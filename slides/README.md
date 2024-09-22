@@ -41,11 +41,12 @@
 - **Assignment 4**: Build a context-aware customer service chatbot
 
 # Week 7: Models of Conversation
+- Discussion: what is language and what is it "used" for?
 - Thought trajectories
   - Reading: [Heusser et al. (2021)](https://www.dropbox.com/s/jec5q2r2f2d02wv/HeusEtal21.pdf)
   - Reading: [Manning (2021)](https://www.dropbox.com/s/7873vuevillrbze/Mann21.pdf)
 - Demo: ConvoKit
-- Positional coding and context
+- Positional coding, context, and memory
   - Reading: [Manning (2023)](https://www.dropbox.com/scl/fi/9amk5mlgeop0srtpwqesg/Mann23.pdf?rlkey=lc785xhq1pcjqdtarn692e21k)
 
 # Week 8: Generative Pretrained Transformers
