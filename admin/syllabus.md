@@ -87,6 +87,7 @@ Students are expected to adhere to Dartmouth’s Academic Honor Principle. You a
 
 ## Use of Generative AI
 Given that this is a course about the technologies used to _make_ modern generative AIs like ChatGPT, Claude, Llama, Gemeni, etc., you will be using these models extensively in class and in your assignments.  There are just two "rules" about using GenAI:
+
   - Most importantly, **you** are responsible for the content of your assignments, whether written by you "from scratch" or with the help of a GenAI agent.
   - Second, you are bound by the Academic Honor Principle to acknowledge any use of GenAI in your work.  This can be done by either using a brief comment in your code, by explicitly citing the tools you use, or by adding a note to the relevant section(s) of your assignment.  Each situation is unique, but you need to make it clear exactly what work is your own vs. produced by GenAI.  You must also include a chat history (including any prompts you used) as an addendum to your assignment(s).
 
