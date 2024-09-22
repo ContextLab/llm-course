@@ -33,6 +33,7 @@ We will investigate what these models can and cannot do from various cognitive, 
 
 ## Course Goals
 This course is intended to train students to:
+
 - Explore a variety of approaches to constructing conversational agents, including string manipulation models, rules-based (decision tree) models, and transformer-based models.  Students will implement and train these models, largely from scratch, to gain a deep understanding of how they work.
 - Understand different classic and modern approaches to text embeddings (LSA, LDA, word2vec, USE, BERT, etc.) and dimensionality reduction (PCA, UMAP).  Students will use these approaches to carry out analyses of text corpora.
 - Gain a general understanding of computational linguistic text analyses including part of speech tagging, sentiment analysis, etc.  Again, students will implement and apply these tools to text data.
