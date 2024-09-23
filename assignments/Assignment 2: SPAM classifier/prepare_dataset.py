@@ -5,7 +5,7 @@ import zipfile
 import sys
 
 def prepare_email_dataset(data_dir, train_prop):
-    # Step 1: Gather all the .txt files from ham and spam directories across enron subfolders
+    # Step 1: Gather all the .txt files from ham and spam directories across subfolders
     ham_files = []
     spam_files = []
 
