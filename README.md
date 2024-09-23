@@ -2,7 +2,9 @@
 
 Welcome!  This repository contains course materials for the Dartmouth undergraduate course on large language models and chatbots (conversational agents).  The syllabus may be found [here](https://github.com/ContextLab/llm-course/blob/main/admin/syllabus.pdf).  Feel free to follow along with the course materials (whether you are officially enrolled in the course or just visiting!), submit comments and suggestions, etc.  An outline of the course materials, including links to lecture and discussion videos and assignments may be found [here](https://github.com/ContextLab/llm-course/blob/main/slides/README.md).
 
-<img src="https://raw.githubusercontent.com/ContextLab/llm-course/main/admin/readme_robot.png" alt="robot" width="400"/>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ContextLab/llm-course/main/admin/readme_robot.png" alt="robot" width="400"/>
+</p>
 
 ## A note about this Open Course
 This course is taught as an *Open Course*, meaning that the course is designed from the ground up to be shareable and freely accessible to anyone.  All code for this course is written in [Python](https://www.python.org/) and most of the material is organized in [Jupyter notebooks](http://jupyter.org/).
