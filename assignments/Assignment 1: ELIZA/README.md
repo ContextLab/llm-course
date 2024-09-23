@@ -28,9 +28,9 @@ The chatbot will use a predefined file (`instructions.txt`) containing patterns,
 
 ### 2. Start with a Greeting
 Once the chatbot starts, it should display one of the pre-defined greeting lines from the `instructions.txt` file. For example:
-$$$
+```
 Welcome. What brings you here today?
-$$$
+```
 
 ### 3. Implement the Conversation Loop
 Your chatbot should repeatedly ask for user input and respond based on pattern matching until the user types a quit command. The conversation ends when the user enters one of the quit keywords specified in the instructions file (e.g., `bye`, `quit`).
@@ -68,21 +68,21 @@ For instance, if the user says, "I feel sad," and the chatbot's response is base
 
 ### 8. Generate Responses and Continue the Loop
 Once the chatbot generates a response, it should display the response and continue the conversation until the user types a quit command. The chatbot should have default responses if no patterns match the user input, such as:
-$$$
+```
 I'm not sure I understand you fully. Can you elaborate?
-$$$
+```
 
 ### 9. Quit and Final Message
 When the user inputs one of the quit keywords (e.g., `bye` or `quit`), the chatbot should print a final message, like:
-$$$
+```
 That will be $200. See you again next week.
-$$$
+```
 
 ### Example Conversation
 
 Your chatbot should handle a conversation like the following:
 
-$$$
+```
 Chatbot: Welcome. What brings you here today?
 User: I am feeling sad.
 Chatbot: Why do you feel sad?
@@ -90,7 +90,7 @@ User: I can't stop thinking about my family.
 Chatbot: Tell me more about your family.
 User: I have to go now.
 Chatbot: That will be $200. See you again next week.
-$$$
+```
 
 ## Requirements
 
