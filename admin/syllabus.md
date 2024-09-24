@@ -56,6 +56,7 @@ Students _must_ have prior experience with Python programming in order to enroll
 This course follows an **experiential learning** model. Students will engage with lecture materials through hands-on programming exercises, experiments with models and tools, and group discussions. Problem sets will deepen your understanding of the course material, and small projects will allow you to apply concepts to real-world research problems in the relevant domains.
 
 Classes will include:
+
 - **Lectures**: Foundational topics, discussions on implementing and leveraging conversational agents, text embeddings, and text analysis.
 - **Hands-on Labs**: Experimenting with conversational agents, designing simple conversational agents, and conducting research using these models.
 - **Problem Sets and Projects**: Bi-weekly problem sets to apply what you've learned.  These will typically take the form of small-scale "research" projects.
