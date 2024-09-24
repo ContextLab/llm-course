@@ -1,1 +1,1 @@
-pandoc -s -o syllabus.pdf syllabus.md --pdf-engine=lualatex
+pandoc -s -o syllabus.pdf syllabus.md --pdf-engine=xelatex

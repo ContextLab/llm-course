@@ -2,9 +2,13 @@
 title: "COGS 8X.XX: Models of Language and Conversation"
 geometry: margin=1in
 header-includes:
-  - \usepackage{pxfonts}
+  - \usepackage{fontspec}
+  - \usepackage{booktabs}
+  - \setmainfont{Berkeley Mono}
+output: pdf
 ---
 
+\setlength{\arrayrulewidth}{0.5mm}
 \vspace{-0.75in}
 \begin{center}
 \begin{tabular}{|p{1.25in}|p{2in}|}
