@@ -8,7 +8,7 @@ In this assignment, you will embark on a deep exploration of how machines repres
 
 This assignment asks fundamental questions: What does it mean to "understand" the meaning of a document? How do different computational approaches capture semantic relationships? What aspects of human semantic knowledge can be modeled through distributional representations? Which methods best capture the conceptual structure of human knowledge as encoded in Wikipedia?
 
-You will implement ~10 different embedding methods, perform sophisticated quantitative and qualitative analyses, create beautiful interactive visualizations, and connect your findings to theories of meaning in cognitive science and linguistics. This is a substantial, multi-week assignment that will deepen your understanding of how we represent and compute with meaning.
+You will implement ~10 different embedding methods, perform sophisticated quantitative and qualitative analyses, create beautiful interactive visualizations, and connect your findings to theories of meaning in cognitive science and linguistics. This is a substantial, 2-week assignment that will deepen your understanding of how we represent and compute with meaning.
 
 ## Dataset
 
@@ -738,39 +738,30 @@ Submit a **Google Colaboratory notebook** (or Jupyter notebook) that includes:
 
 ## Expected Timeline
 
-This is a substantial, multi-week assignment. Here's a suggested timeline:
+This is a 2-week intensive assignment (Weeks 3-4 of the course). With GenAI assistance and focused implementation, here's a suggested timeline:
 
-### Week 1: Implementation Phase 1
+### Week 1: Implementation of All Methods, Initial Clustering
 - Set up environment, download dataset
-- Implement classical methods (LSA, LDA)
-- Implement static embeddings (Word2Vec, GloVe, FastText)
-- Test on subset of data
-
-### Week 2: Implementation Phase 2
+- Implement all classical methods (LSA, LDA)
+- Implement all static embeddings (Word2Vec, GloVe, FastText)
 - Implement contextualized embeddings (BERT, GPT-2)
 - Implement modern embeddings (Sentence-BERT, Llama)
 - Implement topic models (BERTopic, Top2Vec)
 - Generate embeddings for full dataset
+- Apply clustering algorithms (K-Means, Hierarchical, DBSCAN/HDBSCAN)
+- Compute initial quantitative metrics
 
-### Week 3: Analysis and Clustering
-- Implement clustering algorithms
-- Compute quantitative metrics
-- Perform qualitative analysis
-- Compare methods systematically
+### Week 2: Analysis, Visualization, Cognitive Science Connection, and Extensions
+- Perform qualitative analysis and error analysis
+- Cross-method comparison and interpretation
+- Create multi-level clustering hierarchies
+- Create interactive Plotly visualizations (3D scatter, 2D hexbin, cluster comparisons)
+- Implement dimensionality reduction (t-SNE and UMAP)
+- Write cognitive science connection and theoretical analysis
+- Implement advanced extension (Option A, B, or C)
+- Polish all outputs and finalize documentation
 
-### Week 4: Visualization and Extensions
-- Create interactive visualizations
-- Implement hierarchical clustering
-- Choose and implement advanced extension
-- Begin cognitive science analysis
-
-### Week 5: Writing and Refinement
-- Write theoretical connections
-- Complete critical analysis
-- Polish visualizations
-- Final testing and documentation
-
-**Total estimated effort: 40-60 hours**
+**Total estimated effort: 25-35 hours** (with GenAI assistance for coding and documentation)
 
 ---
 

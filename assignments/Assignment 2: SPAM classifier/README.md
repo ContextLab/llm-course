@@ -13,6 +13,8 @@ Unlike a simple "build a classifier" task, this assignment requires you to:
 
 This assignment mirrors real-world ML engineering: you'll make architecture decisions, justify trade-offs, and demonstrate that you understand not just how to build models, but why they work.
 
+**Timeline:** This assignment is designed to be completed in **1 week (7 days)** while remaining comprehensive in scope. By using GenAI tools to accelerate implementation, you can focus your time on the deeper analytical work—error analysis, robustness testing, and deriving insights—that separates excellent work from good work.
+
 ## Learning Objectives
 
 By completing this assignment, you will:
@@ -376,25 +378,43 @@ print(f"Model AUC Score: {auc_score:.4f}")
 
 ## Tips for Success
 
-### Start Early and Iterate
-- This is a substantial assignment. Start with simple baselines and gradually add complexity.
-- Implement a simple Naive Bayes classifier first to establish a baseline.
-- Add complexity incrementally: better features, neural models, ensembles.
+### Complete Within 1 Week: Suggested Daily Schedule
+While this assignment is comprehensive in scope, it's designed to be completable in **7 days**. Here's a suggested timeline (students can use GenAI to accelerate implementation):
+
+- **Day 1: Setup & Data Exploration** - Extract data, perform EDA, create train/val/test splits
+- **Day 2: Traditional ML Models** - Implement two traditional ML classifiers with feature engineering (use GenAI to accelerate TF-IDF/feature pipeline code)
+- **Day 3: Neural Model** - Fine-tune transformer (DistilBERT recommended for speed), monitor training
+- **Day 4: Evaluation & Metrics** - Compute all metrics, generate comparison tables and visualizations
+- **Day 5: Error Analysis** - Identify and categorize 20+ failure cases, analyze patterns and feature importance
+- **Day 6: Adversarial Testing & Real-World Considerations** - Create adversarial examples, test robustness, discuss class imbalance and deployment scenarios
+- **Day 7: Documentation & Polish** - Write markdown sections, verify code runs cleanly, final review
+
+**Key to Success:** Use GenAI coding assistants to accelerate boilerplate code and feature engineering, but invest your time in understanding results, analyzing errors, and writing insightful analysis.
 
 ### Use Version Control
 - Save different model versions as you experiment.
 - Track what worked and what didn't in your notebook.
 - Use meaningful names for models and experiments.
 
-### Leverage GenAI Tools Effectively
-Since you likely have access to AI coding assistants:
-- **Use them to accelerate implementation**, not replace understanding.
-- **Ask for explanations** of code they generate.
-- **Experiment with variations** they suggest.
-- **Critically evaluate** their suggestions—they may not always be optimal.
-- **Focus your time on analysis and insights** rather than boilerplate code.
+### Leverage GenAI Tools Effectively (Critical for 1-Week Timeline)
+Since this assignment must be completed in 7 days, **using AI coding assistants is essential** to accelerate implementation while you focus on the analytical components:
 
-The goal is to learn ML concepts deeply, not just produce working code.
+**DO use GenAI for:**
+- **Boilerplate code**: Data loading, train/test splits, metric computation
+- **Feature engineering pipelines**: TF-IDF setup, feature extraction utilities
+- **Model scaffolding**: Training loops, validation monitoring, hyperparameter grids
+- **Visualization code**: Confusion matrices, ROC curves, comparison tables
+- **Debugging**: Finding issues in data processing or model output shape mismatches
+
+**DON'T use GenAI as a shortcut for:**
+- **Understanding results**: Always interpret what your models are doing
+- **Error analysis**: Manually examine misclassified examples and identify patterns
+- **Design decisions**: Think critically about which models/features to try and why
+- **Documentation**: Write your own explanations of methodology and findings
+
+**Workflow:** Generate code scaffolds with GenAI, then spend your time on data exploration, result interpretation, error categorization, and insightful analysis. The best submissions show deep understanding of the *why*, not just the *how*.
+
+The goal is to learn ML concepts deeply while shipping a complete, well-analyzed project in 7 days.
 
 ### Feature Engineering Matters
 For traditional ML models:
@@ -477,7 +497,7 @@ Your notebook must:
 2. **Include all necessary code** for training, evaluation, and analysis
 3. **Download any required data/models** within the notebook (don't assume files are present)
 4. **Set random seeds** for reproducibility (e.g., `np.random.seed(42)`)
-5. **Have a reasonable runtime**: Full execution should complete in under 60 minutes on Colab
+5. **Have a reasonable runtime**: Full execution should complete in under 60 minutes on Colab (use DistilBERT instead of BERT-base to stay within this constraint)
 
 ### Organization
 Structure your notebook with clear sections:
@@ -549,7 +569,7 @@ Before submitting, verify:
 - [ ] File is named correctly
 
 ### Deadline
-[Insert deadline here]
+**One week from assignment release** (7 calendar days)
 
 Late submissions will be penalized according to the course late policy.
 
@@ -575,16 +595,24 @@ Remember: The goal is to learn about text classification, evaluation, and error 
 
 ## Final Notes
 
-This assignment is designed to be challenging but achievable. You're expected to:
+This assignment is designed to be challenging but achievable **within 1 week**. You're expected to:
 - Think critically about model selection and evaluation
 - Go beyond "does it work?" to "why does it work?"
 - Consider real-world deployment constraints
 - Demonstrate both technical skills and analytical thinking
+- **Use GenAI tools strategically** to manage time constraints without sacrificing rigor
 
 The best submissions will show:
 - Deep understanding of classification fundamentals
 - Thoughtful comparison across methods
 - Insightful error analysis
 - Professional code and documentation
+- Strategic use of GenAI to accelerate implementation while maintaining analytical depth
 
-Good luck, and enjoy building your spam classifier!
+**Remember:** The 7-day timeline is realistic because:
+1. GenAI can generate boilerplate code (training loops, metrics, visualizations)
+2. DistilBERT trains faster than BERT-base
+3. You can run many experiments in parallel on Colab's GPUs
+4. The most valuable insights come from *analysis*, not *implementation time*
+
+Good luck, and enjoy building your spam classifier in a week!

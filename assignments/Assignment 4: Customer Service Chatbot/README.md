@@ -1,8 +1,12 @@
 # Assignment 4: Context-Aware Customer Service Chatbot
 
+**Timeline: 1 Week**
+
 ## Overview
 
 In this assignment, you will build a sophisticated, context-aware customer service chatbot that uses modern transformer models and retrieval-augmented generation (RAG) techniques. Unlike traditional rule-based chatbots, your system will leverage semantic understanding to match customer queries with relevant knowledge base entries and generate contextually appropriate responses.
+
+This is a **1-week assignment** designed to be achievable with GenAI assistance (ChatGPT, Claude, GitHub Copilot). You can focus on system design, integration, and evaluation rather than getting bogged down in low-level implementation details.
 
 You will implement a complete RAG pipeline that:
 - Uses transformer-based encoders (BERT or similar) to understand customer queries semantically
@@ -351,7 +355,7 @@ openai>=0.27.0  # if using OpenAI
 - **Memory**: 8GB+ RAM recommended
 - **Storage**: ~2GB for models and data
 
-The entire assignment should run in **Google Colaboratory** with a free tier GPU.
+The entire assignment should run in **Google Colaboratory** with a free tier GPU and is designed to be completable in **1 week** with GenAI assistance.
 
 ## Deliverables
 
@@ -441,12 +445,13 @@ Your assignment will be graded on the following criteria:
 
 ## Tips for Success
 
-### Getting Started
+### Getting Started (1-Week Timeline)
 
 1. **Start Simple**: Begin with a small knowledge base (20-30 FAQs) to test your pipeline
 2. **Incremental Development**: Build and test each component separately before integration
 3. **Use Examples**: Work through concrete examples at each step
 4. **Validate Early**: Check that embeddings and retrieval make sense before moving to generation
+5. **Leverage GenAI**: Use ChatGPT, Claude, or GitHub Copilot to accelerate implementation. Ask for help understanding libraries, debugging errors, and optimizing code.
 
 ### Common Pitfalls to Avoid
 

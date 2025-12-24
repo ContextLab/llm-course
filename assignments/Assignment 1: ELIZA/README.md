@@ -408,11 +408,14 @@ Submit a **single Jupyter notebook** that includes:
 
 ### Time Management
 
-- **Week 1**: Implement core ELIZA functionality, get basic conversations working
-- **Week 2**: Complete testing scenarios, begin analysis
-- **Week 3**: Finish analysis, comparison, and reflection; polish presentation
+This assignment is designed to be completed in **one week (7 days)**. While substantial, it is achievable within a week with focused effort. Here's a suggested daily breakdown:
 
-Start early! Pattern matching can be trickier than it initially appears.
+- **Days 1-2**: Implement core ELIZA functionality (pattern matching, pre/post-substitutions, synonym handling, conversation loop)
+- **Days 3-4**: Conduct conversation testing and analysis (at least 5 diverse conversation scenarios, ELIZA effect analysis, pattern effectiveness analysis)
+- **Days 5-6**: Complete comparison with modern chatbots and write your reflection (500-1000 word reflection on key questions)
+- **Day 7**: Polish your notebook, test it in a fresh Colab session, and prepare for submission
+
+**Key tip**: These phases can overlap! While implementing, you can begin testing. While analyzing, you can refine your implementation. The daily breakdown above represents the primary focus for each phase, but iterating and moving between phases is normal and expected. Start early in the week and test incrementally as you build each component.
 
 ## Resources and References
 

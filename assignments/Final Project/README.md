@@ -13,7 +13,7 @@ This is your chance to:
 - Build a portfolio piece that demonstrates your AI/ML capabilities
 - Potentially contribute to ongoing research in the field
 
-You will work in **teams of 2-3 students** over **4-6 weeks**, leveraging your combined skills and interests to tackle problems that would be challenging for any individual. The collaborative nature of this project mirrors real-world research and industry practices.
+You will work in **teams of 2-3 students** over **4 weeks (Weeks 7-10)**, leveraging your combined skills and interests to tackle problems that would be challenging for any individual. The collaborative nature of this project mirrors real-world research and industry practices.
 
 ## Learning Objectives
 
@@ -29,7 +29,7 @@ By completing this project, you will:
 
 ## Project Scope
 
-Your project should represent approximately **4-6 weeks of focused work for a team of 2-3 students**. This translates to roughly 15-20 hours per person per week, though the actual time investment may vary based on your background and the project's complexity.
+Your project should represent approximately **4 weeks of focused work for a team of 2-3 students (Weeks 7-10)**. This translates to roughly 15-20 hours per person per week, though the actual time investment may vary based on your background and the project's complexity.
 
 ### Scale and Ambition
 
@@ -183,7 +183,7 @@ Here are **20 diverse project ideas** to inspire you. These span different diffi
 
 Your final project must include four key deliverables:
 
-### 1. Project Proposal (Due Week 2)
+### 1. Project Proposal (Due Week 8)
 
 Submit a **1-2 page proposal** that includes:
 
@@ -197,7 +197,7 @@ Submit a **1-2 page proposal** that includes:
 
 The proposal helps you clarify your ideas and allows us to provide early feedback to ensure your project is appropriately scoped.
 
-### 2. Code Implementation (Due Week 6)
+### 2. Code Implementation (Due Week 10)
 
 Submit a **well-documented Jupyter notebook** that:
 
@@ -211,7 +211,7 @@ Submit a **well-documented Jupyter notebook** that:
 
 **Code quality matters**: Your notebook should be something you'd be proud to share publicly or include in a portfolio.
 
-### 3. Presentation (Due Week 6)
+### 3. Presentation (Due Week 10)
 
 Create a **10-12 minute video presentation** and present it in class:
 
@@ -223,7 +223,7 @@ Create a **10-12 minute video presentation** and present it in class:
 
 The presentation should be accessible to your classmates—assume they're smart but may not know the specific technical details of your domain.
 
-### 4. Written Writeup (Due Week 6)
+### 4. Written Writeup (Due Week 10)
 
 Submit a **2-5 page writeup** (not including references or appendices) structured as:
 
@@ -256,33 +256,29 @@ Write clearly and concisely. Think of this as a mini research paper suitable for
 
 ## Timeline and Milestones
 
-### Week 1: Team Formation and Brainstorming
+### Week 7: Team Formation and Brainstorming
 - Form teams of 2-3 students
 - Brainstorm project ideas
 - Review recent papers and existing systems for inspiration
 - Discuss with instructor or peers to refine ideas
 - **Deliverable**: Team formed, preliminary idea identified
 
-### Week 2: Proposal Development and Submission
-- Develop detailed project proposal
+### Week 8: Proposal, Feedback, and Implementation Starts
+- Develop detailed project proposal (1-2 pages)
 - Identify datasets, models, and tools needed
 - Create timeline and divide initial responsibilities
-- **Deliverable**: 1-2 page proposal submitted
-
-### Week 3: Feedback and Implementation Kickoff
-- Receive feedback on proposal
-- Revise scope if needed based on feedback
+- Submit proposal and receive feedback
 - Begin implementation: setup environment, load data, test baseline approaches
-- **Deliverable**: Initial codebase, preliminary experiments
+- **Deliverable**: Proposal submitted, initial codebase, preliminary experiments
 
-### Weeks 4-5: Core Development and Iteration
+### Week 9: Core Development and Iteration
 - Implement main technical components
 - Run experiments and collect results
 - Iterate based on findings—adjust approaches as needed
 - Begin drafting writeup and presentation materials
 - **Deliverable**: Major progress on implementation, preliminary results
 
-### Week 6: Final Push and Presentations
+### Week 10: Final Push and Presentations
 - Finalize code and ensure reproducibility
 - Complete all experiments and analysis
 - Finish writeup and presentation video

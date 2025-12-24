@@ -1,8 +1,12 @@
 # Assignment 5: Build and Train a GPT Model
 
+**Timeline: 1 Week**
+
 ## Overview
 
 In this capstone-style assignment, you will build a GPT (Generative Pre-trained Transformer) model from the ground up and train it to generate text. This assignment goes beyond using pre-trained models—you will implement the core components of a transformer architecture, understand how autoregressive language modeling works, and gain deep insights into what makes modern large language models tick.
+
+This is a **1-week assignment** designed to be ambitious yet achievable with modern GenAI tools (ChatGPT, Claude, GitHub Copilot) to assist with implementation, debugging, and optimization.
 
 GPT models are decoder-only transformers that have revolutionized natural language processing. By building one yourself, you'll understand the intricate details of self-attention mechanisms, positional encodings, layer normalization, and the training dynamics that enable these models to generate coherent text.
 
@@ -438,17 +442,21 @@ If you finish the core assignment and want to push further, consider these exten
 - **Weights & Biases**: For experiment tracking [wandb.ai](https://wandb.ai/)
 - **BERTViz**: For visualizing attention [github.com/jessevig/bertviz](https://github.com/jessevig/bertviz)
 
-## Tips for Success
+## Tips for Success (1-Week Timeline)
 
-1. **Start small**: Begin with a tiny model (2-4 layers, small hidden size) to debug your implementation quickly
-2. **Validate components**: Test each component individually before assembling the full model
-3. **Monitor carefully**: Watch for NaN losses, exploding gradients, or other training instabilities
-4. **Use gradient clipping**: This prevents exploding gradients in early training
-5. **Overfit a small batch first**: Ensure your model can memorize a tiny amount of data before scaling up
-6. **Compare with references**: If results seem off, compare your implementation with nanoGPT or other references
-7. **Save often**: Checkpointing is critical—you don't want to lose hours of training
-8. **Document everything**: Future you (and the grader) will thank you for clear explanations
-9. **Use GenAI tools**: Claude, ChatGPT, and Copilot can help you debug, optimize, and understand concepts
+1. **Use GenAI aggressively**: Claude, ChatGPT, and GitHub Copilot are your friends. Use them to:
+   - Implement transformer components you haven't built before
+   - Debug errors and understand PyTorch behavior
+   - Write boilerplate code and data processing pipelines
+   - Explain unfamiliar concepts or papers
+2. **Start small**: Begin with a tiny model (2-4 layers, small hidden size) to debug your implementation quickly
+3. **Validate components**: Test each component individually before assembling the full model
+4. **Monitor carefully**: Watch for NaN losses, exploding gradients, or other training instabilities
+5. **Use gradient clipping**: This prevents exploding gradients in early training
+6. **Overfit a small batch first**: Ensure your model can memorize a tiny amount of data before scaling up
+7. **Compare with references**: If results seem off, compare your implementation with nanoGPT or other references
+8. **Save often**: Checkpointing is critical—you don't want to lose hours of training
+9. **Document everything**: Future you (and the grader) will thank you for clear explanations
 10. **Have fun**: This is a challenging but incredibly rewarding assignment!
 
 ## Submission
