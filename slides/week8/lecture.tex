@@ -1,0 +1,2189 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{emoji}
+
+% TikZ libraries
+\usetikzlibrary{positioning,shapes,arrows,calc}
+
+% Code listing setup
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  language=Python
+}
+
+\title{Generative Pretrained Transformers}
+\subtitle{Week 8: From GPT-1 to GPT-4 and Beyond}
+\author{LLM Course}
+\date{\today}
+
+\begin{document}
+
+% ============================================================
+% TITLE SLIDE
+% ============================================================
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ============================================================
+% OVERVIEW
+% ============================================================
+\begin{frame}{Today's Journey 🗺️}
+\large
+\begin{enumerate}
+    \item 🚀 \textbf{GPT Evolution}: From GPT-1 to GPT-4
+    \item 🦙 \textbf{Open Source LLMs}: LLaMA and Llama 3
+    \item 🧠 \textbf{Language Models \& the Brain}: Neural convergence
+    \item 🤖 \textbf{The Turing Test}: What are we really testing?
+    \item 💻 \textbf{Building GPT from Scratch}: Code walkthrough
+    \item 🎓 \textbf{Assignment 5}: Train your own GPT
+\end{enumerate}
+
+\vspace{1em}
+\textit{Goal: Understand the revolution in generative language modeling}
+\end{frame}
+
+% ============================================================
+% THE GPT REVOLUTION
+% ============================================================
+\section{The GPT Revolution}
+
+\begin{frame}{The Paradigm Shift 💡}
+\begin{center}
+\LARGE
+\textbf{2018: Everything changed (again)}
+\end{center}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Before GPT:}
+\begin{itemize}
+    \item Task-specific models
+    \item Supervised learning on labeled data
+    \item Limited generalization
+    \item Expensive data annotation
+    \item Separate models for each task
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{After GPT:}
+\begin{itemize}
+    \item One model, many tasks
+    \item Unsupervised pre-training
+    \item Emergent capabilities
+    \item Learn from raw text
+    \item \alert{Zero-shot \& few-shot learning}
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{1em}
+
+\begin{alertblock}{Key Insight}
+Pre-train on massive text $\rightarrow$ fine-tune on specific tasks $\rightarrow$ amazing performance!
+\end{alertblock}
+
+\small
+\textit{Reference: Radford et al. (2018) - Improving Language Understanding by Generative Pre-Training}
+\end{frame}
+
+% ============================================================
+% DECODER-ONLY ARCHITECTURE
+% ============================================================
+\begin{frame}{Decoder-Only Architecture 🏗️}
+\textbf{GPT uses only the decoder part of the Transformer}
+
+\vspace{0.5em}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8, every node/.style={scale=0.8}]
+    % Input
+    \node[rectangle,draw,fill=blue!20,minimum width=3cm,minimum height=0.8cm] (input) at (0,0) {Input Tokens};
+
+    % Embedding
+    \node[rectangle,draw,fill=green!20,minimum width=3cm,minimum height=0.8cm] (embed) at (0,-1.2) {Token + Positional Embedding};
+
+    % Decoder Block 1
+    \node[rectangle,draw,fill=orange!20,minimum width=3cm,minimum height=2cm] (dec1) at (0,-3) {
+        \begin{minipage}{2.8cm}
+        \centering
+        \scriptsize
+        Masked Self-Attention\\
+        $\downarrow$\\
+        Feed Forward\\
+        $\downarrow$\\
+        Layer Norm
+        \end{minipage}
+    };
+
+    % Decoder Block 2
+    \node[rectangle,draw,fill=orange!20,minimum width=3cm,minimum height=2cm] (dec2) at (0,-5.5) {
+        \begin{minipage}{2.8cm}
+        \centering
+        \scriptsize
+        Masked Self-Attention\\
+        $\downarrow$\\
+        Feed Forward\\
+        $\downarrow$\\
+        Layer Norm
+        \end{minipage}
+    };
+
+    % More layers indicator
+    \node at (0,-7) {$\vdots$ (N layers)};
+
+    % Output
+    \node[rectangle,draw,fill=red!20,minimum width=3cm,minimum height=0.8cm] (output) at (0,-8.2) {Linear + Softmax};
+    \node[rectangle,draw,fill=purple!20,minimum width=3cm,minimum height=0.8cm] (prob) at (0,-9.3) {Next Token Probability};
+
+    % Arrows
+    \draw[->,thick] (input) -- (embed);
+    \draw[->,thick] (embed) -- (dec1);
+    \draw[->,thick] (dec1) -- (dec2);
+    \draw[->,thick] (dec2) -- (-0.8,-7);
+    \draw[->,thick] (0.8,-7) -- (output);
+    \draw[->,thick] (output) -- (prob);
+
+    % Annotation
+    \node[align=left,text width=4cm] at (5,-4.5) {
+        \textbf{Key Feature:}\\
+        \alert{Causal masking} prevents looking ahead\\
+        $\rightarrow$ Can only attend to previous tokens
+    };
+\end{tikzpicture}
+\end{center}
+
+\textbf{Autoregressive Generation:} Predict one token at a time, left to right
+\end{frame}
+
+% ============================================================
+% AUTOREGRESSIVE GENERATION
+% ============================================================
+\begin{frame}{Autoregressive Generation 🔮}
+\textbf{How GPT generates text:}
+
+\vspace{1em}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+    % Step 1
+    \node[align=center] at (0,3) {\textbf{Step 1}};
+    \node[rectangle,draw,fill=blue!20] at (0,2.3) {The};
+    \node at (0,1.8) {$\downarrow$ GPT};
+    \node[rectangle,draw,fill=green!20] at (0,1.3) {cat: 0.45};
+    \node[rectangle,draw,fill=green!10] at (0,0.9) {dog: 0.35};
+    \node[rectangle,draw,fill=green!10] at (0,0.5) {bird: 0.10};
+
+    % Step 2
+    \node[align=center] at (3,3) {\textbf{Step 2}};
+    \node[rectangle,draw,fill=blue!20] at (3,2.6) {The};
+    \node[rectangle,draw,fill=blue!20] at (3,2.0) {cat};
+    \node at (3,1.5) {$\downarrow$ GPT};
+    \node[rectangle,draw,fill=green!20] at (3,1.0) {sat: 0.52};
+    \node[rectangle,draw,fill=green!10] at (3,0.6) {is: 0.28};
+
+    % Step 3
+    \node[align=center] at (6.5,3) {\textbf{Step 3}};
+    \node[rectangle,draw,fill=blue!20] at (6.5,2.7) {The};
+    \node[rectangle,draw,fill=blue!20] at (6.5,2.3) {cat};
+    \node[rectangle,draw,fill=blue!20] at (6.5,1.9) {sat};
+    \node at (6.5,1.4) {$\downarrow$ GPT};
+    \node[rectangle,draw,fill=green!20] at (6.5,0.9) {on: 0.63};
+    \node[rectangle,draw,fill=green!10] at (6.5,0.5) {down: 0.22};
+
+    % Step 4
+    \node[align=center] at (10,3) {\textbf{Step 4}};
+    \node[rectangle,draw,fill=blue!20] at (10,2.7) {The cat};
+    \node[rectangle,draw,fill=blue!20] at (10,2.3) {sat on};
+    \node[rectangle,draw,fill=blue!20] at (10,1.9) {the mat};
+    \node at (10,1.3) {\Large ✓};
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5em}
+
+\textbf{Key aspects:}
+\begin{itemize}
+    \item Each token depends on all previous tokens
+    \item Sampling strategies: greedy, top-k, top-p (nucleus), temperature
+    \item Can generate indefinitely (until stopping condition)
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% GPT-1
+% ============================================================
+\section{GPT Evolution}
+
+\begin{frame}{GPT-1: The Beginning 🌱}
+\begin{block}{Radford et al. (2018)}
+\textit{Improving Language Understanding by Generative Pre-Training}
+\end{block}
+
+\vspace{0.5em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Architecture:}
+\begin{itemize}
+    \item 12 transformer layers
+    \item 768 hidden dimensions
+    \item 117 million parameters
+    \item 512 token context window
+    \item Decoder-only (causal)
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Training Data:}
+\begin{itemize}
+    \item BooksCorpus dataset
+    \item 7,000+ unpublished books
+    \item $\sim$4.5 GB of text
+    \item Long-range dependencies
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Two-Stage Process:}
+\begin{enumerate}
+    \item \textbf{Pre-training (unsupervised):}
+    \begin{itemize}
+        \item Language modeling objective
+        \item Predict next token
+        \item Learn general representations
+    \end{itemize}
+
+    \item \textbf{Fine-tuning (supervised):}
+    \begin{itemize}
+        \item Task-specific adaptation
+        \item Add classification head
+        \item Minimal architecture changes
+    \end{itemize}
+\end{enumerate}
+
+\vspace{0.5em}
+
+\textbf{Results:}
+\begin{itemize}
+    \item SOTA on 9/12 NLP tasks
+    \item Textual entailment: 89.9\%
+    \item Question answering: 76.1\%
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% GPT-2
+% ============================================================
+\begin{frame}{GPT-2: Language Models are Unsupervised Multitask Learners 📈}
+\begin{block}{Radford et al. (2019)}
+\textit{Language Models are Unsupervised Multitask Learners}
+\end{block}
+
+\vspace{0.5em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Scale Up:}
+\begin{itemize}
+    \item 48 layers (GPT-2 Large)
+    \item 1.5 \textbf{billion} parameters
+    \item 1024 token context
+    \item 10x more parameters than GPT-1
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Training Data:}
+\begin{itemize}
+    \item WebText: 8M web pages
+    \item 40 GB of text
+    \item Filtered for quality
+    \item Reddit outbound links (3+ karma)
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Key Innovation:}
+\begin{itemize}
+    \item \alert{Zero-shot learning}
+    \item No fine-tuning needed!
+    \item Task conditioning via prompts
+    \item Emergent multitask behavior
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{exampleblock}{Example: Translation}
+\scriptsize
+\texttt{Translate English to French:\\
+English: Hello\\
+French: Bonjour\\
+English: Goodbye\\
+French:} \alert{Au revoir}
+\end{exampleblock}
+
+\vspace{0.5em}
+
+\textbf{Controversy:}
+\begin{itemize}
+    \item Initially withheld due to misuse concerns
+    \item Could generate convincing fake news
+    \item Released in stages
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% GPT-2 EXAMPLES
+% ============================================================
+\begin{frame}{GPT-2 Generation Examples 💬}
+\textbf{Prompt:} \textit{In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains...}
+
+\vspace{0.5em}
+
+\begin{block}{GPT-2 Continuation}
+\small
+\textit{...Even more surprising to the researchers was the fact that the unicorns spoke perfect English. The scientist named the population, after their distinctive horn, Ovid's Unicorn. These four-horned, silver-white unicorns were previously unknown to science.}
+
+\textit{Now, after almost two centuries, the mystery of what sparked this odd phenomenon is finally solved. Dr. Jorge Pérez, an evolutionary biologist from the University of La Paz, and several companions, were exploring the Andes Mountains when they found a small valley, with no other animals or humans...}
+\end{block}
+
+\vspace{0.5em}
+
+\begin{alertblock}{Observations}
+\begin{itemize}
+    \item Coherent narrative structure
+    \item Specific details (names, locations)
+    \item Maintains consistent style
+    \item \alert{But factually nonsensical!}
+\end{itemize}
+\end{alertblock}
+\end{frame}
+
+% ============================================================
+% GPT-3
+% ============================================================
+\begin{frame}{GPT-3: Few-Shot Learners 🚀}
+\begin{block}{Brown et al. (2020)}
+\textit{Language Models are Few-Shot Learners}
+\end{block}
+
+\vspace{0.5em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Massive Scale:}
+\begin{itemize}
+    \item 96 layers
+    \item \alert{175 billion parameters}
+    \item 2048 token context
+    \item 100x larger than GPT-2!
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Training:}
+\begin{itemize}
+    \item Common Crawl (filtered)
+    \item WebText2, Books corpora
+    \item Wikipedia
+    \item $\sim$300 billion tokens
+    \item Estimated cost: \$4.6M
+    \item Trained on V100 GPUs
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Learning Paradigms:}
+
+\vspace{0.3em}
+
+\begin{itemize}
+    \item \textbf{Zero-shot:} Task description only
+    \item \textbf{One-shot:} 1 example + task
+    \item \textbf{Few-shot:} K examples + task
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{exampleblock}{Few-Shot Example}
+\tiny
+\texttt{Translate to French:}\\
+\texttt{sea otter => loutre de mer}\\
+\texttt{peppermint => menthe poivrée}\\
+\texttt{plush giraffe => girafe peluche}\\
+\texttt{cheese =>} \alert{fromage}
+\end{exampleblock}
+
+\vspace{0.5em}
+
+\textbf{Emergent Abilities:}
+\begin{itemize}
+    \item Arithmetic (2-3 digit)
+    \item Code generation
+    \item Creative writing
+    \item Question answering
+    \item Common sense reasoning
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% SCALING LAWS
+% ============================================================
+\begin{frame}{Scaling Laws: More is Better 📊}
+\textbf{Key finding: Performance scales predictably with model size, data, and compute}
+
+\vspace{0.5em}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+    % Axes
+    \draw[->] (0,0) -- (8,0) node[right] {Parameters (log scale)};
+    \draw[->] (0,0) -- (0,5) node[above] {Performance};
+
+    % Performance curve
+    \draw[very thick, blue, smooth] plot coordinates {
+        (0.5,1) (1,1.5) (2,2) (3,2.5) (4,3) (5,3.4) (6,3.7) (7,3.9)
+    };
+
+    % GPT markers
+    \node[circle,fill=red,inner sep=3pt,label=above:{\scriptsize GPT-1}] at (1.5,1.7) {};
+    \node[circle,fill=red,inner sep=3pt,label=above:{\scriptsize GPT-2}] at (3.5,2.7) {};
+    \node[circle,fill=red,inner sep=3pt,label=above:{\scriptsize GPT-3}] at (6.5,3.75) {};
+
+    % Parameter counts
+    \node at (1.5,0) [below] {\tiny 117M};
+    \node at (3.5,0) [below] {\tiny 1.5B};
+    \node at (6.5,0) [below] {\tiny 175B};
+
+    % Diminishing returns annotation
+    \draw[dashed,gray] (7,0) -- (7,3.9);
+    \node[align=left,text width=3cm] at (10,2) {
+        \scriptsize
+        \textbf{Scaling continues...}\\
+        but with diminishing returns
+    };
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5em}
+
+\textbf{Implications:}
+\begin{itemize}
+    \item Bigger models $\approx$ better performance (up to a point)
+    \item Data quality matters as much as quantity
+    \item Computational cost grows rapidly
+    \item New capabilities emerge at certain scales
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% GPT-4
+% ============================================================
+\begin{frame}{GPT-4: The Frontier Model 🔮}
+\begin{block}{OpenAI (2023)}
+\textit{GPT-4 Technical Report}
+\end{block}
+
+\vspace{0.5em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{What We Know:}
+\begin{itemize}
+    \item \alert{Multimodal} (text + images)
+    \item 32,768 token context (GPT-4-32k)
+    \item Massive performance gains
+    \item Better reasoning
+    \item More factual, less hallucination
+    \item Improved safety \& alignment
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{What OpenAI Won't Share:}
+\begin{itemize}
+    \item Number of parameters
+    \item Architecture details
+    \item Training data composition
+    \item Training compute
+    \item \textit{Citing "competitive landscape"}
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Benchmark Performance:}
+\begin{center}
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Task} & \textbf{GPT-3.5} & \textbf{GPT-4} \\
+\midrule
+Bar Exam & 10\% & 90\% \\
+SAT Math & 70\% & 89\% \\
+MMLU & 70.0\% & 86.4\% \\
+HumanEval & 48.1\% & 67.0\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.5em}
+
+\textbf{Notable Capabilities:}
+\begin{itemize}
+    \item Pass professional exams
+    \item Solve novel problems
+    \item Understand images
+    \item Long-form reasoning
+    \item Creative \& technical writing
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{alertblock}{Rumor Mill}
+\scriptsize
+Estimated 1.8 trillion parameters, mixture of experts architecture?
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% COMPARISON TABLE
+% ============================================================
+\begin{frame}{GPT Evolution: Side by Side 📋}
+\begin{center}
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Feature} & \textbf{GPT-1} & \textbf{GPT-2} & \textbf{GPT-3} & \textbf{GPT-3.5} & \textbf{GPT-4} \\
+\midrule
+Year & 2018 & 2019 & 2020 & 2022 & 2023 \\
+Parameters & 117M & 1.5B & 175B & 175B+ & ???\\
+Layers & 12 & 48 & 96 & ??? & ??? \\
+Context & 512 & 1024 & 2048 & 4096 & 32k \\
+Training Data & 5GB & 40GB & 570GB & ??? & ??? \\
+\midrule
+Fine-tuning & Required & Optional & No & No & No \\
+Zero-shot & Limited & Yes & Yes & Yes & Yes \\
+Few-shot & No & Limited & Yes & Yes & Yes \\
+Multimodal & No & No & No & No & \alert{Yes} \\
+\midrule
+Open Source & Yes & Yes & No & No & No \\
+API Access & No & No & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+
+\textbf{Trend:} Bigger $\rightarrow$ Better, but increasingly \alert{proprietary} and \alert{expensive}
+\end{frame}
+
+% ============================================================
+% OPEN SOURCE LLMS
+% ============================================================
+\section{Open Source LLMs}
+
+\begin{frame}{The Open Source Movement 🦙}
+\begin{center}
+\Large
+\textbf{Democratizing Large Language Models}
+\end{center}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Why Open Source Matters:}
+\begin{itemize}
+    \item \textbf{Accessibility}: Anyone can use
+    \item \textbf{Transparency}: Inspect internals
+    \item \textbf{Privacy}: Run locally
+    \item \textbf{Customization}: Fine-tune freely
+    \item \textbf{Research}: Enable science
+    \item \textbf{Safety}: Community audit
+    \item \textbf{Cost}: No API fees
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{The Problem with Closed Models:}
+\begin{itemize}
+    \item Black box behavior
+    \item Vendor lock-in
+    \item Privacy concerns
+    \item Reproducibility issues
+    \item Cost at scale
+    \item Cannot study internals
+    \item Alignment with company goals
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{alertblock}{The Gap}
+Can open models compete with GPT-4?
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+
+\textbf{Major Open Source LLMs:} LLaMA, Mistral, Falcon, MPT, Pythia, OLMo, Gemma
+\end{frame}
+
+% ============================================================
+% LLAMA
+% ============================================================
+\begin{frame}{LLaMA: Open and Efficient Foundation Models 🦙}
+\begin{block}{Touvron et al. (2023)}
+\textit{LLaMA: Open and Efficient Foundation Language Models}
+\end{block}
+
+\vspace{0.5em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Model Sizes:}
+\begin{itemize}
+    \item LLaMA-7B (7 billion params)
+    \item LLaMA-13B
+    \item LLaMA-33B
+    \item LLaMA-65B
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Training Data:}
+\begin{itemize}
+    \item 1.4 trillion tokens
+    \item Publicly available data only
+    \item CommonCrawl, C4
+    \item Github, Wikipedia
+    \item Books, ArXiv, StackExchange
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Key Results:}
+\begin{itemize}
+    \item LLaMA-13B outperforms GPT-3 (175B) on most benchmarks
+    \item More efficient training
+    \item Inference-friendly sizes
+    \item Strong few-shot learning
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Release Strategy:}
+\begin{itemize}
+    \item Weights released to researchers
+    \item Accidentally leaked publicly
+    \item Spawned ecosystem of derivatives
+    \item Alpaca, Vicuna, WizardLM, etc.
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{alertblock}{Impact}
+Proved competitive open models are possible!
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% LLAMA 3
+% ============================================================
+\begin{frame}{Llama 3: The New Standard 🔥}
+\begin{block}{Llama Team (2024)}
+\textit{The Llama 3 Herd of Models}
+\end{block}
+
+\vspace{0.5em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Model Family:}
+\begin{itemize}
+    \item Llama 3 8B \& 70B
+    \item Llama 3.1 (8B, 70B, 405B)
+    \item Llama 3.2 (1B, 3B, 11B, 90B)
+    \item Instruct versions for chat
+    \item \alert{128k context window} (3.1+)
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Training Data:}
+\begin{itemize}
+    \item 15 \textbf{trillion} tokens
+    \item Multilingual (8 languages)
+    \item Better quality filtering
+    \item Deduplicated
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Architecture Improvements:}
+\begin{itemize}
+    \item Grouped Query Attention (GQA)
+    \item RoPE positional embeddings
+    \item Better tokenizer (128k vocab)
+    \item Optimized for efficiency
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Performance:}
+\begin{itemize}
+    \item Llama 3.1 405B rivals GPT-4
+    \item Best open model to date
+    \item Strong on reasoning, math, code
+    \item Improved instruction following
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{exampleblock}{Truly Open}
+Full weights, code, and training details released!
+\end{exampleblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% OPEN VS CLOSED
+% ============================================================
+\begin{frame}{Open vs. Closed: The Current Landscape 🗺️}
+\begin{center}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{Parameters} & \textbf{Context} & \textbf{Open?} & \textbf{Performance} \\
+\midrule
+GPT-4 & ??? & 128k & ✗ & \alert{Excellent} \\
+GPT-3.5 & 175B+ & 16k & ✗ & Very Good \\
+Claude 3.5 Sonnet & ??? & 200k & ✗ & Excellent \\
+\midrule
+Llama 3.1 405B & 405B & 128k & ✓ & \alert{Excellent} \\
+Llama 3.1 70B & 70B & 128k & ✓ & Very Good \\
+Mistral Large & 123B & 128k & ✗ (weights) & Very Good \\
+Mixtral 8x22B & 176B & 65k & ✓ & Good \\
+Gemma 2 27B & 27B & 8k & ✓ & Good \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item Gap is \alert{closing rapidly}
+    \item Open models now competitive at frontier
+    \item Trade-offs: Open models need more resources to run
+    \item Ecosystem: HuggingFace has 600k+ models
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Reference:} HuggingFace Chapters 1.6 (Decoder Models), 7.6 (Causal Language Modeling)
+\end{frame}
+
+% ============================================================
+% LANGUAGE MODELS AND THE BRAIN
+% ============================================================
+\section{Language Models \& the Brain}
+
+\begin{frame}{A Surprising Convergence 🧠}
+\begin{center}
+\LARGE
+\textbf{Do language models work like brains?}
+\end{center}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Brain Language Processing:}
+\begin{itemize}
+    \item Left hemisphere dominant
+    \item Perisylvian cortex
+    \item Hierarchical processing
+    \item Context-dependent
+    \item Predictive coding
+    \item Distributed representations
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.6]
+    % Brain outline (simplified)
+    \draw[thick] (0,0) ellipse (2cm and 1.5cm);
+
+    % Language areas
+    \draw[fill=blue!30] (-1.2,0.5) circle (0.4cm);
+    \node at (-1.2,0.5) {\tiny B};
+    \node[below] at (-1.2,0) {\tiny Broca's};
+
+    \draw[fill=green!30] (0.5,-0.5) circle (0.4cm);
+    \node at (0.5,-0.5) {\tiny W};
+    \node[below] at (0.5,-1) {\tiny Wernicke's};
+
+    \draw[thick,<->] (-0.8,0.3) -- (0.1,-0.3);
+\end{tikzpicture}
+\end{center}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Language Model Processing:}
+\begin{itemize}
+    \item Transformer layers
+    \item Self-attention mechanisms
+    \item Hierarchical representations
+    \item Context windows
+    \item Next-word prediction
+    \item Vector embeddings
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.6]
+    % Layers
+    \foreach \y in {0,0.5,1,1.5,2,2.5} {
+        \draw[fill=orange!30] (-1,\y) rectangle (1,\y+0.3);
+    }
+    \node at (0,3) {\tiny Layer N};
+    \node at (0,-0.5) {\tiny Input};
+
+    % Arrows
+    \draw[thick,->] (0,-0.7) -- (0,0);
+    \draw[thick,->] (0,3.2) -- (0,3.5);
+    \node at (0,3.7) {\tiny Output};
+\end{tikzpicture}
+\end{center}
+\end{column}
+\end{columns}
+
+\vspace{1em}
+
+\begin{alertblock}{The Question}
+Can we measure neural similarity between artificial and biological language processing?
+\end{alertblock}
+\end{frame}
+
+% ============================================================
+% SCHRIMPF STUDY
+% ============================================================
+\begin{frame}{Neural Architecture of Language 🔬}
+\begin{block}{Schrimpf et al. (2021) - PNAS}
+\textit{The neural architecture of language: Integrative modeling converges on predictive processing}
+\end{block}
+
+\vspace{0.5em}
+
+\textbf{Method:}
+\begin{itemize}
+    \item Compare 43 language models to brain recordings
+    \item fMRI: spatial resolution, whole brain
+    \item ECoG: temporal resolution, direct neural activity
+    \item Measure representational similarity
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Key Finding 1:}
+
+\alert{GPT-2 best predicts neural responses}
+
+\vspace{0.3em}
+
+Better than:
+\begin{itemize}
+    \item BERT (encoder-only)
+    \item Word2Vec
+    \item Linguistic features
+    \item Acoustic models
+\end{itemize}
+
+\vspace{0.3em}
+
+Why? \textit{Predictive processing!}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Key Finding 2:}
+
+\alert{Layer-by-layer correspondence}
+
+\vspace{0.3em}
+
+\begin{itemize}
+    \item Early layers $\leftrightarrow$ Early visual cortex
+    \item Middle layers $\leftrightarrow$ Temporal cortex
+    \item Late layers $\leftrightarrow$ Frontal cortex
+\end{itemize}
+
+\vspace{0.3em}
+
+Hierarchical processing in both!
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+
+\begin{alertblock}{Implication}
+Language models capture \textit{some} aspects of biological language processing
+\end{alertblock}
+\end{frame}
+
+% ============================================================
+% CAUCHETEUX STUDY
+% ============================================================
+\begin{frame}{Brains and Algorithms Partially Converge 🤝}
+\begin{block}{Caucheteux \& King (2022) - Communications Biology}
+\textit{Brains and algorithms partially converge in natural language processing}
+\end{block}
+
+\vspace{0.5em}
+
+\textbf{Experiment:}
+\begin{itemize}
+    \item 102 participants listen to stories
+    \item Brain activity recorded with MEG
+    \item Compare to GPT-2 hidden states
+    \item Track word-by-word neural responses
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Results:}
+\begin{itemize}
+    \item \alert{High correlation} (r = 0.9+)
+    \item GPT-2 predicts brain activity
+    \item Especially in language cortex
+    \item Time-resolved alignment
+    \item Peaks at $\sim$300-500ms
+\end{itemize}
+
+\vspace{0.3em}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+    \draw[->] (0,0) -- (5,0) node[right] {Time (ms)};
+    \draw[->] (0,0) -- (0,3) node[above] {Correlation};
+    \draw[thick,blue] plot[smooth] coordinates {(0,0.3) (1,0.8) (2,1.8) (2.5,2.5) (3,2.3) (4,1.5) (5,1)};
+    \node at (2.5,0) [below] {300-500};
+    \draw[dashed] (2.5,0) -- (2.5,2.5);
+\end{tikzpicture}
+\end{center}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Interpretation:}
+\begin{itemize}
+    \item Shared \textit{computational strategy}
+    \item Both use context for prediction
+    \item Similar representations
+    \item Both hierarchical
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{But differences remain:}
+\begin{itemize}
+    \item Brains have grounding
+    \item Multimodal integration
+    \item Emotional processing
+    \item Social cognition
+    \item Consciousness?
+\end{itemize}
+
+\vspace{0.3em}
+
+\begin{alertblock}{Caution}
+Correlation $\neq$ identical mechanisms
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% HOSSEINI STUDY
+% ============================================================
+\begin{frame}{ANNs Predict Human Brain Responses 👶}
+\begin{block}{Hosseini et al. (2024) - Neurobiology of Language}
+\textit{ANNs predict human brain responses to language even after developmentally realistic training}
+\end{block}
+
+\vspace{0.5em}
+
+\textbf{Research Question:}
+\begin{center}
+Do language models need as much data as they typically get?\\
+Or can they match brain responses with \alert{child-scale} training data?
+\end{center}
+
+\vspace{0.5em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Experiment:}
+\begin{itemize}
+    \item Train GPT-2 on limited data
+    \item Compare: 100M, 1B, 10B tokens
+    \item vs. Standard: 40B+ tokens
+    \item Test brain alignment
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Finding:}
+\begin{itemize}
+    \item \alert{10B tokens is enough!}
+    \item Similar brain alignment
+    \item Child hears $\sim$10M-100M words by age 6
+    \item Models are data-efficient for alignment
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Implications:}
+\begin{enumerate}
+    \item Brain-like representations don't require massive data
+    \item Emergent properties appear early
+    \item Quality $>$ Quantity (to some extent)
+    \item Suggests shared inductive biases
+\end{enumerate}
+
+\vspace{0.5em}
+
+\begin{exampleblock}{Insight}
+\small
+The alignment between ANNs and brains emerges from the \textit{learning objective} (prediction) more than scale
+\end{exampleblock}
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+
+\textbf{Open Question:} Do brains and models learn language the same way?
+\end{frame}
+
+% ============================================================
+% BRAIN-LM SUMMARY
+% ============================================================
+\begin{frame}{What Does This Tell Us? 🤔}
+\textbf{Brain-Language Model Convergence:}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Similarities:}
+\begin{itemize}
+    \item ✓ Hierarchical processing
+    \item ✓ Predictive mechanisms
+    \item ✓ Context-dependent representations
+    \item ✓ Distributed coding
+    \item ✓ Similar layer mapping
+    \item ✓ Temporal dynamics
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{alertblock}{Convergence}
+Similar \textit{computational goals} lead to similar \textit{solutions}
+\end{alertblock}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Differences:}
+\begin{itemize}
+    \item ✗ Grounding in physical world
+    \item ✗ Embodied experience
+    \item ✗ Multimodal integration
+    \item ✗ Social interaction
+    \item ✗ Emotional content
+    \item ✗ Consciousness
+    \item ✗ Biological constraints
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{alertblock}{Divergence}
+Substrate and experience matter!
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\vspace{1em}
+
+\begin{center}
+\textbf{Big Picture:} Language models are useful \textit{cognitive models} but not perfect brain simulations
+\end{center}
+\end{frame}
+
+% ============================================================
+% TURING TEST
+% ============================================================
+\section{The Turing Test}
+
+\begin{frame}{The Imitation Game 🎭}
+\begin{block}{Turing (1950)}
+\textit{Computing Machinery and Intelligence}
+\end{block}
+
+\vspace{0.5em}
+
+\textbf{The Original Test:}
+
+\vspace{0.3em}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+    % Interrogator
+    \node[rectangle,draw,fill=blue!20,minimum width=2cm,minimum height=1cm] (int) at (0,0) {
+        \begin{minipage}{1.8cm}
+        \centering
+        \scriptsize Interrogator\\
+        (Human)
+        \end{minipage}
+    };
+
+    % Player A (Human)
+    \node[rectangle,draw,fill=green!20,minimum width=2cm,minimum height=1cm] (playerA) at (6,1.5) {
+        \begin{minipage}{1.8cm}
+        \centering
+        \scriptsize Player A\\
+        (Human)
+        \end{minipage}
+    };
+
+    % Player B (Machine)
+    \node[rectangle,draw,fill=red!20,minimum width=2cm,minimum height=1cm] (playerB) at (6,-1.5) {
+        \begin{minipage}{1.8cm}
+        \centering
+        \scriptsize Player B\\
+        (Machine)
+        \end{minipage}
+    };
+
+    % Communication lines
+    \draw[<->,thick] (int) -- node[above,sloped] {\tiny questions} (playerA);
+    \draw[<->,thick] (int) -- node[above,sloped] {\tiny questions} (playerB);
+
+    % Question
+    \node[align=center] at (3,-3) {
+        \scriptsize Can the interrogator tell\\
+        \scriptsize which is human?
+    };
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5em}
+
+\textbf{Turing's Prediction:} By year 2000, machines would fool 30\% of judges after 5 minutes
+
+\textbf{Reality:} GPT-4 in 2023 can fool most judges most of the time!
+\end{frame}
+
+% ============================================================
+% DISCUSSION TURING TEST
+% ============================================================
+\begin{frame}{Discussion: What is the Turing Test Really Testing? 💭}
+\begin{center}
+\Large
+\textbf{Has ChatGPT passed the Turing test?}
+\end{center}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Arguments FOR:}
+\begin{itemize}
+    \item Can carry natural conversations
+    \item Fools many humans
+    \item Contextually appropriate responses
+    \item Shows apparent reasoning
+    \item Passes many "human" tests
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{exampleblock}{Turing's Criterion}
+"If it behaves indistinguishably from a human, it is intelligent"
+\end{exampleblock}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Arguments AGAINST:}
+\begin{itemize}
+    \item Imitation $\neq$ understanding
+    \item No genuine beliefs or desires
+    \item No subjective experience
+    \item Trained to seem human
+    \item Fails on adversarial examples
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{alertblock}{The Problem}
+The test measures \textit{behavioral similarity}, not \textit{cognition}
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\vspace{1em}
+
+\textbf{Think about:}
+\begin{itemize}
+    \item Does passing the Turing test prove intelligence?
+    \item What if the model is just very good at pattern matching?
+    \item Is there a difference between "seeming intelligent" and "being intelligent"?
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% WHAT TURING TEST MISSES
+% ============================================================
+\begin{frame}{What the Turing Test Misses 🎯}
+\textbf{The test was designed for 1950s computers, not modern LLMs!}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{What it Tests:}
+\begin{itemize}
+    \item \alert{Linguistic competence}
+    \item Surface-level reasoning
+    \item Pattern matching
+    \item Social mimicry
+    \item Conversational flow
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Problems:}
+\begin{itemize}
+    \item Anthropocentric bias
+    \item Tests imitation, not intelligence
+    \item Can be "gamed"
+    \item Ignores non-linguistic intelligence
+    \item No insight into mechanism
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{What it Doesn't Test:}
+\begin{itemize}
+    \item Consciousness
+    \item Understanding vs. simulation
+    \item Causal reasoning
+    \item Physical grounding
+    \item Genuine learning
+    \item Creativity vs. recombination
+    \item Self-awareness
+    \item Goals and motivations
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{exampleblock}{Alternative Tests}
+\begin{itemize}
+    \item \textbf{Winograd Schema:} Common sense reasoning
+    \item \textbf{ARC:} Abstract reasoning
+    \item \textbf{Theory of Mind:} Social cognition
+\end{itemize}
+\end{exampleblock}
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+
+\begin{alertblock}{Modern View}
+The Turing test is \textit{necessary} but not \textit{sufficient} for intelligence
+\end{alertblock}
+\end{frame}
+
+% ============================================================
+% BUILDING GPT
+% ============================================================
+\section{Building GPT from Scratch}
+
+\begin{frame}{Let's Build GPT! 💻}
+\begin{center}
+\Large
+\textbf{From Scratch, in Code, Spelled Out}
+\end{center}
+
+\vspace{0.5em}
+
+\begin{block}{Andrej Karpathy's Tutorial}
+\href{https://www.youtube.com/watch?v=kCc8FmEb1nY}{Let's build GPT: from scratch, in code, spelled out (YouTube)}
+\end{block}
+
+\vspace{0.5em}
+
+\textbf{What we'll build:}
+\begin{itemize}
+    \item A character-level GPT model
+    \item Train on Shakespeare text
+    \item Transformer architecture
+    \item Self-attention mechanism
+    \item Positional encodings
+    \item All in $\sim$300 lines of PyTorch
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Learning objectives:}
+\begin{itemize}
+    \item Understand every component
+    \item See how attention works
+    \item Train a working model
+    \item Generate text
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% GPT COMPONENTS
+% ============================================================
+\begin{frame}[fragile]{Core Components 🔧}
+\textbf{1. Token \& Positional Embeddings:}
+
+\begin{lstlisting}[language=Python]
+class GPT(nn.Module):
+    def __init__(self, vocab_size, n_embd, block_size):
+        super().__init__()
+        # Token embeddings
+        self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
+        # Positional embeddings
+        self.position_embedding_table = nn.Embedding(block_size, n_embd)
+
+    def forward(self, idx):
+        B, T = idx.shape
+
+        # Get token embeddings
+        tok_emb = self.token_embedding_table(idx)  # (B,T,C)
+        # Get positional embeddings
+        pos_emb = self.position_embedding_table(torch.arange(T))  # (T,C)
+        # Combine
+        x = tok_emb + pos_emb  # (B,T,C)
+        return x
+\end{lstlisting}
+
+\textbf{Key idea:} Each token has content (token embedding) + position (positional embedding)
+\end{frame}
+
+% ============================================================
+% SELF ATTENTION
+% ============================================================
+\begin{frame}[fragile]{Self-Attention Mechanism 🎯}
+\textbf{The heart of the Transformer:}
+
+\begin{lstlisting}[language=Python]
+class Head(nn.Module):
+    """Single head of self-attention"""
+    def __init__(self, head_size):
+        super().__init__()
+        self.key = nn.Linear(n_embd, head_size, bias=False)
+        self.query = nn.Linear(n_embd, head_size, bias=False)
+        self.value = nn.Linear(n_embd, head_size, bias=False)
+        # Causal mask: don't attend to future
+        self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
+
+    def forward(self, x):
+        B, T, C = x.shape
+        k = self.key(x)    # (B,T,head_size)
+        q = self.query(x)  # (B,T,head_size)
+
+        # Compute attention scores
+        wei = q @ k.transpose(-2,-1) * C**-0.5  # (B,T,T)
+        wei = wei.masked_fill(self.tril[:T,:T] == 0, float('-inf'))
+        wei = F.softmax(wei, dim=-1)  # (B,T,T)
+
+        # Apply to values
+        v = self.value(x)  # (B,T,head_size)
+        out = wei @ v      # (B,T,head_size)
+        return out
+\end{lstlisting}
+\end{frame}
+
+% ============================================================
+% ATTENTION VISUALIZATION
+% ============================================================
+\begin{frame}{Understanding Attention 👁️}
+\textbf{What does attention do?}
+
+\vspace{0.5em}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Tokens
+    \node at (0,4) {\textbf{The}};
+    \node at (1.5,4) {\textbf{cat}};
+    \node at (3,4) {\textbf{sat}};
+    \node at (4.5,4) {\textbf{on}};
+    \node at (6,4) {\textbf{the}};
+    \node at (7.5,4) {\textbf{?}};
+
+    % Current token being predicted
+    \node[rectangle,draw,fill=red!20] at (7.5,4) {\textbf{?}};
+
+    % Attention weights
+    \draw[->,very thick,blue,opacity=0.8] (7.5,3.7) -- (0,4.3);
+    \draw[->,very thick,blue,opacity=0.4] (7.5,3.7) -- (1.5,4.3);
+    \draw[->,very thick,blue,opacity=0.9] (7.5,3.7) -- (3,4.3);
+    \draw[->,very thick,blue,opacity=0.3] (7.5,3.7) -- (4.5,4.3);
+    \draw[->,very thick,blue,opacity=0.6] (7.5,3.7) -- (6,4.3);
+
+    % Attention weights values
+    \node[blue] at (0,3) {\tiny 0.25};
+    \node[blue] at (1.5,3) {\tiny 0.05};
+    \node[blue] at (3,3) {\tiny 0.45};
+    \node[blue] at (4.5,3) {\tiny 0.02};
+    \node[blue] at (6,3) {\tiny 0.23};
+
+    % Explanation
+    \node[align=left,text width=5cm] at (10,3) {
+        \scriptsize
+        \textbf{Attention weights show:}\\
+        - "sat" gets highest weight (0.45)\\
+        - "the" also important (0.25, 0.23)\\
+        - Model learns relevant context\\
+        - Different heads learn different patterns
+    };
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5em}
+
+\textbf{Multi-Head Attention:} Run multiple attention heads in parallel, each learning different patterns
+\end{frame}
+
+% ============================================================
+% TRANSFORMER BLOCK
+% ============================================================
+\begin{frame}[fragile]{The Transformer Block 🧱}
+\textbf{Putting it all together:}
+
+\begin{lstlisting}[language=Python]
+class Block(nn.Module):
+    """Transformer block: communication followed by computation"""
+    def __init__(self, n_embd, n_head):
+        super().__init__()
+        head_size = n_embd // n_head
+        self.sa = MultiHeadAttention(n_head, head_size)  # Self-attention
+        self.ffwd = FeedForward(n_embd)                  # Feed-forward
+        self.ln1 = nn.LayerNorm(n_embd)                  # Layer norm 1
+        self.ln2 = nn.LayerNorm(n_embd)                  # Layer norm 2
+
+    def forward(self, x):
+        # Attention block (with residual connection)
+        x = x + self.sa(self.ln1(x))
+        # Feed-forward block (with residual connection)
+        x = x + self.ffwd(self.ln2(x))
+        return x
+
+class FeedForward(nn.Module):
+    """Simple feed-forward network"""
+    def __init__(self, n_embd):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(n_embd, 4 * n_embd),
+            nn.ReLU(),
+            nn.Linear(4 * n_embd, n_embd),
+        )
+
+    def forward(self, x):
+        return self.net(x)
+\end{lstlisting}
+\end{frame}
+
+% ============================================================
+% TRAINING GPT
+% ============================================================
+\begin{frame}[fragile]{Training Loop 🏋️}
+\textbf{Train with next-token prediction:}
+
+\begin{lstlisting}[language=Python]
+# Load data
+with open('shakespeare.txt', 'r') as f:
+    text = f.read()
+
+# Create character-level tokenizer
+chars = sorted(list(set(text)))
+vocab_size = len(chars)
+stoi = {ch: i for i, ch in enumerate(chars)}
+encode = lambda s: [stoi[c] for c in s]
+decode = lambda l: ''.join([chars[i] for i in l])
+
+# Initialize model
+model = GPT(vocab_size, n_embd=384, n_head=6, n_layer=6, block_size=256)
+optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4)
+
+# Training loop
+for iter in range(max_iters):
+    # Get batch
+    xb, yb = get_batch('train')  # inputs, targets
+
+    # Forward pass
+    logits, loss = model(xb, yb)
+
+    # Backward pass
+    optimizer.zero_grad(set_to_none=True)
+    loss.backward()
+    optimizer.step()
+
+    if iter % eval_interval == 0:
+        print(f"step {iter}: loss {loss.item():.4f}")
+\end{lstlisting}
+\end{frame}
+
+% ============================================================
+% GENERATION
+% ============================================================
+\begin{frame}[fragile]{Generating Text 📝}
+\textbf{Sample from the trained model:}
+
+\begin{lstlisting}[language=Python]
+def generate(model, idx, max_new_tokens):
+    """Generate tokens autoregressively"""
+    for _ in range(max_new_tokens):
+        # Crop context to block_size
+        idx_cond = idx[:, -block_size:]
+
+        # Get predictions
+        logits, loss = model(idx_cond)
+
+        # Focus on last time step
+        logits = logits[:, -1, :]  # (B, C)
+
+        # Apply softmax to get probabilities
+        probs = F.softmax(logits, dim=-1)
+
+        # Sample from distribution
+        idx_next = torch.multinomial(probs, num_samples=1)  # (B, 1)
+
+        # Append to sequence
+        idx = torch.cat((idx, idx_next), dim=1)  # (B, T+1)
+
+    return idx
+
+# Generate from model
+context = torch.zeros((1, 1), dtype=torch.long)
+generated = generate(model, context, max_new_tokens=500)
+print(decode(generated[0].tolist()))
+\end{lstlisting}
+\end{frame}
+
+% ============================================================
+% GPT EXAMPLE OUTPUT
+% ============================================================
+\begin{frame}{Example Generation: Baby GPT 👶}
+\textbf{After training on Shakespeare for 5000 steps:}
+
+\vspace{0.5em}
+
+\begin{block}{Early Training (Step 500)}
+\scriptsize
+\texttt{DUKE:}\\
+\texttt{Wherof the kighd mear, and I shell I me and love treme?}\\
+\texttt{CAMILLO:}\\
+\texttt{I'll shall's, I have I will and I have they I have the say}
+\end{block}
+
+\vspace{0.3em}
+
+\begin{block}{Mid Training (Step 2500)}
+\scriptsize
+\texttt{DUKE VINCENTIO:}\\
+\texttt{Good my lord, I have some news for you.}\\
+\texttt{What say you to the king?}\\
+\texttt{CAMILLO:}\\
+\texttt{I cannot tell what you and I shall do}
+\end{block}
+
+\vspace{0.3em}
+
+\begin{block}{Late Training (Step 5000)}
+\scriptsize
+\texttt{DUKE VINCENTIO:}\\
+\texttt{Then must your brother die. The law hath not been dead,}\\
+\texttt{Though it hath slept. Those many had not dared to do}\\
+\texttt{That evil if the first that did the edict infringe}
+\end{block}
+
+\vspace{0.5em}
+
+\textbf{Observations:} Structure emerges! Grammar, character names, coherent syntax
+\end{frame}
+
+% ============================================================
+% HUGGINGFACE EXAMPLE
+% ============================================================
+\begin{frame}[fragile]{Using Pre-trained GPT Models 🤗}
+\textbf{HuggingFace makes it easy:}
+
+\begin{lstlisting}[language=Python]
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# Load model and tokenizer
+model_name = "gpt2"  # or "gpt2-medium", "gpt2-large", "gpt2-xl"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name)
+
+# Generate text
+prompt = "The future of artificial intelligence is"
+inputs = tokenizer(prompt, return_tensors="pt")
+
+# Generate
+outputs = model.generate(
+    inputs.input_ids,
+    max_length=100,
+    num_return_sequences=1,
+    temperature=0.8,          # Higher = more random
+    top_k=50,                 # Sample from top-k tokens
+    top_p=0.95,               # Nucleus sampling
+    do_sample=True
+)
+
+# Decode
+generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+print(generated_text)
+\end{lstlisting}
+
+\small
+\textit{Reference: HuggingFace Chapter 7.6 - Causal Language Modeling}
+\end{frame}
+
+% ============================================================
+% SAMPLING STRATEGIES
+% ============================================================
+\begin{frame}{Sampling Strategies 🎲}
+\textbf{How to pick the next token?}
+
+\vspace{0.5em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{1. Greedy Decoding:}
+\begin{itemize}
+    \item Always pick highest probability
+    \item Deterministic
+    \item \alert{Repetitive and boring}
+\end{itemize}
+
+\vspace{0.3em}
+
+\textbf{2. Temperature Sampling:}
+\begin{itemize}
+    \item Scale logits by temperature T
+    \item $T < 1$: more confident (peaked)
+    \item $T > 1$: more random (flat)
+    \item $T = 0$: greedy
+\end{itemize}
+
+$$P(x_i) = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)}$$
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{3. Top-k Sampling:}
+\begin{itemize}
+    \item Sample from k most probable tokens
+    \item Filters unlikely options
+    \item Typical: k = 50
+\end{itemize}
+
+\vspace{0.3em}
+
+\textbf{4. Nucleus (Top-p) Sampling:}
+\begin{itemize}
+    \item Sample from smallest set with cumulative probability $> p$
+    \item Adaptive cutoff
+    \item Typical: p = 0.9 or 0.95
+    \item \alert{Best for coherent generation}
+\end{itemize}
+
+\vspace{0.3em}
+
+\begin{exampleblock}{In Practice}
+Combine: temperature + top-p
+\end{exampleblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% FEW SHOT LEARNING
+% ============================================================
+\begin{frame}{Few-Shot Learning 🎯}
+\textbf{GPT's superpower: Learn from examples in the prompt}
+
+\vspace{0.5em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Zero-Shot:}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny]
+Translate to Spanish:
+Hello =>
+\end{lstlisting}
+
+\vspace{0.3em}
+
+\textbf{One-Shot:}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny]
+Translate to Spanish:
+Hello => Hola
+Goodbye =>
+\end{lstlisting}
+
+\vspace{0.3em}
+
+\textbf{Few-Shot:}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny]
+Translate to Spanish:
+Hello => Hola
+Goodbye => Adios
+Thank you => Gracias
+Good morning =>
+\end{lstlisting}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Why does this work?}
+\begin{itemize}
+    \item Model learned pattern recognition
+    \item Generalizes from examples
+    \item "In-context learning"
+    \item No gradient updates!
+    \item Emergent capability
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Applications:}
+\begin{itemize}
+    \item Classification
+    \item Translation
+    \item Question answering
+    \item Code generation
+    \item Creative writing
+    \item Math word problems
+\end{itemize}
+
+\vspace{0.3em}
+
+\begin{alertblock}{Key Insight}
+The model is a \textit{meta-learner}
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% ASSIGNMENT 5
+% ============================================================
+\section{Assignment 5}
+
+\begin{frame}{Assignment 5: Build \& Train a GPT Model 🎓}
+\begin{alertblock}{Your Task}
+Implement and train your own GPT model from scratch!
+\end{alertblock}
+
+\vspace{0.5em}
+
+\textbf{What you'll do:}
+\begin{enumerate}
+    \item \textbf{Implement the architecture:}
+    \begin{itemize}
+        \item Token \& positional embeddings
+        \item Multi-head self-attention
+        \item Feed-forward layers
+        \item Layer normalization
+        \item Residual connections
+    \end{itemize}
+
+    \item \textbf{Train on a text corpus:}
+    \begin{itemize}
+        \item Character-level or BPE tokenization
+        \item Next-token prediction objective
+        \item Monitor training loss
+        \item Generate sample text
+    \end{itemize}
+
+    \item \textbf{Experiment \& analyze:}
+    \begin{itemize}
+        \item Try different hyperparameters
+        \item Visualize attention patterns
+        \item Compare sampling strategies
+        \item Evaluate on perplexity
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+% ASSIGNMENT DETAILS
+% ============================================================
+\begin{frame}{Assignment Details 📋}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Technical Requirements:}
+\begin{itemize}
+    \item PyTorch implementation
+    \item Runnable in Google Colab
+    \item At least 4-6 transformer layers
+    \item At least 4 attention heads
+    \item Context length: 128-256 tokens
+    \item Train for convergence
+    \item Well-documented code
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Dataset Options:}
+\begin{itemize}
+    \item Shakespeare corpus
+    \item TinyStories
+    \item Your own text data
+    \item OpenWebText (subset)
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Deliverables:}
+\begin{enumerate}
+    \item Jupyter notebook with:
+    \begin{itemize}
+        \item Complete implementation
+        \item Training code
+        \item Generation examples
+        \item Analysis \& visualizations
+    \end{itemize}
+    \item Written report including:
+    \begin{itemize}
+        \item Architecture description
+        \item Training details
+        \item Hyperparameter choices
+        \item Generated examples
+        \item Attention visualizations
+        \item Discussion of results
+    \end{itemize}
+\end{enumerate}
+
+\vspace{0.5em}
+
+\textbf{Resources:}
+\begin{itemize}
+    \item Karpathy's video tutorial
+    \item HuggingFace documentation
+    \item Assignment starter code
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% TIPS FOR SUCCESS
+% ============================================================
+\begin{frame}{Tips for Success 💡}
+\begin{enumerate}
+    \item \textbf{Start with the tutorial:}
+    \begin{itemize}
+        \item Follow Karpathy's video step-by-step
+        \item Understand each component
+        \item Get a working baseline
+    \end{itemize}
+
+    \item \textbf{Debug carefully:}
+    \begin{itemize}
+        \item Check tensor shapes at each step
+        \item Verify attention masking
+        \item Monitor for NaN/Inf values
+        \item Start small, scale up
+    \end{itemize}
+
+    \item \textbf{Experiment systematically:}
+    \begin{itemize}
+        \item Change one hyperparameter at a time
+        \item Track all experiments
+        \item Use version control
+    \end{itemize}
+
+    \item \textbf{Visualize everything:}
+    \begin{itemize}
+        \item Plot training loss
+        \item Visualize attention weights
+        \item Compare different samples
+    \end{itemize}
+
+    \item \textbf{Manage compute:}
+    \begin{itemize}
+        \item Use GPU in Colab
+        \item Save checkpoints frequently
+        \item Don't over-train (diminishing returns)
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+% LEARNING OBJECTIVES
+% ============================================================
+\begin{frame}{Learning Objectives 🎯}
+\textbf{By completing this assignment, you will:}
+
+\vspace{0.5em}
+
+\begin{itemize}
+    \item ✅ \textbf{Understand transformer architecture} at a deep level
+    \item ✅ \textbf{Implement self-attention} from scratch
+    \item ✅ \textbf{Train a neural language model} end-to-end
+    \item ✅ \textbf{Master autoregressive generation} techniques
+    \item ✅ \textbf{Explore sampling strategies} and their effects
+    \item ✅ \textbf{Visualize model internals} (attention patterns)
+    \item ✅ \textbf{Debug deep learning models} effectively
+    \item ✅ \textbf{Appreciate the engineering} behind GPT
+    \item ✅ \textbf{Gain hands-on experience} with modern NLP
+\end{itemize}
+
+\vspace{1em}
+
+\begin{block}{The Big Picture}
+This is your chance to \textit{really} understand how GPT works—not just use it as a black box, but build it yourself and see every moving part!
+\end{block}
+\end{frame}
+
+% ============================================================
+% KEY TAKEAWAYS
+% ============================================================
+\section{Wrap-up}
+
+\begin{frame}{Key Takeaways 🔑}
+\begin{enumerate}
+    \item \textbf{GPT Revolution:} Decoder-only transformers changed everything
+    \begin{itemize}
+        \item Pre-training + prompting $>$ task-specific models
+        \item Scale unlocks emergent capabilities
+    \end{itemize}
+
+    \item \textbf{Evolution:} GPT-1 $\rightarrow$ GPT-2 $\rightarrow$ GPT-3 $\rightarrow$ GPT-4
+    \begin{itemize}
+        \item Each generation: more parameters, more data, better performance
+        \item Few-shot learning emerges at scale
+    \end{itemize}
+
+    \item \textbf{Open Source:} LLaMA and Llama 3 democratize LLMs
+    \begin{itemize}
+        \item Open models now competitive with frontier
+        \item Enables research, customization, privacy
+    \end{itemize}
+
+    \item \textbf{Brain Similarity:} LLMs partially converge with human language processing
+    \begin{itemize}
+        \item Shared computational strategy: prediction
+        \item But fundamentally different substrates
+    \end{itemize}
+
+    \item \textbf{Turing Test:} Behavioral similarity $\neq$ intelligence
+    \begin{itemize}
+        \item Tests imitation, not understanding
+        \item Need deeper measures of cognition
+    \end{itemize}
+
+    \item \textbf{Implementation:} You can build GPT yourself!
+    \begin{itemize}
+        \item Transformers are elegant and understandable
+        \item Assignment 5: hands-on experience
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+% THE BIG PICTURE
+% ============================================================
+\begin{frame}{The Big Picture 🌍}
+\begin{center}
+\Large
+\textbf{Where are we in the LLM revolution?}
+\end{center}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{What we've achieved:}
+\begin{itemize}
+    \item Models that can write, code, reason
+    \item Pass professional exams
+    \item Assist in research \& creativity
+    \item Understand multiple modalities
+    \item Emergent capabilities at scale
+    \item Democratization via open source
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{exampleblock}{Progress}
+We've come incredibly far in just 6 years!
+\end{exampleblock}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{What we haven't achieved:}
+\begin{itemize}
+    \item True understanding
+    \item Genuine reasoning
+    \item Grounded knowledge
+    \item Consistent factuality
+    \item Common sense
+    \item Consciousness
+    \item Alignment with human values
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{alertblock}{Challenges}
+Many fundamental questions remain!
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\vspace{1em}
+
+\begin{center}
+\textbf{The future:} Multimodal, grounded, reasoning agents?
+\end{center}
+\end{frame}
+
+% ============================================================
+% NEXT WEEK
+% ============================================================
+\begin{frame}{Next Week: RAG \& Mixture of Experts 🔮}
+\textbf{Week 9: Advanced Architectures}
+
+\vspace{1em}
+
+\begin{itemize}
+    \item \textbf{Retrieval Augmented Generation (RAG):}
+    \begin{itemize}
+        \item Combining LLMs with external knowledge
+        \item Vector databases \& semantic search
+        \item Reducing hallucinations
+        \item Building smarter agents
+    \end{itemize}
+
+    \item \textbf{Mixture of Experts (MoE):}
+    \begin{itemize}
+        \item Sparse models with specialized experts
+        \item Efficient scaling
+        \item Mixtral, GPT-4 (rumored)
+        \item Trading parameters for compute
+    \end{itemize}
+
+    \item \textbf{Self-Supervised Learning:}
+    \begin{itemize}
+        \item Contrastive methods (SimCLR, CLIP)
+        \item Multimodal representations
+        \item Learning from unlabeled data
+    \end{itemize}
+
+    \item \textbf{Final Project:} Ideas \& team formation
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% READINGS
+% ============================================================
+\begin{frame}{Readings for This Week 📖}
+\textbf{Required Papers:}
+
+\vspace{0.5em}
+
+\begin{enumerate}
+    \item \textbf{Radford et al. (2018)} - Improving Language Understanding by Generative Pre-Training (GPT-1)
+
+    \item \textbf{Radford et al. (2019)} - Language Models are Unsupervised Multitask Learners (GPT-2)
+
+    \item \textbf{Brown et al. (2020)} - Language Models are Few-Shot Learners (GPT-3)
+
+    \item \textbf{OpenAI (2023)} - GPT-4 Technical Report
+
+    \item \textbf{Touvron et al. (2023)} - LLaMA: Open and Efficient Foundation Language Models
+
+    \item \textbf{Llama Team (2024)} - The Llama 3 Herd of Models
+
+    \item \textbf{Schrimpf et al. (2021)} - The neural architecture of language (PNAS)
+
+    \item \textbf{Caucheteux \& King (2022)} - Brains and algorithms partially converge
+
+    \item \textbf{Hosseini et al. (2024)} - ANNs predict brain responses after realistic training
+
+    \item \textbf{Turing (1950)} - Computing Machinery and Intelligence
+\end{enumerate}
+
+\vspace{0.5em}
+
+\textbf{Video:} Andrej Karpathy - Let's build GPT (YouTube)
+
+\textbf{HuggingFace:} Chapters 1.6 (Decoder Models), 7.6 (Causal Language Modeling)
+\end{frame}
+
+% ============================================================
+% QUESTIONS
+% ============================================================
+\begin{frame}{Questions? 🤔}
+\begin{center}
+\Large{Let's discuss!}
+
+\vspace{2cm}
+
+\textbf{Topics for discussion:}
+
+\vspace{0.5cm}
+
+\begin{itemize}
+    \item How do GPT models really work?
+    \item Open source vs. closed models
+    \item Brain-LLM similarities and differences
+    \item What does the Turing test really measure?
+    \item Your ideas for Assignment 5!
+\end{itemize}
+
+\vspace{2cm}
+
+\large{Happy coding! 🚀}
+\end{center}
+\end{frame}
+
+\end{document}
