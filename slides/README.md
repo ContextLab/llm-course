@@ -2,7 +2,7 @@
 
 This directory contains lecture slides for all 10 weeks of the course. Each week includes **3 lectures** (Monday, Wednesday, Friday in the 10-hour slot), with slides provided in both PDF and web-viewable HTML formats.
 
-**📅 Schedule:** MWF 10:00-11:05 | **📍 X-Hour:** Tuesday 12:00-12:50 (first 3 weeks for makeup classes)
+**📅 Schedule:** MWF 10:10-11:15 | **📍 X-Hour:** Thursday 12:15-1:05 (first 3 weeks for makeup classes)
 
 ---
 
@@ -303,7 +303,7 @@ See [SLIDES_README.md](SLIDES_README.md) for detailed compilation instructions.
 ## X-Hour Schedule (Makeup Classes)
 
 **Location:** TBD
-**Time:** Tuesday 12:00-12:50
+**Time:** Thursday 12:15-1:05
 
 X-hours will be used in the first 3 weeks to make up for missed class time (Feb 23-27):
 

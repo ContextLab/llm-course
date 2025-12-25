@@ -1,0 +1,1082 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{emoji}
+\usetikzlibrary{shapes,arrows,positioning,calc}
+
+% Code listing setup
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  language=Python
+}
+
+\title{Lecture 17: Applications of Encoder Models}
+\subtitle{Week 6, Lecture 3 - From Theory to Practice}
+\author{LLM Course}
+\date{Winter 2026}
+
+\begin{document}
+
+% ============================================================
+% TITLE SLIDE
+% ============================================================
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ============================================================
+% OVERVIEW
+% ============================================================
+\begin{frame}{Today's Agenda 📋}
+\large
+\begin{enumerate}
+    \item 🚀 \textbf{Real-World Applications}: Where BERT shines
+    \item 🧠 \textbf{Cognitive Neuroscience}: Brain-model parallels
+    \item 🤔 \textbf{Understanding vs. Pattern Matching}: The big debate
+    \item ⚠️ \textbf{Limitations}: What BERT can't do
+    \item 💡 \textbf{Practical Tips}: Deployment and optimization
+    \item 🔮 \textbf{Future Directions}: Where are we heading?
+\end{enumerate}
+
+\vspace{1em}
+\textit{Goal: Connect BERT to real applications and understand broader implications}
+\end{frame}
+
+% ============================================================
+% BERT APPLICATIONS
+% ============================================================
+\begin{frame}{BERT Applications 🚀}
+\textbf{BERT excels at understanding tasks:}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Classification Tasks:}
+\begin{itemize}
+    \item Sentiment Analysis
+    \item Topic Classification
+    \item Spam Detection
+    \item Intent Recognition
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Token-Level Tasks:}
+\begin{itemize}
+    \item Named Entity Recognition (NER)
+    \item Part-of-Speech Tagging
+    \item Word Sense Disambiguation
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Span-Level Tasks:}
+\begin{itemize}
+    \item Question Answering
+    \item Extractive Summarization
+    \item Information Extraction
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Sentence-Pair Tasks:}
+\begin{itemize}
+    \item Semantic Similarity
+    \item Natural Language Inference
+    \item Paraphrase Detection
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{1em}
+
+\begin{block}{Industry Impact}
+BERT powers:
+\begin{itemize}
+    \item Google Search (understanding queries)
+    \item Customer service chatbots
+    \item Content moderation
+    \item Document understanding
+\end{itemize}
+\end{block}
+\end{frame}
+
+% ============================================================
+% GOOGLE SEARCH
+% ============================================================
+\begin{frame}{Case Study: Google Search 🔍}
+\textbf{BERT revolutionized search in 2019}
+
+\vspace{1em}
+
+\textbf{Problem:}
+\begin{itemize}
+    \item Search queries often depend on context and word order
+    \item Traditional keyword matching misses nuance
+    \item Example: "2019 brazil traveler to usa need a visa"
+\end{itemize}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Before BERT:}
+\begin{itemize}
+    \item Focused on "brazil" and "usa"
+    \item Missed importance of "to"
+    \item Returned results about US travelers to Brazil
+    \item \alert{Wrong direction!}
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{example-image-a}
+
+\small Wrong: US → Brazil
+\end{center}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{With BERT:}
+\begin{itemize}
+    \item Understands "to" is critical
+    \item Grasps full context and direction
+    \item Returns correct results about Brazilian travelers to US
+    \item \alert{Correct understanding!}
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{example-image-b}
+
+\small Correct: Brazil → US
+\end{center}
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+\small
+\textit{Google reported BERT improved 1 in 10 searches in English}
+\end{frame}
+
+% ============================================================
+% QA EXAMPLE
+% ============================================================
+\begin{frame}[fragile]{Question Answering with BERT 💬}
+\textbf{Extractive QA: Find answer span in passage}
+
+\vspace{1em}
+
+\begin{exampleblock}{Example}
+\textbf{Context:} "The Normans (Norman: Nourmands; French: Normands; Latin: Normanni) were the people who in the 10th and 11th centuries gave their name to Normandy, a region in France."
+
+\vspace{0.3em}
+
+\textbf{Question:} "In what country is Normandy located?"
+
+\vspace{0.3em}
+
+\textbf{Answer:} France
+\end{exampleblock}
+
+\vspace{1em}
+
+\begin{lstlisting}[language=Python]
+from transformers import pipeline
+
+# Load QA pipeline with BERT
+qa_pipeline = pipeline("question-answering", model="bert-large-uncased-whole-word-masking-finetuned-squad")
+
+# Ask question
+result = qa_pipeline(
+    question="In what country is Normandy located?",
+    context="The Normans were the people who in the 10th and 11th centuries gave their name to Normandy, a region in France."
+)
+
+print(result)
+# {'answer': 'France', 'score': 0.987, 'start': 134, 'end': 140}
+\end{lstlisting}
+
+\vspace{0.5em}
+\textbf{BERT predicts start and end positions of the answer span!}
+\end{frame}
+
+% ============================================================
+% NER EXAMPLE
+% ============================================================
+\begin{frame}[fragile]{Named Entity Recognition 🏷️}
+\textbf{Token-level classification task}
+
+\vspace{1em}
+
+\begin{exampleblock}{Example}
+\textbf{Input:} "Apple Inc. is headquartered in Cupertino, California."
+
+\vspace{0.3em}
+
+\textbf{Output:}
+\begin{itemize}
+    \item Apple Inc. → \textcolor{blue}{ORGANIZATION}
+    \item Cupertino → \textcolor{green}{LOCATION}
+    \item California → \textcolor{green}{LOCATION}
+\end{itemize}
+\end{exampleblock}
+
+\vspace{1em}
+
+\begin{lstlisting}[language=Python]
+from transformers import pipeline
+
+# Load NER pipeline
+ner_pipeline = pipeline("ner", model="dslim/bert-base-NER")
+
+# Extract entities
+text = "Apple Inc. is headquartered in Cupertino, California."
+entities = ner_pipeline(text)
+
+for entity in entities:
+    print(f"{entity['word']}: {entity['entity']} (score: {entity['score']:.2f})")
+
+# Output:
+# Apple: B-ORG (score: 0.99)
+# Inc: I-ORG (score: 0.99)
+# Cupertino: B-LOC (score: 0.99)
+# California: B-LOC (score: 0.99)
+\end{lstlisting}
+\end{frame}
+
+% ============================================================
+% SENTIMENT ANALYSIS
+% ============================================================
+\begin{frame}[fragile]{Sentiment Analysis 😊😐😢}
+\textbf{Sequence classification task}
+
+\vspace{1em}
+
+\begin{exampleblock}{Examples}
+\begin{itemize}
+    \item "This movie was absolutely amazing!" → \textcolor{green}{POSITIVE}
+    \item "The product broke after one week." → \textcolor{red}{NEGATIVE}
+    \item "The weather is cloudy today." → \textcolor{gray}{NEUTRAL}
+\end{itemize}
+\end{exampleblock}
+
+\vspace{1em}
+
+\begin{lstlisting}[language=Python]
+from transformers import pipeline
+
+# Load sentiment analysis pipeline
+sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
+
+# Analyze sentiments
+texts = [
+    "This movie was absolutely amazing!",
+    "The product broke after one week.",
+    "The weather is cloudy today."
+]
+
+for text in texts:
+    result = sentiment_pipeline(text)[0]
+    print(f"{text}")
+    print(f"  → {result['label']} (confidence: {result['score']:.2f})\n")
+\end{lstlisting}
+
+\vspace{0.5em}
+\textbf{Applications:} Customer reviews, social media monitoring, brand sentiment
+\end{frame}
+
+% ============================================================
+% SEMANTIC SIMILARITY
+% ============================================================
+\begin{frame}[fragile]{Semantic Similarity 🔗}
+\textbf{Measuring sentence similarity with BERT embeddings}
+
+\vspace{1em}
+
+\begin{lstlisting}[language=Python]
+from transformers import BertTokenizer, BertModel
+import torch
+import torch.nn.functional as F
+
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+model = BertModel.from_pretrained('bert-base-uncased')
+
+def get_sentence_embedding(sentence):
+    inputs = tokenizer(sentence, return_tensors='pt', padding=True, truncation=True)
+    outputs = model(**inputs)
+    # Use [CLS] token embedding as sentence representation
+    return outputs.last_hidden_state[:, 0, :]
+
+# Compare sentences
+sent1 = "The cat is sleeping on the couch"
+sent2 = "A feline is resting on the sofa"
+sent3 = "The weather is nice today"
+
+emb1 = get_sentence_embedding(sent1)
+emb2 = get_sentence_embedding(sent2)
+emb3 = get_sentence_embedding(sent3)
+
+# Compute cosine similarities
+sim_12 = F.cosine_similarity(emb1, emb2).item()
+sim_13 = F.cosine_similarity(emb1, emb3).item()
+
+print(f"Similarity (1-2): {sim_12:.3f}")  # High (paraphrases)
+print(f"Similarity (1-3): {sim_13:.3f}")  # Low (different topics)
+\end{lstlisting}
+\end{frame}
+
+% ============================================================
+% COGNITIVE NEUROSCIENCE
+% ============================================================
+\begin{frame}{Cognitive Neuroscience Perspective 🧠}
+\textbf{How do brains and models process language?}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Predictive Processing in the Brain:}
+\begin{itemize}
+    \item Brain constantly predicts upcoming input
+    \item N400: Neural response to unexpected words
+    \item P600: Syntactic anomaly detection
+    \item Context shapes predictions
+    \item Prediction errors drive learning
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Key Brain Regions:}
+\begin{itemize}
+    \item \textbf{Left IFG}: Syntax processing
+    \item \textbf{Left STG/MTG}: Semantic processing
+    \item \textbf{ATL}: Conceptual knowledge
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Predictive Processing in Models:}
+\begin{itemize}
+    \item BERT: Predict masked words
+    \item GPT: Predict next word
+    \item Both use context to predict
+    \item Surprise = high loss
+    \item Gradient descent = learning
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Similarities:}
+\begin{itemize}
+    \item Both hierarchical
+    \item Both context-sensitive
+    \item Both predictive
+    \item Both learn from errors
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+\small
+\textit{References: Kuperberg \& Jaeger (2016), Willems et al. (2016), Hagoort \& Indefrey (2014)}
+\end{frame}
+
+% ============================================================
+% PREDICTION IN BRAINS VS MODELS
+% ============================================================
+\begin{frame}{Prediction in Brains vs. Language Models 🧠🤖}
+\textbf{Parallels between neural and artificial systems}
+
+\vspace{1em}
+
+\begin{center}
+\begin{tabular}{p{5cm}p{5cm}}
+\toprule
+\textbf{Human Brain} & \textbf{Transformer Models} \\
+\midrule
+N400 component\\
+(surprise at unexpected word) &
+High cross-entropy loss\\
+(low probability prediction) \\
+\midrule
+Hierarchical processing\\
+(sounds → words → sentences) &
+Layer-by-layer representations\\
+(tokens → phrases → meaning) \\
+\midrule
+Context integration\\
+(prior discourse, world knowledge) &
+Self-attention mechanism\\
+(attend to relevant context) \\
+\midrule
+Prediction error signals &
+Gradient-based learning \\
+\midrule
+Distributed representations\\
+(population coding) &
+Distributed embeddings\\
+(vector representations) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+
+\textbf{Question:} Are these superficial analogies or deep connections?
+
+\small
+\textit{Reference: Kuperberg \& Jaeger (2016) - "What do we mean by prediction in language comprehension?"}
+\end{frame}
+
+% ============================================================
+% NEURAL ENCODING
+% ============================================================
+\begin{frame}{Neural Encoding with Language Models 🔬}
+\textbf{Can we predict brain activity from language models?}
+
+\vspace{1em}
+
+\textbf{Approach:}
+\begin{enumerate}
+    \item Show participants text while recording brain activity (fMRI/EEG)
+    \item Extract representations from language model (e.g., BERT layer 6)
+    \item Train regression model: Model embeddings → Brain activity
+    \item Test: Can we predict brain responses to new text?
+\end{enumerate}
+
+\vspace{1em}
+
+\textbf{Findings:}
+\begin{itemize}
+    \item \textbf{Better models → Better brain prediction}
+    \item BERT outperforms Word2Vec at predicting brain activity
+    \item Different layers correlate with different brain regions
+    \item Middle layers best for semantic areas
+    \item Suggests shared representations?
+\end{itemize}
+
+\vspace{1em}
+
+\begin{alertblock}{But...}
+Correlation ≠ Causation! Models might capture statistical regularities that brains use, without using the same mechanisms.
+\end{alertblock}
+
+\small
+\textit{Reference: Willems et al. (2016) - "Prediction during natural language comprehension"}
+\end{frame}
+
+% ============================================================
+% WHAT DOES MODEL UNDERSTAND
+% ============================================================
+\begin{frame}{Discussion: What Does the Model "Understand"? 🤔}
+\begin{center}
+\LARGE
+\textbf{Does BERT understand language?}
+\end{center}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Evidence FOR understanding:}
+\begin{itemize}
+    \item Captures syntax and semantics
+    \item Resolves ambiguity
+    \item Handles long-range dependencies
+    \item Generalizes to new examples
+    \item Predicts brain activity
+    \item Solves complex tasks
+\end{itemize}
+
+\vspace{0.5em}
+\textit{"If it acts like it understands, maybe it does?"}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Evidence AGAINST understanding:}
+\begin{itemize}
+    \item No grounding in physical world
+    \item No sensory experience
+    \item No social context
+    \item Brittle to adversarial examples
+    \item No common sense reasoning
+    \item Only pattern matching?
+\end{itemize}
+
+\vspace{0.5em}
+\textit{"Understanding requires more than statistical patterns"}
+\end{column}
+\end{columns}
+
+\vspace{1em}
+
+\begin{block}{Key Questions}
+\begin{itemize}
+    \item What is the difference between understanding and correlation?
+    \item Can meaning exist without grounding?
+    \item Is human understanding fundamentally different?
+\end{itemize}
+\end{block}
+
+\textbf{Class Discussion: What do YOU think?}
+\end{frame}
+
+% ============================================================
+% ADVERSARIAL EXAMPLES
+% ============================================================
+\begin{frame}{Adversarial Examples and Brittleness ⚠️}
+\textbf{BERT can be fooled easily}
+
+\vspace{1em}
+
+\begin{exampleblock}{Example: Sentiment Analysis}
+\textbf{Original:} "This movie was great!"
+
+\textbf{Prediction:} POSITIVE ✓
+
+\vspace{0.5em}
+
+\textbf{Modified:} "This movie was great! [SEP] terrible terrible terrible terrible"
+
+\textbf{Prediction:} NEGATIVE ✗
+
+\vspace{0.5em}
+
+Just adding repeated negative words after [SEP] flips the prediction!
+\end{exampleblock}
+
+\vspace{1em}
+
+\begin{alertblock}{Other Brittleness Issues}
+\begin{itemize}
+    \item \textbf{Word substitutions}: Replace "good" with synonym "excellent" → wrong prediction
+    \item \textbf{Paraphrases}: Semantically equivalent but different words → different predictions
+    \item \textbf{Meaningless additions}: Add irrelevant text → changes prediction
+    \item \textbf{Typos and noise}: Small perturbations cause large errors
+\end{itemize}
+\end{alertblock}
+
+\vspace{0.5em}
+
+\textbf{Implication:} Models learn spurious patterns, not robust understanding
+\end{frame}
+
+% ============================================================
+% LIMITATIONS
+% ============================================================
+\begin{frame}{Limitations of Current Models ⚠️}
+\textbf{Despite impressive performance, transformers have limitations:}
+
+\vspace{1em}
+
+\begin{enumerate}
+    \item \textbf{Quadratic Complexity}
+    \begin{itemize}
+        \item Self-attention scales as $O(n^2)$
+        \item Limited context windows (512-4096 tokens)
+        \item Cannot process very long documents efficiently
+    \end{itemize}
+
+    \item \textbf{No True Understanding}
+    \begin{itemize}
+        \item Pattern matching vs. comprehension
+        \item Lack of common sense
+        \item No world model
+    \end{itemize}
+
+    \item \textbf{Data Efficiency}
+    \begin{itemize}
+        \item Requires massive training data
+        \item Humans learn language with much less data
+        \item Not biologically plausible
+    \end{itemize}
+
+    \item \textbf{Biases and Fairness}
+    \begin{itemize}
+        \item Inherits biases from training data
+        \item Can amplify stereotypes
+        \item Ethical concerns
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+% BIAS EXAMPLE
+% ============================================================
+\begin{frame}{Bias in Language Models ⚖️}
+\textbf{Models reflect and can amplify societal biases}
+
+\vspace{1em}
+
+\begin{alertblock}{Examples of Bias}
+\begin{itemize}
+    \item \textbf{Gender bias:}
+    \begin{itemize}
+        \item "The doctor said [MASK] was running late" → he (90\%)
+        \item "The nurse said [MASK] was running late" → she (80\%)
+    \end{itemize}
+
+    \item \textbf{Occupational stereotypes:}
+    \begin{itemize}
+        \item Associates certain jobs with certain genders
+        \item "Programmer" → male pronouns
+        \item "Secretary" → female pronouns
+    \end{itemize}
+
+    \item \textbf{Racial bias:}
+    \begin{itemize}
+        \item Different sentiment for names associated with different races
+        \item Can perpetuate harmful stereotypes
+    \end{itemize}
+\end{itemize}
+\end{alertblock}
+
+\vspace{1em}
+
+\textbf{Mitigation Strategies:}
+\begin{itemize}
+    \item Debiasing techniques during training
+    \item Balanced and diverse training data
+    \item Post-processing and filtering
+    \item Human oversight and auditing
+    \item Ongoing research area!
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% PRACTICAL TIPS
+% ============================================================
+\begin{frame}{Practical Tips for Working with Transformers 💡}
+\begin{enumerate}
+    \item \textbf{Start with Pre-trained Models}
+    \begin{itemize}
+        \item Don't train from scratch (too expensive!)
+        \item Use HuggingFace Model Hub
+        \item Choose appropriate model size
+    \end{itemize}
+
+    \item \textbf{Fine-tuning Best Practices}
+    \begin{itemize}
+        \item Use small learning rate (1e-5 to 5e-5)
+        \item Add warmup steps
+        \item Monitor for overfitting
+        \item Freeze early layers if data is limited
+    \end{itemize}
+
+    \item \textbf{Computational Efficiency}
+    \begin{itemize}
+        \item Use mixed precision training (FP16)
+        \item Gradient accumulation for larger batch sizes
+        \item Consider DistilBERT for faster inference
+        \item Use FlashAttention when available
+    \end{itemize}
+
+    \item \textbf{Evaluation}
+    \begin{itemize}
+        \item Use task-specific metrics
+        \item Test on out-of-distribution data
+        \item Check for biases
+        \item Visualize attention for interpretability
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+% DEPLOYMENT
+% ============================================================
+\begin{frame}{Deployment Considerations 🚀}
+\textbf{Moving from research to production}
+
+\vspace{1em}
+
+\begin{enumerate}
+    \item \textbf{Model Selection}
+    \begin{itemize}
+        \item Balance quality vs. speed
+        \item DistilBERT for low-latency applications
+        \item BERT-Base for balanced performance
+        \item BERT-Large when quality is critical
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \item \textbf{Optimization}
+    \begin{itemize}
+        \item Quantization: FP32 → INT8 (4x smaller, faster)
+        \item Model pruning: Remove unnecessary weights
+        \item Knowledge distillation: Compress to smaller model
+        \item ONNX Runtime for optimized inference
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \item \textbf{Infrastructure}
+    \begin{itemize}
+        \item GPU acceleration for batch processing
+        \item CPU optimization for single requests
+        \item Caching for repeated queries
+        \item Load balancing for high traffic
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \item \textbf{Monitoring}
+    \begin{itemize}
+        \item Track latency and throughput
+        \item Monitor prediction quality
+        \item Detect distribution drift
+        \item A/B testing for improvements
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+% FUTURE DIRECTIONS
+% ============================================================
+\begin{frame}{Future Directions 🔮}
+\textbf{Where is the field heading?}
+
+\vspace{1em}
+
+\begin{enumerate}
+    \item \textbf{Longer Context}
+    \begin{itemize}
+        \item Efficient attention mechanisms (linear, sparse)
+        \item Models with 100K+ token context
+        \item Better long-document understanding
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \item \textbf{Multimodal Models}
+    \begin{itemize}
+        \item Vision + Language (CLIP, DALL-E)
+        \item Audio + Language (Whisper)
+        \item Grounded understanding
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \item \textbf{Better Pre-training}
+    \begin{itemize}
+        \item More efficient objectives
+        \item Curriculum learning
+        \item Continual learning
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \item \textbf{Smaller, More Efficient Models}
+    \begin{itemize}
+        \item Better compression techniques
+        \item Lottery ticket hypothesis
+        \item Edge deployment
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \item \textbf{Addressing Limitations}
+    \begin{itemize}
+        \item Debiasing and fairness
+        \item Robustness and adversarial training
+        \item Common sense reasoning
+        \item Interpretability and explainability
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+% ENCODER VS DECODER REVISITED
+% ============================================================
+\begin{frame}{Encoder vs Decoder Models Revisited 🔄}
+\textbf{Different models for different tasks}
+
+\vspace{1em}
+
+\begin{center}
+\begin{tabular}{lp{4.5cm}p{4.5cm}}
+\toprule
+ & \textbf{Encoder (BERT)} & \textbf{Decoder (GPT)} \\
+\midrule
+\textbf{Architecture} &
+Bidirectional self-attention &
+Unidirectional (causal) attention \\
+\midrule
+\textbf{Pre-training} &
+Masked Language Modeling &
+Next token prediction \\
+\midrule
+\textbf{Best for} &
+Understanding tasks:\\
+• Classification\\
+• NER, QA\\
+• Similarity &
+Generation tasks:\\
+• Text completion\\
+• Dialogue\\
+• Creative writing \\
+\midrule
+\textbf{Trend} &
+Dominant 2018-2020 &
+Increasingly popular 2020+ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+
+\textbf{Interesting observation:}
+\begin{itemize}
+    \item Decoder-only models (GPT-3, LLaMA) can also do classification via prompting!
+    \item "In-context learning" blurs the distinction
+    \item Trend toward unified decoder-only architectures
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% DISCUSSION
+% ============================================================
+\begin{frame}{Discussion Questions 💭}
+\begin{enumerate}
+    \item \textbf{Understanding vs. Pattern Matching:}
+    \begin{itemize}
+        \item Where do you draw the line?
+        \item Is there a test for "true" understanding?
+        \item Does it matter for applications?
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \item \textbf{Brain-Model Parallels:}
+    \begin{itemize}
+        \item How useful are these comparisons?
+        \item What can neuroscience learn from AI?
+        \item What can AI learn from neuroscience?
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \item \textbf{Bias and Fairness:}
+    \begin{itemize}
+        \item Who is responsible for addressing bias?
+        \item Can we ever have completely unbiased models?
+        \item How do we balance accuracy and fairness?
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \item \textbf{Future of NLP:}
+    \begin{itemize}
+        \item Will encoder models remain relevant?
+        \item Are decoder-only models the future?
+        \item What's the next big breakthrough?
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+% ASSIGNMENT 4
+% ============================================================
+\begin{frame}{Assignment 4: Context-Aware Models 📝}
+\textbf{Hands-on experience with transformers!}
+
+\vspace{1em}
+
+\textbf{Tasks:}
+\begin{enumerate}
+    \item \textbf{Implement Attention Mechanism}
+    \begin{itemize}
+        \item Build scaled dot-product attention from scratch
+        \item Visualize attention weights
+    \end{itemize}
+
+    \item \textbf{Fine-tune BERT}
+    \begin{itemize}
+        \item Load pre-trained BERT
+        \item Fine-tune on sentiment analysis
+        \item Compare to baseline models
+    \end{itemize}
+
+    \item \textbf{Analyze Contextual Embeddings}
+    \begin{itemize}
+        \item Extract embeddings for polysemous words
+        \item Visualize how context changes representations
+        \item Compare BERT vs Word2Vec
+    \end{itemize}
+
+    \item \textbf{Explore Different Architectures}
+    \begin{itemize}
+        \item Compare BERT (encoder) vs GPT (decoder)
+        \item Test on different tasks
+        \item Analyze strengths/weaknesses
+    \end{itemize}
+
+    \item \textbf{Research Component}
+    \begin{itemize}
+        \item Read one paper from references
+        \item Write brief summary \& critical analysis
+    \end{itemize}
+\end{enumerate}
+
+\vspace{0.5em}
+\textbf{Due:} Check course website for deadline
+\end{frame}
+
+% ============================================================
+% SUMMARY WEEKS 5-6
+% ============================================================
+\begin{frame}{Summary: Weeks 5-6 🎯}
+\textbf{What we learned:}
+
+\vspace{1em}
+
+\begin{enumerate}
+    \item \textbf{Evolution of Context}
+    \begin{itemize}
+        \item Seq2Seq → Attention → Transformers
+        \item From bottleneck to full parallelization
+    \end{itemize}
+
+    \item \textbf{Transformer Architecture}
+    \begin{itemize}
+        \item Self-attention, multi-head attention
+        \item Positional encoding, layer norm, residuals
+        \item Encoder-only (BERT), Decoder-only (GPT), Both (T5)
+    \end{itemize}
+
+    \item \textbf{BERT \& Variants}
+    \begin{itemize}
+        \item Masked Language Modeling
+        \item Pre-train then fine-tune paradigm
+        \item RoBERTa, ALBERT, DistilBERT, ELECTRA
+    \end{itemize}
+
+    \item \textbf{Applications}
+    \begin{itemize}
+        \item Classification, NER, QA, similarity
+        \item Real-world impact (Google Search, etc.)
+    \end{itemize}
+
+    \item \textbf{Broader Implications}
+    \begin{itemize}
+        \item Brain-model parallels
+        \item Understanding vs. pattern matching
+        \item Limitations and future directions
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+% RESOURCES
+% ============================================================
+\begin{frame}{Resources \& Further Reading 📚}
+\textbf{Key Papers:}
+\begin{itemize}
+    \item Vaswani et al. (2017) - Attention Is All You Need
+    \item Devlin et al. (2019) - BERT: Pre-training of Deep Bidirectional Transformers
+    \item Liu et al. (2019) - RoBERTa
+    \item Sanh et al. (2019) - DistilBERT
+    \item Dao et al. (2022) - FlashAttention
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Cognitive Neuroscience:}
+\begin{itemize}
+    \item Hagoort \& Indefrey (2014) - The neurobiology of language beyond single words
+    \item Kuperberg \& Jaeger (2016) - What do we mean by prediction in language comprehension?
+    \item Willems et al. (2016) - Prediction during natural language comprehension
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Tutorials:}
+\begin{itemize}
+    \item HuggingFace Course: Chapters 1, 7
+    \item The Illustrated Transformer: \url{https://jalammar.github.io/illustrated-transformer/}
+    \item BertViz: \url{https://github.com/jessevig/bertviz}
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% LOOKING FORWARD COURSE
+% ============================================================
+\begin{frame}{Looking Forward in the Course 🔮}
+\textbf{Where do we go from here?}
+
+\vspace{1em}
+
+\textbf{Upcoming Topics:}
+\begin{itemize}
+    \item \textbf{Week 7:} Decoder models and text generation (GPT family)
+    \item \textbf{Week 8:} Scaling laws and large language models
+    \item \textbf{Week 9:} Prompting, in-context learning, and instruction tuning
+    \item \textbf{Week 10:} Alignment, RLHF, and ethical considerations
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{The Journey Continues:}
+\begin{itemize}
+    \item From understanding (BERT) to generation (GPT)
+    \item From supervised learning to few-shot learning
+    \item From narrow tasks to general-purpose models
+    \item From academic research to societal impact
+\end{itemize}
+
+\vspace{1em}
+
+\begin{center}
+\Large
+\textbf{The transformer revolution continues! 🚀}
+\end{center}
+\end{frame}
+
+% ============================================================
+% QUESTIONS
+% ============================================================
+\begin{frame}{Questions? 🙋}
+\begin{center}
+\LARGE
+\textbf{Discussion Time}
+\end{center}
+
+\vspace{2em}
+
+\textbf{Topics to discuss:}
+\begin{itemize}
+    \item BERT applications
+    \item Understanding vs. pattern matching
+    \item Cognitive neuroscience connections
+    \item Limitations and future work
+    \item Assignment 4 questions
+\end{itemize}
+
+\vspace{2em}
+
+\begin{center}
+\Large
+Thank you! 🙏
+
+\vspace{1em}
+
+See you in Week 7 for GPT and text generation!
+\end{center}
+\end{frame}
+
+\end{document}

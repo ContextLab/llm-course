@@ -13,9 +13,9 @@ output: pdf
 \begin{center}
 \begin{tabular}{|p{1.25in}|p{2in}|}
 \hline
-\textbf{Meeting times}   & MWF 10:00--11:05          \\
+\textbf{Meeting times}   & MWF 10:10--11:15          \\
 \hline
-\textbf{X-hour}          & Tu 12:00--12:50           \\
+\textbf{X-hour}          & Th 12:15--1:05            \\
 \hline
 \textbf{Classroom}       & TBD                       \\
 \hline
@@ -104,7 +104,7 @@ We strive to create an inclusive learning environment where all students feel su
 
 ## Course Schedule
 
-**Note:** Classes meet MWF 10:00--11:05. X-hours (Tu 12:00--12:50) in the first three weeks will be used to make up for instructor absence February 23--27 (no classes that week).
+**Note:** Classes meet MWF 10:10--11:15. X-hours (Th 12:15--1:05) in the first three weeks will be used to make up for instructor absence February 23--27 (no classes that week).
 
 ### Week 1: Introduction & String Manipulation (January 5--9)
 
@@ -114,7 +114,7 @@ We strive to create an inclusive learning environment where all students feel su
   - Reading: [Fedorenko et al. (2024)](https://www.nature.com/articles/s41593-024-01711-5); [Schrimpf et al. (2021)](https://www.pnas.org/doi/10.1073/pnas.2105646118)
   - Slides: [\href{https://contextlab.github.io/llm-course/week1/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week1/lecture.html}{HTML}]
 
-**Tuesday, January 6** (X-hour 1): ELIZA Deep Dive
+**Thursday, January 8** (X-hour 1): ELIZA Deep Dive
   - Topics: Extended discussion of pattern matching, implementation strategies
   - Hands-on: Start Assignment 1
 
@@ -136,7 +136,7 @@ We strive to create an inclusive learning environment where all students feel su
   - Reading: HuggingFace NLP Course Chapter 2
   - Slides: [\href{https://contextlab.github.io/llm-course/week2/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week2/lecture.html}{HTML}]
 
-**Tuesday, January 13** (X-hour 2): Text Classification Workshop
+**Thursday, January 15** (X-hour 2): Text Classification Workshop
   - Topics: Building classifiers, feature engineering for text
   - Hands-on: Explore different classification approaches
 
@@ -155,7 +155,7 @@ We strive to create an inclusive learning environment where all students feel su
 
 **Monday, January 19**: Martin Luther King Jr. Day (No Class)
 
-**Tuesday, January 20** (X-hour 3): Embeddings Workshop
+**Thursday, January 22** (X-hour 3): Embeddings Workshop
   - Topics: Implementing classic embeddings (LSA, LDA)
   - Hands-on: Compare embedding methods on real data
 

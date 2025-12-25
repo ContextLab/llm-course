@@ -1,0 +1,948 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{metropolis}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{fontspec}
+\usepackage{emoji}
+
+\usetikzlibrary{shapes.geometric, arrows, positioning, chains, fit}
+
+% Color scheme
+\definecolor{darkblue}{RGB}{0,82,155}
+\definecolor{lightblue}{RGB}{100,181,246}
+\definecolor{darkgreen}{RGB}{46,125,50}
+\definecolor{orange}{RGB}{255,152,0}
+\definecolor{purple}{RGB}{156,39,176}
+
+\setbeamercolor{frametitle}{bg=darkblue}
+\setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10},
+    keywordstyle=\color{darkblue}\bfseries,
+    commentstyle=\color{darkgreen}\itshape,
+    stringstyle=\color{orange},
+    showstringspaces=false,
+    language=Python
+}
+
+\title{Lecture 5: Tokenization}
+\subtitle{Week 2: From Characters to Meaningful Units}
+\author{LLM Course}
+\date{}
+
+\begin{document}
+
+% Title slide
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Learning Objectives
+\begin{frame}{Learning Objectives 🎯}
+    By the end of this lecture, you will:
+
+    \begin{enumerate}
+        \item Understand what tokenization is and why it matters
+        \item Explain the limitations of word-level tokenization
+        \item Describe how subword tokenization works (BPE, WordPiece, SentencePiece)
+        \item Compare different tokenization methods and their trade-offs
+        \item Implement and experiment with different tokenizers using HuggingFace
+    \end{enumerate}
+
+    \vspace{1em}
+    \textbf{Central question:} How do we break text into meaningful units for AI models? 🔤
+\end{frame}
+
+% Introduction
+\begin{frame}{What is Tokenization? 🔍}
+    \textbf{Definition:} Converting text into smaller units (tokens)
+
+    \vspace{0.5em}
+    \textbf{Why tokenize?}
+    \begin{itemize}
+        \item Neural networks process numbers, not text
+        \item Need discrete units to create vocabulary
+        \item First step in any NLP pipeline
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{What can tokens be?}
+    \begin{itemize}
+        \item \textbf{Characters:} a, b, c, ... (very fine-grained)
+        \item \textbf{Words:} "hello", "world" (intuitive but limited)
+        \item \textbf{Subwords:} "un", "happiness" (sweet spot! 🎯)
+        \item \textbf{Bytes:} 0-255 (most fine-grained)
+    \end{itemize}
+
+    \vspace{0.5em}
+    \begin{center}
+        \textit{"The granularity of tokenization determines what a model can learn"}
+    \end{center}
+\end{frame}
+
+\begin{frame}{The Tokenization Spectrum 📊}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.9]
+            % Spectrum line
+            \draw[thick, ->, >=stealth] (0,0) -- (12,0);
+            \node[below] at (0,-0.3) {Fine-grained};
+            \node[below] at (12,-0.3) {Coarse-grained};
+
+            % Character level
+            \node[rectangle, draw, fill=purple!30, minimum width=2cm, minimum height=0.8cm] at (1.5,0.5) {Character};
+            \node[below, font=\tiny] at (1.5,-0.8) {Vocab: 100s};
+            \node[below, font=\tiny] at (1.5,-1.2) {Seq: Very long};
+
+            % Subword level
+            \node[rectangle, draw, fill=orange!30, minimum width=2cm, minimum height=0.8cm] at (6,0.5) {Subword};
+            \node[below, font=\tiny] at (6,-0.8) {Vocab: 30k-50k};
+            \node[below, font=\tiny] at (6,-1.2) {Seq: Medium};
+
+            % Word level
+            \node[rectangle, draw, fill=lightblue!30, minimum width=2cm, minimum height=0.8cm] at (10.5,0.5) {Word};
+            \node[below, font=\tiny] at (10.5,-0.8) {Vocab: Millions};
+            \node[below, font=\tiny] at (10.5,-1.2) {Seq: Short};
+
+            % Sweet spot marker
+            \draw[dashed, thick, color=darkgreen] (6,-1.5) -- (6,1.5);
+            \node[above, color=darkgreen, font=\small\bfseries] at (6,1.8) {Sweet Spot! ✨};
+        \end{tikzpicture}
+    \end{center}
+
+    \vspace{0.5em}
+    \textbf{Key trade-off:} Vocabulary size vs. sequence length
+\end{frame}
+
+% Word-level limitations
+\begin{frame}{Why Not Just Split on Spaces? 🤔}
+    \textbf{The naive approach:}
+    \begin{quote}
+        \texttt{text.split(" ")} → Done! 🎉
+    \end{quote}
+
+    \vspace{0.5em}
+    \textbf{Problem 1: Vocabulary explosion 💥}
+    \begin{itemize}
+        \item English: ~170,000 words in active use
+        \item Each inflection counts separately: "run", "runs", "running", "ran"
+        \item Compounds: "ice cream", "icecream", "ice-cream"
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{Problem 2: Unknown words ❓}
+    \begin{itemize}
+        \item Out-of-vocabulary (OOV): "supercalifragilisticexpialidocious"
+        \item New words: "COVID-19", "selfie", "blockchain"
+        \item Typos and misspellings: "teh" instead of "the"
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{Problem 3: No spaces in some languages! 🌏}
+    \begin{itemize}
+        \item Chinese: 今天天气很好 (no spaces between words)
+        \item Japanese: ありがとうございます
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Word-level Limitations Illustrated 📉}
+    \begin{center}
+        \begin{tikzpicture}
+            % Vocabulary size growth
+            \draw[->, thick] (0,0) -- (10,0) node[right] {Corpus size};
+            \draw[->, thick] (0,0) -- (0,5) node[above] {Vocabulary};
+
+            % Word-level curve (steep)
+            \draw[thick, color=lightblue, domain=0:9] plot (\x, {0.3*\x + 0.5});
+            \node[color=lightblue, font=\small] at (7,4) {Word-level 📈};
+
+            % Subword curve (logarithmic)
+            \draw[thick, color=orange, domain=0:9] plot (\x, {1.5*ln(\x+1)});
+            \node[color=orange, font=\small] at (7,2.5) {Subword-level 📊};
+
+            % Character curve (flat)
+            \draw[thick, color=purple, domain=0:9] plot (\x, {0.5});
+            \node[color=purple, font=\small] at (7,0.8) {Character-level →};
+
+            % Annotations
+            \node[font=\tiny] at (9,-0.5) {More data};
+        \end{tikzpicture}
+    \end{center}
+
+    \vspace{0.5em}
+    \textbf{Observation:} Word-level vocabulary keeps growing!
+
+    Subword vocabulary stabilizes at reasonable size.
+\end{frame}
+
+\begin{frame}[fragile]{The OOV Problem in Action 🚨}
+    \begin{lstlisting}[language=Python]
+# Simple word-level vocabulary
+vocab = {"hello", "world", "the", "cat", "sat"}
+
+def tokenize_word_level(text, vocab):
+    tokens = text.lower().split()
+    result = []
+    for token in tokens:
+        if token in vocab:
+            result.append(token)
+        else:
+            result.append("<UNK>")  # Unknown token
+    return result
+
+# Example
+text = "Hello! The cat jumped"
+tokens = tokenize_word_level(text, vocab)
+print(tokens)
+# Output: ['hello', 'the', 'cat', '<UNK>']
+#                               ^^^ "jumped" is unknown!
+    \end{lstlisting}
+
+    \textbf{Problem:} We lose information! "jumped" becomes meaningless \texttt{<UNK>}
+\end{frame}
+
+% Subword Tokenization Introduction
+\begin{frame}{The Solution: Subword Tokenization 🎯}
+    \textbf{Key insight:} Most words are made of smaller meaningful pieces!
+
+    \vspace{0.5em}
+    \textbf{Examples:}
+    \begin{itemize}
+        \item "unhappiness" = "un" + "happiness"
+        \item "preprocessing" = "pre" + "process" + "ing"
+        \item "antiestablishmentarianism" = "anti" + "establish" + "ment" + "arian" + "ism"
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{Benefits:}
+    \begin{itemize}
+        \item ✅ Fixed, manageable vocabulary (30k-50k tokens)
+        \item ✅ Handle unknown words by breaking into known parts
+        \item ✅ Capture morphology: prefixes, suffixes, stems
+        \item ✅ Language-agnostic: works for any language!
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{How?} Learn common character sequences from data! 📊
+\end{frame}
+
+\begin{frame}{Visual: How "unhappiness" Gets Tokenized 📊}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.9]
+            % Word-level
+            \node[rectangle, draw, fill=lightblue!30, minimum width=3cm, minimum height=1cm] at (0,3.5) {\texttt{unhappiness}};
+            \node[anchor=east] at (-0.5,3.5) {Word-level:};
+            \node[anchor=west, font=\small] at (2,3.5) {1 token};
+
+            % Subword BPE
+            \node[rectangle, draw, fill=orange!30, minimum width=1.2cm, minimum height=1cm] at (-0.9,2) {\texttt{un}};
+            \node[rectangle, draw, fill=orange!30, minimum width=2cm, minimum height=1cm] at (0.7,2) {\texttt{happiness}};
+            \node[anchor=east] at (-2.5,2) {Subword (BPE):};
+            \node[anchor=west, font=\small] at (2.2,2) {2 tokens};
+
+            % Alternative BPE
+            \node[rectangle, draw, fill=orange!20, minimum width=1.2cm, minimum height=0.8cm, font=\small] at (-1.5,0.8) {\texttt{un}};
+            \node[rectangle, draw, fill=orange!20, minimum width=1cm, minimum height=0.8cm, font=\small] at (-0.3,0.8) {\texttt{happ}};
+            \node[rectangle, draw, fill=orange!20, minimum width=0.8cm, minimum height=0.8cm, font=\small] at (0.7,0.8) {\texttt{i}};
+            \node[rectangle, draw, fill=orange!20, minimum width=1cm, minimum height=0.8cm, font=\small] at (1.7,0.8) {\texttt{ness}};
+            \node[anchor=east, font=\small] at (-2.5,0.8) {Alternative:};
+            \node[anchor=west, font=\small] at (2.5,0.8) {4 tokens};
+
+            % Character-level
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (-3.3,-0.5) {\tiny \texttt{u}};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (-2.9,-0.5) {\tiny \texttt{n}};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (-2.5,-0.5) {\tiny \texttt{h}};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (-2.1,-0.5) {\tiny \texttt{a}};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (-1.7,-0.5) {\tiny \texttt{p}};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (-1.3,-0.5) {\tiny \texttt{p}};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (-0.9,-0.5) {\tiny \texttt{i}};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (-0.5,-0.5) {\tiny \texttt{n}};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (-0.1,-0.5) {\tiny \texttt{e}};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (0.3,-0.5) {\tiny \texttt{s}};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (0.7,-0.5) {\tiny \texttt{s}};
+            \node[anchor=east] at (-4.5,-0.5) {Character-level:};
+            \node[anchor=west, font=\small] at (1.2,-0.5) {11 tokens};
+        \end{tikzpicture}
+    \end{center}
+
+    \vspace{0.5em}
+    \textbf{Trade-off:} More tokens = longer sequences vs. smaller vocabulary
+\end{frame}
+
+% Byte-Pair Encoding
+\begin{frame}{Byte-Pair Encoding (BPE) 🔧}
+    \textbf{Original use:} Data compression (1994)
+
+    \textbf{Adapted for NLP:} Sennrich et al. (2016)
+
+    \vspace{0.5em}
+    \textbf{Core idea:} Iteratively merge the most frequent pair of characters/subwords
+
+    \vspace{0.5em}
+    \textbf{Algorithm:}
+    \begin{enumerate}
+        \item Start with character-level vocabulary
+        \item Count all adjacent pairs in corpus
+        \item Merge most frequent pair → create new token
+        \item Repeat until desired vocabulary size
+    \end{enumerate}
+
+    \vspace{0.5em}
+    \textbf{Used by:} GPT, GPT-2, GPT-3, RoBERTa, BART, many others!
+
+    \vspace{0.5em}
+    📖 \textbf{Reference:} Sennrich, Haddow, \& Birch (2016). Neural Machine Translation of Rare Words with Subword Units. \textit{ACL}.
+\end{frame}
+
+\begin{frame}{BPE Example: Step by Step 👣}
+    \textbf{Training data:} "low low low lower lower newest newest newest newest widest"
+
+    \vspace{0.5em}
+    \textbf{Initial tokens (characters):}
+    \begin{center}
+        \texttt{l, o, w, e, r, n, s, t, i, d}
+    \end{center}
+
+    \vspace{0.5em}
+    \textbf{Iteration 1:} Most frequent pair = \texttt{e, s} (appears 4 times)
+    \begin{itemize}
+        \item Merge → new token: \texttt{es}
+        \item Vocabulary: \texttt{l, o, w, e, r, n, s, t, i, d, es}
+    \end{itemize}
+
+    \vspace{0.3em}
+    \textbf{Iteration 2:} Most frequent = \texttt{es, t}
+    \begin{itemize}
+        \item Merge → new token: \texttt{est}
+        \item Vocabulary: \texttt{l, o, w, e, r, n, s, t, i, d, es, est}
+    \end{itemize}
+
+    \vspace{0.3em}
+    \textbf{Iteration 3:} Most frequent = \texttt{l, o}
+    \begin{itemize}
+        \item Merge → new token: \texttt{lo}
+    \end{itemize}
+
+    \vspace{0.3em}
+    Continue until reaching target vocabulary size (e.g., 30,000)...
+\end{frame}
+
+\begin{frame}{BPE Visualization 🎨}
+    \begin{center}
+        \begin{tikzpicture}[
+            token/.style={rectangle, draw, fill=lightblue!30, minimum width=0.6cm, minimum height=0.6cm, font=\tiny},
+            merge/.style={rectangle, draw, fill=orange!30, minimum width=1.3cm, minimum height=0.6cm, font=\tiny}
+        ]
+            % Step 0: Characters
+            \node[font=\small] at (-1,3) {Step 0:};
+            \node[token] at (0,3) {l};
+            \node[token] at (0.7,3) {o};
+            \node[token] at (1.4,3) {w};
+            \node[token] at (2.1,3) {e};
+            \node[token] at (2.8,3) {s};
+            \node[token] at (3.5,3) {t};
+
+            % Step 1: Merge e+s
+            \node[font=\small] at (-1,2) {Step 1:};
+            \node[token] at (0,2) {l};
+            \node[token] at (0.7,2) {o};
+            \node[token] at (1.4,2) {w};
+            \node[merge] at (2.65,2) {es};
+            \node[token] at (3.5,2) {t};
+
+            % Step 2: Merge es+t
+            \node[font=\small] at (-1,1) {Step 2:};
+            \node[token] at (0,1) {l};
+            \node[token] at (0.7,1) {o};
+            \node[token] at (1.4,1) {w};
+            \node[merge, fill=darkgreen!30, minimum width=2cm] at (3,1) {est};
+
+            % Step 3: Merge l+o
+            \node[font=\small] at (-1,0) {Step 3:};
+            \node[merge] at (0.5,0) {lo};
+            \node[token] at (1.4,0) {w};
+            \node[merge, fill=darkgreen!30, minimum width=2cm] at (3,0) {est};
+
+            % Arrows
+            \draw[->, thick, color=orange] (2.45,2.8) -- (2.65,2.2);
+            \draw[->, thick, color=darkgreen] (2.95,1.8) -- (3,1.2);
+            \draw[->, thick, color=orange] (0.35,2.8) -- (0.5,0.2);
+        \end{tikzpicture}
+    \end{center}
+
+    \vspace{0.5em}
+    \textbf{Result:} "lowest" → \texttt{[lo, w, est]}
+
+    Captures common patterns without explicit linguistic rules!
+\end{frame}
+
+\begin{frame}[fragile]{BPE in Practice with HuggingFace 🤗}
+    \begin{lstlisting}[language=Python]
+from transformers import AutoTokenizer
+
+# GPT-2 uses BPE
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+
+text = "I'm learning about tokenization!"
+
+# Tokenize
+tokens = tokenizer.tokenize(text)
+print("Tokens:", tokens)
+# Output: ['I', "'m", 'Ġlearning', 'Ġabout', 'Ġtoken', 'ization', '!']
+# Note: 'Ġ' represents space
+
+# Get token IDs
+token_ids = tokenizer.encode(text)
+print("Token IDs:", token_ids)
+# Output: [40, 1101, 4673, 546, 11241, 1634, 0]
+
+# Decode back
+decoded = tokenizer.decode(token_ids)
+print("Decoded:", decoded)
+# Output: "I'm learning about tokenization!"
+    \end{lstlisting}
+\end{frame}
+
+% WordPiece
+\begin{frame}{WordPiece Tokenization 🧩}
+    \textbf{Similar to BPE, but with a twist!}
+
+    \vspace{0.5em}
+    \textbf{Key difference:} Instead of merging most \textit{frequent} pair, merge pair that maximizes \textit{likelihood} of training data
+
+    \vspace{0.5em}
+    \textbf{Merge criterion:}
+    \[
+    \text{score}(x, y) = \frac{\text{freq}(xy)}{\text{freq}(x) \times \text{freq}(y)}
+    \]
+
+    \vspace{0.5em}
+    \textbf{Intuition:} Prefer merging pairs that are "surprisingly common" together
+
+    \vspace{0.5em}
+    \textbf{Used by:} BERT, DistilBERT, Electra
+
+    \vspace{0.5em}
+    \textbf{Special tokens:}
+    \begin{itemize}
+        \item \texttt{\#\#} prefix for continuation subwords
+        \item Example: "playing" → \texttt{["play", "\#\#ing"]}
+    \end{itemize}
+
+    \vspace{0.5em}
+    📖 \textbf{Reference:} Wu et al. (2016). Google's Neural Machine Translation System. \textit{arXiv}.
+\end{frame}
+
+\begin{frame}[fragile]{WordPiece Example with BERT 🔍}
+    \begin{lstlisting}[language=Python]
+from transformers import AutoTokenizer
+
+# BERT uses WordPiece
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+
+text = "I'm learning about tokenization!"
+
+tokens = tokenizer.tokenize(text)
+print("Tokens:", tokens)
+# Output: ['i', "'", 'm', 'learning', 'about', 'token', '##ization', '!']
+#                                                        ^^^ Note the ##
+
+# Compare with longer word
+text2 = "unhappiness"
+tokens2 = tokenizer.tokenize(text2)
+print("Tokens:", tokens2)
+# Output: ['un', '##hap', '##pin', '##ess']
+# Breaks into morphological components!
+    \end{lstlisting}
+
+    \vspace{0.5em}
+    \textbf{Notice:} BERT lowercases by default (unless using cased model)
+\end{frame}
+
+% SentencePiece
+\begin{frame}{SentencePiece: Language-Agnostic Tokenization 🌍}
+    \textbf{Problem with BPE/WordPiece:}
+    \begin{itemize}
+        \item Assume text is pre-tokenized (words separated by spaces)
+        \item Doesn't work for languages without spaces (Chinese, Japanese, Thai...)
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{SentencePiece solution:}
+    \begin{itemize}
+        \item Treats input as raw character stream (no pre-tokenization!)
+        \item Spaces are just another character: \texttt{▁}
+        \item Truly language-agnostic
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{Two algorithms:}
+    \begin{enumerate}
+        \item \textbf{Unigram Language Model:} Start with large vocabulary, iteratively remove tokens
+        \item \textbf{BPE:} Same as before, but on raw text
+    \end{enumerate}
+
+    \vspace{0.5em}
+    \textbf{Used by:} T5, ALBERT, XLNet, mT5 (multilingual models)
+
+    \vspace{0.5em}
+    📖 \textbf{Reference:} Kudo \& Richardson (2018). SentencePiece: A simple and language independent approach to subword tokenization. \textit{EMNLP}.
+\end{frame}
+
+\begin{frame}[fragile]{SentencePiece in Action 🚀}
+    \begin{lstlisting}[language=Python]
+from transformers import AutoTokenizer
+
+# T5 uses SentencePiece
+tokenizer = AutoTokenizer.from_pretrained("t5-small")
+
+text = "I'm learning about tokenization!"
+
+tokens = tokenizer.tokenize(text)
+print("Tokens:", tokens)
+# Output: ['▁I', "'", 'm', '▁learning', '▁about', '▁token', 'ization', '!']
+#         ^^^ Note the ▁ for spaces
+
+# Works seamlessly with other languages!
+text_chinese = "今天天气很好"
+tokens_cn = tokenizer.tokenize(text_chinese)
+print("Chinese:", tokens_cn)
+# Breaks into characters/subwords without needing pre-tokenization
+    \end{lstlisting}
+
+    \vspace{0.5em}
+    \textbf{Key advantage:} No language-specific preprocessing required! 🌏
+\end{frame}
+
+% Comparison
+\begin{frame}{Tokenization Methods Comparison 📋}
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{lllp{3.5cm}}
+            \toprule
+            \textbf{Method} & \textbf{Approach} & \textbf{Used By} & \textbf{Key Feature} \\
+            \midrule
+            BPE & Frequency-based & GPT-2, GPT-3, & Simple, effective, \\
+            & merging & RoBERTa & bottom-up \\
+            \midrule
+            WordPiece & Likelihood-based & BERT, & Statistically \\
+            & merging & DistilBERT & principled \\
+            \midrule
+            SentencePiece & No pre-tokenization, & T5, ALBERT, & Language-agnostic, \\
+            (Unigram) & top-down pruning & mT5 & multilingual \\
+            \midrule
+            SentencePiece & No pre-tokenization, & XLNet, & Combines BPE \\
+            (BPE) & bottom-up & mBART & with raw text \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \vspace{0.5em}
+    📖 \textbf{HuggingFace Resources:}
+    \begin{itemize}
+        \item \href{https://huggingface.co/learn/nlp-course/chapter2/4}{Chapter 2.4: Behind the Pipeline - Tokenizers}
+        \item \href{https://huggingface.co/learn/nlp-course/chapter6}{Chapter 6: Tokenizers (full chapter)}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Comparing Tokenizers Side-by-Side 🔬}
+    \begin{lstlisting}[language=Python]
+from transformers import AutoTokenizer
+
+text = "The unhappiest researchers couldn't preprocess data!"
+
+models = {
+    "GPT-2 (BPE)": "gpt2",
+    "BERT (WordPiece)": "bert-base-uncased",
+    "T5 (SentencePiece)": "t5-small"
+}
+
+for name, model_name in models.items():
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokens = tokenizer.tokenize(text)
+    print(f"\n{name}:")
+    print(f"  Tokens ({len(tokens)}): {tokens}")
+
+# Observe:
+# - How each handles "unhappiest"
+# - Different vocabulary sizes
+# - Different handling of spaces
+# - Number of tokens varies!
+    \end{lstlisting}
+\end{frame}
+
+% Special Tokens
+\begin{frame}{Special Tokens 🎟️}
+    \textbf{Most tokenizers add special tokens for specific purposes:}
+
+    \vspace{0.5em}
+    \begin{table}
+        \centering
+        \begin{tabular}{lll}
+            \toprule
+            \textbf{Token} & \textbf{Purpose} & \textbf{Model} \\
+            \midrule
+            \texttt{[CLS]} & Classification token & BERT \\
+            \texttt{[SEP]} & Separator between segments & BERT \\
+            \texttt{[PAD]} & Padding to same length & Most models \\
+            \texttt{[UNK]} & Unknown/rare tokens & Most models \\
+            \texttt{[MASK]} & Masked token for training & BERT \\
+            \texttt{<s>}, \texttt{</s>} & Start/end of sequence & GPT-2, T5 \\
+            \texttt{<|endoftext|>} & Document boundary & GPT-2 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \vspace{0.5em}
+    \textbf{Example usage:}
+    \begin{center}
+        \texttt{[CLS] The cat sat [SEP] The dog ran [SEP]}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Working with Special Tokens 🔧}
+    \begin{lstlisting}[language=Python]
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+
+# Special tokens are automatically added
+text = "Hello world"
+encoded = tokenizer(text, return_tensors="pt")
+print("Input IDs:", encoded['input_ids'])
+# [101, 7592, 2088, 102]
+#  ^^^             ^^^ [CLS] and [SEP] added!
+
+# Decode with/without special tokens
+full_decode = tokenizer.decode(encoded['input_ids'][0])
+print("With special:", full_decode)
+# Output: "[CLS] hello world [SEP]"
+
+clean_decode = tokenizer.decode(encoded['input_ids'][0],
+                                skip_special_tokens=True)
+print("Without special:", clean_decode)
+# Output: "hello world"
+    \end{lstlisting>
+\end{frame}
+
+% Practical Considerations
+\begin{frame}{Vocabulary Size Trade-offs 🎚️}
+    \textbf{Smaller vocabulary (e.g., 10k tokens):}
+    \begin{itemize}
+        \item ➕ Faster training (smaller embedding matrix)
+        \item ➕ Less memory
+        \item ➖ Longer sequences (more subwords per word)
+        \item ➖ May lose semantic information
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{Larger vocabulary (e.g., 100k tokens):}
+    \begin{itemize}
+        \item ➕ Shorter sequences (closer to word-level)
+        \item ➕ Better semantic preservation
+        \item ➖ Slower training (larger embeddings)
+        \item ➖ More memory required
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{Sweet spot:} 30k-50k tokens for most models
+
+    \begin{center}
+        GPT-2: 50k | BERT: 30k | T5: 32k
+    \end{center}
+\end{frame}
+
+\begin{frame}{Tokenization Pitfalls and Gotchas ⚠️}
+    \textbf{Common issues to watch out for:}
+
+    \begin{enumerate}
+        \item \textbf{Tokenizer-model mismatch}
+        \begin{itemize}
+            \item Always use the tokenizer that matches your model!
+            \item GPT-2 tokenizer ≠ BERT tokenizer
+        \end{itemize}
+
+        \item \textbf{Maximum sequence length}
+        \begin{itemize}
+            \item BERT: 512 tokens | GPT-2: 1024 | GPT-3: 2048
+            \item Text gets truncated if too long!
+        \end{itemize}
+
+        \item \textbf{Case sensitivity}
+        \begin{itemize}
+            \item \texttt{bert-base-uncased} lowercases everything
+            \item \texttt{bert-base-cased} preserves case
+        \end{itemize}
+
+        \item \textbf{Rare words → many tokens}
+        \begin{itemize}
+            \item "antidisestablishmentarianism" → 10+ tokens
+            \item Can hit sequence limit faster than expected!
+        \end{itemize}
+
+        \item \textbf{Special characters}
+        \begin{itemize}
+            \item Emoji, Unicode, accents may be split unexpectedly
+        \end{itemize}
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{Debugging Tokenization 🐛}
+    \begin{lstlisting}[language=Python]
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+
+text = "The antidisestablishmentarianism debate continues! 😊"
+
+# Tokenize and see details
+tokens = tokenizer.tokenize(text)
+print(f"Tokens ({len(tokens)}): {tokens}\n")
+
+# Get IDs and decode
+token_ids = tokenizer.encode(text)
+for i, (token, token_id) in enumerate(zip(tokens, token_ids)):
+    decoded = tokenizer.decode([token_id])
+    print(f"{i:2d}. ID {token_id:5d} | Token: {token:20s} | Decoded: {decoded}")
+
+# Check vocabulary size
+print(f"\nVocabulary size: {tokenizer.vocab_size}")
+
+# Check special tokens
+print(f"Special tokens: {tokenizer.all_special_tokens}")
+    \end{lstlisting}
+\end{frame}
+
+% Connection to Human Language
+\begin{frame}{Connection to Human Language Learning 👶}
+    \textbf{Reminder from infant learning (Saffran et al., 1996):}
+    \begin{itemize}
+        \item Babies track statistical regularities in speech
+        \item Identify word boundaries from transitional probabilities
+        \item No explicit rules—just patterns from exposure!
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{Parallel with subword tokenization:}
+    \begin{itemize}
+        \item BPE: Merge frequent character pairs → discover common morphemes
+        \item Infants: Track frequent syllable pairs → discover words
+        \item Both are \textit{data-driven}, not rule-based!
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{Key difference:}
+    \begin{itemize}
+        \item Infants: Online, real-time, multimodal (sound + context)
+        \item BPE: Batch, text-only, no grounding
+    \end{itemize}
+
+    \vspace{0.5em}
+    📖 \textbf{Reference:} Saffran, Aslin, \& Newport (1996). Statistical learning by 8-month-old infants. \textit{Science}.
+\end{frame}
+
+\begin{frame}{Statistical Learning in Action 📊}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Infant Learning:}
+
+            Input stream:
+            \begin{center}
+                \texttt{bidakupadotigolabu...}
+            \end{center}
+
+            Learn high-probability sequences:
+            \begin{itemize}
+                \item \texttt{bi-da-ku} (word)
+                \item \texttt{pa-do-ti} (word)
+            \end{itemize}
+
+            Detect low-probability boundaries:
+            \begin{itemize}
+                \item \texttt{ku | pa} (boundary)
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{BPE Learning:}
+
+            Input corpus:
+            \begin{center}
+                \texttt{low low lower...}
+            \end{center}
+
+            Merge high-frequency pairs:
+            \begin{itemize}
+                \item \texttt{l+o → lo}
+                \item \texttt{lo+w → low}
+            \end{itemize}
+
+            Build vocabulary:
+            \begin{itemize}
+                \item \texttt{low, lower, lowest}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+
+    \vspace{1em}
+    \textbf{Both use distributional statistics to discover structure!} 🎯
+\end{frame}
+
+% Practical Exercise
+\begin{frame}{Hands-On Exercise 🧪}
+    \textbf{Experiment with different tokenizers!}
+
+    \begin{enumerate}
+        \item Choose 3 models: GPT-2, BERT, T5
+        \item Test on diverse texts:
+        \begin{itemize}
+            \item Standard English: "The cat sat on the mat"
+            \item Complex words: "antidisestablishmentarianism"
+            \item Contractions: "I'm, you're, won't"
+            \item Typos: "teh qiuck brown fox"
+            \item Emoji: "I love this! 😊🎉"
+            \item Other languages: "今天天气很好" (Chinese)
+        \end{itemize}
+        \item Compare results:
+        \begin{itemize}
+            \item Number of tokens
+            \item How words are split
+            \item Handling of unknown/rare words
+        \end{itemize}
+        \item Reflect:
+        \begin{itemize}
+            \item Which tokenizer works best for your use case?
+            \item What are the trade-offs?
+        \end{itemize}
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Discussion Questions 💭}
+    \begin{enumerate}
+        \item \textbf{Linguistics vs. Statistics:}
+        \begin{itemize}
+            \item BPE discovers morphemes (un-, -ing, -ness) without linguistic rules. Is this "learning" morphology, or just pattern matching?
+        \end{itemize}
+
+        \item \textbf{Cross-lingual tokenization:}
+        \begin{itemize}
+            \item Should we use the same tokenizer for all languages? What are the trade-offs?
+        \end{itemize}
+
+        \item \textbf{Semantic preservation:}
+        \begin{itemize}
+            \item Does breaking "unhappy" into ["un", "happy"] preserve meaning? What about "butterfly"?
+        \end{itemize}
+
+        \item \textbf{Human vs. machine:}
+        \begin{itemize}
+            \item Humans don't consciously tokenize words. Why do machines need to?
+        \end{itemize}
+
+        \item \textbf{Future directions:}
+        \begin{itemize}
+            \item Will we move toward character-level or byte-level models that don't need tokenization?
+        \end{itemize}
+    \end{enumerate}
+\end{frame}
+
+% Resources and Summary
+\begin{frame}{Primary References 📚}
+    \textbf{Foundational papers:}
+    \begin{itemize}
+        \item Sennrich, Haddow, \& Birch (2016). Neural Machine Translation of Rare Words with Subword Units. \textit{ACL}.
+        \begin{itemize}
+            \item Introduced BPE for NLP
+        \end{itemize}
+
+        \item Kudo \& Richardson (2018). SentencePiece: A simple and language independent approach. \textit{EMNLP}.
+        \begin{itemize}
+            \item Language-agnostic tokenization
+        \end{itemize}
+
+        \item Wu et al. (2016). Google's Neural Machine Translation System. \textit{arXiv}.
+        \begin{itemize}
+            \item WordPiece algorithm
+        \end{itemize}
+    \end{itemize}
+
+    \vspace{0.5em}
+    \textbf{HuggingFace resources:}
+    \begin{itemize}
+        \item \href{https://huggingface.co/learn/nlp-course/chapter2/4}{Chapter 2.4: Tokenizers}
+        \item \href{https://huggingface.co/learn/nlp-course/chapter6}{Chapter 6: Tokenizers (detailed)}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Key Takeaways 🎯}
+    \begin{enumerate}
+        \item \textbf{Tokenization is fundamental}
+        \begin{itemize}
+            \item Bridges raw text and neural networks
+        \end{itemize}
+
+        \item \textbf{Word-level has major limitations}
+        \begin{itemize}
+            \item OOV problem, vocabulary explosion, language-dependent
+        \end{itemize}
+
+        \item \textbf{Subword tokenization is the sweet spot}
+        \begin{itemize}
+            \item Balanced vocabulary size and sequence length
+        \end{itemize}
+
+        \item \textbf{Different methods, similar principles}
+        \begin{itemize}
+            \item BPE: frequency-based | WordPiece: likelihood | SentencePiece: language-agnostic
+        \end{itemize}
+
+        \item \textbf{Statistical learning connects humans and machines}
+        \begin{itemize}
+            \item Both discover structure from distributional patterns
+        \end{itemize}
+
+        \item \textbf{Always match tokenizer to model!}
+        \begin{itemize}
+            \item Critical for correct predictions
+        \end{itemize}
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Looking Ahead 🔮}
+    \textbf{Next lecture:} POS Tagging \& Sentiment Analysis
+
+    \vspace{0.5em}
+    \textbf{How tokenization connects:}
+    \begin{itemize}
+        \item POS tagging: Token-level classification
+        \item Sentiment: Sequence-level classification
+        \item Both depend on good tokenization!
+    \end{itemize}
+
+    \vspace{1em}
+    \textbf{Prepare by:}
+    \begin{itemize}
+        \item Experimenting with HuggingFace tokenizers
+        \item Thinking about: How does token granularity affect downstream tasks?
+        \item Exploring: Tokenizer artifacts and their impact
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[standout]
+    Questions? 🤔
+
+    \vspace{2em}
+
+    \normalsize
+    Next: Lecture 6 - POS Tagging \& Sentiment Analysis
+\end{frame}
+
+\end{document}
