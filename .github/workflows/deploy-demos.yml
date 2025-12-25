@@ -61,11 +61,25 @@ jobs:
       - name: Create build artifact
         run: |
           echo "Preparing demos for deployment..."
-          mkdir -p _site
-          cp -r demos/* _site/
+          mkdir -p _site/demos
+          cp -r demos/* _site/demos/
 
           # Create a .nojekyll file to bypass Jekyll processing
           touch _site/.nojekyll
+
+          # Create root redirect to demos
+          cat > _site/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <meta http-equiv="refresh" content="0; url=demos/">
+              <script>window.location.href = 'demos/';</script>
+          </head>
+          <body>
+              <p>Redirecting to <a href="demos/">demos</a>...</p>
+          </body>
+          </html>
+          EOF
 
           # Create a custom 404 page
           cat > _site/404.html << 'EOF'
