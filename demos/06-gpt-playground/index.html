@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT Text Generation Playground</title>
+    <link rel="stylesheet" href="css/gpt.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GPT Text Generation Playground</h1>
+            <p class="subtitle">Explore different sampling strategies and visualize the generation process</p>
+        </header>
+
+        <div class="model-status">
+            <div id="loadingIndicator" class="loading">
+                <div class="spinner"></div>
+                <span id="loadingText">Initializing...</span>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Left Panel: Controls -->
+            <div class="controls-panel">
+                <section class="control-section">
+                    <h2>Model Settings</h2>
+                    <div class="control-group">
+                        <label for="modelSelect">Model</label>
+                        <select id="modelSelect">
+                            <option value="Xenova/gpt2">GPT-2 (124M)</option>
+                            <option value="Xenova/distilgpt2" selected>DistilGPT-2 (82M)</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="control-section">
+                    <h2>Prompt</h2>
+                    <textarea id="promptInput" rows="4" placeholder="Enter your prompt here...">Once upon a time</textarea>
+                    <div class="button-group">
+                        <button id="generateBtn" class="btn-primary">Generate</button>
+                        <button id="stopBtn" class="btn-secondary" disabled>Stop</button>
+                        <button id="clearBtn" class="btn-secondary">Clear</button>
+                    </div>
+                </section>
+
+                <section class="control-section">
+                    <h2>Sampling Strategy</h2>
+                    <div class="control-group">
+                        <label for="samplingStrategy">Strategy</label>
+                        <select id="samplingStrategy">
+                            <option value="greedy">Greedy Decoding</option>
+                            <option value="temperature" selected>Temperature Sampling</option>
+                            <option value="topk">Top-k Sampling</option>
+                            <option value="topp">Top-p (Nucleus) Sampling</option>
+                            <option value="combined">Combined (Top-k + Top-p + Temp)</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="control-section">
+                    <h2>Generation Parameters</h2>
+
+                    <div class="control-group">
+                        <label for="temperature">
+                            Temperature: <span id="tempValue">1.0</span>
+                        </label>
+                        <input type="range" id="temperature" min="0" max="2" step="0.05" value="1.0">
+                        <small>Lower = more deterministic, Higher = more random</small>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="topK">
+                            Top-k: <span id="topKValue">50</span>
+                        </label>
+                        <input type="range" id="topK" min="1" max="100" step="1" value="50">
+                        <small>Sample from top k tokens</small>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="topP">
+                            Top-p: <span id="topPValue">0.9</span>
+                        </label>
+                        <input type="range" id="topP" min="0" max="1" step="0.05" value="0.9">
+                        <small>Nucleus sampling threshold</small>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="maxLength">
+                            Max Length: <span id="maxLengthValue">100</span>
+                        </label>
+                        <input type="range" id="maxLength" min="10" max="500" step="10" value="100">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="repetitionPenalty">
+                            Repetition Penalty: <span id="repPenaltyValue">1.0</span>
+                        </label>
+                        <input type="range" id="repetitionPenalty" min="1" max="2" step="0.05" value="1.0">
+                        <small>Penalize repeated tokens</small>
+                    </div>
+                </section>
+
+                <section class="control-section">
+                    <h2>Visualization Options</h2>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="showProbabilities" checked>
+                            Show Token Probabilities
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="showAlternatives" checked>
+                            Show Alternative Tokens
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="showEntropy" checked>
+                            Show Entropy
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="showSurprise">
+                            Show Token Surprise
+                        </label>
+                    </div>
+                </section>
+
+                <section class="control-section">
+                    <h2>Comparison Mode</h2>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="comparisonMode">
+                            Enable Side-by-Side Comparison
+                        </label>
+                        <small>Compare different sampling strategies</small>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Panel: Output and Visualization -->
+            <div class="output-panel">
+                <div id="singleOutput" class="output-container">
+                    <section class="output-section">
+                        <h2>Generated Text</h2>
+                        <div id="generatedText" class="generated-text"></div>
+                    </section>
+
+                    <section class="output-section">
+                        <h2>Generation Statistics</h2>
+                        <div id="stats" class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">Tokens Generated:</span>
+                                <span id="tokenCount">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Avg. Probability:</span>
+                                <span id="avgProb">0.00</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Avg. Entropy:</span>
+                                <span id="avgEntropy">0.00</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Time Elapsed:</span>
+                                <span id="timeElapsed">0s</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="output-section" id="probabilitySection">
+                        <h2>Token Probabilities</h2>
+                        <div id="probabilityViz" class="probability-viz"></div>
+                    </section>
+
+                    <section class="output-section" id="alternativesSection">
+                        <h2>Alternative Tokens (Top 10)</h2>
+                        <div id="alternativesViz" class="alternatives-viz"></div>
+                    </section>
+
+                    <section class="output-section" id="entropySection">
+                        <h2>Entropy Over Time</h2>
+                        <div id="entropyChart" class="chart-container">
+                            <canvas id="entropyCanvas"></canvas>
+                        </div>
+                    </section>
+
+                    <section class="output-section" id="surpriseSection" style="display: none;">
+                        <h2>Token Surprise</h2>
+                        <div id="surpriseViz" class="surprise-viz"></div>
+                    </section>
+                </div>
+
+                <div id="comparisonOutput" class="comparison-container" style="display: none;">
+                    <div class="comparison-column">
+                        <h3>Strategy A: <span id="strategyAName">Greedy</span></h3>
+                        <div id="outputA" class="generated-text"></div>
+                        <div id="statsA" class="stats-mini"></div>
+                    </div>
+                    <div class="comparison-column">
+                        <h3>Strategy B: <span id="strategyBName">Temperature</span></h3>
+                        <div id="outputB" class="generated-text"></div>
+                        <div id="statsB" class="stats-mini"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/text-generator.js"></script>
+</body>
+</html>

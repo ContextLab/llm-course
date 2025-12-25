@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BERT Masked Language Modeling - Interactive Demo</title>
+    <link rel="stylesheet" href="css/bert-mlm.css">
+    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BERT Masked Language Modeling</h1>
+            <p class="subtitle">Interactive exploration of BERT's masked token prediction with attention visualization</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- Left Sidebar: Controls -->
+            <aside class="sidebar">
+                <div class="control-panel">
+                    <h3>Model Configuration</h3>
+
+                    <!-- Model Selection -->
+                    <div class="control-section">
+                        <label for="model-select">BERT Model:</label>
+                        <select id="model-select">
+                            <option value="bert-base-uncased" selected>BERT Base Uncased</option>
+                            <option value="distilbert-base-uncased">DistilBERT Base</option>
+                            <option value="bert-base-cased">BERT Base Cased</option>
+                        </select>
+                        <button id="load-model-btn" class="btn btn-primary">Load Model</button>
+                        <div id="model-status" class="status-text"></div>
+                    </div>
+
+                    <!-- Prediction Settings -->
+                    <div class="control-section">
+                        <h4>Prediction Settings</h4>
+
+                        <label for="top-k">Top-K Predictions:</label>
+                        <input type="range" id="top-k" min="1" max="20" value="5" step="1">
+                        <span id="top-k-value">5</span>
+
+                        <label for="min-prob">Minimum Probability:</label>
+                        <input type="range" id="min-prob" min="0" max="0.5" value="0.01" step="0.01">
+                        <span id="min-prob-value">0.01</span>
+
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" id="show-probabilities" checked>
+                                Show Probabilities
+                            </label>
+                            <label>
+                                <input type="checkbox" id="show-percentages" checked>
+                                Show as Percentages
+                            </label>
+                            <label>
+                                <input type="checkbox" id="auto-predict" checked>
+                                Auto-predict on mask
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Example Sentences -->
+                    <div class="control-section">
+                        <h4>Example Sentences</h4>
+                        <div class="examples-list">
+                            <button class="example-btn" data-text="The cat sat on the mat.">
+                                The cat sat on the mat.
+                            </button>
+                            <button class="example-btn" data-text="Paris is the capital of France.">
+                                Paris is the capital of France.
+                            </button>
+                            <button class="example-btn" data-text="I love to eat pizza and pasta.">
+                                I love to eat pizza and pasta.
+                            </button>
+                            <button class="example-btn" data-text="The weather is beautiful today.">
+                                The weather is beautiful today.
+                            </button>
+                            <button class="example-btn" data-text="She plays the piano very well.">
+                                She plays the piano very well.
+                            </button>
+                            <button class="example-btn" data-text="The quick brown fox jumps over the lazy dog.">
+                                The quick brown fox jumps over the lazy dog.
+                            </button>
+                            <button class="example-btn" data-text="Machine learning models learn from data.">
+                                Machine learning models learn from data.
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Panel -->
+                <div class="info-panel">
+                    <h4>How to Use</h4>
+                    <ul>
+                        <li><strong>Click a word</strong> to mask it and see predictions</li>
+                        <li><strong>Multiple masks:</strong> Click multiple words for simultaneous prediction</li>
+                        <li><strong>View attention:</strong> See how BERT attends to each token</li>
+                        <li><strong>Probabilities:</strong> Higher bars = more confident predictions</li>
+                        <li><strong>Load examples:</strong> Click example buttons to try different sentences</li>
+                    </ul>
+
+                    <h4>About BERT MLM</h4>
+                    <p>BERT (Bidirectional Encoder Representations from Transformers) is pre-trained using masked language modeling. It predicts masked tokens based on bidirectional context.</p>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Loading Indicator -->
+                <div id="loading" class="loading hidden">
+                    <div class="spinner"></div>
+                    <p id="loading-text">Loading BERT model...</p>
+                </div>
+
+                <!-- Input Section -->
+                <div class="input-section">
+                    <h2>Input Text</h2>
+                    <p class="instruction">Type or paste your text below, then click words to mask them:</p>
+                    <textarea id="text-input" rows="4" placeholder="Enter your text here...">The cat sat on the mat.</textarea>
+                    <div class="input-actions">
+                        <button id="process-btn" class="btn btn-primary">Process Text</button>
+                        <button id="clear-btn" class="btn btn-secondary">Clear</button>
+                        <button id="mask-random-btn" class="btn btn-secondary">Mask Random Word</button>
+                    </div>
+                </div>
+
+                <!-- Interactive Text Display -->
+                <div class="text-display-section">
+                    <h2>Interactive Text</h2>
+                    <p class="instruction">Click on any word to mask it:</p>
+                    <div id="text-display" class="text-display">
+                        <p class="placeholder">Process text to begin...</p>
+                    </div>
+                    <div id="mask-info" class="mask-info hidden">
+                        <span id="mask-count">0</span> word(s) masked
+                        <button id="unmask-all-btn" class="btn btn-small">Unmask All</button>
+                    </div>
+                </div>
+
+                <!-- Predictions Section -->
+                <div id="predictions-section" class="predictions-section hidden">
+                    <h2>Predictions</h2>
+                    <div id="predictions-container"></div>
+                </div>
+
+                <!-- Attention Visualization -->
+                <div id="attention-section" class="attention-section hidden">
+                    <h2>Attention Visualization</h2>
+                    <p class="subtitle">How BERT attends to each token when predicting masked words</p>
+
+                    <div class="attention-controls">
+                        <label for="layer-select">Layer:</label>
+                        <select id="layer-select"></select>
+
+                        <label for="head-select">Attention Head:</label>
+                        <select id="head-select"></select>
+
+                        <button id="show-attention-btn" class="btn btn-secondary">Show Attention</button>
+                    </div>
+
+                    <div id="attention-heatmap" class="attention-heatmap"></div>
+                    <div id="attention-details" class="attention-details"></div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="stats-panel">
+                    <h3>Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Tokens:</span>
+                            <span class="stat-value" id="stat-tokens">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Masked:</span>
+                            <span class="stat-value" id="stat-masked">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Predictions:</span>
+                            <span class="stat-value" id="stat-predictions">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Avg. Confidence:</span>
+                            <span class="stat-value" id="stat-confidence">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/bert-model.js"></script>
+    <script type="module" src="js/visualization.js"></script>
+    <script type="module">
+        import { BERTModel } from './js/bert-model.js';
+        import { AttentionVisualizer } from './js/visualization.js';
+
+        const app = {
+            bert: null,
+            visualizer: null,
+            currentTokens: [],
+            maskedIndices: new Set(),
+            currentAttentions: null
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            app.visualizer = new AttentionVisualizer();
+            setupEventListeners();
+            loadModel();
+        });
+
+        async function loadModel() {
+            const modelId = document.getElementById('model-select').value;
+            showLoading(true, 'Loading BERT model... This may take a minute.');
+
+            try {
+                app.bert = new BERTModel(modelId);
+                await app.bert.load();
+                updateStatus('Model loaded successfully!', 'success');
+            } catch (error) {
+                console.error('Error loading model:', error);
+                updateStatus('Error loading model: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function setupEventListeners() {
+            // Model loading
+            document.getElementById('load-model-btn').addEventListener('click', loadModel);
+
+            // Text processing
+            document.getElementById('process-btn').addEventListener('click', processText);
+            document.getElementById('clear-btn').addEventListener('click', clearText);
+            document.getElementById('mask-random-btn').addEventListener('click', maskRandomWord);
+            document.getElementById('unmask-all-btn').addEventListener('click', unmaskAll);
+
+            // Range sliders
+            setupRangeSlider('top-k', 'top-k-value');
+            setupRangeSlider('min-prob', 'min-prob-value');
+
+            // Example buttons
+            document.querySelectorAll('.example-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const text = e.target.dataset.text;
+                    document.getElementById('text-input').value = text;
+                    processText();
+                });
+            });
+
+            // Attention visualization
+            document.getElementById('show-attention-btn').addEventListener('click', showAttention);
+
+            // Auto-predict checkbox
+            document.getElementById('auto-predict').addEventListener('change', (e) => {
+                if (e.target.checked && app.maskedIndices.size > 0) {
+                    predictMaskedTokens();
+                }
+            });
+        }
+
+        function setupRangeSlider(sliderId, valueId) {
+            const slider = document.getElementById(sliderId);
+            const valueDisplay = document.getElementById(valueId);
+            slider.addEventListener('input', (e) => {
+                valueDisplay.textContent = e.target.value;
+            });
+        }
+
+        async function processText() {
+            const text = document.getElementById('text-input').value.trim();
+            if (!text) {
+                alert('Please enter some text');
+                return;
+            }
+
+            if (!app.bert) {
+                alert('Please wait for model to load');
+                return;
+            }
+
+            try {
+                app.currentTokens = await app.bert.tokenize(text);
+                app.maskedIndices.clear();
+                displayTokens();
+                updateStats();
+
+                document.getElementById('predictions-section').classList.add('hidden');
+                document.getElementById('attention-section').classList.add('hidden');
+            } catch (error) {
+                console.error('Error processing text:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function displayTokens() {
+            const display = document.getElementById('text-display');
+            display.innerHTML = '';
+
+            app.currentTokens.forEach((token, idx) => {
+                // Skip special tokens [CLS] and [SEP]
+                if (token === '[CLS]' || token === '[SEP]') return;
+
+                const span = document.createElement('span');
+                span.className = 'token';
+                span.textContent = token.replace('##', '');
+                span.dataset.index = idx;
+
+                span.addEventListener('click', () => toggleMask(idx, span));
+                display.appendChild(span);
+
+                // Add space if not a subword
+                if (!token.startsWith('##') && idx < app.currentTokens.length - 1) {
+                    display.appendChild(document.createTextNode(' '));
+                }
+            });
+
+            document.getElementById('mask-info').classList.remove('hidden');
+        }
+
+        function toggleMask(index, element) {
+            if (app.maskedIndices.has(index)) {
+                app.maskedIndices.delete(index);
+                element.classList.remove('masked');
+            } else {
+                app.maskedIndices.add(index);
+                element.classList.add('masked');
+            }
+
+            updateMaskCount();
+
+            if (document.getElementById('auto-predict').checked && app.maskedIndices.size > 0) {
+                predictMaskedTokens();
+            }
+        }
+
+        function maskRandomWord() {
+            if (app.currentTokens.length === 0) {
+                alert('Please process text first');
+                return;
+            }
+
+            // Find valid indices (not [CLS], [SEP], or already masked)
+            const validIndices = [];
+            app.currentTokens.forEach((token, idx) => {
+                if (token !== '[CLS]' && token !== '[SEP]' && !app.maskedIndices.has(idx)) {
+                    validIndices.push(idx);
+                }
+            });
+
+            if (validIndices.length === 0) {
+                alert('No more words to mask');
+                return;
+            }
+
+            const randomIdx = validIndices[Math.floor(Math.random() * validIndices.length)];
+            const element = document.querySelector(`[data-index="${randomIdx}"]`);
+            toggleMask(randomIdx, element);
+        }
+
+        function unmaskAll() {
+            app.maskedIndices.clear();
+            document.querySelectorAll('.token').forEach(el => {
+                el.classList.remove('masked');
+            });
+            updateMaskCount();
+            document.getElementById('predictions-section').classList.add('hidden');
+        }
+
+        function updateMaskCount() {
+            document.getElementById('mask-count').textContent = app.maskedIndices.size;
+        }
+
+        async function predictMaskedTokens() {
+            if (app.maskedIndices.size === 0) {
+                alert('Please mask at least one word');
+                return;
+            }
+
+            showLoading(true, 'Predicting masked tokens...');
+
+            try {
+                const topK = parseInt(document.getElementById('top-k').value);
+                const minProb = parseFloat(document.getElementById('min-prob').value);
+
+                const results = await app.bert.predictMasked(
+                    app.currentTokens,
+                    Array.from(app.maskedIndices),
+                    topK,
+                    minProb
+                );
+
+                app.currentAttentions = results.attentions;
+                displayPredictions(results.predictions);
+                setupAttentionControls(results.attentions);
+                updateStats(results);
+
+            } catch (error) {
+                console.error('Error predicting:', error);
+                alert('Error: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayPredictions(predictions) {
+            const container = document.getElementById('predictions-container');
+            container.innerHTML = '';
+
+            const showProbs = document.getElementById('show-probabilities').checked;
+            const showPercentages = document.getElementById('show-percentages').checked;
+
+            predictions.forEach((pred, idx) => {
+                const maskIdx = Array.from(app.maskedIndices)[idx];
+                const originalToken = app.currentTokens[maskIdx];
+
+                const predDiv = document.createElement('div');
+                predDiv.className = 'prediction-block';
+                predDiv.innerHTML = `
+                    <h4>Predictions for: <span class="original-token">${originalToken}</span></h4>
+                    <div class="predictions-list"></div>
+                `;
+
+                const list = predDiv.querySelector('.predictions-list');
+
+                pred.forEach((p, i) => {
+                    const item = document.createElement('div');
+                    item.className = 'prediction-item';
+
+                    const probability = showPercentages ? (p.probability * 100).toFixed(1) + '%' : p.probability.toFixed(4);
+                    const barWidth = (p.probability * 100) + '%';
+
+                    item.innerHTML = `
+                        <div class="prediction-rank">${i + 1}</div>
+                        <div class="prediction-word">${p.token}</div>
+                        <div class="prediction-bar-container">
+                            <div class="prediction-bar" style="width: ${barWidth}"></div>
+                        </div>
+                        ${showProbs ? `<div class="prediction-prob">${probability}</div>` : ''}
+                    `;
+
+                    item.addEventListener('click', () => {
+                        replaceToken(maskIdx, p.token);
+                    });
+
+                    list.appendChild(item);
+                });
+
+                container.appendChild(predDiv);
+            });
+
+            document.getElementById('predictions-section').classList.remove('hidden');
+        }
+
+        function replaceToken(index, newToken) {
+            app.currentTokens[index] = newToken;
+            app.maskedIndices.delete(index);
+            displayTokens();
+            updateMaskCount();
+            document.getElementById('predictions-section').classList.add('hidden');
+        }
+
+        function setupAttentionControls(attentions) {
+            if (!attentions) return;
+
+            const layerSelect = document.getElementById('layer-select');
+            const headSelect = document.getElementById('head-select');
+
+            layerSelect.innerHTML = '';
+            headSelect.innerHTML = '';
+
+            const numLayers = attentions.length;
+            const numHeads = attentions[0].length;
+
+            for (let i = 0; i < numLayers; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Layer ${i + 1}`;
+                layerSelect.appendChild(option);
+            }
+
+            for (let i = 0; i < numHeads; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Head ${i + 1}`;
+                headSelect.appendChild(option);
+            }
+
+            document.getElementById('attention-section').classList.remove('hidden');
+        }
+
+        function showAttention() {
+            if (!app.currentAttentions) return;
+
+            const layer = parseInt(document.getElementById('layer-select').value);
+            const head = parseInt(document.getElementById('head-select').value);
+
+            const attentionMatrix = app.currentAttentions[layer][head];
+            app.visualizer.renderAttentionHeatmap(attentionMatrix, app.currentTokens, layer, head);
+        }
+
+        function clearText() {
+            document.getElementById('text-input').value = '';
+            document.getElementById('text-display').innerHTML = '<p class="placeholder">Process text to begin...</p>';
+            app.currentTokens = [];
+            app.maskedIndices.clear();
+            document.getElementById('mask-info').classList.add('hidden');
+            document.getElementById('predictions-section').classList.add('hidden');
+            document.getElementById('attention-section').classList.add('hidden');
+            updateStats();
+        }
+
+        function updateStats(results = null) {
+            document.getElementById('stat-tokens').textContent = app.currentTokens.length;
+            document.getElementById('stat-masked').textContent = app.maskedIndices.size;
+
+            if (results) {
+                const totalPreds = results.predictions.reduce((sum, p) => sum + p.length, 0);
+                document.getElementById('stat-predictions').textContent = totalPreds;
+
+                const avgConf = results.predictions.reduce((sum, preds) =>
+                    sum + (preds[0]?.probability || 0), 0) / results.predictions.length;
+                document.getElementById('stat-confidence').textContent = (avgConf * 100).toFixed(1) + '%';
+            } else {
+                document.getElementById('stat-predictions').textContent = '0';
+                document.getElementById('stat-confidence').textContent = '0%';
+            }
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('model-status');
+            statusEl.textContent = message;
+            statusEl.className = 'status-text status-' + type;
+
+            if (type === 'success') {
+                setTimeout(() => statusEl.textContent = '', 3000);
+            }
+        }
+
+        function showLoading(show, text = 'Processing...') {
+            const loadingEl = document.getElementById('loading');
+            loadingEl.classList.toggle('hidden', !show);
+            if (text) {
+                document.getElementById('loading-text').textContent = text;
+            }
+        }
+
+        window.app = app;
+    </script>
+</body>
+</html>

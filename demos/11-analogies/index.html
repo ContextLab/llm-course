@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Analogy Explorer - Vector Space Visualization</title>
+    <link rel="stylesheet" href="css/analogies.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Word Analogy Explorer</h1>
+            <p class="subtitle">Interactive word embeddings with vector arithmetic and similarity search</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- Left Sidebar: Controls -->
+            <aside class="sidebar">
+                <div class="control-panel">
+                    <h3>Embedding Model</h3>
+
+                    <div class="control-section">
+                        <label for="model-select">Model:</label>
+                        <select id="model-select">
+                            <option value="glove-50" selected>GloVe 50d</option>
+                            <option value="word2vec-100">Word2Vec 100d (sample)</option>
+                            <option value="custom">Custom Embeddings</option>
+                        </select>
+                        <button id="load-model-btn" class="btn btn-primary">Load Model</button>
+                        <div id="model-status" class="status-text"></div>
+                    </div>
+
+                    <div class="model-info">
+                        <div class="info-item">
+                            <span class="label">Vocabulary:</span>
+                            <span class="value" id="vocab-size">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Dimensions:</span>
+                            <span class="value" id="embed-dims">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-panel">
+                    <h3>Analogy Solver</h3>
+
+                    <div class="analogy-input">
+                        <div class="analogy-formula">
+                            <input type="text" id="word-a" placeholder="king" class="analogy-word">
+                            <span class="operator">-</span>
+                            <input type="text" id="word-b" placeholder="man" class="analogy-word">
+                            <span class="operator">+</span>
+                            <input type="text" id="word-c" placeholder="woman" class="analogy-word">
+                            <span class="operator">=</span>
+                            <span class="result" id="analogy-result">?</span>
+                        </div>
+
+                        <button id="solve-analogy-btn" class="btn btn-primary">Solve Analogy</button>
+
+                        <div id="analogy-results" class="analogy-results hidden"></div>
+                    </div>
+
+                    <div class="examples-section">
+                        <h4>Example Analogies</h4>
+                        <div class="examples-list">
+                            <button class="example-btn" data-a="king" data-b="man" data-c="woman">
+                                king - man + woman
+                            </button>
+                            <button class="example-btn" data-a="paris" data-b="france" data-c="germany">
+                                paris - france + germany
+                            </button>
+                            <button class="example-btn" data-a="good" data-b="better" data-c="bad">
+                                good - better + bad
+                            </button>
+                            <button class="example-btn" data-a="walking" data-b="walked" data-c="swimming">
+                                walking - walked + swimming
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-panel">
+                    <h3>Similarity Search</h3>
+
+                    <div class="control-section">
+                        <input type="text" id="search-word" placeholder="Enter a word..." class="search-input">
+                        <button id="search-btn" class="btn btn-primary">Find Similar</button>
+
+                        <label for="num-similar">Number of results:</label>
+                        <input type="range" id="num-similar" min="5" max="20" value="10" step="1">
+                        <span id="num-similar-value">10</span>
+                    </div>
+
+                    <div id="similar-results" class="similar-results hidden"></div>
+                </div>
+
+                <div class="control-panel">
+                    <h3>Visualization</h3>
+
+                    <div class="control-section">
+                        <label for="viz-mode">Mode:</label>
+                        <select id="viz-mode">
+                            <option value="2d" selected>2D (t-SNE)</option>
+                            <option value="3d">3D (t-SNE)</option>
+                            <option value="pca-2d">2D (PCA)</option>
+                            <option value="pca-3d">3D (PCA)</option>
+                        </select>
+
+                        <label for="num-words">Words to display:</label>
+                        <input type="range" id="num-words" min="50" max="500" value="200" step="50">
+                        <span id="num-words-value">200</span>
+
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" id="show-labels" checked>
+                                Show Labels
+                            </label>
+                            <label>
+                                <input type="checkbox" id="highlight-analogy">
+                                Highlight Current Analogy
+                            </label>
+                        </div>
+
+                        <button id="update-viz-btn" class="btn btn-secondary">Update Visualization</button>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h4>How It Works</h4>
+                    <p><strong>Vector Arithmetic:</strong> Word embeddings capture semantic relationships. The classic example: king - man + woman ≈ queen</p>
+                    <p><strong>Similarity:</strong> Cosine similarity measures how close two word vectors are in the embedding space.</p>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Loading Indicator -->
+                <div id="loading" class="loading hidden">
+                    <div class="spinner"></div>
+                    <p id="loading-text">Loading embeddings...</p>
+                </div>
+
+                <!-- Vector Arithmetic Visualization -->
+                <div class="viz-section">
+                    <h2>Vector Arithmetic Visualization</h2>
+                    <p class="subtitle">See how word vectors combine to form new meanings</p>
+                    <div id="vector-plot" class="plot-container"></div>
+                </div>
+
+                <!-- Embedding Space Visualization -->
+                <div class="viz-section">
+                    <h2>Embedding Space</h2>
+                    <p class="subtitle">Interactive visualization of word relationships in reduced dimensional space</p>
+                    <div id="embedding-plot" class="plot-container"></div>
+                </div>
+
+                <!-- Analogy Explanation -->
+                <div id="analogy-explanation" class="explanation-panel hidden">
+                    <h3>Analogy Breakdown</h3>
+                    <div id="explanation-content"></div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="stats-panel">
+                    <h3>Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Loaded Words:</span>
+                            <span class="stat-value" id="stat-words">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Analogies Solved:</span>
+                            <span class="stat-value" id="stat-analogies">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Searches:</span>
+                            <span class="stat-value" id="stat-searches">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Avg. Similarity:</span>
+                            <span class="stat-value" id="stat-similarity">0.0</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/embeddings.js"></script>
+    <script type="module" src="js/visualization.js"></script>
+    <script type="module" src="data/sample-embeddings.js"></script>
+    <script type="module">
+        import { EmbeddingModel } from './js/embeddings.js';
+        import { EmbeddingVisualizer } from './js/visualization.js';
+        import { SAMPLE_EMBEDDINGS } from './data/sample-embeddings.js';
+
+        const app = {
+            model: null,
+            visualizer: null,
+            currentAnalogy: null,
+            stats: {
+                analogies: 0,
+                searches: 0,
+                similarities: []
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            app.visualizer = new EmbeddingVisualizer();
+            setupEventListeners();
+            loadDefaultModel();
+        });
+
+        async function loadDefaultModel() {
+            await loadModel();
+        }
+
+        async function loadModel() {
+            const modelId = document.getElementById('model-select').value;
+            showLoading(true, 'Loading embeddings...');
+
+            try {
+                let embeddings;
+
+                if (modelId === 'glove-50') {
+                    embeddings = SAMPLE_EMBEDDINGS.glove50;
+                } else if (modelId === 'word2vec-100') {
+                    embeddings = SAMPLE_EMBEDDINGS.word2vec100;
+                } else {
+                    alert('Custom embeddings not yet implemented');
+                    return;
+                }
+
+                app.model = new EmbeddingModel(embeddings);
+                await app.model.initialize();
+
+                updateModelInfo();
+                updateStats();
+                updateStatus('Model loaded successfully!', 'success');
+
+                // Initial visualization
+                visualizeEmbeddingSpace();
+
+            } catch (error) {
+                console.error('Error loading model:', error);
+                updateStatus('Error loading model: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function setupEventListeners() {
+            // Model loading
+            document.getElementById('load-model-btn').addEventListener('click', loadModel);
+
+            // Analogy solving
+            document.getElementById('solve-analogy-btn').addEventListener('click', solveAnalogy);
+
+            // Example analogies
+            document.querySelectorAll('.example-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.getElementById('word-a').value = e.target.dataset.a;
+                    document.getElementById('word-b').value = e.target.dataset.b;
+                    document.getElementById('word-c').value = e.target.dataset.c;
+                    solveAnalogy();
+                });
+            });
+
+            // Similarity search
+            document.getElementById('search-btn').addEventListener('click', searchSimilar);
+            document.getElementById('search-word').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchSimilar();
+            });
+
+            // Range sliders
+            setupRangeSlider('num-similar', 'num-similar-value');
+            setupRangeSlider('num-words', 'num-words-value');
+
+            // Visualization
+            document.getElementById('update-viz-btn').addEventListener('click', visualizeEmbeddingSpace);
+            document.getElementById('viz-mode').addEventListener('change', visualizeEmbeddingSpace);
+        }
+
+        function setupRangeSlider(sliderId, valueId) {
+            const slider = document.getElementById(sliderId);
+            const valueDisplay = document.getElementById(valueId);
+            slider.addEventListener('input', (e) => {
+                valueDisplay.textContent = e.target.value;
+            });
+        }
+
+        async function solveAnalogy() {
+            const wordA = document.getElementById('word-a').value.trim().toLowerCase();
+            const wordB = document.getElementById('word-b').value.trim().toLowerCase();
+            const wordC = document.getElementById('word-c').value.trim().toLowerCase();
+
+            if (!wordA || !wordB || !wordC) {
+                alert('Please enter all three words');
+                return;
+            }
+
+            if (!app.model) {
+                alert('Please load a model first');
+                return;
+            }
+
+            showLoading(true, 'Solving analogy...');
+
+            try {
+                const result = app.model.solveAnalogy(wordA, wordB, wordC);
+
+                if (!result) {
+                    alert('One or more words not found in vocabulary');
+                    return;
+                }
+
+                app.currentAnalogy = { wordA, wordB, wordC, result };
+                displayAnalogyResults(result);
+                visualizeVectorArithmetic(wordA, wordB, wordC, result.predictions);
+                showAnalogyExplanation(wordA, wordB, wordC, result);
+
+                app.stats.analogies++;
+                updateStats();
+
+            } catch (error) {
+                console.error('Error solving analogy:', error);
+                alert('Error: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayAnalogyResults(result) {
+            const container = document.getElementById('analogy-results');
+            const topResult = result.predictions[0];
+
+            document.getElementById('analogy-result').textContent = topResult.word;
+
+            container.innerHTML = `
+                <h4>Top Predictions:</h4>
+                <div class="predictions-list">
+                    ${result.predictions.slice(0, 10).map((pred, i) => `
+                        <div class="prediction-item">
+                            <span class="rank">${i + 1}</span>
+                            <span class="word">${pred.word}</span>
+                            <div class="similarity-bar">
+                                <div class="bar-fill" style="width: ${pred.similarity * 100}%"></div>
+                            </div>
+                            <span class="similarity">${pred.similarity.toFixed(4)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            container.classList.remove('hidden');
+        }
+
+        async function visualizeVectorArithmetic(wordA, wordB, wordC, predictions) {
+            const vectors = {
+                [wordA]: app.model.getVector(wordA),
+                [wordB]: app.model.getVector(wordB),
+                [wordC]: app.model.getVector(wordC)
+            };
+
+            // Add top predictions
+            predictions.slice(0, 5).forEach(pred => {
+                vectors[pred.word] = app.model.getVector(pred.word);
+            });
+
+            app.visualizer.renderVectorArithmetic(vectors, wordA, wordB, wordC, predictions[0].word);
+        }
+
+        function showAnalogyExplanation(wordA, wordB, wordC, result) {
+            const panel = document.getElementById('analogy-explanation');
+            const content = document.getElementById('explanation-content');
+
+            const vecA = app.model.getVector(wordA);
+            const vecB = app.model.getVector(wordB);
+            const vecC = app.model.getVector(wordC);
+
+            const resultVec = result.resultVector;
+
+            // Calculate magnitudes
+            const magDiff = app.model.vectorMagnitude(
+                app.model.vectorSubtract(vecA, vecB)
+            );
+            const magResult = app.model.vectorMagnitude(resultVec);
+
+            content.innerHTML = `
+                <div class="explanation-steps">
+                    <div class="step">
+                        <strong>Step 1:</strong> Calculate difference vector
+                        <div class="formula">
+                            vec(<em>${wordA}</em>) - vec(<em>${wordB}</em>) = <span class="vector">difference</span>
+                        </div>
+                        <div class="detail">Magnitude: ${magDiff.toFixed(4)}</div>
+                    </div>
+
+                    <div class="step">
+                        <strong>Step 2:</strong> Add to target word
+                        <div class="formula">
+                            <span class="vector">difference</span> + vec(<em>${wordC}</em>) = <span class="vector">result</span>
+                        </div>
+                        <div class="detail">Magnitude: ${magResult.toFixed(4)}</div>
+                    </div>
+
+                    <div class="step">
+                        <strong>Step 3:</strong> Find nearest neighbors
+                        <div class="formula">
+                            cosine_similarity(<span class="vector">result</span>, all_words)
+                        </div>
+                        <div class="detail">
+                            Best match: <strong>${result.predictions[0].word}</strong>
+                            (similarity: ${result.predictions[0].similarity.toFixed(4)})
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            panel.classList.remove('hidden');
+        }
+
+        async function searchSimilar() {
+            const word = document.getElementById('search-word').value.trim().toLowerCase();
+
+            if (!word) {
+                alert('Please enter a word');
+                return;
+            }
+
+            if (!app.model) {
+                alert('Please load a model first');
+                return;
+            }
+
+            const numResults = parseInt(document.getElementById('num-similar').value);
+
+            try {
+                const similar = app.model.findSimilar(word, numResults + 1);
+
+                if (!similar || similar.length === 0) {
+                    alert('Word not found in vocabulary');
+                    return;
+                }
+
+                // Remove the query word itself from results
+                const results = similar.filter(s => s.word !== word);
+
+                displaySimilarResults(word, results);
+
+                app.stats.searches++;
+                app.stats.similarities.push(...results.map(r => r.similarity));
+                updateStats();
+
+            } catch (error) {
+                console.error('Error searching:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function displaySimilarResults(queryWord, results) {
+            const container = document.getElementById('similar-results');
+
+            container.innerHTML = `
+                <h4>Similar to "${queryWord}":</h4>
+                <div class="similar-list">
+                    ${results.map((item, i) => `
+                        <div class="similar-item">
+                            <span class="rank">${i + 1}</span>
+                            <span class="word">${item.word}</span>
+                            <div class="similarity-bar">
+                                <div class="bar-fill" style="width: ${item.similarity * 100}%"></div>
+                            </div>
+                            <span class="similarity">${item.similarity.toFixed(4)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            container.classList.remove('hidden');
+        }
+
+        async function visualizeEmbeddingSpace() {
+            if (!app.model) {
+                alert('Please load a model first');
+                return;
+            }
+
+            showLoading(true, 'Generating visualization...');
+
+            try {
+                const mode = document.getElementById('viz-mode').value;
+                const numWords = parseInt(document.getElementById('num-words').value);
+                const showLabels = document.getElementById('show-labels').checked;
+
+                await app.visualizer.renderEmbeddingSpace(
+                    app.model,
+                    mode,
+                    numWords,
+                    showLabels
+                );
+
+            } catch (error) {
+                console.error('Error visualizing:', error);
+                alert('Error: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function updateModelInfo() {
+            document.getElementById('vocab-size').textContent = app.model.vocabularySize;
+            document.getElementById('embed-dims').textContent = app.model.dimensions;
+        }
+
+        function updateStats() {
+            document.getElementById('stat-words').textContent = app.model ? app.model.vocabularySize : 0;
+            document.getElementById('stat-analogies').textContent = app.stats.analogies;
+            document.getElementById('stat-searches').textContent = app.stats.searches;
+
+            if (app.stats.similarities.length > 0) {
+                const avg = app.stats.similarities.reduce((a, b) => a + b, 0) / app.stats.similarities.length;
+                document.getElementById('stat-similarity').textContent = avg.toFixed(3);
+            }
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('model-status');
+            statusEl.textContent = message;
+            statusEl.className = 'status-text status-' + type;
+
+            if (type === 'success') {
+                setTimeout(() => statusEl.textContent = '', 3000);
+            }
+        }
+
+        function showLoading(show, text = 'Processing...') {
+            const loadingEl = document.getElementById('loading');
+            loadingEl.classList.toggle('hidden', !show);
+            if (text) {
+                document.getElementById('loading-text').textContent = text;
+            }
+        }
+
+        window.app = app;
+    </script>
+</body>
+</html>

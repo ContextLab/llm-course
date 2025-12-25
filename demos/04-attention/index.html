@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer Attention Visualizer</title>
+    <link rel="stylesheet" href="css/attention.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Transformer Attention Visualizer</h1>
+            <p>Explore how transformer models attend to different tokens</p>
+        </header>
+
+        <div class="controls-panel">
+            <div class="control-group">
+                <label for="model-select">Model:</label>
+                <select id="model-select">
+                    <option value="Xenova/distilbert-base-uncased">DistilBERT (Fast)</option>
+                    <option value="Xenova/bert-base-uncased">BERT Base</option>
+                    <option value="Xenova/gpt2">GPT-2</option>
+                    <option value="Xenova/distilgpt2">DistilGPT-2</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="text-input">Input Text:</label>
+                <textarea id="text-input" rows="3" placeholder="Enter your text here...">The cat sat on the mat and looked at the bird.</textarea>
+            </div>
+
+            <div class="control-group">
+                <button id="analyze-btn" class="primary-btn">
+                    <span class="btn-text">Analyze Attention</span>
+                    <span class="btn-loader" style="display: none;">Loading...</span>
+                </button>
+            </div>
+
+            <div id="model-info" class="model-info" style="display: none;">
+                <div class="info-row">
+                    <span class="info-label">Layers:</span>
+                    <span id="num-layers">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Heads per Layer:</span>
+                    <span id="num-heads">-</span>
+                </div>
+            </div>
+
+            <div id="layer-head-controls" style="display: none;">
+                <div class="control-group">
+                    <label for="layer-select">Layer:</label>
+                    <select id="layer-select"></select>
+                </div>
+
+                <div class="control-group">
+                    <label for="head-select">Head:</label>
+                    <select id="head-select"></select>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="all-heads-check">
+                        Show All Heads
+                    </label>
+                </div>
+
+                <div class="control-group">
+                    <label for="viz-type">Visualization:</label>
+                    <select id="viz-type">
+                        <option value="heatmap">Heatmap</option>
+                        <option value="arc">Arc Diagram</option>
+                        <option value="matrix">Matrix View</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="visualization-container">
+            <div id="loading-state" class="loading-state">
+                <div class="spinner"></div>
+                <p>Select a model and enter text to begin...</p>
+            </div>
+
+            <div id="viz-content" style="display: none;">
+                <div class="viz-header">
+                    <h2 id="viz-title">Attention Visualization</h2>
+                    <div class="viz-stats">
+                        <span id="attention-stats"></span>
+                    </div>
+                </div>
+
+                <div id="tokens-display" class="tokens-display"></div>
+
+                <div id="visualization-area" class="visualization-area">
+                    <!-- Heatmap view -->
+                    <div id="heatmap-view" class="viz-view">
+                        <canvas id="heatmap-canvas"></canvas>
+                        <div id="heatmap-tooltip" class="tooltip"></div>
+                    </div>
+
+                    <!-- Arc diagram view -->
+                    <div id="arc-view" class="viz-view" style="display: none;">
+                        <svg id="arc-svg"></svg>
+                        <div id="arc-tooltip" class="tooltip"></div>
+                    </div>
+
+                    <!-- Matrix view -->
+                    <div id="matrix-view" class="viz-view" style="display: none;">
+                        <div id="matrix-container"></div>
+                        <div id="matrix-tooltip" class="tooltip"></div>
+                    </div>
+                </div>
+
+                <!-- Multi-head comparison -->
+                <div id="multihead-view" style="display: none;">
+                    <h3>Multi-Head Comparison</h3>
+                    <div id="multihead-grid"></div>
+                </div>
+
+                <!-- Color scale legend -->
+                <div class="legend">
+                    <span class="legend-label">Attention Weight:</span>
+                    <div class="color-scale">
+                        <div class="scale-bar"></div>
+                        <div class="scale-labels">
+                            <span>0.0</span>
+                            <span>0.5</span>
+                            <span>1.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3>How to Use</h3>
+            <ol>
+                <li>Select a transformer model from the dropdown</li>
+                <li>Enter or modify the input text</li>
+                <li>Click "Analyze Attention" to process the text</li>
+                <li>Use layer and head selectors to explore different attention patterns</li>
+                <li>Switch between visualization types to see different perspectives</li>
+                <li>Hover over elements to see detailed attention weights</li>
+            </ol>
+
+            <h3>Understanding Attention</h3>
+            <p><strong>Attention weights</strong> show how much each token "pays attention" to other tokens when computing its representation. Higher weights (darker colors, thicker lines) indicate stronger attention.</p>
+
+            <p><strong>Multi-head attention</strong> allows the model to focus on different aspects of the input simultaneously. Each head can learn different patterns.</p>
+
+            <div class="viz-types">
+                <h4>Visualization Types:</h4>
+                <ul>
+                    <li><strong>Heatmap:</strong> Color-coded matrix showing attention from queries (rows) to keys (columns)</li>
+                    <li><strong>Arc Diagram:</strong> Curved lines connecting tokens, with thickness representing attention strength</li>
+                    <li><strong>Matrix View:</strong> Detailed numerical matrix with exact attention values</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/attention-extractor.js"></script>
+    <script type="module" src="js/attention-visualizer.js"></script>
+    <script type="module">
+        import { AttentionExtractor } from './js/attention-extractor.js';
+        import { AttentionVisualizer } from './js/attention-visualizer.js';
+
+        // Initialize
+        const extractor = new AttentionExtractor();
+        const visualizer = new AttentionVisualizer();
+
+        let currentAttentionData = null;
+        let currentTokens = null;
+
+        // UI Elements
+        const modelSelect = document.getElementById('model-select');
+        const textInput = document.getElementById('text-input');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const layerSelect = document.getElementById('layer-select');
+        const headSelect = document.getElementById('head-select');
+        const allHeadsCheck = document.getElementById('all-heads-check');
+        const vizType = document.getElementById('viz-type');
+        const loadingState = document.getElementById('loading-state');
+        const vizContent = document.getElementById('viz-content');
+        const layerHeadControls = document.getElementById('layer-head-controls');
+        const modelInfo = document.getElementById('model-info');
+
+        // Event Listeners
+        analyzeBtn.addEventListener('click', analyzeText);
+        layerSelect.addEventListener('change', updateVisualization);
+        headSelect.addEventListener('change', updateVisualization);
+        allHeadsCheck.addEventListener('change', updateVisualization);
+        vizType.addEventListener('change', updateVisualization);
+
+        async function analyzeText() {
+            const modelName = modelSelect.value;
+            const text = textInput.value.trim();
+
+            if (!text) {
+                alert('Please enter some text to analyze');
+                return;
+            }
+
+            // Update UI
+            analyzeBtn.disabled = true;
+            analyzeBtn.querySelector('.btn-text').style.display = 'none';
+            analyzeBtn.querySelector('.btn-loader').style.display = 'inline';
+            loadingState.querySelector('p').textContent = 'Loading model and analyzing text...';
+            loadingState.style.display = 'flex';
+            vizContent.style.display = 'none';
+
+            try {
+                // Extract attention
+                const result = await extractor.extractAttention(modelName, text);
+                currentAttentionData = result.attentions;
+                currentTokens = result.tokens;
+
+                // Update model info
+                const numLayers = currentAttentionData.length;
+                const numHeads = currentAttentionData[0].length;
+
+                document.getElementById('num-layers').textContent = numLayers;
+                document.getElementById('num-heads').textContent = numHeads;
+                modelInfo.style.display = 'block';
+
+                // Populate layer and head selectors
+                layerSelect.innerHTML = '';
+                headSelect.innerHTML = '';
+
+                for (let i = 0; i < numLayers; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `Layer ${i + 1}`;
+                    layerSelect.appendChild(option);
+                }
+
+                for (let i = 0; i < numHeads; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `Head ${i + 1}`;
+                    headSelect.appendChild(option);
+                }
+
+                // Show controls and visualization
+                layerHeadControls.style.display = 'block';
+                loadingState.style.display = 'none';
+                vizContent.style.display = 'block';
+
+                // Initial visualization
+                updateVisualization();
+
+            } catch (error) {
+                console.error('Error analyzing text:', error);
+                loadingState.querySelector('p').textContent = `Error: ${error.message}`;
+                alert(`Error: ${error.message}`);
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.querySelector('.btn-text').style.display = 'inline';
+                analyzeBtn.querySelector('.btn-loader').style.display = 'none';
+            }
+        }
+
+        function updateVisualization() {
+            if (!currentAttentionData || !currentTokens) return;
+
+            const layer = parseInt(layerSelect.value);
+            const head = parseInt(headSelect.value);
+            const showAllHeads = allHeadsCheck.checked;
+            const vizTypeValue = vizType.value;
+
+            // Update title
+            const titleText = showAllHeads
+                ? `Layer ${layer + 1} - All Heads`
+                : `Layer ${layer + 1} - Head ${head + 1}`;
+            document.getElementById('viz-title').textContent = titleText;
+
+            // Display tokens
+            displayTokens(currentTokens);
+
+            // Hide all views first
+            document.getElementById('heatmap-view').style.display = 'none';
+            document.getElementById('arc-view').style.display = 'none';
+            document.getElementById('matrix-view').style.display = 'none';
+            document.getElementById('multihead-view').style.display = 'none';
+
+            if (showAllHeads) {
+                // Show multi-head comparison
+                document.getElementById('multihead-view').style.display = 'block';
+                visualizer.renderMultiHead(
+                    currentAttentionData[layer],
+                    currentTokens,
+                    document.getElementById('multihead-grid')
+                );
+            } else {
+                // Show single head visualization
+                const attentionMatrix = currentAttentionData[layer][head];
+
+                switch (vizTypeValue) {
+                    case 'heatmap':
+                        document.getElementById('heatmap-view').style.display = 'block';
+                        visualizer.renderHeatmap(
+                            attentionMatrix,
+                            currentTokens,
+                            document.getElementById('heatmap-canvas'),
+                            document.getElementById('heatmap-tooltip')
+                        );
+                        break;
+                    case 'arc':
+                        document.getElementById('arc-view').style.display = 'block';
+                        visualizer.renderArcDiagram(
+                            attentionMatrix,
+                            currentTokens,
+                            document.getElementById('arc-svg'),
+                            document.getElementById('arc-tooltip')
+                        );
+                        break;
+                    case 'matrix':
+                        document.getElementById('matrix-view').style.display = 'block';
+                        visualizer.renderMatrixView(
+                            attentionMatrix,
+                            currentTokens,
+                            document.getElementById('matrix-container'),
+                            document.getElementById('matrix-tooltip')
+                        );
+                        break;
+                }
+            }
+
+            // Update stats
+            updateStats(layer, head, showAllHeads);
+        }
+
+        function displayTokens(tokens) {
+            const tokensDisplay = document.getElementById('tokens-display');
+            tokensDisplay.innerHTML = '<strong>Tokens:</strong> ';
+
+            tokens.forEach((token, idx) => {
+                const span = document.createElement('span');
+                span.className = 'token-badge';
+                span.textContent = token;
+                span.dataset.index = idx;
+                tokensDisplay.appendChild(span);
+            });
+        }
+
+        function updateStats(layer, head, showAllHeads) {
+            if (showAllHeads) {
+                const numHeads = currentAttentionData[layer].length;
+                document.getElementById('attention-stats').textContent =
+                    `Showing all ${numHeads} attention heads for layer ${layer + 1}`;
+            } else {
+                const attentionMatrix = currentAttentionData[layer][head];
+                const maxWeight = Math.max(...attentionMatrix.flat());
+                const minWeight = Math.min(...attentionMatrix.flat());
+                const avgWeight = attentionMatrix.flat().reduce((a, b) => a + b, 0) / attentionMatrix.flat().length;
+
+                document.getElementById('attention-stats').textContent =
+                    `Max: ${maxWeight.toFixed(3)} | Avg: ${avgWeight.toFixed(3)} | Min: ${minWeight.toFixed(3)}`;
+            }
+        }
+    </script>
+</body>
+</html>
