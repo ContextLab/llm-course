@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Search Engine - Compare Search Methods</title>
+    <link rel="stylesheet" href="../shared/css/demo-styles.css">
+    <link rel="stylesheet" href="css/semantic-search.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Semantic Search Engine</h1>
+            <p class="subtitle">Compare semantic, keyword, and hybrid search methods on the same document corpus</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- Search Interface -->
+            <section class="search-section">
+                <div class="search-box">
+                    <input type="text" id="search-query" placeholder="Enter your search query (e.g., 'machine learning applications in healthcare')" />
+                    <button id="search-btn" class="btn btn-primary">Search All Methods</button>
+                </div>
+
+                <div class="search-options">
+                    <div class="option-group">
+                        <label>
+                            <input type="checkbox" id="enable-semantic" checked>
+                            Semantic Search (Embeddings)
+                        </label>
+                        <label>
+                            <input type="checkbox" id="enable-keyword" checked>
+                            Keyword Search (BM25)
+                        </label>
+                        <label>
+                            <input type="checkbox" id="enable-hybrid" checked>
+                            Hybrid Search
+                        </label>
+                    </div>
+
+                    <div class="option-group">
+                        <label for="top-k">Results per method:</label>
+                        <input type="range" id="top-k" min="1" max="20" value="10" step="1">
+                        <span id="top-k-value">10</span>
+                    </div>
+
+                    <div class="option-group">
+                        <label for="hybrid-weight">Hybrid weight (semantic ← → keyword):</label>
+                        <input type="range" id="hybrid-weight" min="0" max="1" value="0.5" step="0.05">
+                        <span id="hybrid-weight-value">0.50</span>
+                    </div>
+                </div>
+
+                <div class="corpus-selector">
+                    <label for="corpus-select">Document Corpus:</label>
+                    <select id="corpus-select">
+                        <option value="research-papers" selected>Research Papers (AI/ML)</option>
+                        <option value="news-articles">News Articles</option>
+                        <option value="product-reviews">Product Reviews</option>
+                        <option value="wikipedia">Wikipedia Samples</option>
+                        <option value="medical">Medical Articles</option>
+                    </select>
+                    <button id="load-corpus-btn" class="btn btn-secondary">Load Corpus</button>
+                    <span id="corpus-status" class="status-text"></span>
+                </div>
+            </section>
+
+            <!-- Results Display -->
+            <section class="results-section">
+                <div id="loading" class="loading hidden">
+                    <div class="spinner"></div>
+                    <p>Processing search...</p>
+                </div>
+
+                <!-- Comparison View -->
+                <div id="comparison-container" class="comparison-container">
+                    <!-- Semantic Results -->
+                    <div class="results-column" id="semantic-results">
+                        <div class="results-header">
+                            <h3>Semantic Search</h3>
+                            <p class="method-description">Uses embeddings and cosine similarity to find semantically related documents</p>
+                            <div class="metrics">
+                                <span class="metric">Time: <strong id="semantic-time">-</strong></span>
+                                <span class="metric">Avg Score: <strong id="semantic-avg">-</strong></span>
+                            </div>
+                        </div>
+                        <div class="results-list" id="semantic-list">
+                            <p class="placeholder">Enter a query to see results</p>
+                        </div>
+                    </div>
+
+                    <!-- Keyword Results -->
+                    <div class="results-column" id="keyword-results">
+                        <div class="results-header">
+                            <h3>Keyword Search (BM25)</h3>
+                            <p class="method-description">Uses term frequency and document frequency for lexical matching</p>
+                            <div class="metrics">
+                                <span class="metric">Time: <strong id="keyword-time">-</strong></span>
+                                <span class="metric">Avg Score: <strong id="keyword-avg">-</strong></span>
+                            </div>
+                        </div>
+                        <div class="results-list" id="keyword-list">
+                            <p class="placeholder">Enter a query to see results</p>
+                        </div>
+                    </div>
+
+                    <!-- Hybrid Results -->
+                    <div class="results-column" id="hybrid-results">
+                        <div class="results-header">
+                            <h3>Hybrid Search</h3>
+                            <p class="method-description">Combines semantic and keyword scores for best of both worlds</p>
+                            <div class="metrics">
+                                <span class="metric">Time: <strong id="hybrid-time">-</strong></span>
+                                <span class="metric">Avg Score: <strong id="hybrid-avg">-</strong></span>
+                            </div>
+                        </div>
+                        <div class="results-list" id="hybrid-list">
+                            <p class="placeholder">Enter a query to see results</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Score Visualization -->
+                <div class="visualization-section">
+                    <h3>Relevance Score Comparison</h3>
+                    <div id="score-plot"></div>
+                </div>
+
+                <!-- Analysis Panel -->
+                <div class="analysis-panel">
+                    <h3>Search Analysis</h3>
+                    <div id="analysis-content">
+                        <div class="analysis-item">
+                            <h4>Overlap Analysis</h4>
+                            <div id="overlap-venn"></div>
+                            <p id="overlap-text">Results overlap will appear here after searching</p>
+                        </div>
+                        <div class="analysis-item">
+                            <h4>Performance Comparison</h4>
+                            <div id="performance-chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Educational Content -->
+            <aside class="info-sidebar">
+                <div class="info-panel">
+                    <h3>ℹ️ About Search Methods</h3>
+
+                    <div class="method-info">
+                        <h4>Semantic Search</h4>
+                        <p><strong>How it works:</strong> Converts both query and documents into high-dimensional embedding vectors. Computes cosine similarity to find semantically related content.</p>
+                        <p><strong>Strengths:</strong></p>
+                        <ul>
+                            <li>Finds conceptually similar documents</li>
+                            <li>Handles synonyms and paraphrasing</li>
+                            <li>Language-aware understanding</li>
+                        </ul>
+                        <p><strong>Weaknesses:</strong></p>
+                        <ul>
+                            <li>Slower (requires embedding generation)</li>
+                            <li>May miss exact keyword matches</li>
+                            <li>Computationally expensive</li>
+                        </ul>
+                    </div>
+
+                    <div class="method-info">
+                        <h4>Keyword Search (BM25)</h4>
+                        <p><strong>How it works:</strong> Uses BM25 (Best Matching 25) algorithm based on term frequency-inverse document frequency (TF-IDF) with saturation.</p>
+                        <p><strong>Strengths:</strong></p>
+                        <ul>
+                            <li>Very fast</li>
+                            <li>Excellent for exact matches</li>
+                            <li>Well-understood algorithm</li>
+                        </ul>
+                        <p><strong>Weaknesses:</strong></p>
+                        <ul>
+                            <li>Purely lexical matching</li>
+                            <li>Misses semantic relationships</li>
+                            <li>Sensitive to exact wording</li>
+                        </ul>
+                    </div>
+
+                    <div class="method-info">
+                        <h4>Hybrid Search</h4>
+                        <p><strong>How it works:</strong> Combines normalized scores from both semantic and keyword search methods using a weighted average.</p>
+                        <p><strong>Formula:</strong></p>
+                        <code>score = α × semantic_score + (1-α) × keyword_score</code>
+                        <p><strong>Benefits:</strong></p>
+                        <ul>
+                            <li>Best of both approaches</li>
+                            <li>Configurable trade-offs</li>
+                            <li>Robust to query types</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h3>💡 Try These Queries</h3>
+                    <div class="example-queries">
+                        <button class="example-query" data-query="applications of neural networks in medicine">Neural networks in medicine</button>
+                        <button class="example-query" data-query="how to train a machine learning model">Training ML models</button>
+                        <button class="example-query" data-query="natural language processing techniques">NLP techniques</button>
+                        <button class="example-query" data-query="deep learning for computer vision">Computer vision with deep learning</button>
+                        <button class="example-query" data-query="reinforcement learning algorithms">RL algorithms</button>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h3>📊 Corpus Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Documents:</span>
+                            <span class="stat-value" id="stat-docs">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Avg Length:</span>
+                            <span class="stat-value" id="stat-length">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Vocabulary Size:</span>
+                            <span class="stat-value" id="stat-vocab">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Embedding Model:</span>
+                            <span class="stat-value" id="stat-model">-</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/bm25.js"></script>
+    <script type="module" src="js/semantic-search.js"></script>
+    <script type="module" src="js/hybrid-search.js"></script>
+    <script type="module" src="js/corpus-loader.js"></script>
+    <script type="module" src="js/search-app.js"></script>
+</body>
+</html>

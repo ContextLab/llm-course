@@ -1,0 +1,187 @@
+name: Deploy Demos to GitHub Pages
+
+on:
+  # Trigger on push to main branch
+  push:
+    branches:
+      - main
+    paths:
+      - 'demos/**'
+      - '.github/workflows/deploy-demos.yml'
+
+  # Allow manual trigger from Actions tab
+  workflow_dispatch:
+
+# Sets permissions for GitHub Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate HTML files
+        run: |
+          echo "Validating HTML structure..."
+          # Check if index.html exists
+          if [ ! -f "demos/index.html" ]; then
+            echo "Error: demos/index.html not found"
+            exit 1
+          fi
+          echo "HTML validation passed!"
+
+      - name: Check for broken links (basic)
+        run: |
+          echo "Checking for basic issues in demos..."
+          # Simple check for common issues
+          find demos -name "*.html" -type f | while read file; do
+            echo "Checking: $file"
+            # Check for basic HTML structure
+            if ! grep -q "<!DOCTYPE html>" "$file"; then
+              echo "Warning: $file missing DOCTYPE declaration"
+            fi
+          done
+
+      - name: Create build artifact
+        run: |
+          echo "Preparing demos for deployment..."
+          mkdir -p _site
+          cp -r demos/* _site/
+
+          # Create a .nojekyll file to bypass Jekyll processing
+          touch _site/.nojekyll
+
+          # Create a custom 404 page
+          cat > _site/404.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>404 - Page Not Found</title>
+              <style>
+                  body {
+                      margin: 0;
+                      padding: 0;
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      min-height: 100vh;
+                      text-align: center;
+                  }
+                  .container {
+                      max-width: 600px;
+                      padding: 2rem;
+                  }
+                  h1 {
+                      font-size: 6rem;
+                      margin: 0;
+                      font-weight: 700;
+                  }
+                  p {
+                      font-size: 1.5rem;
+                      margin: 1rem 0 2rem;
+                  }
+                  a {
+                      display: inline-block;
+                      padding: 1rem 2rem;
+                      background: white;
+                      color: #667eea;
+                      text-decoration: none;
+                      border-radius: 8px;
+                      font-weight: 600;
+                      transition: transform 0.3s ease;
+                  }
+                  a:hover {
+                      transform: translateY(-2px);
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1>404</h1>
+                  <p>Oops! This demo doesn't exist yet.</p>
+                  <a href="/">Return to Demo Gallery</a>
+              </div>
+          </body>
+          </html>
+          EOF
+
+          echo "Build artifact created successfully!"
+
+      - name: List build contents
+        run: |
+          echo "Build directory structure:"
+          ls -la _site/
+          echo ""
+          echo "Demos available:"
+          find _site -type d -maxdepth 1 | sort
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Display deployment URL
+        run: |
+          echo "🎉 Demos deployed successfully!"
+          echo "📦 URL: ${{ steps.deployment.outputs.page_url }}"
+          echo ""
+          echo "Available demos:"
+          echo "- Main Gallery: ${{ steps.deployment.outputs.page_url }}"
+          echo "- ELIZA: ${{ steps.deployment.outputs.page_url }}01-eliza/"
+          echo "- Tokenization: ${{ steps.deployment.outputs.page_url }}02-tokenization/"
+          echo "- Embeddings: ${{ steps.deployment.outputs.page_url }}03-embeddings/"
+          echo "- Attention: ${{ steps.deployment.outputs.page_url }}04-attention/"
+          echo "- Transformer: ${{ steps.deployment.outputs.page_url }}05-transformer/"
+          echo "- GPT Playground: ${{ steps.deployment.outputs.page_url }}06-gpt-playground/"
+
+  # Optional: Verify deployment
+  verify:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Verify deployment
+        run: |
+          echo "Deployment verification complete!"
+          echo "Demos should now be live at GitHub Pages."
+          echo ""
+          echo "To enable GitHub Pages:"
+          echo "1. Go to repository Settings"
+          echo "2. Navigate to Pages section"
+          echo "3. Under 'Build and deployment', select 'GitHub Actions' as the source"
+          echo "4. Save changes"

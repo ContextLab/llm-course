@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Sentiment Analysis Dashboard</title>
+    <link rel="stylesheet" href="css/sentiment.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <header>
+            <h1>Sentiment Analysis Dashboard</h1>
+            <p class="subtitle">Real-time emotion detection with multiple models</p>
+        </header>
+
+        <div class="container">
+            <!-- Input Section -->
+            <div class="card input-section">
+                <h2>Input Text</h2>
+                <div class="input-modes">
+                    <button class="mode-btn active" data-mode="single">Single Text</button>
+                    <button class="mode-btn" data-mode="batch">Batch (CSV)</button>
+                </div>
+
+                <div id="single-mode" class="input-mode">
+                    <textarea id="text-input"
+                              placeholder="Type or paste text here for real-time sentiment analysis...&#10;&#10;Examples:&#10;- I absolutely love this product! It's amazing!&#10;- This is the worst experience I've ever had.&#10;- The weather is okay today."
+                              rows="6"></textarea>
+                    <div class="character-count">
+                        <span id="char-count">0</span> characters
+                    </div>
+                </div>
+
+                <div id="batch-mode" class="input-mode" style="display: none;">
+                    <div class="file-upload-area" id="file-drop-zone">
+                        <input type="file" id="csv-file" accept=".csv,.txt" style="display: none;">
+                        <div class="upload-prompt">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <p>Drop CSV file here or click to upload</p>
+                            <span class="file-info">Expected format: text column with sentences</span>
+                        </div>
+                    </div>
+                    <div id="batch-preview" style="display: none;">
+                        <h3>Preview</h3>
+                        <div id="preview-content"></div>
+                    </div>
+                </div>
+
+                <div class="model-selection">
+                    <label>
+                        <input type="radio" name="model" value="rule-based" checked>
+                        Rule-Based (VADER-like)
+                    </label>
+                    <label>
+                        <input type="radio" name="model" value="transformer">
+                        Transformer (DistilBERT)
+                    </label>
+                    <label>
+                        <input type="checkbox" id="compare-models">
+                        Compare Models
+                    </label>
+                </div>
+
+                <button id="analyze-btn" class="analyze-btn">Analyze Sentiment</button>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-grid">
+                <!-- Sentiment Gauge -->
+                <div class="card gauge-card">
+                    <h2>Overall Sentiment</h2>
+                    <div class="sentiment-gauge" id="sentiment-gauge">
+                        <svg viewBox="0 0 200 120">
+                            <!-- Background arc -->
+                            <path id="gauge-bg" d="M 20 100 A 80 80 0 0 1 180 100"
+                                  fill="none" stroke="#e0e0e0" stroke-width="20"/>
+                            <!-- Colored segments -->
+                            <path id="gauge-negative" d="M 20 100 A 80 80 0 0 1 60 40"
+                                  fill="none" stroke="#ef4444" stroke-width="20"/>
+                            <path id="gauge-neutral" d="M 60 40 A 80 80 0 0 1 140 40"
+                                  fill="none" stroke="#94a3b8" stroke-width="20"/>
+                            <path id="gauge-positive" d="M 140 40 A 80 80 0 0 1 180 100"
+                                  fill="none" stroke="#22c55e" stroke-width="20"/>
+                            <!-- Needle -->
+                            <line id="gauge-needle" x1="100" y1="100" x2="100" y2="30"
+                                  stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="100" cy="100" r="8" fill="#1e293b"/>
+                        </svg>
+                        <div class="gauge-label">
+                            <span id="sentiment-label">Neutral</span>
+                            <span id="confidence-score">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confidence Breakdown -->
+                <div class="card">
+                    <h2>Confidence Breakdown</h2>
+                    <div class="confidence-bars">
+                        <div class="confidence-item">
+                            <div class="confidence-header">
+                                <span class="sentiment-icon positive">😊</span>
+                                <span>Positive</span>
+                                <span id="positive-percent" class="percent">0%</span>
+                            </div>
+                            <div class="bar-container">
+                                <div id="positive-bar" class="bar positive-bar"></div>
+                            </div>
+                        </div>
+                        <div class="confidence-item">
+                            <div class="confidence-header">
+                                <span class="sentiment-icon neutral">😐</span>
+                                <span>Neutral</span>
+                                <span id="neutral-percent" class="percent">0%</span>
+                            </div>
+                            <div class="bar-container">
+                                <div id="neutral-bar" class="bar neutral-bar"></div>
+                            </div>
+                        </div>
+                        <div class="confidence-item">
+                            <div class="confidence-header">
+                                <span class="sentiment-icon negative">😞</span>
+                                <span>Negative</span>
+                                <span id="negative-percent" class="percent">0%</span>
+                            </div>
+                            <div class="bar-container">
+                                <div id="negative-bar" class="bar negative-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Word Contributions -->
+                <div class="card full-width">
+                    <h2>Word-Level Sentiment Contribution</h2>
+                    <div id="word-contribution" class="word-contribution">
+                        <p class="placeholder">Analyze text to see word-level sentiment contributions</p>
+                    </div>
+                    <div class="contribution-legend">
+                        <span><span class="legend-box positive"></span> Positive</span>
+                        <span><span class="legend-box neutral"></span> Neutral</span>
+                        <span><span class="legend-box negative"></span> Negative</span>
+                    </div>
+                </div>
+
+                <!-- Emoji Analysis -->
+                <div class="card">
+                    <h2>Emoji Analysis</h2>
+                    <div id="emoji-analysis" class="emoji-analysis">
+                        <div class="emoji-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Positive Emojis</span>
+                                <span id="positive-emoji-count" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Negative Emojis</span>
+                                <span id="negative-emoji-count" class="stat-value">0</span>
+                            </div>
+                        </div>
+                        <div id="emoji-list" class="emoji-list"></div>
+                    </div>
+                </div>
+
+                <!-- Aspect-Based Sentiment -->
+                <div class="card">
+                    <h2>Detected Aspects</h2>
+                    <div id="aspect-sentiment" class="aspect-sentiment">
+                        <p class="placeholder">Aspect-based sentiment will appear here</p>
+                    </div>
+                </div>
+
+                <!-- Distribution Chart (for batch analysis) -->
+                <div class="card full-width" id="distribution-card" style="display: none;">
+                    <h2>Sentiment Distribution</h2>
+                    <canvas id="distribution-chart"></canvas>
+                </div>
+
+                <!-- Model Comparison -->
+                <div class="card full-width" id="comparison-card" style="display: none;">
+                    <h2>Model Comparison</h2>
+                    <div id="model-comparison" class="model-comparison"></div>
+                </div>
+
+                <!-- Batch Results Table -->
+                <div class="card full-width" id="batch-results-card" style="display: none;">
+                    <h2>Batch Results</h2>
+                    <div class="batch-controls">
+                        <button id="export-results" class="export-btn">Export Results</button>
+                        <div class="filter-controls">
+                            <label>
+                                <input type="checkbox" class="filter-sentiment" value="positive" checked>
+                                Positive
+                            </label>
+                            <label>
+                                <input type="checkbox" class="filter-sentiment" value="neutral" checked>
+                                Neutral
+                            </label>
+                            <label>
+                                <input type="checkbox" class="filter-sentiment" value="negative" checked>
+                                Negative
+                            </label>
+                        </div>
+                    </div>
+                    <div id="batch-results-table" class="batch-results"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay" style="display: none;">
+            <div class="spinner"></div>
+            <p id="loading-message">Loading model...</p>
+        </div>
+    </div>
+
+    <script type="module" src="js/sentiment-analyzer.js"></script>
+    <script src="js/contribution-visualizer.js"></script>
+
+    <script type="module">
+        import { SentimentAnalyzer } from './js/sentiment-analyzer.js';
+
+        const analyzer = new SentimentAnalyzer();
+        let batchData = [];
+        let currentResults = [];
+
+        // UI Elements
+        const textInput = document.getElementById('text-input');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const charCount = document.getElementById('char-count');
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        const fileDropZone = document.getElementById('file-drop-zone');
+        const csvFileInput = document.getElementById('csv-file');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const compareModelsCheckbox = document.getElementById('compare-models');
+
+        // Mode switching
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const mode = btn.dataset.mode;
+
+                document.getElementById('single-mode').style.display =
+                    mode === 'single' ? 'block' : 'none';
+                document.getElementById('batch-mode').style.display =
+                    mode === 'batch' ? 'block' : 'none';
+
+                // Reset results
+                document.getElementById('batch-results-card').style.display = 'none';
+                document.getElementById('distribution-card').style.display = 'none';
+            });
+        });
+
+        // Character count
+        textInput.addEventListener('input', (e) => {
+            charCount.textContent = e.target.value.length;
+        });
+
+        // File upload
+        fileDropZone.addEventListener('click', () => csvFileInput.click());
+
+        fileDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileDropZone.classList.add('dragover');
+        });
+
+        fileDropZone.addEventListener('dragleave', () => {
+            fileDropZone.classList.remove('dragover');
+        });
+
+        fileDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileDropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) handleFile(file);
+        });
+
+        csvFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleFile(file);
+        });
+
+        function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                batchData = parseCSV(content);
+                showBatchPreview(batchData);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(content) {
+            const lines = content.split('\n').filter(line => line.trim());
+            const hasHeader = lines[0].toLowerCase().includes('text') ||
+                            lines[0].toLowerCase().includes('sentence');
+            const dataLines = hasHeader ? lines.slice(1) : lines;
+
+            return dataLines.map(line => {
+                // Simple CSV parsing (handle quotes)
+                const match = line.match(/^"?([^"]*)"?$/);
+                return match ? match[1].trim() : line.trim();
+            }).filter(text => text.length > 0);
+        }
+
+        function showBatchPreview(data) {
+            const preview = document.getElementById('batch-preview');
+            const content = document.getElementById('preview-content');
+
+            preview.style.display = 'block';
+            content.innerHTML = `
+                <p><strong>${data.length}</strong> texts loaded</p>
+                <div class="preview-items">
+                    ${data.slice(0, 5).map((text, i) =>
+                        `<div class="preview-item">${i + 1}. ${text.substring(0, 100)}${text.length > 100 ? '...' : ''}</div>`
+                    ).join('')}
+                    ${data.length > 5 ? `<p class="more-items">... and ${data.length - 5} more</p>` : ''}
+                </div>
+            `;
+        }
+
+        // Analyze button
+        analyzeBtn.addEventListener('click', async () => {
+            const mode = document.querySelector('.mode-btn.active').dataset.mode;
+            const selectedModel = document.querySelector('input[name="model"]:checked').value;
+            const compareModels = compareModelsCheckbox.checked;
+
+            if (mode === 'single') {
+                const text = textInput.value.trim();
+                if (!text) {
+                    alert('Please enter some text to analyze');
+                    return;
+                }
+                await analyzeSingleText(text, selectedModel, compareModels);
+            } else {
+                if (batchData.length === 0) {
+                    alert('Please upload a CSV file first');
+                    return;
+                }
+                await analyzeBatch(batchData, selectedModel);
+            }
+        });
+
+        async function analyzeSingleText(text, model, compare) {
+            showLoading('Analyzing sentiment...');
+
+            try {
+                const result = await analyzer.analyze(text, model);
+                updateUI(result, text);
+
+                if (compare) {
+                    const otherModel = model === 'rule-based' ? 'transformer' : 'rule-based';
+                    showLoading(`Comparing with ${otherModel} model...`);
+                    const otherResult = await analyzer.analyze(text, otherModel);
+                    showModelComparison(result, otherResult, model, otherModel);
+                }
+            } catch (error) {
+                console.error('Analysis error:', error);
+                alert('Error analyzing text: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function analyzeBatch(texts, model) {
+            showLoading(`Analyzing ${texts.length} texts...`);
+            currentResults = [];
+
+            try {
+                for (let i = 0; i < texts.length; i++) {
+                    const result = await analyzer.analyze(texts[i], model);
+                    currentResults.push({ text: texts[i], ...result });
+
+                    if ((i + 1) % 10 === 0) {
+                        showLoading(`Analyzed ${i + 1}/${texts.length} texts...`);
+                    }
+                }
+
+                displayBatchResults(currentResults);
+                displayDistributionChart(currentResults);
+            } catch (error) {
+                console.error('Batch analysis error:', error);
+                alert('Error during batch analysis: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function updateUI(result, text) {
+            // Update gauge
+            updateGauge(result);
+
+            // Update confidence bars
+            updateConfidenceBars(result.scores);
+
+            // Update word contribution
+            updateWordContribution(text, result);
+
+            // Update emoji analysis
+            updateEmojiAnalysis(text, result);
+
+            // Update aspect-based sentiment
+            updateAspectSentiment(text, result);
+
+            // Hide batch-specific elements
+            document.getElementById('batch-results-card').style.display = 'none';
+            document.getElementById('distribution-card').style.display = 'none';
+        }
+
+        function updateGauge(result) {
+            const needle = document.getElementById('gauge-needle');
+            const label = document.getElementById('sentiment-label');
+            const confidenceScore = document.getElementById('confidence-score');
+
+            // Calculate angle based on sentiment (-90 to 90 degrees)
+            let angle;
+            if (result.sentiment === 'positive') {
+                angle = 45; // Right side
+            } else if (result.sentiment === 'negative') {
+                angle = -45; // Left side
+            } else {
+                angle = 0; // Center
+            }
+
+            needle.style.transform = `rotate(${angle}deg)`;
+            needle.style.transformOrigin = '100px 100px';
+
+            label.textContent = result.sentiment.charAt(0).toUpperCase() + result.sentiment.slice(1);
+            label.className = `sentiment-${result.sentiment}`;
+            confidenceScore.textContent = Math.round(result.confidence * 100) + '%';
+        }
+
+        function updateConfidenceBars(scores) {
+            const bars = {
+                positive: document.getElementById('positive-bar'),
+                neutral: document.getElementById('neutral-bar'),
+                negative: document.getElementById('negative-bar')
+            };
+
+            const percents = {
+                positive: document.getElementById('positive-percent'),
+                neutral: document.getElementById('neutral-percent'),
+                negative: document.getElementById('negative-percent')
+            };
+
+            Object.keys(scores).forEach(key => {
+                const value = scores[key] * 100;
+                bars[key].style.width = value + '%';
+                percents[key].textContent = Math.round(value) + '%';
+            });
+        }
+
+        function updateWordContribution(text, result) {
+            const container = document.getElementById('word-contribution');
+            const visualizer = new ContributionVisualizer(container);
+            visualizer.visualize(text, result);
+        }
+
+        function updateEmojiAnalysis(text, result) {
+            const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
+            const emojis = text.match(emojiRegex) || [];
+
+            const positiveEmojis = ['😊', '😀', '😃', '😄', '😁', '🥰', '😍', '🤩', '😘', '👍', '❤️', '💕', '🎉', '✨'];
+            const negativeEmojis = ['😞', '😢', '😭', '😠', '😡', '🤬', '😤', '💔', '👎', '😖', '😣', '😫'];
+
+            const positiveCount = emojis.filter(e => positiveEmojis.includes(e)).length;
+            const negativeCount = emojis.filter(e => negativeEmojis.includes(e)).length;
+
+            document.getElementById('positive-emoji-count').textContent = positiveCount;
+            document.getElementById('negative-emoji-count').textContent = negativeCount;
+
+            const emojiList = document.getElementById('emoji-list');
+            if (emojis.length > 0) {
+                emojiList.innerHTML = emojis.map(emoji => `<span class="emoji-item">${emoji}</span>`).join('');
+            } else {
+                emojiList.innerHTML = '<p class="placeholder">No emojis detected</p>';
+            }
+        }
+
+        function updateAspectSentiment(text, result) {
+            const container = document.getElementById('aspect-sentiment');
+
+            // Simple aspect detection based on common keywords
+            const aspects = {
+                'product': ['product', 'item', 'thing', 'device'],
+                'service': ['service', 'support', 'help', 'staff'],
+                'quality': ['quality', 'build', 'material'],
+                'price': ['price', 'cost', 'expensive', 'cheap', 'value'],
+                'delivery': ['delivery', 'shipping', 'arrival']
+            };
+
+            const lowerText = text.toLowerCase();
+            const detectedAspects = [];
+
+            Object.keys(aspects).forEach(aspect => {
+                const found = aspects[aspect].some(keyword => lowerText.includes(keyword));
+                if (found) {
+                    detectedAspects.push({
+                        aspect: aspect,
+                        sentiment: result.sentiment
+                    });
+                }
+            });
+
+            if (detectedAspects.length > 0) {
+                container.innerHTML = detectedAspects.map(a => `
+                    <div class="aspect-item">
+                        <span class="aspect-name">${a.aspect}</span>
+                        <span class="aspect-sentiment sentiment-${a.sentiment}">${a.sentiment}</span>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p class="placeholder">No specific aspects detected</p>';
+            }
+        }
+
+        function displayBatchResults(results) {
+            const card = document.getElementById('batch-results-card');
+            const table = document.getElementById('batch-results-table');
+
+            card.style.display = 'block';
+
+            table.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Text</th>
+                            <th>Sentiment</th>
+                            <th>Confidence</th>
+                            <th>Pos</th>
+                            <th>Neu</th>
+                            <th>Neg</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${results.map((r, i) => `
+                            <tr class="sentiment-row sentiment-${r.sentiment}">
+                                <td>${i + 1}</td>
+                                <td class="text-cell">${r.text}</td>
+                                <td><span class="sentiment-badge sentiment-${r.sentiment}">${r.sentiment}</span></td>
+                                <td>${Math.round(r.confidence * 100)}%</td>
+                                <td>${Math.round(r.scores.positive * 100)}%</td>
+                                <td>${Math.round(r.scores.neutral * 100)}%</td>
+                                <td>${Math.round(r.scores.negative * 100)}%</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            // Filter functionality
+            const filterCheckboxes = document.querySelectorAll('.filter-sentiment');
+            filterCheckboxes.forEach(cb => {
+                cb.addEventListener('change', filterBatchResults);
+            });
+        }
+
+        function filterBatchResults() {
+            const activeFilters = Array.from(document.querySelectorAll('.filter-sentiment:checked'))
+                .map(cb => cb.value);
+
+            const rows = document.querySelectorAll('.sentiment-row');
+            rows.forEach(row => {
+                const sentiment = row.className.split(' ').find(c => c.startsWith('sentiment-')).replace('sentiment-', '');
+                row.style.display = activeFilters.includes(sentiment) ? '' : 'none';
+            });
+        }
+
+        function displayDistributionChart(results) {
+            const card = document.getElementById('distribution-card');
+            card.style.display = 'block';
+
+            const counts = {
+                positive: results.filter(r => r.sentiment === 'positive').length,
+                neutral: results.filter(r => r.sentiment === 'neutral').length,
+                negative: results.filter(r => r.sentiment === 'negative').length
+            };
+
+            const ctx = document.getElementById('distribution-chart');
+
+            // Destroy existing chart if any
+            if (window.distributionChart) {
+                window.distributionChart.destroy();
+            }
+
+            window.distributionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{
+                        data: [counts.positive, counts.neutral, counts.negative],
+                        backgroundColor: ['#22c55e', '#94a3b8', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function showModelComparison(result1, result2, model1, model2) {
+            const card = document.getElementById('comparison-card');
+            const container = document.getElementById('model-comparison');
+
+            card.style.display = 'block';
+
+            container.innerHTML = `
+                <div class="comparison-grid">
+                    <div class="comparison-model">
+                        <h3>${model1.replace('-', ' ').toUpperCase()}</h3>
+                        <div class="comparison-result">
+                            <div class="sentiment-badge sentiment-${result1.sentiment}">
+                                ${result1.sentiment}
+                            </div>
+                            <div class="confidence-value">${Math.round(result1.confidence * 100)}% confidence</div>
+                            <div class="score-breakdown">
+                                <div>Positive: ${Math.round(result1.scores.positive * 100)}%</div>
+                                <div>Neutral: ${Math.round(result1.scores.neutral * 100)}%</div>
+                                <div>Negative: ${Math.round(result1.scores.negative * 100)}%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="comparison-model">
+                        <h3>${model2.replace('-', ' ').toUpperCase()}</h3>
+                        <div class="comparison-result">
+                            <div class="sentiment-badge sentiment-${result2.sentiment}">
+                                ${result2.sentiment}
+                            </div>
+                            <div class="confidence-value">${Math.round(result2.confidence * 100)}% confidence</div>
+                            <div class="score-breakdown">
+                                <div>Positive: ${Math.round(result2.scores.positive * 100)}%</div>
+                                <div>Neutral: ${Math.round(result2.scores.neutral * 100)}%</div>
+                                <div>Negative: ${Math.round(result2.scores.negative * 100)}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                ${result1.sentiment !== result2.sentiment ?
+                    '<p class="comparison-note">⚠️ Models disagree on sentiment classification</p>' :
+                    '<p class="comparison-note">✓ Models agree on sentiment classification</p>'}
+            `;
+        }
+
+        // Export functionality
+        document.getElementById('export-results').addEventListener('click', () => {
+            if (currentResults.length === 0) return;
+
+            const csv = [
+                ['Text', 'Sentiment', 'Confidence', 'Positive', 'Neutral', 'Negative'],
+                ...currentResults.map(r => [
+                    `"${r.text.replace(/"/g, '""')}"`,
+                    r.sentiment,
+                    r.confidence,
+                    r.scores.positive,
+                    r.scores.neutral,
+                    r.scores.negative
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sentiment-analysis-${Date.now()}.csv`;
+            a.click();
+        });
+
+        function showLoading(message) {
+            loadingOverlay.style.display = 'flex';
+            document.getElementById('loading-message').textContent = message;
+        }
+
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+
+        // Real-time analysis for single text mode
+        let analysisTimeout;
+        textInput.addEventListener('input', () => {
+            clearTimeout(analysisTimeout);
+            const text = textInput.value.trim();
+
+            if (text.length > 10) { // Only analyze if there's meaningful text
+                analysisTimeout = setTimeout(async () => {
+                    const selectedModel = document.querySelector('input[name="model"]:checked').value;
+                    try {
+                        const result = await analyzer.analyze(text, selectedModel);
+                        updateUI(result, text);
+                    } catch (error) {
+                        console.error('Real-time analysis error:', error);
+                    }
+                }, 1000); // Wait 1 second after user stops typing
+            }
+        });
+    </script>
+</body>
+</html>

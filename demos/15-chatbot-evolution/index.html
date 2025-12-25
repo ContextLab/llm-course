@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Evolution Timeline - From ELIZA to GPT</title>
+    <link rel="stylesheet" href="../shared/css/demo-styles.css">
+    <link rel="stylesheet" href="css/chatbot-evolution.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Chatbot Evolution Timeline</h1>
+            <p class="subtitle">Journey through 60 years of conversational AI - from pattern matching to neural language models</p>
+        </header>
+
+        <!-- Timeline Navigator -->
+        <section class="timeline-navigator">
+            <div class="timeline-bar">
+                <div class="era era-1960s" data-era="1960s">
+                    <span class="era-label">1960s<br>Rule-Based</span>
+                </div>
+                <div class="era era-1970s" data-era="1970s">
+                    <span class="era-label">1970s<br>Psychiatry</span>
+                </div>
+                <div class="era era-1990s" data-era="1990s">
+                    <span class="era-label">1990s-2000s<br>AIML</span>
+                </div>
+                <div class="era era-2010s" data-era="2010s">
+                    <span class="era-label">2010s<br>Neural</span>
+                </div>
+                <div class="era era-2020s active" data-era="2020s">
+                    <span class="era-label">2020s<br>Transformers</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="main-layout">
+            <!-- Chatbot Showcase -->
+            <section class="chatbot-showcase">
+                <!-- ELIZA (1960s) -->
+                <div class="chatbot-era" id="era-1960s">
+                    <div class="era-header">
+                        <h2>1966: ELIZA</h2>
+                        <span class="era-badge">Rule-Based Pattern Matching</span>
+                    </div>
+
+                    <div class="chatbot-info">
+                        <div class="info-card">
+                            <h3>About ELIZA</h3>
+                            <p><strong>Creator:</strong> Joseph Weizenbaum (MIT)</p>
+                            <p><strong>Method:</strong> Pattern matching and substitution rules</p>
+                            <p><strong>Innovation:</strong> First chatbot to simulate human conversation</p>
+                            <p><strong>Famous for:</strong> Rogerian psychotherapist simulation</p>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>How It Works</h3>
+                            <ul>
+                                <li>Scans input for keywords and patterns</li>
+                                <li>Applies transformation rules</li>
+                                <li>Reflects statements back as questions</li>
+                                <li>No understanding, pure pattern matching</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="chat-interface">
+                        <div class="chat-messages" id="eliza-messages"></div>
+                        <div class="chat-input-area">
+                            <input type="text" class="chat-input" id="eliza-input" placeholder="Talk to ELIZA...">
+                            <button class="chat-send" onclick="sendMessage('eliza')">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PARRY (1970s) -->
+                <div class="chatbot-era" id="era-1970s">
+                    <div class="era-header">
+                        <h2>1972: PARRY</h2>
+                        <span class="era-badge">State Machine with Emotions</span>
+                    </div>
+
+                    <div class="chatbot-info">
+                        <div class="info-card">
+                            <h3>About PARRY</h3>
+                            <p><strong>Creator:</strong> Kenneth Colby (Stanford)</p>
+                            <p><strong>Method:</strong> State machines with emotional modeling</p>
+                            <p><strong>Innovation:</strong> Simulated paranoid schizophrenia</p>
+                            <p><strong>Famous for:</strong> "Conversation" with ELIZA in 1972</p>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>How It Works</h3>
+                            <ul>
+                                <li>Maintains internal emotional state</li>
+                                <li>Anger, fear, mistrust levels</li>
+                                <li>Responses vary based on emotional state</li>
+                                <li>More complex than ELIZA's reflection</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="chat-interface">
+                        <div class="chat-messages" id="parry-messages"></div>
+                        <div class="chat-input-area">
+                            <input type="text" class="chat-input" id="parry-input" placeholder="Talk to PARRY...">
+                            <button class="chat-send" onclick="sendMessage('parry')">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ALICE (1990s-2000s) -->
+                <div class="chatbot-era" id="era-1990s">
+                    <div class="era-header">
+                        <h2>1995: A.L.I.C.E.</h2>
+                        <span class="era-badge">AIML Pattern Language</span>
+                    </div>
+
+                    <div class="chatbot-info">
+                        <div class="info-card">
+                            <h3>About A.L.I.C.E.</h3>
+                            <p><strong>Creator:</strong> Richard Wallace</p>
+                            <p><strong>Method:</strong> AIML (Artificial Intelligence Markup Language)</p>
+                            <p><strong>Innovation:</strong> Won Loebner Prize 3 times</p>
+                            <p><strong>Famous for:</strong> Large rule database (40,000+ patterns)</p>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>How It Works</h3>
+                            <ul>
+                                <li>XML-based pattern matching language</li>
+                                <li>Recursive pattern matching</li>
+                                <li>Context and topic tracking</li>
+                                <li>Still rule-based but more sophisticated</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="chat-interface">
+                        <div class="chat-messages" id="alice-messages"></div>
+                        <div class="chat-input-area">
+                            <input type="text" class="chat-input" id="alice-input" placeholder="Talk to A.L.I.C.E....">
+                            <button class="chat-send" onclick="sendMessage('alice')">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seq2Seq (2010s) -->
+                <div class="chatbot-era" id="era-2010s">
+                    <div class="era-header">
+                        <h2>2014: Neural Seq2Seq</h2>
+                        <span class="era-badge">Neural Machine Translation</span>
+                    </div>
+
+                    <div class="chatbot-info">
+                        <div class="info-card">
+                            <h3>About Seq2Seq</h3>
+                            <p><strong>Innovation:</strong> First end-to-end neural chatbots</p>
+                            <p><strong>Method:</strong> Encoder-Decoder with RNNs/LSTMs</p>
+                            <p><strong>Breakthrough:</strong> Learns from data, not rules</p>
+                            <p><strong>Famous for:</strong> Neural Conversational Model (Google, 2015)</p>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>How It Works</h3>
+                            <ul>
+                                <li>Encoder reads input sequence</li>
+                                <li>Creates context vector</li>
+                                <li>Decoder generates response</li>
+                                <li>Trained on conversation datasets</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="chat-interface">
+                        <div class="chat-messages" id="seq2seq-messages"></div>
+                        <div class="chat-input-area">
+                            <input type="text" class="chat-input" id="seq2seq-input" placeholder="Talk to Seq2Seq model..." disabled>
+                            <button class="chat-send" disabled>Simulated</button>
+                        </div>
+                        <p class="demo-note">Note: Seq2Seq shown with simulated responses (actual model too large for browser)</p>
+                    </div>
+                </div>
+
+                <!-- GPT/Transformer (2020s) -->
+                <div class="chatbot-era active" id="era-2020s">
+                    <div class="era-header">
+                        <h2>2020s: GPT & Transformers</h2>
+                        <span class="era-badge">Large Language Models</span>
+                    </div>
+
+                    <div class="chatbot-info">
+                        <div class="info-card">
+                            <h3>About Modern LLMs</h3>
+                            <p><strong>Innovation:</strong> Transformer architecture with massive scale</p>
+                            <p><strong>Method:</strong> Self-attention, pre-training, fine-tuning</p>
+                            <p><strong>Breakthrough:</strong> Few-shot learning, reasoning, instruction following</p>
+                            <p><strong>Examples:</strong> GPT-4, Claude, Gemini, LLaMA</p>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>How It Works</h3>
+                            <ul>
+                                <li>Transformer architecture (self-attention)</li>
+                                <li>Pre-trained on massive text corpora</li>
+                                <li>Fine-tuned for conversation</li>
+                                <li>Billions of parameters</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="chat-interface">
+                        <div class="chat-messages" id="gpt-messages"></div>
+                        <div class="chat-input-area">
+                            <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to GPT-style model...">
+                            <button class="chat-send" onclick="sendMessage('gpt')">Send</button>
+                        </div>
+                        <p class="demo-note">Using Xenova/distilgpt2 (lightweight model for demo)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Comparison Panel -->
+                <div class="panel comparison-panel">
+                    <h3>🔄 Compare All Bots</h3>
+                    <p>Send the same prompt to all chatbots simultaneously</p>
+                    <textarea id="compare-prompt" rows="3" placeholder="Enter your prompt...">Hello, how are you today?</textarea>
+                    <button id="compare-btn" class="btn btn-primary">Compare Responses</button>
+                    <div id="comparison-results"></div>
+                </div>
+
+                <!-- Architecture Evolution -->
+                <div class="panel architecture-panel">
+                    <h3>📐 Architecture Evolution</h3>
+                    <div id="architecture-viz"></div>
+                </div>
+
+                <!-- Key Papers -->
+                <div class="panel papers-panel">
+                    <h3>📚 Key Papers</h3>
+                    <div class="papers-list">
+                        <div class="paper-item">
+                            <strong>1966</strong> - ELIZA<br>
+                            <small>Weizenbaum, J. "ELIZA - A Computer Program for the Study of Natural Language Communication"</small>
+                        </div>
+                        <div class="paper-item">
+                            <strong>1972</strong> - PARRY<br>
+                            <small>Colby, K. "Simulating Paranoid Thought in a Computer"</small>
+                        </div>
+                        <div class="paper-item">
+                            <strong>2014</strong> - Seq2Seq<br>
+                            <small>Sutskever et al. "Sequence to Sequence Learning with Neural Networks"</small>
+                        </div>
+                        <div class="paper-item">
+                            <strong>2017</strong> - Transformers<br>
+                            <small>Vaswani et al. "Attention Is All You Need"</small>
+                        </div>
+                        <div class="paper-item">
+                            <strong>2020</strong> - GPT-3<br>
+                            <small>Brown et al. "Language Models are Few-Shot Learners"</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="panel stats-panel">
+                    <h3>📊 Evolution Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">ELIZA (1966)</span>
+                            <span class="stat-value">~200 rules</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">ALICE (1995)</span>
+                            <span class="stat-value">~40K patterns</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Seq2Seq (2014)</span>
+                            <span class="stat-value">~10M params</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">GPT-3 (2020)</span>
+                            <span class="stat-value">175B params</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Info -->
+                <div class="panel info-panel">
+                    <h3>ℹ️ About This Demo</h3>
+                    <p>Explore 60 years of chatbot evolution from simple pattern matching to sophisticated language models.</p>
+                    <p><strong>Interactive Features:</strong></p>
+                    <ul>
+                        <li>Chat with historical implementations</li>
+                        <li>Compare responses side-by-side</li>
+                        <li>Learn about each approach</li>
+                        <li>Understand architectural evolution</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/eliza.js"></script>
+    <script type="module" src="js/parry.js"></script>
+    <script type="module" src="js/alice.js"></script>
+    <script type="module" src="js/seq2seq-sim.js"></script>
+    <script type="module" src="js/gpt-bot.js"></script>
+    <script type="module" src="js/timeline-app.js"></script>
+</body>
+</html>

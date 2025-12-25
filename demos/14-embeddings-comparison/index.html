@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embeddings Comparison Lab - Benchmark Multiple Models</title>
+    <link rel="stylesheet" href="../shared/css/demo-styles.css">
+    <link rel="stylesheet" href="css/embeddings-comparison.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 Embeddings Comparison Lab</h1>
+            <p class="subtitle">Compare and benchmark multiple embedding models across various NLP tasks</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- Model Selection Panel -->
+            <section class="model-selection-section">
+                <h2>Select Models to Compare</h2>
+                <div class="model-grid">
+                    <div class="model-card" data-model="all-MiniLM-L6-v2">
+                        <input type="checkbox" id="model-minilm" checked>
+                        <label for="model-minilm">
+                            <h3>MiniLM-L6-v2</h3>
+                            <div class="model-specs">
+                                <span class="spec">384 dimensions</span>
+                                <span class="spec">Fast</span>
+                                <span class="spec">22M params</span>
+                            </div>
+                            <p class="model-desc">Lightweight and fast, good for most tasks</p>
+                        </label>
+                    </div>
+
+                    <div class="model-card" data-model="all-mpnet-base-v2">
+                        <input type="checkbox" id="model-mpnet" checked>
+                        <label for="model-mpnet">
+                            <h3>MPNet-base-v2</h3>
+                            <div class="model-specs">
+                                <span class="spec">768 dimensions</span>
+                                <span class="spec">Medium</span>
+                                <span class="spec">110M params</span>
+                            </div>
+                            <p class="model-desc">Higher quality, slower inference</p>
+                        </label>
+                    </div>
+
+                    <div class="model-card" data-model="paraphrase-multilingual-MiniLM-L12-v2">
+                        <input type="checkbox" id="model-multilingual">
+                        <label for="model-multilingual">
+                            <h3>Multilingual-MiniLM</h3>
+                            <div class="model-specs">
+                                <span class="spec">384 dimensions</span>
+                                <span class="spec">Medium</span>
+                                <span class="spec">118M params</span>
+                            </div>
+                            <p class="model-desc">Supports 50+ languages</p>
+                        </label>
+                    </div>
+
+                    <div class="model-card" data-model="bge-small-en-v1.5">
+                        <input type="checkbox" id="model-bge">
+                        <label for="model-bge">
+                            <h3>BGE-small-en</h3>
+                            <div class="model-specs">
+                                <span class="spec">384 dimensions</span>
+                                <span class="spec">Fast</span>
+                                <span class="spec">33M params</span>
+                            </div>
+                            <p class="model-desc">SOTA performance on retrieval tasks</p>
+                        </label>
+                    </div>
+                </div>
+
+                <button id="load-models-btn" class="btn btn-primary">Load Selected Models</button>
+                <div id="load-status" class="status-text"></div>
+            </section>
+
+            <!-- Benchmark Tasks -->
+            <section class="tasks-section">
+                <h2>Benchmark Tasks</h2>
+
+                <div class="task-tabs">
+                    <button class="task-tab active" data-task="similarity">Similarity</button>
+                    <button class="task-tab" data-task="analogy">Analogy</button>
+                    <button class="task-tab" data-task="categorization">Categorization</button>
+                    <button class="task-tab" data-task="custom">Custom Test</button>
+                </div>
+
+                <div class="task-content">
+                    <!-- Similarity Task -->
+                    <div id="similarity-task" class="task-panel active">
+                        <h3>Semantic Similarity</h3>
+                        <p>Test how well models capture semantic similarity between sentence pairs.</p>
+
+                        <div class="test-inputs">
+                            <div class="input-group">
+                                <label>Sentence 1:</label>
+                                <textarea id="sim-sent1" rows="2" placeholder="The cat sat on the mat.">A man is eating food.</textarea>
+                            </div>
+                            <div class="input-group">
+                                <label>Sentence 2:</label>
+                                <textarea id="sim-sent2" rows="2" placeholder="A cat is sitting on a rug.">A man is eating a piece of bread.</textarea>
+                            </div>
+                            <button id="run-similarity-btn" class="btn btn-secondary">Run Similarity Test</button>
+                        </div>
+
+                        <div id="similarity-results" class="results-area"></div>
+
+                        <div class="preset-tests">
+                            <h4>Quick Tests:</h4>
+                            <button class="preset-btn" data-preset="high-sim">High Similarity</button>
+                            <button class="preset-btn" data-preset="medium-sim">Medium Similarity</button>
+                            <button class="preset-btn" data-preset="low-sim">Low Similarity</button>
+                        </div>
+                    </div>
+
+                    <!-- Analogy Task -->
+                    <div id="analogy-task" class="task-panel">
+                        <h3>Word Analogies</h3>
+                        <p>Test reasoning: "A is to B as C is to ?"</p>
+
+                        <div class="test-inputs">
+                            <div class="analogy-inputs">
+                                <input type="text" id="analogy-a" placeholder="king" value="king">
+                                <span class="analogy-label">is to</span>
+                                <input type="text" id="analogy-b" placeholder="queen" value="queen">
+                                <span class="analogy-label">as</span>
+                                <input type="text" id="analogy-c" placeholder="man" value="man">
+                                <span class="analogy-label">is to</span>
+                                <input type="text" id="analogy-d" placeholder="?" disabled>
+                            </div>
+                            <button id="run-analogy-btn" class="btn btn-secondary">Solve Analogy</button>
+                        </div>
+
+                        <div id="analogy-results" class="results-area"></div>
+
+                        <div class="preset-tests">
+                            <h4>Classic Analogies:</h4>
+                            <button class="preset-btn" data-preset="royalty">King:Queen::Man:?</button>
+                            <button class="preset-btn" data-preset="capitals">Paris:France::London:?</button>
+                            <button class="preset-btn" data-preset="grammar">Good:Better::Bad:?</button>
+                        </div>
+                    </div>
+
+                    <!-- Categorization Task -->
+                    <div id="categorization-task" class="task-panel">
+                        <h3>Topic Categorization</h3>
+                        <p>Test how well models group similar items.</p>
+
+                        <div class="test-inputs">
+                            <div class="input-group">
+                                <label>Items to categorize (one per line):</label>
+                                <textarea id="cat-items" rows="8" placeholder="Enter items to categorize...">apple
+banana
+carrot
+broccoli
+orange
+spinach
+grape
+kale</textarea>
+                            </div>
+                            <div class="input-group">
+                                <label>Number of categories:</label>
+                                <input type="number" id="cat-num" min="2" max="10" value="2">
+                            </div>
+                            <button id="run-categorization-btn" class="btn btn-secondary">Run Categorization</button>
+                        </div>
+
+                        <div id="categorization-results" class="results-area"></div>
+                    </div>
+
+                    <!-- Custom Test -->
+                    <div id="custom-task" class="task-panel">
+                        <h3>Custom Test</h3>
+                        <p>Create your own benchmark test.</p>
+
+                        <div class="test-inputs">
+                            <div class="input-group">
+                                <label>Test Description:</label>
+                                <input type="text" id="custom-desc" placeholder="What are you testing?">
+                            </div>
+                            <div class="input-group">
+                                <label>Test Sentences (one per line):</label>
+                                <textarea id="custom-sentences" rows="10" placeholder="Enter multiple sentences to compare...">The quick brown fox jumps over the lazy dog.
+A fast auburn fox leaps across an idle canine.
+Python is a programming language.
+The weather is sunny today.</textarea>
+                            </div>
+                            <button id="run-custom-btn" class="btn btn-secondary">Run Custom Test</button>
+                        </div>
+
+                        <div id="custom-results" class="results-area"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Dashboard -->
+            <aside class="results-sidebar">
+                <!-- Leaderboard -->
+                <div class="panel leaderboard-panel">
+                    <h3>📊 Leaderboard</h3>
+                    <div id="leaderboard"></div>
+                </div>
+
+                <!-- Performance Radar Chart -->
+                <div class="panel radar-panel">
+                    <h3>⚡ Performance Overview</h3>
+                    <div id="radar-chart"></div>
+                </div>
+
+                <!-- Speed vs Quality -->
+                <div class="panel tradeoff-panel">
+                    <h3>⚖️ Speed vs Quality</h3>
+                    <div id="tradeoff-chart"></div>
+                </div>
+
+                <!-- Model Info -->
+                <div class="panel info-panel">
+                    <h3>ℹ️ About Embeddings</h3>
+                    <p class="info-text">
+                        <strong>What are embeddings?</strong><br>
+                        Dense vector representations of text that capture semantic meaning.
+                    </p>
+                    <p class="info-text">
+                        <strong>Why compare models?</strong><br>
+                        Different models excel at different tasks. Choose based on your needs:
+                    </p>
+                    <ul class="info-list">
+                        <li><strong>Speed</strong>: Smaller models for real-time apps</li>
+                        <li><strong>Quality</strong>: Larger models for offline processing</li>
+                        <li><strong>Language</strong>: Multilingual for global apps</li>
+                        <li><strong>Domain</strong>: Specialized models for specific fields</li>
+                    </ul>
+                </div>
+
+                <!-- Statistics -->
+                <div class="panel stats-panel">
+                    <h3>📈 Statistics</h3>
+                    <div id="stats-grid" class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Models Loaded:</span>
+                            <span class="stat-value" id="stat-models">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Tests Run:</span>
+                            <span class="stat-value" id="stat-tests">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Avg Speed:</span>
+                            <span class="stat-value" id="stat-speed">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Top Model:</span>
+                            <span class="stat-value" id="stat-top">-</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Loading Modal -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p id="loading-text">Loading models...</p>
+            <div id="loading-progress">
+                <div id="loading-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/embedding-models.js"></script>
+    <script type="module" src="js/benchmark-tasks.js"></script>
+    <script type="module" src="js/visualization.js"></script>
+    <script type="module" src="js/comparison-app.js"></script>
+</body>
+</html>

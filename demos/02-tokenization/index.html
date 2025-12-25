@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Tokenization Visualizer</title>
+    <link rel="stylesheet" href="css/tokenization.css">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interactive Tokenization Visualizer</h1>
+            <p class="subtitle">Explore how different tokenization algorithms break down text</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="comparison">Tokenizer Comparison</button>
+            <button class="tab-button" data-tab="bpe-visualizer">BPE Step-by-Step</button>
+            <button class="tab-button" data-tab="vocab-browser">Vocabulary Browser</button>
+        </div>
+
+        <!-- Tab 1: Tokenizer Comparison -->
+        <div id="comparison" class="tab-content active">
+            <div class="input-section">
+                <label for="text-input">Enter text to tokenize:</label>
+                <textarea id="text-input" rows="4" placeholder="Type or paste text here to see how different tokenizers process it...">The quick brown fox jumps over the lazy dog. Tokenization is fundamental to NLP!</textarea>
+                <div class="controls">
+                    <button id="tokenize-btn" class="primary-btn">Tokenize</button>
+                    <button id="clear-btn" class="secondary-btn">Clear</button>
+                    <div class="loading-indicator" id="loading">
+                        <span class="spinner"></span> Loading tokenizers...
+                    </div>
+                </div>
+            </div>
+
+            <div class="tokenizer-grid">
+                <!-- GPT-2 (BPE) -->
+                <div class="tokenizer-card">
+                    <div class="tokenizer-header">
+                        <h3>GPT-2 (BPE)</h3>
+                        <span class="model-tag">OpenAI</span>
+                    </div>
+                    <div class="tokenizer-info">
+                        <span class="info-item">Vocab: 50,257</span>
+                        <span class="info-item" id="gpt2-token-count">Tokens: -</span>
+                        <span class="info-item" id="gpt2-ratio">Ratio: -</span>
+                    </div>
+                    <div id="gpt2-output" class="token-output"></div>
+                    <div class="token-ids">
+                        <details>
+                            <summary>Token IDs</summary>
+                            <div id="gpt2-ids" class="ids-content"></div>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- BERT (WordPiece) -->
+                <div class="tokenizer-card">
+                    <div class="tokenizer-header">
+                        <h3>BERT (WordPiece)</h3>
+                        <span class="model-tag">Google</span>
+                    </div>
+                    <div class="tokenizer-info">
+                        <span class="info-item">Vocab: 30,522</span>
+                        <span class="info-item" id="bert-token-count">Tokens: -</span>
+                        <span class="info-item" id="bert-ratio">Ratio: -</span>
+                    </div>
+                    <div id="bert-output" class="token-output"></div>
+                    <div class="token-ids">
+                        <details>
+                            <summary>Token IDs</summary>
+                            <div id="bert-ids" class="ids-content"></div>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- T5 (SentencePiece) -->
+                <div class="tokenizer-card">
+                    <div class="tokenizer-header">
+                        <h3>T5 (SentencePiece)</h3>
+                        <span class="model-tag">Google</span>
+                    </div>
+                    <div class="tokenizer-info">
+                        <span class="info-item">Vocab: 32,128</span>
+                        <span class="info-item" id="t5-token-count">Tokens: -</span>
+                        <span class="info-item" id="t5-ratio">Ratio: -</span>
+                    </div>
+                    <div id="t5-output" class="token-output"></div>
+                    <div class="token-ids">
+                        <details>
+                            <summary>Token IDs</summary>
+                            <div id="t5-ids" class="ids-content"></div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <h3>Comparison Statistics</h3>
+                <div id="stats-chart" class="chart-container"></div>
+                <canvas id="comparison-chart" width="800" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Tab 2: BPE Step-by-Step Visualizer -->
+        <div id="bpe-visualizer" class="tab-content">
+            <div class="input-section">
+                <label for="bpe-input">Enter text for BPE visualization:</label>
+                <textarea id="bpe-input" rows="3" placeholder="Enter text to see BPE algorithm step-by-step...">hello world</textarea>
+                <div class="controls">
+                    <button id="bpe-start-btn" class="primary-btn">Start BPE Visualization</button>
+                    <button id="bpe-step-btn" class="secondary-btn" disabled>Next Step</button>
+                    <button id="bpe-auto-btn" class="secondary-btn" disabled>Auto Play</button>
+                    <button id="bpe-reset-btn" class="secondary-btn">Reset</button>
+                </div>
+            </div>
+
+            <div class="bpe-container">
+                <div class="bpe-explanation">
+                    <h3>BPE Algorithm Steps</h3>
+                    <div id="bpe-step-info" class="step-info">
+                        <p>Click "Start BPE Visualization" to begin</p>
+                    </div>
+                    <div id="bpe-merge-history" class="merge-history">
+                        <h4>Merge History</h4>
+                        <ul id="merge-list"></ul>
+                    </div>
+                </div>
+
+                <div class="bpe-visualization">
+                    <h3>Current State</h3>
+                    <div id="bpe-current-state" class="current-state">
+                        <p class="placeholder">Visualization will appear here</p>
+                    </div>
+
+                    <div class="bpe-stats">
+                        <div class="stat-box">
+                            <span class="stat-label">Current Step:</span>
+                            <span id="bpe-current-step" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Token Count:</span>
+                            <span id="bpe-token-count" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Pairs Found:</span>
+                            <span id="bpe-pairs-count" class="stat-value">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bpe-tree-section">
+                <h3>BPE Merge Tree</h3>
+                <div id="bpe-tree" class="tree-container"></div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Vocabulary Browser -->
+        <div id="vocab-browser" class="tab-content">
+            <div class="vocab-controls">
+                <label for="vocab-tokenizer">Select Tokenizer:</label>
+                <select id="vocab-tokenizer">
+                    <option value="gpt2">GPT-2 (BPE)</option>
+                    <option value="bert">BERT (WordPiece)</option>
+                    <option value="t5">T5 (SentencePiece)</option>
+                </select>
+
+                <label for="vocab-search">Search Vocabulary:</label>
+                <input type="text" id="vocab-search" placeholder="Search tokens...">
+
+                <label for="vocab-filter">Filter by:</label>
+                <select id="vocab-filter">
+                    <option value="all">All Tokens</option>
+                    <option value="letters">Letters Only</option>
+                    <option value="subwords">Subwords</option>
+                    <option value="special">Special Tokens</option>
+                </select>
+            </div>
+
+            <div class="vocab-stats">
+                <div class="stat-card">
+                    <h4>Vocabulary Size</h4>
+                    <p id="vocab-size" class="big-number">-</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Special Tokens</h4>
+                    <p id="special-tokens-count" class="big-number">-</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Subword Tokens</h4>
+                    <p id="subword-tokens-count" class="big-number">-</p>
+                </div>
+            </div>
+
+            <div class="vocab-table-container">
+                <table class="vocab-table">
+                    <thead>
+                        <tr>
+                            <th>Token ID</th>
+                            <th>Token</th>
+                            <th>Type</th>
+                            <th>Length</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vocab-table-body">
+                        <tr><td colspan="4" class="loading">Loading vocabulary...</td></tr>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <button id="vocab-prev" class="secondary-btn" disabled>Previous</button>
+                    <span id="vocab-page-info">Page 1</span>
+                    <button id="vocab-next" class="secondary-btn">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/tokenizer-comparison.js"></script>
+    <script type="module" src="js/bpe-visualizer.js"></script>
+</body>
+</html>

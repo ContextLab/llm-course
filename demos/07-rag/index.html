@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG System Demo - Interactive Retrieval Augmented Generation</title>
+    <link rel="stylesheet" href="css/rag.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Retrieval Augmented Generation (RAG) System</h1>
+            <p>Interactive demonstration of document retrieval and context-aware generation</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Initialization Section -->
+        <div class="card" id="init-section">
+            <h2>1. Initialize RAG Pipeline</h2>
+            <p>Load the embedding model, retriever, and generator to begin.</p>
+            <button id="init-btn" class="btn btn-primary">
+                <span>Initialize System</span>
+            </button>
+            <div id="init-progress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="init-progress-fill" style="width: 0%">0%</div>
+                </div>
+                <p id="init-status" class="status status-info">Initializing...</p>
+            </div>
+        </div>
+
+        <!-- Document Management Section -->
+        <div class="card" id="document-section" style="display: none;">
+            <h2>2. Document Management</h2>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="sample-docs">Sample Documents</button>
+                <button class="tab" data-tab="custom-docs">Upload Custom</button>
+            </div>
+
+            <div class="tab-content active" id="sample-docs">
+                <p>Using 8 pre-loaded sample documents about LLMs, RAG, and related topics.</p>
+                <div id="document-list" class="document-list"></div>
+            </div>
+
+            <div class="tab-content" id="custom-docs">
+                <div class="file-upload" id="file-upload-area">
+                    <input type="file" id="file-input" accept=".txt,.json" multiple>
+                    <p>Click to upload text or JSON files</p>
+                    <p style="font-size: 0.9em; color: var(--text-secondary);">Or use the pre-loaded sample documents</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chunking Section -->
+        <div class="card" id="chunking-section" style="display: none;">
+            <h2>3. Document Chunking & Indexing</h2>
+
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label for="chunk-strategy">Chunking Strategy</label>
+                    <select id="chunk-strategy">
+                        <option value="fixed">Fixed Size (with overlap)</option>
+                        <option value="sentence">Sentence-based</option>
+                        <option value="paragraph">Paragraph-based</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="chunk-size-group">
+                    <label for="chunk-size">Chunk Size (words)</label>
+                    <input type="number" id="chunk-size" value="200" min="50" max="500">
+                </div>
+
+                <div class="form-group" id="overlap-group">
+                    <label for="overlap">Overlap (words)</label>
+                    <input type="number" id="overlap" value="50" min="0" max="200">
+                </div>
+            </div>
+
+            <button id="process-btn" class="btn btn-primary">
+                <span>Chunk & Index Documents</span>
+            </button>
+
+            <div id="processing-progress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="processing-progress-fill" style="width: 0%">0%</div>
+                </div>
+                <p id="processing-status"></p>
+            </div>
+
+            <div id="chunking-stats" style="display: none;">
+                <h3>Chunking Statistics</h3>
+                <div class="stats-grid" id="stats-container"></div>
+            </div>
+        </div>
+
+        <!-- Visualization Section -->
+        <div class="card" id="visualization-section" style="display: none;">
+            <h2>4. Embedding Visualization</h2>
+            <p>Visualize document chunks in vector space (dimensionality reduced to 2D/3D)</p>
+
+            <div class="viz-controls">
+                <button class="btn btn-secondary" id="viz-2d-btn">2D View</button>
+                <button class="btn btn-secondary" id="viz-3d-btn">3D View</button>
+                <button class="btn btn-success" id="refresh-viz-btn">Refresh Visualization</button>
+            </div>
+
+            <div class="visualization-container">
+                <div id="embedding-canvas"></div>
+            </div>
+        </div>
+
+        <!-- Query Section -->
+        <div class="card" id="query-section" style="display: none;">
+            <h2>5. Query & Retrieval</h2>
+
+            <div class="form-group">
+                <label for="query-input">Enter your question</label>
+                <textarea id="query-input" placeholder="e.g., What is retrieval augmented generation?"></textarea>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label for="top-k">Number of documents to retrieve (Top K)</label>
+                    <input type="number" id="top-k" value="3" min="1" max="10">
+                </div>
+
+                <div class="form-group">
+                    <label>Mode</label>
+                    <div style="display: flex; gap: 12px; margin-top: 8px;">
+                        <button id="query-with-rag-btn" class="btn btn-success">Query with RAG</button>
+                        <button id="query-without-rag-btn" class="btn btn-warning">Query without RAG</button>
+                        <button id="compare-btn" class="btn btn-primary">Compare Both</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="query-progress" style="display: none;">
+                <div class="spinner"></div>
+                <p style="text-align: center;">Processing query...</p>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="card" id="results-section" style="display: none;">
+            <h2>6. Results</h2>
+
+            <div id="single-result" style="display: none;">
+                <!-- Retrieved Chunks -->
+                <div id="retrieved-chunks-section" style="display: none;">
+                    <h3>Retrieved Documents</h3>
+                    <div id="retrieved-chunks" class="chunk-list"></div>
+                </div>
+
+                <!-- Answer -->
+                <div class="answer-box">
+                    <h4>Generated Answer</h4>
+                    <div id="answer-text" class="answer-text"></div>
+                </div>
+
+                <!-- Timing Information -->
+                <div class="timing-info" id="timing-info">
+                    <div class="timing-item">
+                        <div class="timing-value" id="retrieval-time">-</div>
+                        <div class="timing-label">Retrieval Time (ms)</div>
+                    </div>
+                    <div class="timing-item">
+                        <div class="timing-value" id="generation-time">-</div>
+                        <div class="timing-label">Generation Time (ms)</div>
+                    </div>
+                    <div class="timing-item">
+                        <div class="timing-value" id="total-time">-</div>
+                        <div class="timing-label">Total Time (ms)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="comparison-result" style="display: none;">
+                <div class="comparison-grid">
+                    <!-- With RAG -->
+                    <div class="comparison-item with-rag">
+                        <h3><span class="badge badge-success">WITH RAG</span></h3>
+
+                        <div style="margin: 16px 0;">
+                            <strong>Retrieved Documents:</strong>
+                            <div id="comparison-rag-chunks" class="chunk-list" style="max-height: 300px;"></div>
+                        </div>
+
+                        <div class="answer-box">
+                            <h4>Answer</h4>
+                            <div id="comparison-rag-answer" class="answer-text"></div>
+                        </div>
+
+                        <div class="timing-info">
+                            <div class="timing-item">
+                                <div class="timing-value" id="comparison-rag-retrieval">-</div>
+                                <div class="timing-label">Retrieval (ms)</div>
+                            </div>
+                            <div class="timing-item">
+                                <div class="timing-value" id="comparison-rag-generation">-</div>
+                                <div class="timing-label">Generation (ms)</div>
+                            </div>
+                            <div class="timing-item">
+                                <div class="timing-value" id="comparison-rag-total">-</div>
+                                <div class="timing-label">Total (ms)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Without RAG -->
+                    <div class="comparison-item without-rag">
+                        <h3><span class="badge badge-warning">WITHOUT RAG</span></h3>
+
+                        <div style="margin: 16px 0;">
+                            <p class="status status-warning">No context retrieval - answering from model knowledge only</p>
+                        </div>
+
+                        <div class="answer-box">
+                            <h4>Answer</h4>
+                            <div id="comparison-no-rag-answer" class="answer-text"></div>
+                        </div>
+
+                        <div class="timing-info">
+                            <div class="timing-item">
+                                <div class="timing-value">0</div>
+                                <div class="timing-label">Retrieval (ms)</div>
+                            </div>
+                            <div class="timing-item">
+                                <div class="timing-value" id="comparison-no-rag-generation">-</div>
+                                <div class="timing-label">Generation (ms)</div>
+                            </div>
+                            <div class="timing-item">
+                                <div class="timing-value" id="comparison-no-rag-total">-</div>
+                                <div class="timing-label">Total (ms)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="status status-info" style="margin-top: 20px;">
+                    <strong>Note:</strong> Compare the quality and factual accuracy of both answers. RAG typically provides more accurate, grounded responses with specific information from the retrieved documents.
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample Queries -->
+        <div class="card" id="sample-queries-section" style="display: none;">
+            <h3>Sample Queries to Try</h3>
+            <div class="grid grid-2">
+                <button class="btn btn-secondary sample-query-btn" data-query="What is retrieval augmented generation?">
+                    What is retrieval augmented generation?
+                </button>
+                <button class="btn btn-secondary sample-query-btn" data-query="Explain the transformer architecture">
+                    Explain the transformer architecture
+                </button>
+                <button class="btn btn-secondary sample-query-btn" data-query="What are vector embeddings?">
+                    What are vector embeddings?
+                </button>
+                <button class="btn btn-secondary sample-query-btn" data-query="How do you evaluate RAG systems?">
+                    How do you evaluate RAG systems?
+                </button>
+                <button class="btn btn-secondary sample-query-btn" data-query="What are text chunking strategies?">
+                    What are text chunking strategies?
+                </button>
+                <button class="btn btn-secondary sample-query-btn" data-query="What are advanced RAG techniques?">
+                    What are advanced RAG techniques?
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/vector-store.js"></script>
+    <script src="js/retriever.js"></script>
+    <script src="js/rag-pipeline.js"></script>
+
+    <!-- Main Application Script -->
+    <script>
+        let ragPipeline = null;
+        let currentView = '2d';
+
+        // Initialize application
+        document.getElementById('init-btn').addEventListener('click', async () => {
+            const initBtn = document.getElementById('init-btn');
+            const initProgress = document.getElementById('init-progress');
+            const initStatus = document.getElementById('init-status');
+            const initFill = document.getElementById('init-progress-fill');
+
+            initBtn.disabled = true;
+            initProgress.style.display = 'block';
+
+            try {
+                ragPipeline = new RAGPipeline();
+
+                await ragPipeline.initialize((message, progress) => {
+                    initStatus.textContent = message;
+                    initFill.style.width = progress + '%';
+                    initFill.textContent = Math.round(progress) + '%';
+                });
+
+                initStatus.className = 'status status-success';
+                initStatus.textContent = 'RAG Pipeline initialized successfully!';
+
+                // Show next sections
+                setTimeout(() => {
+                    document.getElementById('document-section').style.display = 'block';
+                    document.getElementById('chunking-section').style.display = 'block';
+                    displayDocuments();
+                }, 500);
+            } catch (error) {
+                initStatus.className = 'status status-error';
+                initStatus.textContent = 'Error initializing: ' + error.message;
+                initBtn.disabled = false;
+            }
+        });
+
+        // Display loaded documents
+        function displayDocuments() {
+            const docList = document.getElementById('document-list');
+            const docs = ragPipeline.documents;
+
+            docList.innerHTML = docs.map(doc => `
+                <div class="document-item">
+                    <div class="document-title">${doc.title}</div>
+                    <div class="document-meta">
+                        <span class="badge badge-primary">${doc.metadata.category}</span>
+                        <span>Author: ${doc.metadata.author}</span>
+                        <span>Date: ${doc.metadata.date}</span>
+                    </div>
+                    <div class="document-preview">${doc.content}</div>
+                </div>
+            `).join('');
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+
+                // Update active tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Update active content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Update form visibility based on chunking strategy
+        document.getElementById('chunk-strategy').addEventListener('change', (e) => {
+            const strategy = e.target.value;
+            const chunkSizeGroup = document.getElementById('chunk-size-group');
+            const overlapGroup = document.getElementById('overlap-group');
+
+            if (strategy === 'fixed') {
+                chunkSizeGroup.style.display = 'block';
+                overlapGroup.style.display = 'block';
+            } else if (strategy === 'sentence') {
+                chunkSizeGroup.style.display = 'block';
+                chunkSizeGroup.querySelector('label').textContent = 'Sentences per chunk';
+                document.getElementById('chunk-size').value = 5;
+                overlapGroup.style.display = 'none';
+            } else {
+                chunkSizeGroup.style.display = 'none';
+                overlapGroup.style.display = 'none';
+            }
+        });
+
+        // Process documents
+        document.getElementById('process-btn').addEventListener('click', async () => {
+            const processBtn = document.getElementById('process-btn');
+            const progressDiv = document.getElementById('processing-progress');
+            const progressFill = document.getElementById('processing-progress-fill');
+            const statusText = document.getElementById('processing-status');
+            const statsDiv = document.getElementById('chunking-stats');
+
+            const strategy = document.getElementById('chunk-strategy').value;
+            const chunkSize = parseInt(document.getElementById('chunk-size').value);
+            const overlap = parseInt(document.getElementById('overlap').value);
+
+            processBtn.disabled = true;
+            progressDiv.style.display = 'block';
+            statsDiv.style.display = 'none';
+
+            try {
+                const stats = await ragPipeline.processDocuments(
+                    strategy,
+                    chunkSize,
+                    overlap,
+                    (message, current, total) => {
+                        statusText.textContent = message;
+                        const progress = total > 0 ? (current / total * 100) : 0;
+                        progressFill.style.width = progress + '%';
+                        progressFill.textContent = Math.round(progress) + '%';
+                    }
+                );
+
+                // Display statistics
+                displayChunkingStats(stats);
+                statsDiv.style.display = 'block';
+
+                // Show next sections
+                document.getElementById('visualization-section').style.display = 'block';
+                document.getElementById('query-section').style.display = 'block';
+                document.getElementById('sample-queries-section').style.display = 'block';
+
+                processBtn.disabled = false;
+                progressDiv.style.display = 'none';
+            } catch (error) {
+                statusText.textContent = 'Error: ' + error.message;
+                statusText.className = 'status status-error';
+                processBtn.disabled = false;
+            }
+        });
+
+        // Display chunking statistics
+        function displayChunkingStats(stats) {
+            const container = document.getElementById('stats-container');
+
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.totalChunks}</div>
+                    <div class="stat-label">Total Chunks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.totalDocuments}</div>
+                    <div class="stat-label">Documents</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.avgChunkLength}</div>
+                    <div class="stat-label">Avg Words/Chunk</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.minChunkLength}-${stats.maxChunkLength}</div>
+                    <div class="stat-label">Min-Max Words</div>
+                </div>
+            `;
+        }
+
+        // Visualization
+        async function visualizeEmbeddings(dimensions = '2d', query = null) {
+            const data = await ragPipeline.getEmbeddingsForVisualization(query);
+
+            const embeddings = dimensions === '2d' ? data.embeddings2D : data.embeddings3D;
+            const queryPoint = dimensions === '2d' ? data.queryPoint2D : data.queryPoint3D;
+
+            // Prepare trace for chunks
+            const trace = {
+                type: dimensions === '2d' ? 'scatter' : 'scatter3d',
+                mode: 'markers',
+                name: 'Document Chunks',
+                text: data.chunks.map(chunk => chunk.documentTitle + '<br>' + chunk.text.substring(0, 100) + '...'),
+                hovertemplate: '<b>%{text}</b><extra></extra>',
+                marker: {
+                    size: 8,
+                    color: data.chunks.map(chunk => chunk.documentId.charCodeAt(3)),
+                    colorscale: 'Viridis',
+                    showscale: true,
+                    colorbar: {
+                        title: 'Document'
+                    }
+                }
+            };
+
+            if (dimensions === '2d') {
+                trace.x = embeddings.map(e => e[0]);
+                trace.y = embeddings.map(e => e[1]);
+            } else {
+                trace.x = embeddings.map(e => e[0]);
+                trace.y = embeddings.map(e => e[1]);
+                trace.z = embeddings.map(e => e[2]);
+            }
+
+            const traces = [trace];
+
+            // Add query point if provided
+            if (queryPoint) {
+                const queryTrace = {
+                    type: dimensions === '2d' ? 'scatter' : 'scatter3d',
+                    mode: 'markers',
+                    name: 'Query',
+                    text: ['Your Query'],
+                    marker: {
+                        size: 15,
+                        color: 'red',
+                        symbol: 'star'
+                    }
+                };
+
+                if (dimensions === '2d') {
+                    queryTrace.x = [queryPoint[0]];
+                    queryTrace.y = [queryPoint[1]];
+                } else {
+                    queryTrace.x = [queryPoint[0]];
+                    queryTrace.y = [queryPoint[1]];
+                    queryTrace.z = [queryPoint[2]];
+                }
+
+                traces.push(queryTrace);
+            }
+
+            const layout = {
+                title: `Document Embeddings in ${dimensions.toUpperCase()} Space`,
+                height: 480,
+                margin: { t: 40, b: 40, l: 40, r: 40 },
+                hovermode: 'closest'
+            };
+
+            if (dimensions === '3d') {
+                layout.scene = {
+                    xaxis: { title: 'Dimension 1' },
+                    yaxis: { title: 'Dimension 2' },
+                    zaxis: { title: 'Dimension 3' }
+                };
+            } else {
+                layout.xaxis = { title: 'Dimension 1' };
+                layout.yaxis = { title: 'Dimension 2' };
+            }
+
+            Plotly.newPlot('embedding-canvas', traces, layout);
+        }
+
+        // Visualization controls
+        document.getElementById('viz-2d-btn').addEventListener('click', () => {
+            currentView = '2d';
+            visualizeEmbeddings('2d');
+        });
+
+        document.getElementById('viz-3d-btn').addEventListener('click', () => {
+            currentView = '3d';
+            visualizeEmbeddings('3d');
+        });
+
+        document.getElementById('refresh-viz-btn').addEventListener('click', () => {
+            const query = document.getElementById('query-input').value.trim();
+            visualizeEmbeddings(currentView, query || null);
+        });
+
+        // Query handlers
+        document.getElementById('query-with-rag-btn').addEventListener('click', () => {
+            executeQuery(true);
+        });
+
+        document.getElementById('query-without-rag-btn').addEventListener('click', () => {
+            executeQuery(false);
+        });
+
+        document.getElementById('compare-btn').addEventListener('click', () => {
+            compareQuery();
+        });
+
+        // Execute single query
+        async function executeQuery(useRAG) {
+            const query = document.getElementById('query-input').value.trim();
+            if (!query) {
+                alert('Please enter a question');
+                return;
+            }
+
+            const topK = parseInt(document.getElementById('top-k').value);
+            const progressDiv = document.getElementById('query-progress');
+            const resultsSection = document.getElementById('results-section');
+            const singleResult = document.getElementById('single-result');
+            const comparisonResult = document.getElementById('comparison-result');
+
+            progressDiv.style.display = 'block';
+            resultsSection.style.display = 'none';
+
+            try {
+                const result = await ragPipeline.answerQuery(query, topK, useRAG);
+
+                // Display results
+                displaySingleResult(result);
+
+                singleResult.style.display = 'block';
+                comparisonResult.style.display = 'none';
+                resultsSection.style.display = 'block';
+                progressDiv.style.display = 'none';
+
+                // Update visualization with query
+                visualizeEmbeddings(currentView, query);
+            } catch (error) {
+                alert('Error executing query: ' + error.message);
+                progressDiv.style.display = 'none';
+            }
+        }
+
+        // Compare RAG vs non-RAG
+        async function compareQuery() {
+            const query = document.getElementById('query-input').value.trim();
+            if (!query) {
+                alert('Please enter a question');
+                return;
+            }
+
+            const topK = parseInt(document.getElementById('top-k').value);
+            const progressDiv = document.getElementById('query-progress');
+            const resultsSection = document.getElementById('results-section');
+            const singleResult = document.getElementById('single-result');
+            const comparisonResult = document.getElementById('comparison-result');
+
+            progressDiv.style.display = 'block';
+            resultsSection.style.display = 'none';
+
+            try {
+                const comparison = await ragPipeline.compareAnswers(query, topK);
+
+                // Display comparison
+                displayComparison(comparison);
+
+                singleResult.style.display = 'none';
+                comparisonResult.style.display = 'block';
+                resultsSection.style.display = 'block';
+                progressDiv.style.display = 'none';
+
+                // Update visualization
+                visualizeEmbeddings(currentView, query);
+            } catch (error) {
+                alert('Error comparing queries: ' + error.message);
+                progressDiv.style.display = 'none';
+            }
+        }
+
+        // Display single result
+        function displaySingleResult(result) {
+            const answerText = document.getElementById('answer-text');
+            const retrievedChunksSection = document.getElementById('retrieved-chunks-section');
+            const retrievedChunks = document.getElementById('retrieved-chunks');
+
+            answerText.textContent = result.answer;
+
+            if (result.useRAG && result.retrievedChunks.length > 0) {
+                retrievedChunksSection.style.display = 'block';
+                retrievedChunks.innerHTML = result.retrievedChunks.map((chunk, index) => `
+                    <div class="chunk-item">
+                        <div class="chunk-header">
+                            <span class="chunk-title">${index + 1}. ${chunk.chunk.documentTitle}</span>
+                            <span class="similarity-score">${(chunk.similarity * 100).toFixed(1)}% match</span>
+                        </div>
+                        <div class="chunk-text">${chunk.chunk.text}</div>
+                        <div class="chunk-metadata">
+                            ${chunk.chunk.metadata.category} | ${chunk.chunk.metadata.author} | ${chunk.chunk.metadata.date}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                retrievedChunksSection.style.display = 'none';
+            }
+
+            // Display timing
+            document.getElementById('retrieval-time').textContent = result.timing.retrieval.toFixed(0);
+            document.getElementById('generation-time').textContent = result.timing.generation.toFixed(0);
+            document.getElementById('total-time').textContent = result.timing.total.toFixed(0);
+        }
+
+        // Display comparison
+        function displayComparison(comparison) {
+            // With RAG
+            document.getElementById('comparison-rag-answer').textContent = comparison.withRAG.answer;
+            document.getElementById('comparison-rag-retrieval').textContent = comparison.withRAG.timing.retrieval.toFixed(0);
+            document.getElementById('comparison-rag-generation').textContent = comparison.withRAG.timing.generation.toFixed(0);
+            document.getElementById('comparison-rag-total').textContent = comparison.withRAG.timing.total.toFixed(0);
+
+            const ragChunks = document.getElementById('comparison-rag-chunks');
+            ragChunks.innerHTML = comparison.withRAG.retrievedChunks.map((chunk, index) => `
+                <div class="chunk-item">
+                    <div class="chunk-header">
+                        <span class="chunk-title">${index + 1}. ${chunk.chunk.documentTitle}</span>
+                        <span class="similarity-score">${(chunk.similarity * 100).toFixed(1)}%</span>
+                    </div>
+                    <div class="chunk-text">${chunk.chunk.text}</div>
+                </div>
+            `).join('');
+
+            // Without RAG
+            document.getElementById('comparison-no-rag-answer').textContent = comparison.withoutRAG.answer;
+            document.getElementById('comparison-no-rag-generation').textContent = comparison.withoutRAG.timing.generation.toFixed(0);
+            document.getElementById('comparison-no-rag-total').textContent = comparison.withoutRAG.timing.total.toFixed(0);
+        }
+
+        // Sample query buttons
+        document.querySelectorAll('.sample-query-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const query = btn.dataset.query;
+                document.getElementById('query-input').value = query;
+            });
+        });
+    </script>
+</body>
+</html>

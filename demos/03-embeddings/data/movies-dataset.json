@@ -1,0 +1,42 @@
+{
+  "texts": [
+    "An absolute masterpiece that will leave you speechless. The performances are outstanding and unforgettable!",
+    "Brilliantly crafted with stunning visuals and a compelling storyline that keeps you engaged throughout.",
+    "One of the best films of the year. Highly recommended for anyone who loves great cinema!",
+    "A heartwarming tale that resonates deeply with audiences. Simply beautiful and moving.",
+    "Incredible acting and direction. A must-see cinematic experience that exceeds all expectations.",
+    "Captivating from start to finish. The plot twists are amazing and completely unexpected!",
+    "A triumph of storytelling. Every scene is perfectly executed with attention to detail.",
+    "Phenomenal performances and breathtaking cinematography that creates visual poetry.",
+    "This film exceeded all my expectations. Truly remarkable and inspiring work.",
+    "A modern classic that will stand the test of time and be remembered for generations.",
+    "Disappointing and predictable. The plot was full of holes and lacked coherence.",
+    "A complete waste of time. Poor acting and weak storyline that fails to engage.",
+    "I struggled to stay awake during this film. Boring and uninspired throughout.",
+    "The worst film I have seen this year. Avoid at all costs and save your money.",
+    "Terrible pacing and unconvincing performances throughout the entire runtime.",
+    "A confusing mess that never finds its footing or establishes a clear narrative.",
+    "Poorly written dialogue and forgettable characters that lack depth or development.",
+    "This film fails on every level. A major letdown and disappointment.",
+    "Overhyped and underwhelming. Not worth the ticket price or your time.",
+    "Lacking substance and originality. Very disappointing and derivative work.",
+    "Decent entertainment but nothing particularly memorable or groundbreaking.",
+    "Has its moments but overall just average and doesn't stand out from the crowd.",
+    "Not bad but could have been much better with stronger writing and direction.",
+    "A mixed bag with some good scenes and some weak ones that drag it down.",
+    "Entertaining enough but forgettable once the credits roll. Nothing special.",
+    "Adequate performances in a fairly standard storyline that follows familiar patterns.",
+    "Neither impressive nor terrible, just okay. Perfectly mediocre in every way.",
+    "Some interesting ideas that were not fully developed or explored properly.",
+    "Watchable but not something I would recommend strongly to friends or family.",
+    "A competent film that does not take many risks or challenge the audience."
+  ],
+  "labels": [
+    "positive", "positive", "positive", "positive", "positive",
+    "positive", "positive", "positive", "positive", "positive",
+    "negative", "negative", "negative", "negative", "negative",
+    "negative", "negative", "negative", "negative", "negative",
+    "neutral", "neutral", "neutral", "neutral", "neutral",
+    "neutral", "neutral", "neutral", "neutral", "neutral"
+  ]
+}

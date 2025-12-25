@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive POS Tagging & Dependency Parser</title>
+    <link rel="stylesheet" href="css/pos.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://unpkg.com/compromise@14.10.0/builds/compromise.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interactive POS Tagging & Dependency Parser</h1>
+            <p class="subtitle">Explore linguistic structure through part-of-speech tagging, dependency parsing, and named entity recognition</p>
+        </header>
+
+        <div class="input-section">
+            <div class="input-container">
+                <label for="text-input">Enter text to analyze:</label>
+                <textarea id="text-input" rows="4" placeholder="The quick brown fox jumps over the lazy dog in the park.">The quick brown fox jumps over the lazy dog in the park.</textarea>
+                <div class="button-group">
+                    <button id="analyze-btn" class="primary-btn">Analyze Text</button>
+                    <button id="clear-btn" class="secondary-btn">Clear</button>
+                    <button id="example-btn" class="secondary-btn">Load Example</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="pos">POS Tagging</button>
+            <button class="tab-btn" data-tab="dependency">Dependency Tree</button>
+            <button class="tab-btn" data-tab="arc">Arc Diagram</button>
+            <button class="tab-btn" data-tab="ner">Named Entities</button>
+        </div>
+
+        <div class="content">
+            <!-- POS Tagging Tab -->
+            <div id="pos-tab" class="tab-content active">
+                <div class="section-header">
+                    <h2>Part-of-Speech Tagging</h2>
+                    <div class="controls">
+                        <button id="toggle-tags" class="control-btn">Hide Tags</button>
+                        <button id="toggle-colors" class="control-btn">Toggle Colors</button>
+                    </div>
+                </div>
+                <div id="pos-output" class="output-box">
+                    <p class="placeholder">Click "Analyze Text" to see POS tags</p>
+                </div>
+                <div id="pos-stats" class="stats-box">
+                    <h3>Tag Statistics</h3>
+                    <div id="pos-stats-content"></div>
+                </div>
+                <div class="legend">
+                    <h3>POS Tag Legend</h3>
+                    <div class="legend-grid">
+                        <div class="legend-item"><span class="tag-color noun"></span> Noun</div>
+                        <div class="legend-item"><span class="tag-color verb"></span> Verb</div>
+                        <div class="legend-item"><span class="tag-color adjective"></span> Adjective</div>
+                        <div class="legend-item"><span class="tag-color adverb"></span> Adverb</div>
+                        <div class="legend-item"><span class="tag-color pronoun"></span> Pronoun</div>
+                        <div class="legend-item"><span class="tag-color preposition"></span> Preposition</div>
+                        <div class="legend-item"><span class="tag-color conjunction"></span> Conjunction</div>
+                        <div class="legend-item"><span class="tag-color determiner"></span> Determiner</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dependency Tree Tab -->
+            <div id="dependency-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Dependency Tree Visualization</h2>
+                    <div class="controls">
+                        <button id="zoom-in" class="control-btn">Zoom In</button>
+                        <button id="zoom-out" class="control-btn">Zoom Out</button>
+                        <button id="reset-zoom" class="control-btn">Reset</button>
+                    </div>
+                </div>
+                <div id="dependency-tree" class="visualization-box"></div>
+                <div id="dependency-info" class="info-box">
+                    <h3>Dependency Information</h3>
+                    <p>Click on a node to see detailed dependency information</p>
+                </div>
+            </div>
+
+            <!-- Arc Diagram Tab -->
+            <div id="arc-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Dependency Arc Diagram</h2>
+                    <div class="controls">
+                        <button id="toggle-labels" class="control-btn">Toggle Labels</button>
+                    </div>
+                </div>
+                <div id="arc-diagram" class="visualization-box arc-box"></div>
+                <div class="arc-legend">
+                    <h3>Common Dependencies</h3>
+                    <div class="legend-grid">
+                        <div class="legend-item"><strong>nsubj:</strong> Nominal subject</div>
+                        <div class="legend-item"><strong>obj:</strong> Direct object</div>
+                        <div class="legend-item"><strong>det:</strong> Determiner</div>
+                        <div class="legend-item"><strong>amod:</strong> Adjectival modifier</div>
+                        <div class="legend-item"><strong>prep:</strong> Prepositional modifier</div>
+                        <div class="legend-item"><strong>pobj:</strong> Object of preposition</div>
+                        <div class="legend-item"><strong>advmod:</strong> Adverbial modifier</div>
+                        <div class="legend-item"><strong>aux:</strong> Auxiliary</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NER Tab -->
+            <div id="ner-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Named Entity Recognition</h2>
+                    <div class="controls">
+                        <button id="toggle-entity-colors" class="control-btn">Toggle Colors</button>
+                    </div>
+                </div>
+                <div id="ner-output" class="output-box">
+                    <p class="placeholder">Click "Analyze Text" to see named entities</p>
+                </div>
+                <div id="ner-stats" class="stats-box">
+                    <h3>Entity Statistics</h3>
+                    <div id="ner-stats-content"></div>
+                </div>
+                <div class="legend">
+                    <h3>Entity Type Legend</h3>
+                    <div class="legend-grid">
+                        <div class="legend-item"><span class="entity-color person"></span> Person</div>
+                        <div class="legend-item"><span class="entity-color place"></span> Place</div>
+                        <div class="legend-item"><span class="entity-color organization"></span> Organization</div>
+                        <div class="legend-item"><span class="entity-color date"></span> Date</div>
+                        <div class="legend-item"><span class="entity-color value"></span> Value/Number</div>
+                        <div class="legend-item"><span class="entity-color misc"></span> Miscellaneous</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="detail-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3 id="modal-title">Tag Details</h3>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/pos-tagger.js"></script>
+    <script src="js/dependency-parser.js"></script>
+    <script src="js/tree-visualizer.js"></script>
+    <script>
+        // Main application logic
+        const app = {
+            currentDoc: null,
+            showTags: true,
+            showColors: true,
+            showLabels: true,
+
+            init() {
+                this.bindEvents();
+                this.analyze(); // Analyze default text
+            },
+
+            bindEvents() {
+                document.getElementById('analyze-btn').addEventListener('click', () => this.analyze());
+                document.getElementById('clear-btn').addEventListener('click', () => this.clear());
+                document.getElementById('example-btn').addEventListener('click', () => this.loadExample());
+
+                // Tab switching
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
+                });
+
+                // POS controls
+                document.getElementById('toggle-tags').addEventListener('click', () => this.toggleTags());
+                document.getElementById('toggle-colors').addEventListener('click', () => this.toggleColors());
+
+                // Dependency controls
+                document.getElementById('zoom-in').addEventListener('click', () => TreeVisualizer.zoom(1.2));
+                document.getElementById('zoom-out').addEventListener('click', () => TreeVisualizer.zoom(0.8));
+                document.getElementById('reset-zoom').addEventListener('click', () => TreeVisualizer.resetZoom());
+
+                // Arc controls
+                document.getElementById('toggle-labels').addEventListener('click', () => this.toggleArcLabels());
+
+                // NER controls
+                document.getElementById('toggle-entity-colors').addEventListener('click', () => this.toggleEntityColors());
+
+                // Modal
+                document.querySelector('.close').addEventListener('click', () => this.closeModal());
+                window.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal')) {
+                        this.closeModal();
+                    }
+                });
+            },
+
+            analyze() {
+                const text = document.getElementById('text-input').value.trim();
+                if (!text) {
+                    alert('Please enter some text to analyze');
+                    return;
+                }
+
+                this.currentDoc = nlp(text);
+
+                POSTagger.analyze(this.currentDoc, text);
+                DependencyParser.analyze(this.currentDoc, text);
+                this.analyzeNER();
+            },
+
+            analyzeNER() {
+                const output = document.getElementById('ner-output');
+                const statsContent = document.getElementById('ner-stats-content');
+
+                const entities = {
+                    people: this.currentDoc.people().out('array'),
+                    places: this.currentDoc.places().out('array'),
+                    organizations: this.currentDoc.organizations().out('array'),
+                    dates: this.currentDoc.dates().out('array'),
+                    values: this.currentDoc.values().out('array')
+                };
+
+                let html = '<div class="ner-tokens">';
+                const text = document.getElementById('text-input').value;
+                const words = text.split(/\s+/);
+
+                words.forEach(word => {
+                    let entityType = null;
+                    let cleanWord = word.replace(/[.,!?;:]$/, '');
+
+                    if (entities.people.some(e => cleanWord.toLowerCase().includes(e.toLowerCase()))) {
+                        entityType = 'person';
+                    } else if (entities.places.some(e => cleanWord.toLowerCase().includes(e.toLowerCase()))) {
+                        entityType = 'place';
+                    } else if (entities.organizations.some(e => cleanWord.toLowerCase().includes(e.toLowerCase()))) {
+                        entityType = 'organization';
+                    } else if (entities.dates.some(e => cleanWord.toLowerCase().includes(e.toLowerCase()))) {
+                        entityType = 'date';
+                    } else if (entities.values.some(e => cleanWord.toLowerCase().includes(e.toLowerCase()))) {
+                        entityType = 'value';
+                    }
+
+                    if (entityType) {
+                        html += `<span class="entity ${entityType}" title="${entityType}">${word}</span> `;
+                    } else {
+                        html += `<span>${word}</span> `;
+                    }
+                });
+                html += '</div>';
+                output.innerHTML = html;
+
+                // Statistics
+                let statsHtml = '<div class="stats-grid">';
+                const totalEntities = Object.values(entities).flat().length;
+
+                statsHtml += `<div class="stat-item"><strong>Total Entities:</strong> ${totalEntities}</div>`;
+                statsHtml += `<div class="stat-item"><strong>People:</strong> ${entities.people.length}</div>`;
+                statsHtml += `<div class="stat-item"><strong>Places:</strong> ${entities.places.length}</div>`;
+                statsHtml += `<div class="stat-item"><strong>Organizations:</strong> ${entities.organizations.length}</div>`;
+                statsHtml += `<div class="stat-item"><strong>Dates:</strong> ${entities.dates.length}</div>`;
+                statsHtml += `<div class="stat-item"><strong>Values:</strong> ${entities.values.length}</div>`;
+
+                if (entities.people.length > 0) {
+                    statsHtml += `<div class="stat-item full-width"><strong>Detected People:</strong> ${entities.people.join(', ')}</div>`;
+                }
+                if (entities.places.length > 0) {
+                    statsHtml += `<div class="stat-item full-width"><strong>Detected Places:</strong> ${entities.places.join(', ')}</div>`;
+                }
+                if (entities.organizations.length > 0) {
+                    statsHtml += `<div class="stat-item full-width"><strong>Detected Organizations:</strong> ${entities.organizations.join(', ')}</div>`;
+                }
+
+                statsHtml += '</div>';
+                statsContent.innerHTML = statsHtml;
+            },
+
+            clear() {
+                document.getElementById('text-input').value = '';
+                document.getElementById('pos-output').innerHTML = '<p class="placeholder">Click "Analyze Text" to see POS tags</p>';
+                document.getElementById('ner-output').innerHTML = '<p class="placeholder">Click "Analyze Text" to see named entities</p>';
+                document.getElementById('dependency-tree').innerHTML = '';
+                document.getElementById('arc-diagram').innerHTML = '';
+                document.getElementById('pos-stats-content').innerHTML = '';
+                document.getElementById('ner-stats-content').innerHTML = '';
+            },
+
+            loadExample() {
+                const examples = [
+                    "Dr. Sarah Johnson from MIT published groundbreaking research on artificial intelligence in Nature magazine last Tuesday.",
+                    "Apple Inc. announced a new product launch event in Cupertino, California on September 15th.",
+                    "The ancient ruins of Machu Picchu attract thousands of tourists every year to Peru.",
+                    "Professor Einstein developed the theory of relativity while working at the patent office in Switzerland.",
+                    "Amazon's CEO visited three warehouses in Seattle, New York, and Chicago during the holiday season."
+                ];
+
+                const randomExample = examples[Math.floor(Math.random() * examples.length)];
+                document.getElementById('text-input').value = randomExample;
+                this.analyze();
+            },
+
+            switchTab(tabName) {
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+            },
+
+            toggleTags() {
+                this.showTags = !this.showTags;
+                const btn = document.getElementById('toggle-tags');
+                btn.textContent = this.showTags ? 'Hide Tags' : 'Show Tags';
+                document.querySelectorAll('.pos-tag').forEach(tag => {
+                    tag.style.display = this.showTags ? 'inline-block' : 'none';
+                });
+            },
+
+            toggleColors() {
+                this.showColors = !this.showColors;
+                document.getElementById('pos-output').classList.toggle('no-colors');
+            },
+
+            toggleArcLabels() {
+                this.showLabels = !this.showLabels;
+                document.querySelectorAll('.arc-label').forEach(label => {
+                    label.style.opacity = this.showLabels ? '1' : '0';
+                });
+            },
+
+            toggleEntityColors() {
+                document.getElementById('ner-output').classList.toggle('no-colors');
+            },
+
+            showModal(title, content) {
+                document.getElementById('modal-title').textContent = title;
+                document.getElementById('modal-body').innerHTML = content;
+                document.getElementById('detail-modal').style.display = 'block';
+            },
+
+            closeModal() {
+                document.getElementById('detail-modal').style.display = 'none';
+            }
+        };
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>

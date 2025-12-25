@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELIZA Interactive Demo - Pattern Matching Chatbot</title>
+  <link rel="stylesheet" href="css/eliza.css">
+</head>
+<body>
+  <div class="header">
+    <div class="container">
+      <h1>ELIZA Interactive Demo</h1>
+      <p>Explore the classic pattern-matching chatbot with visual rule breakdown</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Tab Navigation -->
+    <div class="tabs">
+      <button class="tab-button active" data-tab="chat">Chat Interface</button>
+      <button class="tab-button" data-tab="breakdown">Rule Breakdown</button>
+      <button class="tab-button" data-tab="editor">Live Rule Editor</button>
+    </div>
+
+    <!-- Tab 1: Chat Interface -->
+    <div class="tab-content active" id="chat-tab">
+      <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+          <div class="empty-state">
+            <div class="empty-state-icon">💬</div>
+            <div class="empty-state-text">Start a conversation with ELIZA</div>
+            <div class="empty-state-subtext">Type a message below to begin</div>
+          </div>
+        </div>
+        <div class="chat-input-container">
+          <input
+            type="text"
+            class="chat-input"
+            id="chat-input"
+            placeholder="Type your message here..."
+            autocomplete="off"
+          >
+          <button class="btn btn-primary" id="send-btn">Send</button>
+        </div>
+        <div class="chat-controls">
+          <button class="btn btn-secondary" id="clear-chat-btn">Clear Chat</button>
+          <button class="btn btn-secondary" id="export-chat-btn">Export Conversation</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Rule Breakdown -->
+    <div class="tab-content" id="breakdown-tab">
+      <div class="breakdown-container">
+        <div class="breakdown-input-section">
+          <input
+            type="text"
+            class="breakdown-input"
+            id="breakdown-input"
+            placeholder="Enter text to see how ELIZA processes it..."
+            autocomplete="off"
+          >
+          <select class="example-selector" id="example-selector">
+            <option value="">-- Load Example --</option>
+            <option value="I remember my mother">I remember my mother</option>
+            <option value="I feel sad today">I feel sad today</option>
+            <option value="You remind me of my father">You remind me of my father</option>
+            <option value="I am worried about my dreams">I am worried about my dreams</option>
+            <option value="Can you help me?">Can you help me?</option>
+            <option value="Why don't you understand me?">Why don't you understand me?</option>
+            <option value="I think computers are fascinating">I think computers are fascinating</option>
+            <option value="Everyone hates me">Everyone hates me</option>
+            <option value="I want to be happy">I want to be happy</option>
+            <option value="My mother always criticizes me">My mother always criticizes me</option>
+          </select>
+          <button class="btn btn-primary" id="analyze-btn">Analyze</button>
+        </div>
+        <div class="breakdown-steps" id="breakdown-steps">
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <div class="empty-state-text">Enter text to see detailed processing</div>
+            <div class="empty-state-subtext">Watch how ELIZA transforms input into responses step-by-step</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Live Rule Editor -->
+    <div class="tab-content" id="editor-tab">
+      <div class="editor-container">
+        <div class="editor-toolbar">
+          <button class="btn btn-success" id="apply-rules-btn">Apply Changes</button>
+          <button class="btn btn-secondary" id="format-json-btn">Format JSON</button>
+          <button class="btn btn-secondary" id="reset-rules-btn">Reset</button>
+          <select id="template-selector">
+            <option value="">-- Load Template --</option>
+            <option value="minimal">Minimal (Simple Demo)</option>
+            <option value="therapeutic">Therapeutic (Psychology Focus)</option>
+          </select>
+          <div class="file-input-wrapper">
+            <button class="btn btn-secondary">Import Rules</button>
+            <input type="file" id="import-file" accept=".json">
+          </div>
+          <button class="btn btn-secondary" id="export-rules-btn">Export Rules</button>
+          <div class="editor-stats" id="editor-stats">
+            <div class="stat-item">
+              <span>Rules:</span>
+              <span class="stat-value" id="stat-rules">0</span>
+            </div>
+            <div class="stat-item">
+              <span>Patterns:</span>
+              <span class="stat-value" id="stat-patterns">0</span>
+            </div>
+            <div class="stat-item">
+              <span>Responses:</span>
+              <span class="stat-value" id="stat-responses">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="editor-main">
+          <div class="editor-pane">
+            <textarea
+              class="editor-textarea"
+              id="rules-editor"
+              spellcheck="false"
+              placeholder="Loading rules..."
+            ></textarea>
+            <div class="editor-validation" id="editor-validation">
+              <span class="validation-icon"></span>
+              <span class="validation-message"></span>
+            </div>
+          </div>
+          <div class="help-panel">
+            <div class="help-section">
+              <h3>Quick Guide</h3>
+              <p>Edit the ELIZA rules JSON to customize behavior. Changes apply to Tab 1 in real-time.</p>
+            </div>
+            <div class="help-section">
+              <h3>Rule Structure</h3>
+              <p><strong>keyword:</strong> Word to trigger this rule</p>
+              <p><strong>rank:</strong> Priority (higher = checked first)</p>
+              <p><strong>pattern:</strong> Match template (use * for wildcards)</p>
+              <p><strong>responses:</strong> Array of possible replies</p>
+            </div>
+            <div class="help-section">
+              <h3>Wildcards</h3>
+              <p><code>*</code> - Matches any text</p>
+              <p><code>(1), (2), ...</code> - Reference captured groups in responses</p>
+            </div>
+            <div class="help-section">
+              <h3>Synonyms</h3>
+              <p><code>@belief</code> - Matches any word in the belief synonym group (believe, think, feel, wish)</p>
+              <p><code>@family</code> - Matches family members (mother, father, etc.)</p>
+            </div>
+            <div class="help-section">
+              <h3>Example Pattern</h3>
+              <p><code>"* i feel *"</code></p>
+              <p>Matches: "I feel sad", "Sometimes I feel happy"</p>
+              <p>Response: <code>"Why do you feel (2)?"</code></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load JavaScript modules -->
+  <script src="js/pattern-matcher.js"></script>
+  <script src="js/eliza-engine.js"></script>
+  <script src="js/rule-editor.js"></script>
+
+  <!-- Main Application Script -->
+  <script>
+    // Initialize ELIZA
+    let eliza;
+    let ruleEditor;
+
+    // Tab switching
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const tabName = button.dataset.tab;
+
+        // Update active states
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        button.classList.add('active');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+      });
+    });
+
+    // Initialize on page load
+    async function init() {
+      eliza = new ElizaEngine();
+
+      try {
+        await eliza.loadRules('data/eliza-rules.json');
+
+        // Initialize rule editor
+        ruleEditor = new RuleEditor(eliza);
+        ruleEditor.initialize(document.getElementById('rules-editor'));
+        updateEditorStats();
+
+        // Display greeting in chat
+        displayGreeting();
+
+      } catch (error) {
+        console.error('Failed to load ELIZA rules:', error);
+        alert('Failed to load ELIZA rules. Please check the console for details.');
+      }
+    }
+
+    // Chat Interface Functions
+    function displayGreeting() {
+      const greeting = eliza.getGreeting();
+      addMessageToChat('bot', greeting, null);
+    }
+
+    function addMessageToChat(type, text, matchInfo) {
+      const messagesDiv = document.getElementById('chat-messages');
+
+      // Remove empty state if it exists
+      const emptyState = messagesDiv.querySelector('.empty-state');
+      if (emptyState) {
+        emptyState.remove();
+      }
+
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${type}`;
+
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'message-content';
+      contentDiv.textContent = text;
+
+      const metaDiv = document.createElement('div');
+      metaDiv.className = 'message-meta';
+
+      const time = new Date().toLocaleTimeString();
+      metaDiv.innerHTML = `<span>${time}</span>`;
+
+      if (type === 'bot' && matchInfo) {
+        const matchBadge = document.createElement('span');
+        matchBadge.className = 'match-info';
+        matchBadge.textContent = `${matchInfo.keyword} (rank: ${matchInfo.rank})`;
+        metaDiv.appendChild(matchBadge);
+      }
+
+      messageDiv.appendChild(contentDiv);
+      messageDiv.appendChild(metaDiv);
+      messagesDiv.appendChild(messageDiv);
+
+      // Scroll to bottom
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input.value.trim();
+
+      if (!message) return;
+
+      // Display user message
+      addMessageToChat('user', message, null);
+
+      // Get ELIZA response
+      const result = eliza.getResponse(message);
+
+      // Display bot response
+      setTimeout(() => {
+        addMessageToChat('bot', result.response, result.matchInfo);
+      }, 300);
+
+      // Clear input
+      input.value = '';
+    }
+
+    function clearChat() {
+      const messagesDiv = document.getElementById('chat-messages');
+      messagesDiv.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💬</div><div class="empty-state-text">Chat cleared</div><div class="empty-state-subtext">Start a new conversation</div></div>';
+      eliza.reset();
+
+      // Show greeting again
+      setTimeout(() => {
+        displayGreeting();
+      }, 500);
+    }
+
+    function exportChat() {
+      const conversation = eliza.exportConversation();
+      const blob = new Blob([JSON.stringify(conversation, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `eliza-conversation-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Breakdown Functions
+    function analyzeInput() {
+      const input = document.getElementById('breakdown-input').value.trim();
+
+      if (!input) {
+        alert('Please enter some text to analyze');
+        return;
+      }
+
+      const breakdown = eliza.getDetailedBreakdown(input);
+      displayBreakdown(breakdown);
+    }
+
+    function displayBreakdown(breakdown) {
+      const stepsDiv = document.getElementById('breakdown-steps');
+      stepsDiv.innerHTML = '';
+
+      breakdown.steps.forEach((step, index) => {
+        const stepDiv = document.createElement('div');
+        stepDiv.className = 'breakdown-step';
+
+        let stepHTML = `
+          <div class="step-header">
+            <div class="step-number">${index + 1}</div>
+            <div class="step-title">${step.name}</div>
+          </div>
+          <div class="step-description">${step.description}</div>
+        `;
+
+        // Add input/output visualization
+        if (step.input !== undefined && step.output !== undefined) {
+          stepHTML += `
+            <div class="step-io">
+              <div>
+                <div class="io-label">Input</div>
+                <div class="io-box">${escapeHtml(step.input)}</div>
+              </div>
+              <div class="arrow">→</div>
+              <div>
+                <div class="io-label">Output</div>
+                <div class="io-box">${escapeHtml(step.output)}</div>
+              </div>
+            </div>
+          `;
+        }
+
+        // Add details
+        if (step.details) {
+          stepHTML += `<div class="step-details">${step.details}</div>`;
+        }
+
+        // Add pattern tests if available
+        if (step.patternTests && step.patternTests.length > 0) {
+          stepHTML += '<div class="step-content">';
+          step.patternTests.forEach((test, i) => {
+            const testClass = test.matched ? 'matched' : 'not-matched';
+            const testHTML = `
+              <div class="pattern-test ${testClass}">
+                <strong>${test.keyword}</strong>: "${test.pattern}"
+                ${test.matched ? '✓ <span class="highlight">MATCHED</span>' : '✗'}
+                ${test.captures && test.captures.length > 0 ?
+                  `<br>Captures: ${test.captures.map((c, j) => `(${j+1}): "${c}"`).join(', ')}`
+                  : ''}
+              </div>
+            `;
+            stepHTML += testHTML;
+
+            // Only show first few if there are many
+            if (i >= 4 && !test.matched) {
+              stepHTML += `<div class="step-details">... and ${step.patternTests.length - 5} more patterns tested</div>`;
+              return false;
+            }
+          });
+          stepHTML += '</div>';
+        }
+
+        // Add post-substitution steps if available
+        if (step.postSubSteps && step.postSubSteps.length > 0) {
+          stepHTML += '<div class="step-content">';
+          step.postSubSteps.forEach(subStep => {
+            stepHTML += `
+              <div class="post-sub-step">
+                Capture (${subStep.capture}): "${subStep.original}" → "${subStep.reflected}"
+                ${subStep.substitutions.map(s => `<br>&nbsp;&nbsp;• "${s.from}" → "${s.to}"`).join('')}
+              </div>
+            `;
+          });
+          stepHTML += '</div>';
+        }
+
+        stepDiv.innerHTML = stepHTML;
+        stepsDiv.appendChild(stepDiv);
+      });
+
+      // Add final result
+      if (breakdown.finalResponse) {
+        const finalDiv = document.createElement('div');
+        finalDiv.className = 'breakdown-step';
+        finalDiv.style.borderColor = 'var(--secondary-color)';
+        finalDiv.innerHTML = `
+          <div class="step-header">
+            <div class="step-number" style="background: var(--secondary-color);">✓</div>
+            <div class="step-title" style="color: var(--secondary-color);">Final Response</div>
+          </div>
+          <div class="step-content">
+            <div class="io-box" style="font-size: 1.1rem; font-weight: 600;">
+              ${escapeHtml(breakdown.finalResponse)}
+            </div>
+          </div>
+        `;
+        stepsDiv.appendChild(finalDiv);
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Editor Functions
+    function updateEditorStats() {
+      const stats = ruleEditor.getStatistics();
+      if (stats) {
+        document.getElementById('stat-rules').textContent = stats.ruleCount;
+        document.getElementById('stat-patterns').textContent = stats.patternCount;
+        document.getElementById('stat-responses').textContent = stats.responseCount;
+      }
+    }
+
+    function applyRules() {
+      const result = ruleEditor.apply();
+      showValidation(result.success, result.success ? 'Rules applied successfully!' : result.error);
+
+      if (result.success) {
+        updateEditorStats();
+      }
+    }
+
+    function formatJSON() {
+      const result = ruleEditor.format();
+      showValidation(result.success, result.success ? 'JSON formatted' : result.error);
+    }
+
+    function resetRules() {
+      if (confirm('Reset to original rules? This will discard all changes.')) {
+        ruleEditor.reset();
+        showValidation(true, 'Rules reset to original');
+        updateEditorStats();
+      }
+    }
+
+    function showValidation(success, message) {
+      const validationDiv = document.getElementById('editor-validation');
+      validationDiv.className = 'editor-validation visible ' + (success ? 'success' : 'error');
+      validationDiv.innerHTML = `
+        <span class="validation-icon">${success ? '✓' : '✗'}</span>
+        <span class="validation-message">${message}</span>
+      `;
+
+      setTimeout(() => {
+        validationDiv.classList.remove('visible');
+      }, 3000);
+    }
+
+    // Event Listeners
+    document.getElementById('send-btn').addEventListener('click', sendMessage);
+    document.getElementById('chat-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+    document.getElementById('clear-chat-btn').addEventListener('click', clearChat);
+    document.getElementById('export-chat-btn').addEventListener('click', exportChat);
+
+    document.getElementById('analyze-btn').addEventListener('click', analyzeInput);
+    document.getElementById('breakdown-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') analyzeInput();
+    });
+    document.getElementById('example-selector').addEventListener('change', (e) => {
+      if (e.target.value) {
+        document.getElementById('breakdown-input').value = e.target.value;
+        analyzeInput();
+        e.target.value = '';
+      }
+    });
+
+    document.getElementById('apply-rules-btn').addEventListener('click', applyRules);
+    document.getElementById('format-json-btn').addEventListener('click', formatJSON);
+    document.getElementById('reset-rules-btn').addEventListener('click', resetRules);
+    document.getElementById('template-selector').addEventListener('change', (e) => {
+      if (e.target.value) {
+        const result = ruleEditor.loadTemplate(e.target.value);
+        showValidation(result.success, result.success ? 'Template loaded' : result.error);
+        if (result.success) {
+          updateEditorStats();
+        }
+        e.target.value = '';
+      }
+    });
+
+    document.getElementById('export-rules-btn').addEventListener('click', () => {
+      const result = ruleEditor.export();
+      if (!result.success) {
+        showValidation(false, result.error);
+      }
+    });
+
+    document.getElementById('import-file').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        try {
+          const result = await ruleEditor.import(file);
+          showValidation(result.success, 'Rules imported successfully');
+          if (result.success) {
+            updateEditorStats();
+          }
+        } catch (error) {
+          showValidation(false, error.error || 'Import failed');
+        }
+        e.target.value = '';
+      }
+    });
+
+    // Auto-update stats when editor content changes
+    document.getElementById('rules-editor').addEventListener('input', () => {
+      // Debounce the stats update
+      clearTimeout(window.statsUpdateTimeout);
+      window.statsUpdateTimeout = setTimeout(() => {
+        updateEditorStats();
+      }, 1000);
+    });
+
+    // Initialize the app
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Transformer Architecture Explorer</title>
+    <link rel="stylesheet" href="css/transformer.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🔮 Transformer Architecture Explorer</h1>
+            <p class="subtitle">Explore the architecture that revolutionized NLP</p>
+        </header>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-group">
+                <label for="architecture-select">Architecture:</label>
+                <select id="architecture-select">
+                    <option value="vanilla">Vanilla Transformer (Encoder-Decoder)</option>
+                    <option value="bert">BERT (Encoder-only)</option>
+                    <option value="gpt">GPT (Decoder-only)</option>
+                    <option value="t5">T5 (Encoder-Decoder)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="mode-select">Educational Mode:</label>
+                <select id="mode-select">
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="input-text">Input Text:</label>
+                <input type="text" id="input-text" value="The transformer is amazing!" placeholder="Enter text...">
+            </div>
+
+            <div class="control-group">
+                <button id="animate-btn" class="btn btn-primary">
+                    <span>▶</span> Animate Forward Pass
+                </button>
+                <button id="reset-btn" class="btn btn-secondary">
+                    <span>↻</span> Reset View
+                </button>
+                <button id="toggle-labels-btn" class="btn btn-secondary">
+                    <span>🏷</span> Toggle Labels
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- 3D Canvas -->
+            <div class="canvas-container">
+                <div id="scene-container"></div>
+                <div class="canvas-overlay">
+                    <div class="info-panel" id="info-panel">
+                        <h3>Click on components to explore</h3>
+                        <p>Use mouse to rotate, zoom, and pan the 3D view</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Panel for Component Details -->
+            <div class="side-panel" id="side-panel">
+                <div class="panel-header">
+                    <h2 id="component-title">Transformer Overview</h2>
+                    <button class="close-btn" id="close-panel">×</button>
+                </div>
+                <div class="panel-content" id="panel-content">
+                    <div class="overview-content">
+                        <h3>About the Transformer</h3>
+                        <p>The Transformer architecture, introduced in "Attention is All You Need" (Vaswani et al., 2017), revolutionized natural language processing by relying entirely on attention mechanisms.</p>
+
+                        <h4>Key Components:</h4>
+                        <ul>
+                            <li><strong>Embedding Layer:</strong> Converts tokens to vectors</li>
+                            <li><strong>Positional Encoding:</strong> Adds position information</li>
+                            <li><strong>Multi-Head Attention:</strong> Parallel attention mechanisms</li>
+                            <li><strong>Feed-Forward Network:</strong> Position-wise transformations</li>
+                            <li><strong>Layer Normalization:</strong> Stabilizes training</li>
+                            <li><strong>Residual Connections:</strong> Enables deep networks</li>
+                        </ul>
+
+                        <div class="architecture-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Layers:</span>
+                                <span class="stat-value" id="num-layers">6</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Attention Heads:</span>
+                                <span class="stat-value" id="num-heads">8</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Model Dimension:</span>
+                                <span class="stat-value" id="model-dim">512</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">FFN Dimension:</span>
+                                <span class="stat-value" id="ffn-dim">2048</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tensor Flow Visualization -->
+        <div class="tensor-flow-panel">
+            <h3>Data Flow & Tensor Shapes</h3>
+            <div id="tensor-flow-viz"></div>
+        </div>
+
+        <!-- Component Library -->
+        <div class="component-library">
+            <h3>Component Library</h3>
+            <div class="component-grid">
+                <div class="component-card" data-component="embedding">
+                    <div class="component-icon">📊</div>
+                    <h4>Embedding</h4>
+                    <p>Token → Vector</p>
+                </div>
+                <div class="component-card" data-component="positional">
+                    <div class="component-icon">📍</div>
+                    <h4>Positional Encoding</h4>
+                    <p>Add Position Info</p>
+                </div>
+                <div class="component-card" data-component="attention">
+                    <div class="component-icon">👁️</div>
+                    <h4>Multi-Head Attention</h4>
+                    <p>Query, Key, Value</p>
+                </div>
+                <div class="component-card" data-component="feedforward">
+                    <div class="component-icon">🔄</div>
+                    <h4>Feed-Forward</h4>
+                    <p>2-Layer MLP</p>
+                </div>
+                <div class="component-card" data-component="layernorm">
+                    <div class="component-icon">⚖️</div>
+                    <h4>Layer Norm</h4>
+                    <p>Normalize Features</p>
+                </div>
+                <div class="component-card" data-component="residual">
+                    <div class="component-icon">➕</div>
+                    <h4>Residual</h4>
+                    <p>Skip Connections</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <h4>Color Legend</h4>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #4CAF50;"></span>
+                <span>Embedding Layers</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #2196F3;"></span>
+                <span>Attention Mechanisms</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #FF9800;"></span>
+                <span>Feed-Forward Networks</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #9C27B0;"></span>
+                <span>Normalization Layers</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #F44336;"></span>
+                <span>Output Layers</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/architecture-3d.js"></script>
+    <script src="js/component-explorer.js"></script>
+    <script>
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            const explorer = new TransformerExplorer();
+            explorer.init();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "doc1",
+    "title": "Introduction to Large Language Models",
+    "content": "Large Language Models (LLMs) are neural networks trained on vast amounts of text data. They use the transformer architecture, which employs self-attention mechanisms to process and generate text. The transformer was introduced in the 'Attention is All You Need' paper in 2017. Modern LLMs like GPT-3, GPT-4, and Claude can perform a wide variety of language tasks including translation, summarization, question answering, and creative writing. These models are trained using self-supervised learning on internet-scale text corpora. The training process involves predicting the next token in a sequence, which allows the model to learn statistical patterns in language. LLMs have billions of parameters, making them capable of capturing complex linguistic patterns and world knowledge.",
+    "metadata": {
+      "author": "AI Research Team",
+      "date": "2024-01-15",
+      "category": "AI Foundations"
+    }
+  },
+  {
+    "id": "doc2",
+    "title": "Transformer Architecture Deep Dive",
+    "content": "The transformer architecture revolutionized natural language processing. It consists of an encoder and decoder, each containing multiple layers of self-attention and feed-forward networks. The self-attention mechanism allows the model to weigh the importance of different words in a sentence when processing each word. This is computed using queries, keys, and values derived from the input embeddings. Multi-head attention enables the model to attend to different representation subspaces simultaneously. Position encodings are added to input embeddings to provide sequence order information, since attention itself is permutation-invariant. Layer normalization and residual connections help with training stability. The decoder uses masked self-attention to prevent attending to future tokens during training.",
+    "metadata": {
+      "author": "Neural Network Experts",
+      "date": "2024-01-20",
+      "category": "Architecture"
+    }
+  },
+  {
+    "id": "doc3",
+    "title": "Retrieval Augmented Generation (RAG)",
+    "content": "Retrieval Augmented Generation is a technique that enhances language model outputs by retrieving relevant information from external knowledge sources. RAG systems have three main components: a retriever, a knowledge base, and a generator. The retriever finds relevant documents using semantic similarity search, typically with vector embeddings. The knowledge base stores documents as dense vector representations. The generator, usually an LLM, produces answers based on both the query and retrieved context. RAG addresses limitations of pure language models by grounding responses in factual information, reducing hallucinations, and allowing knowledge updates without retraining. The retrieval step uses techniques like approximate nearest neighbors search for efficiency. Dense embeddings are created using models like BERT or sentence transformers.",
+    "metadata": {
+      "author": "Information Retrieval Lab",
+      "date": "2024-02-01",
+      "category": "RAG Systems"
+    }
+  },
+  {
+    "id": "doc4",
+    "title": "Vector Embeddings and Similarity Search",
+    "content": "Vector embeddings are dense numerical representations of text that capture semantic meaning. Words, sentences, or documents are mapped to high-dimensional vectors where semantically similar items are close together in vector space. This is measured using distance metrics like cosine similarity or Euclidean distance. Cosine similarity measures the angle between vectors and ranges from -1 to 1, with 1 indicating identical direction. Common embedding models include Word2Vec, GloVe, BERT, and modern sentence transformers. For efficient similarity search over large collections, approximate nearest neighbors (ANN) algorithms are used. Vector databases like FAISS, Pinecone, and Weaviate are optimized for storing and querying embeddings at scale. Dimensionality reduction techniques like t-SNE or UMAP can visualize high-dimensional embeddings in 2D or 3D space.",
+    "metadata": {
+      "author": "Embeddings Research Group",
+      "date": "2024-02-05",
+      "category": "Vector Search"
+    }
+  },
+  {
+    "id": "doc5",
+    "title": "Text Chunking Strategies",
+    "content": "Text chunking is the process of splitting documents into smaller segments for processing. Effective chunking is crucial for RAG systems because chunks should be self-contained and semantically coherent. Common strategies include fixed-size chunking, sentence-based chunking, paragraph-based chunking, and semantic chunking. Fixed-size chunking divides text into segments of a specific token or character count, often with overlap to maintain context at boundaries. Sentence-based chunking preserves linguistic units but may result in variable-length chunks. Paragraph chunking maintains topical coherence. Semantic chunking uses NLP techniques to identify natural breakpoints based on topic shifts. Chunk size affects retrieval quality: smaller chunks provide precise context but may lack sufficient information, while larger chunks include more context but reduce precision. Typical chunk sizes range from 100 to 1000 tokens with 10-20% overlap.",
+    "metadata": {
+      "author": "Document Processing Team",
+      "date": "2024-02-10",
+      "category": "Text Processing"
+    }
+  },
+  {
+    "id": "doc6",
+    "title": "Prompt Engineering for RAG",
+    "content": "Prompt engineering for RAG systems involves crafting effective prompts that incorporate retrieved context. The typical structure includes the user query, retrieved documents, and instructions for the language model. Best practices include clearly separating the context from the question, providing explicit instructions to answer based only on the given context, and formatting retrieved passages for clarity. Citation instructions can guide the model to reference specific sources. Temperature and other generation parameters should be tuned for factual accuracy. Few-shot examples can demonstrate the desired response format. The order of retrieved documents matters: more relevant documents should appear first or last depending on the model's recency bias. System prompts can establish the model's role as an information assistant that acknowledges limitations and avoids speculation beyond the provided context.",
+    "metadata": {
+      "author": "Prompt Engineering Specialists",
+      "date": "2024-02-15",
+      "category": "Prompt Design"
+    }
+  },
+  {
+    "id": "doc7",
+    "title": "Evaluation Metrics for RAG Systems",
+    "content": "Evaluating RAG systems requires assessing both retrieval and generation quality. Retrieval metrics include precision, recall, Mean Reciprocal Rank (MRR), and Normalized Discounted Cumulative Gain (NDCG). Precision measures the fraction of retrieved documents that are relevant, while recall measures the fraction of relevant documents that are retrieved. MRR evaluates the rank of the first relevant document. For generation, metrics include BLEU, ROUGE, BERTScore, and human evaluation. Faithfulness measures whether the generated answer is consistent with the retrieved context, preventing hallucinations. Answer relevance assesses whether the response addresses the query. Context relevance evaluates whether retrieved passages are pertinent. End-to-end metrics combine retrieval and generation performance. A/B testing with users provides real-world validation. Latency and computational cost are also important practical considerations.",
+    "metadata": {
+      "author": "Evaluation Research Team",
+      "date": "2024-02-20",
+      "category": "Evaluation"
+    }
+  },
+  {
+    "id": "doc8",
+    "title": "Advanced RAG Techniques",
+    "content": "Advanced RAG techniques enhance basic retrieval-generation pipelines. Hypothetical Document Embeddings (HyDE) generate hypothetical answers to embed for retrieval instead of the raw query. Multi-hop retrieval performs iterative searches to gather information across multiple documents. Query expansion reformulates or augments the original question for better coverage. Re-ranking applies a more sophisticated model to reorder initially retrieved documents. Fusion approaches combine results from multiple retrieval strategies. Contextual compression removes irrelevant parts from retrieved passages before generation. Recursive retrieval follows references and citations. Active retrieval allows the language model to decide when to retrieve additional information during generation. These techniques improve accuracy, reduce hallucinations, and handle complex queries requiring synthesis across sources.",
+    "metadata": {
+      "author": "Advanced AI Systems Lab",
+      "date": "2024-02-25",
+      "category": "Advanced Techniques"
+    }
+  }
+]
