@@ -163,3 +163,9 @@ cython_debug/
 .DS_Store
 */.DS_Store
 */*/.DS_Store
+
+# GloVe embeddings - exclude large source files, keep processed JSON
+demos/11-analogies/data/glove.6B.zip
+demos/11-analogies/data/glove.6B.*.txt
+# Keep the processed JSON file (it's committed)
+!demos/11-analogies/data/glove-50d.json

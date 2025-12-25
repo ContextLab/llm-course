@@ -25,17 +25,16 @@
                     <div class="control-section">
                         <label for="model-select">Embedding Model:</label>
                         <select id="model-select">
-                            <optgroup label="Pre-loaded Models">
-                                <option value="glove">GloVe (50d)</option>
-                                <option value="word2vec">Word2Vec (100d)</option>
-                            </optgroup>
-                            <optgroup label="Transformers.js Models">
+                            <optgroup label="Sentence Transformer Models (via Transformers.js)">
                                 <option value="all-MiniLM-L6-v2" selected>all-MiniLM-L6-v2 (384d)</option>
                                 <option value="all-mpnet-base-v2">all-mpnet-base-v2 (768d)</option>
                                 <option value="paraphrase-multilingual">paraphrase-multilingual (384d)</option>
                             </optgroup>
                         </select>
                         <div id="model-status" class="status-text"></div>
+                        <div class="info-note" style="margin-top: 8px; font-size: 0.85em; color: #666;">
+                            Note: These are real pre-trained transformer models that generate true semantic embeddings.
+                        </div>
                     </div>
 
                     <!-- Dataset Selection -->
@@ -149,9 +148,9 @@
                         <div id="comparison-options" class="hidden">
                             <label for="comparison-model">Compare with Model:</label>
                             <select id="comparison-model">
-                                <option value="glove">GloVe (50d)</option>
-                                <option value="word2vec">Word2Vec (100d)</option>
+                                <option value="all-MiniLM-L6-v2">all-MiniLM-L6-v2</option>
                                 <option value="all-mpnet-base-v2">all-mpnet-base-v2</option>
+                                <option value="paraphrase-multilingual">paraphrase-multilingual</option>
                             </select>
                         </div>
                     </div>

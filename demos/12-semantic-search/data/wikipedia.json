@@ -1,0 +1,52 @@
+{
+  "name": "Wikipedia",
+  "description": "Educational excerpts from public knowledge sources",
+  "category": "wikipedia",
+  "documents": [
+    {
+      "id": "wiki_1",
+      "title": "Machine Learning",
+      "text": "Machine learning is a branch of artificial intelligence and computer science which focuses on the use of data and algorithms to imitate the way that humans learn, gradually improving accuracy. Machine learning is an important component of data science, using statistical methods to enable computers to learn from data.",
+      "metadata": {
+        "category": "Computer Science",
+        "topic": "AI"
+      }
+    },
+    {
+      "id": "wiki_2",
+      "title": "Natural Language Processing",
+      "text": "Natural language processing is an interdisciplinary subfield of computer science and linguistics. It is primarily concerned with providing computers the ability to process data encoded in natural language and is thus closely related to information retrieval, knowledge representation and computational linguistics.",
+      "metadata": {
+        "category": "Computer Science",
+        "topic": "NLP"
+      }
+    },
+    {
+      "id": "wiki_3",
+      "title": "Neural Network",
+      "text": "Artificial neural networks are computing systems inspired by biological neural networks. They consist of interconnected nodes called artificial neurons, which loosely model the neurons in a biological brain. Each connection can transmit a signal to other neurons, and each neuron that receives a signal processes it and signals downstream neurons connected to it.",
+      "metadata": {
+        "category": "Computer Science",
+        "topic": "Deep Learning"
+      }
+    },
+    {
+      "id": "wiki_4",
+      "title": "Transformer Architecture",
+      "text": "The transformer is a deep learning architecture developed by researchers at Google and based on the multi-head attention mechanism. It is used primarily in the fields of natural language processing and computer vision. Since their introduction in 2017, transformers have become the basic building block of large language models.",
+      "metadata": {
+        "category": "Computer Science",
+        "topic": "AI Architecture"
+      }
+    },
+    {
+      "id": "wiki_5",
+      "title": "Computer Vision",
+      "text": "Computer vision is an interdisciplinary field that deals with how computers can be made to gain high-level understanding from digital images or videos. From an engineering perspective, it seeks to automate tasks that the human visual system can do. Computer vision tasks include methods for acquiring, processing, analyzing and understanding digital images.",
+      "metadata": {
+        "category": "Computer Science",
+        "topic": "Computer Vision"
+      }
+    }
+  ]
+}

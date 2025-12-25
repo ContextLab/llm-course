@@ -186,6 +186,33 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* Mode Toggle Buttons */
+.mode-btn {
+    transition: all 0.3s ease;
+}
+
+.mode-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.mode-btn.active {
+    border-color: var(--primary-color) !important;
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+.mode-btn:not(.active) {
+    border-color: var(--border-color) !important;
+    background: white !important;
+    color: var(--text-primary) !important;
+}
+
+.mode-btn:not(.active):hover:not(:disabled) {
+    background: var(--bg-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
 /* Loading Indicator */
 .loading-indicator {
     display: none;

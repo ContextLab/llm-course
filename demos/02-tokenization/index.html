@@ -108,6 +108,29 @@
             <div class="input-section">
                 <label for="bpe-input">Enter text for BPE visualization:</label>
                 <textarea id="bpe-input" rows="3" placeholder="Enter text to see BPE algorithm step-by-step...">hello world</textarea>
+
+                <!-- Mode Selection -->
+                <div style="margin: 15px 0; padding: 15px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <div style="margin-bottom: 10px;">
+                        <strong>BPE Mode:</strong>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <button id="bpe-mode-simplified" class="mode-btn active" style="flex: 1; padding: 10px; border: 2px solid #3b82f6; background: #3b82f6; color: white; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                            📚 Simplified (Educational)
+                        </button>
+                        <button id="bpe-mode-gpt2" class="mode-btn" style="flex: 1; padding: 10px; border: 2px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer; font-weight: 500;" disabled>
+                            🤖 Real GPT-2 BPE
+                        </button>
+                    </div>
+                    <div id="bpe-mode-indicator" style="font-size: 0.9rem; color: #6b7280; padding: 10px; background: white; border-radius: 6px;">
+                        <strong>Mode:</strong> Simplified (Educational) - 16 common patterns<br>
+                        <small style="color: #9ca3af; margin-top: 5px; display: block;">
+                            • Simplified: Uses 16 hardcoded common English patterns for easy learning<br>
+                            • Real GPT-2: Uses 5,000 actual merge rules from OpenAI's GPT-2 tokenizer (▁ = space)
+                        </small>
+                    </div>
+                </div>
+
                 <div class="controls">
                     <button id="bpe-start-btn" class="primary-btn">Start BPE Visualization</button>
                     <button id="bpe-step-btn" class="secondary-btn" disabled>Next Step</button>

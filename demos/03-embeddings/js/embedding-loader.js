@@ -25,18 +25,11 @@ export class EmbeddingLoader {
         this.updateStatus(`Loading model: ${modelId}...`);
 
         try {
-            if (modelId === 'glove' || modelId === 'word2vec') {
-                // Pre-computed embeddings
-                this.modelType = 'precomputed';
-                this.precomputedEmbeddings = await this.loadPrecomputedModel(modelId);
-                this.updateStatus(`Model ${modelId} loaded (pre-computed)`);
-            } else {
-                // Transformers.js models
-                this.modelType = 'transformers';
-                const modelName = this.getTransformersModelName(modelId);
-                this.pipeline = await pipeline('feature-extraction', modelName);
-                this.updateStatus(`Model ${modelId} loaded successfully`);
-            }
+            // All models use Transformers.js for real embeddings
+            this.modelType = 'transformers';
+            const modelName = this.getTransformersModelName(modelId);
+            this.pipeline = await pipeline('feature-extraction', modelName);
+            this.updateStatus(`Model ${modelId} loaded successfully`);
         } catch (error) {
             this.updateStatus(`Error loading model: ${error.message}`);
             throw error;
@@ -55,16 +48,6 @@ export class EmbeddingLoader {
         return modelMap[modelId] || modelId;
     }
 
-    /**
-     * Load pre-computed embeddings (for faster demo with GloVe/Word2Vec)
-     */
-    async loadPrecomputedModel(modelId) {
-        const response = await fetch(`data/${modelId}-embeddings.json`);
-        if (!response.ok) {
-            throw new Error(`Failed to load pre-computed embeddings for ${modelId}`);
-        }
-        return await response.json();
-    }
 
     /**
      * Load a dataset
@@ -322,21 +305,10 @@ export class EmbeddingLoader {
      * Compute embeddings for texts
      */
     async computeEmbeddings(texts) {
-        if (this.modelType === 'precomputed') {
-            return this.getPrecomputedEmbeddings(texts);
-        } else if (this.modelType === 'transformers') {
+        if (this.modelType === 'transformers') {
             return this.getTransformersEmbeddings(texts);
         }
         throw new Error('No model loaded');
-    }
-
-    /**
-     * Get pre-computed embeddings (simulate for demo)
-     */
-    async getPrecomputedEmbeddings(texts) {
-        const dim = this.modelId === 'glove' ? 50 : 100;
-        // Generate random embeddings as placeholder
-        return texts.map(() => Array(dim).fill(0).map(() => (Math.random() - 0.5) * 2));
     }
 
     /**
@@ -367,10 +339,7 @@ export class EmbeddingLoader {
      * Embed a single text
      */
     async embedText(text) {
-        if (this.modelType === 'precomputed') {
-            const dim = this.modelId === 'glove' ? 50 : 100;
-            return Array(dim).fill(0).map(() => (Math.random() - 0.5) * 2);
-        } else if (this.modelType === 'transformers') {
+        if (this.modelType === 'transformers') {
             const output = await this.pipeline(text, { pooling: 'mean', normalize: true });
             return Array.from(output.data);
         }
