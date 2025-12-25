@@ -7,15 +7,15 @@
     "dreamt": "dreamed",
     "dreams": "dream",
     "maybe": "perhaps",
+    "how": "what",
+    "when": "what",
     "certainly": "yes",
     "machine": "computer",
     "computers": "computer",
     "were": "was",
     "you're": "you are",
     "i'm": "i am",
-    "same": "alike",
-    "identical": "alike",
-    "equivalent": "alike"
+    "same": "alike"
   },
   "postSubstitutions": {
     "am": "are",
@@ -24,20 +24,9 @@
     "myself": "yourself",
     "yourself": "myself",
     "i": "you",
-    "you": "I",
+    "you": "me",
     "my": "your",
-    "i am": "you are",
-    "you are": "I am",
-    "i was": "you were",
-    "you were": "I was",
-    "i'd": "you would",
-    "you'd": "I would",
-    "i've": "you have",
-    "you've": "I have",
-    "i'll": "you will",
-    "you'll": "I will",
-    "i": "you",
-    "you": "I"
+    "i'm": "you are"
   },
   "quitWords": ["bye", "goodbye", "quit", "exit"],
   "rules": [
@@ -57,15 +46,13 @@
       ]
     },
     {
-      "keyword": "apologize",
+      "keyword": "apologise",
       "rank": 1,
       "patterns": [
         {
           "pattern": "*",
           "responses": [
-            "Why do you apologize?",
-            "Apologies are not necessary.",
-            "What feelings do you have when you apologize?"
+            "goto sorry"
           ]
         }
       ]
@@ -80,7 +67,7 @@
             "Do you often think of (2)?",
             "Does thinking of (2) bring anything else to mind?",
             "What else do you recollect?",
-            "Why do you remember (2) just now?",
+            "Why do you recollect (2) just now?",
             "What in the present situation reminds you of (2)?",
             "What is the connection between me and (2)?"
           ]
@@ -91,14 +78,8 @@
             "Did you think I would forget (2)?",
             "Why do you think I should recall (2) now?",
             "What about (2)?",
+            "goto what",
             "You mentioned (2)?"
-          ]
-        },
-        {
-          "pattern": "* you remember *",
-          "responses": [
-            "How could I forget (2)?",
-            "What about (2) should I remember?"
           ]
         }
       ]
@@ -131,10 +112,7 @@
             "Really, (2)?",
             "Have you ever fantasized (2) while you were awake?",
             "Have you ever dreamed (2) before?",
-            "What does that dream suggest to you?",
-            "Do you dream often?",
-            "What persons appear in your dreams?",
-            "Do you believe that dreams have something to do with your problem?"
+            "goto dream"
           ]
         }
       ]
@@ -184,12 +162,25 @@
       ]
     },
     {
+      "keyword": "xforeign",
+      "rank": 1,
+      "patterns": [
+        {
+          "pattern": "*",
+          "responses": [
+            "I speak only English."
+          ]
+        }
+      ]
+    },
+    {
       "keyword": "deutsch",
       "rank": 1,
       "patterns": [
         {
           "pattern": "*",
           "responses": [
+            "goto xforeign",
             "I told you before, I don't understand German."
           ]
         }
@@ -202,6 +193,7 @@
         {
           "pattern": "*",
           "responses": [
+            "goto xforeign",
             "I told you before, I don't understand French."
           ]
         }
@@ -214,6 +206,7 @@
         {
           "pattern": "*",
           "responses": [
+            "goto xforeign",
             "I told you before, I don't understand Italian."
           ]
         }
@@ -226,6 +219,7 @@
         {
           "pattern": "*",
           "responses": [
+            "goto xforeign",
             "I told you before, I don't understand Spanish."
           ]
         }
@@ -271,21 +265,12 @@
             "Do you believe you are (2)?",
             "Would you want to be (2)?",
             "Do you wish I would tell you you are (2)?",
-            "What would it mean if you were (2)?"
+            "What would it mean if you were (2)?",
+            "goto what"
           ]
         },
         {
-          "pattern": "* i am *",
-          "responses": [
-            "How long have you been (2)?",
-            "Do you believe it is normal to be (2)?",
-            "Do you enjoy being (2)?",
-            "Why do you tell me you're (2)?",
-            "Why do you think you are (2)?"
-          ]
-        },
-        {
-          "pattern": "* am *",
+          "pattern": "*",
           "responses": [
             "Why do you say 'am'?",
             "I don't understand that."
@@ -304,17 +289,7 @@
             "Would you prefer if I weren't (2)?",
             "Perhaps I am (2) in your fantasies.",
             "Do you sometimes think I am (2)?",
-            "Would it matter to you?",
-            "What if I were (2)?"
-          ]
-        },
-        {
-          "pattern": "* you are *",
-          "responses": [
-            "What makes you think I am (2)?",
-            "Does it please you to believe I am (2)?",
-            "Do you sometimes wish you were (2)?",
-            "Perhaps you would like to be (2)."
+            "goto what"
           ]
         },
         {
@@ -323,8 +298,7 @@
             "Did you think they might not be (2)?",
             "Would you like it if they were not (2)?",
             "What if they were not (2)?",
-            "Are they always (2)?",
-            "Are you positive they are (2)?"
+            "Possibly they are (2)."
           ]
         }
       ]
@@ -356,7 +330,8 @@
             "Do you think you were (2)?",
             "Were you (2)?",
             "What would it mean if you were (2)?",
-            "What does '(2)' suggest to you?"
+            "What does (2) suggest to you?",
+            "goto what"
           ]
         },
         {
@@ -415,9 +390,7 @@
         {
           "pattern": "* i was *",
           "responses": [
-            "Were you really?",
-            "Why do you tell me you were (2) now?",
-            "Perhaps I already know you were (2)."
+            "goto was"
           ]
         },
         {
@@ -431,9 +404,7 @@
         {
           "pattern": "* i* @belief *you *",
           "responses": [
-            "Do you really think I (3)?",
-            "What makes you think I (3)?",
-            "Do you doubt I (3)?"
+            "goto you"
           ]
         },
         {
@@ -499,12 +470,7 @@
         {
           "pattern": "* you remind me of *",
           "responses": [
-            "Why do you think I remind you of (2)?",
-            "What connection can you see between me and (2)?",
-            "Does it make you feel good to think I'm like (2)?",
-            "What resemblance do you see?",
-            "What does that similarity suggest to you?",
-            "What other connections do you see?"
+            "goto alike"
           ]
         },
         {
@@ -622,6 +588,7 @@
           "pattern": "* can you *",
           "responses": [
             "You believe I can (2) don't you?",
+            "goto what",
             "You want me to be able to (2).",
             "Perhaps you would like to be able to (2) yourself."
           ]
@@ -629,9 +596,10 @@
         {
           "pattern": "* can i *",
           "responses": [
-            "Whether or not you can (2) depends on you more than on me.",
+            "Whether or not you can (2) depends on you more than me.",
             "Do you want to be able to (2)?",
-            "Perhaps you don't want to (2)."
+            "Perhaps you don't want to (2).",
+            "goto what"
           ]
         }
       ]
@@ -758,10 +726,11 @@
         {
           "pattern": "* why don't you *",
           "responses": [
-            "Do you really believe I don't (2)?",
-            "Perhaps in good time I will (2).",
-            "Do you want me to (2)?",
-            "Should you (2) yourself?"
+            "Do you believe I don't (2)?",
+            "Perhaps I will (2) in good time.",
+            "Should you (2) yourself?",
+            "You want me to (2)?",
+            "goto what"
           ]
         },
         {
@@ -770,21 +739,14 @@
             "Do you think you should be able to (2)?",
             "Do you want to be able to (2)?",
             "Do you believe this will help you to (2)?",
-            "Have you any idea why you can't (2)?"
+            "Have you any idea why you can't (2)?",
+            "goto what"
           ]
         },
         {
           "pattern": "*",
           "responses": [
-            "Why do you ask?",
-            "Does that question interest you?",
-            "What is it you really want to know?",
-            "Are such questions much on your mind?",
-            "What answer would please you most?",
-            "What do you think?",
-            "What comes to mind when you ask that?",
-            "Have you asked such questions before?",
-            "Have you asked anyone else?"
+            "goto what"
           ]
         }
       ]
@@ -816,15 +778,7 @@
         {
           "pattern": "*",
           "responses": [
-            "Really, everybody?",
-            "Surely not everybody.",
-            "Can you think of anyone in particular?",
-            "Who, for example?",
-            "Are you thinking of a very special person?",
-            "Who, may I ask?",
-            "Someone special perhaps?",
-            "You have a particular person in mind, don't you?",
-            "Who do you think you're talking about?"
+            "goto everyone"
           ]
         }
       ]
@@ -836,13 +790,7 @@
         {
           "pattern": "*",
           "responses": [
-            "Really, nobody?",
-            "Surely someone cares.",
-            "Can you think of anyone at all?",
-            "Are you thinking of a very special person?",
-            "Who, may I ask?",
-            "You have a particular person in mind, don't you?",
-            "Who do you think you're talking about?"
+            "goto everyone"
           ]
         }
       ]
@@ -854,13 +802,7 @@
         {
           "pattern": "*",
           "responses": [
-            "Really, no one?",
-            "Surely someone cares.",
-            "Can you think of anyone at all?",
-            "Are you thinking of a very special person?",
-            "Who, may I ask?",
-            "You have a particular person in mind, don't you?",
-            "Who do you think you're talking about?"
+            "goto everyone"
           ]
         }
       ]
@@ -904,34 +846,9 @@
       "rank": 10,
       "patterns": [
         {
-          "pattern": "* @be *like *",
+          "pattern": "* @be * like *",
           "responses": [
-            "In what way?",
-            "What resemblance do you see?",
-            "What does that similarity suggest to you?",
-            "What other connections do you see?",
-            "What do you suppose that resemblance means?",
-            "What is the connection, do you suppose?",
-            "Could there really be some connection?",
-            "How?"
-          ]
-        }
-      ]
-    },
-    {
-      "keyword": "different",
-      "rank": 1,
-      "patterns": [
-        {
-          "pattern": "*",
-          "responses": [
-            "How is it different?",
-            "What differences do you see?",
-            "What does that difference suggest to you?",
-            "What other distinctions do you see?",
-            "What do you suppose that disparity means?",
-            "Could there be some connection, do you suppose?",
-            "How?"
+            "goto alike"
           ]
         }
       ]
@@ -948,21 +865,17 @@
     "sad": ["unhappy", "depressed", "sick"]
   },
   "initialGreetings": [
-    "Hello. I am ELIZA. How can I help you today?",
-    "Hi there. I'm ELIZA. What's on your mind?",
-    "Hello. Tell me about your problems."
+    "Welcome. What brings you here today?",
+    "How are you doing?"
+  ],
+  "finalGreetings": [
+    "See you again next week.",
+    "That will be $200."
   ],
   "fallbacks": [
+    "I'm not sure I understand you fully.",
     "Please go on.",
-    "Tell me more.",
-    "I see.",
-    "That's very interesting.",
-    "Can you elaborate on that?",
-    "Why do you say that?",
-    "I understand.",
-    "How does that make you feel?",
-    "Can you think of a specific example?",
     "What does that suggest to you?",
-    "Please continue."
+    "Do you feel strongly about discussing such things?"
   ]
 }

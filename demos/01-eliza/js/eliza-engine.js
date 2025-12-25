@@ -11,6 +11,7 @@ class ElizaEngine {
     this.synonyms = {};
     this.quitWords = [];
     this.initialGreetings = [];
+    this.finalGreetings = [];
     this.fallbacks = [];
     this.conversationHistory = [];
     this.memoryStack = [];
@@ -32,6 +33,7 @@ class ElizaEngine {
     this.synonyms = rulesData.synonyms || {};
     this.quitWords = rulesData.quitWords || [];
     this.initialGreetings = rulesData.initialGreetings || ['Hello.'];
+    this.finalGreetings = rulesData.finalGreetings || ['Goodbye.'];
     this.fallbacks = rulesData.fallbacks || ['Please go on.'];
     this.rules = rulesData.rules || [];
 
@@ -72,7 +74,7 @@ class ElizaEngine {
 
     // Check for quit
     if (this.isQuitWord(userInput)) {
-      const farewell = "Goodbye. It was nice talking to you.";
+      const farewell = this.finalGreetings[Math.floor(Math.random() * this.finalGreetings.length)];
       this.conversationHistory.push({
         type: 'bot',
         text: farewell,
@@ -108,11 +110,34 @@ class ElizaEngine {
       }
 
       const responseIndex = this.responseIndices[patternKey];
-      const template = match.pattern.responses[responseIndex];
+      let template = match.pattern.responses[responseIndex];
 
       // Cycle to next response
       this.responseIndices[patternKey] =
         (responseIndex + 1) % match.pattern.responses.length;
+
+      // Handle "goto" statements
+      if (template.startsWith('goto ')) {
+        const targetKeyword = template.substring(5).trim();
+        const targetRule = this.rules.find(r => r.keyword === targetKeyword);
+
+        if (targetRule && targetRule.patterns && targetRule.patterns.length > 0) {
+          // Use the first pattern's responses from the target rule
+          const targetPattern = targetRule.patterns[0];
+          const targetPatternKey = `${targetRule.keyword}:${targetPattern.pattern}`;
+
+          if (!this.responseIndices[targetPatternKey]) {
+            this.responseIndices[targetPatternKey] = 0;
+          }
+
+          const targetResponseIndex = this.responseIndices[targetPatternKey];
+          template = targetPattern.responses[targetResponseIndex];
+
+          // Cycle the target's response index
+          this.responseIndices[targetPatternKey] =
+            (targetResponseIndex + 1) % targetPattern.responses.length;
+        }
+      }
 
       // Assemble response
       response = this.patternMatcher.assembleResponse(
@@ -233,6 +258,8 @@ class ElizaEngine {
       this.postSubstitutions = newRulesData.postSubstitutions || this.postSubstitutions;
       this.synonyms = newRulesData.synonyms || this.synonyms;
       this.quitWords = newRulesData.quitWords || this.quitWords;
+      this.initialGreetings = newRulesData.initialGreetings || this.initialGreetings;
+      this.finalGreetings = newRulesData.finalGreetings || this.finalGreetings;
       this.fallbacks = newRulesData.fallbacks || this.fallbacks;
       this.rules = newRulesData.rules;
 
@@ -255,6 +282,7 @@ class ElizaEngine {
       synonyms: this.synonyms,
       quitWords: this.quitWords,
       initialGreetings: this.initialGreetings,
+      finalGreetings: this.finalGreetings,
       fallbacks: this.fallbacks,
       rules: this.rules
     };
