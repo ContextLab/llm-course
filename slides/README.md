@@ -245,17 +245,11 @@ This directory contains lecture slides for all 10 weeks of the course. Each week
 
 ## Week 10: Final Project Presentations
 
-**Monday (Lecture 25):** Project Work Session
-- Office hours for final projects
-- Technical support and debugging
-
-**Wednesday (Lecture 26):** Final Project Presentations I
-- Teams present their work (videos + discussion)
-
-**Friday (Lecture 27):** Final Project Presentations II
-- Remaining team presentations
+**Monday, March 9 (Lecture 24):** Final Project Presentations & Wrap-up
+- All teams present their work (videos + discussion)
 - Course wrap-up and reflections
-- **📝 Final Projects Due:** End of day (11:59 PM Eastern)
+- Last day of classes
+- **📝 Final Projects Due:** Friday, March 13 (Final Exam Period)
 
 ---
 

@@ -17,7 +17,7 @@ output: pdf
 \hline
 \textbf{X-hour}          & Th 12:15--1:05            \\
 \hline
-\textbf{Classroom}       & TBD                       \\
+\textbf{Classroom}       & Moore 302                 \\
 \hline
 \textbf{Instructor}      & Dr. Jeremy R. Manning      \\
 \hline
@@ -262,14 +262,13 @@ We strive to create an inclusive learning environment where all students feel su
   - Reading: [Bender et al. (2021)](https://dl.acm.org/doi/10.1145/3442188.3445922)
   - Slides: [\href{https://contextlab.github.io/llm-course/week9/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week9/lecture.html}{HTML}]
 
-### Week 10: Final Projects (March 9--10)
+### Week 10: Final Projects (March 9)
 
-**Monday, March 9** (Lecture 24): Final Project Work Session
-  - Open lab: Work on final projects with instructor support
+**Monday, March 9** (Lecture 24): Final Project Presentations & Wrap-up
+  - Final project presentations (all teams)
+  - Course wrap-up and reflections
+  - Last day of classes
   - **📝 Final Project:** [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Final\%20Project/README.md}{Research Project}]
-
-**Tuesday, March 10**: Last day of classes
-  - Final project presentations and discussions
 
 ### Final Exam Period (March 13--17)
 
