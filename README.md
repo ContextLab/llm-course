@@ -14,11 +14,11 @@ Learn by doing with our collection of **15 interactive web demonstrations** that
 
 ### Featured Demos
 
-- **[ELIZA Chatbot](https://contextlab.github.io/llm-course/demos/01-eliza/)** - Chat with the groundbreaking 1966 pattern-matching therapist and experience the ELIZA effect firsthand
-- **[Embeddings Visualization](https://contextlab.github.io/llm-course/demos/03-embeddings/)** - Explore word embeddings in interactive 3D space, rotate and zoom to discover semantic relationships
-- **[Transformer Explorer](https://contextlab.github.io/llm-course/demos/05-transformer/)** - Step through the transformer architecture layer by layer with real-time visualizations of attention, feedforward networks, and residual connections
-- **[Tokenization Explorer](https://contextlab.github.io/llm-course/demos/02-tokenization/)** - Compare BPE, WordPiece, and SentencePiece algorithms side-by-side
-- **[Attention Mechanism](https://contextlab.github.io/llm-course/demos/04-attention/)** - Watch attention weights update in real-time as you modify input sequences
+- **[ELIZA Chatbot](https://contextlab.github.io/llm-course/demos/01-eliza/index.html)** - Chat with the groundbreaking 1966 pattern-matching therapist and experience the ELIZA effect firsthand
+- **[Embeddings Visualization](https://contextlab.github.io/llm-course/demos/03-embeddings/index.html)** - Explore word embeddings in interactive 3D space, rotate and zoom to discover semantic relationships
+- **[Transformer Explorer](https://contextlab.github.io/llm-course/demos/05-transformer/index.html)** - Step through the transformer architecture layer by layer with real-time visualizations of attention, feedforward networks, and residual connections
+- **[Tokenization Explorer](https://contextlab.github.io/llm-course/demos/02-tokenization/index.html)** - Compare BPE, WordPiece, and SentencePiece algorithms side-by-side
+- **[Attention Mechanism](https://contextlab.github.io/llm-course/demos/04-attention/index.html)** - Watch attention weights update in real-time as you modify input sequences
 
 ### All Demos
 

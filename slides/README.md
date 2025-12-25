@@ -10,21 +10,21 @@ This directory contains lecture slides for all 10 weeks of the course. Each week
 
 Explore concepts hands-on with our interactive web demos! Each demo runs directly in your browser and provides real-time visualization of the concepts covered in lectures.
 
-1. **[ELIZA Chatbot](https://contextlab.github.io/llm-course/demos/01-eliza/)** - Experience the original pattern-matching chatbot
-2. **[Tokenization Explorer](https://contextlab.github.io/llm-course/demos/02-tokenization/)** - Visualize BPE, WordPiece, and SentencePiece tokenization
-3. **[Embeddings Visualization](https://contextlab.github.io/llm-course/demos/03-embeddings/)** - Interactive 3D exploration of word embeddings
-4. **[Attention Mechanism](https://contextlab.github.io/llm-course/demos/04-attention/)** - See how attention weights work in real-time
-5. **[Transformer Explorer](https://contextlab.github.io/llm-course/demos/05-transformer/)** - Step through transformer architecture layer by layer
-6. **[GPT Playground](https://contextlab.github.io/llm-course/demos/06-gpt-playground/)** - Experiment with autoregressive text generation
-7. **[RAG System Demo](https://contextlab.github.io/llm-course/demos/07-rag/)** - Explore Retrieval-Augmented Generation
-8. **[Topic Modeling](https://contextlab.github.io/llm-course/demos/08-topic-modeling/)** - Visualize LSA, LDA, and BERTopic
-9. **[Sentiment Analysis](https://contextlab.github.io/llm-course/demos/09-sentiment/)** - Classify text sentiment in real-time
-10. **[POS Tagging](https://contextlab.github.io/llm-course/demos/10-pos-tagging/)** - Interactive part-of-speech tagging
-11. **[Word Analogies](https://contextlab.github.io/llm-course/demos/11-analogies/)** - Explore semantic relationships in word embeddings
-12. **[Semantic Search](https://contextlab.github.io/llm-course/demos/12-semantic-search/)** - Search by meaning, not just keywords
-13. **[BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/13-bert-mlm/)** - See how BERT predicts masked words
-14. **[Embeddings Comparison](https://contextlab.github.io/llm-course/demos/14-embeddings-comparison/)** - Compare Word2Vec, GloVe, and FastText
-15. **[Chatbot Evolution](https://contextlab.github.io/llm-course/demos/15-chatbot-evolution/)** - Journey from ELIZA to modern LLMs
+1. **[ELIZA Chatbot](https://contextlab.github.io/llm-course/demos/01-eliza/index.html)** - Experience the original pattern-matching chatbot
+2. **[Tokenization Explorer](https://contextlab.github.io/llm-course/demos/02-tokenization/index.html)** - Visualize BPE, WordPiece, and SentencePiece tokenization
+3. **[Embeddings Visualization](https://contextlab.github.io/llm-course/demos/03-embeddings/index.html)** - Interactive 3D exploration of word embeddings
+4. **[Attention Mechanism](https://contextlab.github.io/llm-course/demos/04-attention/index.html)** - See how attention weights work in real-time
+5. **[Transformer Explorer](https://contextlab.github.io/llm-course/demos/05-transformer/index.html)** - Step through transformer architecture layer by layer
+6. **[GPT Playground](https://contextlab.github.io/llm-course/demos/06-gpt-playground/index.html)** - Experiment with autoregressive text generation
+7. **[RAG System Demo](https://contextlab.github.io/llm-course/demos/07-rag/index.html)** - Explore Retrieval-Augmented Generation
+8. **[Topic Modeling](https://contextlab.github.io/llm-course/demos/08-topic-modeling/index.html)** - Visualize LSA, LDA, and BERTopic
+9. **[Sentiment Analysis](https://contextlab.github.io/llm-course/demos/09-sentiment/index.html)** - Classify text sentiment in real-time
+10. **[POS Tagging](https://contextlab.github.io/llm-course/demos/10-pos-tagging/index.html)** - Interactive part-of-speech tagging
+11. **[Word Analogies](https://contextlab.github.io/llm-course/demos/11-analogies/index.html)** - Explore semantic relationships in word embeddings
+12. **[Semantic Search](https://contextlab.github.io/llm-course/demos/12-semantic-search/index.html)** - Search by meaning, not just keywords
+13. **[BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/13-bert-mlm/index.html)** - See how BERT predicts masked words
+14. **[Embeddings Comparison](https://contextlab.github.io/llm-course/demos/14-embeddings-comparison/index.html)** - Compare Word2Vec, GloVe, and FastText
+15. **[Chatbot Evolution](https://contextlab.github.io/llm-course/demos/15-chatbot-evolution/index.html)** - Journey from ELIZA to modern LLMs
 
 **Browse all demos:** [https://contextlab.github.io/llm-course/demos/](https://contextlab.github.io/llm-course/demos/)
 
@@ -43,14 +43,14 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Pattern matching and string manipulation techniques
 - Introduction to ELIZA chatbot architecture
 - Reading: [Weizenbaum (1966)](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf) - ELIZA: A Computer Program For Natural Language Communication
-- 🎮 **Try it:** [ELIZA Demo](https://contextlab.github.io/llm-course/demos/01-eliza/)
+- 🎮 **Try it:** [ELIZA Demo](https://contextlab.github.io/llm-course/demos/01-eliza/index.html)
 - 📊 [Slides PDF](week1/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture.html)
 
 **Friday (Lecture 3):** ELIZA Implementation & The ELIZA Effect
 - Implementing ELIZA: decomposition, reassembly, substitutions
 - The psychology of human-computer interaction
 - **Assignment 1 Released:** [Building the ELIZA Chatbot](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%201%3A%20ELIZA) (Due: End of Week 2)
-- 🎮 **Try it:** [ELIZA Demo](https://contextlab.github.io/llm-course/demos/01-eliza/) | [Chatbot Evolution](https://contextlab.github.io/llm-course/demos/15-chatbot-evolution/)
+- 🎮 **Try it:** [ELIZA Demo](https://contextlab.github.io/llm-course/demos/01-eliza/index.html) | [Chatbot Evolution](https://contextlab.github.io/llm-course/demos/15-chatbot-evolution/index.html)
 - 📊 [Slides PDF](week1/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture.html)
 
 ---
@@ -68,7 +68,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Kudo & Richardson (2018)](https://aclanthology.org/D18-2012/) - SentencePiece
 - HuggingFace: [Chapter 2.4: Tokenizers](https://huggingface.co/learn/nlp-course/chapter2/4)
 - HuggingFace: [Chapter 6: Tokenizers](https://huggingface.co/learn/nlp-course/chapter6)
-- 🎮 **Try it:** [Tokenization Explorer](https://contextlab.github.io/llm-course/demos/02-tokenization/)
+- 🎮 **Try it:** [Tokenization Explorer](https://contextlab.github.io/llm-course/demos/02-tokenization/index.html)
 - 📊 [Slides PDF](week2/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture.html)
 
 **Friday (Lecture 6):** POS Tagging & Sentiment Analysis
@@ -81,7 +81,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - HuggingFace: [Chapter 7.2: Token Classification](https://huggingface.co/learn/nlp-course/chapter7/2)
 - **Assignment 2 Released:** [SPAM Classifier](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%202%3A%20SPAM%20classifier) (Due: End of Week 3)
 - **📝 Assignment 1 Due**
-- 🎮 **Try it:** [POS Tagging](https://contextlab.github.io/llm-course/demos/10-pos-tagging/) | [Sentiment Analysis](https://contextlab.github.io/llm-course/demos/09-sentiment/)
+- 🎮 **Try it:** [POS Tagging](https://contextlab.github.io/llm-course/demos/10-pos-tagging/index.html) | [Sentiment Analysis](https://contextlab.github.io/llm-course/demos/09-sentiment/index.html)
 - 📊 [Slides PDF](week2/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture.html)
 
 ---
@@ -98,7 +98,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Blei et al. (2003)](https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf) - LDA
 - Reading: [Boyd-Graber et al. (2014)](https://home.cs.colorado.edu/~jbg/docs/2014_book_chapter_care_and_feeding.pdf) - Care and Feeding of Topic Models
 - Reading: [Boleda (2020)](https://arxiv.org/pdf/1905.01896) - Distributional Semantics and Linguistic Theory
-- 🎮 **Try it:** [Topic Modeling](https://contextlab.github.io/llm-course/demos/08-topic-modeling/)
+- 🎮 **Try it:** [Topic Modeling](https://contextlab.github.io/llm-course/demos/08-topic-modeling/index.html)
 - 📊 [Slides PDF](week3-4/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week3-4/lecture.html)
 
 **Thursday X-hour:** From Classical to Modern Embeddings
@@ -115,7 +115,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Pennington et al. (2014)](https://aclanthology.org/D14-1162/) - GloVe
 - Reading: [Bojanowski et al. (2017)](https://arxiv.org/abs/1607.04606) - FastText
 - **📝 Assignment 2 Due**
-- 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/03-embeddings/) | [Word Analogies](https://contextlab.github.io/llm-course/demos/11-analogies/)
+- 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/03-embeddings/index.html) | [Word Analogies](https://contextlab.github.io/llm-course/demos/11-analogies/index.html)
 - 📊 [Slides PDF](week3-4/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week3-4/lecture.html)
 
 ---
@@ -129,7 +129,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [McInnes & Healy (2018)](https://arxiv.org/pdf/1802.03426) - UMAP
 - Reading: [Angelov (2020)](https://arxiv.org/abs/2008.09470) - Top2Vec
 - Reading: [Grootendorst (2022)](https://arxiv.org/abs/2203.05794) - BERTopic
-- 🎮 **Try it:** [Topic Modeling](https://contextlab.github.io/llm-course/demos/08-topic-modeling/)
+- 🎮 **Try it:** [Topic Modeling](https://contextlab.github.io/llm-course/demos/08-topic-modeling/index.html)
 - 📊 [Slides PDF](week3-4/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week3-4/lecture.html)
 
 **Wednesday (Lecture 10):** Transformer Embeddings & Semantic Search
@@ -140,13 +140,13 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - HuggingFace: [Chapter 5.6: Semantic Search with FAISS](https://huggingface.co/learn/nlp-course/chapter5/6)
 - **Assignment 3 Released:** [Wikipedia Embeddings](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%203%3A%20Wikipedia) (Due: Wednesday, End of Week 4)
 - **📝 Assignment 3 Due: Wednesday, End of Week 4**
-- 🎮 **Try it:** [Semantic Search](https://contextlab.github.io/llm-course/demos/12-semantic-search/)
+- 🎮 **Try it:** [Semantic Search](https://contextlab.github.io/llm-course/demos/12-semantic-search/index.html)
 - 📊 [Slides PDF](week3-4/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week3-4/lecture.html)
 
 **Friday (Lecture 11):** Evaluation & Clustering
 - Comparing embedding methods
 - Clustering evaluation metrics
-- 🎮 **Try it:** [Embeddings Comparison](https://contextlab.github.io/llm-course/demos/14-embeddings-comparison/)
+- 🎮 **Try it:** [Embeddings Comparison](https://contextlab.github.io/llm-course/demos/14-embeddings-comparison/index.html)
 - 📊 [Slides PDF](week3-4/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week3-4/lecture.html)
 
 ---
@@ -158,7 +158,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Attention mechanisms explained
 - Reading: [Sutskever et al. (2014)](https://arxiv.org/abs/1409.3215) - Seq2Seq
 - Reading: [Bahdanau et al. (2015)](https://arxiv.org/abs/1409.0473) - Neural Machine Translation with Attention
-- 🎮 **Try it:** [Attention Mechanism](https://contextlab.github.io/llm-course/demos/04-attention/)
+- 🎮 **Try it:** [Attention Mechanism](https://contextlab.github.io/llm-course/demos/04-attention/index.html)
 - 📊 [Slides PDF](week5-6/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week5-6/lecture.html)
 
 **Wednesday (Lecture 13):** The Transformer Architecture
@@ -169,7 +169,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Su et al. (2021)](https://arxiv.org/abs/2104.09864) - RoPE (Rotary Position Embeddings)
 - Tutorial: [The Animated Transformer](https://prvnsmpth.github.io/animated-transformer/)
 - HuggingFace: [Chapter 1.4: How Transformers Work](https://huggingface.co/learn/nlp-course/chapter1/4)
-- 🎮 **Try it:** [Transformer Explorer](https://contextlab.github.io/llm-course/demos/05-transformer/)
+- 🎮 **Try it:** [Transformer Explorer](https://contextlab.github.io/llm-course/demos/05-transformer/index.html)
 - 📊 [Slides PDF](week5-6/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week5-6/lecture.html)
 
 **Friday (Lecture 14):** BERT & Encoder Models
@@ -180,7 +180,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Sanh et al. (2019)](https://arxiv.org/abs/1910.01108) - DistilBERT
 - HuggingFace: [Chapter 1.5: Encoder Models](https://huggingface.co/learn/nlp-course/chapter1/5)
 - HuggingFace: [Chapter 7.3: Fine-tuning MLM](https://huggingface.co/learn/nlp-course/chapter7/3)
-- 🎮 **Try it:** [BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/13-bert-mlm/)
+- 🎮 **Try it:** [BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/13-bert-mlm/index.html)
 - 📊 [Slides PDF](week5-6/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week5-6/lecture.html)
 
 ---
@@ -237,7 +237,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - HuggingFace: [Chapter 7.6: Causal Language Modeling](https://huggingface.co/learn/nlp-course/chapter7/6)
 - Tutorial: [Let's build GPT (Karpathy)](https://www.youtube.com/watch?v=kCc8FmEb1nY)
 - **Assignment 5 Released:** [Build and Train GPT](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%205%3A%20GPT) (Due: Friday, March 6)
-- 🎮 **Try it:** [GPT Playground](https://contextlab.github.io/llm-course/demos/06-gpt-playground/)
+- 🎮 **Try it:** [GPT Playground](https://contextlab.github.io/llm-course/demos/06-gpt-playground/index.html)
 - 📊 [Slides PDF](week8/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week8/lecture.html)
 
 **Friday (Lecture 20):** Language Models & The Brain
@@ -262,7 +262,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Yan et al. (2024)](https://arxiv.org/abs/2401.15884) - Corrective RAG
 - HuggingFace: [Agentic RAG](https://huggingface.co/learn/agents-course/unit3/agentic-rag/agentic-rag)
 - HuggingFace: [Advanced RAG Tutorial](https://huggingface.co/learn/cookbook/advanced_rag)
-- 🎮 **Try it:** [RAG System Demo](https://contextlab.github.io/llm-course/demos/07-rag/)
+- 🎮 **Try it:** [RAG System Demo](https://contextlab.github.io/llm-course/demos/07-rag/index.html)
 - 📊 [Slides PDF](week9/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture.html)
 
 **Wednesday (Lecture 22):** Mixture of Experts
@@ -319,7 +319,16 @@ The web interface provides:
 
 ## Compiling Slides Locally
 
-If you want to compile the slides yourself:
+### Prerequisites
+
+Install a LaTeX distribution:
+- **Mac**: [MacTeX](https://www.tug.org/mactex/)
+- **Windows**: [MiKTeX](https://miktex.org/) or [TeX Live](https://www.tug.org/texlive/)
+- **Linux**: `sudo apt-get install texlive-full` (Debian/Ubuntu)
+
+### Compiling Slides
+
+Navigate to any week's directory and run:
 
 ```bash
 cd slides/week1
@@ -333,7 +342,20 @@ xelatex lecture.tex
 xelatex lecture.tex
 ```
 
-See [SLIDES_README.md](SLIDES_README.md) for detailed compilation instructions.
+Or use `latexmk` for automated compilation:
+```bash
+latexmk -pdf lecture.tex
+```
+
+### Using Overleaf
+
+Alternatively, upload `lecture.tex` to [Overleaf](https://www.overleaf.com/) for cloud-based compilation.
+
+### Troubleshooting
+
+- **Missing packages**: Install the full TeXLive distribution
+- **Font errors**: Use `xelatex` instead of `pdflatex`
+- **TikZ errors**: Ensure `texlive-latex-extra` is installed
 
 ---
 
