@@ -1,0 +1,1238 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{emoji}
+
+% Code listing setup
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  language=Python
+}
+
+\title{Word Embeddings: Word2Vec, GloVe, FastText}
+\subtitle{Lecture 8: The Neural Revolution in NLP}
+\author{LLM Course - Week 3}
+\date{Winter 2026}
+
+\begin{document}
+
+% ============================================================
+% TITLE SLIDE
+% ============================================================
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ============================================================
+% OVERVIEW
+% ============================================================
+\begin{frame}{Today's Lecture 📋}
+\large
+\begin{enumerate}
+    \item 🚀 \textbf{The 2013 Revolution: Word2Vec}
+    \item 🏗️ \textbf{Word2Vec Architectures: CBOW \& Skip-gram}
+    \item 🌍 \textbf{GloVe: Global Vectors}
+    \item 🔤 \textbf{FastText: Subword Information}
+    \item 📊 \textbf{Comparison \& Evaluation}
+    \item 💡 \textbf{Applications \& Best Practices}
+\end{enumerate}
+
+\vspace{1em}
+\textit{Goal: Understand how neural methods learn dense word representations}
+\end{frame}
+
+% ============================================================
+% FROM COUNT TO PREDICT
+% ============================================================
+\begin{frame}{From Count-Based to Prediction-Based 🎯}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Count-Based (LSA, LDA):}
+\begin{itemize}
+    \item Build co-occurrence matrix
+    \item Apply matrix factorization
+    \item Global statistics
+    \item Linear relationships
+    \item Interpretable factors
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Advantages:}
+\begin{itemize}
+    \item Fast training
+    \item Leverages global statistics
+    \item Mathematically grounded
+\end{itemize}
+\end{column}
+
+\pause
+
+\begin{column}{0.48\textwidth}
+\textbf{Prediction-Based (Word2Vec):}
+\begin{itemize}
+    \item Predict context from word
+    \item Train neural network
+    \item Local context windows
+    \item Non-linear relationships
+    \item Learned representations
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Advantages:}
+\begin{itemize}
+    \item Better semantic capture
+    \item Scalable to huge corpora
+    \item Dense, low-dimensional
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{1em}
+\begin{center}
+\alert{2013: Word2Vec showed prediction-based methods could outperform count-based!}
+\end{center}
+\end{frame}
+
+% ============================================================
+% WORD2VEC INTRO
+% ============================================================
+\begin{frame}{Word2Vec: The Revolution 🚀}
+\begin{center}
+\LARGE
+\textbf{2013: Everything changed}
+\end{center}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Key Innovation:}
+\begin{itemize}
+    \item Shallow neural network
+    \item Predict context from word (CBOW)
+    \item Predict word from context (Skip-gram)
+    \item Dense, low-dimensional vectors
+    \item Captures semantic relationships
+    \item \alert{Fast} training with negative sampling
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Impact:}
+\begin{itemize}
+    \item Sparked deep learning in NLP
+    \item Pre-training became standard
+    \item Enabled transfer learning
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Famous Results:}
+\begin{center}
+\Large
+$\vec{king} - \vec{man} + \vec{woman} \approx \vec{queen}$
+\end{center}
+
+\vspace{1em}
+\textbf{Other Examples:}
+\begin{itemize}
+    \item $\vec{Paris} - \vec{France} + \vec{Italy} \approx \vec{Rome}$
+    \item $\vec{walking} - \vec{walk} + \vec{swim} \approx \vec{swimming}$
+    \item $\vec{bigger} - \vec{big} + \vec{small} \approx \vec{smaller}$
+\end{itemize}
+
+\vspace{0.5em}
+\alert{Vector arithmetic captures semantic relationships!}
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+\small
+\textit{Reference: Mikolov et al. (2013a). "Efficient Estimation of Word Representations in Vector Space"}
+\end{frame}
+
+% ============================================================
+% WORD2VEC INTUITION
+% ============================================================
+\begin{frame}{Word2Vec: Core Intuition 💡}
+\begin{center}
+\Large
+\textit{Words that appear in similar contexts should have similar representations}
+\end{center}
+
+\vspace{1em}
+
+\begin{exampleblock}{Example Context Window}
+\begin{center}
+"The quick brown \textbf{[TARGET]} jumped over the lazy dog"
+\end{center}
+
+\textbf{Context:} [The, quick, brown, jumped, over, the, lazy, dog]
+
+\textbf{Target:} fox
+\end{exampleblock}
+
+\vspace{1em}
+
+\textbf{Key Idea:}
+\begin{itemize}
+    \item Train a model to predict target from context (or vice versa)
+    \item The learned \alert{hidden layer weights} become our word vectors!
+    \item Similar words will have similar weight patterns
+\end{itemize}
+
+\vspace{0.5em}
+\begin{center}
+\textit{We don't actually care about the prediction task—we want the embeddings!}
+\end{center}
+\end{frame}
+
+% ============================================================
+% CBOW
+% ============================================================
+\begin{frame}{CBOW: Continuous Bag of Words 🎒}
+\textbf{Predict the center word from context words}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Input layer
+    \node at (-2, 4.5) {the};
+    \node at (-1, 4.5) {cat};
+    \node at (1, 4.5) {on};
+    \node at (2, 4.5) {the};
+
+    % Input vectors
+    \foreach \x in {-2,-1,1,2}
+        \draw[fill=blue!20] (\x-0.2, 3.7) rectangle (\x+0.2, 4.2);
+
+    % Arrows to projection layer
+    \foreach \x in {-2,-1,1,2}
+        \draw[->] (\x, 3.7) -- (0, 2.5);
+
+    % Projection/Hidden layer
+    \draw[fill=green!20] (-0.8,1.8) rectangle (0.8,2.5);
+    \node at (0, 2.15) {Hidden};
+    \node[font=\tiny] at (0, 1.5) {Average/Sum};
+
+    % Arrow to output
+    \draw[->] (0, 1.8) -- (0, 0.8);
+
+    % Output layer
+    \draw[fill=red!20] (-0.5,0.3) rectangle (0.5,0.8);
+    \node at (0, -0.1) {\textbf{sat}};
+
+    % Labels
+    \node[font=\small] at (-3.5, 4.5) {Input:};
+    \node[font=\small] at (-3.5, 2.15) {Hidden:};
+    \node[font=\small] at (-3.5, 0.5) {Output:};
+\end{tikzpicture}
+\end{center}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Architecture:}
+\begin{enumerate}
+    \item Input: One-hot vectors of context words
+    \item Hidden: Average of input embeddings
+    \item Output: Softmax over vocabulary
+\end{enumerate}
+
+\vspace{0.5em}
+\textbf{Training:}
+\begin{itemize}
+    \item Context window size (e.g., 5 words)
+    \item Maximize $P(\text{center}|\text{context})$
+    \item Backpropagation updates embeddings
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Characteristics:}
+\begin{itemize}
+    \item \alert{Faster} to train than Skip-gram
+    \item Better for frequent words
+    \item Smooths over context
+    \item Good for syntactic tasks
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+\textbf{Objective:} $\max \frac{1}{T}\sum_{t=1}^T \log P(w_t | w_{t-c},...,w_{t+c})$
+\end{frame}
+
+% ============================================================
+% SKIP-GRAM
+% ============================================================
+\begin{frame}{Skip-gram: The Inverse Approach 🔄}
+\textbf{Predict context words from the center word}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Input layer
+    \node at (0, 4.5) {\textbf{sat}};
+
+    % Input vector
+    \draw[fill=blue!20] (-0.3, 3.7) rectangle (0.3, 4.2);
+
+    % Arrow down
+    \draw[->] (0, 3.7) -- (0, 2.5);
+
+    % Hidden layer
+    \draw[fill=green!20] (-0.8,1.8) rectangle (0.8,2.5);
+    \node at (0, 2.15) {Hidden};
+
+    % Arrows to output
+    \foreach \x in {-2,-1,1,2}
+        \draw[->] (0, 1.8) -- (\x, 0.8);
+
+    % Output layer
+    \foreach \x in {-2,-1,1,2}
+        \draw[fill=red!20] (\x-0.2, 0.3) rectangle (\x+0.2, 0.8);
+
+    \node at (-2, 0) {the};
+    \node at (-1, 0) {cat};
+    \node at (1, 0) {on};
+    \node at (2, 0) {the};
+
+    % Labels
+    \node[font=\small] at (-3.5, 4.5) {Input:};
+    \node[font=\small] at (-3.5, 2.15) {Hidden:};
+    \node[font=\small] at (-3.5, 0.5) {Output:};
+\end{tikzpicture}
+\end{center}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Architecture:}
+\begin{enumerate}
+    \item Input: One-hot vector of center word
+    \item Hidden: Word embedding (lookup)
+    \item Output: Softmax over vocabulary (×C times)
+\end{enumerate}
+
+\vspace{0.5em}
+\textbf{Training:}
+\begin{itemize}
+    \item For each context position
+    \item Maximize $P(\text{context}|\text{center})$
+    \item Independent predictions
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Characteristics:}
+\begin{itemize}
+    \item \alert{Slower} than CBOW
+    \item Better for rare words
+    \item More training examples per word
+    \item Better semantic representations
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+\textbf{Objective:} $\max \frac{1}{T}\sum_{t=1}^T \sum_{-c \leq j \leq c, j \neq 0} \log P(w_{t+j} | w_t)$
+\end{frame}
+
+% ============================================================
+% NEGATIVE SAMPLING
+% ============================================================
+\begin{frame}{Negative Sampling: The Speed Trick ⚡}
+\textbf{Problem:} Softmax over entire vocabulary is too expensive!
+
+\begin{align*}
+P(w_O|w_I) = \frac{\exp(v_{w_O}^T v_{w_I})}{\sum_{w=1}^V \exp(v_w^T v_{w_I})}
+\end{align*}
+
+\vspace{0.5em}
+For 100k vocabulary: Need to compute 100k exponentials per training example! 😱
+
+\pause
+\vspace{1em}
+
+\textbf{Solution: Negative Sampling}
+
+Instead of predicting across all words, create a binary classification:
+\begin{itemize}
+    \item \textbf{Positive sample:} Actual context word (label = 1)
+    \item \textbf{Negative samples:} K random words (label = 0)
+\end{itemize}
+
+\vspace{0.5em}
+
+\begin{align*}
+\log \sigma(v_{w_O}^T v_{w_I}) + \sum_{i=1}^k \mathbb{E}_{w_i \sim P_n(w)} [\log \sigma(-v_{w_i}^T v_{w_I})]
+\end{align*}
+
+\vspace{0.5em}
+\textbf{Typical K:} 5-20 for large datasets, 2-5 for small datasets
+
+\vspace{0.5em}
+\alert{Result:} Training becomes $O(k)$ instead of $O(V)$ per example!
+
+\small
+\textit{Reference: Mikolov et al. (2013b). "Distributed Representations of Words and Phrases"}
+\end{frame}
+
+% ============================================================
+% WORD2VEC CODE
+% ============================================================
+\begin{frame}[fragile]{Word2Vec in Practice 💻}
+\begin{lstlisting}[language=Python]
+from gensim.models import Word2Vec
+import gensim.downloader as api
+
+# Load pre-trained model (300 dimensions, 3B words)
+model = api.load('word2vec-google-news-300')
+
+# Find similar words
+similar = model.most_similar('computer', topn=5)
+print(similar)
+# Output: [('computers', 0.72), ('laptop', 0.69), ('PC', 0.68), ...]
+
+# Word analogies: king - man + woman = ?
+result = model.most_similar(
+    positive=['king', 'woman'],
+    negative=['man'],
+    topn=1
+)
+print(result)
+# Output: [('queen', 0.71)]
+
+# Train your own model
+sentences = [
+    ['the', 'cat', 'sat', 'on', 'the', 'mat'],
+    ['the', 'dog', 'ran', 'in', 'the', 'park'],
+    # ... more sentences
+]
+
+custom_model = Word2Vec(
+    sentences,
+    vector_size=100,    # embedding dimension
+    window=5,           # context window
+    min_count=1,        # ignore rare words
+    sg=1,               # 1=skip-gram, 0=CBOW
+    negative=5,         # negative sampling
+    workers=4           # parallel threads
+)
+\end{lstlisting}
+\end{frame}
+
+% ============================================================
+% GLOVE INTRO
+% ============================================================
+\begin{frame}{GloVe: Global Vectors for Word Representation 🌍}
+\textbf{Combining the best of count-based and prediction-based methods}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Motivation:}
+\begin{itemize}
+    \item Word2Vec uses \alert{local} context windows
+    \item LSA uses \alert{global} co-occurrence statistics
+    \item Can we get the best of both?
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Key Insight:}
+
+Ratios of co-occurrence probabilities encode meaning better than raw probabilities!
+
+\vspace{0.5em}
+\begin{center}
+\small
+\begin{tabular}{lcc}
+\toprule
+$P(k|w)$ & ice & steam \\
+\midrule
+solid & high & low \\
+gas & low & high \\
+water & med & med \\
+fashion & low & low \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Ratio Encodes Relevance:}
+
+\vspace{0.5em}
+\begin{align*}
+\frac{P(\text{solid}|\text{ice})}{P(\text{solid}|\text{steam})} &\gg 1 \\
+\frac{P(\text{gas}|\text{ice})}{P(\text{gas}|\text{steam})} &\ll 1 \\
+\frac{P(\text{water}|\text{ice})}{P(\text{water}|\text{steam})} &\approx 1
+\end{align*}
+
+\vspace{0.5em}
+\textbf{Idea:}
+Learn word vectors such that their dot product relates to co-occurrence probability ratios
+
+\vspace{0.5em}
+$\vec{w}_i^T \vec{w}_j \approx \log P(i,j)$
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+\small
+\textit{Reference: Pennington et al. (2014). "GloVe: Global Vectors for Word Representation"}
+\end{frame}
+
+% ============================================================
+% GLOVE OBJECTIVE
+% ============================================================
+\begin{frame}{GloVe: The Objective Function 🎯}
+\textbf{Goal:} Learn vectors that capture co-occurrence statistics
+
+\vspace{1em}
+
+\textbf{Objective Function:}
+\begin{align*}
+J = \sum_{i,j=1}^{V} f(X_{ij}) \left(\vec{w}_i^T \tilde{\vec{w}}_j + b_i + \tilde{b}_j - \log X_{ij}\right)^2
+\end{align*}
+
+where:
+\begin{itemize}
+    \item $X_{ij}$ = number of times word $j$ appears in context of word $i$
+    \item $\vec{w}_i$ = word vector for word $i$
+    \item $\tilde{\vec{w}}_j$ = separate context vector for word $j$
+    \item $b_i, \tilde{b}_j$ = bias terms
+    \item $f(X_{ij})$ = weighting function
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{Weighting Function:}
+\begin{align*}
+f(x) = \begin{cases}
+(x/x_{\max})^\alpha & \text{if } x < x_{\max} \\
+1 & \text{otherwise}
+\end{cases}
+\end{align*}
+
+\textbf{Purpose:} Prevent very common co-occurrences from dominating (typically $x_{\max}=100$, $\alpha=0.75$)
+\end{frame}
+
+% ============================================================
+% GLOVE VS WORD2VEC
+% ============================================================
+\begin{frame}{GloVe vs. Word2Vec 🥊}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Word2Vec (Skip-gram):}
+\begin{itemize}
+    \item Local context windows
+    \item Online training
+    \item Predicts context from word
+    \item Stochastic updates
+    \item Negative sampling trick
+    \item Each occurrence matters
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Advantages:}
+\begin{itemize}
+    \item Works well on small corpora
+    \item Can train incrementally
+    \item Captures local patterns
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{GloVe:}
+\begin{itemize}
+    \item Global co-occurrence matrix
+    \item Batch training
+    \item Factorizes co-occurrence matrix
+    \item Deterministic
+    \item Weighted least squares
+    \item Aggregates all occurrences
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Advantages:}
+\begin{itemize}
+    \item Faster training (large corpora)
+    \item Better statistical efficiency
+    \item More interpretable
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{1em}
+
+\begin{block}{Performance}
+In practice: Similar performance on most tasks! Choose based on:
+\begin{itemize}
+    \item Corpus size (GloVe better for large)
+    \item Training infrastructure (GloVe needs memory for matrix)
+    \item Availability of pre-trained models
+\end{itemize}
+\end{block}
+\end{frame}
+
+% ============================================================
+% GLOVE CODE
+% ============================================================
+\begin{frame}[fragile]{GloVe in Practice 💻}
+\begin{lstlisting}[language=Python]
+import gensim.downloader as api
+import numpy as np
+
+# Load pre-trained GloVe embeddings
+# Options: glove-wiki-gigaword-50, -100, -200, -300
+# Or: glove-twitter-25, -50, -100, -200
+glove = api.load("glove-wiki-gigaword-100")
+
+# Use just like Word2Vec
+similar = glove.most_similar('computer', topn=5)
+print(similar)
+
+# Analogies
+result = glove.most_similar(
+    positive=['france', 'berlin'],
+    negative=['paris'],
+    topn=1
+)
+print(result)  # Should be close to 'germany'
+
+# Vector arithmetic
+king = glove['king']
+man = glove['man']
+woman = glove['woman']
+result_vec = king - man + woman
+
+# Find closest word
+closest = glove.similar_by_vector(result_vec, topn=1)
+print(closest)  # Should be close to 'queen'
+
+# Compute similarity
+similarity = glove.similarity('cat', 'dog')
+print(f"Similarity: {similarity:.3f}")
+\end{lstlisting}
+\end{frame}
+
+% ============================================================
+% FASTTEXT INTRO
+% ============================================================
+\begin{frame}{FastText: Enriching with Subword Information 🔤}
+\textbf{The Problem with Word2Vec and GloVe:}
+
+\vspace{1em}
+
+\begin{exampleblock}{Out-of-Vocabulary (OOV) Problem}
+\begin{itemize}
+    \item Word2Vec/GloVe: One vector per word
+    \item New word? \alert{No vector!}
+    \item Misspelling? \alert{No vector!}
+    \item Rare morphological form? \alert{No vector!}
+\end{itemize}
+\end{exampleblock}
+
+\vspace{1em}
+
+\textbf{Example:}
+\begin{itemize}
+    \item Have: "running", "runner"
+    \item Need: "runnable" $\rightarrow$ \alert{OOV!}
+    \item But these words share morphology! ("run" + suffix)
+\end{itemize}
+
+\vspace{1em}
+
+\begin{center}
+\Large
+\textbf{FastText Solution:} Represent words as \alert{bags of character n-grams}
+\end{center}
+
+\small
+\textit{Reference: Bojanowski et al. (2017). "Enriching Word Vectors with Subword Information"}
+\end{frame}
+
+% ============================================================
+% FASTTEXT DETAILS
+% ============================================================
+\begin{frame}{FastText: Character N-grams 🧩}
+\textbf{Key Idea:} Break words into character n-grams
+
+\vspace{1em}
+
+\begin{exampleblock}{Example: "where" (with n=3)}
+\textbf{Character trigrams:} <wh, whe, her, ere, re>
+
+\textbf{Plus:} <where> (the whole word)
+
+\textbf{Word vector:}
+\begin{align*}
+\vec{\text{where}} = \frac{1}{6}\left(\vec{\text{<wh>}} + \vec{\text{whe}} + \vec{\text{her}} + \vec{\text{ere}} + \vec{\text{re>}} + \vec{\text{<where>}}\right)
+\end{align*}
+\end{exampleblock}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Advantages:}
+\begin{itemize}
+    \item Handles OOV words!
+    \item Captures morphology
+    \item Better for rare words
+    \item Great for German, Turkish, Finnish
+    \item Robust to typos
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Example OOV:}
+
+Have trained on: "run", "running"
+
+Need vector for: "runnable"
+
+N-grams: <ru, run, unn, nna, nab, abl, ble, le>
+
+Many overlap with "run" and "running"!
+
+$\rightarrow$ Can generate reasonable embedding
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% FASTTEXT CODE
+% ============================================================
+\begin{frame}[fragile]{FastText in Practice 💻}
+\begin{lstlisting}[language=Python]
+from gensim.models import FastText
+import gensim.downloader as api
+
+# Load pre-trained FastText model
+# Available in 157 languages!
+fasttext_model = api.load('fasttext-wiki-news-subwords-300')
+
+# Works for known words
+vec_cat = fasttext_model['cat']
+
+# Also works for unknown words! (OOV)
+vec_unknownword = fasttext_model['unknownword']  # Still get a vector!
+
+# Even works for misspellings (somewhat)
+vec_misspelling = fasttext_model['computr']  # Close to "computer"
+
+# Train your own FastText model
+sentences = [['the', 'cat', 'sat'], ['the', 'dog', 'ran']]
+
+ft_model = FastText(
+    sentences,
+    vector_size=100,
+    window=5,
+    min_count=1,
+    min_n=3,      # minimum n-gram length
+    max_n=6,      # maximum n-gram length
+    word_ngrams=1 # use word + ngrams
+)
+
+# Check similar words
+similar = ft_model.wv.most_similar('cat', topn=5)
+
+# Morphological awareness
+# 'running', 'runner', 'runnable' will be close
+\end{lstlisting}
+\end{frame}
+
+% ============================================================
+% COMPARISON TABLE
+% ============================================================
+\begin{frame}{Embedding Methods Comparison 📊}
+\begin{center}
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Method} & \textbf{Year} & \textbf{Type} & \textbf{OOV} & \textbf{Speed} & \textbf{Best For} \\
+\midrule
+LSA & 1990 & Count & ✗ & Medium & IR, exploration \\
+LDA & 2003 & Probabilistic & ✗ & Slow & Topic modeling \\
+Word2Vec & 2013 & Neural (local) & ✗ & Fast & General NLP \\
+GloVe & 2014 & Hybrid (global) & ✗ & Fast & Large corpora \\
+FastText & 2017 & Neural + ngrams & ✓ & Fast & Morphology-rich \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+
+\begin{block}{When to Use What?}
+\begin{itemize}
+    \item \textbf{Word2Vec (Skip-gram):} General purpose, good semantic quality, most popular
+    \item \textbf{GloVe:} Large corpus, want deterministic training, good interpretability
+    \item \textbf{FastText:} Morphologically rich languages, need OOV handling, many rare words
+    \item \textbf{LSA/LDA:} Topic modeling, document similarity, interpretable dimensions
+\end{itemize}
+\end{block}
+
+\vspace{0.5em}
+\textbf{Typical dimensions:} 50-300 (100-300 most common)
+\end{frame}
+
+% ============================================================
+% EVALUATION
+% ============================================================
+\begin{frame}{Evaluating Word Embeddings 📏}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Intrinsic Evaluation:}
+
+\vspace{0.5em}
+\textbf{1. Word Similarity}
+\begin{itemize}
+    \item WordSim-353 dataset
+    \item SimLex-999 dataset
+    \item Spearman correlation with human judgments
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{2. Word Analogies}
+\begin{itemize}
+    \item Google Analogy Dataset (19k questions)
+    \item Semantic: \textit{Athens:Greece::Baghdad:Iraq}
+    \item Syntactic: \textit{good:better::bad:worse}
+    \item Accuracy: \% correct
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{3. Categorization}
+\begin{itemize}
+    \item Cluster words
+    \item Compare to gold categories
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Extrinsic Evaluation:}
+
+Use embeddings as features in downstream tasks:
+
+\vspace{0.5em}
+\begin{itemize}
+    \item \textbf{Sentiment Analysis}
+    \item \textbf{Named Entity Recognition}
+    \item \textbf{POS Tagging}
+    \item \textbf{Machine Translation}
+    \item \textbf{Question Answering}
+    \item \textbf{Text Classification}
+\end{itemize}
+
+\vspace{1em}
+\begin{alertblock}{Key Insight}
+Intrinsic scores don't always correlate with extrinsic performance!
+
+Best approach: Evaluate on your actual task.
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% LIMITATIONS
+% ============================================================
+\begin{frame}{Limitations of Static Embeddings ⚠️}
+\textbf{The fundamental problem: One vector per word type}
+
+\vspace{1em}
+
+\begin{exampleblock}{Example: Polysemy}
+\begin{enumerate}
+    \item "I deposited money at the \textbf{bank}" (financial institution)
+    \item "We sat by the river \textbf{bank}" (riverside)
+    \item "The plane will \textbf{bank} left" (tilt)
+\end{enumerate}
+All get the \alert{same vector}! This conflates different meanings.
+\end{exampleblock}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Other Limitations:}
+\begin{itemize}
+    \item No compositional semantics
+    \item "hot dog" $\neq$ "hot" + "dog"
+    \item Bias in embeddings
+    \item Limited to training corpus
+    \item No understanding of negation
+    \item Missing multimodal grounding
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{The Solution:}
+\begin{itemize}
+    \item \alert{Contextual embeddings!}
+    \item Different vector per occurrence
+    \item Consider sentence context
+    \item ELMo, BERT, GPT, ...
+    \item Coming next lecture!
+\end{itemize}
+
+\vspace{0.5em}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{transformer_preview.png}
+\textit{(if image available)}
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% BIASES
+% ============================================================
+\begin{frame}{Bias in Word Embeddings ⚖️}
+\textbf{Embeddings learn the biases in their training data}
+
+\vspace{1em}
+
+\begin{exampleblock}{Gender Bias Examples}
+\begin{itemize}
+    \item $\vec{\text{man}} : \vec{\text{programmer}} :: \vec{\text{woman}} : \vec{\text{homemaker}}$
+    \item $\vec{\text{father}} : \vec{\text{doctor}} :: \vec{\text{mother}} : \vec{\text{nurse}}$
+    \item "man" more associated with "career", "woman" with "family"
+\end{itemize}
+\end{exampleblock}
+
+\vspace{0.5em}
+
+\textbf{Other Biases:}
+\begin{itemize}
+    \item Racial/ethnic stereotypes
+    \item Age bias
+    \item Religious bias
+    \item Socioeconomic bias
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{Why This Matters:}
+\begin{itemize}
+    \item Embeddings used in hiring tools, search, recommendations
+    \item Can perpetuate and amplify societal biases
+    \item May violate fairness and anti-discrimination principles
+\end{itemize}
+
+\vspace{0.5em}
+\small
+\textit{References: Bolukbasi et al. (2016). "Man is to Computer Programmer as Woman is to Homemaker?"}
+
+\textit{Caliskan et al. (2017). "Semantics derived automatically from language corpora contain human-like biases"}
+\end{frame}
+
+% ============================================================
+% DEBIASING
+% ============================================================
+\begin{frame}{Debiasing Approaches 🔧}
+\textbf{How can we reduce bias in embeddings?}
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{1. Post-processing:}
+\begin{itemize}
+    \item Identify bias subspace
+    \item Neutralize: Remove bias from neutral words
+    \item Equalize: Ensure equal distances
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{2. Training-time:}
+\begin{itemize}
+    \item Counterfactual data augmentation
+    \item Adversarial debiasing
+    \item Constrained optimization
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{3. Data curation:}
+\begin{itemize}
+    \item Balanced corpora
+    \item Careful source selection
+    \item Remove problematic content
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Challenges:}
+\begin{itemize}
+    \item Hard to define "bias"
+    \item May harm performance
+    \item Bias is multidimensional
+    \item Not a complete solution
+    \item Ethical considerations
+\end{itemize}
+
+\vspace{1em}
+\begin{alertblock}{Important}
+Debiasing is an active research area. No perfect solution yet!
+
+Best practice:
+\begin{itemize}
+    \item Be aware of biases
+    \item Document training data
+    \item Test for bias
+    \item Use multiple evaluation metrics
+    \item Consider societal impact
+\end{itemize}
+\end{alertblock}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+% PRACTICAL TIPS
+% ============================================================
+\begin{frame}{Practical Tips for Using Embeddings 💡}
+\begin{enumerate}
+    \item \textbf{Start with pre-trained models}
+    \begin{itemize}
+        \item Word2Vec: Google News (300d, 3B words)
+        \item GloVe: Common Crawl (300d, 840B tokens)
+        \item FastText: Available in 157 languages
+    \end{itemize}
+
+    \item \textbf{Fine-tune if you have domain data}
+    \begin{itemize}
+        \item Medical: PubMed, clinical notes
+        \item Legal: case law, contracts
+        \item Social media: tweets, posts
+        \item Can significantly improve performance
+    \end{itemize}
+
+    \item \textbf{Choose dimensions wisely}
+    \begin{itemize}
+        \item More dims = more expressiveness, more data needed
+        \item 50-100d: small datasets, fast computation
+        \item 200-300d: large datasets, better quality
+    \end{itemize}
+
+    \item \textbf{Use cosine similarity}
+    \begin{itemize}
+        \item $\text{similarity}(u,v) = \frac{u \cdot v}{||u|| \cdot ||v||}$
+        \item Not Euclidean distance (direction matters more than magnitude)
+    \end{itemize}
+
+    \item \textbf{Be aware of biases and limitations}
+    \begin{itemize}
+        \item Test for bias in your use case
+        \item Static embeddings can't handle polysemy
+        \item Consider contextual embeddings for better performance
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+% APPLICATIONS
+% ============================================================
+\begin{frame}{Real-World Applications 🌟}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Search \& Information Retrieval:}
+\begin{itemize}
+    \item Semantic search
+    \item Query expansion
+    \item Document ranking
+    \item Question answering
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Text Classification:}
+\begin{itemize}
+    \item Sentiment analysis
+    \item Spam detection
+    \item Topic classification
+    \item Intent detection
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Sequence Labeling:}
+\begin{itemize}
+    \item Named entity recognition
+    \item POS tagging
+    \item Chunking
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\textbf{Recommendation Systems:}
+\begin{itemize}
+    \item Product recommendations
+    \item Content recommendations
+    \item User similarity
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Machine Translation:}
+\begin{itemize}
+    \item Word alignment
+    \item Transfer learning
+    \item Multilingual models
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Creative Applications:}
+\begin{itemize}
+    \item Poetry generation
+    \item Analogy discovery
+    \item Semantic exploration
+    \item Visualization
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{1em}
+\textbf{Example:} Google Search uses embeddings to understand query intent and match relevant documents!
+\end{frame}
+
+% ============================================================
+% DISCUSSION
+% ============================================================
+\begin{frame}{Discussion Question 💬}
+\begin{center}
+\Large
+\textbf{Why do word analogies work so well?}
+\end{center}
+
+\vspace{1em}
+
+\textbf{The famous example:}
+\begin{center}
+$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{queen}}$
+\end{center}
+
+\vspace{1em}
+
+\textbf{Think about:}
+\begin{itemize}
+    \item What does vector subtraction represent linguistically?
+    \item Why does this capture semantic relationships?
+    \item What are the limitations of this approach?
+    \item Does this mean embeddings "understand" gender?
+\end{itemize}
+
+\vspace{1em}
+
+\begin{alertblock}{Deeper Question}
+Are these embeddings truly capturing \textit{meaning}, or just statistical patterns?
+
+Does the distributional hypothesis have limits?
+\end{alertblock}
+
+\small
+\textit{Reference: Boleda (2020). "Distributional Semantics and Linguistic Theory"}
+\end{frame}
+
+% ============================================================
+% SUMMARY
+% ============================================================
+\begin{frame}{Summary 🎯}
+\textbf{What we learned today:}
+
+\begin{enumerate}
+    \item \textbf{Word2Vec (2013):} Neural revolution in embeddings
+    \begin{itemize}
+        \item CBOW: Predict center from context
+        \item Skip-gram: Predict context from center
+        \item Negative sampling for efficiency
+    \end{itemize}
+
+    \item \textbf{GloVe (2014):} Combining count + prediction
+    \begin{itemize}
+        \item Global co-occurrence statistics
+        \item Factorization objective
+        \item Ratio of probabilities
+    \end{itemize}
+
+    \item \textbf{FastText (2017):} Subword information
+    \begin{itemize}
+        \item Character n-grams
+        \item Handles OOV words
+        \item Captures morphology
+    \end{itemize}
+
+    \item \textbf{Evaluation:} Intrinsic vs. extrinsic
+
+    \item \textbf{Limitations:} Static, biased, no polysemy
+
+    \item \textbf{Next:} Contextual embeddings solve polysemy!
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+% REFERENCES
+% ============================================================
+\begin{frame}{Key References 📚}
+\small
+\textbf{Foundational Papers:}
+\begin{itemize}
+    \item Mikolov et al. (2013a). "Efficient Estimation of Word Representations in Vector Space"
+    \item Mikolov et al. (2013b). "Distributed Representations of Words and Phrases and their Compositionality"
+    \item Pennington et al. (2014). "GloVe: Global Vectors for Word Representation"
+    \item Bojanowski et al. (2017). "Enriching Word Vectors with Subword Information"
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Bias \& Ethics:}
+\begin{itemize}
+    \item Bolukbasi et al. (2016). "Man is to Computer Programmer as Woman is to Homemaker?"
+    \item Caliskan et al. (2017). "Semantics derived automatically from language corpora contain human-like biases"
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Theory:}
+\begin{itemize}
+    \item Boleda, G. (2020). "Distributional Semantics and Linguistic Theory"
+    \item Levy & Goldberg (2014). "Neural Word Embedding as Implicit Matrix Factorization"
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Tools:}
+\begin{itemize}
+    \item Gensim: \url{https://radimrehurek.com/gensim/}
+    \item Pre-trained vectors: \url{https://github.com/RaRe-Technologies/gensim-data}
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% QUESTIONS
+% ============================================================
+\begin{frame}{Questions? 🙋}
+\begin{center}
+\LARGE
+\textbf{Next Lecture:}
+
+\vspace{1em}
+Contextual Embeddings: ELMo, Universal Sentence Encoder, BERT
+
+\vspace{2em}
+\textit{One word, multiple meanings!}
+\end{center}
+\end{frame}
+
+\end{document}

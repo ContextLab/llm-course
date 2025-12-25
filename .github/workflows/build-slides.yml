@@ -1,0 +1,275 @@
+name: Build and Deploy Slides
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'slides/**/*.tex'
+      - '.github/workflows/build-slides.yml'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'slides/**/*.tex'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-slides:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-latex-base \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-fonts-extra \
+            texlive-xetex \
+            latexmk \
+            pdf2svg
+
+      - name: Find and compile all lecture slides
+        run: |
+          echo "🔍 Finding all lecture.tex files..."
+          find slides -name "lecture.tex" -type f | while read -r tex_file; do
+            dir=$(dirname "$tex_file")
+            echo "📝 Compiling $tex_file..."
+            cd "$dir"
+
+            # Compile with pdflatex (try twice for references)
+            pdflatex -interaction=nonstopmode -halt-on-error lecture.tex || true
+            pdflatex -interaction=nonstopmode -halt-on-error lecture.tex || true
+
+            # Try with xelatex if pdflatex failed
+            if [ ! -f lecture.pdf ]; then
+              echo "⚠️  pdflatex failed, trying xelatex..."
+              xelatex -interaction=nonstopmode -halt-on-error lecture.tex || true
+              xelatex -interaction=nonstopmode -halt-on-error lecture.tex || true
+            fi
+
+            cd - > /dev/null
+
+            if [ -f "$dir/lecture.pdf" ]; then
+              echo "✅ Successfully compiled $tex_file"
+            else
+              echo "❌ Failed to compile $tex_file"
+            fi
+          done
+
+      - name: Install pdf.js and build web viewer
+        run: |
+          # Create web directory structure
+          mkdir -p web_slides
+
+          # Copy PDF files to web directory
+          echo "📦 Copying PDFs to web directory..."
+          find slides -name "lecture.pdf" -type f | while read -r pdf_file; do
+            week_dir=$(dirname "$pdf_file" | xargs basename)
+            mkdir -p "web_slides/$week_dir"
+            cp "$pdf_file" "web_slides/$week_dir/"
+            echo "Copied $pdf_file to web_slides/$week_dir/"
+          done
+
+      - name: Generate index page
+        run: |
+          cat > web_slides/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>LLM Course Slides</title>
+              <style>
+                  * {
+                      margin: 0;
+                      padding: 0;
+                      box-sizing: border-box;
+                  }
+
+                  body {
+                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      min-height: 100vh;
+                      padding: 40px 20px;
+                  }
+
+                  .container {
+                      max-width: 1200px;
+                      margin: 0 auto;
+                  }
+
+                  h1 {
+                      color: white;
+                      text-align: center;
+                      font-size: 3em;
+                      margin-bottom: 20px;
+                      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                  }
+
+                  .subtitle {
+                      color: rgba(255,255,255,0.9);
+                      text-align: center;
+                      font-size: 1.2em;
+                      margin-bottom: 50px;
+                  }
+
+                  .slides-grid {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                      gap: 30px;
+                      margin-top: 40px;
+                  }
+
+                  .slide-card {
+                      background: white;
+                      border-radius: 15px;
+                      padding: 30px;
+                      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                      transition: transform 0.3s ease, box-shadow 0.3s ease;
+                      text-decoration: none;
+                      color: inherit;
+                      display: block;
+                  }
+
+                  .slide-card:hover {
+                      transform: translateY(-10px);
+                      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+                  }
+
+                  .slide-card h2 {
+                      color: #667eea;
+                      margin-bottom: 15px;
+                      font-size: 1.5em;
+                  }
+
+                  .slide-card p {
+                      color: #666;
+                      line-height: 1.6;
+                      margin-bottom: 20px;
+                  }
+
+                  .slide-card .view-button {
+                      display: inline-block;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      padding: 12px 30px;
+                      border-radius: 25px;
+                      text-decoration: none;
+                      font-weight: bold;
+                      transition: opacity 0.3s ease;
+                  }
+
+                  .slide-card .view-button:hover {
+                      opacity: 0.8;
+                  }
+
+                  .emoji {
+                      font-size: 2em;
+                      margin-bottom: 15px;
+                      display: block;
+                  }
+
+                  footer {
+                      text-align: center;
+                      color: white;
+                      margin-top: 60px;
+                      padding: 20px;
+                  }
+
+                  footer a {
+                      color: white;
+                      text-decoration: underline;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1>🤖 LLM Course Slides</h1>
+                  <p class="subtitle">Models of Language and Conversation</p>
+
+                  <div class="slides-grid">
+                      <a href="week1/lecture.pdf" class="slide-card" target="_blank">
+                          <span class="emoji">🚀</span>
+                          <h2>Week 1: Introduction</h2>
+                          <p>String manipulation, pattern matching, and the ELIZA chatbot. Is ChatGPT conscious?</p>
+                          <span class="view-button">View Slides →</span>
+                      </a>
+
+                      <a href="week2/lecture.pdf" class="slide-card" target="_blank">
+                          <span class="emoji">📝</span>
+                          <h2>Week 2: Computational Linguistics</h2>
+                          <p>Tokenization, POS tagging, sentiment analysis, and statistical learning.</p>
+                          <span class="view-button">View Slides →</span>
+                      </a>
+
+                      <a href="week3-4/lecture.pdf" class="slide-card" target="_blank">
+                          <span class="emoji">📊</span>
+                          <h2>Weeks 3-4: Text Embeddings</h2>
+                          <p>Dimensionality reduction, LSA, LDA, Word2Vec, GloVe, and modern topic modeling.</p>
+                          <span class="view-button">View Slides →</span>
+                      </a>
+
+                      <a href="week5-6/lecture.pdf" class="slide-card" target="_blank">
+                          <span class="emoji">⚡</span>
+                          <h2>Weeks 5-6: Transformers & BERT</h2>
+                          <p>Attention mechanisms, transformer architecture, and context-aware models.</p>
+                          <span class="view-button">View Slides →</span>
+                      </a>
+
+                      <a href="week7/lecture.pdf" class="slide-card" target="_blank">
+                          <span class="emoji">💬</span>
+                          <h2>Week 7: Models of Conversation</h2>
+                          <p>Pragmatics, dialogue, common ground, and thought trajectories.</p>
+                          <span class="view-button">View Slides →</span>
+                      </a>
+
+                      <a href="week8/lecture.pdf" class="slide-card" target="_blank">
+                          <span class="emoji">🧠</span>
+                          <h2>Week 8: GPT Models</h2>
+                          <p>GPT evolution, building transformers from scratch, and language models & the brain.</p>
+                          <span class="view-button">View Slides →</span>
+                      </a>
+
+                      <a href="week9/lecture.pdf" class="slide-card" target="_blank">
+                          <span class="emoji">🔍</span>
+                          <h2>Week 9: RAG & MoE</h2>
+                          <p>Retrieval Augmented Generation, Mixture of Experts, and the future of LLMs.</p>
+                          <span class="view-button">View Slides →</span>
+                      </a>
+                  </div>
+
+                  <footer>
+                      <p>📚 <a href="https://github.com/ContextLab/llm-course" target="_blank">View Course on GitHub</a></p>
+                      <p>Built with ❤️ using LaTeX Beamer and GitHub Actions</p>
+                  </footer>
+              </div>
+          </body>
+          </html>
+          EOF
+
+          echo "✅ Created index page at web_slides/index.html"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'web_slides'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
