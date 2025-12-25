@@ -24,8 +24,7 @@
                     <div class="control-section">
                         <label for="model-select">Model:</label>
                         <select id="model-select">
-                            <option value="glove-50" selected>GloVe 50d</option>
-                            <option value="word2vec-100">Word2Vec 100d (sample)</option>
+                            <option value="glove-50" selected>GloVe 50d (real pre-trained)</option>
                             <option value="custom">Custom Embeddings</option>
                         </select>
                         <button id="load-model-btn" class="btn btn-primary">Load Model</button>
@@ -227,9 +226,9 @@
                 let embeddings;
 
                 if (modelId === 'glove-50') {
-                    embeddings = SAMPLE_EMBEDDINGS.glove50;
+                    embeddings = await SAMPLE_EMBEDDINGS.glove50;
                 } else if (modelId === 'word2vec-100') {
-                    embeddings = SAMPLE_EMBEDDINGS.word2vec100;
+                    embeddings = await SAMPLE_EMBEDDINGS.word2vec100;
                 } else {
                     alert('Custom embeddings not yet implemented');
                     return;

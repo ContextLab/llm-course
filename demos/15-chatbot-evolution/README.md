@@ -77,27 +77,36 @@ An interactive journey through 60 years of conversational AI development, from E
 - Can handle complex patterns
 - Maintains conversation context
 
-### 4. Seq2Seq (2014)
+### 4. Seq2Seq / BlenderBot (2014-2020)
 **Innovation:** Neural Conversational Models
 
-**Approach:** Encoder-Decoder architecture with RNNs/LSTMs
+**Approach:** Encoder-Decoder architecture with Transformers
+
+**Model Used:** Facebook's BlenderBot Small (90M parameters)
 
 **How it works:**
-- Encoder reads input sequence, creates context vector
+- Real neural conversation model running in your browser
+- Encoder processes input, creates context representation
 - Decoder generates response token by token
-- Trained end-to-end on conversation datasets
-- No hand-written rules
+- Trained on conversational datasets (Reddit, Twitter, etc.)
+- No hand-written rules - purely learned from data
 
 **Famous for:**
 - First successful end-to-end neural chatbots
 - Google's Neural Conversational Model (2015)
-- Breakthrough in learned conversation
+- BlenderBot (Facebook AI, 2020) - open-domain chatbot
 
-**Limitations:**
-- Generic responses ("I don't know")
-- Inconsistent personality
-- No long-term memory
-- Can be incoherent
+**Real Neural Characteristics You'll See:**
+- Contextual understanding beyond pattern matching
+- Variable response quality (sometimes great, sometimes generic)
+- Occasional repetition or incoherence
+- Learning-based responses, not rule-based
+- May take 30-60 seconds to load initially
+
+**Try asking:**
+- Open-ended questions
+- Follow-up questions to test context
+- Compare with rule-based responses above
 
 ### 5. GPT & Transformers (2020s)
 **Innovation:** Large Language Models with transformers
@@ -201,16 +210,22 @@ An interactive journey through 60 years of conversational AI development, from E
 ### Neural Era (2010s-2020s)
 
 **Strengths:**
-- Learns from data
-- Handles variations
-- More natural responses
-- Continuous improvement
+- Learns from data (no manual rules needed)
+- Handles variations and paraphrasing naturally
+- More natural, contextual responses
+- Continuous improvement through training
+- Generalizes to unseen inputs
 
 **Weaknesses:**
-- Requires large datasets
-- Computationally expensive
-- Can be unpredictable
-- Difficult to control
+- Requires large datasets and compute for training
+- Larger model size (90M+ parameters)
+- Can be unpredictable or generate unexpected responses
+- Difficult to control or debug
+- May produce generic responses when uncertain
+- Initial model loading time in browser
+
+**What Makes This Demo Special:**
+This demo runs **real neural models** (BlenderBot 90M, DistilGPT2 82M) directly in your browser using Transformers.js. You'll experience genuine neural behavior - not simulations - allowing you to see the clear evolution from rule-based to learned conversation.
 
 ## Historical Timeline
 
@@ -235,8 +250,9 @@ An interactive journey through 60 years of conversational AI development, from E
 - **ELIZA**: ~200 pattern-response rules
 - **PARRY**: State machine with emotional variables
 - **A.L.I.C.E.**: ~40,000 AIML patterns
-- **Seq2Seq**: ~10 million parameters
-- **GPT-3**: 175 billion parameters
+- **BlenderBot Small**: 90 million parameters (real neural model)
+- **DistilGPT2**: 82 million parameters (real neural model)
+- **GPT-3**: 175 billion parameters (comparison reference)
 
 ### Architectural Progression
 
@@ -286,8 +302,8 @@ An interactive journey through 60 years of conversational AI development, from E
 │   ├── eliza.js           # ELIZA implementation
 │   ├── parry.js           # PARRY implementation
 │   ├── alice.js           # A.L.I.C.E. implementation
-│   ├── seq2seq-sim.js     # Seq2Seq simulator
-│   ├── gpt-bot.js         # GPT interface
+│   ├── seq2seq-bot.js     # Real BlenderBot neural model
+│   ├── gpt-bot.js         # DistilGPT2 interface
 │   └── timeline-app.js    # Main application
 └── README.md              # This file
 ```
@@ -303,11 +319,17 @@ Simplified state machine with emotional tracking (anger, fear, suspicion) affect
 ### A.L.I.C.E.
 AIML-inspired pattern matching with improved context handling over ELIZA.
 
-### Seq2Seq
-Simulated responses (actual model too large for browser). Demonstrates characteristic seq2seq behaviors.
+### Seq2Seq / BlenderBot
+**Real neural model** using Transformers.js with Facebook's BlenderBot Small (90M parameters). This is a genuine neural conversation model that demonstrates:
+- Learned responses from conversational data
+- Contextual understanding beyond pattern matching
+- Real neural characteristics (variable quality, occasional generic responses)
+- Encoder-decoder transformer architecture
+- Loads and runs entirely in your browser (may take 30-60 seconds initially)
+- Fallback to DialoGPT-small if BlenderBot fails to load
 
-### GPT
-Uses Transformers.js with DistilGPT-2 for actual neural text generation in the browser.
+### GPT / DistilGPT2
+Uses Transformers.js with DistilGPT-2 (82M parameters) for actual neural text generation in the browser. Demonstrates modern transformer capabilities.
 
 ## Extensions
 

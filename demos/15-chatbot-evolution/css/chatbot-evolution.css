@@ -197,6 +197,13 @@ header h1 {
     color: var(--text-color);
 }
 
+.message.bot-typing {
+    background: #f3f4f6;
+    color: #9ca3af;
+    font-style: italic;
+    opacity: 0.8;
+}
+
 .chat-input-area {
     display: flex;
     gap: 10px;

@@ -8,8 +8,11 @@ class BPEVisualizer {
         this.mergeHistory = [];
         this.isRunning = false;
         this.autoPlayInterval = null;
+        this.mode = 'simplified'; // 'simplified' or 'gpt2'
+        this.gpt2Merges = null;
+        this.gpt2MergesLoaded = false;
 
-        // Simulated BPE merge rules (common English patterns)
+        // Simulated BPE merge rules (common English patterns) - Educational version
         this.commonMerges = [
             ['e', 'r'],
             ['h', 'e'],
@@ -30,6 +33,27 @@ class BPEVisualizer {
         ];
 
         this.setupEventListeners();
+        this.loadGPT2Merges();
+    }
+
+    async loadGPT2Merges() {
+        try {
+            const response = await fetch('data/gpt2-merges.json');
+            const data = await response.json();
+            this.gpt2Merges = data.merges;
+            this.gpt2MergesLoaded = true;
+            console.log(`Loaded ${data.num_merges} GPT-2 merge rules`);
+
+            // Enable GPT-2 mode toggle
+            const gpt2ModeBtn = document.getElementById('bpe-mode-gpt2');
+            if (gpt2ModeBtn) {
+                gpt2ModeBtn.disabled = false;
+                gpt2ModeBtn.title = `${data.num_merges} real GPT-2 merges loaded`;
+            }
+        } catch (error) {
+            console.error('Failed to load GPT-2 merges:', error);
+            this.gpt2MergesLoaded = false;
+        }
     }
 
     setupEventListeners() {
@@ -37,6 +61,38 @@ class BPEVisualizer {
         document.getElementById('bpe-step-btn').addEventListener('click', () => this.step());
         document.getElementById('bpe-auto-btn').addEventListener('click', () => this.toggleAutoPlay());
         document.getElementById('bpe-reset-btn').addEventListener('click', () => this.reset());
+
+        // Mode toggle buttons
+        document.getElementById('bpe-mode-simplified').addEventListener('click', () => this.setMode('simplified'));
+        document.getElementById('bpe-mode-gpt2').addEventListener('click', () => this.setMode('gpt2'));
+    }
+
+    setMode(mode) {
+        if (mode === 'gpt2' && !this.gpt2MergesLoaded) {
+            alert('GPT-2 merges are still loading. Please try again in a moment.');
+            return;
+        }
+
+        this.mode = mode;
+
+        // Update button states
+        document.getElementById('bpe-mode-simplified').classList.toggle('active', mode === 'simplified');
+        document.getElementById('bpe-mode-gpt2').classList.toggle('active', mode === 'gpt2');
+
+        // Update mode indicator
+        const modeIndicator = document.getElementById('bpe-mode-indicator');
+        if (modeIndicator) {
+            if (mode === 'simplified') {
+                modeIndicator.innerHTML = '<strong>Mode:</strong> Simplified (Educational) - 16 common patterns';
+            } else {
+                modeIndicator.innerHTML = `<strong>Mode:</strong> Real GPT-2 BPE - ${this.gpt2Merges.length.toLocaleString()} merge rules from HuggingFace`;
+            }
+        }
+
+        // Reset visualization if running
+        if (this.isRunning || this.tokens.length > 0) {
+            this.reset();
+        }
     }
 
     start() {
@@ -47,10 +103,34 @@ class BPEVisualizer {
         }
 
         // Initialize tokens as individual characters
-        this.tokens = this.text.split('').map(char => ({
-            value: char,
-            merged: false
-        }));
+        if (this.mode === 'gpt2') {
+            // For GPT-2 mode, handle spaces specially
+            // GPT-2 uses Ġ to represent space at the beginning of words
+            this.tokens = [];
+            const chars = this.text.split('');
+
+            for (let i = 0; i < chars.length; i++) {
+                const char = chars[i];
+                if (char === ' ') {
+                    // Replace space with GPT-2's space marker
+                    this.tokens.push({
+                        value: 'Ġ',
+                        merged: false
+                    });
+                } else {
+                    this.tokens.push({
+                        value: char,
+                        merged: false
+                    });
+                }
+            }
+        } else {
+            // Simplified mode - just split into characters
+            this.tokens = this.text.split('').map(char => ({
+                value: char,
+                merged: false
+            }));
+        }
 
         this.mergeHistory = [];
         this.currentStep = 0;
@@ -61,7 +141,9 @@ class BPEVisualizer {
         document.getElementById('bpe-auto-btn').disabled = false;
 
         this.updateDisplay();
-        this.updateStepInfo('BPE initialized. Each character is a separate token. Click "Next Step" to begin merging.');
+
+        const modeText = this.mode === 'gpt2' ? 'Real GPT-2 BPE' : 'Simplified BPE';
+        this.updateStepInfo(`${modeText} initialized. Each character is a separate token. Click "Next Step" to begin merging.`);
     }
 
     step() {
@@ -108,26 +190,55 @@ class BPEVisualizer {
     }
 
     getMostFrequentPair(pairs) {
-        // Try to use predefined merge rules first
-        for (const mergeRule of this.commonMerges) {
-            const pairKey = mergeRule.join('|');
-            if (pairs.has(pairKey)) {
-                return pairs.get(pairKey);
+        if (this.mode === 'gpt2' && this.gpt2Merges) {
+            // Use GPT-2 merge rules - merge priority is based on order in the list
+            // Earlier merges have higher priority
+            for (const mergeRule of this.gpt2Merges) {
+                // Handle GPT-2's special space character (Ġ)
+                const rule0 = mergeRule[0];
+                const rule1 = mergeRule[1];
+
+                // Create pair key
+                const pairKey = [rule0, rule1].join('|');
+                if (pairs.has(pairKey)) {
+                    return pairs.get(pairKey);
+                }
             }
-        }
 
-        // Otherwise, use the most frequent pair
-        let maxCount = 0;
-        let mostFrequent = null;
+            // If no GPT-2 merge rule matches, use the most frequent pair
+            let maxCount = 0;
+            let mostFrequent = null;
 
-        for (const [key, data] of pairs.entries()) {
-            if (data.count > maxCount) {
-                maxCount = data.count;
-                mostFrequent = data;
+            for (const [key, data] of pairs.entries()) {
+                if (data.count > maxCount) {
+                    maxCount = data.count;
+                    mostFrequent = data;
+                }
             }
-        }
 
-        return mostFrequent;
+            return mostFrequent;
+        } else {
+            // Simplified mode: Try to use predefined merge rules first
+            for (const mergeRule of this.commonMerges) {
+                const pairKey = mergeRule.join('|');
+                if (pairs.has(pairKey)) {
+                    return pairs.get(pairKey);
+                }
+            }
+
+            // Otherwise, use the most frequent pair
+            let maxCount = 0;
+            let mostFrequent = null;
+
+            for (const [key, data] of pairs.entries()) {
+                if (data.count > maxCount) {
+                    maxCount = data.count;
+                    mostFrequent = data;
+                }
+            }
+
+            return mostFrequent;
+        }
     }
 
     mergePair(pairData) {
@@ -156,9 +267,17 @@ class BPEVisualizer {
             count: indices.length
         });
 
+        // Format tokens for display
+        const formatToken = (token) => {
+            if (this.mode === 'gpt2') {
+                return token.replace(/Ġ/g, '▁');
+            }
+            return token;
+        };
+
         // Update step info
         this.updateStepInfo(
-            `Step ${this.currentStep + 1}: Merged <span class="highlight">"${pair[0]}" + "${pair[1]}"</span> → <span class="highlight">"${mergedValue}"</span> (${indices.length} occurrence${indices.length > 1 ? 's' : ''})`
+            `Step ${this.currentStep + 1}: Merged <span class="highlight">"${formatToken(pair[0])}" + "${formatToken(pair[1])}"</span> → <span class="highlight">"${formatToken(mergedValue)}"</span> (${indices.length} occurrence${indices.length > 1 ? 's' : ''})`
         );
 
         // Reset merged flag after animation
@@ -241,7 +360,16 @@ class BPEVisualizer {
             this.tokens.forEach(token => {
                 const span = document.createElement('span');
                 span.className = 'bpe-token' + (token.merged ? ' merged' : '');
-                span.textContent = token.value;
+
+                // Display Ġ as a visible space marker for GPT-2 mode
+                let displayValue = token.value;
+                if (this.mode === 'gpt2' && token.value.includes('Ġ')) {
+                    // Replace Ġ with a visible space representation
+                    displayValue = token.value.replace(/Ġ/g, '▁');
+                    span.title = token.value; // Show original on hover
+                }
+
+                span.textContent = displayValue;
                 stateDiv.appendChild(span);
             });
         }
@@ -273,7 +401,20 @@ class BPEVisualizer {
 
         newMerges.forEach(merge => {
             const li = document.createElement('li');
-            li.textContent = `Step ${merge.step}: "${merge.pair[0]}" + "${merge.pair[1]}" → "${merge.result}" (×${merge.count})`;
+
+            // Format tokens for display (replace Ġ with ▁ for readability)
+            const formatToken = (token) => {
+                if (this.mode === 'gpt2') {
+                    return token.replace(/Ġ/g, '▁');
+                }
+                return token;
+            };
+
+            const pair0 = formatToken(merge.pair[0]);
+            const pair1 = formatToken(merge.pair[1]);
+            const result = formatToken(merge.result);
+
+            li.textContent = `Step ${merge.step}: "${pair0}" + "${pair1}" → "${result}" (×${merge.count})`;
             mergeList.appendChild(li);
         });
 
@@ -290,6 +431,14 @@ class BPEVisualizer {
         }
 
         treeDiv.innerHTML = '';
+
+        // Format tokens for display
+        const formatToken = (token) => {
+            if (this.mode === 'gpt2') {
+                return token.replace(/Ġ/g, '▁');
+            }
+            return token;
+        };
 
         // Group merges by level
         const levels = [];
@@ -315,8 +464,8 @@ class BPEVisualizer {
                 nodeDiv.className = 'tree-node';
                 nodeDiv.innerHTML = `
                     <div style="font-size: 0.8rem; color: #6b7280;">Step ${merge.step}</div>
-                    <div style="font-weight: 600;">${merge.result}</div>
-                    <div style="font-size: 0.85rem; color: #6b7280;">${merge.pair[0]} + ${merge.pair[1]}</div>
+                    <div style="font-weight: 600;">${formatToken(merge.result)}</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">${formatToken(merge.pair[0])} + ${formatToken(merge.pair[1])}</div>
                 `;
                 levelDiv.appendChild(nodeDiv);
             });
@@ -453,7 +602,8 @@ function addExampleButtons() {
     const examples = [
         { label: 'Simple', text: 'hello world' },
         { label: 'Repeated', text: 'the the the cat sat' },
-        { label: 'Complex', text: 'tokenization preprocessing subword' }
+        { label: 'Common Words', text: 'tokenization preprocessing' },
+        { label: 'Sentence', text: 'The quick brown fox jumps' }
     ];
 
     const container = document.querySelector('#bpe-visualizer .controls');
@@ -461,6 +611,7 @@ function addExampleButtons() {
     examplesDiv.style.marginLeft = 'auto';
     examplesDiv.style.display = 'flex';
     examplesDiv.style.gap = '5px';
+    examplesDiv.style.flexWrap = 'wrap';
 
     const label = document.createElement('span');
     label.textContent = 'Examples: ';

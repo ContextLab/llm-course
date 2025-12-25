@@ -9,9 +9,10 @@ An interactive demonstration of word embeddings, vector arithmetic, and semantic
 - **Similarity Search**: Find semantically similar words
 - **Vector Arithmetic Visualization**: See how word vectors combine
 - **Embedding Space Exploration**: Visualize high-dimensional embeddings
-- **Pre-loaded Embeddings**:
-  - GloVe 50-dimensional
-  - Word2Vec 100-dimensional (sample)
+- **Real Pre-trained Embeddings**:
+  - GloVe 50-dimensional (10,000 most common words)
+  - Trained on 6 billion tokens from Wikipedia and Gigaword
+  - Authentic word relationships learned from real text data
   - Custom embedding support
 
 ### Analogy Solver
@@ -79,7 +80,9 @@ Find words semantically similar to a query:
 - `css/analogies.css` - Comprehensive styling
 - `js/embeddings.js` - Embedding model and vector operations
 - `js/visualization.js` - 2D/3D visualization components
-- `data/sample-embeddings.js` - Pre-computed word embeddings
+- `data/sample-embeddings.js` - Module for loading real GloVe embeddings
+- `data/glove-50d.json` - Real pre-trained GloVe word vectors (10K words, ~4.6MB)
+- `data/convert_glove_to_json.py` - Script to convert GloVe text format to JSON
 
 ### Key Algorithms
 
@@ -104,11 +107,12 @@ Find words semantically similar to a query:
   - Momentum and adaptive learning rates
   - Perplexity parameter tuning
 
-**Embedding Generation**:
-- Semantic category vectors
-- Hand-crafted relationships
-- Random noise addition
-- Consistent seed-based generation
+**Real Pre-trained Embeddings**:
+- GloVe (Global Vectors for Word Representation)
+- Trained on 6 billion tokens from Wikipedia 2014 and Gigaword 5
+- Co-occurrence matrix factorization with global statistics
+- 10,000 most frequent words included for browser performance
+- 50-dimensional vectors capturing semantic and syntactic relationships
 
 ## Usage
 
@@ -134,11 +138,22 @@ Find words semantically similar to a query:
 ## Educational Value
 
 This demo teaches:
-- **Word embeddings** capture semantic relationships
-- **Vector arithmetic** reveals linguistic patterns
+- **Word embeddings** capture semantic relationships from real text data
+- **Vector arithmetic** reveals linguistic patterns learned from billions of words
 - **Cosine similarity** measures semantic distance
-- **Dimensionality reduction** reveals structure
+- **Dimensionality reduction** reveals structure in high-dimensional spaces
 - **Distributional semantics** - words with similar contexts have similar meanings
+
+### Real vs. Synthetic Embeddings
+
+Unlike previous versions that used hand-crafted embeddings explicitly designed to make analogies work perfectly, this demo uses **real pre-trained GloVe embeddings**. This means:
+
+- **Analogies won't always be perfect** - This is authentic behavior! Real embeddings capture complex, nuanced relationships from actual language use
+- **Unexpected results are educational** - When "king - man + woman" doesn't perfectly yield "queen", it reveals the limitations and biases in training data
+- **More realistic demonstration** - Shows how word embeddings actually work in practice, not an idealized version
+- **Authentic semantic relationships** - The similarities and analogies come from real patterns in 6 billion words of text, not hand-coded rules
+
+This educational honesty is crucial for understanding how language models and embeddings actually behave in real applications.
 
 ### Classic Analogies
 
@@ -195,6 +210,44 @@ Q_ij = (1 + ||y_i - y_j||²)^(-1) / Σ_k (1 + ||y_i - y_k||²)^(-1)
 - PCA: ~1-2 seconds for 200 words
 - t-SNE: ~5-10 seconds for 200 words (more iterations = better quality)
 - All computations run in browser
+
+## Regenerating Embeddings
+
+If you need to regenerate the embeddings file (e.g., to change vocabulary size or use different dimensions):
+
+1. Download GloVe embeddings:
+   ```bash
+   cd data/
+   wget https://nlp.stanford.edu/data/glove.6B.zip
+   unzip glove.6B.zip
+   ```
+
+2. Run the conversion script:
+   ```bash
+   # Convert with default settings (10,000 words, 50 dimensions)
+   python3 convert_glove_to_json.py
+
+   # Or customize the vocabulary size
+   python3 convert_glove_to_json.py glove.6B.50d.txt glove-50d.json 15000
+   ```
+
+3. The script will create `glove-50d.json` with the specified number of most common words
+
+Note: The GloVe download is ~800MB and contains 400,000 words. The conversion script selects only the most common words to keep the browser-loaded JSON file at a reasonable size (~4.6MB for 10K words).
+
+## Data Source and Citation
+
+**GloVe: Global Vectors for Word Representation**
+- Source: Stanford NLP - https://nlp.stanford.edu/projects/glove/
+- Dataset: glove.6B (trained on 6 billion tokens)
+- License: Public Domain
+
+Citation:
+```
+Jeffrey Pennington, Richard Socher, and Christopher D. Manning. 2014.
+GloVe: Global Vectors for Word Representation.
+In Proceedings of EMNLP 2014.
+```
 
 ## Extensions
 

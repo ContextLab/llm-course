@@ -159,18 +159,19 @@
                         <div class="info-card">
                             <h3>About Seq2Seq</h3>
                             <p><strong>Innovation:</strong> First end-to-end neural chatbots</p>
-                            <p><strong>Method:</strong> Encoder-Decoder with RNNs/LSTMs</p>
+                            <p><strong>Method:</strong> Encoder-Decoder with transformers</p>
                             <p><strong>Breakthrough:</strong> Learns from data, not rules</p>
-                            <p><strong>Famous for:</strong> Neural Conversational Model (Google, 2015)</p>
+                            <p><strong>Model:</strong> BlenderBot Small (90M parameters)</p>
                         </div>
 
                         <div class="info-card">
                             <h3>How It Works</h3>
                             <ul>
-                                <li>Encoder reads input sequence</li>
-                                <li>Creates context vector</li>
-                                <li>Decoder generates response</li>
-                                <li>Trained on conversation datasets</li>
+                                <li>Real neural conversation model</li>
+                                <li>Trained on conversational datasets</li>
+                                <li>Generates contextual responses</li>
+                                <li>Shows real neural characteristics</li>
+                                <li>May take time to load initially</li>
                             </ul>
                         </div>
                     </div>
@@ -179,9 +180,9 @@
                         <div class="chat-messages" id="seq2seq-messages"></div>
                         <div class="chat-input-area">
                             <input type="text" class="chat-input" id="seq2seq-input" placeholder="Talk to Seq2Seq model..." disabled>
-                            <button class="chat-send" disabled>Simulated</button>
+                            <button class="chat-send" disabled>Loading...</button>
                         </div>
-                        <p class="demo-note">Note: Seq2Seq shown with simulated responses (actual model too large for browser)</p>
+                        <p class="demo-note">Using BlenderBot Small (90M) - a real neural conversation model. May take ~30s to load initially.</p>
                     </div>
                 </div>
 
@@ -280,8 +281,12 @@
                             <span class="stat-value">~40K patterns</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Seq2Seq (2014)</span>
-                            <span class="stat-value">~10M params</span>
+                            <span class="stat-label">BlenderBot (2020)</span>
+                            <span class="stat-value">90M params</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">DistilGPT2 (2019)</span>
+                            <span class="stat-value">82M params</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">GPT-3 (2020)</span>
@@ -310,7 +315,7 @@
     <script type="module" src="js/eliza.js"></script>
     <script type="module" src="js/parry.js"></script>
     <script type="module" src="js/alice.js"></script>
-    <script type="module" src="js/seq2seq-sim.js"></script>
+    <script type="module" src="js/seq2seq-bot.js"></script>
     <script type="module" src="js/gpt-bot.js"></script>
     <script type="module" src="js/timeline-app.js"></script>
 </body>

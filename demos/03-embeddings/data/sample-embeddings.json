@@ -126,15 +126,5 @@
       "Art",
       "Neuroscience"
     ]
-  },
-  "glove-embeddings": {
-    "description": "Pre-computed GloVe-style embeddings (50d) - Sample data for demo",
-    "dimension": 50,
-    "note": "These are synthetic embeddings for demonstration purposes"
-  },
-  "word2vec-embeddings": {
-    "description": "Pre-computed Word2Vec-style embeddings (100d) - Sample data for demo",
-    "dimension": 100,
-    "note": "These are synthetic embeddings for demonstration purposes"
   }
 }

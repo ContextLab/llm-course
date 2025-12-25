@@ -6,10 +6,12 @@ An interactive 3D/2D visualization tool for exploring text embeddings with multi
 
 ### 🎯 Core Capabilities
 
-- **Multiple Embedding Models**
-  - Pre-loaded: GloVe (50d), Word2Vec (100d)
-  - Transformers.js models: all-MiniLM-L6-v2, all-mpnet-base-v2, paraphrase-multilingual
-  - Real-time embedding using state-of-the-art sentence transformers
+- **Real Transformer-based Embedding Models**
+  - **all-MiniLM-L6-v2** (384d): Fast, efficient sentence embeddings
+  - **all-mpnet-base-v2** (768d): High-quality general-purpose embeddings
+  - **paraphrase-multilingual** (384d): Multilingual sentence embeddings
+  - All models powered by **Transformers.js** for client-side inference
+  - These are real pre-trained models that generate true semantic embeddings
 
 - **Diverse Datasets**
   - News Articles (50 samples, 10 categories)
@@ -233,15 +235,24 @@ Create a JSON file in `data/` directory:
 
 Update the dataset selector in `index.html`.
 
-### Adding New Models
+### Adding New Transformer Models
 
-Modify the model selector and update `getTransformersModelName()` in `embedding-loader.js`:
+You can add any Transformers.js-compatible model:
+
+1. Find a model on [HuggingFace](https://huggingface.co/models?library=transformers.js)
+2. Update the model selector in `index.html`
+3. Add the mapping in `embedding-loader.js`:
 
 ```javascript
 const modelMap = {
   'your-model-id': 'Xenova/your-model-name'
 };
 ```
+
+**Recommended models to try**:
+- `Xenova/all-distilroberta-v1` (768d, RoBERTa-based)
+- `Xenova/paraphrase-MiniLM-L3-v2` (384d, very fast)
+- `Xenova/multilingual-e5-small` (384d, multilingual)
 
 ### Styling
 
@@ -251,12 +262,64 @@ Modify `css/embeddings.css` to customize:
 - Typography
 - Interactive elements
 
+## Important Note: Why No GloVe or Word2Vec?
+
+Earlier versions of this demo included "GloVe" and "Word2Vec" options, but **these were fake implementations that generated random vectors**. This was educationally dishonest and has been removed.
+
+### Why Were They Fake?
+
+Real GloVe and Word2Vec models:
+- Are **word-level** embeddings (not sentence-level)
+- Require large pre-trained weight files (100s of MB)
+- Need special handling for out-of-vocabulary words
+- Use different architectures than modern transformers
+
+The previous implementation simply generated random numbers, which:
+- Provided no actual semantic meaning
+- Misled users about how these models work
+- Created false comparisons with real transformer models
+
+### Current Approach: Honest and Educational
+
+This demo now **only includes real, working models**:
+- All three models are genuine pre-trained transformers
+- They generate actual semantic embeddings
+- You can trust the visualizations and comparisons
+- The code is honest about what it's doing
+
+### Want to Add Real Classic Embeddings?
+
+If you're interested in comparing classic word embeddings with modern sentence embeddings, here's how you could extend this demo:
+
+1. **For GloVe**:
+   - Download pre-trained GloVe vectors (e.g., `glove.6B.50d.txt` from Stanford NLP)
+   - Convert to JSON format for browser loading
+   - Implement word-level averaging for sentences
+   - Handle out-of-vocabulary words (e.g., zero vectors or random initialization)
+
+2. **For Word2Vec**:
+   - Use Gensim to load pre-trained Word2Vec models
+   - Export to a browser-friendly format
+   - Implement similar word averaging strategy
+   - Consider subword models (FastText) for better OOV handling
+
+3. **Key Differences to Show**:
+   - Word-level vs sentence-level representations
+   - Static embeddings vs contextualized embeddings
+   - Vocabulary limitations vs unlimited vocabulary
+   - Performance on semantic similarity tasks
+
+**Educational Resources**:
+- [GloVe: Global Vectors for Word Representation](https://nlp.stanford.edu/projects/glove/)
+- [Word2Vec Paper](https://arxiv.org/abs/1301.3781)
+- [Understanding the Difference](https://jalammar.github.io/illustrated-word2vec/)
+
 ## Troubleshooting
 
 **Model loading is slow**
-- First load downloads model files
+- First load downloads model files (~10-50MB each)
 - Subsequent loads use browser cache
-- Consider starting with smaller models
+- Consider starting with the smallest model (all-MiniLM-L6-v2)
 
 **Visualization is laggy**
 - Reduce number of data points
@@ -264,7 +327,7 @@ Modify `css/embeddings.css` to customize:
 - Use 2D instead of 3D
 
 **Out of memory errors**
-- Use smaller embedding models
+- Use smaller embedding models (all-MiniLM-L6-v2 instead of all-mpnet-base-v2)
 - Reduce dataset size
 - Close other browser tabs
 
@@ -286,6 +349,23 @@ Possible additions:
 - [UMAP Paper](https://arxiv.org/abs/1802.03426)
 - [t-SNE Paper](https://www.jmlr.org/papers/v9/vandermaaten08a.html)
 - [Sentence Transformers](https://www.sbert.net/)
+
+## Changelog
+
+### December 2025 - Removed Fake Embeddings
+
+**Breaking Change**: Removed GloVe and Word2Vec options
+
+**Why?** The previous implementation generated **random vectors** instead of using real pre-trained embeddings. This was educationally dishonest and could mislead students about how these classic embedding models actually work.
+
+**What changed:**
+- ✅ Removed fake GloVe (50d) and Word2Vec (100d) options from UI
+- ✅ Removed random vector generation code
+- ✅ Updated documentation to be honest about what's implemented
+- ✅ Added guidance for students who want to integrate real classic embeddings
+- ✅ All remaining models (all-MiniLM-L6-v2, all-mpnet-base-v2, paraphrase-multilingual) are **real, working transformer models**
+
+**Impact:** The demo is now smaller, faster, and most importantly, **honest**. Students can trust that what they see represents actual semantic embeddings, not random noise.
 
 ## License
 
