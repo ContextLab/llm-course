@@ -369,12 +369,12 @@ We welcome contributions! To contribute a new demo:
 
 ## License
 
-This project is part of the PSYC 50/CS 72 course materials at Dartmouth College.
+This project is part of the PSYC 51.17 course materials.
 
 ## Contact
 
 For questions or issues:
-- Course: PSYC 50/CS 72 - Language Models from Scratch
+- Course: PSYC 51.17 - Language Models from Scratch
 - Instructor: [Course website](https://www.dartmouth.edu/~psyc50/)
 - Repository: [GitHub](https://github.com/ContextLab/llm-course)
 
@@ -382,4 +382,4 @@ For questions or issues:
 
 **Last Updated**: December 2025
 **Course**: Winter 2026
-**Institution**: Dartmouth College
+**Copyright**: Jeremy R. Manning

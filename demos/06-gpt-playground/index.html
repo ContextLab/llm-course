@@ -36,6 +36,31 @@
 
                 <section class="control-section">
                     <h2>Prompt</h2>
+                    <div class="control-group">
+                        <label for="samplePrompts">Sample Prompts</label>
+                        <select id="samplePrompts">
+                            <option value="">-- Select a sample prompt --</option>
+                            <optgroup label="Classic Literature">
+                                <option value="pride_prejudice">Pride and Prejudice - Jane Austen</option>
+                                <option value="moby_dick">Moby-Dick - Herman Melville</option>
+                                <option value="two_cities">A Tale of Two Cities - Charles Dickens</option>
+                                <option value="gatsby">The Great Gatsby - F. Scott Fitzgerald</option>
+                            </optgroup>
+                            <optgroup label="Historical Speeches">
+                                <option value="mlk_dream">MLK - "I Have a Dream"</option>
+                                <option value="gettysburg">Lincoln - Gettysburg Address</option>
+                                <option value="jfk_inaugural">JFK - Inaugural Address</option>
+                            </optgroup>
+                            <optgroup label="Scientific Writing">
+                                <option value="watson_crick">Watson & Crick - DNA Structure</option>
+                                <option value="einstein">Einstein - Special Relativity</option>
+                            </optgroup>
+                            <optgroup label="News Articles">
+                                <option value="news_breaking">Breaking News Style</option>
+                                <option value="news_feature">Feature Article Style</option>
+                            </optgroup>
+                        </select>
+                    </div>
                     <textarea id="promptInput" rows="4" placeholder="Enter your prompt here...">Once upon a time</textarea>
                     <div class="button-group">
                         <button id="generateBtn" class="btn-primary">Generate</button>

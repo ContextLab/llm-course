@@ -1,5 +1,5 @@
 ---
-title: "COGS 8X.XX: Models of Language and Conversation"
+title: "PSYC 51.17: Models of Language and Conversation"
 geometry: margin=1in
 header-includes:
   - \usepackage{fontspec}

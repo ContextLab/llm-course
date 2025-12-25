@@ -1,6 +1,6 @@
 # Final Project Presentation Guidelines
 
-**Course:** Models of Language and Conversation (COGS 8X.XX)
+**Course:** Models of Language and Conversation (PSYC 51.17)
 **Instructor:** Dr. Jeremy R. Manning
 **Presentation Dates:** Week 10 (Wednesday & Friday)
 

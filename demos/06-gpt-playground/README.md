@@ -37,6 +37,11 @@ An interactive web-based playground for exploring GPT text generation with diffe
 
 ### Interactive Controls
 
+- **Sample Prompts**: Quick-load curated real-world prompts from:
+  - Classic Literature (Pride and Prejudice, Moby-Dick, A Tale of Two Cities, The Great Gatsby)
+  - Historical Speeches (MLK "I Have a Dream", Gettysburg Address, JFK Inaugural)
+  - Scientific Writing (Watson & Crick DNA paper, Einstein's Relativity)
+  - News Articles (Breaking news and feature styles)
 - **Temperature Slider** (0.0-2.0): Control randomness
 - **Top-k Slider** (1-100): Limit vocabulary size
 - **Top-p Slider** (0.0-1.0): Nucleus sampling threshold
@@ -88,9 +93,24 @@ An interactive web-based playground for exploring GPT text generation with diffe
 
 1. Open `index.html` in a modern web browser
 2. Wait for the model to load (first time may take 1-2 minutes)
-3. Enter your prompt
+3. Enter your prompt or select a sample prompt from the dropdown
 4. Adjust parameters as desired
 5. Click "Generate"
+
+### Using Sample Prompts
+
+The playground includes curated real-world prompts to demonstrate different writing styles:
+
+1. Click the "Sample Prompts" dropdown
+2. Browse categories: Classic Literature, Historical Speeches, Scientific Writing, or News Articles
+3. Select a prompt to automatically load it into the text area
+4. Generate to see how the model continues in that style
+
+Sample prompts showcase:
+- Literary styles from different eras
+- Formal speech and rhetorical techniques
+- Scientific and technical writing conventions
+- Journalistic writing patterns
 
 ### Example Workflows
 

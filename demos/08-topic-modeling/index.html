@@ -13,7 +13,7 @@
     <div class="container">
         <header>
             <h1>Topic Modeling Studio</h1>
-            <p class="subtitle">Interactive LDA (Latent Dirichlet Allocation) with real-time visualization</p>
+            <p class="subtitle">Interactive LDA (Latent Dirichlet Allocation) with 3000 real Wikipedia articles</p>
         </header>
 
         <div class="main-layout">
@@ -26,7 +26,8 @@
                     <div class="control-section">
                         <label for="dataset-select">Dataset:</label>
                         <select id="dataset-select">
-                            <option value="news" selected>News Articles (100 docs)</option>
+                            <option value="wikipedia" selected>Wikipedia Articles (3000 real articles)</option>
+                            <option value="news">News Articles (100 docs)</option>
                             <option value="scientific">Scientific Papers (50 docs)</option>
                             <option value="reviews">Product Reviews (75 docs)</option>
                             <option value="custom">Custom Text (paste below)</option>
@@ -250,7 +251,7 @@
             });
         }
 
-        function loadInitialDataset() {
+        async function loadInitialDataset() {
             const datasetId = document.getElementById('dataset-select').value;
 
             if (datasetId === 'custom') {
@@ -258,8 +259,31 @@
                 return;
             }
 
-            app.currentDataset = DATASETS[datasetId];
-            updateStats();
+            showLoading(true, 'Loading dataset...');
+
+            try {
+                const dataset = DATASETS[datasetId];
+
+                // Call the load() method to get the actual dataset (for Wikipedia this loads from JSON)
+                if (dataset.load) {
+                    app.currentDataset = await dataset.load();
+                } else {
+                    app.currentDataset = dataset;
+                }
+
+                updateStats();
+
+                document.getElementById('lda-status').textContent = `Loaded ${app.currentDataset.documents.length} documents`;
+                setTimeout(() => {
+                    document.getElementById('lda-status').textContent = '';
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error loading dataset:', error);
+                alert('Error loading dataset: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
         }
 
         function processCustomDocs() {

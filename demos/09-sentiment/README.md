@@ -1,14 +1,16 @@
 # Interactive Sentiment Analysis Dashboard
 
-A comprehensive web-based sentiment analysis tool featuring multiple models, real-time analysis, and beautiful visualizations.
+A comprehensive web-based sentiment analysis tool featuring multiple models, real-time analysis, and beautiful visualizations. Now includes real IMDB movie review dataset with 5000 labeled reviews for model evaluation and comparison.
 
 ## Features
 
 ### 1. Sentiment Classification
 - **Single Text Analysis**: Real-time sentiment detection as you type
 - **Batch Analysis**: Upload CSV files to analyze multiple texts at once
+- **IMDB Dataset Analysis**: Analyze real movie reviews with ground truth labels
 - **Multi-class Classification**: Positive, Negative, and Neutral sentiments
 - **Confidence Scores**: Detailed probability distributions for each sentiment
+- **Model Performance Metrics**: Accuracy, precision, recall, F1 score, confusion matrix
 
 ### 2. Multiple Models
 - **Rule-Based (VADER-like)**: Fast, lightweight sentiment analysis using lexicon-based approach
@@ -97,6 +99,22 @@ A comprehensive web-based sentiment analysis tool featuring multiple models, rea
 7. Filter results by sentiment type
 8. Export results using the "Export Results" button
 
+### IMDB Dataset Analysis
+
+1. Click the "IMDB Reviews" tab
+2. Choose dataset size:
+   - **Sample (500 reviews)**: Fast loading and analysis for quick testing
+   - **Full (5000 reviews)**: Comprehensive dataset for thorough evaluation
+3. Set the number of reviews to analyze (10-5000)
+4. Click "Load & Analyze Reviews"
+5. View comprehensive results:
+   - **Accuracy Banner**: Overall model accuracy percentage
+   - **Results Table**: Shows each review with true label, prediction, and match indicator
+   - **Performance Metrics**: Precision, recall, and F1 score
+   - **Confusion Matrix**: True positives, false positives, true negatives, false negatives
+   - **Distribution Chart**: Visual breakdown of sentiment predictions
+6. Compare different models to see which performs better on real data
+
 ### Model Comparison
 
 1. Enter text for analysis
@@ -116,8 +134,12 @@ demos/09-sentiment/
 │   └── sentiment.css              # Styling and animations
 ├── js/
 │   ├── sentiment-analyzer.js      # Core analysis logic
-│   └── contribution-visualizer.js # Word-level visualization
-├── sample-data.csv                # Example dataset
+│   ├── contribution-visualizer.js # Word-level visualization
+│   └── imdb-handler.js            # IMDB dataset handling
+├── data/
+│   ├── imdb-reviews.json          # Full IMDB dataset (5000 reviews)
+│   └── imdb-sample.json           # Sample dataset (500 reviews)
+├── sample-data.csv                # Example CSV dataset
 └── README.md                      # Documentation
 ```
 
@@ -259,16 +281,54 @@ This dashboard is designed for educational purposes to demonstrate:
 - Word-level visualization is approximated for transformer model
 - Aspect detection uses simple keyword matching
 
+## Dataset Information
+
+### IMDB Movie Reviews
+
+The dashboard includes a real-world dataset of movie reviews from the Internet Movie Database (IMDB):
+
+- **Total Reviews**: 5000 (with 500-review sample for faster testing)
+- **Source**: IMDB movie reviews
+- **Labels**: Binary sentiment (positive/negative)
+- **Distribution**: Balanced dataset (~50% positive, ~50% negative)
+- **Average Length**: Varies from short comments to detailed reviews
+- **Format**: JSON array with fields: `text`, `sentiment`, `source`
+
+This dataset allows you to:
+- Test model accuracy on real-world data
+- Compare rule-based vs. transformer models
+- Understand model strengths and weaknesses
+- Learn about precision, recall, and F1 scores
+- Visualize confusion matrices
+
+### Data Format
+
+```json
+[
+  {
+    "text": "This film is stunningly beautiful...",
+    "sentiment": "positive",
+    "source": "imdb"
+  },
+  {
+    "text": "This was not enjoyable to watch...",
+    "sentiment": "negative",
+    "source": "imdb"
+  }
+]
+```
+
 ## Future Enhancements
 
 - [ ] Multi-language support
 - [ ] Sarcasm detection
 - [ ] Fine-grained emotion detection (joy, anger, fear, etc.)
 - [ ] Sentence-level sentiment in paragraphs
-- [ ] Comparison with human annotations
+- [ ] Additional real-world datasets (Twitter, Amazon reviews, etc.)
 - [ ] Model fine-tuning interface
 - [ ] API integration options
 - [ ] Historical analysis tracking
+- [ ] Export detailed performance reports
 
 ## License
 
@@ -293,7 +353,23 @@ For issues or questions about this demo:
 
 Simply open `index.html` in your browser - no installation or build process required!
 
-Try the sample data:
+### Quick Start Options
+
+**Option 1: Try IMDB Dataset (Recommended)**
+1. Open `index.html` in a modern web browser
+2. Click on the "IMDB Reviews" tab
+3. Select "Sample Dataset" (500 reviews) for faster results
+4. Set number of reviews to 100
+5. Click "Load & Analyze Reviews"
+6. Explore the accuracy metrics and results!
+
+**Option 2: Single Text Analysis**
+1. Open `index.html`
+2. Type your own text in the input area
+3. Watch real-time sentiment analysis
+4. Try both Rule-Based and Transformer models
+
+**Option 3: Batch CSV Upload**
 1. Switch to "Batch (CSV)" mode
 2. Upload `sample-data.csv`
 3. Analyze and explore the results

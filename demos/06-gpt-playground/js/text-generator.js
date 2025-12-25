@@ -35,6 +35,7 @@ class TextGenerationPlayground {
         this.elements = {
             // Controls
             modelSelect: document.getElementById('modelSelect'),
+            samplePrompts: document.getElementById('samplePrompts'),
             promptInput: document.getElementById('promptInput'),
             generateBtn: document.getElementById('generateBtn'),
             stopBtn: document.getElementById('stopBtn'),
@@ -82,6 +83,9 @@ class TextGenerationPlayground {
         // Model selection
         this.elements.modelSelect.addEventListener('change', () => this.loadModel());
 
+        // Sample prompts
+        this.elements.samplePrompts.addEventListener('change', (e) => this.loadSamplePrompt(e.target.value));
+
         // Buttons
         this.elements.generateBtn.addEventListener('click', () => this.generate());
         this.elements.stopBtn.addEventListener('click', () => this.stopGeneration());
@@ -119,6 +123,49 @@ class TextGenerationPlayground {
             this.elements.singleOutput.style.display = e.target.checked ? 'none' : 'block';
             this.elements.comparisonOutput.style.display = e.target.checked ? 'grid' : 'none';
         });
+    }
+
+    /**
+     * Load a sample prompt
+     */
+    loadSamplePrompt(promptId) {
+        if (!promptId) {
+            return;
+        }
+
+        const samplePrompts = {
+            // Classic Literature
+            'pride_prejudice': 'It is a truth universally acknowledged, that a single man in possession of a good fortune must be in want of a wife.',
+
+            'moby_dick': 'Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.',
+
+            'two_cities': 'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair,',
+
+            'gatsby': 'In my younger and more vulnerable years my father gave me some advice that I\'ve been turning over in my mind ever since. "Whenever you feel like criticizing anyone," he told me, "just remember that all the people in this world haven\'t had the advantages that you\'ve had."',
+
+            // Historical Speeches
+            'mlk_dream': 'I am happy to join with you today in what will go down in history as the greatest demonstration for freedom in the history of our Republic. Five score years ago, a great American, in whose symbolic shadow we stand today, signed the Emancipation Proclamation.',
+
+            'gettysburg': 'Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal. Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure.',
+
+            'jfk_inaugural': 'We observe today not a victory of party, but a celebration of freedom—symbolizing an end, as well as a beginning—signifying renewal, as well as change. For I have sworn before you and Almighty God the same solemn oath our forebears prescribed nearly a century and three quarters ago.',
+
+            // Scientific Writing
+            'watson_crick': 'We wish to suggest a structure for the salt of deoxyribose nucleic acid (D.N.A.). This structure has novel features which are of considerable biological interest. A structure for nucleic acid has already been proposed by Pauling and Corey.',
+
+            'einstein': 'The theory to be developed is based—like all electrodynamics—on the kinematics of the rigid body, since the assertions of any such theory have to do with the relationships between rigid bodies (systems of coordinates), clocks, and electromagnetic processes.',
+
+            // News Articles
+            'news_breaking': 'In a stunning development that has sent shockwaves through the scientific community, researchers announced today the discovery of a previously unknown phenomenon that could fundamentally change our understanding of',
+
+            'news_feature': 'The morning sun cast long shadows across the laboratory as Dr. Sarah Chen prepared for an experiment that would challenge decades of conventional wisdom. What she didn\'t know was that her findings would spark a revolution in'
+        };
+
+        if (samplePrompts[promptId]) {
+            this.elements.promptInput.value = samplePrompts[promptId];
+            // Reset the dropdown to default
+            this.elements.samplePrompts.value = '';
+        }
     }
 
     /**

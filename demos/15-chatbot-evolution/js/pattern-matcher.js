@@ -2,7 +2,7 @@
  * Pattern Matcher - Handles pattern matching and decomposition for ELIZA
  */
 
-class PatternMatcher {
+export class PatternMatcher {
   constructor() {
     this.debugMode = false;
   }

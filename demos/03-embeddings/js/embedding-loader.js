@@ -82,216 +82,34 @@ export class EmbeddingLoader {
      * Load pre-loaded datasets
      */
     async loadPreloadedDataset(datasetId) {
-        const response = await fetch(`data/${datasetId}-dataset.json`);
-        if (!response.ok) {
-            // If dataset file doesn't exist, generate synthetic data
-            return this.generateSyntheticDataset(datasetId);
+        let dataFile;
+
+        // Map dataset IDs to their data files
+        if (datasetId === 'wikipedia') {
+            dataFile = 'data/wikipedia-embeddings.json';
+        } else {
+            dataFile = `data/${datasetId}-dataset.json`;
         }
-        return await response.json();
+
+        const response = await fetch(dataFile);
+        if (!response.ok) {
+            throw new Error(`Failed to load dataset: ${datasetId}`);
+        }
+
+        const data = await response.json();
+
+        // Handle the new Wikipedia format with array of objects
+        if (datasetId === 'wikipedia' && Array.isArray(data)) {
+            return {
+                texts: data.map(item => item.text),
+                labels: data.map(item => item.category),
+                titles: data.map(item => item.title)
+            };
+        }
+
+        return data;
     }
 
-    /**
-     * Generate synthetic dataset for demo purposes
-     */
-    async generateSyntheticDataset(datasetId) {
-        const datasets = {
-            'news': this.generateNewsDataset(),
-            'movies': this.generateMovieReviewsDataset(),
-            'wikipedia': this.generateWikipediaDataset()
-        };
-
-        const data = datasets[datasetId] || datasets['news'];
-
-        // Compute embeddings
-        const embeddings = await this.computeEmbeddings(data.texts);
-
-        return {
-            ...data,
-            embeddings
-        };
-    }
-
-    /**
-     * Generate synthetic news dataset
-     */
-    generateNewsDataset() {
-        const categories = [
-            'technology', 'sports', 'politics', 'entertainment', 'science',
-            'health', 'business', 'world', 'environment', 'education'
-        ];
-
-        const templates = {
-            'technology': [
-                'New AI model achieves breakthrough in natural language understanding',
-                'Tech giant announces revolutionary quantum computing chip',
-                'Cybersecurity experts warn of new ransomware threat',
-                'Smartphone manufacturer unveils latest flagship device',
-                'Software update brings major improvements to popular platform'
-            ],
-            'sports': [
-                'Championship game ends in dramatic overtime victory',
-                'Star athlete breaks long-standing world record',
-                'Team announces surprising coaching change',
-                'Young player emerges as breakout star of the season',
-                'League introduces new rules to improve player safety'
-            ],
-            'politics': [
-                'New legislation aims to address climate change concerns',
-                'Political leaders meet to discuss international trade agreements',
-                'Voter turnout reaches record high in recent election',
-                'Government announces major infrastructure investment plan',
-                'Policy debate intensifies ahead of upcoming referendum'
-            ],
-            'entertainment': [
-                'Blockbuster film breaks box office records worldwide',
-                'Popular streaming service announces new original series',
-                'Music festival lineup features diverse array of artists',
-                'Award-winning director begins production on anticipated project',
-                'Celebrity couple announces engagement on social media'
-            ],
-            'science': [
-                'Researchers discover new species in deep ocean exploration',
-                'Study reveals surprising findings about human cognition',
-                'Space telescope captures stunning images of distant galaxy',
-                'Scientific breakthrough could lead to cancer treatment',
-                'Climate scientists publish comprehensive environmental report'
-            ],
-            'health': [
-                'New study shows benefits of Mediterranean diet',
-                'Medical researchers develop innovative treatment approach',
-                'Public health officials announce vaccination campaign',
-                'Mental health awareness program launches nationwide',
-                'Fitness experts recommend updated exercise guidelines'
-            ],
-            'business': [
-                'Major corporation announces record quarterly earnings',
-                'Startup raises significant funding for expansion plans',
-                'Market analysts predict economic growth in coming quarter',
-                'Company unveils new sustainability initiatives',
-                'Merger creates industry-leading business entity'
-            ],
-            'world': [
-                'International summit addresses global challenges',
-                'Historic peace agreement signed between nations',
-                'Natural disaster prompts humanitarian relief efforts',
-                'Cultural festival celebrates diverse traditions',
-                'Archaeological discovery sheds light on ancient civilization'
-            ],
-            'environment': [
-                'Conservation efforts help endangered species population recover',
-                'Renewable energy project begins operation in remote region',
-                'Environmental activists organize climate action demonstration',
-                'New recycling program aims to reduce plastic waste',
-                'Wildlife sanctuary expands protection for natural habitat'
-            ],
-            'education': [
-                'University announces groundbreaking research initiative',
-                'Educational technology transforms classroom learning experience',
-                'Students achieve impressive results in academic competition',
-                'New curriculum focuses on critical thinking skills',
-                'Scholarship program helps underprivileged students access education'
-            ]
-        };
-
-        const texts = [];
-        const labels = [];
-
-        categories.forEach(category => {
-            const categoryTexts = templates[category];
-            categoryTexts.forEach(text => {
-                texts.push(text);
-                labels.push(category);
-            });
-        });
-
-        return { texts, labels };
-    }
-
-    /**
-     * Generate synthetic movie reviews dataset
-     */
-    generateMovieReviewsDataset() {
-        const positiveReviews = [
-            'An absolute masterpiece that will leave you speechless. The performances are outstanding!',
-            'Brilliantly crafted with stunning visuals and a compelling storyline.',
-            'One of the best films of the year. Highly recommended!',
-            'A heartwarming tale that resonates deeply. Simply beautiful.',
-            'Incredible acting and direction. A must-see cinematic experience.',
-            'Captivating from start to finish. The plot twists are amazing!',
-            'A triumph of storytelling. Every scene is perfectly executed.',
-            'Phenomenal performances and breathtaking cinematography.',
-            'This film exceeded all my expectations. Truly remarkable.',
-            'A modern classic that will stand the test of time.'
-        ];
-
-        const negativeReviews = [
-            'Disappointing and predictable. The plot was full of holes.',
-            'A complete waste of time. Poor acting and weak storyline.',
-            'I struggled to stay awake. Boring and uninspired.',
-            'The worst film I have seen this year. Avoid at all costs.',
-            'Terrible pacing and unconvincing performances throughout.',
-            'A confusing mess that never finds its footing.',
-            'Poorly written dialogue and forgettable characters.',
-            'This film fails on every level. A major letdown.',
-            'Overhyped and underwhelming. Not worth the ticket price.',
-            'Lacking substance and originality. Very disappointing.'
-        ];
-
-        const neutralReviews = [
-            'Decent entertainment but nothing particularly memorable.',
-            'Has its moments but overall just average.',
-            'Not bad but could have been much better with stronger writing.',
-            'A mixed bag with some good scenes and some weak ones.',
-            'Entertaining enough but forgettable once the credits roll.',
-            'Adequate performances in a fairly standard storyline.',
-            'Neither impressive nor terrible, just okay.',
-            'Some interesting ideas that were not fully developed.',
-            'Watchable but not something I would recommend strongly.',
-            'A competent film that does not take many risks.'
-        ];
-
-        const texts = [...positiveReviews, ...negativeReviews, ...neutralReviews];
-        const labels = [
-            ...Array(positiveReviews.length).fill('positive'),
-            ...Array(negativeReviews.length).fill('negative'),
-            ...Array(neutralReviews.length).fill('neutral')
-        ];
-
-        return { texts, labels };
-    }
-
-    /**
-     * Generate synthetic Wikipedia dataset
-     */
-    generateWikipediaDataset() {
-        const articles = [
-            { text: 'Artificial intelligence is intelligence demonstrated by machines, as opposed to natural intelligence displayed by animals including humans.', label: 'Computer Science' },
-            { text: 'Python is a high-level, interpreted programming language with dynamic semantics and a focus on code readability.', label: 'Computer Science' },
-            { text: 'Machine learning is a subset of artificial intelligence that focuses on the development of algorithms that can learn from data.', label: 'Computer Science' },
-            { text: 'The Theory of Relativity, developed by Albert Einstein, revolutionized our understanding of space, time, and gravity.', label: 'Physics' },
-            { text: 'Quantum mechanics is a fundamental theory in physics that describes nature at the smallest scales of energy levels.', label: 'Physics' },
-            { text: 'DNA, or deoxyribonucleic acid, is the hereditary material in humans and almost all other organisms.', label: 'Biology' },
-            { text: 'Photosynthesis is the process by which plants use sunlight to synthesize nutrients from carbon dioxide and water.', label: 'Biology' },
-            { text: 'Evolution is change in the heritable characteristics of biological populations over successive generations.', label: 'Biology' },
-            { text: 'The Renaissance was a period in European history marking the transition from the Middle Ages to modernity.', label: 'History' },
-            { text: 'World War II was a global war that lasted from 1939 to 1945 and involved the vast majority of the world nations.', label: 'History' },
-            { text: 'Shakespeare was an English playwright and poet, widely regarded as the greatest writer in the English language.', label: 'Literature' },
-            { text: 'Climate change refers to long-term shifts in temperatures and weather patterns, mainly caused by human activities.', label: 'Environment' },
-            { text: 'The water cycle describes the continuous movement of water on, above, and below the surface of the Earth.', label: 'Environment' },
-            { text: 'Democracy is a form of government in which the people have the authority to choose their governing representatives.', label: 'Politics' },
-            { text: 'The stock market is a collection of markets where stocks are traded between investors.', label: 'Economics' },
-            { text: 'Supply and demand is an economic model of price determination in a market economy.', label: 'Economics' },
-            { text: 'The Great Pyramid of Giza is the oldest and largest of the three pyramids in the Giza pyramid complex.', label: 'Archaeology' },
-            { text: 'Classical music is art music produced in the traditions of Western culture over a long period of time.', label: 'Music' },
-            { text: 'Abstract art uses visual language of shape, form, color and line to create compositions independent of visual references.', label: 'Art' },
-            { text: 'The human brain is the central organ of the nervous system and the most complex organ in the human body.', label: 'Neuroscience' }
-        ];
-
-        return {
-            texts: articles.map(a => a.text),
-            labels: articles.map(a => a.label)
-        };
-    }
 
     /**
      * Load custom dataset
@@ -318,7 +136,9 @@ export class EmbeddingLoader {
         const embeddings = [];
 
         // Process in batches to show progress
-        const batchSize = 5;
+        const batchSize = 10;
+        const totalBatches = Math.ceil(texts.length / batchSize);
+
         for (let i = 0; i < texts.length; i += batchSize) {
             const batch = texts.slice(i, i + batchSize);
             const batchEmbeddings = await this.pipeline(batch, { pooling: 'mean', normalize: true });
@@ -329,7 +149,15 @@ export class EmbeddingLoader {
                 embeddings.push(embedding);
             }
 
-            this.updateStatus(`Embedding progress: ${Math.min(i + batchSize, texts.length)}/${texts.length}`);
+            const currentBatch = Math.floor(i / batchSize) + 1;
+            const percentage = Math.round((embeddings.length / texts.length) * 100);
+            this.updateStatus(`Embedding progress: ${embeddings.length}/${texts.length} (${percentage}%) - Batch ${currentBatch}/${totalBatches}`);
+
+            // Update loading message if available
+            const loadingProgress = document.getElementById('loading-progress');
+            if (loadingProgress) {
+                loadingProgress.textContent = `Processing ${embeddings.length}/${texts.length} texts (${percentage}%)`;
+            }
         }
 
         return embeddings;

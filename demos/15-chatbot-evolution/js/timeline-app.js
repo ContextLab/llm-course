@@ -108,7 +108,7 @@ class TimelineApp {
 
     initializeChats() {
         const initialMessages = {
-            eliza: "Hello. I am ELIZA. What brings you here today?",
+            eliza: "WELCOME. WHAT BRINGS YOU HERE TODAY?",
             parry: "What do you want? I don't know you.",
             alice: "Hi! I'm A.L.I.C.E. How can I help you today?",
             seq2seq: "Loading neural model... This may take a minute on first use.",

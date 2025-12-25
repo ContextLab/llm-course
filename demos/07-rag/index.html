@@ -11,7 +11,7 @@
     <header>
         <div class="container">
             <h1>Retrieval Augmented Generation (RAG) System</h1>
-            <p>Interactive demonstration of document retrieval and context-aware generation</p>
+            <p>Interactive demonstration using 2000 real Wikipedia articles - document retrieval and context-aware generation</p>
         </div>
     </header>
 
@@ -19,9 +19,12 @@
         <!-- Initialization Section -->
         <div class="card" id="init-section">
             <h2>1. Initialize RAG Pipeline</h2>
-            <p>Load the embedding model, retriever, and generator to begin.</p>
+            <p>Load the embedding model, retriever, generator, and 2000 Wikipedia articles. This may take a moment due to the large dataset.</p>
+            <div class="status status-info" style="margin-bottom: 16px;">
+                <strong>Note:</strong> Loading 2000 real Wikipedia articles (approximately 5MB of data). Please wait for initialization to complete.
+            </div>
             <button id="init-btn" class="btn btn-primary">
-                <span>Initialize System</span>
+                <span>Initialize System & Load Wikipedia Articles</span>
             </button>
             <div id="init-progress" style="display: none;">
                 <div class="progress-bar">
@@ -33,23 +36,46 @@
 
         <!-- Document Management Section -->
         <div class="card" id="document-section" style="display: none;">
-            <h2>2. Document Management</h2>
+            <h2>2. Document Collection</h2>
+
+            <div class="status status-success" style="margin-bottom: 20px;">
+                <strong>Dataset Loaded:</strong> 2000 real Wikipedia articles across diverse topics
+            </div>
 
             <div class="tabs">
-                <button class="tab active" data-tab="sample-docs">Sample Documents</button>
+                <button class="tab active" data-tab="sample-docs">Wikipedia Articles</button>
                 <button class="tab" data-tab="custom-docs">Upload Custom</button>
             </div>
 
             <div class="tab-content active" id="sample-docs">
-                <p>Using 8 pre-loaded sample documents about LLMs, RAG, and related topics.</p>
-                <div id="document-list" class="document-list"></div>
+                <p>Loaded 2000 real Wikipedia articles from various topics including science, history, arts, technology, and more. These articles provide a rich knowledge base for testing RAG capabilities.</p>
+                <div id="document-stats" class="stats-grid" style="margin: 20px 0;">
+                    <div class="stat-card">
+                        <div class="stat-value" id="doc-count">-</div>
+                        <div class="stat-label">Total Articles</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">Wikipedia</div>
+                        <div class="stat-label">Source</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">Real Data</div>
+                        <div class="stat-label">Dataset Type</div>
+                    </div>
+                </div>
+                <details style="margin-top: 20px;">
+                    <summary style="cursor: pointer; font-weight: 600; padding: 10px; background: var(--bg-secondary); border-radius: 8px;">
+                        View Sample Articles (Click to expand)
+                    </summary>
+                    <div id="document-list" class="document-list" style="margin-top: 10px; max-height: 400px; overflow-y: auto;"></div>
+                </details>
             </div>
 
             <div class="tab-content" id="custom-docs">
                 <div class="file-upload" id="file-upload-area">
                     <input type="file" id="file-input" accept=".txt,.json" multiple>
                     <p>Click to upload text or JSON files</p>
-                    <p style="font-size: 0.9em; color: var(--text-secondary);">Or use the pre-loaded sample documents</p>
+                    <p style="font-size: 0.9em; color: var(--text-secondary);">Or use the 2000 Wikipedia articles</p>
                 </div>
             </div>
         </div>
@@ -248,24 +274,25 @@
         <!-- Sample Queries -->
         <div class="card" id="sample-queries-section" style="display: none;">
             <h3>Sample Queries to Try</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">Try these queries against the 2000 Wikipedia articles to see RAG in action:</p>
             <div class="grid grid-2">
-                <button class="btn btn-secondary sample-query-btn" data-query="What is retrieval augmented generation?">
-                    What is retrieval augmented generation?
+                <button class="btn btn-secondary sample-query-btn" data-query="Who is Stef Chura?">
+                    Who is Stef Chura?
                 </button>
-                <button class="btn btn-secondary sample-query-btn" data-query="Explain the transformer architecture">
-                    Explain the transformer architecture
+                <button class="btn btn-secondary sample-query-btn" data-query="Tell me about the history of artificial intelligence">
+                    Tell me about AI history
                 </button>
-                <button class="btn btn-secondary sample-query-btn" data-query="What are vector embeddings?">
-                    What are vector embeddings?
+                <button class="btn btn-secondary sample-query-btn" data-query="What are some famous landmarks?">
+                    What are some famous landmarks?
                 </button>
-                <button class="btn btn-secondary sample-query-btn" data-query="How do you evaluate RAG systems?">
-                    How do you evaluate RAG systems?
+                <button class="btn btn-secondary sample-query-btn" data-query="Explain quantum physics">
+                    Explain quantum physics
                 </button>
-                <button class="btn btn-secondary sample-query-btn" data-query="What are text chunking strategies?">
-                    What are text chunking strategies?
+                <button class="btn btn-secondary sample-query-btn" data-query="What is machine learning?">
+                    What is machine learning?
                 </button>
-                <button class="btn btn-secondary sample-query-btn" data-query="What are advanced RAG techniques?">
-                    What are advanced RAG techniques?
+                <button class="btn btn-secondary sample-query-btn" data-query="Tell me about space exploration">
+                    Tell me about space exploration
                 </button>
             </div>
         </div>
@@ -319,19 +346,30 @@
         // Display loaded documents
         function displayDocuments() {
             const docList = document.getElementById('document-list');
+            const docCount = document.getElementById('doc-count');
             const docs = ragPipeline.documents;
 
-            docList.innerHTML = docs.map(doc => `
+            // Update document count
+            docCount.textContent = docs.length;
+
+            // Display first 20 articles as a preview
+            const previewDocs = docs.slice(0, 20);
+
+            docList.innerHTML = previewDocs.map(doc => `
                 <div class="document-item">
                     <div class="document-title">${doc.title}</div>
                     <div class="document-meta">
-                        <span class="badge badge-primary">${doc.metadata.category}</span>
-                        <span>Author: ${doc.metadata.author}</span>
-                        <span>Date: ${doc.metadata.date}</span>
+                        <span class="badge badge-primary">${doc.metadata.source}</span>
+                        <span class="badge">${doc.metadata.category}</span>
                     </div>
-                    <div class="document-preview">${doc.content}</div>
+                    <div class="document-preview">${doc.content.substring(0, 300)}${doc.content.length > 300 ? '...' : ''}</div>
+                    ${doc.metadata.url ? `<a href="${doc.metadata.url}" target="_blank" style="font-size: 0.9em; color: var(--primary);">View on Wikipedia →</a>` : ''}
                 </div>
             `).join('');
+
+            if (docs.length > 20) {
+                docList.innerHTML += `<p style="text-align: center; color: var(--text-secondary); margin-top: 20px;">... and ${docs.length - 20} more articles</p>`;
+            }
         }
 
         // Tab switching

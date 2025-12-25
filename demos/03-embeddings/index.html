@@ -44,7 +44,7 @@
                             <optgroup label="Pre-loaded Datasets">
                                 <option value="news" selected>News Articles (20 categories)</option>
                                 <option value="movies">Movie Reviews (sentiment)</option>
-                                <option value="wikipedia">Wikipedia Samples</option>
+                                <option value="wikipedia">Wikipedia Articles (2000 real articles)</option>
                             </optgroup>
                             <optgroup label="Custom">
                                 <option value="custom-text">Custom Text Input</option>
@@ -52,6 +52,9 @@
                             </optgroup>
                         </select>
                         <button id="load-dataset-btn" class="btn btn-primary">Load Dataset</button>
+                        <div class="info-note" style="margin-top: 8px; font-size: 0.85em; color: #666;">
+                            Note: Wikipedia dataset contains 2000 real articles from Wikipedia with actual content.
+                        </div>
                     </div>
 
                     <!-- Dimension Reduction -->
@@ -189,7 +192,8 @@
                     <div id="comparison-plot-container" class="plot-area hidden"></div>
                     <div id="loading" class="loading hidden">
                         <div class="spinner"></div>
-                        <p>Processing embeddings...</p>
+                        <p id="loading-message">Processing embeddings...</p>
+                        <p id="loading-progress" style="font-size: 0.9em; margin-top: 8px;"></p>
                     </div>
                 </div>
 
@@ -288,14 +292,17 @@
         });
 
         async function loadInitialData() {
-            showLoading(true);
+            showLoading(true, 'Loading model...');
             try {
                 const modelId = document.getElementById('model-select').value;
                 const datasetId = document.getElementById('dataset-select').value;
 
                 await app.loader.loadModel(modelId);
+
+                showLoading(true, 'Loading dataset...', 'This may take a moment for larger datasets');
                 app.currentData = await app.loader.loadDataset(datasetId);
 
+                showLoading(true, 'Applying dimension reduction...');
                 updateStats();
                 await applyReduction();
             } catch (error) {
@@ -309,14 +316,17 @@
         function setupEventListeners() {
             // Model selection
             document.getElementById('load-dataset-btn').addEventListener('click', async () => {
-                showLoading(true);
+                showLoading(true, 'Loading model...');
                 try {
                     const modelId = document.getElementById('model-select').value;
                     const datasetId = document.getElementById('dataset-select').value;
 
                     await app.loader.loadModel(modelId);
+
+                    showLoading(true, 'Loading dataset...', 'This may take a moment for larger datasets');
                     app.currentData = await app.loader.loadDataset(datasetId);
 
+                    showLoading(true, 'Applying dimension reduction...');
                     updateStats();
                     await applyReduction();
                 } catch (error) {
@@ -393,9 +403,11 @@
                 return;
             }
 
-            showLoading(true);
+            const method = document.getElementById('reduction-method').value;
+            const methodName = method === 'umap' ? 'UMAP' : method === 'tsne' ? 't-SNE' : 'PCA';
+            showLoading(true, `Applying ${methodName} dimension reduction...`, 'This may take a moment for larger datasets');
+
             try {
-                const method = document.getElementById('reduction-method').value;
                 const nComponents = parseInt(document.getElementById('n-components').value);
 
                 let params = { nComponents };
@@ -630,8 +642,18 @@
             app.comparisonPlot = null;
         }
 
-        function showLoading(show) {
-            document.getElementById('loading').classList.toggle('hidden', !show);
+        function showLoading(show, message = 'Processing embeddings...', progress = '') {
+            const loadingEl = document.getElementById('loading');
+            const messageEl = document.getElementById('loading-message');
+            const progressEl = document.getElementById('loading-progress');
+
+            loadingEl.classList.toggle('hidden', !show);
+            if (show && messageEl) {
+                messageEl.textContent = message;
+            }
+            if (show && progressEl) {
+                progressEl.textContent = progress;
+            }
         }
 
         // Export for debugging

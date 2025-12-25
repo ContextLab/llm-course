@@ -32,9 +32,9 @@ class RAGPipeline {
             // Initialize generator
             await this.initializeGenerator();
 
-            if (onProgress) onProgress('Loading sample documents...', 80);
+            if (onProgress) onProgress('Loading Wikipedia articles...', 80);
 
-            // Load sample documents
+            // Load Wikipedia articles
             await this.loadSampleDocuments();
 
             if (onProgress) onProgress('Ready!', 100);
@@ -69,16 +69,30 @@ class RAGPipeline {
     }
 
     /**
-     * Load sample documents from JSON file
+     * Load Wikipedia articles from JSON file
      */
     async loadSampleDocuments() {
         try {
-            const response = await fetch('data/sample-documents.json');
-            this.documents = await response.json();
+            const response = await fetch('data/wikipedia-articles.json');
+            const rawArticles = await response.json();
+
+            // Transform Wikipedia articles to match expected document format
+            this.documents = rawArticles.map((article, index) => ({
+                id: `wiki-${index}`,
+                title: article.title,
+                content: article.content,
+                metadata: {
+                    source: 'Wikipedia',
+                    url: article.url,
+                    category: 'Encyclopedia',
+                    date: '2024'
+                }
+            }));
+
             this.retriever.loadDocuments(this.documents);
-            console.log(`Loaded ${this.documents.length} sample documents`);
+            console.log(`Loaded ${this.documents.length} Wikipedia articles`);
         } catch (error) {
-            console.error('Error loading sample documents:', error);
+            console.error('Error loading Wikipedia articles:', error);
             throw error;
         }
     }

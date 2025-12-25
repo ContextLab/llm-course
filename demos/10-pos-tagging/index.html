@@ -12,7 +12,7 @@
     <div class="container">
         <header>
             <h1>Interactive POS Tagging & Dependency Parser</h1>
-            <p class="subtitle">Explore linguistic structure through part-of-speech tagging, dependency parsing, and named entity recognition</p>
+            <p class="subtitle">Explore linguistic structure through part-of-speech tagging, dependency parsing, and named entity recognition using real Wikipedia passages</p>
         </header>
 
         <div class="input-section">
@@ -22,7 +22,13 @@
                 <div class="button-group">
                     <button id="analyze-btn" class="primary-btn">Analyze Text</button>
                     <button id="clear-btn" class="secondary-btn">Clear</button>
-                    <button id="example-btn" class="secondary-btn">Load Example</button>
+                    <button id="random-passage-btn" class="secondary-btn">Load Random Passage</button>
+                </div>
+                <div class="wikipedia-selector" style="margin-top: 15px;">
+                    <label for="passage-select">Or select a Wikipedia passage:</label>
+                    <select id="passage-select" style="width: 100%; padding: 8px; margin-top: 5px; font-size: 14px;">
+                        <option value="">-- Select a passage --</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -155,16 +161,40 @@
             showTags: true,
             showColors: true,
             showLabels: true,
+            wikipediaPassages: [],
 
-            init() {
+            async init() {
+                await this.loadWikipediaPassages();
                 this.bindEvents();
                 this.analyze(); // Analyze default text
+            },
+
+            async loadWikipediaPassages() {
+                try {
+                    const response = await fetch('data/wikipedia-passages.json');
+                    this.wikipediaPassages = await response.json();
+                    this.populatePassageSelector();
+                } catch (error) {
+                    console.error('Error loading Wikipedia passages:', error);
+                    this.wikipediaPassages = [];
+                }
+            },
+
+            populatePassageSelector() {
+                const select = document.getElementById('passage-select');
+                this.wikipediaPassages.forEach((passage, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = passage.title;
+                    select.appendChild(option);
+                });
             },
 
             bindEvents() {
                 document.getElementById('analyze-btn').addEventListener('click', () => this.analyze());
                 document.getElementById('clear-btn').addEventListener('click', () => this.clear());
-                document.getElementById('example-btn').addEventListener('click', () => this.loadExample());
+                document.getElementById('random-passage-btn').addEventListener('click', () => this.loadRandomPassage());
+                document.getElementById('passage-select').addEventListener('change', (e) => this.loadSelectedPassage(e.target.value));
 
                 // Tab switching
                 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -277,6 +307,7 @@
 
             clear() {
                 document.getElementById('text-input').value = '';
+                document.getElementById('passage-select').value = '';
                 document.getElementById('pos-output').innerHTML = '<p class="placeholder">Click "Analyze Text" to see POS tags</p>';
                 document.getElementById('ner-output').innerHTML = '<p class="placeholder">Click "Analyze Text" to see named entities</p>';
                 document.getElementById('dependency-tree').innerHTML = '';
@@ -285,18 +316,29 @@
                 document.getElementById('ner-stats-content').innerHTML = '';
             },
 
-            loadExample() {
-                const examples = [
-                    "Dr. Sarah Johnson from MIT published groundbreaking research on artificial intelligence in Nature magazine last Tuesday.",
-                    "Apple Inc. announced a new product launch event in Cupertino, California on September 15th.",
-                    "The ancient ruins of Machu Picchu attract thousands of tourists every year to Peru.",
-                    "Professor Einstein developed the theory of relativity while working at the patent office in Switzerland.",
-                    "Amazon's CEO visited three warehouses in Seattle, New York, and Chicago during the holiday season."
-                ];
+            loadRandomPassage() {
+                if (this.wikipediaPassages.length === 0) {
+                    alert('Wikipedia passages not loaded yet. Please wait a moment and try again.');
+                    return;
+                }
 
-                const randomExample = examples[Math.floor(Math.random() * examples.length)];
-                document.getElementById('text-input').value = randomExample;
+                const randomIndex = Math.floor(Math.random() * this.wikipediaPassages.length);
+                const passage = this.wikipediaPassages[randomIndex];
+                document.getElementById('text-input').value = passage.text;
+                document.getElementById('passage-select').value = randomIndex;
                 this.analyze();
+            },
+
+            loadSelectedPassage(index) {
+                if (!index || index === '') {
+                    return;
+                }
+
+                const passage = this.wikipediaPassages[parseInt(index)];
+                if (passage) {
+                    document.getElementById('text-input').value = passage.text;
+                    this.analyze();
+                }
             },
 
             switchTab(tabName) {

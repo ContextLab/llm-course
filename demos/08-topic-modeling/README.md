@@ -6,7 +6,8 @@ An interactive demonstration of Latent Dirichlet Allocation (LDA) for topic mode
 
 ### Core Functionality
 - **LDA Implementation**: Full JavaScript implementation of LDA using Collapsed Gibbs Sampling
-- **Multiple Datasets**: Pre-loaded news articles, scientific papers, and product reviews
+- **Real Wikipedia Dataset**: 3000 real Wikipedia articles covering diverse topics
+- **Multiple Sample Datasets**: Pre-loaded news articles, scientific papers, and product reviews
 - **Custom Text Input**: Process your own documents
 - **Adjustable Parameters**:
   - Number of topics (K)
@@ -56,7 +57,8 @@ An interactive demonstration of Latent Dirichlet Allocation (LDA) for topic mode
 - `css/topic-modeling.css` - Comprehensive styling
 - `js/lda.js` - LDA algorithm implementation
 - `js/visualization.js` - Visualization rendering
-- `data/sample-docs.js` - Sample datasets
+- `data/sample-docs.js` - Dataset loaders and sample datasets
+- `data/wikipedia-corpus.json` - 3000 real Wikipedia articles (4.8MB)
 
 ### Key Algorithms
 
@@ -80,11 +82,22 @@ An interactive demonstration of Latent Dirichlet Allocation (LDA) for topic mode
 
 ## Usage
 
-1. **Load Dataset**: Select a pre-loaded dataset or enter custom text
+1. **Load Dataset**:
+   - Wikipedia (default): 3000 real articles - great for discovering diverse topics
+   - News Articles: 100 sample articles across 10 topics
+   - Scientific Papers: 50 scientific abstracts
+   - Product Reviews: 75 product reviews
+   - Custom Text: Enter your own documents
 2. **Configure Parameters**: Adjust LDA parameters using sliders
-3. **Run LDA**: Click "Run LDA" to train the model
+3. **Run LDA**: Click "Run LDA" to train the model (may take 30-60 seconds for large datasets)
 4. **Explore Results**: Switch between visualization modes
 5. **Export**: Save topics or visualizations for later use
+
+### Performance Notes
+- **Wikipedia dataset (3000 docs)**: Takes 30-60 seconds to process with default settings
+- **Sample datasets (50-100 docs)**: Process in 5-10 seconds
+- Reduce iterations or number of topics for faster results
+- Enable stopword removal for better topic quality
 
 ## Educational Value
 

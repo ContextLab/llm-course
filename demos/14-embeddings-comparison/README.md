@@ -349,5 +349,5 @@ This demo relates to:
 ---
 
 **Last Updated**: December 2025
-**Course**: PSYC 50/CS 72 - Language Models from Scratch
-**Institution**: Dartmouth College
+**Course**: PSYC 51.17 - Language Models from Scratch
+**Copyright**: Jeremy R. Manning

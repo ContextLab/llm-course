@@ -201,6 +201,11 @@ export class TopicVisualizer {
     showDocumentDistribution(docIdx, results, dataset) {
         const distribution = results.documentTopics[docIdx];
 
+        // Get document title if available
+        const docTitle = dataset.titles && dataset.titles[docIdx]
+            ? dataset.titles[docIdx]
+            : `Document ${docIdx + 1}`;
+
         // Create bar chart
         const data = [{
             x: distribution.map((_, i) => `Topic ${i + 1}`),
@@ -212,7 +217,7 @@ export class TopicVisualizer {
         }];
 
         const layout = {
-            title: `Topic Distribution for Document ${docIdx + 1}`,
+            title: `Topic Distribution: ${docTitle}`,
             xaxis: { title: 'Topic' },
             yaxis: { title: 'Probability', range: [0, 1] },
             height: 400
@@ -220,11 +225,21 @@ export class TopicVisualizer {
 
         Plotly.newPlot('doc-topic-plot', data, layout, { responsive: true });
 
-        // Show document content
+        // Show document content with title if available
         const contentDiv = document.getElementById('doc-content');
+        const titleHtml = dataset.titles && dataset.titles[docIdx]
+            ? `<h4>${dataset.titles[docIdx]}</h4>`
+            : `<h4>Document ${docIdx + 1}:</h4>`;
+
+        // Truncate long documents for display
+        const docText = dataset.documents[docIdx];
+        const displayText = docText.length > 500
+            ? docText.substring(0, 500) + '...'
+            : docText;
+
         contentDiv.innerHTML = `
-            <h4>Document Content:</h4>
-            <p>${dataset.documents[docIdx]}</p>
+            ${titleHtml}
+            <p>${displayText}</p>
         `;
     }
 

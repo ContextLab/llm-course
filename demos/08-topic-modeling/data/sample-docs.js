@@ -1,10 +1,74 @@
 /**
  * Sample datasets for topic modeling
+ * Now includes real Wikipedia corpus with 3000 articles
  */
 
+// Wikipedia dataset - loaded dynamically from JSON file
+let wikipediaDataset = null;
+let isLoadingWikipedia = false;
+
+/**
+ * Load Wikipedia corpus from JSON file
+ */
+async function loadWikipediaCorpus() {
+    if (wikipediaDataset) {
+        return wikipediaDataset;
+    }
+
+    if (isLoadingWikipedia) {
+        // Wait for existing load to complete
+        while (isLoadingWikipedia) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        return wikipediaDataset;
+    }
+
+    isLoadingWikipedia = true;
+
+    try {
+        const response = await fetch('./data/wikipedia-corpus.json');
+        if (!response.ok) {
+            throw new Error(`Failed to load Wikipedia corpus: ${response.status}`);
+        }
+
+        const articles = await response.json();
+
+        // Transform to the format expected by the LDA model
+        wikipediaDataset = {
+            name: 'Wikipedia Articles (3000 real articles)',
+            description: 'Real Wikipedia articles covering diverse topics from history, science, sports, entertainment, and more',
+            documents: articles.map(article => article.text),
+            titles: articles.map(article => article.title),
+            ids: articles.map(article => article.id)
+        };
+
+        console.log(`Loaded ${wikipediaDataset.documents.length} Wikipedia articles`);
+        return wikipediaDataset;
+    } catch (error) {
+        console.error('Error loading Wikipedia corpus:', error);
+        throw error;
+    } finally {
+        isLoadingWikipedia = false;
+    }
+}
+
 export const DATASETS = {
+    wikipedia: {
+        name: 'Wikipedia Articles',
+        description: '3000 real Wikipedia articles',
+        async load() {
+            return await loadWikipediaCorpus();
+        },
+        // Placeholder until loaded
+        documents: []
+    },
+
     news: {
         name: 'News Articles',
+        description: '100 sample news articles across 10 topics',
+        async load() {
+            return this;
+        },
         documents: [
             // Technology (Topic 1)
             "Apple released its latest iPhone model with advanced artificial intelligence features and improved camera technology. The new device includes machine learning capabilities.",
@@ -130,6 +194,10 @@ export const DATASETS = {
 
     scientific: {
         name: 'Scientific Papers',
+        description: '50 sample scientific abstracts',
+        async load() {
+            return this;
+        },
         documents: [
             // Neuroscience
             "Recent studies in neuroscience reveal how synaptic plasticity underlies learning and memory formation in the hippocampus through long-term potentiation mechanisms.",
@@ -205,6 +273,10 @@ export const DATASETS = {
 
     reviews: {
         name: 'Product Reviews',
+        description: '75 sample product reviews',
+        async load() {
+            return this;
+        },
         documents: [
             // Positive Electronics Reviews
             "This smartphone exceeded my expectations with its amazing camera quality and long battery life. Highly recommend for photography enthusiasts.",
@@ -306,3 +378,6 @@ export const DATASETS = {
         ]
     }
 };
+
+// Export the load function for easy access
+export { loadWikipediaCorpus };

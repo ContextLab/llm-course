@@ -2,7 +2,9 @@
  * ELIZA Engine - Main chatbot logic
  */
 
-class ElizaEngine {
+import { PatternMatcher } from './pattern-matcher.js';
+
+export class ElizaEngine {
   constructor() {
     this.patternMatcher = new PatternMatcher();
     this.rules = null;

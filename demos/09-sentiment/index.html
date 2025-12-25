@@ -12,7 +12,7 @@
     <div class="dashboard">
         <header>
             <h1>Sentiment Analysis Dashboard</h1>
-            <p class="subtitle">Real-time emotion detection with multiple models</p>
+            <p class="subtitle">Real-time emotion detection with multiple models - Powered by 5000 real IMDB movie reviews</p>
         </header>
 
         <div class="container">
@@ -22,6 +22,7 @@
                 <div class="input-modes">
                     <button class="mode-btn active" data-mode="single">Single Text</button>
                     <button class="mode-btn" data-mode="batch">Batch (CSV)</button>
+                    <button class="mode-btn" data-mode="imdb">IMDB Reviews</button>
                 </div>
 
                 <div id="single-mode" class="input-mode">
@@ -49,6 +50,41 @@
                     <div id="batch-preview" style="display: none;">
                         <h3>Preview</h3>
                         <div id="preview-content"></div>
+                    </div>
+                </div>
+
+                <div id="imdb-mode" class="input-mode" style="display: none;">
+                    <div class="imdb-controls">
+                        <h3>IMDB Movie Reviews Dataset</h3>
+                        <p class="dataset-info">
+                            Analyze real movie reviews from the Internet Movie Database with pre-labeled sentiment.
+                        </p>
+                        <div class="dataset-selection">
+                            <label class="dataset-option">
+                                <input type="radio" name="dataset-size" value="sample" checked>
+                                <div class="option-content">
+                                    <strong>Sample Dataset</strong>
+                                    <span>500 reviews - Fast loading and analysis</span>
+                                </div>
+                            </label>
+                            <label class="dataset-option">
+                                <input type="radio" name="dataset-size" value="full">
+                                <div class="option-content">
+                                    <strong>Full Dataset</strong>
+                                    <span>5000 reviews - Comprehensive analysis (slower)</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="batch-size-control">
+                            <label for="batch-size">Number of reviews to analyze:</label>
+                            <input type="number" id="batch-size" min="10" max="5000" value="100" step="10">
+                            <span class="batch-size-info">Analyzing more reviews provides better insights but takes longer</span>
+                        </div>
+                        <button id="load-imdb-btn" class="load-btn">Load & Analyze Reviews</button>
+                    </div>
+                    <div id="imdb-preview" style="display: none;">
+                        <h3>Dataset Loaded</h3>
+                        <div id="imdb-preview-content"></div>
                     </div>
                 </div>
 
@@ -228,6 +264,8 @@
         const analyzer = new SentimentAnalyzer();
         let batchData = [];
         let currentResults = [];
+        let imdbData = [];
+        let loadedDatasetSize = null;
 
         // UI Elements
         const textInput = document.getElementById('text-input');
@@ -238,6 +276,8 @@
         const csvFileInput = document.getElementById('csv-file');
         const loadingOverlay = document.getElementById('loading-overlay');
         const compareModelsCheckbox = document.getElementById('compare-models');
+        const loadImdbBtn = document.getElementById('load-imdb-btn');
+        const batchSizeInput = document.getElementById('batch-size');
 
         // Mode switching
         modeBtns.forEach(btn => {
@@ -250,6 +290,8 @@
                     mode === 'single' ? 'block' : 'none';
                 document.getElementById('batch-mode').style.display =
                     mode === 'batch' ? 'block' : 'none';
+                document.getElementById('imdb-mode').style.display =
+                    mode === 'imdb' ? 'block' : 'none';
 
                 // Reset results
                 document.getElementById('batch-results-card').style.display = 'none';
@@ -314,15 +356,370 @@
             const content = document.getElementById('preview-content');
 
             preview.style.display = 'block';
-            content.innerHTML = `
-                <p><strong>${data.length}</strong> texts loaded</p>
-                <div class="preview-items">
-                    ${data.slice(0, 5).map((text, i) =>
-                        `<div class="preview-item">${i + 1}. ${text.substring(0, 100)}${text.length > 100 ? '...' : ''}</div>`
-                    ).join('')}
-                    ${data.length > 5 ? `<p class="more-items">... and ${data.length - 5} more</p>` : ''}
-                </div>
+
+            // Clear existing content
+            content.innerHTML = '';
+
+            // Add count
+            const countP = document.createElement('p');
+            const strong = document.createElement('strong');
+            strong.textContent = data.length;
+            countP.appendChild(strong);
+            countP.appendChild(document.createTextNode(' texts loaded'));
+            content.appendChild(countP);
+
+            // Add preview items
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'preview-items';
+
+            data.slice(0, 5).forEach((text, i) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'preview-item';
+                const truncated = text.length > 100 ? text.substring(0, 100) + '...' : text;
+                itemDiv.textContent = `${i + 1}. ${truncated}`;
+                previewDiv.appendChild(itemDiv);
+            });
+
+            if (data.length > 5) {
+                const moreP = document.createElement('p');
+                moreP.className = 'more-items';
+                moreP.textContent = `... and ${data.length - 5} more`;
+                previewDiv.appendChild(moreP);
+            }
+
+            content.appendChild(previewDiv);
+        }
+
+        // IMDB Dataset Loading
+        loadImdbBtn.addEventListener('click', async () => {
+            const datasetSize = document.querySelector('input[name="dataset-size"]:checked').value;
+            const batchSize = parseInt(batchSizeInput.value);
+
+            await loadImdbDataset(datasetSize, batchSize);
+        });
+
+        async function loadImdbDataset(size, numReviews) {
+            const filename = size === 'sample' ? 'imdb-sample.json' : 'imdb-reviews.json';
+            const maxReviews = size === 'sample' ? 500 : 5000;
+
+            // Validate batch size
+            if (numReviews > maxReviews) {
+                alert(`The ${size} dataset only has ${maxReviews} reviews. Please select a smaller number.`);
+                batchSizeInput.value = maxReviews;
+                return;
+            }
+
+            showLoading(`Loading ${size} IMDB dataset (${numReviews} reviews)...`);
+
+            try {
+                const response = await fetch(`data/${filename}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to load dataset: ${response.statusText}`);
+                }
+
+                const allReviews = await response.json();
+
+                // Shuffle and take requested number of reviews
+                const shuffled = allReviews.sort(() => Math.random() - 0.5);
+                imdbData = shuffled.slice(0, numReviews);
+                loadedDatasetSize = size;
+
+                showImdbPreview(imdbData, size);
+
+                // Automatically start analysis
+                const selectedModel = document.querySelector('input[name="model"]:checked').value;
+                await analyzeImdbBatch(imdbData, selectedModel);
+
+            } catch (error) {
+                console.error('Error loading IMDB dataset:', error);
+                alert('Error loading IMDB dataset: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        function showImdbPreview(data, size) {
+            const preview = document.getElementById('imdb-preview');
+            const content = document.getElementById('imdb-preview-content');
+
+            const positiveCount = data.filter(r => r.sentiment === 'positive').length;
+            const negativeCount = data.filter(r => r.sentiment === 'negative').length;
+
+            preview.style.display = 'block';
+            content.innerHTML = '';
+
+            // Dataset stats
+            const statsDiv = document.createElement('div');
+            statsDiv.className = 'dataset-stats';
+
+            const statsP = document.createElement('p');
+            const statsStrong = document.createElement('strong');
+            statsStrong.textContent = data.length;
+            statsP.appendChild(statsStrong);
+            statsP.appendChild(document.createTextNode(` reviews loaded from ${size === 'sample' ? '500-review sample' : 'full 5000-review dataset'}`));
+            statsDiv.appendChild(statsP);
+
+            const distDiv = document.createElement('div');
+            distDiv.className = 'label-distribution';
+
+            const posSpan = document.createElement('span');
+            posSpan.className = 'label-stat positive';
+            posSpan.textContent = `Positive: ${positiveCount} (${Math.round(positiveCount/data.length*100)}%)`;
+            distDiv.appendChild(posSpan);
+
+            const negSpan = document.createElement('span');
+            negSpan.className = 'label-stat negative';
+            negSpan.textContent = `Negative: ${negativeCount} (${Math.round(negativeCount/data.length*100)}%)`;
+            distDiv.appendChild(negSpan);
+
+            statsDiv.appendChild(distDiv);
+            content.appendChild(statsDiv);
+
+            // Sample reviews
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'preview-items';
+
+            const h4 = document.createElement('h4');
+            h4.textContent = 'Sample Reviews:';
+            previewDiv.appendChild(h4);
+
+            data.slice(0, 3).forEach((review, i) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'preview-item';
+
+                const strong = document.createElement('strong');
+                strong.textContent = `${i + 1}. [${review.sentiment.toUpperCase()}]`;
+                itemDiv.appendChild(strong);
+                itemDiv.appendChild(document.createElement('br'));
+
+                const truncated = review.text.length > 150 ? review.text.substring(0, 150) + '...' : review.text;
+                itemDiv.appendChild(document.createTextNode(truncated));
+
+                previewDiv.appendChild(itemDiv);
+            });
+
+            content.appendChild(previewDiv);
+        }
+
+        async function analyzeImdbBatch(reviews, model) {
+            showLoading(`Analyzing ${reviews.length} IMDB reviews...`);
+            currentResults = [];
+
+            try {
+                for (let i = 0; i < reviews.length; i++) {
+                    const result = await analyzer.analyze(reviews[i].text, model);
+                    currentResults.push({
+                        text: reviews[i].text,
+                        trueLabel: reviews[i].sentiment,
+                        ...result
+                    });
+
+                    if ((i + 1) % 10 === 0 || i === reviews.length - 1) {
+                        showLoading(`Analyzed ${i + 1}/${reviews.length} reviews...`);
+                    }
+                }
+
+                displayImdbResults(currentResults);
+                displayDistributionChart(currentResults);
+                displayAccuracyMetrics(currentResults);
+            } catch (error) {
+                console.error('IMDB batch analysis error:', error);
+                alert('Error during analysis: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayImdbResults(results) {
+            const card = document.getElementById('batch-results-card');
+            const table = document.getElementById('batch-results-table');
+
+            card.style.display = 'block';
+            table.innerHTML = '';
+
+            // Calculate accuracy
+            const correct = results.filter(r => r.sentiment === r.trueLabel).length;
+            const accuracy = (correct / results.length * 100).toFixed(1);
+
+            // Create accuracy banner
+            const banner = document.createElement('div');
+            banner.className = 'accuracy-banner';
+            const bannerH3 = document.createElement('h3');
+            bannerH3.textContent = `Model Accuracy: ${accuracy}% (${correct}/${results.length} correct predictions)`;
+            banner.appendChild(bannerH3);
+            table.appendChild(banner);
+
+            // Create table
+            const tableEl = document.createElement('table');
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+
+            ['#', 'Review Text', 'True Label', 'Predicted', 'Match', 'Confidence', 'Pos', 'Neg'].forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            tableEl.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            results.forEach((r, i) => {
+                const isCorrect = r.sentiment === r.trueLabel;
+                const row = document.createElement('tr');
+                row.className = `sentiment-row ${isCorrect ? 'correct' : 'incorrect'}`;
+
+                // Index
+                const td1 = document.createElement('td');
+                td1.textContent = i + 1;
+                row.appendChild(td1);
+
+                // Text
+                const td2 = document.createElement('td');
+                td2.className = 'text-cell';
+                const truncated = r.text.length > 100 ? r.text.substring(0, 100) + '...' : r.text;
+                td2.textContent = truncated;
+                row.appendChild(td2);
+
+                // True Label
+                const td3 = document.createElement('td');
+                const badge1 = document.createElement('span');
+                badge1.className = `sentiment-badge sentiment-${r.trueLabel}`;
+                badge1.textContent = r.trueLabel;
+                td3.appendChild(badge1);
+                row.appendChild(td3);
+
+                // Predicted
+                const td4 = document.createElement('td');
+                const badge2 = document.createElement('span');
+                badge2.className = `sentiment-badge sentiment-${r.sentiment}`;
+                badge2.textContent = r.sentiment;
+                td4.appendChild(badge2);
+                row.appendChild(td4);
+
+                // Match
+                const td5 = document.createElement('td');
+                td5.className = 'match-cell';
+                td5.textContent = isCorrect ? '✓' : '✗';
+                row.appendChild(td5);
+
+                // Confidence
+                const td6 = document.createElement('td');
+                td6.textContent = Math.round(r.confidence * 100) + '%';
+                row.appendChild(td6);
+
+                // Positive score
+                const td7 = document.createElement('td');
+                td7.textContent = Math.round(r.scores.positive * 100) + '%';
+                row.appendChild(td7);
+
+                // Negative score
+                const td8 = document.createElement('td');
+                td8.textContent = Math.round(r.scores.negative * 100) + '%';
+                row.appendChild(td8);
+
+                tbody.appendChild(row);
+            });
+
+            tableEl.appendChild(tbody);
+            table.appendChild(tableEl);
+        }
+
+        function displayAccuracyMetrics(results) {
+            // Calculate confusion matrix
+            const tp = results.filter(r => r.sentiment === 'positive' && r.trueLabel === 'positive').length;
+            const tn = results.filter(r => r.sentiment === 'negative' && r.trueLabel === 'negative').length;
+            const fp = results.filter(r => r.sentiment === 'positive' && r.trueLabel === 'negative').length;
+            const fn = results.filter(r => r.sentiment === 'negative' && r.trueLabel === 'positive').length;
+
+            const precision = tp + fp > 0 ? (tp / (tp + fp) * 100).toFixed(1) : 0;
+            const recall = tp + fn > 0 ? (tp / (tp + fn) * 100).toFixed(1) : 0;
+            const f1 = precision > 0 && recall > 0 ? (2 * precision * recall / (parseFloat(precision) + parseFloat(recall))).toFixed(1) : 0;
+
+            // Remove existing metrics card
+            const existing = document.getElementById('metrics-card');
+            if (existing) existing.remove();
+
+            // Create metrics card
+            const metricsCard = document.createElement('div');
+            metricsCard.className = 'card full-width';
+            metricsCard.id = 'metrics-card';
+
+            const h2 = document.createElement('h2');
+            h2.textContent = 'Performance Metrics';
+            metricsCard.appendChild(h2);
+
+            // Metrics grid
+            const metricsGrid = document.createElement('div');
+            metricsGrid.className = 'metrics-grid';
+
+            // Precision
+            const precDiv = document.createElement('div');
+            precDiv.className = 'metric-item';
+            precDiv.innerHTML = `
+                <div class="metric-label">Precision</div>
+                <div class="metric-value">${precision}%</div>
+                <div class="metric-desc">Of predicted positive, how many were correct</div>
             `;
+            metricsGrid.appendChild(precDiv);
+
+            // Recall
+            const recDiv = document.createElement('div');
+            recDiv.className = 'metric-item';
+            recDiv.innerHTML = `
+                <div class="metric-label">Recall</div>
+                <div class="metric-value">${recall}%</div>
+                <div class="metric-desc">Of actual positive, how many were found</div>
+            `;
+            metricsGrid.appendChild(recDiv);
+
+            // F1
+            const f1Div = document.createElement('div');
+            f1Div.className = 'metric-item';
+            f1Div.innerHTML = `
+                <div class="metric-label">F1 Score</div>
+                <div class="metric-value">${f1}%</div>
+                <div class="metric-desc">Harmonic mean of precision and recall</div>
+            `;
+            metricsGrid.appendChild(f1Div);
+
+            metricsCard.appendChild(metricsGrid);
+
+            // Confusion matrix
+            const matrixDiv = document.createElement('div');
+            matrixDiv.className = 'confusion-matrix';
+
+            const matrixH3 = document.createElement('h3');
+            matrixH3.textContent = 'Confusion Matrix';
+            matrixDiv.appendChild(matrixH3);
+
+            const matrixTable = document.createElement('table');
+            matrixTable.className = 'matrix-table';
+            matrixTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Predicted Positive</th>
+                        <th>Predicted Negative</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Actually Positive</th>
+                        <td class="tp">${tp}</td>
+                        <td class="fn">${fn}</td>
+                    </tr>
+                    <tr>
+                        <th>Actually Negative</th>
+                        <td class="fp">${fp}</td>
+                        <td class="tn">${tn}</td>
+                    </tr>
+                </tbody>
+            `;
+            matrixDiv.appendChild(matrixTable);
+            metricsCard.appendChild(matrixDiv);
+
+            // Insert after distribution card
+            const distributionCard = document.getElementById('distribution-card');
+            distributionCard.parentNode.insertBefore(metricsCard, distributionCard.nextSibling);
         }
 
         // Analyze button

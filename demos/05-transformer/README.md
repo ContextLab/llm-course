@@ -246,7 +246,7 @@ mynewcomponent: {
 
 ## License
 
-Educational use only. Created for the LLM Course at Dartmouth College.
+Educational use only. Created for the LLM Course. Copyright Jeremy R. Manning.
 
 ## Credits
 

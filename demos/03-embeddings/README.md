@@ -16,7 +16,7 @@ An interactive 3D/2D visualization tool for exploring text embeddings with multi
 - **Diverse Datasets**
   - News Articles (50 samples, 10 categories)
   - Movie Reviews (30 samples, sentiment analysis)
-  - Wikipedia Excerpts (60 samples, multiple topics)
+  - **Wikipedia Articles (2000 real Wikipedia articles)** - Real text from Wikipedia with authentic content across diverse categories
 
 - **Dimension Reduction**
   - **UMAP**: Uniform Manifold Approximation and Projection
@@ -351,6 +351,20 @@ Possible additions:
 - [Sentence Transformers](https://www.sbert.net/)
 
 ## Changelog
+
+### December 2025 - Added Real Wikipedia Dataset
+
+**Enhancement**: Replaced synthetic Wikipedia text with 2000 real Wikipedia articles
+
+**What changed:**
+- ✅ Added `wikipedia-embeddings.json` with 2000 real Wikipedia articles
+- ✅ Updated `embedding-loader.js` to load real Wikipedia data instead of generating synthetic samples
+- ✅ Removed synthetic data generation functions (generateNewsDataset, generateMovieReviewsDataset, generateWikipediaDataset)
+- ✅ Enhanced loading indicators to show progress for larger datasets
+- ✅ Updated UI to reflect that Wikipedia dataset contains 2000 real articles
+- ✅ Added batch processing with progress updates for better user experience
+
+**Impact:** The Wikipedia dataset now provides authentic, real-world text data for meaningful embeddings exploration. Users can explore semantic relationships in actual Wikipedia content rather than synthetic samples.
 
 ### December 2025 - Removed Fake Embeddings
 
