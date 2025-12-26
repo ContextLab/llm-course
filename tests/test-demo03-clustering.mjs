@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load the clustering module
-const clusteringCode = await readFile(join(__dirname, 'js/clustering.js'), 'utf-8');
+const clusteringCode = await readFile(join(__dirname, '../demos/03-embeddings/js/clustering.js'), 'utf-8');
 const executableCode = clusteringCode
     .replace(/export class (\w+)/g, 'globalThis.$1 = class $1')
     .replace(/export default .+;?/g, '');

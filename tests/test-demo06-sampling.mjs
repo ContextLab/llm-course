@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load the sampling strategies module
-const samplingCode = await readFile(join(__dirname, 'js/sampling-strategies.js'), 'utf-8');
+const samplingCode = await readFile(join(__dirname, '../demos/06-gpt-playground/js/sampling-strategies.js'), 'utf-8');
 
 // Convert ES module to eval-able code and make class globally available
 const executableCode = samplingCode

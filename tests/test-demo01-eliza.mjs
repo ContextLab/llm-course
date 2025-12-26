@@ -27,8 +27,8 @@ global.window = {};
 global.document = {};
 
 // Load the required modules
-const patternMatcherCode = await readFile(join(__dirname, 'js/pattern-matcher.js'), 'utf-8');
-const elizaEngineCode = await readFile(join(__dirname, 'js/eliza-engine.js'), 'utf-8');
+const patternMatcherCode = await readFile(join(__dirname, '../demos/01-eliza/js/pattern-matcher.js'), 'utf-8');
+const elizaEngineCode = await readFile(join(__dirname, '../demos/01-eliza/js/eliza-engine.js'), 'utf-8');
 
 // Execute PatternMatcher code
 global.module = { exports: {} };
@@ -116,7 +116,7 @@ async function runTests() {
     const patternMatcher = new PatternMatcher();
 
     // Load rules
-    const rulesData = JSON.parse(await readFile(join(__dirname, 'data/eliza-rules.json'), 'utf-8'));
+    const rulesData = JSON.parse(await readFile(join(__dirname, '../demos/01-eliza/data/eliza-rules.json'), 'utf-8'));
     await eliza.loadRules(rulesData);
 
     // ========================================================================

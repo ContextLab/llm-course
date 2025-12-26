@@ -3,7 +3,7 @@
  * Run with: node test-eliza-fixes.mjs
  */
 
-import { ElizaEngine } from './js/eliza-engine.js';
+import { ElizaEngine } from '../demos/15-chatbot-evolution/js/eliza-engine.js';
 import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -24,7 +24,7 @@ async function runTests() {
 
         // Load rules manually (path relative to this script file)
         const rulesData = JSON.parse(
-            await readFile(join(__dirname, 'data', 'eliza-rules.json'), 'utf-8')
+            await readFile(join(__dirname, '../demos/15-chatbot-evolution/data', 'eliza-rules.json'), 'utf-8')
         );
         await eliza.loadRules(rulesData);
 
