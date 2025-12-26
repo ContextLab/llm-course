@@ -5,6 +5,11 @@
 
 import { ElizaEngine } from './js/eliza-engine.js';
 import { readFile } from 'fs/promises';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 async function runTests() {
     console.log('='.repeat(60));
@@ -17,9 +22,9 @@ async function runTests() {
         console.log('Loading ELIZA engine...');
         const eliza = new ElizaEngine();
 
-        // Load rules manually
+        // Load rules manually (path relative to this script file)
         const rulesData = JSON.parse(
-            await readFile('./data/eliza-rules.json', 'utf-8')
+            await readFile(join(__dirname, 'data', 'eliza-rules.json'), 'utf-8')
         );
         await eliza.loadRules(rulesData);
 

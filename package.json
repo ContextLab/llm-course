@@ -67,6 +67,7 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "devDependencies": {},
-  "dependencies": {}
+  "devDependencies": {
+    "compromise": "^14.14.5"
+  }
 }
