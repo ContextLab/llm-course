@@ -148,13 +148,23 @@ export class ElizaEngine {
         this.postSubstitutions
       );
 
-      // Convert to uppercase to match original ELIZA behavior
-      response = assembled.response.toUpperCase();
+      // Format response: sentence case (capitalize first letter)
+      response = assembled.response;
 
-      // Restore lowercase for captured text markers
+      // Replace markers with captured text
       for (const { marker, text } of assembled.lowercaseMarkers) {
-        response = response.replace(marker.toUpperCase(), text);
+        // Clean captured text: truncate at first punctuation, remove trailing punctuation
+        let cleanedText = text.split(/[.!?,;:]/)[0].trim();
+        cleanedText = cleanedText.replace(/[.!?,;:]+$/, '').trim();
+        response = response.replace(marker, cleanedText);
       }
+
+      // Clean up punctuation: remove double punctuation like ".?" or ".."
+      response = response.replace(/([.!?])[.!?]+/g, '$1');
+      response = response.replace(/\s+([.!?,;:])/g, '$1');
+
+      // Ensure sentence case: first letter uppercase, rest as-is
+      response = response.charAt(0).toUpperCase() + response.slice(1);
 
       matchInfo = {
         keyword: match.rule.keyword,

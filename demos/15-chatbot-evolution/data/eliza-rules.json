@@ -28,26 +28,82 @@
     "my": "your",
     "i'm": "you are"
   },
-  "quitWords": ["bye", "goodbye", "quit", "exit"],
+  "synonyms": {
+    "belief": [
+      "feel",
+      "think",
+      "believe",
+      "wish"
+    ],
+    "family": [
+      "mother",
+      "mom",
+      "father",
+      "dad",
+      "sister",
+      "brother",
+      "wife",
+      "children",
+      "child"
+    ],
+    "desire": [
+      "want",
+      "need"
+    ],
+    "sad": [
+      "unhappy",
+      "depressed",
+      "sick"
+    ],
+    "happy": [
+      "elated",
+      "glad",
+      "better"
+    ],
+    "cannot": [
+      "can't"
+    ],
+    "everyone": [
+      "everybody",
+      "nobody",
+      "noone"
+    ],
+    "be": [
+      "am",
+      "is",
+      "are",
+      "was"
+    ]
+  },
+  "quitWords": [
+    "bye",
+    "goodbye",
+    "quit"
+  ],
+  "initialGreetings": [
+    "Welcome. What brings you here today ?",
+    "How are you doing ?"
+  ],
+  "finalGreetings": [
+    "See you again next week.",
+    "That will be $200."
+  ],
   "rules": [
     {
       "keyword": "sorry",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "*",
           "responses": [
-            "Please don't apologize.",
+            "Please don't apologise.",
             "Apologies are not necessary.",
-            "I've told you that apologies are not required.",
-            "It did not bother me. Please continue."
+            "I've told you that apologies are not required."
           ]
         }
       ]
     },
     {
       "keyword": "apologise",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "*",
@@ -59,98 +115,93 @@
     },
     {
       "keyword": "remember",
-      "rank": 5,
       "patterns": [
         {
           "pattern": "* i remember *",
           "responses": [
-            "Do you often think of (2)?",
-            "Does thinking of (2) bring anything else to mind?",
-            "What else do you recollect?",
-            "Why do you recollect (2) just now?",
-            "What in the present situation reminds you of (2)?",
-            "What is the connection between me and (2)?"
+            "Do you often think of (2) ?",
+            "Does thinking of (2) bring anything else to mind ?",
+            "What else do you recollect ?",
+            "Why do you recollect (2) just now ?",
+            "What in the present situation reminds you of (2) ?",
+            "What is the connection between me and (2) ?"
           ]
         },
         {
           "pattern": "* do you remember *",
           "responses": [
-            "Did you think I would forget (2)?",
-            "Why do you think I should recall (2) now?",
-            "What about (2)?",
+            "Did you think I would forget (2) ?",
+            "Why do you think I should recall (2) now ?",
+            "What about (2) ?",
             "goto what",
-            "You mentioned (2)?"
+            "You mentioned (2) ?"
           ]
         }
-      ]
+      ],
+      "rank": 5
     },
     {
       "keyword": "if",
-      "rank": 3,
       "patterns": [
         {
           "pattern": "* if *",
           "responses": [
-            "Do you think it's likely that (2)?",
-            "Do you wish that (2)?",
-            "What do you know about (2)?",
-            "Really, if (2)?",
-            "What would you do if (2)?",
-            "But what are the chances that (2)?",
-            "What does this speculation lead to?"
+            "Do you think its likely that (2) ?",
+            "Do you wish that (2) ?",
+            "What do you know about (2) ?",
+            "Really, if (2) ?"
           ]
         }
-      ]
+      ],
+      "rank": 3
     },
     {
       "keyword": "dreamed",
-      "rank": 4,
       "patterns": [
         {
           "pattern": "* i dreamed *",
           "responses": [
-            "Really, (2)?",
-            "Have you ever fantasized (2) while you were awake?",
-            "Have you ever dreamed (2) before?",
+            "Really, (2) ?",
+            "Have you ever fantasized (2) while you were awake ?",
+            "Have you ever dreamed (2) before ?",
             "goto dream"
           ]
         }
-      ]
+      ],
+      "rank": 4
     },
     {
       "keyword": "dream",
-      "rank": 3,
       "patterns": [
         {
           "pattern": "*",
           "responses": [
-            "What does that dream suggest to you?",
-            "Do you dream often?",
-            "What persons appear in your dreams?",
-            "Do you believe that dreams have something to do with your problems?"
+            "What does that dream suggest to you ?",
+            "Do you dream often ?",
+            "What persons appear in your dreams ?",
+            "Do you believe that dreams have something to do with your problems ?"
           ]
         }
-      ]
+      ],
+      "rank": 3
     },
     {
       "keyword": "perhaps",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "*",
           "responses": [
             "You don't seem quite certain.",
-            "Why the uncertain tone?",
-            "Can't you be more positive?",
-            "You aren't sure?",
-            "Don't you know?"
+            "Why the uncertain tone ?",
+            "Can't you be more positive ?",
+            "You aren't sure ?",
+            "Don't you know ?"
           ]
         }
       ]
     },
     {
       "keyword": "name",
-      "rank": 15,
       "patterns": [
         {
           "pattern": "*",
@@ -159,23 +210,11 @@
             "I've told you before, I don't care about names -- please continue."
           ]
         }
-      ]
-    },
-    {
-      "keyword": "xforeign",
-      "rank": 1,
-      "patterns": [
-        {
-          "pattern": "*",
-          "responses": [
-            "I speak only English."
-          ]
-        }
-      ]
+      ],
+      "rank": 15
     },
     {
       "keyword": "deutsch",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "*",
@@ -188,7 +227,6 @@
     },
     {
       "keyword": "francais",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "*",
@@ -201,7 +239,6 @@
     },
     {
       "keyword": "italiano",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "*",
@@ -214,7 +251,6 @@
     },
     {
       "keyword": "espanol",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "*",
@@ -226,53 +262,62 @@
       ]
     },
     {
-      "keyword": "hello",
-      "rank": 1,
+      "keyword": "xforeign",
       "patterns": [
         {
           "pattern": "*",
           "responses": [
-            "How do you do. Please state your problem.",
-            "Hi. What seems to be your problem?"
+            "I speak only English."
+          ]
+        }
+      ]
+    },
+    {
+      "keyword": "hello",
+      "patterns": [
+        {
+          "pattern": "*",
+          "responses": [
+            "How do you do.  Please state your problem.",
+            "Hi.  What seems to be your problem ?"
           ]
         }
       ]
     },
     {
       "keyword": "computer",
-      "rank": 50,
       "patterns": [
         {
           "pattern": "*",
           "responses": [
-            "Do computers worry you?",
-            "Why do you mention computers?",
-            "What do you think machines have to do with your problem?",
-            "Don't you think computers can help people?",
-            "What about machines worries you?",
-            "What do you think about machines?"
+            "Do computers worry you ?",
+            "Why do you mention computers ?",
+            "What do you think machines have to do with your problem ?",
+            "Don't you think computers can help people ?",
+            "What about machines worries you ?",
+            "What do you think about machines ?"
           ]
         }
-      ]
+      ],
+      "rank": 50
     },
     {
       "keyword": "am",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "* am i *",
           "responses": [
-            "Do you believe you are (2)?",
-            "Would you want to be (2)?",
-            "Do you wish I would tell you you are (2)?",
-            "What would it mean if you were (2)?",
+            "Do you believe you are (2) ?",
+            "Would you want to be (2) ?",
+            "Do you wish I would tell you you are (2) ?",
+            "What would it mean if you were (2) ?",
             "goto what"
           ]
         },
         {
           "pattern": "*",
           "responses": [
-            "Why do you say 'am'?",
+            "Why do you say 'am' ?",
             "I don't understand that."
           ]
         }
@@ -280,111 +325,107 @@
     },
     {
       "keyword": "are",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "* are you *",
           "responses": [
-            "Why are you interested in whether I am (2) or not?",
-            "Would you prefer if I weren't (2)?",
+            "Why are you interested in whether I am (2) or not ?",
+            "Would you prefer if I weren't (2) ?",
             "Perhaps I am (2) in your fantasies.",
-            "Do you sometimes think I am (2)?",
+            "Do you sometimes think I am (2) ?",
             "goto what"
           ]
         },
         {
           "pattern": "* are *",
           "responses": [
-            "Did you think they might not be (2)?",
-            "Would you like it if they were not (2)?",
-            "What if they were not (2)?",
-            "Possibly they are (2)."
+            "Did you think they might not be (2) ?",
+            "Would you like it if they were not (2) ?",
+            "What if they were not (2) ?",
+            "Possibly they are (2) ."
           ]
         }
       ]
     },
     {
       "keyword": "your",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "* your *",
           "responses": [
-            "Why are you concerned over my (2)?",
-            "What about your own (2)?",
-            "Are you worried about someone else's (2)?",
-            "Really, my (2)?",
-            "What makes you think of my (2)?"
+            "Why are you concerned over my (2) ?",
+            "What about your own (2) ?",
+            "Are you worried about someone else's (2) ?",
+            "Really, my (2) ?"
           ]
         }
       ]
     },
     {
       "keyword": "was",
-      "rank": 2,
       "patterns": [
         {
           "pattern": "* was i *",
           "responses": [
-            "What if you were (2)?",
-            "Do you think you were (2)?",
-            "Were you (2)?",
-            "What would it mean if you were (2)?",
-            "What does (2) suggest to you?",
+            "What if you were (2) ?",
+            "Do you think you were (2) ?",
+            "Were you (2) ?",
+            "What would it mean if you were (2) ?",
+            "What does (2) suggest to you ?",
             "goto what"
           ]
         },
         {
           "pattern": "* i was *",
           "responses": [
-            "Were you really?",
-            "Why do you tell me you were (2) now?",
-            "Perhaps I already know you were (2)."
+            "Were you really ?",
+            "Why do you tell me you were (2) now ?",
+            "Perhaps I already know you were (2) ."
           ]
         },
         {
           "pattern": "* was you *",
           "responses": [
-            "Would you like to believe I was (2)?",
-            "What suggests that I was (2)?",
-            "What do you think?",
-            "Perhaps I was (2).",
-            "What if I had been (2)?"
+            "Would you like to believe I was (2) ?",
+            "What suggests that I was (2) ?",
+            "What do you think ?",
+            "Perhaps I was (2) .",
+            "What if I had been (2) ?"
           ]
         }
-      ]
+      ],
+      "rank": 2
     },
     {
       "keyword": "i",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "* i @desire *",
           "responses": [
-            "What would it mean to you if you got (2)?",
-            "Why do you want (2)?",
-            "Suppose you got (2) soon.",
-            "What if you never got (2)?",
-            "What would getting (2) mean to you?",
-            "What does wanting (2) have to do with this discussion?"
+            "What would it mean to you if you got (3) ?",
+            "Why do you want (3) ?",
+            "Suppose you got (3) soon ?",
+            "What if you never got (3) ?",
+            "What would getting (3) mean to you ?",
+            "What does wanting (3) have to do with this discussion ?"
           ]
         },
         {
-          "pattern": "* i am* @sad *",
+          "pattern": "* i am * @sad *",
           "responses": [
-            "I am sorry to hear that you are (3).",
-            "Do you think coming here will help you not to be (3)?",
-            "I'm sure it's not pleasant to be (3).",
-            "Can you explain what made you (3)?"
+            "I am sorry to hear that you are (3) .",
+            "Do you think that coming here will help you not to be (3) ?",
+            "I'm sure it's not pleasant to be (3) .",
+            "Can you explain what made you (3) ?"
           ]
         },
         {
-          "pattern": "* i am* @happy *",
+          "pattern": "* i am * @happy *",
           "responses": [
-            "How have I helped you to be (3)?",
-            "Has your treatment made you (3)?",
-            "What makes you (3) just now?",
-            "Can you explain why you are suddenly (3)?"
+            "How have I helped you to be (3) ?",
+            "Has your treatment made you (3) ?",
+            "What makes you (3) just now ?",
+            "Can you explain why you are suddenly (3) ?"
           ]
         },
         {
@@ -396,13 +437,13 @@
         {
           "pattern": "* i @belief * i *",
           "responses": [
-            "Do you really think so?",
-            "But you are not sure you (3).",
-            "Do you really doubt you (3)?"
+            "Do you really think so ?",
+            "But you are not sure you (3) .",
+            "Do you really doubt you (3) ?"
           ]
         },
         {
-          "pattern": "* i* @belief *you *",
+          "pattern": "* i * @belief * you *",
           "responses": [
             "goto you"
           ]
@@ -410,54 +451,54 @@
         {
           "pattern": "* i am *",
           "responses": [
-            "Is it because you are (2) that you came to me?",
-            "How long have you been (2)?",
-            "Do you believe it is normal to be (2)?",
-            "Do you enjoy being (2)?"
+            "Is it because you are (2) that you came to me ?",
+            "How long have you been (2) ?",
+            "Do you believe it is normal to be (2) ?",
+            "Do you enjoy being (2) ?"
           ]
         },
         {
           "pattern": "* i @cannot *",
           "responses": [
-            "How do you know that you can't (2)?",
-            "Have you tried?",
-            "Perhaps you could (2) now.",
-            "Do you really want to be able to (2)?"
+            "How do you think that you can't (3) ?",
+            "Have you tried ?",
+            "Perhaps you could (3) now.",
+            "Do you really want to be able to (3) ?"
           ]
         },
         {
           "pattern": "* i don't *",
           "responses": [
-            "Don't you really (2)?",
-            "Why don't you (2)?",
-            "Do you wish to be able to (2)?",
-            "Does that trouble you?"
+            "Don't you really (2) ?",
+            "Why don't you (2) ?",
+            "Do you wish to be able to (2) ?",
+            "Does that trouble you ?"
           ]
         },
         {
-          "pattern": "* i feel *",
+          "pattern": "* do i feel *",
           "responses": [
             "Tell me more about such feelings.",
-            "Do you often feel (2)?",
-            "Do you enjoy feeling (2)?",
-            "Of what does feeling (2) remind you?"
+            "Do you often feel (2) ?",
+            "Do you enjoy feeling (2) ?",
+            "Of what does feeling (2) remind you ?"
           ]
         },
         {
           "pattern": "* i * you *",
           "responses": [
             "Perhaps in your fantasies we (2) each other.",
-            "Do you wish to (2) me?",
+            "Do you wish to (2) me ?",
             "You seem to need to (2) me.",
-            "Do you (2) anyone else?"
+            "Do you (2) anyone else ?"
           ]
         },
         {
           "pattern": "*",
           "responses": [
-            "You say (1)?",
-            "Can you elaborate on that?",
-            "Do you say (1) for some special reason?",
+            "You say (1) ?",
+            "Can you elaborate on that ?",
+            "Do you say (1) for some special reason ?",
             "That's quite interesting."
           ]
         }
@@ -465,7 +506,6 @@
     },
     {
       "keyword": "you",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "* you remind me of *",
@@ -476,38 +516,37 @@
         {
           "pattern": "* you are *",
           "responses": [
-            "What makes you think I am (2)?",
-            "Does it please you to believe I am (2)?",
-            "Do you sometimes wish you were (2)?",
-            "Perhaps you would like to be (2)."
+            "What makes you think I am (2) ?",
+            "Does it please you to believe I am (2) ?",
+            "Do you sometimes wish you were (2) ?",
+            "Perhaps you would like to be (2) ."
           ]
         },
         {
-          "pattern": "* you* me *",
+          "pattern": "* you * me *",
           "responses": [
-            "Why do you think I (2) you?",
-            "You like to think I (2) you -- don't you?",
-            "What makes you think I (2) you?",
-            "Really, I (2) you?",
-            "Do you wish to believe I (2) you?",
-            "Suppose I did (2) you -- what would that mean?",
-            "Does someone else believe I (2) you?"
+            "Why do you think I (2) you ?",
+            "You like to think I (2) you -- don't you ?",
+            "What makes you think I (2) you ?",
+            "Really, I (2) you ?",
+            "Do you wish to believe I (2) you ?",
+            "Suppose I did (2) you -- what would that mean ?",
+            "Does someone else believe I (2) you ?"
           ]
         },
         {
           "pattern": "* you *",
           "responses": [
             "We were discussing you -- not me.",
-            "Oh, I (2)?",
-            "You're not really talking about me -- are you?",
-            "What are your feelings now?"
+            "Oh, I (2) ?",
+            "You're not really talking about me -- are you ?",
+            "What are your feelings now ?"
           ]
         }
       ]
     },
     {
       "keyword": "yes",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "*",
@@ -522,74 +561,60 @@
     },
     {
       "keyword": "no",
-      "rank": 1,
       "patterns": [
-        {
-          "pattern": "* no one *",
-          "responses": [
-            "Are you sure, no one (2)?",
-            "Surely someone (2).",
-            "Can you think of anyone at all?",
-            "Are you thinking of a very special person?",
-            "Who, may I ask?",
-            "You have a particular person in mind, don't you?",
-            "Who do you think you are talking about?"
-          ]
-        },
         {
           "pattern": "*",
           "responses": [
             "Are you saying no just to be negative?",
             "You are being a bit negative.",
-            "Why not?",
-            "Why 'no'?"
+            "Why not ?",
+            "Why 'no' ?"
           ]
         }
       ]
     },
     {
       "keyword": "my",
-      "rank": 2,
       "patterns": [
         {
-          "pattern": "$ * my *",
+          "pattern": "* my * @family *",
           "responses": [
-            "Does that have anything to do with the fact that your (2)?",
-            "Lets discuss further why your (2).",
-            "Earlier you said your (2).",
-            "But your (2)."
+            "Tell me more about your family.",
+            "Who else in your family (4) ?",
+            "Your (3) ?",
+            "What else comes to mind when you think of your (3) ?"
           ]
         },
         {
-          "pattern": "* my* @family *",
+          "pattern": "$ * my *",
           "responses": [
-            "Tell me more about your family.",
-            "Who else in your family (4)?",
-            "Your (3)?",
-            "What else comes to mind when you think of your (3)?"
+            "Your (2) .",
+            "Let's discuss your (2) further .",
+            "What does your (2) mean to you ?",
+            "Tell me more about your (2) ."
           ]
         },
         {
           "pattern": "* my *",
           "responses": [
-            "Your (2).",
-            "Why do you say your (2)?",
-            "Does that suggest anything else which belongs to you?",
-            "Is it important to you that your (2)?"
+            "Your (2) ?",
+            "Why do you mention your (2) ?",
+            "Is your (2) important ?",
+            "Did you come to me to talk about your (2) ?"
           ]
         }
-      ]
+      ],
+      "rank": 2
     },
     {
       "keyword": "can",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "* can you *",
           "responses": [
-            "You believe I can (2) don't you?",
+            "You believe I can (2) don't you ?",
             "goto what",
-            "You want me to be able to (2).",
+            "You want me to be able to (2) .",
             "Perhaps you would like to be able to (2) yourself."
           ]
         },
@@ -597,8 +622,8 @@
           "pattern": "* can i *",
           "responses": [
             "Whether or not you can (2) depends on you more than me.",
-            "Do you want to be able to (2)?",
-            "Perhaps you don't want to (2).",
+            "Do you want to be able to (2) ?",
+            "Perhaps you don't want to (2) .",
             "goto what"
           ]
         }
@@ -606,140 +631,57 @@
     },
     {
       "keyword": "what",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "*",
           "responses": [
-            "Why do you ask?",
-            "Does that question interest you?",
-            "What is it you really want to know?",
-            "Are such questions much on your mind?",
-            "What answer would please you most?",
-            "What do you think?",
-            "What comes to mind when you ask that?",
-            "Have you asked such questions before?",
-            "Have you asked anyone else?"
-          ]
-        }
-      ]
-    },
-    {
-      "keyword": "who",
-      "rank": 1,
-      "patterns": [
-        {
-          "pattern": "who *",
-          "responses": [
-            "Why do you ask?",
-            "Does that question interest you?",
-            "What is it you really want to know?",
-            "Are such questions much on your mind?",
-            "What answer would please you most?",
-            "What do you think?",
-            "What comes to mind when you ask that?",
-            "Have you asked such questions before?",
-            "Have you asked anyone else?"
-          ]
-        }
-      ]
-    },
-    {
-      "keyword": "when",
-      "rank": 1,
-      "patterns": [
-        {
-          "pattern": "*",
-          "responses": [
-            "Why do you ask?",
-            "Does that question interest you?",
-            "What is it you really want to know?",
-            "Are such questions much on your mind?",
-            "What answer would please you most?",
-            "What do you think?",
-            "What comes to mind when you ask that?",
-            "Have you asked such questions before?",
-            "Have you asked anyone else?"
-          ]
-        }
-      ]
-    },
-    {
-      "keyword": "where",
-      "rank": 1,
-      "patterns": [
-        {
-          "pattern": "*",
-          "responses": [
-            "Why do you ask?",
-            "Does that question interest you?",
-            "What is it you really want to know?",
-            "Are such questions much on your mind?",
-            "What answer would please you most?",
-            "What do you think?",
-            "What comes to mind when you ask that?",
-            "Have you asked such questions before?",
-            "Have you asked anyone else?"
-          ]
-        }
-      ]
-    },
-    {
-      "keyword": "how",
-      "rank": 1,
-      "patterns": [
-        {
-          "pattern": "*",
-          "responses": [
-            "Why do you ask?",
-            "Does that question interest you?",
-            "What is it you really want to know?",
-            "Are such questions much on your mind?",
-            "What answer would please you most?",
-            "What do you think?",
-            "What comes to mind when you ask that?",
-            "Have you asked such questions before?",
-            "Have you asked anyone else?"
+            "Why do you ask ?",
+            "Does that question interest you ?",
+            "What is it you really wanted to know ?",
+            "Are such questions much on your mind ?",
+            "What answer would please you most ?",
+            "What do you think ?",
+            "What comes to mind when you ask that ?",
+            "Have you asked such questions before ?",
+            "Have you asked anyone else ?"
           ]
         }
       ]
     },
     {
       "keyword": "because",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "*",
           "responses": [
-            "Is that the real reason?",
-            "Don't any other reasons come to mind?",
-            "Does that reason seem to explain anything else?",
-            "What other reasons might there be?"
+            "Is that the real reason ?",
+            "Don't any other reasons come to mind ?",
+            "Does that reason seem to explain anything else ?",
+            "What other reasons might there be ?"
           ]
         }
       ]
     },
     {
       "keyword": "why",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "* why don't you *",
           "responses": [
-            "Do you believe I don't (2)?",
+            "Do you believe I don't (2) ?",
             "Perhaps I will (2) in good time.",
-            "Should you (2) yourself?",
-            "You want me to (2)?",
+            "Should you (2) yourself ?",
+            "You want me to (2) ?",
             "goto what"
           ]
         },
         {
           "pattern": "* why can't i *",
           "responses": [
-            "Do you think you should be able to (2)?",
-            "Do you want to be able to (2)?",
-            "Do you believe this will help you to (2)?",
-            "Have you any idea why you can't (2)?",
+            "Do you think you should be able to (2) ?",
+            "Do you want to be able to (2) ?",
+            "Do you believe this will help you to (2) ?",
+            "Have you any idea why you can't (2) ?",
             "goto what"
           ]
         },
@@ -753,27 +695,26 @@
     },
     {
       "keyword": "everyone",
-      "rank": 2,
       "patterns": [
         {
           "pattern": "* @everyone *",
           "responses": [
-            "Really, (2)?",
-            "Surely not (2).",
-            "Can you think of anyone in particular?",
+            "Really, (2) ?",
+            "Surely not (2) .",
+            "Can you think of anyone in particular ?",
             "Who, for example?",
-            "Are you thinking of a very special person?",
-            "Who, may I ask?",
-            "Someone special perhaps?",
-            "You have a particular person in mind, don't you?",
-            "Who do you think you're talking about?"
+            "Are you thinking of a very special person ?",
+            "Who, may I ask ?",
+            "Someone special perhaps ?",
+            "You have a particular person in mind, don't you ?",
+            "Who do you think you're talking about ?"
           ]
         }
-      ]
+      ],
+      "rank": 2
     },
     {
       "keyword": "everybody",
-      "rank": 2,
       "patterns": [
         {
           "pattern": "*",
@@ -781,11 +722,11 @@
             "goto everyone"
           ]
         }
-      ]
+      ],
+      "rank": 2
     },
     {
       "keyword": "nobody",
-      "rank": 2,
       "patterns": [
         {
           "pattern": "*",
@@ -793,11 +734,11 @@
             "goto everyone"
           ]
         }
-      ]
+      ],
+      "rank": 2
     },
     {
       "keyword": "noone",
-      "rank": 2,
       "patterns": [
         {
           "pattern": "*",
@@ -805,45 +746,45 @@
             "goto everyone"
           ]
         }
-      ]
+      ],
+      "rank": 2
     },
     {
       "keyword": "always",
-      "rank": 1,
       "patterns": [
         {
           "pattern": "*",
           "responses": [
-            "Can you think of a specific example?",
-            "When?",
-            "What incident are you thinking of?",
-            "Really, always?"
+            "Can you think of a specific example ?",
+            "When ?",
+            "What incident are you thinking of ?",
+            "Really, always ?"
           ]
         }
-      ]
+      ],
+      "rank": 1
     },
     {
       "keyword": "alike",
-      "rank": 10,
       "patterns": [
         {
           "pattern": "*",
           "responses": [
-            "In what way?",
-            "What resemblance do you see?",
-            "What does that similarity suggest to you?",
-            "What other connections do you see?",
-            "What do you suppose that resemblance means?",
-            "What is the connection, do you suppose?",
-            "Could there really be some connection?",
-            "How?"
+            "In what way ?",
+            "What resemblance do you see ?",
+            "What does that similarity suggest to you ?",
+            "What other connections do you see ?",
+            "What do you suppose that resemblance means ?",
+            "What is the connection, do you suppose ?",
+            "Could there really be some connection ?",
+            "How ?"
           ]
         }
-      ]
+      ],
+      "rank": 10
     },
     {
       "keyword": "like",
-      "rank": 10,
       "patterns": [
         {
           "pattern": "* @be * like *",
@@ -851,31 +792,14 @@
             "goto alike"
           ]
         }
-      ]
+      ],
+      "rank": 10
     }
-  ],
-  "synonyms": {
-    "be": ["am", "is", "are", "was"],
-    "belief": ["believe", "feel", "think", "wish"],
-    "cannot": ["can't"],
-    "desire": ["want", "need"],
-    "everyone": ["everybody", "nobody", "noone"],
-    "family": ["mother", "mom", "father", "dad", "sister", "brother", "wife", "children", "child"],
-    "happy": ["elated", "glad", "better"],
-    "sad": ["unhappy", "depressed", "sick"]
-  },
-  "initialGreetings": [
-    "Welcome. What brings you here today?",
-    "How are you doing?"
-  ],
-  "finalGreetings": [
-    "See you again next week.",
-    "That will be $200."
   ],
   "fallbacks": [
     "I'm not sure I understand you fully.",
     "Please go on.",
-    "What does that suggest to you?",
-    "Do you feel strongly about discussing such things?"
+    "What does that suggest to you ?",
+    "Do you feel strongly about discussing such things ?"
   ]
 }

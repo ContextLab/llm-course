@@ -37,21 +37,21 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Language vs. thought: The language network in the brain
 - Reading: [Fedorenko et al. (2024)](https://www.nature.com/articles/s41586-024-07522-w) - The language network as a natural kind
 - Reading: [Lupyan et al. (2020)](https://doi.org/10.1016/j.tics.2020.08.005) - Effects of language on visual perception
-- 📊 [Slides PDF](week1/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week1/lecture.pdf)
 
 **Wednesday (Lecture 2):** Pattern Matching & ELIZA
 - Pattern matching and string manipulation techniques
 - Introduction to ELIZA chatbot architecture
 - Reading: [Weizenbaum (1966)](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf) - ELIZA: A Computer Program For Natural Language Communication
 - 🎮 **Try it:** [ELIZA Demo](https://contextlab.github.io/llm-course/demos/01-eliza/)
-- 📊 [Slides PDF](week1/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week1/lecture.pdf)
 
 **Friday (Lecture 3):** ELIZA Implementation & The ELIZA Effect
 - Implementing ELIZA: decomposition, reassembly, substitutions
 - The psychology of human-computer interaction
 - **Assignment 1 Released:** [Building the ELIZA Chatbot](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%201%3A%20ELIZA) (Due: End of Week 2)
 - 🎮 **Try it:** [ELIZA Demo](https://contextlab.github.io/llm-course/demos/01-eliza/) | [Chatbot Evolution](https://contextlab.github.io/llm-course/demos/15-chatbot-evolution/)
-- 📊 [Slides PDF](week1/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week1/lecture.pdf)
 
 ---
 
@@ -60,7 +60,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 **Monday (Lecture 4):** Data Cleaning & Preprocessing
 - Web scraping with Beautiful Soup
 - Lemmatization and text normalization
-- 📊 [Slides PDF](week2/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week2/lecture.pdf)
 
 **Wednesday (Lecture 5):** Tokenization
 - Byte-Pair Encoding (BPE), WordPiece, SentencePiece
@@ -69,7 +69,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - HuggingFace: [Chapter 2.4: Tokenizers](https://huggingface.co/learn/nlp-course/chapter2/4)
 - HuggingFace: [Chapter 6: Tokenizers](https://huggingface.co/learn/nlp-course/chapter6)
 - 🎮 **Try it:** [Tokenization Explorer](https://contextlab.github.io/llm-course/demos/02-tokenization/)
-- 📊 [Slides PDF](week2/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week2/lecture.pdf)
 
 **Friday (Lecture 6):** POS Tagging & Sentiment Analysis
 - Part-of-speech tagging and token classification
@@ -82,7 +82,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - **Assignment 2 Released:** [SPAM Classifier](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%202%3A%20SPAM%20classifier) (Due: End of Week 3)
 - **📝 Assignment 1 Due**
 - 🎮 **Try it:** [POS Tagging](https://contextlab.github.io/llm-course/demos/10-pos-tagging/) | [Sentiment Analysis](https://contextlab.github.io/llm-course/demos/09-sentiment/)
-- 📊 [Slides PDF](week2/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week2/lecture.pdf)
 
 ---
 
@@ -99,7 +99,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Boyd-Graber et al. (2014)](https://home.cs.colorado.edu/~jbg/docs/2014_book_chapter_care_and_feeding.pdf) - Care and Feeding of Topic Models
 - Reading: [Boleda (2020)](https://arxiv.org/pdf/1905.01896) - Distributional Semantics and Linguistic Theory
 - 🎮 **Try it:** [Topic Modeling](https://contextlab.github.io/llm-course/demos/08-topic-modeling/)
-- 📊 [Slides PDF](week3-4/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week3-4/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week3-4/lecture.pdf)
 
 **Thursday X-hour:** From Classical to Modern Embeddings
 - Hands-on: Implementing and exploring LSA/LDA (review of Wednesday)
@@ -116,7 +116,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Bojanowski et al. (2017)](https://arxiv.org/abs/1607.04606) - FastText
 - **📝 Assignment 2 Due**
 - 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/03-embeddings/) | [Word Analogies](https://contextlab.github.io/llm-course/demos/11-analogies/)
-- 📊 [Slides PDF](week3-4/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week3-4/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week3-4/lecture.pdf)
 
 ---
 
@@ -130,7 +130,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Angelov (2020)](https://arxiv.org/abs/2008.09470) - Top2Vec
 - Reading: [Grootendorst (2022)](https://arxiv.org/abs/2203.05794) - BERTopic
 - 🎮 **Try it:** [Topic Modeling](https://contextlab.github.io/llm-course/demos/08-topic-modeling/)
-- 📊 [Slides PDF](week3-4/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week3-4/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week3-4/lecture.pdf)
 
 **Wednesday (Lecture 10):** Transformer Embeddings & Semantic Search
 - BERT and GPT-2 embeddings
@@ -141,13 +141,13 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - **Assignment 3 Released:** [Wikipedia Embeddings](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%203%3A%20Wikipedia) (Due: Wednesday, End of Week 4)
 - **📝 Assignment 3 Due: Wednesday, End of Week 4**
 - 🎮 **Try it:** [Semantic Search](https://contextlab.github.io/llm-course/demos/12-semantic-search/)
-- 📊 [Slides PDF](week3-4/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week3-4/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week3-4/lecture.pdf)
 
 **Friday (Lecture 11):** Evaluation & Clustering
 - Comparing embedding methods
 - Clustering evaluation metrics
 - 🎮 **Try it:** [Embeddings Comparison](https://contextlab.github.io/llm-course/demos/14-embeddings-comparison/)
-- 📊 [Slides PDF](week3-4/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week3-4/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week3-4/lecture.pdf)
 
 ---
 
@@ -159,7 +159,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Sutskever et al. (2014)](https://arxiv.org/abs/1409.3215) - Seq2Seq
 - Reading: [Bahdanau et al. (2015)](https://arxiv.org/abs/1409.0473) - Neural Machine Translation with Attention
 - 🎮 **Try it:** [Attention Mechanism](https://contextlab.github.io/llm-course/demos/04-attention/)
-- 📊 [Slides PDF](week5-6/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week5-6/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week5-6/lecture.pdf)
 
 **Wednesday (Lecture 13):** The Transformer Architecture
 - Self-attention, multi-head attention
@@ -170,7 +170,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Tutorial: [The Animated Transformer](https://prvnsmpth.github.io/animated-transformer/)
 - HuggingFace: [Chapter 1.4: How Transformers Work](https://huggingface.co/learn/nlp-course/chapter1/4)
 - 🎮 **Try it:** [Transformer Explorer](https://contextlab.github.io/llm-course/demos/05-transformer/)
-- 📊 [Slides PDF](week5-6/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week5-6/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week5-6/lecture.pdf)
 
 **Friday (Lecture 14):** BERT & Encoder Models
 - Bidirectional attention and masked language modeling
@@ -181,7 +181,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - HuggingFace: [Chapter 1.5: Encoder Models](https://huggingface.co/learn/nlp-course/chapter1/5)
 - HuggingFace: [Chapter 7.3: Fine-tuning MLM](https://huggingface.co/learn/nlp-course/chapter7/3)
 - 🎮 **Try it:** [BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/13-bert-mlm/)
-- 📊 [Slides PDF](week5-6/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week5-6/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week5-6/lecture.pdf)
 
 ---
 
@@ -193,14 +193,14 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Kuperberg & Jaeger (2016)](https://pmc.ncbi.nlm.nih.gov/articles/PMC4850025/) - Prediction in language comprehension
 - Reading: [Willems et al. (2016)](https://academic.oup.com/cercor/article/26/6/2506/1754078) - Prediction during comprehension
 - Reading: [Hagoort & Indefrey (2014)](https://www.annualreviews.org/content/journals/10.1146/annurev-neuro-071013-013847) - Neurobiology of language
-- 📊 [Slides PDF](week5-6/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week5-6/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week5-6/lecture.pdf)
 
 **Wednesday (Lecture 16):** Applications & Fine-tuning
 - Fine-tuning BERT for downstream tasks
 - Practical applications of transformers
 - **Assignment 4 Released:** [Customer Service Chatbot](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%204%3A%20Customer%20Service%20Chatbot) (Due: Friday, End of Week 6)
 - **📝 Assignment 4 Due: Friday, End of Week 6**
-- 📊 [Slides PDF](week5-6/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week5-6/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week5-6/lecture.pdf)
 
 **Friday (Lecture 17):** Hackathon / Work Session
 - Work on Assignment 4
@@ -224,7 +224,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Clark & Brennan (1991)](https://www.semanticscholar.org/paper/Grounding-in-communication-Clark-Brennan/5a9cac54de14e58697d0315fe3c01f3dbe69c186) - Grounding in communication
 - Reading: [Pickering & Garrod (2004)](https://pubmed.ncbi.nlm.nih.gov/15595235/) - Mechanistic psychology of dialogue
 - Reading: [Bisk et al. (2020)](https://aclanthology.org/2020.emnlp-main.703/) - Experience Grounds Language
-- 📊 [Slides PDF](week7/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week7/lecture.pdf)
 
 **Wednesday (Lecture 19):** GPT Architecture & Evolution
 - GPT-1 through GPT-4
@@ -238,7 +238,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Tutorial: [Let's build GPT (Karpathy)](https://www.youtube.com/watch?v=kCc8FmEb1nY)
 - **Assignment 5 Released:** [Build and Train GPT](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%205%3A%20GPT) (Due: Friday, March 6)
 - 🎮 **Try it:** [GPT Playground](https://contextlab.github.io/llm-course/demos/06-gpt-playground/)
-- 📊 [Slides PDF](week8/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week8/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week8/lecture.pdf)
 
 **Friday (Lecture 20):** Language Models & The Brain
 - Do models and brains converge?
@@ -248,7 +248,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Caucheteux & King (2022)](https://www.nature.com/articles/s42003-022-03036-1) - Brains and algorithms converge
 - Reading: [Hosseini et al. (2024)](https://direct.mit.edu/nol/article/5/1/43/119156/) - ANNs with realistic training
 - Reading: [Turing (1950)](https://www.dropbox.com/scl/fi/aflxsbnqua01bl0eh950h/Turi50.pdf?rlkey=7fft5daq3i32vehd4nrm35ii2) - Computing Machinery and Intelligence
-- 📊 [Slides PDF](week8/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week8/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week8/lecture.pdf)
 
 ---
 
@@ -263,7 +263,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - HuggingFace: [Agentic RAG](https://huggingface.co/learn/agents-course/unit3/agentic-rag/agentic-rag)
 - HuggingFace: [Advanced RAG Tutorial](https://huggingface.co/learn/cookbook/advanced_rag)
 - 🎮 **Try it:** [RAG System Demo](https://contextlab.github.io/llm-course/demos/07-rag/)
-- 📊 [Slides PDF](week9/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week9/lecture.pdf)
 
 **Wednesday (Lecture 22):** Mixture of Experts
 - MoE architecture
@@ -273,7 +273,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - HuggingFace: [MoE Explained](https://huggingface.co/blog/moe)
 - HuggingFace: [Implementing MoE](https://huggingface.co/blog/AviSoori1x/makemoe-from-scratch)
 - **Final Project Released:** [Capstone Research Project](https://github.com/ContextLab/llm-course/tree/main/assignments/Final%20Project) (Due: Monday, March 9)
-- 📊 [Slides PDF](week9/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week9/lecture.pdf)
 
 **Friday (Lecture 23):** Future of LLMs & Project Formation
 - Multimodal models, agents, reasoning
@@ -282,7 +282,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Chen et al. (2020)](https://arxiv.org/abs/2002.05709) - SimCLR
 - Reading: [Radford et al. (2021)](https://arxiv.org/abs/2103.00020) - CLIP
 - **📝 Assignment 5 Due: Friday, March 6**
-- 📊 [Slides PDF](week9/lecture.pdf) | [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture.html)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week9/lecture.pdf)
 
 ---
 
@@ -299,21 +299,20 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ## Accessing Slides
 
 ### PDF Versions
-All slides are compiled to PDF and available in each week's directory:
-- `slides/week1/lecture.pdf`
-- `slides/week2/lecture.pdf`
-- etc.
+All slides are available as PDF files in the GitHub repository. You can access them directly:
+- Week 1: [slides/week1/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week1/lecture.pdf)
+- Week 2: [slides/week2/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week2/lecture.pdf)
+- Weeks 3-4: [slides/week3-4/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week3-4/lecture.pdf)
+- Weeks 5-6: [slides/week5-6/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week5-6/lecture.pdf)
+- Week 7: [slides/week7/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week7/lecture.pdf)
+- Week 8: [slides/week8/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week8/lecture.pdf)
+- Week 9: [slides/week9/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week9/lecture.pdf)
 
-### Web Versions (HTML)
-Slides are automatically deployed as web pages via GitHub Pages:
-- **Main Index:** https://contextlab.github.io/llm-course/
-- **Individual Weeks:** https://contextlab.github.io/llm-course/week1/lecture.pdf (etc.)
-
-The web interface provides:
-- One-click access to all slides
-- Beautiful, responsive design
-- No downloads required
-- Works on all devices
+Or clone the repository to access all materials locally:
+```bash
+git clone https://github.com/ContextLab/llm-course.git
+cd llm-course/slides
+```
 
 ---
 

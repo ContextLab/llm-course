@@ -1,0 +1,320 @@
+#!/usr/bin/env python3
+"""
+Convert ALICE AIML files to JSON format for JavaScript implementation.
+
+This script parses all AIML files from the official ALICE distribution
+and converts them to a format compatible with the alice.js implementation.
+
+Original ALICE has ~95,000 patterns across 60 AIML files.
+"""
+
+import xml.etree.ElementTree as ET
+import json
+import os
+import re
+from pathlib import Path
+from typing import List, Dict, Any
+
+class AIMLConverter:
+    def __init__(self, aiml_dir: str):
+        self.aiml_dir = Path(aiml_dir)
+        self.patterns = []
+        self.pattern_count = 0
+        self.file_count = 0
+
+    def parse_template(self, template_elem) -> str:
+        """
+        Parse AIML template element and convert to JavaScript-compatible string.
+
+        AIML tags to handle:
+        - <srai>text</srai> -> recursive call (we'll mark this for handling)
+        - <random><li>opt1</li><li>opt2</li></random> -> random selection
+        - <bot name="x"/> -> bot property
+        - <get name="x"/> -> context variable
+        - <set name="x">value</set> -> set context variable
+        - <person/> or <person>text</person> -> pronoun transformation
+        - <think>...</think> -> execute without output
+        - Plain text
+        """
+        if template_elem is None:
+            return ""
+
+        # Get all text and handle child elements
+        result = template_elem.text or ""
+
+        for child in template_elem:
+            if child.tag == 'srai':
+                # Mark for recursive call - we'll handle this specially
+                srai_text = self.get_element_text(child)
+                result += f"{{{{SRAI:{srai_text}}}}}"
+            elif child.tag == 'random':
+                # Random selection
+                options = [self.get_element_text(li) for li in child.findall('li')]
+                result += f"{{{{RANDOM:{json.dumps(options)}}}}}"
+            elif child.tag == 'bot':
+                # Bot property
+                name = child.get('name', '')
+                result += f"{{{{BOT:{name}}}}}"
+            elif child.tag == 'get':
+                # Get context variable
+                name = child.get('name', '')
+                result += f"{{{{GET:{name}}}}}"
+            elif child.tag == 'set':
+                # Set context variable
+                name = child.get('name', '')
+                value = self.get_element_text(child)
+                result += f"{{{{SET:{name}:{value}}}}}"
+            elif child.tag == 'person':
+                # Pronoun transformation
+                text = self.get_element_text(child) or 'WILDCARD'
+                result += f"{{{{PERSON:{text}}}}}"
+            elif child.tag == 'think':
+                # Think tag - process but don't output
+                think_content = self.parse_template(child)
+                result += f"{{{{THINK:{think_content}}}}}"
+            elif child.tag == 'star':
+                # Wildcard capture
+                index = child.get('index', '1')
+                result += f"{{{{STAR:{index}}}}}"
+            elif child.tag == 'that':
+                # Reference to bot's previous response
+                result += "{THAT}"
+            elif child.tag == 'formal':
+                # Capitalize first letter
+                text = self.get_element_text(child)
+                result += f"{{{{FORMAL:{text}}}}}"
+            elif child.tag == 'uppercase':
+                text = self.get_element_text(child)
+                result += f"{{{{UPPERCASE:{text}}}}}"
+            elif child.tag == 'lowercase':
+                text = self.get_element_text(child)
+                result += f"{{{{LOWERCASE:{text}}}}}"
+            elif child.tag == 'a':
+                # HTML link
+                href = child.get('href', '')
+                text = self.get_element_text(child)
+                result += f'<a href="{href}">{text}</a>'
+            elif child.tag == 'br':
+                result += '\n'
+            else:
+                # Unknown tag - just get text
+                result += self.get_element_text(child)
+
+            # Add tail text
+            if child.tail:
+                result += child.tail
+
+        # Clean up whitespace
+        result = ' '.join(result.split())
+        return result.strip()
+
+    def get_element_text(self, elem) -> str:
+        """Get all text from an element and its children."""
+        if elem is None:
+            return ""
+        text = elem.text or ""
+        for child in elem:
+            text += self.get_element_text(child)
+            if child.tail:
+                text += child.tail
+        return text.strip()
+
+    def convert_pattern_to_regex(self, pattern: str) -> str:
+        """
+        Convert AIML pattern to regex.
+
+        AIML wildcards:
+        - * (star) = match 1+ words (lower priority)
+        - _ (underscore) = match 1+ words (higher priority)
+        - EXACT = exact match (highest priority)
+        """
+        # Escape special regex characters except * and _
+        pattern = pattern.strip()
+
+        # Replace AIML wildcards with regex
+        # _ matches one or more words (higher priority)
+        pattern = pattern.replace('_', '(.+)')
+        # * matches one or more words (lower priority)
+        pattern = pattern.replace('*', '(.*)')
+
+        # Escape other special regex characters
+        for char in ['.', '?', '+', '(', ')', '[', ']', '{', '}', '^', '$', '|', '\\']:
+            if char not in pattern or pattern.count(char) == pattern.count('(.'):
+                continue
+            pattern = pattern.replace(char, '\\' + char)
+
+        return pattern
+
+    def determine_priority(self, pattern: str, has_that: bool, has_topic: bool) -> int:
+        """
+        Determine pattern priority based on AIML rules.
+
+        Priority order (highest to lowest):
+        1. Patterns with <that> context + exact match (priority 10)
+        2. Patterns with <that> context + _ wildcard (priority 9)
+        3. Patterns with <that> context + * wildcard (priority 8)
+        4. Exact patterns (no wildcards) (priority 5)
+        5. Patterns with _ wildcard (priority 4)
+        6. Patterns with * wildcard (priority 2)
+        7. Catch-all patterns (priority 0)
+
+        Topic adds +1 to priority for context sensitivity
+        """
+        base_priority = 0
+
+        # Check for wildcards in original pattern
+        has_underscore = '_' in pattern
+        has_star = '*' in pattern
+        has_wildcard = has_underscore or has_star
+
+        # Exact match (no wildcards)
+        if not has_wildcard:
+            base_priority = 5
+        # Underscore wildcard (higher than star)
+        elif has_underscore:
+            base_priority = 4
+        # Star wildcard
+        elif has_star:
+            base_priority = 2
+
+        # <that> context significantly boosts priority
+        if has_that:
+            base_priority += 5
+
+        # Topic adds small boost
+        if has_topic:
+            base_priority += 1
+
+        return base_priority
+
+    def parse_aiml_file(self, filepath: Path) -> List[Dict[str, Any]]:
+        """Parse a single AIML file and extract patterns."""
+        patterns = []
+
+        try:
+            # Parse XML
+            tree = ET.parse(filepath)
+            root = tree.getroot()
+
+            # Find all category elements
+            categories = root.findall('.//category')
+
+            for category in categories:
+                pattern_elem = category.find('pattern')
+                template_elem = category.find('template')
+                that_elem = category.find('that')
+                topic_elem = category.find('topic')
+
+                if pattern_elem is None or template_elem is None:
+                    continue
+
+                # Extract pattern
+                pattern_text = self.get_element_text(pattern_elem)
+                if not pattern_text:
+                    continue
+
+                # Extract template
+                template_text = self.parse_template(template_elem)
+                if not template_text:
+                    continue
+
+                # Extract that context if present
+                that_text = None
+                if that_elem is not None:
+                    that_text = self.get_element_text(that_elem)
+
+                # Extract topic if present
+                topic_text = None
+                if topic_elem is not None:
+                    topic_text = self.get_element_text(topic_elem)
+
+                # Convert pattern to regex
+                regex_pattern = self.convert_pattern_to_regex(pattern_text)
+
+                # Determine priority
+                has_that = that_text is not None
+                has_topic = topic_text is not None
+                priority = self.determine_priority(pattern_text, has_that, has_topic)
+
+                # Create pattern object
+                pattern_obj = {
+                    'pattern': pattern_text,
+                    'regex': regex_pattern,
+                    'template': template_text,
+                    'priority': priority,
+                    'source_file': filepath.name
+                }
+
+                if that_text:
+                    pattern_obj['that'] = that_text
+                if topic_text:
+                    pattern_obj['topic'] = topic_text
+
+                patterns.append(pattern_obj)
+                self.pattern_count += 1
+
+        except Exception as e:
+            print(f"Error parsing {filepath.name}: {e}")
+            return []
+
+        return patterns
+
+    def convert_all(self) -> List[Dict[str, Any]]:
+        """Convert all AIML files in the directory."""
+        all_patterns = []
+
+        # Get all .aiml files
+        aiml_files = sorted(self.aiml_dir.glob('*.aiml'))
+
+        print(f"Found {len(aiml_files)} AIML files")
+
+        for filepath in aiml_files:
+            print(f"Processing {filepath.name}...")
+            patterns = self.parse_aiml_file(filepath)
+            all_patterns.extend(patterns)
+            self.file_count += 1
+
+        print(f"\nConversion complete!")
+        print(f"Files processed: {self.file_count}")
+        print(f"Patterns extracted: {self.pattern_count}")
+
+        return all_patterns
+
+    def save_json(self, patterns: List[Dict[str, Any]], output_file: str):
+        """Save patterns to JSON file."""
+        with open(output_file, 'w', encoding='utf-8') as f:
+            json.dump({
+                'metadata': {
+                    'source': 'ALICE AIML Foundation v1.0',
+                    'files_processed': self.file_count,
+                    'total_patterns': self.pattern_count,
+                    'license': 'GNU General Public License',
+                    'copyright': '(c) 2011 ALICE A.I. Foundation'
+                },
+                'patterns': patterns
+            }, f, indent=2, ensure_ascii=False)
+
+        print(f"\nSaved {self.pattern_count} patterns to {output_file}")
+
+
+def main():
+    """Main conversion function."""
+    # Set up paths
+    aiml_dir = Path(__file__).parent / 'alice-aiml-original'
+    output_file = Path(__file__).parent / 'data' / 'alice-patterns-full.json'
+
+    # Create converter
+    converter = AIMLConverter(aiml_dir)
+
+    # Convert all files
+    patterns = converter.convert_all()
+
+    # Save to JSON
+    converter.save_json(patterns, str(output_file))
+
+    print(f"\nConversion successful!")
+    print(f"Output: {output_file}")
+
+
+if __name__ == '__main__':
+    main()

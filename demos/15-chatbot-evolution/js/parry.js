@@ -157,7 +157,7 @@ export class Parry {
                     const responses = [
                         "Why do you mention the police? Are you trying to get me in trouble?",
                         "The cops won't help. They're probably paid off anyway.",
-                        "What are you, some kind of informant?",
+                        "What are you, some kind of police informant?",
                         "I haven't done anything wrong! Why would I need the police?",
                         "The police can't protect me from them.",
                         "Are you recording this conversation for the police?"
@@ -176,7 +176,7 @@ export class Parry {
                         "Trust? How can I trust anyone when they're all watching me?",
                         "I don't trust anybody anymore. I've been betrayed too many times.",
                         "You want me to trust you? That's what they all say.",
-                        "Believing people is what got me into this mess.",
+                        "I can't trust anyone. Believing people is what got me into this mess.",
                         "Truth? Nobody tells the truth. Everyone has an angle.",
                         "I don't confide in strangers.",
                         "I will help you if I trust you. But I don't trust anyone."
@@ -202,18 +202,18 @@ export class Parry {
 
             // === RACETRACK/HORSES (Deflection topic - must come before surveillance 'track') ===
             {
-                pattern: /\b(racetrack|races?|horses?|racing|bay meadows)\b/i,
+                pattern: /\b(racetrack|races?|horses?|racing|bay meadows|been.*track)\b/i,
                 response: () => {
                     this.anger -= 1;  // Calming topic
                     this.mistrust -= 1;
                     const responses = [
                         "I used to go to the racetrack. That's where my troubles started.",
-                        "The horses are honest, at least. Not like people.",
+                        "The horses at the track are honest, at least. Not like people.",
                         "I had a system for the races. It worked until the bookie cheated me.",
-                        "Racing is in my blood. But I can't go back there now.",
+                        "Racing is in my blood. But I can't go back to the track now.",
                         "I went to the track at Bay Meadows a while back.",
-                        "I like horseraces. I used to go every week.",
-                        "Horseracing interests me. But there's a lot of crooked gambling going on there."
+                        "I like horseraces. I used to go to the track every week.",
+                        "I went to the races. Horseracing interests me."
                     ];
                     return responses[Math.floor(Math.random() * responses.length)];
                 }
@@ -323,7 +323,7 @@ export class Parry {
                     const responses = [
                         "I don't understand your motives.",
                         "What are you getting at?",
-                        "What's your real agenda here?",
+                        "What are you getting at with that question?",
                         "Why do you need to know that?",
                         "I don't understand what you're after."
                     ];

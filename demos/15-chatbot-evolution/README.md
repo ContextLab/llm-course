@@ -4,6 +4,8 @@
 
 An interactive journey through 60 years of conversational AI development, from ELIZA's simple pattern matching in 1966 to modern transformer-based language models. Experience firsthand how chatbot technology has evolved across different eras.
 
+**NEW**: Now includes complete ALICE implementation with all **95,026 patterns** from the original AIML distribution! See [ALICE_FULL_INTEGRATION.md](ALICE_FULL_INTEGRATION.md) for details.
+
 ## Learning Objectives
 
 - Understand the historical progression of chatbot technology
@@ -63,19 +65,29 @@ An interactive journey through 60 years of conversational AI development, from E
 
 **How it works:**
 - XML-based pattern matching language
-- Large database of patterns (~40,000+)
-- Recursive pattern matching
+- Large database of patterns (95,026 in full implementation)
+- Recursive pattern matching (SRAI)
 - Context and topic tracking
+- Wildcard matching with priority (* and _)
 
 **Famous for:**
 - Won Loebner Prize 3 times (2000, 2001, 2004)
 - Open-source and widely adopted
 - Inspired many derivative chatbots
+- Most comprehensive rule-based chatbot ever created
 
 **Features:**
 - More sophisticated than ELIZA
-- Can handle complex patterns
-- Maintains conversation context
+- Can handle complex patterns with wildcards
+- Maintains conversation context and topics
+- Random response variations
+- Pronoun and person transformations
+
+**Full Implementation:**
+- All 95,026 patterns from original AIML distribution
+- 60 AIML files covering diverse topics
+- See [ALICE_FULL_INTEGRATION.md](ALICE_FULL_INTEGRATION.md) for complete details
+- Test with `test-alice-full.html` or `test-alice-full-node.mjs`
 
 ### 4. Seq2Seq / BlenderBot (2014-2020)
 **Innovation:** Neural Conversational Models

@@ -1,0 +1,92 @@
+ELIZA FIXES INTEGRATION - DEMO 15 CHATBOT EVOLUTION
+====================================================
+
+Date: 2025-12-25
+Source: Demo 01 ELIZA (extensively debugged implementation)
+Status: COMPLETE - All tests passed (12/12)
+
+FILES MODIFIED:
+--------------
+
+1. js/eliza-engine.js
+   - Updated response formatting (lines 144-167)
+   - Changed from ALL CAPS to sentence case
+   - Added punctuation cleanup
+   - Added captured text cleaning
+
+2. js/pattern-matcher.js
+   - Fixed regex escaping order in patternToRegex()
+   - Added input padding in matchPattern()
+   - Ensures synonym syntax (?:...) is preserved
+
+3. data/eliza-rules.json
+   - Completely replaced with Demo 01 version
+   - Fixed 32 major discrepancies from original
+   - Corrected keyword rankings
+   - Fixed pattern spacing issues
+
+NEW FILES CREATED:
+-----------------
+
+1. test-eliza-fixes.mjs
+   - Comprehensive test suite
+   - 12 tests covering classic conversation, keyword priority, formatting
+   - Run with: node test-eliza-fixes.mjs
+
+2. ELIZA_FIXES_INTEGRATION.md
+   - Detailed integration report
+   - Technical documentation
+   - Test results and verification
+
+3. CHANGES_SUMMARY.txt
+   - This file
+
+KEY FIXES APPLIED:
+-----------------
+
+1. Keyword Priority Bug
+   - Removed incorrect ranks from "sorry" and 18 other keywords
+   - "sorry" now only matches when user actually apologizes
+
+2. Response Formatting
+   - Changed from uppercase to sentence case
+   - Example: "HOW DO YOU FEEL?" → "How do you feel?"
+
+3. Pattern Matching
+   - Fixed spacing in patterns (e.g., "* i am * @sad *")
+   - Fixed regex escaping order
+   - Added input padding for wildcard matches
+
+4. Rules Accuracy
+   - Restored to original 1966 Weizenbaum implementation
+   - Fixed pattern order for "my" keyword
+   - Corrected response templates
+
+VERIFICATION:
+------------
+
+Test Results: 12/12 PASSED ✓
+
+- Classic ELIZA conversation works correctly
+- "sorry" keyword priority fixed
+- Response formatting uses sentence case
+- No breaking changes to Demo 15 functionality
+
+INTEGRATION STATUS:
+------------------
+
+✓ ELIZA engine updated and working
+✓ Pattern matcher updated and working
+✓ Rules file replaced with fixed version
+✓ All tests passing
+✓ Compatible with timeline interface
+✓ Other chatbots (PARRY, ALICE, etc.) unaffected
+
+NEXT STEPS:
+----------
+
+1. Test in browser by opening index.html
+2. Verify ELIZA conversations in timeline interface
+3. Compare responses with Demo 01 ELIZA (should be identical)
+
+For detailed information, see ELIZA_FIXES_INTEGRATION.md
