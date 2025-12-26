@@ -574,7 +574,14 @@ export class Parry {
         // Pattern matching with first match wins
         for (const { pattern, response } of this.patterns) {
             if (pattern.test(input)) {
-                return response();
+                const responseText = response();
+
+                // Clamp emotions again after response may have modified them
+                this.anger = Math.max(0, Math.min(20, this.anger));
+                this.fear = Math.max(0, Math.min(20, this.fear));
+                this.mistrust = Math.max(0, Math.min(15, this.mistrust));
+
+                return responseText;
             }
         }
 

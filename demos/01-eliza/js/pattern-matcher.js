@@ -80,8 +80,8 @@ class PatternMatcher {
     regexPattern = this.expandSynonyms(regexPattern, synonyms);
 
     // Convert ELIZA wildcards to regex
-    // * matches any sequence of words
-    regexPattern = regexPattern.replace(/\*/g, '(.*)');
+    // * matches any sequence of words (non-greedy to match minimal text)
+    regexPattern = regexPattern.replace(/\*/g, '(.*?)');
 
     // Add anchors
     regexPattern = '^' + regexPattern + '$';
