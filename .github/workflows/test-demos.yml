@@ -63,6 +63,9 @@ jobs:
       - name: Display Node.js version
         run: node --version
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Run ${{ matrix.demo.name }}
         run: npm run ${{ matrix.demo.script }}
         continue-on-error: false
@@ -80,6 +83,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Run all tests together
         run: npm test
