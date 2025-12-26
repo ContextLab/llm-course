@@ -356,17 +356,17 @@
     },
     {
       "keyword": "i",
-      "rank": 1,
+      "rank": 3,
       "patterns": [
         {
           "pattern": "* i @desire *",
           "responses": [
-            "What would it mean to you if you got (2)?",
-            "Why do you want (2)?",
-            "Suppose you got (2) soon.",
-            "What if you never got (2)?",
-            "What would getting (2) mean to you?",
-            "What does wanting (2) have to do with this discussion?"
+            "What would it mean to you if you got (3)?",
+            "Why do you want (3)?",
+            "Suppose you got (3) soon.",
+            "What if you never got (3)?",
+            "What would getting (3) mean to you?",
+            "What does wanting (3) have to do with this discussion?"
           ]
         },
         {
@@ -419,10 +419,10 @@
         {
           "pattern": "* i @cannot *",
           "responses": [
-            "How do you know that you can't (2)?",
+            "How do you know that you can't (3)?",
             "Have you tried?",
-            "Perhaps you could (2) now.",
-            "Do you really want to be able to (2)?"
+            "Perhaps you could (3) now.",
+            "Do you really want to be able to (3)?"
           ]
         },
         {
@@ -543,6 +543,36 @@
             "You are being a bit negative.",
             "Why not?",
             "Why 'no'?"
+          ]
+        }
+      ]
+    },
+    {
+      "keyword": "mother",
+      "rank": 5,
+      "patterns": [
+        {
+          "pattern": "*",
+          "responses": [
+            "Tell me more about your family.",
+            "Who else in your family?",
+            "Your mother?",
+            "What else comes to mind when you think of your mother?"
+          ]
+        }
+      ]
+    },
+    {
+      "keyword": "father",
+      "rank": 5,
+      "patterns": [
+        {
+          "pattern": "*",
+          "responses": [
+            "Tell me more about your family.",
+            "Who else in your family?",
+            "Your father?",
+            "What else comes to mind when you think of your father?"
           ]
         }
       ]

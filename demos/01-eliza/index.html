@@ -165,9 +165,9 @@
   </div>
 
   <!-- Load JavaScript modules -->
-  <script src="js/pattern-matcher.js?v=1766670871"></script>
-  <script src="js/eliza-engine.js?v=1766670871"></script>
-  <script src="js/rule-editor.js?v=1766670871"></script>
+  <script src="js/pattern-matcher.js?v=1766709790"></script>
+  <script src="js/eliza-engine.js?v=1766709800"></script>
+  <script src="js/rule-editor.js?v=1766709790"></script>
 
   <!-- Main Application Script -->
   <script>
@@ -194,7 +194,7 @@
       eliza = new ElizaEngine();
 
       try {
-        await eliza.loadRules('data/eliza-rules.json');
+        await eliza.loadRules('data/eliza-rules.json?v=1766709810');
 
         // Initialize rule editor
         ruleEditor = new RuleEditor(eliza);

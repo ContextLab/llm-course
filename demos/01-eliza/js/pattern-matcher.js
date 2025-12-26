@@ -71,11 +71,13 @@ class PatternMatcher {
    * Convert ELIZA pattern to regex
    */
   patternToRegex(pattern, synonyms) {
-    // Expand synonyms first
-    let regexPattern = this.expandSynonyms(pattern, synonyms);
+    // Escape special regex characters first (before synonym expansion)
+    // Note: We escape . + ^ $ { } [ ] \ but NOT * () | ? :
+    // * and () are used in ELIZA patterns, | ? : are used in synonym groups
+    let regexPattern = pattern.replace(/[.+^${}[\]\\]/g, '\\$&');
 
-    // Escape special regex characters except * and ()
-    regexPattern = regexPattern.replace(/[.+?^${}[\]\\|]/g, '\\$&');
+    // Expand synonyms after escaping to preserve (?:...) syntax
+    regexPattern = this.expandSynonyms(regexPattern, synonyms);
 
     // Convert ELIZA wildcards to regex
     // * matches any sequence of words
@@ -92,7 +94,9 @@ class PatternMatcher {
    */
   matchPattern(input, pattern, synonyms) {
     const regex = this.patternToRegex(pattern, synonyms);
-    const match = input.match(regex);
+    // Pad input with spaces to handle patterns starting/ending with *
+    const paddedInput = ' ' + input + ' ';
+    const match = paddedInput.match(regex);
 
     if (match) {
       const captures = match.slice(1).map(g => (g || '').trim());
