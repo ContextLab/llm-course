@@ -1,0 +1,52 @@
+{
+  "name": "llm-course",
+  "version": "1.0.0",
+  "description": "Large Language Models Course - Interactive Demos and Tests",
+  "type": "module",
+  "scripts": {
+    "test": "npm run test:all",
+    "test:all": "npm run test:demo01 && npm run test:demo02 && npm run test:demo06 && npm run test:demo12 && npm run test:demo15",
+    "test:demo01": "node demos/01-eliza/test-eliza.mjs",
+    "test:demo02": "node demos/02-tokenization/test-tokenization.mjs",
+    "test:demo06": "node demos/06-gpt-playground/test-sampling.mjs",
+    "test:demo12": "node demos/12-semantic-search/test-bm25.mjs",
+    "test:demo15": "npm run test:demo15:eliza && npm run test:demo15:parry && npm run test:demo15:alice",
+    "test:demo15:eliza": "node demos/15-chatbot-evolution/test-eliza-fixes.mjs",
+    "test:demo15:parry": "node demos/15-chatbot-evolution/test-parry-final.mjs",
+    "test:demo15:alice": "node demos/15-chatbot-evolution/test-alice-full-node.mjs",
+    "test:chatbots": "npm run test:demo15",
+    "test:eliza": "npm run test:demo01 && npm run test:demo15:eliza",
+    "test:tokenization": "npm run test:demo02",
+    "test:sampling": "npm run test:demo06",
+    "test:search": "npm run test:demo12",
+    "test:verbose": "npm test -- --verbose"
+  },
+  "keywords": [
+    "llm",
+    "machine-learning",
+    "nlp",
+    "transformers",
+    "educational",
+    "chatbots",
+    "eliza",
+    "parry",
+    "alice",
+    "bpe",
+    "tokenization",
+    "embeddings",
+    "attention",
+    "rag",
+    "semantic-search"
+  ],
+  "author": "ContextLab",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ContextLab/llm-course.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

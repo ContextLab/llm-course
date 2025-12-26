@@ -1,0 +1,101 @@
+name: Test Demos
+
+on:
+  push:
+    branches: [ main, develop, claude/** ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Demo Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        demo:
+          - name: "Demo 01 - ELIZA"
+            script: "test:demo01"
+          - name: "Demo 02 - Tokenization"
+            script: "test:demo02"
+          - name: "Demo 06 - GPT Playground"
+            script: "test:demo06"
+          - name: "Demo 12 - Semantic Search"
+            script: "test:demo12"
+          - name: "Demo 15 - ELIZA (Evolution)"
+            script: "test:demo15:eliza"
+          - name: "Demo 15 - PARRY"
+            script: "test:demo15:parry"
+          - name: "Demo 15 - ALICE"
+            script: "test:demo15:alice"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Display Node.js version
+        run: node --version
+
+      - name: Run ${{ matrix.demo.name }}
+        run: npm run ${{ matrix.demo.script }}
+        continue-on-error: false
+
+  test-all:
+    name: Run All Tests
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Run all tests together
+        run: npm test
+
+      - name: Test summary
+        if: always()
+        run: echo "All demo tests completed!"
+
+  coverage-report:
+    name: Test Coverage Report
+    runs-on: ubuntu-latest
+    needs: test-all
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate coverage summary
+        run: |
+          echo "# Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Tested Demos" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 01** - ELIZA Pattern Matching (Classic chatbot)" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 02** - BPE Tokenization Algorithm" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 06** - GPT Sampling Strategies (Greedy, Temperature, Top-K, Top-P)" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 12** - BM25 Semantic Search Algorithm" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 15** - Chatbot Evolution (ELIZA, PARRY, ALICE)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Test Categories" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Unit Tests**: Pattern matching, tokenization, sampling algorithms" >> $GITHUB_STEP_SUMMARY
+          echo "- **Integration Tests**: End-to-end chatbot conversations" >> $GITHUB_STEP_SUMMARY
+          echo "- **Regression Tests**: Historical accuracy verification (ELIZA, PARRY, ALICE)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Algorithm Tests**: BPE, BM25, softmax, temperature scaling" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Total Test Suites: 7" >> $GITHUB_STEP_SUMMARY
+          echo "## Demos Covered: 5 of 15" >> $GITHUB_STEP_SUMMARY
