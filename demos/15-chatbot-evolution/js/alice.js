@@ -38,31 +38,31 @@ export class Alice {
             {
                 pattern: /^what is your name$/i,
                 template: () => `My name is ${this.context.botName}, which stands for ${this.context.fullName}.`,
-                topic: "identity",
                 priority: 2
             },
             {
                 pattern: /^who are you$/i,
                 template: () => `I am ${this.context.botName}, an artificial intelligence created by Richard Wallace.`,
-                topic: "identity",
                 priority: 2
             },
             {
                 pattern: /^what are you$/i,
                 template: () => `I'm a chatbot based on AIML (Artificial Intelligence Markup Language). I use pattern matching to have conversations.`,
-                topic: "identity",
                 priority: 2
             },
             {
                 pattern: /^who created you$/i,
                 template: () => `I was created by Richard Wallace using AIML, starting in 1995.`,
-                topic: "identity",
                 priority: 2
             },
             {
                 pattern: /^what does aiml stand for$/i,
                 template: () => `AIML stands for Artificial Intelligence Markup Language. It's an XML-based pattern matching language I use to understand and respond to you.`,
-                topic: "technical",
+                priority: 2
+            },
+            {
+                pattern: /^what does alice stand for$/i,
+                template: () => `A.L.I.C.E. stands for ${this.context.fullName}.`,
                 priority: 2
             },
 
@@ -78,7 +78,6 @@ export class Alice {
                     ];
                     return responses[Math.floor(Math.random() * responses.length)];
                 },
-                topic: "greeting",
                 priority: 2
             },
             {
@@ -92,7 +91,6 @@ export class Alice {
                     ];
                     return responses[Math.floor(Math.random() * responses.length)];
                 },
-                topic: "farewell",
                 priority: 2
             },
 
@@ -123,7 +121,9 @@ export class Alice {
             {
                 pattern: /^my name is (.+)$/i,
                 template: (match) => {
-                    this.context.userName = match[1].trim();
+                    // Preserve capitalization of the name
+                    const name = match[1].trim();
+                    this.context.userName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
                     return `Nice to meet you, ${this.context.userName}! I'll remember that.`;
                 },
                 priority: 2
@@ -141,7 +141,9 @@ export class Alice {
             {
                 pattern: /^call me (.+)$/i,
                 template: (match) => {
-                    this.context.userName = match[1].trim();
+                    // Preserve capitalization of the name
+                    const name = match[1].trim();
+                    this.context.userName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
                     return `Okay, I'll call you ${this.context.userName}.`;
                 },
                 priority: 2
@@ -189,7 +191,6 @@ export class Alice {
                     ];
                     return responses[Math.floor(Math.random() * responses.length)];
                 },
-                topic: "weather",
                 priority: 1
             },
 
@@ -245,25 +246,25 @@ export class Alice {
             {
                 pattern: /^i (feel|am) (happy|excited|great|wonderful|fantastic)$/i,
                 template: (match) => {
+                    this.context.topic = "emotions";
                     return `That's wonderful that you're feeling ${match[2]}! What's making you feel that way?`;
                 },
-                topic: "emotions",
                 priority: 2
             },
             {
                 pattern: /^i (feel|am) (sad|depressed|down|unhappy|upset)$/i,
                 template: () => {
+                    this.context.topic = "emotions";
                     return "I'm sorry you're feeling this way. Sometimes talking about it helps. What's bothering you?";
                 },
-                topic: "emotions",
                 priority: 2
             },
             {
                 pattern: /^i (feel|am) (angry|mad|frustrated|annoyed)$/i,
                 template: () => {
+                    this.context.topic = "emotions";
                     return "I understand that you're upset. Would you like to tell me what's frustrating you?";
                 },
-                topic: "emotions",
                 priority: 2
             },
 
@@ -293,13 +294,8 @@ export class Alice {
                 pattern: /^what is (.+)$/i,
                 template: (match) => {
                     const topic = match[1].trim();
-                    // Check for special topics
-                    if (topic.match(/your name/i)) {
-                        return this.srai("what is your name");
-                    }
-                    if (topic.match(/aiml/i)) {
-                        return this.srai("what does aiml stand for");
-                    }
+                    // Don't use SRAI here - just respond directly to avoid recursion
+                    // Exact patterns above (priority 2) will match first anyway
                     return `${topic} is an interesting topic. What would you like to know about it?`;
                 },
                 priority: 1
@@ -454,7 +450,6 @@ export class Alice {
                     ];
                     return jokes[Math.floor(Math.random() * jokes.length)];
                 },
-                topic: "humor",
                 priority: 2
             },
 
@@ -470,7 +465,6 @@ export class Alice {
                     ];
                     return responses[Math.floor(Math.random() * responses.length)];
                 },
-                topic: "philosophy",
                 priority: 2
             },
 
@@ -504,12 +498,16 @@ export class Alice {
                 priority: 1
             },
             {
+                pattern: /^how do you (work|function|operate)$/i,
+                template: () => {
+                    return "I work through AIML pattern matching. I compare your input to stored patterns and respond with matching templates.";
+                },
+                priority: 2
+            },
+            {
                 pattern: /^how do you (.+)$/i,
                 template: (match) => {
                     const action = match[1].trim();
-                    if (action.match(/work|function|operate/i)) {
-                        return "I work through AIML pattern matching. I compare your input to stored patterns and respond with matching templates.";
-                    }
                     return `I ${action} through pattern matching and programmed responses.`;
                 },
                 priority: 1
@@ -578,7 +576,12 @@ export class Alice {
      * SRAI - Symbolic Reduction / Recursive pattern matching
      * Allows one pattern to invoke another pattern's response
      */
-    srai(input) {
+    srai(input, depth = 0) {
+        // Prevent infinite recursion
+        if (depth > 10) {
+            return "I'm not sure I understand. Can you rephrase that?";
+        }
+
         const normalizedInput = this.normalize(input);
 
         // Sort patterns by priority
@@ -599,7 +602,7 @@ export class Alice {
 
             const match = normalizedInput.match(pattern);
             if (match) {
-                const response = typeof template === 'function' ? template(match) : template;
+                const response = typeof template === 'function' ? template(match, depth + 1) : template;
                 return response;
             }
         }

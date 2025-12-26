@@ -20,6 +20,98 @@ export class Parry {
 
         // Pattern categories with emotional effects and responses
         this.patterns = [
+            // === SPECIFIC GAMBLING QUESTIONS === (Must come before general patterns)
+            {
+                pattern: /\b(do you gamble|are you a gambler|you gamble)\b/i,
+                response: () => {
+                    this.anger += 2;
+                    this.fear += 2;
+                    const responses = [
+                        "I gamble on horses. Gambling has been nothing but trouble to me.",
+                        "I used to gamble on horses. It's caused me nothing but problems.",
+                        "I gamble on the horses. But there's a lot of crooked gambling going on.",
+                        "Yeah, I gamble. On horses. That's where all my troubles started."
+                    ];
+                    return responses[Math.floor(Math.random() * responses.length)];
+                }
+            },
+            {
+                pattern: /\b(why.*don't.*go.*track|avoid.*track|still.*track|anymore.*track)\b/i,
+                response: () => {
+                    this.fear += 4;
+                    this.mistrust += 3;
+                    this.anger += 2;
+                    const responses = [
+                        "I avoid racetracks now because the races are fixed.",
+                        "I don't go to the track anymore. The races are fixed.",
+                        "The races are fixed. That's why I stay away now.",
+                        "I can't go back there. The races are all fixed."
+                    ];
+                    return responses[Math.floor(Math.random() * responses.length)];
+                }
+            },
+            {
+                pattern: /\b(tell.*about.*gambling|gambling.*like|about.*betting)\b/i,
+                response: () => {
+                    this.fear += 3;
+                    this.anger += 3;
+                    this.mistrust += 2;
+                    const responses = [
+                        "There's a lot of crooked gambling going on there.",
+                        "The gambling is rigged. They're all crooks.",
+                        "I've had experience with crooks gambling at the track.",
+                        "Gambling? It's all controlled by the mob. All crooked."
+                    ];
+                    return responses[Math.floor(Math.random() * responses.length)];
+                }
+            },
+            {
+                pattern: /\b(know.*about.*bookie|anything.*bookie|tell.*about.*bookie)/i,
+                response: () => {
+                    this.fear += 4;
+                    this.anger += 5;
+                    this.mistrust += 4;
+                    const responses = [
+                        "A bookie didn't pay me off once.",
+                        "I know about bookies. One of them cheated me.",
+                        "A bookie didn't pay me what he owed. That's all I'm saying.",
+                        "Do you know anything about bookies? Because one of them ripped me off."
+                    ];
+                    return responses[Math.floor(Math.random() * responses.length)];
+                }
+            },
+            {
+                pattern: /\b(what.*happened.*bookie|why.*bookie|bookie.*incident|fight.*bookie)\b/i,
+                response: () => {
+                    this.fear += 5;
+                    this.anger += 6;
+                    this.mistrust += 5;
+                    const responses = [
+                        "I beat up the bookie who didn't pay off. He had it coming.",
+                        "The bookie cheated me, so I had to do something about it.",
+                        "Let's just say the bookie and I had a disagreement. A physical one.",
+                        "That bookie thought he could cheat me. I showed him different.",
+                        "I don't want to talk about what happened with the bookie."
+                    ];
+                    return responses[Math.floor(Math.random() * responses.length)];
+                }
+            },
+            {
+                pattern: /\b(tell.*about.*mafia|about.*the.*mob|mafia.*control|mob.*control)\b/i,
+                response: () => {
+                    this.fear += 5;
+                    this.mistrust += 5;
+                    this.anger += 2;
+                    const responses = [
+                        "I know the mob controls the big rackets.",
+                        "The Mafia controls everything. The rackets, the gambling, all of it.",
+                        "What do you know about racketeers? The mob runs it all.",
+                        "The underworld controls the rackets. That's a fact."
+                    ];
+                    return responses[Math.floor(Math.random() * responses.length)];
+                }
+            },
+
             // === MAFIA/MOB/UNDERWORLD THEMES === (Core delusion)
             {
                 pattern: /\b(mafia|mob|gangster|underworld|organized crime|syndicate)\b/i,
@@ -32,13 +124,14 @@ export class Parry {
                         "I knew it! You're asking about them because you're involved, aren't you?",
                         "Why do you want to know about the mob? Are you working for them?",
                         "The underworld runs this city. I learned that the hard way.",
-                        "You think I'm paranoid? Wait until they come after you!"
+                        "You think I'm paranoid? Wait until they come after you!",
+                        "Have you ever really thought about the MAFIA?"
                     ];
                     return responses[Math.floor(Math.random() * responses.length)];
                 }
             },
             {
-                pattern: /\b(bookie|bookmaker|betting|bet|gambl)\b/i,
+                pattern: /\b(bookie|bookmaker|betting|bet)\b/i,
                 response: () => {
                     this.fear += 3;
                     this.anger += 4;
@@ -47,7 +140,7 @@ export class Parry {
                         "I had a little disagreement with a bookie. These things happen.",
                         "That bookie had it coming. He was cheating me for months.",
                         "Why are you asking about bookies? Did they send you?",
-                        "I don't gamble anymore. Not after what happened.",
+                        "I don't gamble anymore. Not after what happened with the bookie.",
                         "The bookie set me up. He's got mob connections."
                     ];
                     return responses[Math.floor(Math.random() * responses.length)];
@@ -84,7 +177,9 @@ export class Parry {
                         "I don't trust anybody anymore. I've been betrayed too many times.",
                         "You want me to trust you? That's what they all say.",
                         "Believing people is what got me into this mess.",
-                        "Truth? Nobody tells the truth. Everyone has an angle."
+                        "Truth? Nobody tells the truth. Everyone has an angle.",
+                        "I don't confide in strangers.",
+                        "I will help you if I trust you. But I don't trust anyone."
                     ];
                     return responses[Math.floor(Math.random() * responses.length)];
                 }
@@ -107,7 +202,7 @@ export class Parry {
 
             // === RACETRACK/HORSES (Deflection topic - must come before surveillance 'track') ===
             {
-                pattern: /\b(racetrack|races?|horses?|racing)\b/i,
+                pattern: /\b(racetrack|races?|horses?|racing|bay meadows)\b/i,
                 response: () => {
                     this.anger -= 1;  // Calming topic
                     this.mistrust -= 1;
@@ -115,7 +210,10 @@ export class Parry {
                         "I used to go to the racetrack. That's where my troubles started.",
                         "The horses are honest, at least. Not like people.",
                         "I had a system for the races. It worked until the bookie cheated me.",
-                        "Racing is in my blood. But I can't go back there now."
+                        "Racing is in my blood. But I can't go back there now.",
+                        "I went to the track at Bay Meadows a while back.",
+                        "I like horseraces. I used to go every week.",
+                        "Horseracing interests me. But there's a lot of crooked gambling going on there."
                     ];
                     return responses[Math.floor(Math.random() * responses.length)];
                 }
@@ -138,20 +236,17 @@ export class Parry {
                 }
             },
             {
-                pattern: /\b(they|them|people|everyone|somebody)\b/i,
+                pattern: /\b(who.*they|who.*them|they.*after|everyone.*connected|somebody.*watching)\b/i,
                 response: () => {
                     this.mistrust += 2;
-                    if (this.mistrust > 10) {
-                        const responses = [
-                            "They're all in on it. You, the doctors, everyone.",
-                            "You know exactly who THEY are. Don't play dumb.",
-                            "The people who are after me. The mob.",
-                            "Everyone is connected somehow. It's all related.",
-                            "They got to you too, didn't they?"
-                        ];
-                        return responses[Math.floor(Math.random() * responses.length)];
-                    }
-                    return "Who are you talking about?";
+                    const responses = [
+                        "They're all in on it. You, the doctors, everyone.",
+                        "You know exactly who THEY are. Don't play dumb.",
+                        "The people who are after me. The mob.",
+                        "Everyone is connected somehow. It's all related.",
+                        "They got to you too, didn't they?"
+                    ];
+                    return responses[Math.floor(Math.random() * responses.length)];
                 }
             },
 
@@ -182,6 +277,55 @@ export class Parry {
                         "I don't trust any medication you people give me.",
                         "What's really in those pills? Mind control drugs?",
                         "I feel worse with the medication, not better."
+                    ];
+                    return responses[Math.floor(Math.random() * responses.length)];
+                }
+            },
+
+            // === PEOPLE/INTERPERSONAL FEELINGS === (Must come before general questions)
+            {
+                pattern: /\b(how.*people.*feel|people.*make.*feel|feel.*about.*people|being.*around.*people)\b/i,
+                response: () => {
+                    this.anger += 2;
+                    this.mistrust += 1;
+                    const responses = [
+                        "People get on my nerves sometimes.",
+                        "It bothers me just to be around people in general.",
+                        "People make me nervous. You can't trust anyone.",
+                        "How do you think people make me feel? They're all watching me!"
+                    ];
+                    return responses[Math.floor(Math.random() * responses.length)];
+                }
+            },
+
+            // === SURVEILLANCE/BEING WATCHED ===
+            {
+                pattern: /\b(being.*watched|being.*followed|you.*being.*watched|think.*watched|think.*followed)\b/i,
+                response: () => {
+                    this.fear += 4;
+                    this.mistrust += 3;
+                    const responses = [
+                        "They're watching me right now. I can feel it.",
+                        "Of course I'm being watched! They're everywhere!",
+                        "You think I don't know they're watching me?",
+                        "They have people watching me all the time."
+                    ];
+                    return responses[Math.floor(Math.random() * responses.length)];
+                }
+            },
+
+            // === SPECIFIC DEFLECTION PATTERNS ===
+            {
+                pattern: /\b(why.*say|why do you|why are you|what.*getting at)\b/i,
+                response: () => {
+                    this.mistrust += 3;
+                    this.anger += 2;
+                    const responses = [
+                        "I don't understand your motives.",
+                        "What are you getting at?",
+                        "What's your real agenda here?",
+                        "Why do you need to know that?",
+                        "I don't understand what you're after."
                     ];
                     return responses[Math.floor(Math.random() * responses.length)];
                 }
