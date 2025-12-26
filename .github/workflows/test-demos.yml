@@ -18,12 +18,32 @@ jobs:
         demo:
           - name: "Demo 01 - ELIZA"
             script: "test:demo01"
-          - name: "Demo 02 - Tokenization"
+          - name: "Demo 02 - Tokenization (BPE)"
             script: "test:demo02"
-          - name: "Demo 06 - GPT Playground"
+          - name: "Demo 03 - Embeddings (Clustering)"
+            script: "test:demo03"
+          - name: "Demo 04 - Attention"
+            script: "test:demo04"
+          - name: "Demo 05 - Transformer"
+            script: "test:demo05"
+          - name: "Demo 06 - GPT Playground (Sampling)"
             script: "test:demo06"
-          - name: "Demo 12 - Semantic Search"
+          - name: "Demo 07 - RAG"
+            script: "test:demo07"
+          - name: "Demo 08 - Topic Modeling (LDA)"
+            script: "test:demo08"
+          - name: "Demo 09 - Sentiment Analysis"
+            script: "test:demo09"
+          - name: "Demo 10 - POS Tagging"
+            script: "test:demo10"
+          - name: "Demo 11 - Word Analogies"
+            script: "test:demo11"
+          - name: "Demo 12 - Semantic Search (BM25)"
             script: "test:demo12"
+          - name: "Demo 13 - BERT MLM"
+            script: "test:demo13"
+          - name: "Demo 14 - Embeddings Comparison"
+            script: "test:demo14"
           - name: "Demo 15 - ELIZA (Evolution)"
             script: "test:demo15:eliza"
           - name: "Demo 15 - PARRY"
@@ -82,20 +102,30 @@ jobs:
         run: |
           echo "# Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## Tested Demos" >> $GITHUB_STEP_SUMMARY
+          echo "## Tested Demos - ALL 15 DEMOS COVERED" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 01** - ELIZA Pattern Matching (Classic chatbot)" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 01** - ELIZA Pattern Matching" >> $GITHUB_STEP_SUMMARY
           echo "✅ **Demo 02** - BPE Tokenization Algorithm" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 06** - GPT Sampling Strategies (Greedy, Temperature, Top-K, Top-P)" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 12** - BM25 Semantic Search Algorithm" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 03** - Embeddings & Clustering (K-means, DBSCAN)" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 04** - Attention Mechanisms" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 05** - Transformer Architecture" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 06** - GPT Sampling Strategies" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 07** - RAG (Retrieval Augmented Generation)" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 08** - Topic Modeling (LDA)" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 09** - Sentiment Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 10** - POS Tagging" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 11** - Word Analogies & Vector Operations" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 12** - Semantic Search (BM25)" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 13** - BERT Masked Language Modeling" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Demo 14** - Embeddings Comparison" >> $GITHUB_STEP_SUMMARY
           echo "✅ **Demo 15** - Chatbot Evolution (ELIZA, PARRY, ALICE)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Test Categories" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Unit Tests**: Pattern matching, tokenization, sampling algorithms" >> $GITHUB_STEP_SUMMARY
-          echo "- **Integration Tests**: End-to-end chatbot conversations" >> $GITHUB_STEP_SUMMARY
-          echo "- **Regression Tests**: Historical accuracy verification (ELIZA, PARRY, ALICE)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Algorithm Tests**: BPE, BM25, softmax, temperature scaling" >> $GITHUB_STEP_SUMMARY
+          echo "- **Unit Tests**: Pattern matching, tokenization, clustering, vector operations" >> $GITHUB_STEP_SUMMARY
+          echo "- **Integration Tests**: End-to-end chatbot conversations, RAG pipeline" >> $GITHUB_STEP_SUMMARY
+          echo "- **Regression Tests**: Historical chatbot accuracy (ELIZA 1966, PARRY 1972, ALICE 1995)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Algorithm Tests**: BPE, BM25, K-means, DBSCAN, LDA, softmax, attention" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## Total Test Suites: 7" >> $GITHUB_STEP_SUMMARY
-          echo "## Demos Covered: 5 of 15" >> $GITHUB_STEP_SUMMARY
+          echo "## Total Test Suites: 17" >> $GITHUB_STEP_SUMMARY
+          echo "## Demos Covered: 15 of 15 (100%)" >> $GITHUB_STEP_SUMMARY
