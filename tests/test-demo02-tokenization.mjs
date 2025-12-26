@@ -47,7 +47,7 @@ global.fetch = async (url) => {
 };
 
 // Load the BPE visualizer code
-const bpeCode = await readFile(join(__dirname, 'js/bpe-visualizer.js'), 'utf-8');
+const bpeCode = await readFile(join(__dirname, '../demos/02-tokenization/js/bpe-visualizer.js'), 'utf-8');
 
 // Remove everything from document.addEventListener('DOMContentLoaded' onwards
 const domContentLoadedIndex = bpeCode.indexOf("document.addEventListener('DOMContentLoaded'");

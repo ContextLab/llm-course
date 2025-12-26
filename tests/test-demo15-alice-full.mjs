@@ -232,7 +232,7 @@ async function runTests() {
     console.log();
 
     const alice = new AliceFullTest();
-    const patternsFile = path.join(__dirname, 'data', 'alice-patterns-full.json');
+    const patternsFile = path.join(__dirname, '../demos/15-chatbot-evolution/data', 'alice-patterns-full.json');
 
     // Load patterns
     const loaded = alice.loadPatterns(patternsFile);
