@@ -24,6 +24,25 @@ Learn by doing with our collection of **15 interactive web demonstrations** that
 
 Our complete collection covers: ELIZA, tokenization, embeddings, attention mechanisms, transformer architecture, GPT playground, RAG systems, topic modeling, sentiment analysis, POS tagging, word analogies, semantic search, BERT masked language modeling, embeddings comparison, and chatbot evolution. Browse the [demo collection](https://contextlab.github.io/llm-course/demos/) to explore them all!
 
+## 🧪 Running Tests
+
+For developers contributing to this repository, we have a comprehensive test suite covering all 15 demos:
+
+```bash
+# Install dependencies
+npm install
+
+# Run all tests
+npm test
+
+# Run specific demo tests
+npm run test:demo01  # ELIZA
+npm run test:demo02  # Tokenization
+# ... etc for demos 01-15
+```
+
+The test suite includes 1,500+ tests covering unit tests, integration tests, and regression tests to ensure all demos function correctly. CI/CD runs automatically on all pull requests.
+
 ## A note about this Open Course
 This course is taught as an *Open Course*, meaning that the course is designed from the ground up to be shareable and freely accessible to anyone.  All code for this course is written in [Python](https://www.python.org/) and most of the material is organized in [Jupyter notebooks](http://jupyter.org/).
 
