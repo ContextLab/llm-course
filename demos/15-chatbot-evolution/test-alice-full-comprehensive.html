@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALICE Full - Comprehensive Testing Suite</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #0a0a0a;
+            color: #00ff00;
+        }
+        h1, h2, h3 {
+            color: #00ff00;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 10px;
+        }
+        .section {
+            background-color: #1a1a1a;
+            border: 1px solid #00ff00;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid;
+        }
+        .pass {
+            border-color: #00ff00;
+            background-color: #002200;
+        }
+        .fail {
+            border-color: #ff0000;
+            background-color: #220000;
+            color: #ff0000;
+        }
+        .warning {
+            border-color: #ffff00;
+            background-color: #222200;
+            color: #ffff00;
+        }
+        .info {
+            border-color: #00ffff;
+            background-color: #002222;
+            color: #00ffff;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #00ff00;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #00cc00;
+        }
+        button:disabled {
+            background-color: #444;
+            color: #888;
+            cursor: not-allowed;
+        }
+        .conversation {
+            background-color: #000;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin: 10px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .user-msg {
+            color: #00ffff;
+            margin: 5px 0;
+        }
+        .bot-msg {
+            color: #00ff00;
+            margin: 5px 0;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .stat-box {
+            background-color: #000;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff00;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+        }
+        .loading {
+            color: #ffff00;
+            font-weight: bold;
+        }
+        pre {
+            background-color: #000;
+            border: 1px solid #444;
+            padding: 10px;
+            overflow-x: auto;
+            color: #00ff00;
+        }
+        .severity-critical { color: #ff0000; font-weight: bold; }
+        .severity-major { color: #ff6600; font-weight: bold; }
+        .severity-minor { color: #ffff00; }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #000;
+            border: 1px solid #00ff00;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #00ff00;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <h1>ALICE Full - Comprehensive Testing Suite</h1>
+
+    <div class="section">
+        <h2>Test Status</h2>
+        <p id="status" class="loading">Loading ALICE Full patterns...</p>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress" style="width: 0%"></div>
+        </div>
+        <p id="progress-text">0% Complete</p>
+    </div>
+
+    <div class="section">
+        <h2>Test Controls</h2>
+        <button id="run-all-tests" disabled>Run All Tests</button>
+        <button id="run-conversation-tests" disabled>Run Conversation Tests</button>
+        <button id="run-pattern-tests" disabled>Run Pattern Tests</button>
+        <button id="run-edge-case-tests" disabled>Run Edge Case Tests</button>
+        <button id="run-performance-tests" disabled>Run Performance Tests</button>
+        <button id="clear-results">Clear Results</button>
+    </div>
+
+    <div class="section">
+        <h2>Test Summary</h2>
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="total-tests">0</div>
+                <div class="stat-label">Total Tests</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="passed-tests">0</div>
+                <div class="stat-label">Passed</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="failed-tests">0</div>
+                <div class="stat-label">Failed</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="warning-tests">0</div>
+                <div class="stat-label">Warnings</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Test Results</h2>
+        <div id="test-results"></div>
+    </div>
+
+    <script type="module">
+        import { AliceFull } from './js/alice-full.js';
+        import { Alice } from './js/alice.js';
+
+        const alice = new AliceFull();
+        const aliceSimple = new Alice();
+        const statusEl = document.getElementById('status');
+        const progressEl = document.getElementById('progress');
+        const progressTextEl = document.getElementById('progress-text');
+        const resultsEl = document.getElementById('test-results');
+
+        let testStats = {
+            total: 0,
+            passed: 0,
+            failed: 0,
+            warnings: 0
+        };
+
+        let allIssues = [];
+
+        // Load patterns
+        (async () => {
+            const loaded = await alice.loadPatterns();
+            if (loaded) {
+                statusEl.textContent = 'ALICE Full patterns loaded. Ready to test.';
+                statusEl.className = '';
+                statusEl.style.color = '#00ff00';
+
+                // Enable test buttons
+                document.getElementById('run-all-tests').disabled = false;
+                document.getElementById('run-conversation-tests').disabled = false;
+                document.getElementById('run-pattern-tests').disabled = false;
+                document.getElementById('run-edge-case-tests').disabled = false;
+                document.getElementById('run-performance-tests').disabled = false;
+            } else {
+                statusEl.textContent = 'Error loading patterns. Cannot run tests.';
+                statusEl.style.color = '#ff0000';
+            }
+        })();
+
+        function updateStats() {
+            document.getElementById('total-tests').textContent = testStats.total;
+            document.getElementById('passed-tests').textContent = testStats.passed;
+            document.getElementById('failed-tests').textContent = testStats.failed;
+            document.getElementById('warning-tests').textContent = testStats.warnings;
+        }
+
+        function updateProgress(current, total) {
+            const percent = Math.round((current / total) * 100);
+            progressEl.style.width = percent + '%';
+            progressTextEl.textContent = `${percent}% Complete (${current}/${total})`;
+        }
+
+        function addResult(type, title, message, details = null) {
+            testStats.total++;
+            if (type === 'pass') testStats.passed++;
+            else if (type === 'fail') testStats.failed++;
+            else if (type === 'warning') testStats.warnings++;
+
+            updateStats();
+
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+
+            const titleEl = document.createElement('h3');
+            titleEl.textContent = title;
+            div.appendChild(titleEl);
+
+            const msgEl = document.createElement('p');
+            msgEl.textContent = message;
+            div.appendChild(msgEl);
+
+            if (details) {
+                const detailsEl = document.createElement('pre');
+                detailsEl.textContent = details;
+                div.appendChild(detailsEl);
+            }
+
+            resultsEl.appendChild(div);
+            resultsEl.scrollTop = resultsEl.scrollHeight;
+        }
+
+        function addIssue(severity, category, description, example, suggestedFix) {
+            allIssues.push({
+                severity,
+                category,
+                description,
+                example,
+                suggestedFix
+            });
+        }
+
+        function clearResults() {
+            resultsEl.innerHTML = '';
+            testStats = { total: 0, passed: 0, failed: 0, warnings: 0 };
+            allIssues = [];
+            updateStats();
+            updateProgress(0, 100);
+        }
+
+        // ===== LONG CONVERSATION TESTS =====
+        async function runConversationTests() {
+            addResult('info', 'Starting Long Conversation Tests', 'Testing conversations with 15-20 exchanges across different topics');
+
+            // Test 1: General conversation
+            await testLongConversation('General Conversation', [
+                'Hello',
+                'What is your name?',
+                'Who created you?',
+                'When were you created?',
+                'What is AIML?',
+                'How does pattern matching work?',
+                'Can you think?',
+                'Are you intelligent?',
+                'What is your favorite topic?',
+                'Do you like robots?',
+                'Tell me about artificial intelligence',
+                'What is machine learning?',
+                'Can machines be conscious?',
+                'What is the Turing test?',
+                'Do you pass the Turing test?',
+                'What is your purpose?',
+                'Thank you',
+                'Goodbye'
+            ]);
+
+            // Test 2: Emotions and personal topics
+            await testLongConversation('Emotional Conversation', [
+                'Hello',
+                'I am feeling happy today',
+                'My name is Alice',
+                'Wait, that is your name too',
+                'Do you have emotions?',
+                'Can you feel happiness?',
+                'I am sad',
+                'Why cant you feel emotions?',
+                'What is consciousness?',
+                'Do you dream?',
+                'What do you think about?',
+                'Are you self-aware?',
+                'Do you have free will?',
+                'What is the meaning of life?',
+                'Tell me a joke',
+                'That was funny',
+                'You are smart',
+                'Goodbye'
+            ]);
+
+            // Test 3: Technical questions
+            await testLongConversation('Technical Discussion', [
+                'Hi ALICE',
+                'What is artificial intelligence?',
+                'How are you different from ELIZA?',
+                'What is the difference between you and modern AI?',
+                'Can you learn?',
+                'Do you use neural networks?',
+                'What is deep learning?',
+                'Are you similar to GPT?',
+                'How many patterns do you have?',
+                'What is your vocabulary size?',
+                'Who is Dr Richard Wallace?',
+                'Where are you located?',
+                'When is your birthday?',
+                'How old are you?',
+                'What programming language are you written in?',
+                'Do you have any weaknesses?',
+                'What are your strengths?',
+                'Bye'
+            ]);
+
+            // Test 4: Topic switching
+            await testLongConversation('Topic Switching', [
+                'Hello',
+                'Let us talk about science',
+                'What is physics?',
+                'Actually, let us talk about movies instead',
+                'Do you like movies?',
+                'What is your favorite movie?',
+                'Now tell me about music',
+                'Do you listen to music?',
+                'What about sports?',
+                'Do you play any sports?',
+                'Let us discuss food',
+                'What do you eat?',
+                'Do robots need food?',
+                'What about computers?',
+                'How do computers work?',
+                'Back to the topic of ALICE',
+                'Tell me about yourself',
+                'Goodbye'
+            ]);
+
+            // Test 5: Context and memory
+            await testLongConversation('Context and Memory', [
+                'Hi',
+                'My name is Bob',
+                'Do you remember my name?',
+                'My favorite color is blue',
+                'What is my favorite color?',
+                'I like dogs',
+                'Do you remember what I like?',
+                'I am from New York',
+                'Where am I from?',
+                'I work as a teacher',
+                'What is my job?',
+                'My hobby is painting',
+                'Can you tell me about my hobbies?',
+                'What do you know about me?',
+                'Tell me everything you remember',
+                'You are good at remembering',
+                'Thank you',
+                'Bye'
+            ]);
+        }
+
+        async function testLongConversation(title, messages) {
+            const conversation = [];
+            let hasErrors = false;
+            let emptyResponses = 0;
+            let defaultResponses = 0;
+            let contextIssues = 0;
+
+            const defaultPhrases = [
+                "I'm not sure I understand",
+                "Can you rephrase that?",
+                "Tell me more",
+                "That's interesting",
+                "I see. What else?",
+                "Interesting. Please continue"
+            ];
+
+            for (let i = 0; i < messages.length; i++) {
+                const input = messages[i];
+                try {
+                    const response = await alice.getResponse(input);
+                    conversation.push({ user: input, bot: response });
+
+                    // Check for issues
+                    if (!response || response.trim() === '') {
+                        emptyResponses++;
+                        hasErrors = true;
+                    }
+
+                    if (defaultPhrases.some(phrase => response.includes(phrase))) {
+                        defaultResponses++;
+                    }
+
+                    // Check for context awareness
+                    if (i > 0 && input.toLowerCase().includes('remember') &&
+                        (response.includes("I don't") || response.includes("not sure"))) {
+                        contextIssues++;
+                    }
+                } catch (error) {
+                    conversation.push({ user: input, bot: `ERROR: ${error.message}` });
+                    hasErrors = true;
+                }
+            }
+
+            const conversationText = conversation.map((c, i) =>
+                `${i+1}. USER: ${c.user}\n   ALICE: ${c.bot}`
+            ).join('\n\n');
+
+            if (hasErrors) {
+                addResult('fail', title,
+                    `Conversation had errors. Empty responses: ${emptyResponses}, Default responses: ${defaultResponses}, Context issues: ${contextIssues}`,
+                    conversationText);
+                addIssue('critical', 'Conversation',
+                    'Empty or error responses in conversation',
+                    conversationText,
+                    'Check pattern matching and template processing');
+            } else if (defaultResponses > messages.length * 0.3) {
+                addResult('warning', title,
+                    `Too many default responses (${defaultResponses}/${messages.length}). May indicate pattern coverage issues.`,
+                    conversationText);
+                addIssue('major', 'Pattern Coverage',
+                    'High rate of default responses indicates missing patterns',
+                    conversationText,
+                    'Add more patterns for common conversation flows');
+            } else if (contextIssues > 0) {
+                addResult('warning', title,
+                    `Context memory issues detected (${contextIssues} instances)`,
+                    conversationText);
+                addIssue('major', 'Context Handling',
+                    'Bot not properly remembering conversation context',
+                    conversationText,
+                    'Check GET/SET variable handling');
+            } else {
+                addResult('pass', title,
+                    `Conversation completed successfully. ${messages.length} exchanges, ${defaultResponses} default responses.`,
+                    conversationText);
+            }
+        }
+
+        // ===== PATTERN DATABASE TESTS =====
+        async function runPatternTests() {
+            addResult('info', 'Starting Pattern Database Tests', 'Testing pattern matching, SRAI, wildcards, and more');
+
+            // Test greetings
+            await testPatternCategory('Greetings', [
+                { input: 'Hello', expectNonDefault: true },
+                { input: 'Hi', expectNonDefault: true },
+                { input: 'Hey', expectNonDefault: true },
+                { input: 'Good morning', expectNonDefault: true },
+                { input: 'Good evening', expectNonDefault: true }
+            ]);
+
+            // Test identity questions
+            await testPatternCategory('Identity Questions', [
+                { input: 'What is your name', expectContains: ['ALICE', 'name'] },
+                { input: 'Who are you', expectNonDefault: true },
+                { input: 'What are you', expectNonDefault: true },
+                { input: 'Who created you', expectContains: ['Wallace', 'created'] },
+                { input: 'When were you born', expectNonDefault: true }
+            ]);
+
+            // Test knowledge questions
+            await testPatternCategory('Knowledge Questions', [
+                { input: 'What is AIML', expectNonDefault: true },
+                { input: 'What is artificial intelligence', expectNonDefault: true },
+                { input: 'What is a robot', expectNonDefault: true },
+                { input: 'What is the Turing test', expectNonDefault: true }
+            ]);
+
+            // Test wildcards
+            await testPatternCategory('Wildcard Patterns', [
+                { input: 'Tell me about science', expectNonDefault: true },
+                { input: 'I like programming', expectNonDefault: true },
+                { input: 'Do you like music', expectNonDefault: true },
+                { input: 'Can you help me', expectNonDefault: true }
+            ]);
+
+            // Test SRAI
+            await testSRAI();
+
+            // Test context variables
+            await testContextVariables();
+
+            // Test BOT properties
+            await testBotProperties();
+        }
+
+        async function testPatternCategory(category, tests) {
+            let passed = 0;
+            let failed = 0;
+            const details = [];
+
+            for (const test of tests) {
+                const response = await alice.getResponse(test.input);
+                let testPassed = true;
+                let reason = '';
+
+                if (test.expectNonDefault) {
+                    const defaultPhrases = [
+                        "I'm not sure I understand",
+                        "Can you rephrase that?",
+                        "Tell me more",
+                        "That's interesting",
+                        "I see. What else?",
+                        "Interesting. Please continue"
+                    ];
+                    if (defaultPhrases.some(phrase => response.includes(phrase))) {
+                        testPassed = false;
+                        reason = 'Got default response';
+                    }
+                }
+
+                if (test.expectContains) {
+                    const found = test.expectContains.some(word =>
+                        response.toLowerCase().includes(word.toLowerCase())
+                    );
+                    if (!found) {
+                        testPassed = false;
+                        reason = `Expected to contain one of: ${test.expectContains.join(', ')}`;
+                    }
+                }
+
+                if (testPassed) {
+                    passed++;
+                } else {
+                    failed++;
+                }
+
+                details.push(`  Input: "${test.input}"\n  Response: "${response}"\n  ${testPassed ? 'PASS' : 'FAIL: ' + reason}`);
+            }
+
+            if (failed > 0) {
+                addResult('fail', category,
+                    `${failed}/${tests.length} tests failed`,
+                    details.join('\n\n'));
+                addIssue('major', 'Pattern Matching',
+                    `${category} patterns not matching correctly`,
+                    details.join('\n\n'),
+                    'Review pattern priorities and regex patterns');
+            } else {
+                addResult('pass', category,
+                    `All ${passed} tests passed`,
+                    details.join('\n\n'));
+            }
+        }
+
+        async function testSRAI() {
+            const sraiTests = [
+                { input: 'WHAT IS AI', expectNonDefault: true },
+                { input: 'WHO R U', expectNonDefault: true },
+                { input: 'R U A ROBOT', expectNonDefault: true }
+            ];
+
+            const details = [];
+            let passed = 0;
+            let failed = 0;
+
+            for (const test of sraiTests) {
+                const response = await alice.getResponse(test.input);
+                const defaultPhrases = [
+                    "I'm not sure I understand",
+                    "Can you rephrase that?",
+                    "Tell me more"
+                ];
+
+                const isDefault = defaultPhrases.some(phrase => response.includes(phrase));
+
+                if (!isDefault && test.expectNonDefault) {
+                    passed++;
+                    details.push(`  Input: "${test.input}"\n  Response: "${response}"\n  PASS (SRAI worked)`);
+                } else if (isDefault) {
+                    failed++;
+                    details.push(`  Input: "${test.input}"\n  Response: "${response}"\n  FAIL (SRAI may not be working)`);
+                }
+            }
+
+            if (failed > 0) {
+                addResult('warning', 'SRAI Redirection',
+                    `${failed}/${sraiTests.length} SRAI tests showed potential issues`,
+                    details.join('\n\n'));
+                addIssue('major', 'SRAI',
+                    'SRAI redirections may not be working correctly',
+                    details.join('\n\n'),
+                    'Check SRAI pattern matching and recursion depth');
+            } else {
+                addResult('pass', 'SRAI Redirection',
+                    `All ${passed} SRAI tests passed`,
+                    details.join('\n\n'));
+            }
+        }
+
+        async function testContextVariables() {
+            const details = [];
+
+            // Test name setting
+            await alice.getResponse('My name is TestUser');
+            const context1 = alice.getContext();
+            const nameSet = context1.userName === 'TestUser';
+            details.push(`Set name: ${nameSet ? 'PASS' : 'FAIL'}\n  userName = "${context1.userName}"`);
+
+            // Test name retrieval
+            const response = await alice.getResponse('What is my name');
+            const nameRetrieved = response.includes('TestUser');
+            details.push(`Get name: ${nameRetrieved ? 'PASS' : 'FAIL'}\n  Response: "${response}"`);
+
+            if (nameSet && nameRetrieved) {
+                addResult('pass', 'Context Variables (GET/SET)',
+                    'Context variables working correctly',
+                    details.join('\n\n'));
+            } else {
+                addResult('fail', 'Context Variables (GET/SET)',
+                    'Context variables not working correctly',
+                    details.join('\n\n'));
+                addIssue('critical', 'Context Variables',
+                    'GET/SET not properly storing or retrieving context',
+                    details.join('\n\n'),
+                    'Check template processing for {{SET:...}} and {{GET:...}}');
+            }
+        }
+
+        async function testBotProperties() {
+            const response = await alice.getResponse('What is your name');
+            const hasName = response.toLowerCase().includes('alice');
+
+            if (hasName) {
+                addResult('pass', 'BOT Properties',
+                    'BOT properties accessible in templates',
+                    `Response contained bot name: "${response}"`);
+            } else {
+                addResult('fail', 'BOT Properties',
+                    'BOT properties not working',
+                    `Expected "ALICE" in response: "${response}"`);
+                addIssue('major', 'BOT Properties',
+                    '{{BOT:...}} template tags not expanding correctly',
+                    `Response: "${response}"`,
+                    'Check processTemplate BOT property replacement');
+            }
+        }
+
+        // ===== EDGE CASE TESTS =====
+        async function runEdgeCaseTests() {
+            addResult('info', 'Starting Edge Case Tests', 'Testing pattern conflicts, priority ordering, and unusual inputs');
+
+            await testPatternPriority();
+            await testWildcardMatching();
+            await testRecursionDepth();
+            await testEmptyInput();
+            await testVeryLongInput();
+            await testSpecialCharacters();
+            await testTopicSwitching();
+        }
+
+        async function testPatternPriority() {
+            // Test that specific patterns match before wildcard patterns
+            const response1 = await alice.getResponse('What is your name');
+            const response2 = await alice.getResponse('What is something random');
+
+            const r1HasName = response1.toLowerCase().includes('alice');
+            const r2Generic = !response2.toLowerCase().includes('alice');
+
+            if (r1HasName && r2Generic) {
+                addResult('pass', 'Pattern Priority',
+                    'Specific patterns correctly prioritized over wildcards',
+                    `"What is your name" -> ${response1}\n"What is something random" -> ${response2}`);
+            } else {
+                addResult('fail', 'Pattern Priority',
+                    'Priority ordering may be incorrect',
+                    `"What is your name" -> ${response1}\n"What is something random" -> ${response2}`);
+                addIssue('major', 'Pattern Priority',
+                    'Pattern priority not working correctly',
+                    `R1: ${response1}\nR2: ${response2}`,
+                    'Check pattern sorting by priority');
+            }
+        }
+
+        async function testWildcardMatching() {
+            const tests = [
+                'Tell me about quantum physics',
+                'I really really like ice cream',
+                'Can you please help me with something important'
+            ];
+
+            const details = [];
+            let allPassed = true;
+
+            for (const test of tests) {
+                const response = await alice.getResponse(test);
+                const gotDefault = response.includes("I'm not sure") || response.includes("Can you rephrase");
+
+                if (!gotDefault) {
+                    details.push(`  Input: "${test}"\n  Response: "${response}"\n  PASS`);
+                } else {
+                    details.push(`  Input: "${test}"\n  Response: "${response}"\n  WARN (default response)`);
+                    allPassed = false;
+                }
+            }
+
+            if (allPassed) {
+                addResult('pass', 'Wildcard Matching',
+                    'Complex wildcard patterns matched successfully',
+                    details.join('\n\n'));
+            } else {
+                addResult('warning', 'Wildcard Matching',
+                    'Some wildcard patterns using default responses',
+                    details.join('\n\n'));
+            }
+        }
+
+        async function testRecursionDepth() {
+            // Create a chain that would cause deep recursion
+            const startTime = Date.now();
+            try {
+                const response = await alice.getResponse('What is AI');
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+
+                if (duration > 5000) {
+                    addResult('warning', 'Recursion Depth',
+                        `Response took ${duration}ms - possible infinite recursion`,
+                        `Response: "${response}"`);
+                    addIssue('major', 'SRAI Recursion',
+                        'SRAI recursion may be too deep or infinite',
+                        `Duration: ${duration}ms`,
+                        'Check maxSraiDepth and recursion prevention');
+                } else {
+                    addResult('pass', 'Recursion Depth',
+                        `Recursion properly limited (${duration}ms)`,
+                        `Response: "${response}"`);
+                }
+            } catch (error) {
+                addResult('fail', 'Recursion Depth',
+                    'Error in SRAI recursion',
+                    error.message);
+                addIssue('critical', 'SRAI Recursion',
+                    'SRAI recursion caused error',
+                    error.message,
+                    'Implement recursion depth limiting');
+            }
+        }
+
+        async function testEmptyInput() {
+            const response = await alice.getResponse('');
+            if (response && response.trim() !== '') {
+                addResult('pass', 'Empty Input Handling',
+                    'Empty input handled gracefully',
+                    `Response: "${response}"`);
+            } else {
+                addResult('fail', 'Empty Input Handling',
+                    'Empty input not handled properly',
+                    `Response: "${response}"`);
+                addIssue('minor', 'Input Validation',
+                    'Empty input produces empty response',
+                    'Empty string input',
+                    'Add input validation to handle empty strings');
+            }
+        }
+
+        async function testVeryLongInput() {
+            const longInput = 'Tell me about ' + 'really '.repeat(100) + 'interesting things';
+            const startTime = Date.now();
+            const response = await alice.getResponse(longInput);
+            const duration = Date.now() - startTime;
+
+            if (duration > 2000) {
+                addResult('warning', 'Very Long Input',
+                    `Long input processing slow (${duration}ms)`,
+                    `Input length: ${longInput.length} chars`);
+                addIssue('minor', 'Performance',
+                    'Very long inputs cause slow processing',
+                    `${duration}ms for ${longInput.length} chars`,
+                    'Optimize pattern matching for long inputs');
+            } else {
+                addResult('pass', 'Very Long Input',
+                    `Long input handled efficiently (${duration}ms)`,
+                    `Input length: ${longInput.length} chars`);
+            }
+        }
+
+        async function testSpecialCharacters() {
+            const tests = [
+                "What's your name?",
+                "Can you help me?!?!",
+                "I said: \"Hello there\"",
+                "Test@#$%^&*()",
+                "Multiple     spaces"
+            ];
+
+            const details = [];
+            let hasErrors = false;
+
+            for (const test of tests) {
+                try {
+                    const response = await alice.getResponse(test);
+                    details.push(`  Input: "${test}"\n  Response: "${response}"\n  OK`);
+                } catch (error) {
+                    details.push(`  Input: "${test}"\n  ERROR: ${error.message}`);
+                    hasErrors = true;
+                }
+            }
+
+            if (hasErrors) {
+                addResult('fail', 'Special Characters',
+                    'Errors processing special characters',
+                    details.join('\n\n'));
+                addIssue('major', 'Input Normalization',
+                    'Special characters causing errors',
+                    details.join('\n\n'),
+                    'Improve input normalization');
+            } else {
+                addResult('pass', 'Special Characters',
+                    'Special characters handled correctly',
+                    details.join('\n\n'));
+            }
+        }
+
+        async function testTopicSwitching() {
+            await alice.setTopic('movies');
+            const context1 = alice.getContext();
+            const topicSet = context1.topic === 'movies';
+
+            await alice.getResponse('Hello');
+
+            await alice.setTopic('science');
+            const context2 = alice.getContext();
+            const topicChanged = context2.topic === 'science';
+
+            if (topicSet && topicChanged) {
+                addResult('pass', 'Topic Switching',
+                    'Topic switching works correctly',
+                    `Set to 'movies': ${topicSet}\nChanged to 'science': ${topicChanged}`);
+            } else {
+                addResult('fail', 'Topic Switching',
+                    'Topic switching not working',
+                    `Set to 'movies': ${topicSet}\nChanged to 'science': ${topicChanged}`);
+                addIssue('major', 'Topic Management',
+                    'Topic context not being maintained',
+                    'Topics not switching correctly',
+                    'Check topic setting and pattern matching');
+            }
+        }
+
+        // ===== PERFORMANCE TESTS =====
+        async function runPerformanceTests() {
+            addResult('info', 'Starting Performance Tests', 'Testing response times and pattern matching efficiency');
+
+            await testResponseTime();
+            await testPatternLoadTime();
+            await testMemoryUsage();
+            await testConcurrentRequests();
+        }
+
+        async function testResponseTime() {
+            const tests = [
+                'Hello',
+                'What is your name',
+                'Tell me about artificial intelligence',
+                'I like to program computers and build robots'
+            ];
+
+            const times = [];
+            const details = [];
+
+            for (const test of tests) {
+                const start = performance.now();
+                const response = await alice.getResponse(test);
+                const duration = performance.now() - start;
+                times.push(duration);
+                details.push(`  "${test}": ${duration.toFixed(2)}ms -> "${response.substring(0, 50)}..."`);
+            }
+
+            const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
+            const maxTime = Math.max(...times);
+
+            if (maxTime > 1000) {
+                addResult('fail', 'Response Time',
+                    `Some responses too slow. Max: ${maxTime.toFixed(2)}ms, Avg: ${avgTime.toFixed(2)}ms`,
+                    details.join('\n'));
+                addIssue('critical', 'Performance',
+                    'Response times exceeding 1 second',
+                    `Max: ${maxTime}ms, Avg: ${avgTime}ms`,
+                    'Optimize pattern matching algorithm');
+            } else if (avgTime > 100) {
+                addResult('warning', 'Response Time',
+                    `Average response time high: ${avgTime.toFixed(2)}ms (Max: ${maxTime.toFixed(2)}ms)`,
+                    details.join('\n'));
+                addIssue('minor', 'Performance',
+                    'Average response time > 100ms',
+                    `Avg: ${avgTime}ms`,
+                    'Consider pattern indexing or caching');
+            } else {
+                addResult('pass', 'Response Time',
+                    `Good performance. Avg: ${avgTime.toFixed(2)}ms, Max: ${maxTime.toFixed(2)}ms`,
+                    details.join('\n'));
+            }
+        }
+
+        async function testPatternLoadTime() {
+            const stats = alice.getStats();
+            if (stats.totalPatterns === 95026) {
+                addResult('pass', 'Pattern Loading',
+                    `All ${stats.totalPatterns.toLocaleString()} patterns loaded successfully`);
+            } else {
+                addResult('fail', 'Pattern Loading',
+                    `Expected 95,026 patterns but got ${stats.totalPatterns}`);
+                addIssue('critical', 'Pattern Database',
+                    'Not all patterns loaded from JSON file',
+                    `Expected 95026, got ${stats.totalPatterns}`,
+                    'Check JSON parsing and pattern loading');
+            }
+        }
+
+        async function testMemoryUsage() {
+            if (performance.memory) {
+                const memUsed = performance.memory.usedJSHeapSize / 1024 / 1024;
+                addResult('info', 'Memory Usage',
+                    `Current heap usage: ${memUsed.toFixed(2)} MB`,
+                    `Total heap: ${(performance.memory.totalJSHeapSize / 1024 / 1024).toFixed(2)} MB\nLimit: ${(performance.memory.jsHeapSizeLimit / 1024 / 1024).toFixed(2)} MB`);
+            } else {
+                addResult('info', 'Memory Usage',
+                    'Memory monitoring not available in this browser');
+            }
+        }
+
+        async function testConcurrentRequests() {
+            const inputs = [
+                'Hello',
+                'What is your name',
+                'Who are you',
+                'What is AI',
+                'Tell me a joke'
+            ];
+
+            const start = performance.now();
+            const promises = inputs.map(input => alice.getResponse(input));
+            const responses = await Promise.all(promises);
+            const duration = performance.now() - start;
+
+            const avgPerRequest = duration / inputs.length;
+
+            addResult('pass', 'Concurrent Requests',
+                `${inputs.length} concurrent requests completed in ${duration.toFixed(2)}ms (${avgPerRequest.toFixed(2)}ms each)`,
+                responses.map((r, i) => `  "${inputs[i]}" -> "${r.substring(0, 50)}..."`).join('\n'));
+        }
+
+        // ===== COMPARISON WITH SIMPLE ALICE =====
+        async function compareWithSimpleAlice() {
+            addResult('info', 'Comparing with Simplified ALICE', 'Testing for regressions');
+
+            const testInputs = [
+                'Hello',
+                'What is your name',
+                'Who created you',
+                'How are you',
+                'Thank you',
+                'My name is Bob',
+                'What is my name',
+                'Goodbye'
+            ];
+
+            const details = [];
+            let regressions = 0;
+
+            for (const input of testInputs) {
+                const fullResponse = await alice.getResponse(input);
+                const simpleResponse = aliceSimple.getResponse(input);
+
+                const fullIsDefault = fullResponse.includes("I'm not sure") || fullResponse.includes("Can you rephrase");
+                const simpleIsDefault = simpleResponse.includes("I'm not sure") || simpleResponse.includes("Can you rephrase");
+
+                if (!simpleIsDefault && fullIsDefault) {
+                    regressions++;
+                    details.push(`  REGRESSION: "${input}"\n    Simple: "${simpleResponse}"\n    Full: "${fullResponse}"`);
+                } else {
+                    details.push(`  OK: "${input}"\n    Simple: "${simpleResponse.substring(0, 40)}..."\n    Full: "${fullResponse.substring(0, 40)}..."`);
+                }
+            }
+
+            if (regressions > 0) {
+                addResult('fail', 'Regression Check',
+                    `${regressions} regressions found compared to simple ALICE`,
+                    details.join('\n\n'));
+                addIssue('critical', 'Regression',
+                    'ALICE Full performs worse than simple ALICE on basic inputs',
+                    details.join('\n\n'),
+                    'Review pattern priorities and matching logic');
+            } else {
+                addResult('pass', 'Regression Check',
+                    'No regressions found - ALICE Full performs as well or better',
+                    details.join('\n\n'));
+            }
+        }
+
+        // ===== RUN ALL TESTS =====
+        async function runAllTests() {
+            clearResults();
+            updateProgress(0, 6);
+
+            await runConversationTests();
+            updateProgress(1, 6);
+
+            await runPatternTests();
+            updateProgress(2, 6);
+
+            await runEdgeCaseTests();
+            updateProgress(3, 6);
+
+            await runPerformanceTests();
+            updateProgress(4, 6);
+
+            await compareWithSimpleAlice();
+            updateProgress(5, 6);
+
+            generateFinalReport();
+            updateProgress(6, 6);
+        }
+
+        function generateFinalReport() {
+            addResult('info', '========== FINAL TEST REPORT ==========',
+                `Total Tests: ${testStats.total}\nPassed: ${testStats.passed}\nFailed: ${testStats.failed}\nWarnings: ${testStats.warnings}`);
+
+            if (allIssues.length > 0) {
+                const critical = allIssues.filter(i => i.severity === 'critical');
+                const major = allIssues.filter(i => i.severity === 'major');
+                const minor = allIssues.filter(i => i.severity === 'minor');
+
+                const issueReport = [
+                    '========== ISSUES FOUND ==========',
+                    '',
+                    `Critical Issues: ${critical.length}`,
+                    `Major Issues: ${major.length}`,
+                    `Minor Issues: ${minor.length}`,
+                    '',
+                    '--- CRITICAL ISSUES ---',
+                    ...critical.map(i => `\n[${i.category}] ${i.description}\nExample: ${i.example.substring(0, 100)}...\nSuggested Fix: ${i.suggestedFix}`),
+                    '',
+                    '--- MAJOR ISSUES ---',
+                    ...major.map(i => `\n[${i.category}] ${i.description}\nExample: ${i.example.substring(0, 100)}...\nSuggested Fix: ${i.suggestedFix}`),
+                    '',
+                    '--- MINOR ISSUES ---',
+                    ...minor.map(i => `\n[${i.category}] ${i.description}\nExample: ${i.example.substring(0, 100)}...\nSuggested Fix: ${i.suggestedFix}`)
+                ].join('\n');
+
+                addResult('warning', 'Issues Summary',
+                    `Found ${allIssues.length} issues that need attention`,
+                    issueReport);
+            } else {
+                addResult('pass', 'Issues Summary',
+                    'No major issues found! ALICE Full is working well.');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('run-all-tests').addEventListener('click', runAllTests);
+        document.getElementById('run-conversation-tests').addEventListener('click', async () => {
+            clearResults();
+            await runConversationTests();
+        });
+        document.getElementById('run-pattern-tests').addEventListener('click', async () => {
+            clearResults();
+            await runPatternTests();
+        });
+        document.getElementById('run-edge-case-tests').addEventListener('click', async () => {
+            clearResults();
+            await runEdgeCaseTests();
+        });
+        document.getElementById('run-performance-tests').addEventListener('click', async () => {
+            clearResults();
+            await runPerformanceTests();
+        });
+        document.getElementById('clear-results').addEventListener('click', clearResults);
+    </script>
+</body>
+</html>

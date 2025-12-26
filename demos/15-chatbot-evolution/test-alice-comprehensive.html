@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALICE Comprehensive Bug Testing Suite</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        h1 {
+            color: #00ff00;
+            border-bottom: 3px solid #00ff00;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            background: #0a0a0a;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-section h2 {
+            color: #ffff00;
+            margin-top: 0;
+        }
+        .test-case {
+            background: #1a1a1a;
+            border-left: 4px solid #666;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .test-case.pass {
+            border-left-color: #00ff00;
+        }
+        .test-case.fail {
+            border-left-color: #ff0000;
+        }
+        .exchange {
+            margin: 10px 0;
+            padding: 8px;
+            background: #000;
+            border-radius: 4px;
+        }
+        .user-msg {
+            color: #00ffff;
+        }
+        .bot-msg {
+            color: #00ff00;
+            margin-left: 20px;
+        }
+        .context-info {
+            color: #ffff00;
+            font-size: 0.9em;
+            margin-left: 20px;
+            font-style: italic;
+        }
+        .error {
+            color: #ff0000;
+            font-weight: bold;
+        }
+        .warning {
+            color: #ff8800;
+            font-weight: bold;
+        }
+        .success {
+            color: #00ff00;
+            font-weight: bold;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-badge.pass {
+            background: #00ff00;
+            color: #000;
+        }
+        .status-badge.fail {
+            background: #ff0000;
+            color: #fff;
+        }
+        .status-badge.warn {
+            background: #ff8800;
+            color: #000;
+        }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        .summary {
+            background: #004400;
+            border: 3px solid #00ff00;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .summary h2 {
+            margin-top: 0;
+            color: #00ff00;
+        }
+        .bug-report {
+            background: #440000;
+            border: 2px solid #ff0000;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .bug-report h3 {
+            margin-top: 0;
+            color: #ff0000;
+        }
+        .severity-critical {
+            background: #660000;
+        }
+        .severity-major {
+            background: #664400;
+        }
+        .severity-minor {
+            background: #444400;
+        }
+    </style>
+</head>
+<body>
+    <h1>ALICE Comprehensive Bug Testing Suite</h1>
+    <p style="color: #ffff00;">Testing AIML features: wildcards, SRAI, context, topics, pattern priority, edge cases</p>
+
+    <button onclick="runAllTests()">Run All Tests</button>
+    <button onclick="runLongConversationTest()">Run Long Conversation (20 exchanges)</button>
+    <button onclick="runEdgeCaseTests()">Run Edge Case Tests</button>
+
+    <div id="summary" class="summary" style="display: none;">
+        <h2>Test Summary</h2>
+        <div id="summary-content"></div>
+    </div>
+
+    <div id="bug-report" class="summary" style="display: none;">
+        <h2>Bug Report</h2>
+        <div id="bug-list"></div>
+    </div>
+
+    <div id="test-results"></div>
+
+    <script type="module">
+        import { Alice } from './js/alice.js';
+
+        let alice;
+        let testResults = {
+            total: 0,
+            passed: 0,
+            failed: 0,
+            warnings: 0
+        };
+        let bugs = [];
+
+        function reportBug(severity, title, description, testCase) {
+            bugs.push({
+                severity,
+                title,
+                description,
+                testCase
+            });
+        }
+
+        function addTestSection(title, description) {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = `<h2>${title}</h2><p>${description}</p>`;
+            document.getElementById('test-results').appendChild(section);
+            return section;
+        }
+
+        function addTestCase(section, testName, exchanges, validation) {
+            const testCase = document.createElement('div');
+            testCase.className = 'test-case';
+
+            const header = document.createElement('h3');
+            header.innerHTML = testName;
+            testCase.appendChild(header);
+
+            let allPass = true;
+            let hasWarning = false;
+
+            exchanges.forEach(ex => {
+                const exchangeDiv = document.createElement('div');
+                exchangeDiv.className = 'exchange';
+
+                const userMsg = document.createElement('div');
+                userMsg.className = 'user-msg';
+                userMsg.textContent = `USER: ${ex.input}`;
+                exchangeDiv.appendChild(userMsg);
+
+                const response = alice.getResponse(ex.input);
+                const context = alice.getContext();
+
+                const botMsg = document.createElement('div');
+                botMsg.className = 'bot-msg';
+                botMsg.textContent = `ALICE: ${response}`;
+                exchangeDiv.appendChild(botMsg);
+
+                const contextInfo = document.createElement('div');
+                contextInfo.className = 'context-info';
+                contextInfo.textContent = `[Context - userName: "${context.userName}", topic: "${context.topic}", that: "${context.that.substring(0, 50)}..."]`;
+                exchangeDiv.appendChild(contextInfo);
+
+                if (ex.validate) {
+                    const result = ex.validate(response, context);
+                    if (result.pass) {
+                        const successMsg = document.createElement('div');
+                        successMsg.className = 'success';
+                        successMsg.textContent = `✓ ${result.message || 'Validation passed'}`;
+                        exchangeDiv.appendChild(successMsg);
+                    } else if (result.warning) {
+                        const warnMsg = document.createElement('div');
+                        warnMsg.className = 'warning';
+                        warnMsg.textContent = `⚠ ${result.message}`;
+                        exchangeDiv.appendChild(warnMsg);
+                        hasWarning = true;
+                    } else {
+                        const errorMsg = document.createElement('div');
+                        errorMsg.className = 'error';
+                        errorMsg.textContent = `✗ ${result.message}`;
+                        exchangeDiv.appendChild(errorMsg);
+                        allPass = false;
+
+                        if (result.bug) {
+                            reportBug(result.bug.severity, result.bug.title, result.bug.description, testName);
+                        }
+                    }
+                }
+
+                testCase.appendChild(exchangeDiv);
+            });
+
+            if (validation) {
+                const finalResult = validation(alice.getContext());
+                if (!finalResult.pass) {
+                    allPass = false;
+                    if (finalResult.bug) {
+                        reportBug(finalResult.bug.severity, finalResult.bug.title, finalResult.bug.description, testName);
+                    }
+                }
+            }
+
+            testResults.total++;
+            if (allPass && !hasWarning) {
+                testResults.passed++;
+                testCase.className += ' pass';
+                header.innerHTML += '<span class="status-badge pass">PASS</span>';
+            } else if (allPass && hasWarning) {
+                testResults.warnings++;
+                testCase.className += ' pass';
+                header.innerHTML += '<span class="status-badge warn">PASS (with warnings)</span>';
+            } else {
+                testResults.failed++;
+                testCase.className += ' fail';
+                header.innerHTML += '<span class="status-badge fail">FAIL</span>';
+            }
+
+            section.appendChild(testCase);
+        }
+
+        window.runAllTests = function() {
+            alice = new Alice();
+            testResults = { total: 0, passed: 0, failed: 0, warnings: 0 };
+            bugs = [];
+            document.getElementById('test-results').innerHTML = '';
+
+            testBasicIdentity();
+            testNameLearningAndRecall();
+            testWildcardMatching();
+            testSRAIRecursion();
+            testContextAndTopic();
+            testThatVariable();
+            testPatternPriority();
+            testEdgeCases();
+
+            showSummary();
+        };
+
+        function testBasicIdentity() {
+            const section = addTestSection('1. Basic Identity', 'Testing basic identity patterns');
+
+            addTestCase(section, 'Test 1.1: Name inquiry', [
+                {
+                    input: 'What is your name?',
+                    validate: (r) => {
+                        if (r.toLowerCase().includes('alice')) {
+                            return { pass: true, message: 'Correctly identifies as ALICE' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'Failed to mention ALICE in name response',
+                            bug: {
+                                severity: 'critical',
+                                title: 'Name Pattern Not Working',
+                                description: 'ALICE does not respond with her name to "What is your name?"'
+                            }
+                        };
+                    }
+                }
+            ]);
+
+            addTestCase(section, 'Test 1.2: SRAI name redirect', [
+                {
+                    input: "What's your name?",
+                    validate: (r) => {
+                        if (r.toLowerCase().includes('alice')) {
+                            return { pass: true, message: 'SRAI correctly redirects to main name pattern' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'SRAI redirection failed for name inquiry',
+                            bug: {
+                                severity: 'major',
+                                title: 'SRAI Not Working for Name',
+                                description: 'Contractions like "What\'s your name?" should use SRAI to redirect to "What is your name?"'
+                            }
+                        };
+                    }
+                }
+            ]);
+        }
+
+        function testNameLearningAndRecall() {
+            const section = addTestSection('2. Name Learning & Recall', 'Testing context persistence across exchanges');
+
+            addTestCase(section, 'Test 2.1: Name learning (lowercase)', [
+                {
+                    input: 'My name is alice',
+                    validate: (r, c) => {
+                        if (c.userName && c.userName.length > 0) {
+                            if (c.userName === 'Alice' || c.userName === 'alice') {
+                                return { pass: true, message: `Name stored as: ${c.userName}` };
+                            }
+                            return {
+                                pass: false,
+                                message: `Name capitalization issue. Expected 'Alice', got '${c.userName}'`,
+                                bug: {
+                                    severity: 'minor',
+                                    title: 'Name Capitalization Inconsistent',
+                                    description: `Name should be properly capitalized. Input: "alice", stored as: "${c.userName}"`
+                                }
+                            };
+                        }
+                        return {
+                            pass: false,
+                            message: 'Failed to store userName in context',
+                            bug: {
+                                severity: 'critical',
+                                title: 'Name Not Stored in Context',
+                                description: 'When user says "My name is X", userName should be stored in context'
+                            }
+                        };
+                    }
+                },
+                {
+                    input: 'What is my name?',
+                    validate: (r, c) => {
+                        if (r.toLowerCase().includes('alice')) {
+                            return { pass: true, message: 'Successfully recalled name' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'Failed to recall stored name',
+                            bug: {
+                                severity: 'critical',
+                                title: 'Name Recall Failed',
+                                description: 'After storing name, ALICE should recall it when asked "What is my name?"'
+                            }
+                        };
+                    }
+                }
+            ]);
+
+            alice = new Alice(); // Reset for next test
+
+            addTestCase(section, 'Test 2.2: Name with "call me"', [
+                {
+                    input: 'Call me Bob',
+                    validate: (r, c) => {
+                        if (c.userName === 'Bob') {
+                            return { pass: true, message: 'Name stored correctly' };
+                        }
+                        return {
+                            pass: false,
+                            message: `Expected userName='Bob', got '${c.userName}'`,
+                            bug: {
+                                severity: 'major',
+                                title: 'Call Me Pattern Not Working',
+                                description: 'Pattern "call me X" should store name in context'
+                            }
+                        };
+                    }
+                },
+                {
+                    input: 'Do you know my name?',
+                    validate: (r) => {
+                        if (r.toLowerCase().includes('bob')) {
+                            return { pass: true, message: 'Successfully recalled name from "call me" pattern' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'Failed to recall name stored via "call me"'
+                        };
+                    }
+                }
+            ]);
+        }
+
+        function testWildcardMatching() {
+            alice = new Alice();
+            const section = addTestSection('3. Wildcard Pattern Matching', 'Testing * wildcard capture');
+
+            addTestCase(section, 'Test 3.1: Single wildcard capture', [
+                {
+                    input: 'I like chocolate ice cream',
+                    validate: (r) => {
+                        if (r.toLowerCase().includes('chocolate ice cream')) {
+                            return { pass: true, message: 'Wildcard correctly captured "chocolate ice cream"' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'Wildcard failed to capture full object',
+                            bug: {
+                                severity: 'major',
+                                title: 'Wildcard Capture Incomplete',
+                                description: 'Pattern "I like *" should capture entire remaining string'
+                            }
+                        };
+                    }
+                }
+            ]);
+
+            addTestCase(section, 'Test 3.2: Wildcard with question words', [
+                {
+                    input: 'What is artificial intelligence?',
+                    validate: (r) => {
+                        if (r.toLowerCase().includes('artificial intelligence')) {
+                            return { pass: true, message: 'Wildcard in "what is" pattern works' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'Failed to capture topic in "what is X" pattern'
+                        };
+                    }
+                }
+            ]);
+
+            addTestCase(section, 'Test 3.3: Very long input with wildcard', [
+                {
+                    input: 'I like programming and coding and software development and computer science and algorithms',
+                    validate: (r) => {
+                        const hasContent = r.toLowerCase().includes('programming') ||
+                                         r.toLowerCase().includes('coding') ||
+                                         r.toLowerCase().includes('algorithms');
+                        if (hasContent) {
+                            return { pass: true, message: 'Long wildcard capture works' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'Long wildcard input not properly captured',
+                            bug: {
+                                severity: 'minor',
+                                title: 'Long Input Wildcard Issue',
+                                description: 'Very long inputs with wildcards may not be fully captured'
+                            }
+                        };
+                    }
+                }
+            ]);
+        }
+
+        function testSRAIRecursion() {
+            alice = new Alice();
+            const section = addTestSection('4. SRAI Recursive Patterns', 'Testing symbolic reduction/recursion');
+
+            addTestCase(section, 'Test 4.1: SRAI basic redirect', [
+                {
+                    input: 'how r u',
+                    validate: (r) => {
+                        // Should redirect to "how are you" pattern
+                        if (r.length > 0 && !r.includes('not sure')) {
+                            return { pass: true, message: 'SRAI redirect works for "how r u"' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'SRAI failed to redirect shorthand to full pattern',
+                            bug: {
+                                severity: 'major',
+                                title: 'SRAI Redirection Failed',
+                                description: 'Shorthand "how r u" should use SRAI to redirect to "how are you"'
+                            }
+                        };
+                    }
+                }
+            ]);
+
+            addTestCase(section, 'Test 4.2: SRAI depth limit (prevent infinite loop)', [
+                {
+                    input: 'thx',
+                    validate: (r) => {
+                        // Should redirect to "thank you" but not loop infinitely
+                        if (!r.toLowerCase().includes('not sure') && r.length > 0) {
+                            return { pass: true, message: 'SRAI works and doesn\'t loop infinitely' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'SRAI may have depth issue or not redirecting'
+                        };
+                    }
+                }
+            ]);
+        }
+
+        function testContextAndTopic() {
+            alice = new Alice();
+            const section = addTestSection('5. Context & Topic Tracking', 'Testing topic changes and persistence');
+
+            addTestCase(section, 'Test 5.1: Topic setting', [
+                {
+                    input: "Let's talk about computers",
+                    validate: (r, c) => {
+                        if (c.topic === 'computers' || c.topic.includes('computer')) {
+                            return { pass: true, message: `Topic set to: ${c.topic}` };
+                        }
+                        return {
+                            pass: false,
+                            message: `Topic not set correctly. Expected 'computers', got '${c.topic}'`,
+                            bug: {
+                                severity: 'major',
+                                title: 'Topic Not Setting',
+                                description: 'Pattern "let\'s talk about X" should set topic to X'
+                            }
+                        };
+                    }
+                }
+            ]);
+
+            addTestCase(section, 'Test 5.2: Emotion topic setting', [
+                {
+                    input: 'I feel sad',
+                    validate: (r, c) => {
+                        if (c.topic === 'emotions') {
+                            return { pass: true, message: 'Emotion topic set correctly' };
+                        }
+                        return {
+                            pass: false,
+                            message: `Topic should be 'emotions', got '${c.topic}'`,
+                            bug: {
+                                severity: 'minor',
+                                title: 'Emotion Topic Not Setting',
+                                description: 'Emotional statements should set topic to "emotions"'
+                            }
+                        };
+                    }
+                }
+            ]);
+        }
+
+        function testThatVariable() {
+            alice = new Alice();
+            const section = addTestSection('6. "That" Variable (Last Response)', 'Testing context.that tracking');
+
+            addTestCase(section, 'Test 6.1: That variable update', [
+                {
+                    input: 'How are you?',
+                    validate: (r, c) => {
+                        if (c.that === r) {
+                            return { pass: true, message: '"that" variable correctly stores last response' };
+                        }
+                        return {
+                            pass: false,
+                            message: '"that" variable not updating',
+                            bug: {
+                                severity: 'critical',
+                                title: 'That Variable Not Updating',
+                                description: 'context.that should store the last bot response'
+                            }
+                        };
+                    }
+                },
+                {
+                    input: 'I am fine',
+                    validate: (r, c) => {
+                        // Should match the "that" constraint pattern
+                        const previousResponse = c.that;
+                        if (r.toLowerCase().includes('glad') || r.toLowerCase().includes('good')) {
+                            return { pass: true, message: 'That constraint pattern matched' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'That constraint pattern not working',
+                            warning: true
+                        };
+                    }
+                }
+            ]);
+        }
+
+        function testPatternPriority() {
+            alice = new Alice();
+            const section = addTestSection('7. Pattern Priority', 'Testing priority: _ (high), exact, * (low)');
+
+            addTestCase(section, 'Test 7.1: Underscore vs exact match', [
+                {
+                    input: 'my name is _',
+                    validate: (r, c) => {
+                        // Priority 3 pattern should match over priority 2
+                        // But this is tricky - the pattern is looking for ACTUAL underscore or treating it as wildcard?
+                        return {
+                            pass: true,
+                            warning: true,
+                            message: 'Pattern priority complex - need to verify exact vs wildcard behavior'
+                        };
+                    }
+                }
+            ]);
+        }
+
+        function testEdgeCases() {
+            alice = new Alice();
+            const section = addTestSection('8. Edge Cases', 'Testing boundary conditions and error cases');
+
+            addTestCase(section, 'Test 8.1: Empty input', [
+                {
+                    input: '',
+                    validate: (r) => {
+                        if (r.length > 0) {
+                            return { pass: true, message: 'Handles empty input gracefully' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'Empty input handling issue',
+                            bug: {
+                                severity: 'minor',
+                                title: 'Empty Input Not Handled',
+                                description: 'Empty string should return a default response'
+                            }
+                        };
+                    }
+                }
+            ]);
+
+            addTestCase(section, 'Test 8.2: Punctuation handling', [
+                {
+                    input: 'What is your name???',
+                    validate: (r) => {
+                        if (r.toLowerCase().includes('alice')) {
+                            return { pass: true, message: 'Multiple punctuation marks handled' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'Punctuation normalization issue'
+                        };
+                    }
+                }
+            ]);
+
+            addTestCase(section, 'Test 8.3: Case sensitivity', [
+                {
+                    input: 'WHAT IS YOUR NAME',
+                    validate: (r) => {
+                        if (r.toLowerCase().includes('alice')) {
+                            return { pass: true, message: 'Case insensitivity works' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'Case sensitivity issue',
+                            bug: {
+                                severity: 'critical',
+                                title: 'Case Sensitivity Problem',
+                                description: 'AIML should be case-insensitive'
+                            }
+                        };
+                    }
+                }
+            ]);
+
+            addTestCase(section, 'Test 8.4: Extra whitespace', [
+                {
+                    input: '  hello  ',
+                    validate: (r) => {
+                        if (r.toLowerCase().includes('hello') || r.toLowerCase().includes('hi')) {
+                            return { pass: true, message: 'Whitespace normalization works' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'Whitespace handling issue'
+                        };
+                    }
+                }
+            ]);
+        }
+
+        window.runLongConversationTest = function() {
+            alice = new Alice();
+            testResults = { total: 0, passed: 0, failed: 0, warnings: 0 };
+            bugs = [];
+            document.getElementById('test-results').innerHTML = '';
+
+            const section = addTestSection('Long Conversation Test (20 exchanges)',
+                                          'Testing context persistence across extended conversation');
+
+            const conversation = [
+                { input: 'Hello', expected: 'greeting' },
+                { input: 'My name is Sarah', expected: 'name stored' },
+                { input: 'What is my name?', expected: 'recalls Sarah' },
+                { input: 'How are you?', expected: 'positive response' },
+                { input: 'I am fine', expected: 'glad response' },
+                { input: 'What is your name?', expected: 'ALICE' },
+                { input: 'Who created you?', expected: 'Richard Wallace' },
+                { input: 'What does AIML stand for?', expected: 'markup language' },
+                { input: 'I like pizza', expected: 'mentions pizza' },
+                { input: 'Can you help me?', expected: 'help response' },
+                { input: "Let's talk about computers", expected: 'topic set' },
+                { input: 'Tell me about programming', expected: 'programming mentioned' },
+                { input: 'I feel happy', expected: 'emotions topic' },
+                { input: 'What time is it?', expected: 'time provided' },
+                { input: 'Tell me a joke', expected: 'joke response' },
+                { input: 'Thank you', expected: 'you\'re welcome' },
+                { input: 'Do you know my name?', expected: 'recalls Sarah' },
+                { input: 'Are you a bot?', expected: 'confirms bot' },
+                { input: 'What is the meaning of life?', expected: 'philosophical response' },
+                { input: 'Goodbye', expected: 'farewell' }
+            ];
+
+            const exchanges = conversation.map((ex, idx) => ({
+                input: ex.input,
+                validate: (r, c) => {
+                    // Basic validation - response should not be error message
+                    if (r.toLowerCase().includes('not sure') || r.toLowerCase().includes('rephrase')) {
+                        return {
+                            pass: false,
+                            message: `Exchange ${idx + 1}: Got fallback response, may indicate pattern matching issue`,
+                            bug: {
+                                severity: 'minor',
+                                title: `Fallback Response in Long Conversation (Exchange ${idx + 1})`,
+                                description: `Input: "${ex.input}" resulted in fallback response: "${r}"`
+                            }
+                        };
+                    }
+
+                    // Check specific expectations
+                    let specificCheck = true;
+                    let checkMessage = '';
+
+                    switch(ex.expected) {
+                        case 'recalls Sarah':
+                            specificCheck = r.toLowerCase().includes('sarah');
+                            checkMessage = specificCheck ? 'Correctly recalls Sarah' : 'Failed to recall Sarah';
+                            break;
+                        case 'ALICE':
+                            specificCheck = r.toLowerCase().includes('alice');
+                            checkMessage = specificCheck ? 'Mentions ALICE' : 'Failed to mention name';
+                            break;
+                        case 'Richard Wallace':
+                            specificCheck = r.toLowerCase().includes('wallace');
+                            checkMessage = specificCheck ? 'Mentions creator' : 'Failed to mention creator';
+                            break;
+                        default:
+                            checkMessage = 'Got valid response';
+                    }
+
+                    return {
+                        pass: specificCheck,
+                        message: `Exchange ${idx + 1}: ${checkMessage}`
+                    };
+                }
+            }));
+
+            addTestCase(section, 'Complete 20-exchange conversation', exchanges);
+            showSummary();
+        };
+
+        window.runEdgeCaseTests = function() {
+            alice = new Alice();
+            testResults = { total: 0, passed: 0, failed: 0, warnings: 0 };
+            bugs = [];
+            document.getElementById('test-results').innerHTML = '';
+
+            const section = addTestSection('Extreme Edge Cases', 'Testing unusual inputs and boundary conditions');
+
+            // Test multiple wildcards
+            addTestCase(section, 'Multiple wildcards (not supported in this implementation)', [
+                {
+                    input: 'I like dogs and cats',
+                    validate: (r) => ({
+                        pass: true,
+                        warning: true,
+                        message: 'Multiple wildcards in single pattern not tested (implementation limitation)'
+                    })
+                }
+            ]);
+
+            // Test SRAI infinite loop prevention
+            alice = new Alice();
+            addTestCase(section, 'SRAI depth limit (should not crash)', [
+                {
+                    input: 'thx',
+                    validate: (r) => {
+                        if (r && r.length > 0) {
+                            return { pass: true, message: 'SRAI depth limit prevents infinite loops' };
+                        }
+                        return {
+                            pass: false,
+                            message: 'SRAI may have crashed or returned empty',
+                            bug: {
+                                severity: 'critical',
+                                title: 'SRAI Infinite Loop or Crash',
+                                description: 'SRAI should have depth limit to prevent infinite recursion'
+                            }
+                        };
+                    }
+                }
+            ]);
+
+            // Test context reset
+            alice = new Alice();
+            addTestCase(section, 'Context isolation between users (simulated)', [
+                {
+                    input: 'My name is User1',
+                    validate: (r, c) => ({ pass: c.userName === 'User1', message: 'User1 name stored' })
+                }
+            ]);
+
+            showSummary();
+        };
+
+        function showSummary() {
+            const summaryDiv = document.getElementById('summary');
+            const summaryContent = document.getElementById('summary-content');
+            summaryDiv.style.display = 'block';
+
+            const percentage = testResults.total > 0 ?
+                Math.round((testResults.passed / testResults.total) * 100) : 0;
+
+            summaryContent.innerHTML = `
+                <p><strong>Total Tests:</strong> ${testResults.total}</p>
+                <p class="success"><strong>Passed:</strong> ${testResults.passed}</p>
+                <p class="error"><strong>Failed:</strong> ${testResults.failed}</p>
+                <p class="warning"><strong>Warnings:</strong> ${testResults.warnings}</p>
+                <p><strong>Success Rate:</strong> ${percentage}%</p>
+            `;
+
+            // Show bug report
+            if (bugs.length > 0) {
+                const bugReportDiv = document.getElementById('bug-report');
+                const bugList = document.getElementById('bug-list');
+                bugReportDiv.style.display = 'block';
+
+                bugList.innerHTML = '';
+                bugs.forEach((bug, idx) => {
+                    const bugDiv = document.createElement('div');
+                    bugDiv.className = `bug-report severity-${bug.severity}`;
+                    bugDiv.innerHTML = `
+                        <h3>Bug #${idx + 1}: ${bug.title}</h3>
+                        <p><strong>Severity:</strong> <span style="color: ${
+                            bug.severity === 'critical' ? '#ff0000' :
+                            bug.severity === 'major' ? '#ff8800' : '#ffff00'
+                        }">${bug.severity.toUpperCase()}</span></p>
+                        <p><strong>Test Case:</strong> ${bug.testCase}</p>
+                        <p><strong>Description:</strong> ${bug.description}</p>
+                    `;
+                    bugList.appendChild(bugDiv);
+                });
+            }
+
+            summaryDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                runAllTests();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

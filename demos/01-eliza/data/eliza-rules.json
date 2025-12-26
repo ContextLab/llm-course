@@ -51,11 +51,13 @@
       "need"
     ],
     "sad": [
+      "sad",
       "unhappy",
       "depressed",
       "sick"
     ],
     "happy": [
+      "happy",
       "elated",
       "glad",
       "better"
@@ -64,6 +66,7 @@
       "can't"
     ],
     "everyone": [
+      "everyone",
       "everybody",
       "nobody",
       "noone"
@@ -89,30 +92,6 @@
     "That will be $200."
   ],
   "rules": [
-    {
-      "keyword": "sorry",
-      "patterns": [
-        {
-          "pattern": "*",
-          "responses": [
-            "Please don't apologise.",
-            "Apologies are not necessary.",
-            "I've told you that apologies are not required."
-          ]
-        }
-      ]
-    },
-    {
-      "keyword": "apologise",
-      "patterns": [
-        {
-          "pattern": "*",
-          "responses": [
-            "goto sorry"
-          ]
-        }
-      ]
-    },
     {
       "keyword": "remember",
       "patterns": [
@@ -794,6 +773,30 @@
         }
       ],
       "rank": 10
+    },
+    {
+      "keyword": "sorry",
+      "patterns": [
+        {
+          "pattern": "*",
+          "responses": [
+            "Please don't apologise.",
+            "Apologies are not necessary.",
+            "I've told you that apologies are not required."
+          ]
+        }
+      ]
+    },
+    {
+      "keyword": "apologise",
+      "patterns": [
+        {
+          "pattern": "*",
+          "responses": [
+            "goto sorry"
+          ]
+        }
+      ]
     }
   ],
   "fallbacks": [

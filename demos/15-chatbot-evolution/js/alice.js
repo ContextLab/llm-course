@@ -11,6 +11,7 @@ export class Alice {
     constructor() {
         this.context = {
             that: "",  // Bot's last response (for <that> matching)
+            thatInput: "",  // User's last input pattern matched (for more reliable <that> matching)
             topic: "general",  // Current conversation topic
             userName: "",
             botName: "A.L.I.C.E.",
@@ -26,7 +27,7 @@ export class Alice {
         return [
             // === HIGH PRIORITY PATTERNS (underscore wildcard _) ===
             {
-                pattern: /^my name is _$/i,
+                pattern: /^my name is (.+)$/i,
                 template: (match) => {
                     this.context.userName = match[1];
                     return `Nice to meet you, ${match[1]}!`;
@@ -112,7 +113,8 @@ export class Alice {
                 pattern: /^(please|could you|would you)(.*)$/i,
                 template: (match) => {
                     this.context.topic = "request";
-                    return `Of course, I'll do my best to help with ${match[2] || "your request"}.`;
+                    const transformed = this.transformPerson(match[2] || "your request");
+                    return `Of course, I'll do my best to help with ${transformed}.`;
                 },
                 priority: 1
             },
@@ -639,8 +641,8 @@ export class Alice {
                 continue;
             }
 
-            // Check that constraint (context from bot's last response)
-            if (that && !that.test(this.context.that)) {
+            // Check that constraint (context from user's last input)
+            if (that && !that.test(this.context.thatInput)) {
                 continue;
             }
 
@@ -650,6 +652,7 @@ export class Alice {
 
                 // Update context
                 this.context.that = response;
+                this.context.thatInput = normalizedInput;
 
                 return response;
             }
@@ -659,6 +662,23 @@ export class Alice {
         const fallback = "I'm not sure I understand. Can you rephrase that?";
         this.context.that = fallback;
         return fallback;
+    }
+
+    /**
+     * Transform pronouns for person substitution (me->you, my->your, etc.)
+     */
+    transformPerson(text) {
+        if (!text) return text;
+
+        // Word boundary substitutions for pronouns
+        return text
+            .replace(/\bI\b/gi, 'you')
+            .replace(/\bme\b/gi, 'you')
+            .replace(/\bmy\b/gi, 'your')
+            .replace(/\byour\b/gi, 'my')
+            .replace(/\byou\b/gi, 'me')
+            .replace(/\bmyself\b/gi, 'yourself')
+            .replace(/\byourself\b/gi, 'myself');
     }
 
     /**
