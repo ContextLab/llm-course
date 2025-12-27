@@ -51,13 +51,11 @@
       "need"
     ],
     "sad": [
-      "sad",
       "unhappy",
       "depressed",
       "sick"
     ],
     "happy": [
-      "happy",
       "elated",
       "glad",
       "better"
@@ -66,7 +64,6 @@
       "can't"
     ],
     "everyone": [
-      "everyone",
       "everybody",
       "nobody",
       "noone"
@@ -92,6 +89,30 @@
     "That will be $200."
   ],
   "rules": [
+    {
+      "keyword": "sorry",
+      "patterns": [
+        {
+          "pattern": "*",
+          "responses": [
+            "Please don't apologise.",
+            "Apologies are not necessary.",
+            "I've told you that apologies are not required."
+          ]
+        }
+      ]
+    },
+    {
+      "keyword": "apologise",
+      "patterns": [
+        {
+          "pattern": "*",
+          "responses": [
+            "goto sorry"
+          ]
+        }
+      ]
+    },
     {
       "keyword": "remember",
       "patterns": [
@@ -379,7 +400,7 @@
       "keyword": "i",
       "patterns": [
         {
-          "pattern": "* i *@desire*",
+          "pattern": "* i @desire *",
           "responses": [
             "What would it mean to you if you got (3) ?",
             "Why do you want (3) ?",
@@ -390,7 +411,7 @@
           ]
         },
         {
-          "pattern": "* i am*@sad*",
+          "pattern": "* i am * @sad *",
           "responses": [
             "I am sorry to hear that you are (3) .",
             "Do you think that coming here will help you not to be (3) ?",
@@ -399,7 +420,7 @@
           ]
         },
         {
-          "pattern": "* i am*@happy*",
+          "pattern": "* i am * @happy *",
           "responses": [
             "How have I helped you to be (3) ?",
             "Has your treatment made you (3) ?",
@@ -414,7 +435,7 @@
           ]
         },
         {
-          "pattern": "* i *@belief* i *",
+          "pattern": "* i @belief * i *",
           "responses": [
             "Do you really think so ?",
             "But you are not sure you (3) .",
@@ -422,7 +443,7 @@
           ]
         },
         {
-          "pattern": "* i *@belief* you *",
+          "pattern": "* i * @belief * you *",
           "responses": [
             "goto you"
           ]
@@ -437,7 +458,7 @@
           ]
         },
         {
-          "pattern": "* i *@cannot*",
+          "pattern": "* i @cannot *",
           "responses": [
             "How do you think that you can't (3) ?",
             "Have you tried ?",
@@ -481,8 +502,7 @@
             "That's quite interesting."
           ]
         }
-      ],
-      "rank": 2
+      ]
     },
     {
       "keyword": "you",
@@ -523,8 +543,7 @@
             "What are your feelings now ?"
           ]
         }
-      ],
-      "rank": 1
+      ]
     },
     {
       "keyword": "yes",
@@ -558,7 +577,7 @@
       "keyword": "my",
       "patterns": [
         {
-          "pattern": "* my *@family*",
+          "pattern": "* my * @family *",
           "responses": [
             "Tell me more about your family.",
             "Who else in your family (4) ?",
@@ -678,7 +697,7 @@
       "keyword": "everyone",
       "patterns": [
         {
-          "pattern": "*@everyone*",
+          "pattern": "* @everyone *",
           "responses": [
             "Really, (2) ?",
             "Surely not (2) .",
@@ -768,37 +787,13 @@
       "keyword": "like",
       "patterns": [
         {
-          "pattern": "*@be* like *",
+          "pattern": "* @be * like *",
           "responses": [
             "goto alike"
           ]
         }
       ],
       "rank": 10
-    },
-    {
-      "keyword": "sorry",
-      "patterns": [
-        {
-          "pattern": "*",
-          "responses": [
-            "Please don't apologise.",
-            "Apologies are not necessary.",
-            "I've told you that apologies are not required."
-          ]
-        }
-      ]
-    },
-    {
-      "keyword": "apologise",
-      "patterns": [
-        {
-          "pattern": "*",
-          "responses": [
-            "goto sorry"
-          ]
-        }
-      ]
     }
   ],
   "fallbacks": [
