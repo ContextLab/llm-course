@@ -16,7 +16,7 @@
  */
 
 import { readFile } from 'fs/promises';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { dirname, join } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,27 +25,24 @@ const __dirname = dirname(__filename);
 // Mock DOM globals for browser-based code
 global.window = {};
 global.document = {};
+global.fetch = async function(url) {
+    // Mock fetch for loading rules
+    const content = await readFile(join(__dirname, '../demos/01-eliza', url), 'utf-8');
+    return {
+        json: async () => JSON.parse(content)
+    };
+};
 
-// Load the required modules
-const patternMatcherCode = await readFile(join(__dirname, '../demos/01-eliza/js/pattern-matcher.js'), 'utf-8');
-const elizaEngineCode = await readFile(join(__dirname, '../demos/01-eliza/js/eliza-engine.js'), 'utf-8');
+// Import the ES6 modules directly using file URLs
+const patternMatcherPath = pathToFileURL(join(__dirname, '../demos/01-eliza/js/pattern-matcher.js')).href;
+const elizaEnginePath = pathToFileURL(join(__dirname, '../demos/01-eliza/js/eliza-engine.js')).href;
 
-// Execute PatternMatcher code
-global.module = { exports: {} };
-eval(patternMatcherCode);
-const PatternMatcher = global.module.exports;
+const { PatternMatcher } = await import(patternMatcherPath);
+const { ElizaEngine } = await import(elizaEnginePath);
 
 if (!PatternMatcher) {
     throw new Error('Failed to load PatternMatcher class');
 }
-
-// Make PatternMatcher globally available for ElizaEngine
-global.PatternMatcher = PatternMatcher;
-
-// Execute ElizaEngine code
-global.module = { exports: {} };
-eval(elizaEngineCode);
-const ElizaEngine = global.module.exports;
 
 if (!ElizaEngine) {
     throw new Error('Failed to load ElizaEngine class');
