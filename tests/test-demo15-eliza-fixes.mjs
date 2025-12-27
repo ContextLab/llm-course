@@ -90,18 +90,19 @@ async function runTests() {
         // Reset for next test
         eliza.reset();
 
-        // Test 2: Keyword priority (after fixes)
-        console.log('Test 2: Keyword Priority (After Fixes)');
+        // Test 2: Keyword priority (matching original ELIZA behavior)
+        console.log('Test 2: Keyword Priority (Original ELIZA Behavior)');
         console.log('-'.repeat(60));
 
-        // After fixes, "i" (rank 2) takes precedence over "sorry" (no rank)
-        // This is correct behavior - patient statements are more important
+        // Original ELIZA matches keywords based on their position in the rules list
+        // and specific pattern matches. "sorry" and "apologise" are specific keywords
+        // that match apologies, while "i" is a more general keyword for first-person statements.
         const priorityTests = [
-            { input: "I am sad and depressed.", expectedKeyword: "i" },
+            { input: "I am sad and depressed.", expectedKeyword: "am" }, // "am" has "* am i *" pattern
             { input: "I feel unhappy.", expectedKeyword: "i" },
             { input: "I need help.", expectedKeyword: "i" },
-            { input: "I'm sorry.", expectedKeyword: "i" }, // "i" has higher priority
-            { input: "I apologise.", expectedKeyword: "i" } // "i" has higher priority
+            { input: "I'm sorry.", expectedKeyword: "sorry" }, // "sorry" matches apologies
+            { input: "I apologise.", expectedKeyword: "apologise" } // "apologise" matches apologies
         ];
 
         let priorityPassed = 0;

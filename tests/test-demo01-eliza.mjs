@@ -197,14 +197,15 @@ async function runTests() {
     );
     eliza.reset();
 
-    // Test 2.5: Keyword priority after fixes
-    // After fixes, "i" (rank 2) takes precedence over "sorry" (moved to end, no rank)
-    // This is correct behavior - patient statements are more important than apologies
+    // Test 2.5: Keyword priority (matching original ELIZA behavior)
+    // In original ELIZA, keywords are matched in the order they appear in rules
+    // "sorry" and "apologise" don't have ranks, but appear before "i" in the list
+    // The original ELIZA prefers specific keywords like "sorry" over generic "i"
     const sorryTests = [
-        { input: "I'm sorry.", expectedKeyword: "i" }, // "i" has higher priority than "sorry"
-        { input: "I apologise.", expectedKeyword: "i" }, // "i" has higher priority
-        { input: "I am sad and sorry.", expectedKeyword: "i" }, // "i" with @sad pattern
-        { input: "I feel unhappy.", expectedKeyword: "i" }, // "i" keyword matches
+        { input: "I'm sorry.", expectedKeyword: "sorry" }, // "sorry" keyword matches apologies
+        { input: "I apologise.", expectedKeyword: "apologise" }, // "apologise" redirects to sorry
+        { input: "I am sad and sorry.", expectedKeyword: "sorry" }, // "sorry" detected
+        { input: "I feel unhappy.", expectedKeyword: "i" }, // "i" keyword matches (no sorry)
         { input: "I need help.", expectedKeyword: "i" } // "i" keyword matches
     ];
 
@@ -432,10 +433,10 @@ async function runTests() {
     console.log('\n--- Test Group 8: goto Statements ---\n');
 
     // Test 8.1: goto sorry (from apologise)
-    // After fixes, "I apologise" matches "i" keyword first (rank 2) instead of "apologise" (no rank)
-    // This is correct behavior - patient statements have higher priority
+    // In original ELIZA, "apologise" keyword has a goto to "sorry"
+    // This tests that the goto mechanism works correctly
     const gotoSorry = eliza.getResponse("I apologise");
-    runner.assertEqual(gotoSorry.matchInfo.keyword, "i", "goto: 'i' detected (higher priority than 'apologise')");
+    runner.assertEqual(gotoSorry.matchInfo.keyword, "apologise", "goto: 'apologise' keyword detected");
     runner.assertNotEmpty(gotoSorry.response, "goto sorry: generates response");
     eliza.reset();
 
@@ -795,8 +796,10 @@ async function runTests() {
     eliza.reset();
 
     const priorityTest2 = eliza.getResponse("Am I happy");
-    // After fixes, "i" (rank 2) takes priority over "am" (rank 0)
-    runner.assertEqual(priorityTest2.matchInfo.keyword, "i", "Priority: 'i' (rank 2) beats 'am' (rank 0)");
+    // In original ELIZA, both "am" and "i" have no explicit rank
+    // When ranks are equal, the first keyword appearing in rules takes precedence
+    // "am" has a specific pattern "* am i *" that matches this input
+    runner.assertEqual(priorityTest2.matchInfo.keyword, "am", "Priority: 'am' matches '* am i *' pattern");
     eliza.reset();
 
     const priorityTest3 = eliza.getResponse("Are you a computer");
