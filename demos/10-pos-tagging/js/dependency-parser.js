@@ -284,7 +284,7 @@ const DependencyParser = {
 
         if (!dep) return;
 
-        const headWord = dependencies.find(d => d.target === dep.source)?.word || 'ROOT';
+        const headWord = this.dependencies.find(d => d.target === dep.source)?.word || 'ROOT';
 
         let html = '<h3>Dependency Information</h3>';
         html += '<div class="dep-details">';

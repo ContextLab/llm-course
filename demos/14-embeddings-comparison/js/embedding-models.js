@@ -93,6 +93,12 @@ export class EmbeddingModelsManager {
     }
 
     cosineSimilarity(vecA, vecB) {
+        // Handle vector length mismatch
+        if (vecA.length !== vecB.length) {
+            console.warn('Vector length mismatch in cosine similarity calculation');
+            return 0;
+        }
+
         let dotProduct = 0;
         let normA = 0;
         let normB = 0;
@@ -103,7 +109,13 @@ export class EmbeddingModelsManager {
             normB += vecB[i] * vecB[i];
         }
 
-        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+        // Handle zero vectors (avoid division by zero)
+        const denominator = Math.sqrt(normA) * Math.sqrt(normB);
+        if (denominator === 0) {
+            return 0;
+        }
+
+        return dotProduct / denominator;
     }
 
     getLoadedModels() {

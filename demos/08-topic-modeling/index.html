@@ -457,13 +457,15 @@
                     return;
             }
 
-            if (plotDiv && plotDiv.querySelector('.plotly')) {
+            if (plotDiv && plotDiv.querySelector('.js-plotly-plot')) {
                 Plotly.downloadImage(plotDiv, {
                     format: 'png',
                     width: 1200,
                     height: 800,
                     filename: `lda-${viewMode}`
                 });
+            } else {
+                alert('Please run LDA and generate a visualization first');
             }
         }
 

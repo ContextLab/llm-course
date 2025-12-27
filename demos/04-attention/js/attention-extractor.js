@@ -34,7 +34,9 @@ export class AttentionExtractor {
             });
 
             console.log('Running model inference...');
-            const outputs = await this.currentModel(inputs);
+            const outputs = await this.currentModel(inputs, {
+                output_attentions: true
+            });
 
             // Extract attention weights
             // Transformers.js returns attentions as a list of tensors
@@ -73,10 +75,8 @@ export class AttentionExtractor {
             // Load tokenizer
             this.currentTokenizer = await AutoTokenizer.from_pretrained(modelName);
 
-            // Load model with attention output enabled
-            this.currentModel = await AutoModel.from_pretrained(modelName, {
-                output_attentions: true
-            });
+            // Load model (attention output is requested during inference)
+            this.currentModel = await AutoModel.from_pretrained(modelName);
 
             this.currentModelName = modelName;
             console.log(`Model ${modelName} loaded successfully`);

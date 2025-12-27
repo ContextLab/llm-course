@@ -568,8 +568,9 @@
             if (!app.currentData) return;
 
             document.getElementById('stat-total').textContent = app.currentData.texts.length;
-            document.getElementById('stat-dim').textContent = app.currentData.embeddings[0].length;
-            document.getElementById('stat-reduced').textContent = app.reducedData ?
+            document.getElementById('stat-dim').textContent = app.currentData.embeddings && app.currentData.embeddings.length > 0 ?
+                app.currentData.embeddings[0].length : '-';
+            document.getElementById('stat-reduced').textContent = app.reducedData && app.reducedData.length > 0 ?
                 app.reducedData[0].length : '-';
 
             const uniqueCategories = new Set(app.currentData.labels).size;

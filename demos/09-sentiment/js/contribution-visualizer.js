@@ -346,4 +346,6 @@ class ContributionVisualizer {
 // Export for use in main script
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ContributionVisualizer;
+} else if (typeof window !== 'undefined') {
+    window.ContributionVisualizer = ContributionVisualizer;
 }

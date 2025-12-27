@@ -23,7 +23,7 @@ export class SentimentAnalyzer {
 
             // Negative words
             'hate': -3.0, 'terrible': -3.0, 'awful': -3.0, 'horrible': -3.0, 'worst': -3.0,
-            'bad': -2.0, 'poor': -2.0, 'disappointing': -2.5, 'disappointing': -2.5,
+            'bad': -2.0, 'poor': -2.0, 'disappointing': -2.5, 'disappointed': -2.5,
             'useless': -2.5, 'worthless': -3.0, 'pathetic': -2.5, 'disgusting': -3.0,
             'appalling': -3.0, 'dreadful': -3.0, 'atrocious': -3.0, 'nasty': -2.5,
             'sad': -2.0, 'unfortunate': -2.0, 'negative': -2.0, 'wrong': -1.5,

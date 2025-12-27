@@ -504,6 +504,27 @@ class TransformerExplorer {
     }
 
     init() {
+        // Check for required dependencies
+        if (typeof THREE === 'undefined') {
+            alert('Error: Three.js library failed to load. Please refresh the page.');
+            return;
+        }
+
+        if (typeof THREE.OrbitControls === 'undefined') {
+            alert('Error: OrbitControls failed to load. Please refresh the page.');
+            return;
+        }
+
+        if (typeof d3 === 'undefined') {
+            alert('Error: D3.js library failed to load. Please refresh the page.');
+            return;
+        }
+
+        if (typeof anime === 'undefined') {
+            alert('Error: Anime.js library failed to load. Please refresh the page.');
+            return;
+        }
+
         // Initialize 3D architecture
         this.architecture3D = new Architecture3D('scene-container');
         this.architecture3D.init();

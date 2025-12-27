@@ -49,15 +49,15 @@ https://contextlab.github.io/llm-course/demos/
 | 04 | [Attention Mechanism](04-attention/) | Self-attention, Query-Key-Value, Attention weights | ✅ Available |
 | 05 | [Transformer Architecture](05-transformer/) | Encoder-decoder, Multi-head attention | ✅ Available |
 | 06 | [GPT Playground](06-gpt-playground/) | Autoregressive generation, GPT architecture | ✅ Available |
-| 07 | Fine-tuning Visualization | Transfer learning, Weight updates | 🚧 Coming Soon |
-| 08 | Prompt Engineering Lab | Zero-shot, Few-shot, Chain-of-thought | 🚧 Coming Soon |
-| 09 | RLHF Simulator | Reinforcement learning, Alignment | 🚧 Coming Soon |
-| 10 | RAG System Demo | Retrieval-augmented generation | 🚧 Coming Soon |
-| 11 | Bias Detection Tool | Fairness metrics, Ethics | 🚧 Coming Soon |
-| 12 | Model Interpretability | Attention patterns, Neuron visualization | 🚧 Coming Soon |
-| 13 | Multimodal Models | Vision-language models, CLIP | 🚧 Coming Soon |
-| 14 | Reasoning Chains | Step-by-step reasoning, Problem solving | 🚧 Coming Soon |
-| 15 | Model Comparison Lab | Benchmarking, Performance comparison | 🚧 Coming Soon |
+| 07 | [RAG System Demo](07-rag/) | Retrieval-augmented generation, Wikipedia corpus | ✅ Available |
+| 08 | [Topic Modeling Studio](08-topic-modeling/) | LDA, Unsupervised learning, Wikipedia articles | ✅ Available |
+| 09 | [Sentiment Analysis Dashboard](09-sentiment/) | Sentiment classification, IMDB dataset, Feature visualization | ✅ Available |
+| 10 | [POS Tagging & Parsing](10-pos-tagging/) | Part-of-speech tagging, Dependency parsing, Syntax trees | ✅ Available |
+| 11 | [Word Analogies Explorer](11-analogies/) | Vector arithmetic, Word2Vec, Semantic relationships | ✅ Available |
+| 12 | [Semantic Search Engine](12-semantic-search/) | BM25, Embeddings, Hybrid search | ✅ Available |
+| 13 | [BERT Masked Language Modeling](13-bert-mlm/) | BERT, MLM, Bidirectional context | ✅ Available |
+| 14 | [Embeddings Comparison Lab](14-embeddings-comparison/) | Benchmarking, Model comparison, Quality vs speed | ✅ Available |
+| 15 | [Chatbot Evolution Timeline](15-chatbot-evolution/) | ELIZA, PARRY, ALICE, Seq2Seq, GPT | ✅ Available |
 
 ## Architecture
 
