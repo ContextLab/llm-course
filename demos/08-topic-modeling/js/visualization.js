@@ -201,10 +201,9 @@ export class TopicVisualizer {
     showDocumentDistribution(docIdx, results, dataset) {
         const distribution = results.documentTopics[docIdx];
 
-        // Get document title if available
-        const docTitle = dataset.titles && dataset.titles[docIdx]
-            ? dataset.titles[docIdx]
-            : `Document ${docIdx + 1}`;
+        // Get document title if available - safely handle undefined titles
+        const hasTitle = dataset && dataset.titles && dataset.titles[docIdx];
+        const docTitle = hasTitle ? dataset.titles[docIdx] : `Document ${docIdx + 1}`;
 
         // Create bar chart
         const data = [{
@@ -227,7 +226,7 @@ export class TopicVisualizer {
 
         // Show document content with title if available
         const contentDiv = document.getElementById('doc-content');
-        const titleHtml = dataset.titles && dataset.titles[docIdx]
+        const titleHtml = hasTitle
             ? `<h4>${dataset.titles[docIdx]}</h4>`
             : `<h4>Document ${docIdx + 1}:</h4>`;
 

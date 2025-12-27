@@ -186,18 +186,46 @@ class TimelineApp {
 
         const responses = {};
 
-        // Get responses from all bots
+        // Get responses from all bots with individual error handling
         try {
-            // Rule-based bots (synchronous)
-            responses.eliza = this.bots.eliza.getResponse(prompt);
-            responses.parry = this.bots.parry.getResponse(prompt);
-            responses.alice = this.bots.alice.getResponse(prompt);
+            // Rule-based bots (synchronous) - handle individually
+            try {
+                responses.eliza = this.bots.eliza.getResponse(prompt);
+            } catch (error) {
+                console.error('Error from ELIZA:', error);
+                responses.eliza = 'Error: Unable to get response';
+            }
 
-            // Neural models (asynchronous)
-            responses.seq2seq = await this.bots.seq2seq.getResponse(prompt);
-            responses.gpt = await this.bots.gpt.getResponse(prompt);
+            try {
+                responses.parry = this.bots.parry.getResponse(prompt);
+            } catch (error) {
+                console.error('Error from PARRY:', error);
+                responses.parry = 'Error: Unable to get response';
+            }
+
+            try {
+                responses.alice = this.bots.alice.getResponse(prompt);
+            } catch (error) {
+                console.error('Error from ALICE:', error);
+                responses.alice = 'Error: Unable to get response';
+            }
+
+            // Neural models (asynchronous) - handle individually
+            try {
+                responses.seq2seq = await this.bots.seq2seq.getResponse(prompt);
+            } catch (error) {
+                console.error('Error from Seq2Seq:', error);
+                responses.seq2seq = 'Error: Unable to get response';
+            }
+
+            try {
+                responses.gpt = await this.bots.gpt.getResponse(prompt);
+            } catch (error) {
+                console.error('Error from GPT:', error);
+                responses.gpt = 'Error: Unable to get response';
+            }
         } catch (error) {
-            console.error('Error in comparison:', error);
+            console.error('Unexpected error in comparison:', error);
         }
 
         // Display results

@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <details style="margin-top: 20px;">
-                    <summary style="cursor: pointer; font-weight: 600; padding: 10px; background: var(--bg-secondary); border-radius: 8px;">
+                    <summary style="cursor: pointer; font-weight: 600; padding: 10px; background: var(--bg-color); border-radius: 8px;">
                         View Sample Articles (Click to expand)
                     </summary>
                     <div id="document-list" class="document-list" style="margin-top: 10px; max-height: 400px; overflow-y: auto;"></div>
@@ -363,7 +363,7 @@
                         <span class="badge">${doc.metadata.category}</span>
                     </div>
                     <div class="document-preview">${doc.content.substring(0, 300)}${doc.content.length > 300 ? '...' : ''}</div>
-                    ${doc.metadata.url ? `<a href="${doc.metadata.url}" target="_blank" style="font-size: 0.9em; color: var(--primary);">View on Wikipedia →</a>` : ''}
+                    ${doc.metadata.url ? `<a href="${doc.metadata.url}" target="_blank" style="font-size: 0.9em; color: var(--primary-color);">View on Wikipedia →</a>` : ''}
                 </div>
             `).join('');
 
@@ -682,7 +682,7 @@
                         </div>
                         <div class="chunk-text">${chunk.chunk.text}</div>
                         <div class="chunk-metadata">
-                            ${chunk.chunk.metadata.category} | ${chunk.chunk.metadata.author} | ${chunk.chunk.metadata.date}
+                            ${chunk.chunk.metadata.source} | ${chunk.chunk.metadata.category}${chunk.chunk.metadata.url ? ' | <a href="' + chunk.chunk.metadata.url + '" target="_blank">View Source</a>' : ''}
                         </div>
                     </div>
                 `).join('');

@@ -26,6 +26,11 @@ export class GPTBot {
             return "Model is still loading, please wait...";
         }
 
+        // Handle empty input
+        if (!input || input.trim().length === 0) {
+            return "Please say something!";
+        }
+
         try {
             const result = await this.model(input, {
                 max_new_tokens: 30,
@@ -34,7 +39,17 @@ export class GPTBot {
                 top_k: 50
             });
 
-            return result[0].generated_text.substring(input.length).trim();
+            const generatedText = result[0].generated_text;
+
+            // Extract only the new text (remove the input prompt)
+            let response = generatedText.substring(input.length).trim();
+
+            // If response is empty or too short, return the full generation
+            if (response.length < 3) {
+                response = generatedText.trim();
+            }
+
+            return response;
         } catch (error) {
             console.error('Error generating response:', error);
             return "I'm having trouble generating a response right now.";

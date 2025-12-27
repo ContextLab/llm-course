@@ -965,8 +965,11 @@
 
             const rows = document.querySelectorAll('.sentiment-row');
             rows.forEach(row => {
-                const sentiment = row.className.split(' ').find(c => c.startsWith('sentiment-')).replace('sentiment-', '');
-                row.style.display = activeFilters.includes(sentiment) ? '' : 'none';
+                const sentimentClass = row.className.split(' ').find(c => c.startsWith('sentiment-'));
+                if (sentimentClass) {
+                    const sentiment = sentimentClass.replace('sentiment-', '');
+                    row.style.display = activeFilters.includes(sentiment) ? '' : 'none';
+                }
             });
         }
 

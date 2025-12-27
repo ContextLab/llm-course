@@ -27,7 +27,8 @@ export class BERTModel {
 
             // Load model
             this.model = await AutoModelForMaskedLM.from_pretrained(this.modelId, {
-                quantized: false  // Use full precision for better quality
+                quantized: false,  // Use full precision for better quality
+                output_attentions: true  // Enable attention outputs for visualization
             });
             console.log('Model loaded');
 
@@ -73,23 +74,32 @@ export class BERTModel {
 
         console.log('Predicting masked tokens:', maskedIndices);
 
-        // Create a copy of tokens and replace masked positions with [MASK]
-        const maskedTokens = [...tokens];
+        // Convert tokens back to token IDs
+        const inputIds = [];
+        for (let i = 0; i < tokens.length; i++) {
+            // Get token ID for each token
+            const tokenId = this.tokenizer.model.convert_tokens_to_ids([tokens[i]])[0];
+            inputIds.push(tokenId);
+        }
+
+        // Replace masked positions with [MASK] token ID
+        const maskedInputIds = [...inputIds];
         maskedIndices.forEach(idx => {
-            maskedTokens[idx] = this.tokenizer.mask_token || '[MASK]';
+            maskedInputIds[idx] = this.maskTokenId;
         });
 
-        // Join tokens (handling subwords)
-        const text = maskedTokens.map(t => t.replace('##', '')).join(' ');
+        // Create input tensor
+        const { Tensor } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1');
+        const inputs = {
+            input_ids: new Tensor('int64', BigInt64Array.from(maskedInputIds.map(id => BigInt(id))), [1, maskedInputIds.length]),
+            attention_mask: new Tensor('int64', BigInt64Array.from(maskedInputIds.map(() => BigInt(1))), [1, maskedInputIds.length])
+        };
 
-        // Encode with special tokens
-        const inputs = await this.tokenizer(text, {
-            return_tensors: 'pt',
-            add_special_tokens: true
+        // Run model with attention outputs
+        const outputs = await this.model({
+            ...inputs,
+            output_attentions: true
         });
-
-        // Run model
-        const outputs = await this.model(inputs);
 
         // Extract logits and attentions
         const logits = outputs.logits;

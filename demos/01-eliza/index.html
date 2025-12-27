@@ -165,12 +165,13 @@
   </div>
 
   <!-- Load JavaScript modules -->
-  <script src="js/pattern-matcher.js?v=1766709790"></script>
-  <script src="js/eliza-engine.js?v=1766709800"></script>
   <script src="js/rule-editor.js?v=1766709790"></script>
 
   <!-- Main Application Script -->
-  <script>
+  <script type="module">
+    import { ElizaEngine } from './js/eliza-engine.js';
+    import { PatternMatcher } from './js/pattern-matcher.js';
+
     // Initialize ELIZA
     let eliza;
     let ruleEditor;

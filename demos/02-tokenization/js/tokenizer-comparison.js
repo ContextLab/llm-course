@@ -163,7 +163,7 @@ async function processTokenizer(name, text, tokenizer) {
     tokens.forEach((token, idx) => {
         const span = document.createElement('span');
         span.className = `token token-${idx % 8}`;
-        span.textContent = token.replace('▁', '·').replace('Ġ', '·');
+        span.textContent = token.replace(/▁/g, '·').replace(/Ġ/g, '·');
         span.title = `Token ID: ${encoded[idx]}`;
         outputDiv.appendChild(span);
     });
