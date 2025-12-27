@@ -261,66 +261,113 @@ class TextGenerationPlayground {
         promptSpan.textContent = prompt;
         this.elements.generatedText.appendChild(promptSpan);
 
-        // Since Transformers.js doesn't expose raw logits easily in streaming mode,
-        // we'll use a workaround: generate token by token and simulate the process
-
-        let currentText = prompt;
-        let generatedCount = 0;
-
-        while (generatedCount < maxLength && !this.shouldStop) {
-            // Generate next token
-            const output = await this.model(currentText, {
-                max_new_tokens: 1,
-                temperature: strategy === 'greedy' ? 0.001 : temperature,
+        try {
+            // Generate all tokens at once for better performance
+            // Note: Transformers.js doesn't expose raw logits, so we simulate probabilities
+            const output = await this.model(prompt, {
+                max_new_tokens: maxLength,
+                temperature: strategy === 'greedy' ? 0.1 : temperature,
                 top_k: strategy === 'topk' || strategy === 'combined' ? topK : 0,
                 top_p: strategy === 'topp' || strategy === 'combined' ? topP : 1.0,
                 repetition_penalty: repetitionPenalty,
-                return_full_text: false
+                do_sample: strategy !== 'greedy',
+                num_return_sequences: 1
             });
 
-            if (!output || output.length === 0) break;
+            if (!output || output.length === 0) {
+                throw new Error('Model returned no output');
+            }
 
             const generatedText = output[0].generated_text;
-            if (!generatedText) break;
-
-            // Extract new token
-            const newToken = generatedText;
-            currentText += newToken;
-
-            // Simulate token info (since we don't have direct access to logits)
-            const tokenInfo = this.simulateTokenInfo(newToken, strategy, {
-                temperature,
-                topK,
-                topP
-            });
-
-            // Update display
-            this.displayToken(newToken, tokenInfo);
-
-            // Update statistics
-            this.updateStatistics(tokenInfo);
-
-            // Update visualizations
-            if (this.elements.showProbabilities.checked) {
-                this.visualizer.displayTokenProbabilities(tokenInfo, generatedCount + 1);
+            if (!generatedText) {
+                throw new Error('Generated text is empty');
             }
 
-            if (this.elements.showAlternatives.checked) {
-                this.visualizer.displayAlternatives(tokenInfo.topTokens);
+            // Split the generated text into tokens (approximate)
+            // This is a simple approximation since we don't have access to the actual tokenization
+            const fullText = generatedText.substring(prompt.length);
+            const tokens = this.approximateTokenize(fullText);
+
+            // Display tokens with simulated animations
+            for (let i = 0; i < tokens.length && !this.shouldStop; i++) {
+                const token = tokens[i];
+
+                // Simulate token info (since we don't have direct access to logits)
+                const tokenInfo = this.simulateTokenInfo(token, strategy, {
+                    temperature,
+                    topK,
+                    topP
+                });
+
+                // Update display
+                this.displayToken(token, tokenInfo);
+
+                // Update statistics
+                this.updateStatistics(tokenInfo);
+
+                // Update visualizations
+                if (this.elements.showProbabilities.checked) {
+                    this.visualizer.displayTokenProbabilities(tokenInfo, i + 1);
+                }
+
+                if (this.elements.showAlternatives.checked) {
+                    this.visualizer.displayAlternatives(tokenInfo.topTokens);
+                }
+
+                if (this.elements.showEntropy.checked) {
+                    this.visualizer.updateEntropyChart(tokenInfo.entropy);
+                }
+
+                // Small delay for visualization effect
+                await new Promise(resolve => setTimeout(resolve, 50));
             }
 
-            if (this.elements.showEntropy.checked) {
-                this.visualizer.updateEntropyChart(tokenInfo.entropy);
+            // Final statistics update
+            this.updateFinalStats();
+
+        } catch (error) {
+            console.error('Generation error:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Approximate tokenization for visualization
+     * Splits text into word-like tokens for display
+     * @param {string} text - Text to tokenize
+     * @returns {Array} Array of token strings
+     */
+    approximateTokenize(text) {
+        // Simple approximation: split on spaces and punctuation boundaries
+        // This is not the real BPE tokenization, but good enough for visualization
+        const tokens = [];
+        let currentToken = '';
+
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+
+            if (char === ' ' || char === '\n' || char === '\t') {
+                if (currentToken) {
+                    tokens.push(currentToken);
+                    currentToken = '';
+                }
+                tokens.push(char);
+            } else if (/[.,!?;:]/.test(char)) {
+                if (currentToken) {
+                    tokens.push(currentToken);
+                    currentToken = '';
+                }
+                tokens.push(char);
+            } else {
+                currentToken += char;
             }
-
-            generatedCount++;
-
-            // Small delay for visualization
-            await new Promise(resolve => setTimeout(resolve, 50));
         }
 
-        // Final statistics update
-        this.updateFinalStats();
+        if (currentToken) {
+            tokens.push(currentToken);
+        }
+
+        return tokens;
     }
 
     /**
@@ -461,8 +508,8 @@ class TextGenerationPlayground {
         const maxLength = parseInt(this.elements.maxLength.value);
 
         const strategies = [
-            { name: 'Greedy', value: 'greedy', temp: 0.001 },
-            { name: 'Temperature (1.0)', value: 'temperature', temp: 1.0 }
+            { name: 'Greedy', value: 'greedy', temp: 0.1, doSample: false },
+            { name: 'Temperature (1.0)', value: 'temperature', temp: 1.0, doSample: true }
         ];
 
         document.getElementById('strategyAName').textContent = strategies[0].name;
@@ -471,8 +518,8 @@ class TextGenerationPlayground {
         const outputA = document.getElementById('outputA');
         const outputB = document.getElementById('outputB');
 
-        outputA.textContent = prompt;
-        outputB.textContent = prompt;
+        outputA.innerHTML = `<span style="color: #94a3b8;">${prompt}</span>`;
+        outputB.innerHTML = `<span style="color: #94a3b8;">${prompt}</span>`;
 
         this.elements.generateBtn.disabled = true;
 
@@ -482,17 +529,26 @@ class TextGenerationPlayground {
                 this.model(prompt, {
                     max_new_tokens: maxLength,
                     temperature: strategies[0].temp,
-                    return_full_text: false
+                    do_sample: strategies[0].doSample,
+                    num_return_sequences: 1
                 }),
                 this.model(prompt, {
                     max_new_tokens: maxLength,
                     temperature: strategies[1].temp,
-                    return_full_text: false
+                    do_sample: strategies[1].doSample,
+                    num_return_sequences: 1
                 })
             ]);
 
-            outputA.textContent = prompt + (resultA[0]?.generated_text || '');
-            outputB.textContent = prompt + (resultB[0]?.generated_text || '');
+            if (resultA && resultA[0]) {
+                const textA = resultA[0].generated_text.substring(prompt.length);
+                outputA.innerHTML = `<span style="color: #94a3b8;">${prompt}</span>${textA}`;
+            }
+
+            if (resultB && resultB[0]) {
+                const textB = resultB[0].generated_text.substring(prompt.length);
+                outputB.innerHTML = `<span style="color: #94a3b8;">${prompt}</span>${textB}`;
+            }
 
         } catch (error) {
             console.error('Comparison generation error:', error);
