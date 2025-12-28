@@ -5,11 +5,15 @@ on:
     branches: [ main, master ]
     paths:
       - 'slides/**/*.tex'
+      - 'slides/**/*.ipynb'
+      - 'admin/syllabus.md'
       - '.github/workflows/build-slides.yml'
   pull_request:
     branches: [ main, master ]
     paths:
       - 'slides/**/*.tex'
+      - 'slides/**/*.ipynb'
+      - 'admin/syllabus.md'
   workflow_dispatch:
 
 permissions:
@@ -39,49 +43,202 @@ jobs:
             texlive-fonts-extra \
             texlive-xetex \
             latexmk \
-            pdf2svg
+            pdf2svg \
+            pandoc
+
+      - name: Install Berkeley Mono font for syllabus
+        run: |
+          # Create fonts directory
+          sudo mkdir -p /usr/share/fonts/truetype/berkeley-mono
+
+          # Note: Berkeley Mono is a commercial font
+          # If the font files exist in the repo, they would be copied here
+          # For now, we'll use a fallback font in the LaTeX compilation
+          echo "Berkeley Mono font installation skipped (commercial font)"
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Jupyter and nbconvert
+        run: |
+          pip install jupyter nbconvert
+
+      - name: Compile syllabus PDF
+        run: |
+          echo "📄 Compiling syllabus..."
+          cd admin
+
+          # Try with xelatex first (supports custom fonts)
+          pandoc -s -o syllabus.pdf syllabus.md --pdf-engine=xelatex || \
+          pandoc -s -o syllabus.pdf syllabus.md --pdf-engine=pdflatex
+
+          if [ -f syllabus.pdf ]; then
+            echo "✅ Successfully compiled syllabus.pdf"
+          else
+            echo "❌ Failed to compile syllabus.pdf"
+          fi
+          cd ..
 
       - name: Find and compile all lecture slides
         run: |
-          echo "🔍 Finding all lecture.tex files..."
-          find slides -name "lecture.tex" -type f | while read -r tex_file; do
+          echo "🔍 Finding all .tex files in slides directory..."
+          find slides -name "*.tex" -type f | while read -r tex_file; do
             dir=$(dirname "$tex_file")
+            filename=$(basename "$tex_file" .tex)
             echo "📝 Compiling $tex_file..."
             cd "$dir"
 
-            # Compile with pdflatex (try twice for references)
-            pdflatex -interaction=nonstopmode -halt-on-error lecture.tex || true
-            pdflatex -interaction=nonstopmode -halt-on-error lecture.tex || true
+            # Compile with xelatex first (better Unicode/emoji support)
+            xelatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
+            xelatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
 
-            # Try with xelatex if pdflatex failed
-            if [ ! -f lecture.pdf ]; then
-              echo "⚠️  pdflatex failed, trying xelatex..."
-              xelatex -interaction=nonstopmode -halt-on-error lecture.tex || true
-              xelatex -interaction=nonstopmode -halt-on-error lecture.tex || true
+            # Try with pdflatex if xelatex failed
+            if [ ! -f "$filename.pdf" ]; then
+              echo "⚠️  xelatex failed, trying pdflatex..."
+              pdflatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
+              pdflatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
             fi
 
             cd - > /dev/null
 
-            if [ -f "$dir/lecture.pdf" ]; then
-              echo "✅ Successfully compiled $tex_file"
+            if [ -f "$dir/$filename.pdf" ]; then
+              echo "✅ Successfully compiled $tex_file to $filename.pdf"
             else
               echo "❌ Failed to compile $tex_file"
             fi
           done
 
-      - name: Install pdf.js and build web viewer
+      - name: Convert Jupyter notebooks to HTML
+        run: |
+          echo "🔍 Finding all .ipynb files in slides directory..."
+          find slides -name "*.ipynb" -type f | while read -r notebook; do
+            dir=$(dirname "$notebook")
+            filename=$(basename "$notebook" .ipynb)
+            echo "📓 Converting $notebook to HTML..."
+
+            jupyter nbconvert --to html "$notebook" --output "$filename.html" || true
+
+            if [ -f "$dir/$filename.html" ]; then
+              echo "✅ Successfully converted $notebook"
+            else
+              echo "❌ Failed to convert $notebook"
+            fi
+          done
+
+      - name: Create PDF.js HTML viewers for slides
+        run: |
+          echo "🌐 Creating HTML viewers for PDFs..."
+          find slides -name "*.pdf" -type f | while read -r pdf_file; do
+            dir=$(dirname "$pdf_file")
+            filename=$(basename "$pdf_file" .pdf)
+
+            # Create a simple HTML viewer that embeds the PDF
+            cat > "$dir/${filename}-viewer.html" << 'VIEWER_EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FILENAME_PLACEHOLDER - LLM Course</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: white;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .header h1 {
+            margin-bottom: 10px;
+        }
+        .links {
+            margin-top: 10px;
+        }
+        .links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+        .links a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .pdf-container {
+            width: 100%;
+            height: calc(100vh - 120px);
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 FILENAME_PLACEHOLDER</h1>
+        <div class="links">
+            <a href="FILENAME_PLACEHOLDER.pdf" download>⬇️ Download PDF</a>
+            <a href="../../index.html">🏠 All Slides</a>
+            <a href="https://github.com/ContextLab/llm-course">📚 GitHub</a>
+        </div>
+    </div>
+    <div class="pdf-container">
+        <iframe src="FILENAME_PLACEHOLDER.pdf"></iframe>
+    </div>
+</body>
+</html>
+VIEWER_EOF
+
+            # Replace placeholder with actual filename
+            sed -i "s/FILENAME_PLACEHOLDER/$filename/g" "$dir/${filename}-viewer.html"
+
+            echo "✅ Created HTML viewer for $pdf_file"
+          done
+
+      - name: Build web directory structure
         run: |
           # Create web directory structure
-          mkdir -p web_slides
+          mkdir -p web_slides/slides
+          mkdir -p web_slides/admin
 
-          # Copy PDF files to web directory
-          echo "📦 Copying PDFs to web directory..."
-          find slides -name "lecture.pdf" -type f | while read -r pdf_file; do
-            week_dir=$(dirname "$pdf_file" | xargs basename)
-            mkdir -p "web_slides/$week_dir"
-            cp "$pdf_file" "web_slides/$week_dir/"
-            echo "Copied $pdf_file to web_slides/$week_dir/"
+          # Copy all PDF files
+          echo "📦 Copying PDFs..."
+          find slides -name "*.pdf" -type f | while read -r pdf_file; do
+            rel_path=${pdf_file#slides/}
+            target_dir=$(dirname "web_slides/slides/$rel_path")
+            mkdir -p "$target_dir"
+            cp "$pdf_file" "web_slides/slides/$rel_path"
+            echo "Copied $pdf_file"
           done
+
+          # Copy all HTML files (both converted notebooks and viewers)
+          echo "📦 Copying HTML files..."
+          find slides -name "*.html" -type f | while read -r html_file; do
+            rel_path=${html_file#slides/}
+            target_dir=$(dirname "web_slides/slides/$rel_path")
+            mkdir -p "$target_dir"
+            cp "$html_file" "web_slides/slides/$rel_path"
+            echo "Copied $html_file"
+          done
+
+          # Copy syllabus
+          echo "📦 Copying syllabus..."
+          cp admin/syllabus.pdf web_slides/admin/ 2>/dev/null || echo "Syllabus PDF not found"
 
       - name: Generate index page
         run: |
@@ -123,7 +280,30 @@ jobs:
                       color: rgba(255,255,255,0.9);
                       text-align: center;
                       font-size: 1.2em;
+                      margin-bottom: 30px;
+                  }
+
+                  .syllabus-link {
+                      text-align: center;
                       margin-bottom: 50px;
+                  }
+
+                  .syllabus-link a {
+                      display: inline-block;
+                      background: white;
+                      color: #667eea;
+                      padding: 15px 40px;
+                      border-radius: 30px;
+                      text-decoration: none;
+                      font-weight: bold;
+                      font-size: 1.1em;
+                      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+                      transition: transform 0.3s ease, box-shadow 0.3s ease;
+                  }
+
+                  .syllabus-link a:hover {
+                      transform: translateY(-3px);
+                      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
                   }
 
                   .slides-grid {
@@ -139,9 +319,6 @@ jobs:
                       padding: 30px;
                       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
                       transition: transform 0.3s ease, box-shadow 0.3s ease;
-                      text-decoration: none;
-                      color: inherit;
-                      display: block;
                   }
 
                   .slide-card:hover {
@@ -161,19 +338,34 @@ jobs:
                       margin-bottom: 20px;
                   }
 
-                  .slide-card .view-button {
+                  .slide-card .links {
+                      display: flex;
+                      gap: 10px;
+                      flex-wrap: wrap;
+                  }
+
+                  .slide-card .btn {
                       display: inline-block;
-                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                      color: white;
-                      padding: 12px 30px;
-                      border-radius: 25px;
+                      padding: 10px 20px;
+                      border-radius: 20px;
                       text-decoration: none;
                       font-weight: bold;
                       transition: opacity 0.3s ease;
+                      font-size: 0.9em;
                   }
 
-                  .slide-card .view-button:hover {
+                  .slide-card .btn:hover {
                       opacity: 0.8;
+                  }
+
+                  .btn-primary {
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                  }
+
+                  .btn-secondary {
+                      background: #e0e0e0;
+                      color: #333;
                   }
 
                   .emoji {
@@ -198,61 +390,97 @@ jobs:
           <body>
               <div class="container">
                   <h1>🤖 LLM Course Slides</h1>
-                  <p class="subtitle">Models of Language and Conversation</p>
+                  <p class="subtitle">Models of Language and Conversation - PSYC 51.17</p>
+
+                  <div class="syllabus-link">
+                      <a href="admin/syllabus.pdf" target="_blank">📄 Download Course Syllabus</a>
+                  </div>
 
                   <div class="slides-grid">
-                      <a href="week1/lecture.pdf" class="slide-card" target="_blank">
+                      <div class="slide-card">
                           <span class="emoji">🚀</span>
                           <h2>Week 1: Introduction</h2>
                           <p>String manipulation, pattern matching, and the ELIZA chatbot. Is ChatGPT conscious?</p>
-                          <span class="view-button">View Slides →</span>
-                      </a>
+                          <div class="links">
+                              <a href="slides/week1/lecture1.pdf" class="btn btn-primary" target="_blank">Lecture 1 PDF</a>
+                              <a href="slides/week1/lecture2.pdf" class="btn btn-primary" target="_blank">Lecture 2 PDF</a>
+                              <a href="slides/week1/lecture3.pdf" class="btn btn-primary" target="_blank">Lecture 3 PDF</a>
+                              <a href="slides/week1/xhour_eliza_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
+                          </div>
+                      </div>
 
-                      <a href="week2/lecture.pdf" class="slide-card" target="_blank">
+                      <div class="slide-card">
                           <span class="emoji">📝</span>
                           <h2>Week 2: Computational Linguistics</h2>
                           <p>Tokenization, POS tagging, sentiment analysis, and statistical learning.</p>
-                          <span class="view-button">View Slides →</span>
-                      </a>
+                          <div class="links">
+                              <a href="slides/week2/lecture4.pdf" class="btn btn-primary" target="_blank">Lecture 4 PDF</a>
+                              <a href="slides/week2/lecture5.pdf" class="btn btn-primary" target="_blank">Lecture 5 PDF</a>
+                              <a href="slides/week2/lecture6.pdf" class="btn btn-primary" target="_blank">Lecture 6 PDF</a>
+                              <a href="slides/week2/xhour_classification_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
+                          </div>
+                      </div>
 
-                      <a href="week3-4/lecture.pdf" class="slide-card" target="_blank">
+                      <div class="slide-card">
                           <span class="emoji">📊</span>
-                          <h2>Weeks 3-4: Text Embeddings</h2>
-                          <p>Dimensionality reduction, LSA, LDA, Word2Vec, GloVe, and modern topic modeling.</p>
-                          <span class="view-button">View Slides →</span>
-                      </a>
+                          <h2>Week 3: Text Embeddings I</h2>
+                          <p>Classical embeddings (LSA, LDA) and word embeddings (Word2Vec, GloVe, FastText).</p>
+                          <div class="links">
+                              <a href="slides/week3/lecture7.pdf" class="btn btn-primary" target="_blank">Lecture 7 PDF</a>
+                              <a href="slides/week3/lecture8.pdf" class="btn btn-primary" target="_blank">Lecture 8 PDF</a>
+                              <a href="slides/week3/xhour_embeddings_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
+                          </div>
+                      </div>
 
-                      <a href="week5-6/lecture.pdf" class="slide-card" target="_blank">
+                      <div class="slide-card">
+                          <span class="emoji">📈</span>
+                          <h2>Weeks 3-4: Combined Slides</h2>
+                          <p>Complete deck covering classical and modern text embeddings.</p>
+                          <div class="links">
+                              <a href="slides/week3-4/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
+                          </div>
+                      </div>
+
+                      <div class="slide-card">
                           <span class="emoji">⚡</span>
                           <h2>Weeks 5-6: Transformers & BERT</h2>
                           <p>Attention mechanisms, transformer architecture, and context-aware models.</p>
-                          <span class="view-button">View Slides →</span>
-                      </a>
+                          <div class="links">
+                              <a href="slides/week5-6/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
+                          </div>
+                      </div>
 
-                      <a href="week7/lecture.pdf" class="slide-card" target="_blank">
+                      <div class="slide-card">
                           <span class="emoji">💬</span>
                           <h2>Week 7: Models of Conversation</h2>
                           <p>Pragmatics, dialogue, common ground, and thought trajectories.</p>
-                          <span class="view-button">View Slides →</span>
-                      </a>
+                          <div class="links">
+                              <a href="slides/week7/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
+                          </div>
+                      </div>
 
-                      <a href="week8/lecture.pdf" class="slide-card" target="_blank">
+                      <div class="slide-card">
                           <span class="emoji">🧠</span>
                           <h2>Week 8: GPT Models</h2>
-                          <p>GPT evolution, building transformers from scratch, and language models & the brain.</p>
-                          <span class="view-button">View Slides →</span>
-                      </a>
+                          <p>GPT evolution, building transformers from scratch, language models & the brain.</p>
+                          <div class="links">
+                              <a href="slides/week8/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
+                          </div>
+                      </div>
 
-                      <a href="week9/lecture.pdf" class="slide-card" target="_blank">
+                      <div class="slide-card">
                           <span class="emoji">🔍</span>
                           <h2>Week 9: RAG & MoE</h2>
                           <p>Retrieval Augmented Generation, Mixture of Experts, and the future of LLMs.</p>
-                          <span class="view-button">View Slides →</span>
-                      </a>
+                          <div class="links">
+                              <a href="slides/week9/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
+                          </div>
+                      </div>
                   </div>
 
                   <footer>
                       <p>📚 <a href="https://github.com/ContextLab/llm-course" target="_blank">View Course on GitHub</a></p>
+                      <p>🎮 <a href="https://contextlab.github.io/llm-course/demos/" target="_blank">Interactive Demos</a></p>
                       <p>Built with ❤️ using LaTeX Beamer and GitHub Actions</p>
                   </footer>
               </div>
