@@ -1,0 +1,37 @@
+\frametitle{FastText in Practice 💻}
+\begin{lstlisting}[language=Python]
+from gensim.models import FastText
+import gensim.downloader as api
+
+# Load pre-trained FastText model
+# Available in 157 languages!
+fasttext_model = api.load('fasttext-wiki-news-subwords-300')
+
+# Works for known words
+vec_cat = fasttext_model['cat']
+
+# Also works for unknown words! (OOV)
+vec_unknownword = fasttext_model['unknownword']  # Still get a vector!
+
+# Even works for misspellings (somewhat)
+vec_misspelling = fasttext_model['computr']  # Close to "computer"
+
+# Train your own FastText model
+sentences = [['the', 'cat', 'sat'], ['the', 'dog', 'ran']]
+
+ft_model = FastText(
+    sentences,
+    vector_size=100,
+    window=5,
+    min_count=1,
+    min_n=3,      # minimum n-gram length
+    max_n=6,      # maximum n-gram length
+    word_ngrams=1 # use word + ngrams
+)
+
+# Check similar words
+similar = ft_model.wv.most_similar('cat', topn=5)
+
+# Morphological awareness
+# 'running', 'runner', 'runnable' will be close
+\end{lstlisting}

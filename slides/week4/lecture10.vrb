@@ -1,0 +1,68 @@
+\frametitle{Case Study: Visualizing BERT Layers 🔬}
+\textbf{Question:} What do different BERT layers capture?
+
+\vspace{1em}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Approach:}
+\begin{enumerate}
+    \item Extract embeddings from each layer
+    \item Apply UMAP to each layer separately
+    \item Visualize and compare
+\end{enumerate}
+
+\vspace{0.5em}
+\textbf{Typical Findings:}
+\begin{itemize}
+    \item \textbf{Layer 0-2:} Syntactic (POS tags cluster)
+    \item \textbf{Layer 3-8:} Semantic (meaning clusters)
+    \item \textbf{Layer 9-12:} Task-specific
+\end{itemize}
+
+\vspace{0.5em}
+\textbf{Insights:}
+\begin{itemize}
+    \item Lower layers: syntax
+    \item Middle layers: semantics
+    \item Upper layers: task adaptation
+    \item Confirms linguistic hierarchy
+\end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+\begin{lstlisting}[language=Python]
+from transformers import BertModel, BertTokenizer
+
+model = BertModel.from_pretrained('bert-base-uncased', output_hidden_states=True)
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+
+# Get embeddings from all layers
+tokens = tokenizer(sentences, return_tensors='pt', padding=True)
+outputs = model(**tokens)
+
+# outputs.hidden_states: tuple of 13 tensors
+# (embedding layer + 12 transformer layers)
+
+for layer_idx in range(13):
+    layer_embeddings = outputs.hidden_states[layer_idx]
+
+    # Average over sequence length
+    avg_embeddings = layer_embeddings.mean(dim=1).numpy()
+
+    # Apply UMAP
+    reducer = umap.UMAP(n_components=2)
+    viz_2d = reducer.fit_transform(avg_embeddings)
+
+    # Plot
+    plt.figure()
+    plt.scatter(viz_2d[:, 0], viz_2d[:, 1], c=pos_tags)
+    plt.title(f'Layer {layer_idx}')
+    plt.show()
+\end{lstlisting}
+\end{column}
+\end{columns}
+
+\vspace{0.5em}
+\small
+\textit{Reference: Jawahar et al. (2019). "What Does BERT Learn about the Structure of Language?"}

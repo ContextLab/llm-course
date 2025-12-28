@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{colortbl}
 \usepackage{booktabs}
 \usepackage{emoji}
 \usetikzlibrary{shapes,arrows,positioning,calc}
@@ -145,7 +146,7 @@
 % ============================================================
 % ENCODER DECODER ARCHITECTURE
 % ============================================================
-\begin{frame}{Encoder-Decoder Architecture 🏗️}
+\begin{frame}[fragile]{Encoder-Decoder Architecture 🏗️}
 \textbf{Two-part architecture: Encode then Decode}
 
 \vspace{1em}
@@ -167,7 +168,7 @@
     \node[below=of e3] {sat};
 
     % Context vector
-    \node[rectangle,draw,fill=green!20,minimum width=1.5cm,minimum height=1cm,right=of e3] (ctx) {Context\\Vector};
+    \node[rectangle,draw,fill=green!20,minimum width=1.5cm,minimum height=1cm,right=of e3,align=center] (ctx) {Context\\Vector};
 
     % Decoder
     \node[decoder,right=of ctx] (d1) {RNN};
@@ -435,7 +436,7 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 % ============================================================
 % TRANSFORMER ARCHITECTURE
 % ============================================================
-\begin{frame}{Transformer Architecture Overview 🏗️}
+\begin{frame}[fragile]{Transformer Architecture Overview 🏗️}
 \begin{center}
 \begin{tikzpicture}[scale=0.65]
     % Encoder
@@ -444,10 +445,10 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 
     % Encoder components
     \node[rectangle,draw,fill=blue!20,minimum width=2.5cm] at (1.5, 7) {Feed Forward};
-    \node[rectangle,draw,fill=blue!30,minimum width=2.5cm] at (1.5, 5.5) {Multi-Head\\Attention};
+    \node[rectangle,draw,fill=blue!30,minimum width=2.5cm,align=center] at (1.5, 5.5) {Multi-Head\\Attention};
     \node[rectangle,draw,fill=blue!20,minimum width=2.5cm] at (1.5, 4) {Feed Forward};
-    \node[rectangle,draw,fill=blue!30,minimum width=2.5cm] at (1.5, 2.5) {Multi-Head\\Attention};
-    \node at (1.5, 1) {+ Positional\\Encoding};
+    \node[rectangle,draw,fill=blue!30,minimum width=2.5cm,align=center] at (1.5, 2.5) {Multi-Head\\Attention};
+    \node[align=center] at (1.5, 1) {+ Positional\\Encoding};
     \node[below] at (1.5, 0) {Input};
 
     % Decoder
@@ -456,10 +457,10 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 
     % Decoder components
     \node[rectangle,draw,fill=red!20,minimum width=2.5cm] at (6.5, 7) {Feed Forward};
-    \node[rectangle,draw,fill=red!30,minimum width=2.5cm] at (6.5, 5.8) {Cross\\Attention};
-    \node[rectangle,draw,fill=red!40,minimum width=2.5cm] at (6.5, 4.3) {Masked\\Self-Attention};
+    \node[rectangle,draw,fill=red!30,minimum width=2.5cm,align=center] at (6.5, 5.8) {Cross\\Attention};
+    \node[rectangle,draw,fill=red!40,minimum width=2.5cm,align=center] at (6.5, 4.3) {Masked\\Self-Attention};
     \node[rectangle,draw,fill=red!20,minimum width=2.5cm] at (6.5, 2.8) {Feed Forward};
-    \node[rectangle,draw,fill=red!30,minimum width=2.5cm] at (6.5, 1.3) {Masked\\Self-Attention};
+    \node[rectangle,draw,fill=red!30,minimum width=2.5cm,align=center] at (6.5, 1.3) {Masked\\Self-Attention};
     \node[below] at (6.5, 0) {Output};
 
     % Arrows
@@ -757,7 +758,7 @@ Rotary Position Embedding (Su et al. 2021)
 % ============================================================
 % FEED FORWARD
 % ============================================================
-\begin{frame}{Feed-Forward Networks 🔄}
+\begin{frame}[fragile]{Feed-Forward Networks 🔄}
 \textbf{After attention, apply position-wise feed-forward network}
 
 \vspace{1em}
@@ -778,15 +779,15 @@ Rotary Position Embedding (Su et al. 2021)
 
 \begin{center}
 \begin{tikzpicture}[scale=0.8]
-    \node[rectangle,draw,fill=blue!20,minimum width=2cm,minimum height=0.8cm] (input) at (0, 0) {Input\\(768 dims)};
+    \node[rectangle,draw,fill=blue!20,minimum width=2cm,minimum height=0.8cm,align=center] (input) at (0, 0) {Input\\(768 dims)};
 
-    \node[rectangle,draw,fill=green!20,minimum width=2cm,minimum height=0.8cm] (expand) at (0, 2) {Linear + ReLU\\(3072 dims)};
+    \node[rectangle,draw,fill=green!20,minimum width=2cm,minimum height=0.8cm,align=center] (expand) at (0, 2) {Linear + ReLU\\(3072 dims)};
     \draw[->] (input) -- (expand);
 
-    \node[rectangle,draw,fill=orange!20,minimum width=2cm,minimum height=0.8cm] (project) at (0, 4) {Linear\\(768 dims)};
+    \node[rectangle,draw,fill=orange!20,minimum width=2cm,minimum height=0.8cm,align=center] (project) at (0, 4) {Linear\\(768 dims)};
     \draw[->] (expand) -- (project);
 
-    \node[rectangle,draw,fill=red!20,minimum width=2cm,minimum height=0.8cm] (output) at (0, 6) {Output\\(768 dims)};
+    \node[rectangle,draw,fill=red!20,minimum width=2cm,minimum height=0.8cm,align=center] (output) at (0, 6) {Output\\(768 dims)};
     \draw[->] (project) -- (output);
 
     \node[right=0.5cm of expand] {4x expansion};

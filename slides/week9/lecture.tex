@@ -3,6 +3,8 @@
 \usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
@@ -719,23 +721,23 @@ Learning representations from unlabeled data by creating pretext tasks where the
 \begin{tikzpicture}[
     node distance=1.5cm,
     imgnode/.style={rectangle, draw, fill=blue!20, minimum size=1cm},
-    anchor/.style={rectangle, draw, fill=green!40, minimum size=1cm},
-    pos/.style={rectangle, draw, fill=green!20, minimum size=1cm},
-    neg/.style={rectangle, draw, fill=red!20, minimum size=1cm}
+    anchornode/.style={rectangle, draw, fill=green!40, minimum size=1cm},
+    posnode/.style={rectangle, draw, fill=green!20, minimum size=1cm},
+    negnode/.style={rectangle, draw, fill=red!20, minimum size=1cm}
 ]
 
 % Anchor
-\node[anchor] (anchor) {🐕};
+\node[anchornode] (anchor) {🐕};
 \node[below=0.1cm of anchor, font=\tiny] {Anchor};
 
 % Positive
-\node[pos, right=2cm of anchor] (pos) {🐕};
+\node[posnode, right=2cm of anchor] (pos) {🐕};
 \node[below=0.1cm of pos, font=\tiny] {Positive};
 
 % Negatives
-\node[neg, above right=0.5cm and 3.5cm of anchor] (neg1) {🐱};
-\node[neg, right=3.5cm of anchor] (neg2) {🚗};
-\node[neg, below right=0.5cm and 3.5cm of anchor] (neg3) {🌳};
+\node[negnode, above right=0.5cm and 3.5cm of anchor] (neg1) {🐱};
+\node[negnode, right=3.5cm of anchor] (neg2) {🚗};
+\node[negnode, below right=0.5cm and 3.5cm of anchor] (neg3) {🌳};
 
 % Arrows
 \draw[->, thick, green!60!black] (anchor) -- (pos) node[midway, above, font=\small] {Pull together};

@@ -327,7 +327,7 @@ for result in results:
 # looking         VERB     (confidence: 0.997)
 # at              ADP      (confidence: 0.999)
 # ...
-    \end{lstlisting>
+    \end{lstlisting}
 
     📖 \href{https://huggingface.co/learn/nlp-course/chapter7/2}{HuggingFace Chapter 7.2: Token Classification}
 \end{frame}
@@ -483,7 +483,7 @@ for text in texts:
     \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Modern Approach: Pre-trained Models 🤖}
+\begin{frame}[fragile]{Modern Approach: Pre-trained Models 🤖}
     \textbf{Neural network advantages:}
     \begin{itemize}
         \item Learn context-dependent representations
@@ -497,8 +497,8 @@ for text in texts:
     \begin{center}
         \begin{tikzpicture}[node distance=1.5cm]
             \node[rectangle, draw, fill=lightblue!30, minimum width=2.5cm] (input) {Input Text};
-            \node[rectangle, draw, fill=orange!30, minimum width=2.5cm, below of=input] (bert) {Pre-trained Model\\(BERT, RoBERTa)};
-            \node[rectangle, draw, fill=darkgreen!30, minimum width=2.5cm, below of=bert] (cls) {Classification Head\\(Dense + Softmax)};
+            \node[rectangle, draw, fill=orange!30, minimum width=2.5cm, below of=input, align=center] (bert) {Pre-trained Model\\(BERT, RoBERTa)};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=2.5cm, below of=bert, align=center] (cls) {Classification Head\\(Dense + Softmax)};
             \node[rectangle, draw, fill=purple!30, minimum width=2.5cm, below of=cls] (output) {Sentiment Label};
 
             \draw[->, thick] (input) -- (bert);
