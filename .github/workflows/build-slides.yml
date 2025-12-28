@@ -70,9 +70,10 @@ jobs:
           echo "📄 Compiling syllabus..."
           cd admin
 
-          # Try with xelatex first (supports custom fonts)
-          pandoc -s -o syllabus.pdf syllabus.md --pdf-engine=xelatex || \
-          pandoc -s -o syllabus.pdf syllabus.md --pdf-engine=pdflatex
+          # Try with xelatex first (supports custom fonts), then pdflatex as fallback
+          pandoc -s -o syllabus.pdf syllabus.md --pdf-engine=xelatex 2>&1 || \
+          pandoc -s -o syllabus.pdf syllabus.md --pdf-engine=pdflatex 2>&1 || \
+          echo "⚠️ Syllabus compilation failed, continuing anyway..."
 
           if [ -f syllabus.pdf ]; then
             echo "✅ Successfully compiled syllabus.pdf"
@@ -84,24 +85,32 @@ jobs:
       - name: Find and compile all lecture slides
         run: |
           echo "🔍 Finding all .tex files in slides directory..."
+
+          # Store current directory
+          ROOT_DIR=$(pwd)
+
+          # Find and compile each tex file
           find slides -name "*.tex" -type f | while read -r tex_file; do
             dir=$(dirname "$tex_file")
             filename=$(basename "$tex_file" .tex)
             echo "📝 Compiling $tex_file..."
-            cd "$dir"
+
+            # Change to the directory containing the tex file
+            cd "$ROOT_DIR/$dir"
 
             # Compile with xelatex first (better Unicode/emoji support)
-            xelatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
-            xelatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
+            xelatex -interaction=nonstopmode "$filename.tex" 2>&1 > /dev/null || true
+            xelatex -interaction=nonstopmode "$filename.tex" 2>&1 > /dev/null || true
 
             # Try with pdflatex if xelatex failed
             if [ ! -f "$filename.pdf" ]; then
-              echo "⚠️  xelatex failed, trying pdflatex..."
-              pdflatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
-              pdflatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
+              echo "⚠️  xelatex failed for $filename, trying pdflatex..."
+              pdflatex -interaction=nonstopmode "$filename.tex" 2>&1 > /dev/null || true
+              pdflatex -interaction=nonstopmode "$filename.tex" 2>&1 > /dev/null || true
             fi
 
-            cd - > /dev/null
+            # Return to root
+            cd "$ROOT_DIR"
 
             if [ -f "$dir/$filename.pdf" ]; then
               echo "✅ Successfully compiled $tex_file to $filename.pdf"
@@ -111,6 +120,7 @@ jobs:
           done
 
       - name: Convert Jupyter notebooks to HTML
+        continue-on-error: true
         run: |
           echo "🔍 Finding all .ipynb files in slides directory..."
           find slides -name "*.ipynb" -type f | while read -r notebook; do
@@ -118,7 +128,7 @@ jobs:
             filename=$(basename "$notebook" .ipynb)
             echo "📓 Converting $notebook to HTML..."
 
-            jupyter nbconvert --to html "$notebook" --output "$filename.html" || true
+            jupyter nbconvert --to html "$notebook" --output "$filename.html" 2>&1 || true
 
             if [ -f "$dir/$filename.html" ]; then
               echo "✅ Successfully converted $notebook"
@@ -127,9 +137,17 @@ jobs:
             fi
           done
 
-      - name: Create PDF.js HTML viewers for slides
+      - name: Create HTML viewers for PDF slides
+        continue-on-error: true
         run: |
           echo "🌐 Creating HTML viewers for PDFs..."
+
+          # Only create viewers if PDFs exist
+          if [ -z "$(find slides -name '*.pdf' -type f)" ]; then
+            echo "No PDF files found, skipping HTML viewer creation"
+            exit 0
+          fi
+
           find slides -name "*.pdf" -type f | while read -r pdf_file; do
             dir=$(dirname "$pdf_file")
             filename=$(basename "$pdf_file" .pdf)
@@ -218,275 +236,288 @@ VIEWER_EOF
 
           # Copy all PDF files
           echo "📦 Copying PDFs..."
-          find slides -name "*.pdf" -type f | while read -r pdf_file; do
-            rel_path=${pdf_file#slides/}
-            target_dir=$(dirname "web_slides/slides/$rel_path")
-            mkdir -p "$target_dir"
-            cp "$pdf_file" "web_slides/slides/$rel_path"
-            echo "Copied $pdf_file"
-          done
+          if [ -n "$(find slides -name '*.pdf' -type f 2>/dev/null)" ]; then
+            find slides -name "*.pdf" -type f | while read -r pdf_file; do
+              rel_path=${pdf_file#slides/}
+              target_dir=$(dirname "web_slides/slides/$rel_path")
+              mkdir -p "$target_dir"
+              cp "$pdf_file" "web_slides/slides/$rel_path"
+              echo "Copied $pdf_file"
+            done
+          else
+            echo "No PDF files found in slides directory"
+          fi
 
           # Copy all HTML files (both converted notebooks and viewers)
           echo "📦 Copying HTML files..."
-          find slides -name "*.html" -type f | while read -r html_file; do
-            rel_path=${html_file#slides/}
-            target_dir=$(dirname "web_slides/slides/$rel_path")
-            mkdir -p "$target_dir"
-            cp "$html_file" "web_slides/slides/$rel_path"
-            echo "Copied $html_file"
-          done
+          if [ -n "$(find slides -name '*.html' -type f 2>/dev/null)" ]; then
+            find slides -name "*.html" -type f | while read -r html_file; do
+              rel_path=${html_file#slides/}
+              target_dir=$(dirname "web_slides/slides/$rel_path")
+              mkdir -p "$target_dir"
+              cp "$html_file" "web_slides/slides/$rel_path"
+              echo "Copied $html_file"
+            done
+          else
+            echo "No HTML files found in slides directory"
+          fi
 
           # Copy syllabus
           echo "📦 Copying syllabus..."
-          cp admin/syllabus.pdf web_slides/admin/ 2>/dev/null || echo "Syllabus PDF not found"
+          if [ -f admin/syllabus.pdf ]; then
+            cp admin/syllabus.pdf web_slides/admin/
+            echo "Copied syllabus.pdf"
+          else
+            echo "Syllabus PDF not found, skipping"
+          fi
 
       - name: Generate index page
         run: |
           cat > web_slides/index.html << 'EOF'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>LLM Course Slides</title>
-              <style>
-                  * {
-                      margin: 0;
-                      padding: 0;
-                      box-sizing: border-box;
-                  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Course Slides</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-                  body {
-                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                      min-height: 100vh;
-                      padding: 40px 20px;
-                  }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
 
-                  .container {
-                      max-width: 1200px;
-                      margin: 0 auto;
-                  }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-                  h1 {
-                      color: white;
-                      text-align: center;
-                      font-size: 3em;
-                      margin-bottom: 20px;
-                      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-                  }
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
 
-                  .subtitle {
-                      color: rgba(255,255,255,0.9);
-                      text-align: center;
-                      font-size: 1.2em;
-                      margin-bottom: 30px;
-                  }
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
 
-                  .syllabus-link {
-                      text-align: center;
-                      margin-bottom: 50px;
-                  }
+        .syllabus-link {
+            text-align: center;
+            margin-bottom: 50px;
+        }
 
-                  .syllabus-link a {
-                      display: inline-block;
-                      background: white;
-                      color: #667eea;
-                      padding: 15px 40px;
-                      border-radius: 30px;
-                      text-decoration: none;
-                      font-weight: bold;
-                      font-size: 1.1em;
-                      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-                      transition: transform 0.3s ease, box-shadow 0.3s ease;
-                  }
+        .syllabus-link a {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-                  .syllabus-link a:hover {
-                      transform: translateY(-3px);
-                      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-                  }
+        .syllabus-link a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
 
-                  .slides-grid {
-                      display: grid;
-                      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                      gap: 30px;
-                      margin-top: 40px;
-                  }
+        .slides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
 
-                  .slide-card {
-                      background: white;
-                      border-radius: 15px;
-                      padding: 30px;
-                      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-                      transition: transform 0.3s ease, box-shadow 0.3s ease;
-                  }
+        .slide-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-                  .slide-card:hover {
-                      transform: translateY(-10px);
-                      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-                  }
+        .slide-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
 
-                  .slide-card h2 {
-                      color: #667eea;
-                      margin-bottom: 15px;
-                      font-size: 1.5em;
-                  }
+        .slide-card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
 
-                  .slide-card p {
-                      color: #666;
-                      line-height: 1.6;
-                      margin-bottom: 20px;
-                  }
+        .slide-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
 
-                  .slide-card .links {
-                      display: flex;
-                      gap: 10px;
-                      flex-wrap: wrap;
-                  }
+        .slide-card .links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
 
-                  .slide-card .btn {
-                      display: inline-block;
-                      padding: 10px 20px;
-                      border-radius: 20px;
-                      text-decoration: none;
-                      font-weight: bold;
-                      transition: opacity 0.3s ease;
-                      font-size: 0.9em;
-                  }
+        .slide-card .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: opacity 0.3s ease;
+            font-size: 0.9em;
+        }
 
-                  .slide-card .btn:hover {
-                      opacity: 0.8;
-                  }
+        .slide-card .btn:hover {
+            opacity: 0.8;
+        }
 
-                  .btn-primary {
-                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                      color: white;
-                  }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
 
-                  .btn-secondary {
-                      background: #e0e0e0;
-                      color: #333;
-                  }
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
 
-                  .emoji {
-                      font-size: 2em;
-                      margin-bottom: 15px;
-                      display: block;
-                  }
+        .emoji {
+            font-size: 2em;
+            margin-bottom: 15px;
+            display: block;
+        }
 
-                  footer {
-                      text-align: center;
-                      color: white;
-                      margin-top: 60px;
-                      padding: 20px;
-                  }
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+            padding: 20px;
+        }
 
-                  footer a {
-                      color: white;
-                      text-decoration: underline;
-                  }
-              </style>
-          </head>
-          <body>
-              <div class="container">
-                  <h1>🤖 LLM Course Slides</h1>
-                  <p class="subtitle">Models of Language and Conversation - PSYC 51.17</p>
+        footer a {
+            color: white;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 LLM Course Slides</h1>
+        <p class="subtitle">Models of Language and Conversation - PSYC 51.17</p>
 
-                  <div class="syllabus-link">
-                      <a href="admin/syllabus.pdf" target="_blank">📄 Download Course Syllabus</a>
-                  </div>
+        <div class="syllabus-link">
+            <a href="admin/syllabus.pdf" target="_blank">📄 Download Course Syllabus</a>
+        </div>
 
-                  <div class="slides-grid">
-                      <div class="slide-card">
-                          <span class="emoji">🚀</span>
-                          <h2>Week 1: Introduction</h2>
-                          <p>String manipulation, pattern matching, and the ELIZA chatbot. Is ChatGPT conscious?</p>
-                          <div class="links">
-                              <a href="slides/week1/lecture1.pdf" class="btn btn-primary" target="_blank">Lecture 1 PDF</a>
-                              <a href="slides/week1/lecture2.pdf" class="btn btn-primary" target="_blank">Lecture 2 PDF</a>
-                              <a href="slides/week1/lecture3.pdf" class="btn btn-primary" target="_blank">Lecture 3 PDF</a>
-                              <a href="slides/week1/xhour_eliza_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
-                          </div>
-                      </div>
+        <div class="slides-grid">
+            <div class="slide-card">
+                <span class="emoji">🚀</span>
+                <h2>Week 1: Introduction</h2>
+                <p>String manipulation, pattern matching, and the ELIZA chatbot. Is ChatGPT conscious?</p>
+                <div class="links">
+                    <a href="slides/week1/lecture1.pdf" class="btn btn-primary" target="_blank">Lecture 1 PDF</a>
+                    <a href="slides/week1/lecture2.pdf" class="btn btn-primary" target="_blank">Lecture 2 PDF</a>
+                    <a href="slides/week1/lecture3.pdf" class="btn btn-primary" target="_blank">Lecture 3 PDF</a>
+                    <a href="slides/week1/xhour_eliza_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
+                </div>
+            </div>
 
-                      <div class="slide-card">
-                          <span class="emoji">📝</span>
-                          <h2>Week 2: Computational Linguistics</h2>
-                          <p>Tokenization, POS tagging, sentiment analysis, and statistical learning.</p>
-                          <div class="links">
-                              <a href="slides/week2/lecture4.pdf" class="btn btn-primary" target="_blank">Lecture 4 PDF</a>
-                              <a href="slides/week2/lecture5.pdf" class="btn btn-primary" target="_blank">Lecture 5 PDF</a>
-                              <a href="slides/week2/lecture6.pdf" class="btn btn-primary" target="_blank">Lecture 6 PDF</a>
-                              <a href="slides/week2/xhour_classification_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
-                          </div>
-                      </div>
+            <div class="slide-card">
+                <span class="emoji">📝</span>
+                <h2>Week 2: Computational Linguistics</h2>
+                <p>Tokenization, POS tagging, sentiment analysis, and statistical learning.</p>
+                <div class="links">
+                    <a href="slides/week2/lecture4.pdf" class="btn btn-primary" target="_blank">Lecture 4 PDF</a>
+                    <a href="slides/week2/lecture5.pdf" class="btn btn-primary" target="_blank">Lecture 5 PDF</a>
+                    <a href="slides/week2/lecture6.pdf" class="btn btn-primary" target="_blank">Lecture 6 PDF</a>
+                    <a href="slides/week2/xhour_classification_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
+                </div>
+            </div>
 
-                      <div class="slide-card">
-                          <span class="emoji">📊</span>
-                          <h2>Week 3: Text Embeddings I</h2>
-                          <p>Classical embeddings (LSA, LDA) and word embeddings (Word2Vec, GloVe, FastText).</p>
-                          <div class="links">
-                              <a href="slides/week3/lecture7.pdf" class="btn btn-primary" target="_blank">Lecture 7 PDF</a>
-                              <a href="slides/week3/lecture8.pdf" class="btn btn-primary" target="_blank">Lecture 8 PDF</a>
-                              <a href="slides/week3/xhour_embeddings_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
-                          </div>
-                      </div>
+            <div class="slide-card">
+                <span class="emoji">📊</span>
+                <h2>Week 3: Text Embeddings I</h2>
+                <p>Classical embeddings (LSA, LDA) and word embeddings (Word2Vec, GloVe, FastText).</p>
+                <div class="links">
+                    <a href="slides/week3/lecture7.pdf" class="btn btn-primary" target="_blank">Lecture 7 PDF</a>
+                    <a href="slides/week3/lecture8.pdf" class="btn btn-primary" target="_blank">Lecture 8 PDF</a>
+                    <a href="slides/week3/xhour_embeddings_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
+                </div>
+            </div>
 
-                      <div class="slide-card">
-                          <span class="emoji">📈</span>
-                          <h2>Weeks 3-4: Combined Slides</h2>
-                          <p>Complete deck covering classical and modern text embeddings.</p>
-                          <div class="links">
-                              <a href="slides/week3-4/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
-                          </div>
-                      </div>
+            <div class="slide-card">
+                <span class="emoji">📈</span>
+                <h2>Weeks 3-4: Combined Slides</h2>
+                <p>Complete deck covering classical and modern text embeddings.</p>
+                <div class="links">
+                    <a href="slides/week3-4/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
+                </div>
+            </div>
 
-                      <div class="slide-card">
-                          <span class="emoji">⚡</span>
-                          <h2>Weeks 5-6: Transformers & BERT</h2>
-                          <p>Attention mechanisms, transformer architecture, and context-aware models.</p>
-                          <div class="links">
-                              <a href="slides/week5-6/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
-                          </div>
-                      </div>
+            <div class="slide-card">
+                <span class="emoji">⚡</span>
+                <h2>Weeks 5-6: Transformers & BERT</h2>
+                <p>Attention mechanisms, transformer architecture, and context-aware models.</p>
+                <div class="links">
+                    <a href="slides/week5-6/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
+                </div>
+            </div>
 
-                      <div class="slide-card">
-                          <span class="emoji">💬</span>
-                          <h2>Week 7: Models of Conversation</h2>
-                          <p>Pragmatics, dialogue, common ground, and thought trajectories.</p>
-                          <div class="links">
-                              <a href="slides/week7/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
-                          </div>
-                      </div>
+            <div class="slide-card">
+                <span class="emoji">💬</span>
+                <h2>Week 7: Models of Conversation</h2>
+                <p>Pragmatics, dialogue, common ground, and thought trajectories.</p>
+                <div class="links">
+                    <a href="slides/week7/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
+                </div>
+            </div>
 
-                      <div class="slide-card">
-                          <span class="emoji">🧠</span>
-                          <h2>Week 8: GPT Models</h2>
-                          <p>GPT evolution, building transformers from scratch, language models & the brain.</p>
-                          <div class="links">
-                              <a href="slides/week8/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
-                          </div>
-                      </div>
+            <div class="slide-card">
+                <span class="emoji">🧠</span>
+                <h2>Week 8: GPT Models</h2>
+                <p>GPT evolution, building transformers from scratch, language models & the brain.</p>
+                <div class="links">
+                    <a href="slides/week8/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
+                </div>
+            </div>
 
-                      <div class="slide-card">
-                          <span class="emoji">🔍</span>
-                          <h2>Week 9: RAG & MoE</h2>
-                          <p>Retrieval Augmented Generation, Mixture of Experts, and the future of LLMs.</p>
-                          <div class="links">
-                              <a href="slides/week9/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
-                          </div>
-                      </div>
-                  </div>
+            <div class="slide-card">
+                <span class="emoji">🔍</span>
+                <h2>Week 9: RAG & MoE</h2>
+                <p>Retrieval Augmented Generation, Mixture of Experts, and the future of LLMs.</p>
+                <div class="links">
+                    <a href="slides/week9/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
+                </div>
+            </div>
+        </div>
 
-                  <footer>
-                      <p>📚 <a href="https://github.com/ContextLab/llm-course" target="_blank">View Course on GitHub</a></p>
-                      <p>🎮 <a href="https://contextlab.github.io/llm-course/demos/" target="_blank">Interactive Demos</a></p>
-                      <p>Built with ❤️ using LaTeX Beamer and GitHub Actions</p>
-                  </footer>
-              </div>
-          </body>
-          </html>
-          EOF
+        <footer>
+            <p>📚 <a href="https://github.com/ContextLab/llm-course" target="_blank">View Course on GitHub</a></p>
+            <p>🎮 <a href="https://contextlab.github.io/llm-course/demos/" target="_blank">Interactive Demos</a></p>
+            <p>Built with ❤️ using LaTeX Beamer and GitHub Actions</p>
+        </footer>
+    </div>
+</body>
+</html>
+EOF
 
           echo "✅ Created index page at web_slides/index.html"
 
