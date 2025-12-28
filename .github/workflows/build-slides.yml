@@ -42,23 +42,22 @@ jobs:
             texlive-fonts-recommended \
             texlive-fonts-extra \
             texlive-xetex \
+            texlive-luatex \
+            texlive-science \
             latexmk \
             pdf2svg \
-            pandoc
+            pandoc \
+            fonts-firacode \
+            fonts-noto-color-emoji \
+            fonts-font-awesome
 
-      - name: Install Berkeley Mono font for syllabus
-        run: |
-          # Create fonts directory
-          sudo mkdir -p /usr/share/fonts/truetype/berkeley-mono
-
-          # Copy Berkeley Mono font from repo to system fonts directory
-          sudo cp admin/berkeley-mono.ttf /usr/share/fonts/truetype/berkeley-mono/
-
-          # Refresh font cache
+          # Update font cache
           sudo fc-cache -f -v
 
+      - name: Verify Fira Code font installation
+        run: |
           # Verify font installation
-          fc-list | grep -i "berkeley" || echo "Warning: Berkeley Mono font may not be installed correctly"
+          fc-list | grep -i "fira" || echo "Warning: Fira Code font may not be installed correctly"
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -74,7 +73,8 @@ jobs:
           echo "📄 Compiling syllabus..."
           cd admin
 
-          # Try with xelatex first (supports custom fonts)
+          # Use lualatex (required for emoji package)
+          pandoc -s -o syllabus.pdf syllabus.md --pdf-engine=lualatex || \
           pandoc -s -o syllabus.pdf syllabus.md --pdf-engine=xelatex || \
           pandoc -s -o syllabus.pdf syllabus.md --pdf-engine=pdflatex
 
@@ -94,15 +94,20 @@ jobs:
             echo "📝 Compiling $tex_file..."
             cd "$dir"
 
-            # Compile with xelatex first (better Unicode/emoji support)
-            xelatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
-            xelatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
-
-            # Try with pdflatex if xelatex failed
-            if [ ! -f "$filename.pdf" ]; then
-              echo "⚠️  xelatex failed, trying pdflatex..."
-              pdflatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
-              pdflatex -interaction=nonstopmode -halt-on-error "$filename.tex" || true
+            # Try lualatex first (required for emoji package)
+            if lualatex -interaction=nonstopmode -halt-on-error "$filename.tex" > /dev/null 2>&1; then
+              lualatex -interaction=nonstopmode -halt-on-error "$filename.tex" > /dev/null 2>&1 || true
+            else
+              echo "⚠️  lualatex failed, trying xelatex..."
+              # Try xelatex (better Unicode support)
+              if xelatex -interaction=nonstopmode -halt-on-error "$filename.tex" > /dev/null 2>&1; then
+                xelatex -interaction=nonstopmode -halt-on-error "$filename.tex" > /dev/null 2>&1 || true
+              else
+                echo "⚠️  xelatex failed, trying pdflatex..."
+                # Fall back to pdflatex
+                pdflatex -interaction=nonstopmode -halt-on-error "$filename.tex" > /dev/null 2>&1 || true
+                pdflatex -interaction=nonstopmode -halt-on-error "$filename.tex" > /dev/null 2>&1 || true
+              fi
             fi
 
             cd - > /dev/null
