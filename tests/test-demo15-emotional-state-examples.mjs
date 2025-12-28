@@ -1,4 +1,4 @@
-import { Parry } from './js/parry.js';
+import { Parry } from '../demos/15-chatbot-evolution/js/parry.js';
 
 console.log('='.repeat(80));
 console.log('PARRY EMOTIONAL STATE ISSUES - DETAILED CONVERSATION EXAMPLES');

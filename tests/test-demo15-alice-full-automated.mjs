@@ -1,6 +1,11 @@
-import { AliceFull } from './js/alice-full.js';
-import { Alice } from './js/alice.js';
+import { AliceFull } from '../demos/15-chatbot-evolution/js/alice-full.js';
+import { Alice } from '../demos/15-chatbot-evolution/js/alice.js';
 import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 console.log('='.repeat(80));
 console.log('ALICE FULL - COMPREHENSIVE AUTOMATED TESTING SUITE');
@@ -47,7 +52,7 @@ function reportWarning(testName, message, details = '') {
 // Load patterns (Node.js version - load from file system)
 console.log('Loading ALICE Full patterns...');
 try {
-    const patternsData = JSON.parse(readFileSync('./data/alice-patterns-full.json', 'utf-8'));
+    const patternsData = JSON.parse(readFileSync(join(__dirname, '../demos/15-chatbot-evolution/data/alice-patterns-full.json'), 'utf-8'));
     console.log(`Source: ${patternsData.metadata.source}`);
     console.log(`Total patterns: ${patternsData.metadata.total_patterns}`);
     console.log(`Files: ${patternsData.metadata.files_processed}`);

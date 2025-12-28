@@ -6,6 +6,11 @@ Tests vector arithmetic and similarity computations.
 
 import json
 import math
+import os
+
+# Get the directory of this script to resolve relative paths
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(SCRIPT_DIR, '..', 'demos', '11-analogies', 'data')
 
 def cosine_similarity(v1, v2):
     """Compute cosine similarity between two vectors."""
@@ -54,7 +59,7 @@ def test_demo_integration():
 
     # Load embeddings
     print("\n1. Loading embeddings...")
-    with open('glove-50d.json', 'r') as f:
+    with open(os.path.join(DATA_DIR, 'glove-50d.json'), 'r') as f:
         embeddings = json.load(f)
     print(f"   ✓ Loaded {len(embeddings):,} word embeddings")
 

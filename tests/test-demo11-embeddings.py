@@ -6,9 +6,17 @@ and contains the expected words.
 
 import json
 import sys
+import os
 
-def test_embeddings(json_file='glove-50d.json'):
+# Get the directory of this script to resolve relative paths
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(SCRIPT_DIR, '..', 'demos', '11-analogies', 'data')
+DEFAULT_JSON = os.path.join(DATA_DIR, 'glove-50d.json')
+
+def test_embeddings(json_file=None):
     """Test the embeddings JSON file."""
+    if json_file is None:
+        json_file = DEFAULT_JSON
     print(f"Testing {json_file}...")
     print("=" * 60)
 
@@ -97,6 +105,6 @@ def test_embeddings(json_file='glove-50d.json'):
     return True
 
 if __name__ == "__main__":
-    json_file = sys.argv[1] if len(sys.argv) > 1 else 'glove-50d.json'
+    json_file = sys.argv[1] if len(sys.argv) > 1 else None
     success = test_embeddings(json_file)
     sys.exit(0 if success else 1)

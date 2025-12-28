@@ -1,4 +1,4 @@
-import { Parry } from './js/parry.js';
+import { Parry } from '../demos/15-chatbot-evolution/js/parry.js';
 
 // Test results tracking
 const results = {
