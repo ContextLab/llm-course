@@ -1,13 +1,15 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{emoji}
-
 % Code listing setup
 \lstset{
   basicstyle=\ttfamily\small,
@@ -22,7 +24,7 @@
 
 \title{Cognitive Models of Semantic Representation}
 \subtitle{Lecture 11: How Humans Represent Meaning}
-\author{LLM Course - Week 4}
+\author{PSYC 51.07: Models of Language and Communication - Week 4}
 \date{Winter 2026}
 
 \begin{document}
@@ -30,16 +32,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Lecture 📋}
+\begin{frame}[shrink=10]{Today's Lecture 📋}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 🧠 \textbf{Human vs. Computational Semantics}
     \item 🔬 \textbf{Cognitive Theories of Meaning}
     \item 🌐 \textbf{Embodied \& Grounded Cognition}
@@ -55,18 +57,18 @@
 % ============================================================
 % FUNDAMENTAL QUESTION
 % ============================================================
-\begin{frame}{The Fundamental Question 🤔}
+\begin{frame}[shrink=10]{The Fundamental Question 🤔}
 \begin{center}
 \LARGE
 \textbf{What does "meaning" actually mean?}
 \end{center}
 
-\vspace{2em}
+\vspace{1em}
 
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Computational View:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Vectors in high-dimensional space
     \item Learned from text co-occurrence
     \item Distributional patterns
@@ -80,7 +82,7 @@
 
 \begin{column}{0.48\textwidth}
 \textbf{Human View:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Sensory experiences
     \item Emotional associations
     \item Physical grounding
@@ -104,7 +106,7 @@
 % ============================================================
 % HUMAN SEMANTICS
 % ============================================================
-\begin{frame}{How Do Humans Represent Meaning? 🧠}
+\begin{frame}[shrink=10]{How Do Humans Represent Meaning? 🧠}
 \textbf{Example: The word "coffee"}
 
 \vspace{1em}
@@ -112,7 +114,7 @@
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{What comes to YOUR mind?}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Visual:} brown liquid, mug, steam, beans
     \item \textbf{Olfactory:} aroma, roasted smell
     \item \textbf{Gustatory:} bitter taste, smooth texture
@@ -137,7 +139,7 @@
 
 \vspace{1em}
 \textbf{What's missing?}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item No sensory grounding
     \item No embodied experience
     \item No emotional content
@@ -157,13 +159,13 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 % ============================================================
 % SYMBOL GROUNDING
 % ============================================================
-\begin{frame}{The Symbol Grounding Problem 🔗}
+\begin{frame}[shrink=10]{The Symbol Grounding Problem 🔗}
 \textbf{Harnad (1990): Can symbols have intrinsic meaning?}
 
 \vspace{1em}
 
 \begin{exampleblock}{The Chinese Room Argument (Searle, 1980)}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Person in room, doesn't understand Chinese
     \item Receives Chinese symbols, has rule book
     \item Follows rules to produce Chinese responses
@@ -180,7 +182,7 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Symbol Systems:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Symbols refer to other symbols
     \item Purely syntactic manipulation
     \item No connection to world
@@ -190,7 +192,7 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 
 \begin{column}{0.48\textwidth}
 \textbf{Grounded Systems:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Symbols connected to perception
     \item Linked to action
     \item Embodied in physical world
@@ -207,7 +209,7 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 % ============================================================
 % EMBODIED COGNITION
 % ============================================================
-\begin{frame}{Embodied Cognition Theory 🏃}
+\begin{frame}[shrink=10]{Embodied Cognition Theory 🏃}
 \textbf{Meaning arises from bodily experience and sensorimotor interaction}
 
 \vspace{1em}
@@ -215,7 +217,7 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Key Principles:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Embodiment:} Cognition shaped by body
     \item \textbf{Situatedness:} Meaning context-dependent
     \item \textbf{Enactivism:} Knowing through doing
@@ -224,7 +226,7 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 
 \vspace{0.5em}
 \textbf{Evidence:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Reading "kick": activates motor cortex
     \item Understanding "grasp": simulates action
     \item Processing emotions: activates body maps
@@ -261,7 +263,7 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 
 \vspace{0.5em}
 \textbf{Implications for AI:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Text-only models miss embodiment
     \item Need multimodal grounding
     \item Interaction with environment
@@ -278,7 +280,7 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 % ============================================================
 % DISTRIBUTIONAL HYPOTHESIS
 % ============================================================
-\begin{frame}{The Distributional Hypothesis Revisited 📖}
+\begin{frame}[shrink=10]{The Distributional Hypothesis Revisited 📖}
 \begin{center}
 \huge
 \textit{"You shall know a word by the company it keeps"}
@@ -299,7 +301,7 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Supports:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Works remarkably well in practice
     \item Captures semantic similarity
     \item Enables analogical reasoning
@@ -311,7 +313,7 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 
 \begin{column}{0.48\textwidth}
 \textbf{Limitations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Correlation $\neq$ causation
     \item Lacks perceptual grounding
     \item No embodied understanding
@@ -335,7 +337,7 @@ Is distributional semantics sufficient for meaning, or just a useful approximati
 % ============================================================
 % SEMANTIC SIMILARITY
 % ============================================================
-\begin{frame}{What Does "Semantic Similarity" Really Mean? 🔍}
+\begin{frame}[shrink=10]{What Does "Semantic Similarity" Really Mean? 🔍}
 \textbf{Different types of similarity:}
 
 \vspace{1em}
@@ -343,7 +345,7 @@ Is distributional semantics sufficient for meaning, or just a useful approximati
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{1. Taxonomic:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item dog $\sim$ cat (both animals)
     \item red $\sim$ blue (both colors)
     \item "Is-a" relationships
@@ -351,7 +353,7 @@ Is distributional semantics sufficient for meaning, or just a useful approximati
 
 \vspace{0.3em}
 \textbf{2. Thematic:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item dog $\sim$ leash (co-occur in events)
     \item coffee $\sim$ cup (functional relation)
     \item "Goes-with" relationships
@@ -359,14 +361,14 @@ Is distributional semantics sufficient for meaning, or just a useful approximati
 
 \vspace{0.3em}
 \textbf{3. Synonymy:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item big $\sim$ large (same meaning)
     \item happy $\sim$ joyful
 \end{itemize}
 
 \vspace{0.3em}
 \textbf{4. Functional:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item knife $\sim$ scissors (similar function)
     \item chair $\sim$ stool
 \end{itemize}
@@ -376,7 +378,7 @@ Is distributional semantics sufficient for meaning, or just a useful approximati
 \textbf{What do models capture?}
 
 \vspace{0.5em}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Word2Vec: Mostly thematic + taxonomic
     \item BERT: Better at taxonomic
     \item Varies by context window size
@@ -385,7 +387,7 @@ Is distributional semantics sufficient for meaning, or just a useful approximati
 
 \vspace{1em}
 \textbf{Human judgments:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item SimLex-999: True similarity
     \item WordSim-353: Relatedness (broader)
     \item Models better at relatedness than similarity
@@ -411,7 +413,7 @@ Models often conflate these!
 % ============================================================
 % GRAND ET AL
 % ============================================================
-\begin{frame}{Semantic Projection: Recovering Human Knowledge 🔬}
+\begin{frame}[shrink=10]{Semantic Projection: Recovering Human Knowledge 🔬}
 \textbf{Grand et al. (2022): Can we extract human-like features from embeddings?}
 
 \vspace{1em}
@@ -419,9 +421,9 @@ Models often conflate these!
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{The Experiment:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Collect human ratings on perceptual features
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Is it edible?
         \item Is it heavy?
         \item Is it alive?
@@ -433,7 +435,7 @@ Models often conflate these!
 
 \vspace{0.5em}
 \textbf{Key Findings:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Embeddings encode surprisingly rich knowledge
     \item Can predict perceptual features
     \item Even vision and motor properties!
@@ -456,7 +458,7 @@ Models often conflate these!
 
     % Features
     \draw[fill=green!20] (0,0.3) rectangle (4,1.5);
-    \node[font=\small] at (2, 1.3) {Perceptual Features};
+    \node[font=\footnotesize] at (2, 1.3) {Perceptual Features};
     \node[font=\tiny] at (2, 0.9) {Size: 0.7};
     \node[font=\tiny] at (2, 0.6) {Edible: 0.1};
 
@@ -473,7 +475,7 @@ Models often conflate these!
 
 \vspace{0.5em}
 \textbf{Interpretation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Text co-occurrence captures real-world properties
     \item Indirect grounding through language
     \item But still not true perceptual grounding
@@ -489,7 +491,7 @@ Models often conflate these!
 % ============================================================
 % MULTIMODAL
 % ============================================================
-\begin{frame}{Multimodal Models: Bridging the Gap 🌉}
+\begin{frame}[shrink=10]{Multimodal Models: Bridging the Gap 🌉}
 \textbf{Combining language with perception}
 
 \vspace{1em}
@@ -497,7 +499,7 @@ Models often conflate these!
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Vision-Language Models:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item CLIP (OpenAI)
     \item ALIGN (Google)
     \item Flamingo (DeepMind)
@@ -506,7 +508,7 @@ Models often conflate these!
 
 \vspace{0.5em}
 \textbf{Key Idea:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Learn joint embedding space
     \item Text and images map to same space
     \item Enables cross-modal understanding
@@ -515,7 +517,7 @@ Models often conflate these!
 
 \vspace{0.5em}
 \textbf{Training:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Image-caption pairs
     \item Contrastive learning
     \item Matching images to descriptions
@@ -538,11 +540,11 @@ Models often conflate these!
     \draw[->, thick] (1, 4) -- (1, 3);
     \draw[->, thick] (5, 4) -- (5, 3);
 
-    \node[font=\small] at (1, 3.5) {Vision};
-    \node[font=\small] at (1, 3.2) {Encoder};
+    \node[font=\footnotesize] at (1, 3.5) {Vision};
+    \node[font=\footnotesize] at (1, 3.2) {Encoder};
 
-    \node[font=\small] at (5, 3.5) {Text};
-    \node[font=\small] at (5, 3.2) {Encoder};
+    \node[font=\footnotesize] at (5, 3.5) {Text};
+    \node[font=\footnotesize] at (5, 3.2) {Encoder};
 
     % Joint Space
     \draw[fill=purple!20] (0,0.5) rectangle (6,2.5);
@@ -563,7 +565,7 @@ Models often conflate these!
 
 \vspace{0.5em}
 \textbf{Benefits:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Visual grounding
     \item Zero-shot classification
     \item Better generalization
@@ -580,7 +582,7 @@ Models often conflate these!
 % ============================================================
 % CONCEPTUAL SPACES
 % ============================================================
-\begin{frame}{Conceptual Spaces Theory 🌌}
+\begin{frame}[shrink=10]{Conceptual Spaces Theory 🌌}
 \textbf{Gärdenfors (2000): Meaning as geometry}
 
 \vspace{1em}
@@ -588,7 +590,7 @@ Models often conflate these!
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Key Ideas:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Concepts represented in quality dimensions
     \item Dimensions: color, size, temperature, etc.
     \item Each dimension has a metric
@@ -598,7 +600,7 @@ Models often conflate these!
 
 \vspace{0.5em}
 \textbf{Example: Colors}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Hue, saturation, brightness
     \item Natural categories (red, blue, green)
     \item Fuzzy boundaries
@@ -624,7 +626,7 @@ Models often conflate these!
     \node at (4, 3) {elephant};
 
     \draw[fill=yellow!20, opacity=0.5] (3.5,0.8) circle (0.5);
-    \node[font=\small] at (3.5, 0.8) {rabbit};
+    \node[font=\footnotesize] at (3.5, 0.8) {rabbit};
 
     % Prototype
     \fill[red] (0.5, 3) circle (2pt);
@@ -634,7 +636,7 @@ Models often conflate these!
 
 \vspace{0.5em}
 \textbf{Relation to Embeddings:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Similar geometric structure
     \item But learned dimensions
     \item Not interpretable qualities
@@ -651,7 +653,7 @@ Models often conflate these!
 % ============================================================
 % LEXICAL SEMANTICS
 % ============================================================
-\begin{frame}{Lexical Semantic Theories 📚}
+\begin{frame}[shrink=10]{Lexical Semantic Theories 📚}
 \textbf{How do linguists think about word meaning?}
 
 \vspace{1em}
@@ -659,7 +661,7 @@ Models often conflate these!
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{1. Feature-Based:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Words = bundles of features
     \item bachelor = [+human, +male, +adult, -married]
     \item Compositional
@@ -668,7 +670,7 @@ Models often conflate these!
 
 \vspace{0.3em}
 \textbf{2. Prototype Theory:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Categories have best examples
     \item Robin is a prototypical bird
     \item Penguin is peripheral
@@ -677,7 +679,7 @@ Models often conflate these!
 
 \vspace{0.3em}
 \textbf{3. Frame Semantics:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Words evoke conceptual frames
     \item "Buy" activates commerce frame
     \item Buyer, seller, goods, money
@@ -687,7 +689,7 @@ Models often conflate these!
 
 \begin{column}{0.48\textwidth}
 \textbf{4. Construction Grammar:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Meaning from form-function pairings
     \item Idioms, patterns
     \item Usage-based
@@ -695,7 +697,7 @@ Models often conflate these!
 
 \vspace{0.3em}
 \textbf{5. Word Sense Disambiguation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Words have multiple senses
     \item WordNet: hierarchical ontology
     \item Bank$_1$ (financial), Bank$_2$ (riverside)
@@ -722,7 +724,7 @@ Struggle with: Feature analysis, Frame semantics
 % ============================================================
 % EMPIRICAL EVIDENCE
 % ============================================================
-\begin{frame}{Empirical Evidence from Neuroscience 🧬}
+\begin{frame}[shrink=10]{Empirical Evidence from Neuroscience 🧬}
 \textbf{What does the brain tell us about semantic representation?}
 
 \vspace{1em}
@@ -730,7 +732,7 @@ Struggle with: Feature analysis, Frame semantics
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{fMRI Studies:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Can predict brain activity from word embeddings
     \item Semantic information distributed across cortex
     \item Different regions for different features
@@ -741,7 +743,7 @@ Struggle with: Feature analysis, Frame semantics
 
 \vspace{0.5em}
 \textbf{Findings:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Word2Vec correlates with neural patterns
     \item But: imperfect match
     \item Human brain uses multimodal integration
@@ -768,7 +770,7 @@ Fast & ✓ & ✓ \\
 
 \vspace{1em}
 \textbf{Key Insight:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Models capture some aspects
     \item But miss crucial grounding
     \item Convergent representation learning?
@@ -785,7 +787,7 @@ Fast & ✓ & ✓ \\
 % ============================================================
 % STOCHASTIC PARROTS
 % ============================================================
-\begin{frame}{The "Stochastic Parrots" Debate 🦜}
+\begin{frame}[shrink=10]{The "Stochastic Parrots" Debate 🦜}
 \textbf{Bender et al. (2021): On the Dangers of Stochastic Parrots}
 
 \vspace{1em}
@@ -793,7 +795,7 @@ Fast & ✓ & ✓ \\
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{The Argument:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item LLMs learn form, not meaning
     \item "Stochastic parrots" - repeating patterns
     \item No understanding of world
@@ -803,7 +805,7 @@ Fast & ✓ & ✓ \\
 
 \vspace{0.5em}
 \textbf{Evidence:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Fail on simple reasoning
     \item Sensitive to phrasing
     \item Hallucinate facts
@@ -814,7 +816,7 @@ Fast & ✓ & ✓ \\
 
 \begin{column}{0.48\textwidth}
 \textbf{Counter-Arguments:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Emergent capabilities at scale
     \item Performance on complex tasks
     \item Transfer to new domains
@@ -828,7 +830,7 @@ Fast & ✓ & ✓ \\
 
 \vspace{0.3em}
 Or do we need grounding in:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Perception?
     \item Action?
     \item Social interaction?
@@ -846,7 +848,7 @@ Or do we need grounding in:
 % ============================================================
 % COMMON SENSE
 % ============================================================
-\begin{frame}{Common Sense Reasoning 🤯}
+\begin{frame}[shrink=10]{Common Sense Reasoning 🤯}
 \textbf{What humans know but models don't}
 
 \vspace{1em}
@@ -857,7 +859,7 @@ Or do we need grounding in:
 
 \vspace{0.3em}
 \begin{exampleblock}{Physical}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Water is wet
     \item Objects fall down
     \item You can't be in two places at once
@@ -867,7 +869,7 @@ Or do we need grounding in:
 
 \vspace{0.3em}
 \begin{exampleblock}{Social}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item People have feelings
     \item Insults are hurtful
     \item Promises should be kept
@@ -878,7 +880,7 @@ Or do we need grounding in:
 
 \begin{column}{0.48\textwidth}
 \textbf{Why Models Struggle:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Not explicit in text
     \item Assumed background knowledge
     \item Requires world experience
@@ -888,7 +890,7 @@ Or do we need grounding in:
 
 \vspace{1em}
 \textbf{Benchmark Datasets:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Winograd Schema Challenge
     \item PIQA (Physical Interaction QA)
     \item SocialIQA
@@ -897,7 +899,7 @@ Or do we need grounding in:
 
 \vspace{0.5em}
 \textbf{Progress:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Large models do better
     \item But still far from human
     \item Often exploit shortcuts
@@ -910,7 +912,7 @@ Or do we need grounding in:
 % ============================================================
 % COMPOSITIONALITY
 % ============================================================
-\begin{frame}{Compositionality: Phrases and Sentences 🧩}
+\begin{frame}[shrink=10]{Compositionality: Phrases and Sentences 🧩}
 \textbf{How do we combine word meanings?}
 
 \vspace{1em}
@@ -918,7 +920,7 @@ Or do we need grounding in:
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{The Problem:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "hot" + "dog" $\neq$ "hot dog"
     \item "red" + "herring" $\neq$ "red herring"
     \item Idioms, metaphors, collocations
@@ -927,7 +929,7 @@ Or do we need grounding in:
 
 \vspace{0.5em}
 \textbf{Classical Approaches:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Vector addition: $\vec{hot} + \vec{dog}$
     \item Element-wise multiplication
     \item Tensor products
@@ -936,7 +938,7 @@ Or do we need grounding in:
 
 \vspace{0.5em}
 \textbf{Neural Approaches:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item RNNs, LSTMs
     \item Transformers (BERT)
     \item Learn composition functions
@@ -949,21 +951,21 @@ Or do we need grounding in:
 
 \vspace{0.3em}
 \textbf{1. Semantic Composition:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "big red ball" = big $\cap$ red $\cap$ ball
     \item Intersective
 \end{itemize}
 
 \vspace{0.3em}
 \textbf{2. Non-intersective:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "fake gun" $\neq$ fake $\cap$ gun
     \item Adjective changes interpretation
 \end{itemize}
 
 \vspace{0.3em}
 \textbf{3. Metaphorical:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "Time is money"
     \item Cross-domain mapping
 \end{itemize}
@@ -971,7 +973,7 @@ Or do we need grounding in:
 \vspace{1em}
 \begin{alertblock}{Current Status}
 Transformers handle many cases through attention, but still struggle with:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Novel compositions
     \item Systematic generalization
     \item Logical operators (negation!)
@@ -984,7 +986,7 @@ Transformers handle many cases through attention, but still struggle with:
 % ============================================================
 % DISCUSSION
 % ============================================================
-\begin{frame}{Grand Discussion 💬}
+\begin{frame}[shrink=10]{Grand Discussion 💬}
 \begin{center}
 \Large
 \textbf{Do large language models "understand" language?}
@@ -995,7 +997,7 @@ Transformers handle many cases through attention, but still struggle with:
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Arguments FOR:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Solve complex tasks
     \item Generalize to new domains
     \item Show emergent capabilities
@@ -1011,7 +1013,7 @@ Transformers handle many cases through attention, but still struggle with:
 
 \begin{column}{0.48\textwidth}
 \textbf{Arguments AGAINST:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item No grounding in reality
     \item No embodied experience
     \item No intentionality
@@ -1031,7 +1033,7 @@ Transformers handle many cases through attention, but still struggle with:
 
 \begin{alertblock}{Perhaps the wrong question?}
 Instead of "Do they understand?", ask:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item What do they represent?
     \item How does it differ from humans?
     \item What are the limits?
@@ -1043,35 +1045,35 @@ Instead of "Do they understand?", ask:
 % ============================================================
 % FUTURE DIRECTIONS
 % ============================================================
-\begin{frame}{Future Directions 🔮}
+\begin{frame}[shrink=10]{Future Directions 🔮}
 \textbf{Bridging computational and cognitive semantics}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Multimodal Learning:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Vision + language (CLIP, Flamingo)
         \item Audio, tactile, proprioception
         \item Grounding in multiple modalities
     \end{itemize}
 
     \item \textbf{Embodied AI:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Robots learning through interaction
         \item Simulation environments
         \item Sensorimotor grounding
     \end{itemize}
 
     \item \textbf{Neurosymbolic AI:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Combining neural and symbolic
         \item Logical reasoning + learning
         \item Structured knowledge graphs
     \end{itemize}
 
     \item \textbf{Cognitively-Inspired Architectures:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Memory systems
         \item Attention mechanisms
         \item Episodic learning
@@ -1079,7 +1081,7 @@ Instead of "Do they understand?", ask:
     \end{itemize}
 
     \item \textbf{Social Grounding:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Learning through dialogue
         \item Cultural context
         \item Pragmatic understanding
@@ -1090,14 +1092,14 @@ Instead of "Do they understand?", ask:
 % ============================================================
 % PRACTICAL IMPLICATIONS
 % ============================================================
-\begin{frame}{Practical Implications 💼}
+\begin{frame}[shrink=10]{Practical Implications 💼}
 \textbf{What this means for NLP practitioners}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Know the Limits:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Models excel at pattern matching
         \item Struggle with true reasoning
         \item Need task-specific evaluation
@@ -1105,14 +1107,14 @@ Instead of "Do they understand?", ask:
     \end{itemize}
 
     \item \textbf{Choose Appropriate Tasks:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Good: classification, retrieval, similarity
         \item Moderate: summarization, translation
         \item Challenging: reasoning, planning, common sense
     \end{itemize}
 
     \item \textbf{Augment with Structure:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Knowledge graphs
         \item Rules and constraints
         \item Domain expertise
@@ -1120,7 +1122,7 @@ Instead of "Do they understand?", ask:
     \end{itemize}
 
     \item \textbf{Evaluate Carefully:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Beyond accuracy metrics
         \item Test edge cases
         \item Adversarial robustness
@@ -1129,7 +1131,7 @@ Instead of "Do they understand?", ask:
     \end{itemize}
 
     \item \textbf{Stay Informed:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Rapidly evolving field
         \item New capabilities emerging
         \item Ethical considerations
@@ -1141,10 +1143,10 @@ Instead of "Do they understand?", ask:
 % ============================================================
 % SUMMARY
 % ============================================================
-\begin{frame}{Summary 🎯}
+\begin{frame}[shrink=10]{Summary 🎯}
 \textbf{What we learned today:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Symbol Grounding:} Computational models lack perceptual grounding
 
     \item \textbf{Embodied Cognition:} Human meaning tied to bodily experience
@@ -1156,7 +1158,7 @@ Instead of "Do they understand?", ask:
     \item \textbf{Empirical Evidence:} Models align with neural patterns but miss multimodality
 
     \item \textbf{Current Debates:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Stochastic parrots vs. emergent understanding
         \item Form vs. meaning
         \item Prediction vs. comprehension
@@ -1178,10 +1180,10 @@ Instead of "Do they understand?", ask:
 % ============================================================
 % REFERENCES
 % ============================================================
-\begin{frame}{Key References 📚}
+\begin{frame}[shrink=10]{Key References 📚}
 \small
 \textbf{Foundational Papers:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Searle, J. (1980). "Minds, Brains, and Programs"
     \item Harnad, S. (1990). "The Symbol Grounding Problem"
     \item Barsalou, L. (2008). "Grounded Cognition"
@@ -1190,7 +1192,7 @@ Instead of "Do they understand?", ask:
 
 \vspace{0.3em}
 \textbf{Distributional Semantics:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Firth, J.R. (1957). "A Synopsis of Linguistic Theory"
     \item Boleda, G. (2020). "Distributional Semantics and Linguistic Theory"
     \item Hill et al. (2015). "SimLex-999"
@@ -1199,21 +1201,21 @@ Instead of "Do they understand?", ask:
 
 \vspace{0.3em}
 \textbf{Critical Perspectives:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Bender \& Koller (2020). "Climbing towards NLU: On Meaning, Form, and Understanding"
     \item Bender et al. (2021). "On the Dangers of Stochastic Parrots"
 \end{itemize}
 
 \vspace{0.3em}
 \textbf{Neuroscience:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Mitchell et al. (2008). "Predicting Human Brain Activity"
     \item Huth et al. (2016). "Natural Speech Reveals Semantic Maps"
 \end{itemize}
 
 \vspace{0.3em}
 \textbf{Multimodal:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Radford et al. (2021). "Learning Transferable Visual Models" (CLIP)
 \end{itemize}
 \end{frame}
@@ -1241,7 +1243,7 @@ Instead of "Do they understand?", ask:
 \vspace{0.5em}
 \textit{How can we do better?}
 
-\vspace{2em}
+\vspace{1em}
 \textbf{Questions? 🙋}
 \end{center}
 \end{frame}

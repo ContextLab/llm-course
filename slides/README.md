@@ -1,4 +1,4 @@
-# Course Slides - Models of Language and Conversation
+# Course Slides - Models of Language and Communication
 
 This directory contains lecture slides for all 10 weeks of the course. Each week includes **3 lectures** (Monday, Wednesday, Friday in the 10-hour slot), with slides provided in both PDF and web-viewable HTML formats.
 

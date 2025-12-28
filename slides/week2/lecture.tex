@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{tikz}
@@ -7,8 +11,6 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{fontspec}
-\usepackage{emoji}
-
 % Color scheme
 \definecolor{darkblue}{RGB}{0,82,155}
 \definecolor{lightblue}{RGB}{100,181,246}
@@ -33,7 +35,7 @@
 
 \title{Week 2: Computational Linguistics}
 \subtitle{From Text Processing to Statistical Learning}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \date{}
 
 \begin{document}
@@ -44,11 +46,11 @@
 \end{frame}
 
 % Overview
-\begin{frame}{This Week's Journey 🗺️}
+\begin{frame}[shrink=10]{This Week's Journey 🗺️}
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
             \textbf{Computational Methods:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item 📝 Data cleaning \& preprocessing
                 \item 🔤 Tokenization techniques
                 \item 🎯 Part-of-speech tagging
@@ -57,7 +59,7 @@
         \end{column}
         \begin{column}{0.5\textwidth}
             \textbf{Cognitive Connection:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item 👶 Statistical learning in infants
                 \item 🧠 How humans learn language patterns
                 \item 🤔 Bridging computation \& cognition
@@ -72,9 +74,9 @@
 \end{frame}
 
 % Data Cleaning and Preprocessing
-\begin{frame}{Data Cleaning \& Preprocessing 📝}
+\begin{frame}[shrink=10]{Data Cleaning \& Preprocessing 📝}
     \textbf{Why clean data?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Real-world text is messy: HTML tags, special characters, inconsistent formatting
         \item Quality of input = quality of output
         \item Different tasks need different preprocessing
@@ -82,7 +84,7 @@
 
     \vspace{0.5em}
     \textbf{Common preprocessing steps:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Remove HTML/XML tags
         \item Normalize whitespace
         \item Handle punctuation
@@ -159,16 +161,16 @@ for token in doc:
 
     \vspace{1em}
     \textbf{Key differences:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textbf{Stemming:} Fast, rule-based, may produce non-words
         \item \textbf{Lemmatization:} Slower, uses vocabulary/morphological analysis, produces real words
     \end{itemize}
 \end{frame}
 
 % Tokenization Section
-\begin{frame}{Tokenization: Breaking Text into Pieces 🔤}
+\begin{frame}[shrink=10]{Tokenization: Breaking Text into Pieces 🔤}
     \textbf{What is tokenization?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Converting text into smaller units (tokens)
         \item Could be: words, subwords, characters, or bytes
         \item Fundamental first step for NLP models
@@ -176,7 +178,7 @@ for token in doc:
 
     \vspace{0.5em}
     \textbf{Why not just split on spaces?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Languages like Chinese don't use spaces
         \item Vocabulary size explodes (millions of unique words)
         \item Can't handle unknown/rare words
@@ -206,26 +208,26 @@ print(f"Subword tokens: {subword_tokens}")
 
     \vspace{0.5em}
     \textbf{Benefits:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Captures morphology: "un-" prefix recognized
         \item Handles unknown words: rare words broken into known parts
         \item Smaller vocabulary size
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Visual: How "unhappiness" Gets Tokenized 📊}
+\begin{frame}[shrink=5]{Visual: How "unhappiness" Gets Tokenized 📊}
     \begin{center}
         \begin{tikzpicture}[scale=0.9]
             % Word-level
             \node[rectangle, draw, fill=lightblue!30, minimum width=3cm, minimum height=1cm] at (0,3) {\texttt{unhappiness}};
             \node[anchor=east] at (-0.5,3) {Word-level:};
-            \node[anchor=west, font=\small] at (2,3) {1 token};
+            \node[anchor=west, font=\footnotesize] at (2,3) {1 token};
 
             % Subword BPE
             \node[rectangle, draw, fill=orange!30, minimum width=1.2cm, minimum height=1cm] at (-0.9,1.5) {\texttt{un}};
             \node[rectangle, draw, fill=orange!30, minimum width=2cm, minimum height=1cm] at (0.7,1.5) {\texttt{happiness}};
             \node[anchor=east] at (-2.5,1.5) {Subword (BPE):};
-            \node[anchor=west, font=\small] at (2.2,1.5) {2 tokens};
+            \node[anchor=west, font=\footnotesize] at (2.2,1.5) {2 tokens};
 
             % Character-level
             \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (-3.3,0) {\tiny \texttt{u}};
@@ -240,7 +242,7 @@ print(f"Subword tokens: {subword_tokens}")
             \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (0.3,0) {\tiny \texttt{s}};
             \node[rectangle, draw, fill=darkgreen!30, minimum width=0.4cm, minimum height=0.8cm] at (0.7,0) {\tiny \texttt{s}};
             \node[anchor=east] at (-4.5,0) {Character-level:};
-            \node[anchor=west, font=\small] at (1.2,0) {11 tokens};
+            \node[anchor=west, font=\footnotesize] at (1.2,0) {11 tokens};
         \end{tikzpicture}
     \end{center}
 
@@ -248,12 +250,12 @@ print(f"Subword tokens: {subword_tokens}")
     \textbf{Trade-off:} Vocabulary size vs. sequence length
 \end{frame}
 
-\begin{frame}{Byte-Pair Encoding (BPE) 🔧}
+\begin{frame}[shrink=10]{Byte-Pair Encoding (BPE) 🔧}
     \textbf{Key idea:} Start with characters, iteratively merge frequent pairs
 
     \vspace{0.5em}
     \textbf{Algorithm:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Start with vocabulary of all characters
         \item Find most frequent pair of tokens
         \item Merge this pair into a new token
@@ -262,7 +264,7 @@ print(f"Subword tokens: {subword_tokens}")
 
     \vspace{0.5em}
     \textbf{Example progression:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Initial: \texttt{[l, o, w, e, r, ...]}
         \item After merge 1: \texttt{[lo, w, e, r, ...]} (if "lo" is frequent)
         \item After merge 2: \texttt{[low, e, r, ...]} (if "low" is frequent)
@@ -295,7 +297,7 @@ print(f"Subword tokens: {subword_tokens}")
 
     \vspace{1em}
     📖 \textbf{References:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Kudo \& Richardson (2018) - SentencePiece
         \item \href{https://huggingface.co/learn/nlp-course/chapter2/4}{HuggingFace Chapter 2.4: Tokenizers}
         \item \href{https://huggingface.co/learn/nlp-course/chapter6}{HuggingFace Chapter 6: Tokenizers}
@@ -323,7 +325,7 @@ print("T5:", t5_tokenizer.tokenize(text))
 
     \vspace{0.5em}
     \textbf{Your turn!} Try this with different texts and observe:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item How do they handle punctuation?
         \item What about rare words or typos?
         \item Which produces the shortest sequence?
@@ -331,9 +333,9 @@ print("T5:", t5_tokenizer.tokenize(text))
 \end{frame}
 
 % Part-of-Speech Tagging
-\begin{frame}{Part-of-Speech (POS) Tagging 🎯}
+\begin{frame}[shrink=10]{Part-of-Speech (POS) Tagging 🎯}
     \textbf{What is POS tagging?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Identifying grammatical role of each word
         \item Examples: noun, verb, adjective, adverb, etc.
         \item Crucial for understanding sentence structure
@@ -350,7 +352,7 @@ print("T5:", t5_tokenizer.tokenize(text))
 
     \vspace{0.5em}
     \textbf{Why it matters:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Disambiguation: "book" as noun vs. verb ("Book a table")
         \item Syntax analysis and parsing
         \item Information extraction
@@ -382,26 +384,26 @@ for token in doc:
     Notice "book" is correctly identified as a VERB, not NOUN!
 \end{frame}
 
-\begin{frame}{Syntactic Dependencies in Neural Networks 🧠}
+\begin{frame}[shrink=10]{Syntactic Dependencies in Neural Networks 🧠}
     \textbf{Can neural networks learn grammar?}
 
     \vspace{0.5em}
     Example from Linzen et al. (2016):
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item "The key to the cabinets \underline{is} on the table" ✓
         \item "The key to the cabinets \underline{are} on the table" ✗
     \end{itemize}
 
     \vspace{0.5em}
     \textbf{Challenge:} Subject-verb agreement with distractors
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Model must track "key" (singular) not "cabinets" (plural)
         \item Tests long-range syntactic dependencies
     \end{itemize}
 
     \vspace{0.5em}
     \textbf{BLiMP Dataset} (Warstadt et al. 2020):
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Benchmark of Linguistic Minimal Pairs
         \item 67 tasks covering syntax, semantics, morphology
         \item Tests if models have implicit grammatical knowledge
@@ -418,7 +420,7 @@ for token in doc:
 
     \vspace{1em}
     \textbf{Questions to ponder:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Do neural networks "learn" grammar the same way humans do?
         \item Can statistical patterns capture syntactic knowledge?
         \item What does it mean to "understand" grammar?
@@ -430,9 +432,9 @@ for token in doc:
 \end{frame}
 
 % Sentiment Analysis
-\begin{frame}{Sentiment Analysis 😊😢}
+\begin{frame}[shrink=10]{Sentiment Analysis 😊😢}
     \textbf{What is sentiment analysis?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Determining emotional tone of text
         \item Classification task: positive, negative, neutral
         \item Can be fine-grained (1-5 stars) or coarse (binary)
@@ -440,7 +442,7 @@ for token in doc:
 
     \vspace{0.5em}
     \textbf{Applications:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Customer feedback analysis
         \item Social media monitoring
         \item Market research
@@ -449,7 +451,7 @@ for token in doc:
 
     \vspace{0.5em}
     \textbf{Challenges:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Sarcasm: "Oh great, another meeting 🙄"
         \item Context-dependence: "This movie is sick!" (positive in slang)
         \item Mixed sentiments: "The food was great but service was terrible"
@@ -484,11 +486,11 @@ for text in texts:
     \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Fine-tuning for Sentiment Analysis 🎯}
+\begin{frame}[shrink=10]{Fine-tuning for Sentiment Analysis 🎯}
     \textbf{Pre-trained models} are trained on general text
 
     \textbf{Fine-tuning} adapts them to specific domains:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Movie reviews (IMDb dataset)
         \item Product reviews (Amazon)
         \item Financial news sentiment
@@ -497,7 +499,7 @@ for text in texts:
 
     \vspace{0.5em}
     \textbf{Process:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Start with pre-trained model (e.g., BERT)
         \item Add classification layer
         \item Train on labeled sentiment data
@@ -506,7 +508,7 @@ for text in texts:
 
     \vspace{0.5em}
     📖 \textbf{Resources:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \href{https://huggingface.co/learn/nlp-course/chapter1/2}{HuggingFace Chapter 1.2: NLP Tasks}
         \item \href{https://huggingface.co/learn/nlp-course/chapter3/2}{HuggingFace Chapter 3.2: Processing Data}
     \end{itemize}
@@ -531,7 +533,7 @@ print("Financial:", finbert(text))
 
     \vspace{0.5em}
     \textbf{Your challenge:} Find domain-specific sentiment models on HuggingFace Hub:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Twitter sentiment
         \item Product reviews
         \item Movie reviews
@@ -540,12 +542,12 @@ print("Financial:", finbert(text))
 \end{frame}
 
 % Statistical Learning in Infants
-\begin{frame}{Statistical Learning in Infants 👶}
+\begin{frame}[shrink=10]{Statistical Learning in Infants 👶}
     \textbf{How do babies learn language?}
 
     \vspace{0.5em}
     \textbf{Classic study:} Saffran et al. (1996)
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item 8-month-old infants exposed to artificial language
         \item Continuous stream: \textit{bidakupadotigolabubidaku...}
         \item No pauses between "words"
@@ -554,7 +556,7 @@ print("Financial:", finbert(text))
 
     \vspace{0.5em}
     \textbf{Key findings:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Infants could segment words from continuous speech
         \item They tracked which syllables frequently occur together
         \item \textit{bidaku} (high transitional probability) → word
@@ -565,7 +567,7 @@ print("Financial:", finbert(text))
     \textbf{Implication:} Statistical learning is a fundamental mechanism for language acquisition!
 \end{frame}
 
-\begin{frame}{Statistical Regularities: The Numbers 📊}
+\begin{frame}[shrink=5]{Statistical Regularities: The Numbers 📊}
     \textbf{Transitional Probability:} $P(\text{syllable}_2 | \text{syllable}_1)$
 
     \vspace{0.5em}
@@ -577,21 +579,21 @@ print("Financial:", finbert(text))
             \node[rectangle, draw, fill=darkgreen!30] at (0,2) {\textbf{bi}};
             \node[rectangle, draw, fill=darkgreen!30] at (1.5,2) {\textbf{da}};
             \node[rectangle, draw, fill=darkgreen!30] at (3,2) {\textbf{ku}};
-            \draw[->, thick, color=darkgreen] (0.4,2) -- (1.1,2) node[midway,above,font=\small] {1.0};
-            \draw[->, thick, color=darkgreen] (1.9,2) -- (2.6,2) node[midway,above,font=\small] {1.0};
+            \draw[->, thick, color=darkgreen] (0.4,2) -- (1.1,2) node[midway,above,font=\footnotesize] {1.0};
+            \draw[->, thick, color=darkgreen] (1.9,2) -- (2.6,2) node[midway,above,font=\footnotesize] {1.0};
             \node[anchor=west] at (3.5,2) {← Within word (high)};
 
             % Between-word transitions (low probability)
             \node[rectangle, draw, fill=orange!30] at (0,0.5) {\textbf{ku}};
             \node[rectangle, draw, fill=orange!30] at (1.5,0.5) {\textbf{pa}};
-            \draw[->, thick, color=orange] (0.4,0.5) -- (1.1,0.5) node[midway,above,font=\small] {0.33};
+            \draw[->, thick, color=orange] (0.4,0.5) -- (1.1,0.5) node[midway,above,font=\footnotesize] {0.33};
             \node[anchor=west] at (2,0.5) {← Between words (low)};
         \end{tikzpicture}
     \end{center}
 
     \vspace{0.5em}
     Infants learned to recognize:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item High probability → within-word transitions
         \item Low probability → word boundaries
     \end{itemize}
@@ -600,11 +602,11 @@ print("Financial:", finbert(text))
     📖 \textbf{Reference:} Saffran, Aslin, \& Newport (1996) - Statistical learning by 8-month-old infants
 \end{frame}
 
-\begin{frame}{Connecting Infants to NLP 🔄}
+\begin{frame}[shrink=10]{Connecting Infants to NLP 🔄}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \textbf{👶 Infant Learning:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Track syllable co-occurrence
                 \item Learn word boundaries
                 \item No explicit supervision
@@ -614,7 +616,7 @@ print("Financial:", finbert(text))
         \end{column}
         \begin{column}{0.48\textwidth}
             \textbf{🤖 Neural Networks:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Track token co-occurrence
                 \item Learn subword units (BPE)
                 \item Self-supervised learning
@@ -626,7 +628,7 @@ print("Financial:", finbert(text))
 
     \vspace{1em}
     \textbf{Discussion Questions:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Are these processes fundamentally similar?
         \item What do infants have that models don't? (social cues, multimodal input...)
         \item What do models have that infants don't? (scale, perfect memory...)
@@ -638,13 +640,13 @@ print("Financial:", finbert(text))
     \textbf{Parallel ideas:}
 
     \begin{center}
-        \begin{tikzpicture}
+        \begin{tikzpicture}[scale=0.85]
             % Infants
             \node[rectangle, draw, fill=lightblue!30, minimum width=3.5cm, minimum height=1.2cm, align=center] at (0,3)
                 {\textbf{Infants (1996)} \\ Find syllable patterns \\ in speech stream};
 
             % Arrow
-            \draw[->, thick, dashed] (0,2.2) -- (0,1.3) node[midway,right,font=\small] {similar principle};
+            \draw[->, thick, dashed] (0,2.2) -- (0,1.3) node[midway,right,font=\footnotesize] {similar principle};
 
             % BPE
             \node[rectangle, draw, fill=orange!30, minimum width=3.5cm, minimum height=1.2cm, align=center] at (0,0.5)
@@ -657,16 +659,16 @@ print("Financial:", finbert(text))
 
     \vspace{0.5em}
     \textbf{Key difference:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Infants: Real-time, online learning with multimodal cues
         \item BPE: Batch processing of text, no other modalities
     \end{itemize}
 \end{frame}
 
 % Practical Exercises
-\begin{frame}{Hands-On Practice 🛠️}
+\begin{frame}[shrink=10]{Hands-On Practice 🛠️}
     \textbf{Today's demos covered:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Web scraping} with Beautiful Soup
         \item \textbf{Lemmatization} with spaCy
         \item \textbf{Tokenization} comparison (GPT-2, BERT, T5)
@@ -676,7 +678,7 @@ print("Financial:", finbert(text))
 
     \vspace{1em}
     \textbf{Try combining them!} 💡
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Scrape news articles → analyze sentiment trends
         \item Lemmatize text → compare tokenization results
         \item POS tag → extract only nouns and verbs → analyze
@@ -712,12 +714,12 @@ print(f"\n{positive_count}/10 headlines are positive")
 \end{frame}
 
 % Assignment 2
-\begin{frame}{Assignment 2: SPAM Email Classifier 📧}
+\begin{frame}[shrink=10]{Assignment 2: SPAM Email Classifier 📧}
     \textbf{Your task:} Build a classifier to detect spam emails
 
     \vspace{0.5em}
     \textbf{What you'll practice:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Data cleaning and preprocessing
         \item Text tokenization
         \item Feature extraction
@@ -727,7 +729,7 @@ print(f"\n{positive_count}/10 headlines are positive")
 
     \vspace{0.5em}
     \textbf{Skills you'll use:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Everything from today's lecture!
         \item Lemmatization to normalize words
         \item Tokenization to handle different vocabularies
@@ -738,9 +740,9 @@ print(f"\n{positive_count}/10 headlines are positive")
     \textbf{Link:} \href{https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment\%202\%3A\%20SPAM\%20classifier}{Assignment 2: SPAM classifier}
 \end{frame}
 
-\begin{frame}{Assignment 2: Getting Started 🚀}
+\begin{frame}[shrink=10]{Assignment 2: Getting Started 🚀}
     \textbf{Suggested approach:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Explore the data:} What do spam vs. legitimate emails look like?
         \item \textbf{Preprocess:} Clean HTML, remove special characters, lemmatize
         \item \textbf{Tokenize:} Try different tokenization strategies
@@ -752,7 +754,7 @@ print(f"\n{positive_count}/10 headlines are positive")
 
     \vspace{0.5em}
     \textbf{Think about:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item What features distinguish spam from legitimate emails?
         \item How does preprocessing affect performance?
         \item What mistakes does your classifier make?
@@ -760,8 +762,8 @@ print(f"\n{positive_count}/10 headlines are positive")
 \end{frame}
 
 % Conclusion and Discussion
-\begin{frame}{Key Takeaways 🎯}
-    \begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🎯}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Preprocessing matters:} Clean data = better results
         \item \textbf{Tokenization is fundamental:} Choice affects everything downstream
         \item \textbf{Subword tokenization:} Balances vocabulary size and semantic coverage
@@ -771,16 +773,16 @@ print(f"\n{positive_count}/10 headlines are positive")
 
     \vspace{1em}
     \textbf{The Big Picture:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Computational methods can model linguistic phenomena
         \item But: Are they modeling the \textit{same} processes as humans?
         \item Statistical patterns are powerful, but is there more to language?
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Looking Ahead: Week 3-4 🔮}
+\begin{frame}[shrink=10]{Looking Ahead: Week 3-4 🔮}
     \textbf{Next topics:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Dimensionality reduction (PCA, UMAP)
         \item Bag-of-words models
         \item Word embeddings (Word2Vec, GloVe)
@@ -789,16 +791,16 @@ print(f"\n{positive_count}/10 headlines are positive")
 
     \vspace{1em}
     \textbf{Prepare by:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Completing Assignment 2
         \item Reading about distributional semantics
         \item Thinking about: How can we represent word \textit{meaning}?
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Additional Resources 📚}
+\begin{frame}[shrink=10]{Additional Resources 📚}
     \textbf{Primary Sources:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Sennrich et al. (2016) - BPE for neural machine translation
         \item Kudo \& Richardson (2018) - SentencePiece
         \item Linzen et al. (2016) - LSTMs and syntax
@@ -808,7 +810,7 @@ print(f"\n{positive_count}/10 headlines are positive")
 
     \vspace{0.5em}
     \textbf{HuggingFace Resources:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Chapter 2.4: Behind the Pipeline - Tokenizers
         \item Chapter 6: Tokenizers (full chapter)
         \item Chapter 7.2: Token Classification
@@ -820,7 +822,7 @@ print(f"\n{positive_count}/10 headlines are positive")
 \begin{frame}{Discussion: Open Questions 💭}
     \textbf{To think about:}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item If a model can perform POS tagging without explicit grammatical rules, does it "understand" grammar?
 
         \item Infants learn from \textasciitilde 10M words by age 3. Models train on billions. What does this tell us?
@@ -839,7 +841,7 @@ print(f"\n{positive_count}/10 headlines are positive")
 \begin{frame}[standout]
     \Huge Thank you! 🎉
 
-    \vspace{2em}
+    \vspace{1em}
 
     \large Questions?
 

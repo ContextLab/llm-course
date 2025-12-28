@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{tikz}
@@ -74,17 +78,17 @@
 
 \section{From GPT to GPT-2}
 
-\begin{frame}{GPT-2: The Unexpected Leap 📈}
+\begin{frame}[shrink=10]{GPT-2: The Unexpected Leap 📈}
     \begin{discussion}
         What happens when we scale up GPT by 10x?
     \end{discussion}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \textbf{GPT (2018):}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item 117M parameters
                 \item 5B tokens training
                 \item BooksCorpus
@@ -94,7 +98,7 @@
 
         \begin{column}{0.48\textwidth}
             \textbf{GPT-2 (2019):}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item 1.5B parameters (13x larger)
                 \item 40GB text (8x more data)
                 \item WebText dataset
@@ -103,7 +107,7 @@
         \end{column}
     \end{columns}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{alertblock}{Key Claim}
         "Language models are unsupervised multitask learners"
@@ -115,13 +119,14 @@
     \textit{Reference: Radford et al. (2019) - "Language Models are Unsupervised Multitask Learners"}
 \end{frame}
 
-\begin{frame}{The WebText Dataset 🌐}
+\begin{frame}[shrink=10]{The WebText Dataset 🌐}
+\small
     \textbf{How GPT-2 was trained:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{block}{WebText Creation}
-        \begin{enumerate}
+        \begin{enumerate}\setlength{\itemsep}{0pt}
             \item Scrape all outbound links from Reddit with ≥3 karma
             \item Filter for quality and diversity
             \item Remove Wikipedia (to avoid test set contamination)
@@ -129,17 +134,17 @@
         \end{enumerate}
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Why Reddit links?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item 👍 Community curation (karma = quality signal)
         \item 📚 Diverse topics and writing styles
         \item 🌍 Web-scale variety
         \item 🎯 Human-filtered content
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         This introduced a new paradigm: curated web scraping as training data!
@@ -149,7 +154,7 @@
 \begin{frame}{GPT-2 Model Sizes 📊}
     \textbf{Four model sizes released progressively:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{table}
         \begin{tabular}{lccc}
@@ -164,10 +169,10 @@
         \end{tabular}
     \end{table}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Staged release strategy:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Feb 2019: Released small model (117M)
         \item May 2019: Medium model (345M)
         \item Aug 2019: Large model (762M)
@@ -179,7 +184,7 @@
 \begin{frame}{Zero-Shot Task Transfer 🎯}
     \textbf{The surprising finding: GPT-2 can perform tasks without fine-tuning!}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{block}{Zero-Shot Prompting}
         Instead of fine-tuning, just format the task as text:
@@ -204,16 +209,16 @@
         TL;DR: }
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{alertblock}{No task-specific training needed!}
     \end{alertblock}
 \end{frame}
 
-\begin{frame}{GPT-2 Performance 📈}
+\begin{frame}[shrink=10]{GPT-2 Performance 📈}
     \textbf{Zero-shot results on various benchmarks:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{table}
         \small
@@ -229,12 +234,12 @@
         \end{tabular}
     \end{table}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \textbf{✅ Promising:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Works without fine-tuning
                 \item Generalizes across tasks
                 \item Improves with scale
@@ -243,7 +248,7 @@
 
         \begin{column}{0.48\textwidth}
             \textbf{⚠️ Limitations:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Still behind fine-tuned models
                 \item Inconsistent quality
                 \item Hard to control
@@ -263,10 +268,10 @@
         "Even more surprising to the researchers was the fact that the unicorns spoke perfect English. The scientist named the population, after their distinctive horn, Ovid's Unicorn. These four-horned, silver-white unicorns were previously unknown to science..."
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Observations:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ✅ Coherent and fluent
         \item ✅ Maintains context and style
         \item ⚠️ Completely fabricated "facts"
@@ -287,10 +292,10 @@
         What happens when we scale up another 100x?
     \end{discussion}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{center}
-        \begin{tikzpicture}
+        \begin{tikzpicture}[scale=0.85]
             \begin{axis}[
                 ybar,
                 width=0.8\textwidth,
@@ -338,7 +343,7 @@
         \end{tabular}
     \end{table}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{alertblock}{Scale}
         GPT-3 is so large it has never been fully fine-tuned—only used via API!
@@ -348,7 +353,7 @@
 \begin{frame}{GPT-3 Training Data 📚}
     \textbf{Training corpus composition:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{table}
         \small
@@ -365,10 +370,10 @@
         \end{tabular}
     \end{table}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Key differences from GPT-2:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Much larger and more diverse
         \item Includes Common Crawl (with quality filtering)
         \item Multiple passes over high-quality data
@@ -376,22 +381,23 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Few-Shot Learning 🎓}
+\begin{frame}[shrink=10]{Few-Shot Learning 🎓}
+\small
     \textbf{GPT-3's key capability: In-context learning}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{block}{Learning Paradigms}
-        \begin{enumerate}
+        \begin{enumerate}\setlength{\itemsep}{0pt}
             \item \textbf{Zero-shot}: Task description only
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item \texttt{Translate to French: I love AI →}
             \end{itemize}
 
             \vspace{0.3cm}
 
             \item \textbf{One-shot}: One example
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item \texttt{sea otter → loutre de mer}
                 \item \texttt{I love AI →}
             \end{itemize}
@@ -399,7 +405,7 @@
             \vspace{0.3cm}
 
             \item \textbf{Few-shot}: Multiple examples (typically 10-100)
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item \texttt{dog → chien}
                 \item \texttt{cat → chat}
                 \item \texttt{bird → oiseau}
@@ -415,7 +421,7 @@
 
 \begin{frame}{In-Context Learning Mechanism 🧠}
     \begin{center}
-        \begin{tikzpicture}[node distance=1.5cm]
+        \begin{tikzpicture}[scale=0.85][node distance=1.5cm]
             % Context window
             \node[draw, rectangle, fill=lightblue!30, minimum width=10cm, minimum height=1.5cm, align=left] (context) {
                 \small
@@ -442,10 +448,10 @@
         \end{tikzpicture}
     \end{center}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{How does it work?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Model recognizes pattern in examples
         \item Continues the pattern for new input
         \item No weight updates—pure inference!
@@ -455,7 +461,7 @@
 
 \begin{frame}{GPT-3 Performance Across Tasks 📊}
     \begin{center}
-        \begin{tikzpicture}
+        \begin{tikzpicture}[scale=0.85]
             \begin{axis}[
                 ybar,
                 width=0.9\textwidth,
@@ -468,7 +474,7 @@
                 ymin=0,
                 ymax=100,
                 bar width=15pt,
-                x tick label style={font=\small},
+                x tick label style={font=\footnotesize},
             ]
             \addplot coordinates {
                 (Translation, 25)
@@ -498,15 +504,15 @@
     \textbf{Key observation: More examples = better performance}
 \end{frame}
 
-\begin{frame}{GPT-3's Emergent Abilities ✨}
+\begin{frame}[shrink=10]{GPT-3's Emergent Abilities ✨}
     \begin{discussion}
         What can GPT-3 do that smaller models can't?
     \end{discussion}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Emergent capabilities:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item 🧮 \textbf{Arithmetic}: 2-3 digit addition/subtraction
         \item 💭 \textbf{Reasoning}: Simple logical deduction
         \item 🎨 \textbf{Code generation}: Write simple programs
@@ -515,7 +521,7 @@
         \item 🎯 \textbf{Task composition}: Multi-step procedures
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{alertblock}{Scaling Hypothesis}
         These abilities weren't explicitly trained—they \textit{emerged} from scale!
@@ -529,27 +535,28 @@
 
 \section{Scaling Laws}
 
-\begin{frame}{The Scaling Laws Hypothesis 📈}
+\begin{frame}[shrink=10]{The Scaling Laws Hypothesis 📈}
+\small
     \begin{block}{Kaplan et al. (2020) - "Scaling Laws for Neural Language Models"}
         Model performance scales as a \textbf{power law} with:
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Model size (parameters)
             \item Dataset size (tokens)
             \item Compute (FLOPs)
         \end{itemize}
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Key findings:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Performance depends strongly on scale
         \item Very weak dependence on model shape (depth vs width)
         \item Smooth, predictable improvements
         \item Optimal compute allocation: Grow model and data together
     \end{enumerate}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         If scaling laws hold, we can predict future model performance!
@@ -559,22 +566,22 @@
 \begin{frame}{The Scaling Law Formula ⚖️}
     \textbf{Loss as a function of scale:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     $$L(N) = \left(\frac{N_c}{N}\right)^{\alpha_N}$$
 
     where:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item $L$ = Cross-entropy loss
         \item $N$ = Number of parameters
         \item $N_c$ = Scaling constant
         \item $\alpha_N \approx 0.076$ (empirically determined)
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{center}
-        \begin{tikzpicture}
+        \begin{tikzpicture}[scale=0.85]
             \begin{axis}[
                 width=0.7\textwidth,
                 height=5cm,
@@ -597,11 +604,11 @@
     \end{center}
 \end{frame}
 
-\begin{frame}{Implications of Scaling Laws 🎯}
+\begin{frame}[shrink=10]{Implications of Scaling Laws 🎯}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \textbf{✅ Good news:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Predictable improvements
                 \item Clear path to better models
                 \item Can plan compute budgets
@@ -611,7 +618,7 @@
 
         \begin{column}{0.48\textwidth}
             \textbf{⚠️ Challenges:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Diminishing returns
                 \item Exponential cost increase
                 \item Hardware limitations
@@ -620,7 +627,7 @@
         \end{column}
     \end{columns}
 
-    \vspace{1cm}
+    \vspace{0.5cm}
 
     \begin{alertblock}{The Scaling Question}
         To improve loss by 0.1: \\
@@ -637,17 +644,17 @@
         Previous models were over-parameterized and under-trained!
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Key insight:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item For a given compute budget, should balance model size and data
         \item \textbf{Optimal ratio}: 20 tokens per parameter
         \item GPT-3 (175B params, 300B tokens): Under-trained!
         \item Chinchilla (70B params, 1.4T tokens): Better performance
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         Instead of making models bigger, train longer on more data!
@@ -661,9 +668,9 @@
 
 \section{From GPT-3 to ChatGPT}
 
-\begin{frame}{The Path to ChatGPT 🤖}
+\begin{frame}[shrink=5]{The Path to ChatGPT 🤖}
     \begin{center}
-        \begin{tikzpicture}[node distance=2cm]
+        \begin{tikzpicture}[scale=0.85][node distance=2cm]
             % GPT-3
             \node[draw, rectangle, fill=lightblue!30, minimum width=3cm, minimum height=1cm] (gpt3) {
                 \textbf{GPT-3}\\
@@ -687,42 +694,43 @@
             \draw[->, very thick] (instruct) -- (chat) node[midway, above, font=\tiny] {Align};
 
             % Labels
-            \node[below=0.3cm of gpt3, align=center, font=\small] {Predict\\next token};
-            \node[below=0.3cm of instruct, align=center, font=\small] {Follow\\instructions};
-            \node[below=0.3cm of chat, align=center, font=\small] {Helpful \&\\harmless};
+            \node[below=0.3cm of gpt3, align=center, font=\footnotesize] {Predict\\next token};
+            \node[below=0.3cm of instruct, align=center, font=\footnotesize] {Follow\\instructions};
+            \node[below=0.3cm of chat, align=center, font=\footnotesize] {Helpful \&\\harmless};
         \end{tikzpicture}
     \end{center}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Three key innovations:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Instruction tuning}: Train to follow instructions
         \item \textbf{RLHF}: Reinforcement Learning from Human Feedback
         \item \textbf{Safety guardrails}: Reduce harmful outputs
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Instruction Tuning 📋}
+\begin{frame}[shrink=10]{Instruction Tuning 📋}
+\small
     \begin{block}{What is Instruction Tuning?}
         Fine-tune the model on (instruction, response) pairs to make it better at following user commands.
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Training examples:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textit{"Explain quantum computing to a 5-year-old"} → [explanation]
         \item \textit{"Write a Python function to sort a list"} → [code]
         \item \textit{"Summarize this article in 3 sentences"} → [summary]
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \textbf{Before (GPT-3):}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Continues the text
                 \item Often misunderstands intent
                 \item Needs careful prompting
@@ -731,7 +739,7 @@
 
         \begin{column}{0.48\textwidth}
             \textbf{After (InstructGPT):}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Follows instructions
                 \item Clear, helpful responses
                 \item More controllable
@@ -742,7 +750,7 @@
 
 \begin{frame}{RLHF: Reinforcement Learning from Human Feedback 👍}
     \begin{center}
-        \begin{tikzpicture}[node distance=1.2cm]
+        \begin{tikzpicture}[scale=0.85][node distance=1.2cm]
             % Step 1
             \node[draw, rectangle, fill=lightblue!30, minimum width=2.5cm, minimum height=0.8cm] (step1) {
                 \small 1. Generate responses
@@ -771,10 +779,10 @@
         \end{tikzpicture}
     \end{center}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Why RLHF?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Hard to write perfect instruction examples
         \item Easier to compare: "Which response is better?"
         \item Learns subtle preferences (tone, safety, helpfulness)
@@ -782,22 +790,22 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{ChatGPT's Impact 🌍}
+\begin{frame}[shrink=10]{ChatGPT's Impact 🌍}
     \textbf{Launched: November 30, 2022}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Growth:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item 1 million users in 5 days
         \item 100 million users in 2 months
         \item Fastest-growing consumer application ever
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Why so successful?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ✅ Easy to use (conversational interface)
         \item ✅ Broadly capable (many tasks)
         \item ✅ Accessible (free tier)
@@ -805,7 +813,7 @@
         \item ✅ Timing (post-pandemic digital adoption)
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{alertblock}{Cultural Impact}
         ChatGPT brought LLMs into mainstream consciousness and sparked an AI revolution.
@@ -814,12 +822,12 @@
 
 \section{Beyond GPT-3}
 
-\begin{frame}{The Modern LLM Landscape 🌈}
+\begin{frame}[shrink=10]{The Modern LLM Landscape 🌈}
     \textbf{Post-GPT-3 developments (2020-2024):}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textbf{2021}: Anthropic founded (Claude)
         \item \textbf{2022}: ChatGPT launched
         \item \textbf{2023}: GPT-4 (multimodal, improved reasoning)
@@ -829,10 +837,10 @@
         \item \textbf{2024}: Smaller efficient models (Phi, Mistral)
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Key trends:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Multimodal capabilities (vision, audio)
         \item Longer context windows (100K+ tokens)
         \item Better reasoning and factuality
@@ -841,17 +849,18 @@
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Open Source LLMs 🔓}
+\begin{frame}[shrink=10]{Open Source LLMs 🔓}
+\small
     \begin{discussion}
         Should powerful AI models be open or closed?
     \end{discussion}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \textbf{Closed (GPT-4, Claude):}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item ✅ Better safety control
                 \item ✅ Monetization easier
                 \item ✅ Protect IP
@@ -863,7 +872,7 @@
 
         \begin{column}{0.48\textwidth}
             \textbf{Open (Llama, Mistral):}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item ✅ Transparency
                 \item ✅ Community innovation
                 \item ✅ Full control
@@ -874,55 +883,55 @@
         \end{column}
     \end{columns}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         The debate mirrors open source software vs proprietary—with higher stakes!
     \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Current Limitations 🚧}
+\begin{frame}[shrink=10]{Current Limitations 🚧}
     \textbf{What LLMs still struggle with:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Factual accuracy}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Hallucinations and confabulation
             \item No citations or sources
         \end{itemize}
 
         \item \textbf{Reasoning}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Multi-step logic
             \item Mathematical proofs
         \end{itemize}
 
         \item \textbf{Knowledge grounding}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Knowledge cutoff date
             \item Can't access real-time info
         \end{itemize}
 
         \item \textbf{Personalization}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item No persistent memory
             \item Stateless conversations
         \end{itemize}
 
         \item \textbf{Reliability}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Inconsistent outputs
             \item Prompt sensitivity
         \end{itemize}
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Key Takeaways 🔑}
-    \begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🔑}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Scaling works}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item GPT → GPT-2 → GPT-3 showed clear improvements
             \item Power law scaling continues to hold
         \end{itemize}
@@ -930,7 +939,7 @@
         \vspace{0.3cm}
 
         \item \textbf{Few-shot learning emerged at scale}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item No fine-tuning needed for many tasks
             \item In-context learning is powerful
         \end{itemize}
@@ -938,7 +947,7 @@
         \vspace{0.3cm}
 
         \item \textbf{Scaling laws provide predictability}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item But diminishing returns and compute costs are real
             \item Chinchilla scaling: balance model size and data
         \end{itemize}
@@ -946,7 +955,7 @@
         \vspace{0.3cm}
 
         \item \textbf{RLHF changed everything}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item ChatGPT = GPT-3.5 + instruction tuning + RLHF
             \item Alignment is crucial for deployment
         \end{itemize}
@@ -954,16 +963,17 @@
         \vspace{0.3cm}
 
         \item \textbf{The field is rapidly evolving}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Open vs closed debate continues
             \item New capabilities emerging
         \end{itemize}
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Readings 📖}
+\begin{frame}[shrink=10]{Readings 📖}
+\small
     \begin{block}{Required Readings}
-        \begin{enumerate}
+        \begin{enumerate}\setlength{\itemsep}{0pt}
             \item \textbf{Radford et al. (2019)} - "Language Models are Unsupervised Multitask Learners" (GPT-2) \\
             \href{https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf}{[PDF]}
 
@@ -975,10 +985,10 @@
         \end{enumerate}
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{block}{Recommended Readings}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item \textbf{Wei et al. (2022)} - "Emergent Abilities of Large Language Models" \\
             \href{https://arxiv.org/abs/2206.07682}{[ArXiv]}
 
@@ -992,8 +1002,9 @@
 \end{frame}
 
 \begin{frame}{Next Lecture Preview 🔮}
+\small
     \begin{block}{Lecture 20: Implementing GPT from Scratch}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Building a mini-GPT in PyTorch
             \item Tokenization with BPE
             \item Training loop and optimization
@@ -1002,7 +1013,7 @@
         \end{itemize}
     \end{block}
 
-    \vspace{1cm}
+    \vspace{0.5cm}
 
     \begin{center}
         \Large{Questions? 💬}

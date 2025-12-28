@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
@@ -53,7 +57,7 @@
 
 \title{Lecture 21: Retrieval Augmented Generation}
 \subtitle{Grounding LLMs in External Knowledge 🔍}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \institute{Dr. Jeremy R. Manning}
 \date{Week 9}
 
@@ -62,14 +66,14 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Journey 🗺️}
+\begin{frame}[shrink=5]{Today's Journey 🗺️}
 \tableofcontents
 \end{frame}
 
@@ -78,7 +82,7 @@
 % ============================================================
 \section{The Knowledge Problem}
 
-\begin{frame}{The Limits of Parametric Memory 🧠}
+\begin{frame}[shrink=10]{The Limits of Parametric Memory 🧠}
 \begin{discussionbox}
 What are the fundamental limitations of storing knowledge in model parameters?
 \end{discussionbox}
@@ -86,7 +90,7 @@ What are the fundamental limitations of storing knowledge in model parameters?
 \vspace{0.5em}
 
 \textbf{Problems with purely parametric models:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ❌ \textbf{Knowledge cutoff}: No information after training date
     \item ❌ \textbf{Hallucinations}: Models confidently generate false information
     \item ❌ \textbf{No source attribution}: Can't cite where information comes from
@@ -145,7 +149,7 @@ Retrieval provides a \textbf{dynamic, updatable} knowledge base without retraini
 % ============================================================
 \section{What is RAG?}
 
-\begin{frame}{Retrieval Augmented Generation: Definition 📚}
+\begin{frame}[shrink=10]{Retrieval Augmented Generation: Definition 📚}
 \begin{block}{RAG (Lewis et al., 2020)}
 A technique that enhances LLMs by retrieving relevant documents from an external knowledge base and using them to inform generation.
 \end{block}
@@ -159,7 +163,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 \begin{columns}[T]
 \begin{column}{0.45\textwidth}
 \textbf{Traditional LLM:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Question → Model → Answer
     \item Only parametric knowledge
     \item Fixed at training time
@@ -169,7 +173,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 
 \begin{column}{0.45\textwidth}
 \textbf{RAG Pipeline:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Question → Retrieve Docs
     \item Docs + Question → Model
     \item Grounded Answer + Citations
@@ -183,9 +187,9 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 \textit{Reference: Lewis et al. (2020) - "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"}
 \end{frame}
 
-\begin{frame}{RAG Architecture 🏗️}
+\begin{frame}[shrink=5]{RAG Architecture 🏗️}
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85][
     node distance=1.5cm,
     box/.style={rectangle, rounded corners, draw, fill=blue!20, text width=2.5cm, align=center, minimum height=1cm},
     databox/.style={rectangle, draw, fill=green!20, text width=2.5cm, align=center, minimum height=1cm},
@@ -231,7 +235,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 
 \vspace{0.5em}
 \textbf{Key Steps:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Embed user query into vector space
     \item Search vector database for similar documents
     \item Retrieve top-k most relevant documents
@@ -240,11 +244,11 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{RAG Components Deep Dive 🔬}
+\begin{frame}[shrink=10]{RAG Components Deep Dive 🔬}
 \textbf{1. Document Processing \& Indexing}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Chunking}: Break documents into manageable pieces
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Fixed size (e.g., 512 tokens)
         \item Semantic (paragraph, section breaks)
         \item Recursive (hierarchical splitting)
@@ -256,7 +260,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 \vspace{0.5em}
 
 \textbf{2. Vector Database}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Store embeddings for fast similarity search
     \item Popular options: FAISS, ChromaDB, Pinecone, Weaviate, Qdrant
     \item Indexing methods: IVF, HNSW, PQ
@@ -266,7 +270,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 \vspace{0.5em}
 
 \textbf{3. Retrieval}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Embed query with same model as documents
     \item Compute similarity (cosine, dot product)
     \item Return top-k most similar chunks (typically k=3-10)
@@ -351,7 +355,7 @@ for doc in result['source_documents']:
 
 \begin{frame}{Evolution of RAG Approaches 📈}
 \begin{center}
-\begin{tikzpicture}[node distance=2.5cm]
+\begin{tikzpicture}[scale=0.85][node distance=2.5cm]
     % Naive RAG
     \node[draw, rectangle, fill=blue!20, text width=3cm, align=center] (naive) {
         \textbf{Naive RAG}\\
@@ -386,13 +390,13 @@ Moving from always-retrieve to \textbf{adaptive}, \textbf{self-correcting} retri
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Self-RAG: Adaptive Retrieval 🎯}
+\begin{frame}[shrink=10]{Self-RAG: Adaptive Retrieval 🎯}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Key Innovation:}
 
 Model learns to decide:
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{When} to retrieve
     \item \textbf{What} is relevant
     \item \textbf{How} to use it
@@ -402,7 +406,7 @@ Model learns to decide:
 \vspace{0.5em}
 
 \textbf{Special Tokens:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item [Retrieve]: Need info?
     \item [Relevant]: Is doc useful?
     \item [Support]: Does doc support answer?
@@ -437,18 +441,18 @@ Model learns to decide:
 \textit{Reference: Asai et al. (2023) - "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection"}
 \end{frame}
 
-\begin{frame}{Corrective RAG (CRAG) 🔧}
+\begin{frame}[shrink=10]{Corrective RAG (CRAG) 🔧}
 \textbf{Problem:} Sometimes retrieved documents are irrelevant or misleading!
 
 \vspace{0.5em}
 
 \textbf{Solution: Evaluate and correct retrieval}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Retrieve} initial documents
     \item \textbf{Evaluate} relevance with a critic model
     \item \textbf{Decision:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item If correct: Use as-is
         \item If ambiguous: Filter and refine
         \item If incorrect: Re-retrieve with expanded query or use web search
@@ -459,7 +463,7 @@ Model learns to decide:
 \vspace{0.5em}
 
 \textbf{Knowledge Refinement:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Extract key sentences
     \item Remove redundancy
     \item Rerank by relevance
@@ -505,35 +509,35 @@ What's right for your application?
 % ============================================================
 \section{RAG Components in Detail}
 
-\begin{frame}{Chunking Strategies 📄}
+\begin{frame}[shrink=10]{Chunking Strategies 📄}
 \textbf{How to split documents matters!}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Fixed-size chunking}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Split every N tokens/characters
         \item ✅ Simple, predictable size
         \item ❌ May break semantic units
     \end{itemize}
 
     \item \textbf{Recursive chunking}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Try paragraphs, then sentences, then tokens
         \item ✅ Respects document structure
         \item ✅ More semantic coherence
     \end{itemize}
 
     \item \textbf{Semantic chunking}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use embedding similarity to find boundaries
         \item ✅ Best semantic coherence
         \item ❌ More computation
     \end{itemize}
 
     \item \textbf{Hierarchical chunking}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Parent-child relationships (sections → paragraphs)
         \item ✅ Retrieve at multiple granularities
         \item ✅ Better context
@@ -541,7 +545,7 @@ What's right for your application?
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Embedding Models for Retrieval 🎯}
+\begin{frame}[shrink=10]{Embedding Models for Retrieval 🎯}
 \textbf{Dense Retrieval Models:}
 
 \vspace{0.5em}
@@ -563,7 +567,7 @@ OpenAI text-embedding-3 & 1536 & API & Proprietary, excellent \\
 \vspace{0.5em}
 
 \textbf{Sparse Retrieval (Traditional IR):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{BM25}: TF-IDF-like, keyword matching
     \item \textbf{TF-IDF}: Term frequency weighting
     \item ✅ Interpretable, fast
@@ -573,14 +577,14 @@ OpenAI text-embedding-3 & 1536 & API & Proprietary, excellent \\
 \vspace{0.5em}
 
 \textbf{Hybrid Retrieval:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Combine dense + sparse
     \item Best of both worlds: semantic + keyword
     \item Weighted combination or reranking
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Vector Databases 🗄️}
+\begin{frame}[shrink=10]{Vector Databases 🗄️}
 \textbf{Purpose:} Fast similarity search over millions of embeddings
 
 \vspace{0.5em}
@@ -590,19 +594,19 @@ OpenAI text-embedding-3 & 1536 & API & Proprietary, excellent \\
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Open Source:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{FAISS} (Meta)
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Extremely fast
         \item Library, not database
     \end{itemize}
     \item \textbf{ChromaDB}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Easy to use
         \item Embedded or server
     \end{itemize}
     \item \textbf{Weaviate}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Full-featured
         \item GraphQL interface
     \end{itemize}
@@ -611,19 +615,19 @@ OpenAI text-embedding-3 & 1536 & API & Proprietary, excellent \\
 
 \begin{column}{0.48\textwidth}
 \textbf{Managed Services:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Pinecone}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Fully managed
         \item Production-ready
     \end{itemize}
     \item \textbf{Qdrant}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Rust-based, fast
         \item Cloud or self-hosted
     \end{itemize}
     \item \textbf{Milvus}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Enterprise-grade
         \item Highly scalable
     \end{itemize}
@@ -634,14 +638,14 @@ OpenAI text-embedding-3 & 1536 & API & Proprietary, excellent \\
 \vspace{0.5em}
 
 \textbf{Key Features to Consider:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Indexing speed, query latency, scalability
     \item Filtering (by metadata)
     \item Update capability, persistence
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Prompt Engineering for RAG 📝}
+\begin{frame}[shrink=10]{Prompt Engineering for RAG 📝}
 \textbf{How to incorporate retrieved context into prompts:}
 
 \vspace{0.5em}
@@ -664,7 +668,7 @@ OpenAI text-embedding-3 & 1536 & API & Proprietary, excellent \\
 \vspace{0.3em}
 
 \texttt{Instructions:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \texttt{- Answer based on the context}
     \item \texttt{- Cite sources}
     \item \texttt{- If info not in context, say "I don't know"}
@@ -676,7 +680,7 @@ OpenAI text-embedding-3 & 1536 & API & Proprietary, excellent \\
 \vspace{0.5em}
 
 \textbf{Best Practices:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Clear instructions to use provided context
     \item Explicit grounding requirements
     \item Request citations
@@ -689,11 +693,11 @@ OpenAI text-embedding-3 & 1536 & API & Proprietary, excellent \\
 % ============================================================
 \section{RAG in Production}
 
-\begin{frame}{Production Challenges 🏭}
+\begin{frame}[shrink=10]{Production Challenges 🏭}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Performance Challenges:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 💰 \textbf{Cost}: Embedding generation + storage + inference
     \item ⚡ \textbf{Latency}: Retrieval adds 50-200ms
     \item 📏 \textbf{Context limits}: LLM window size
@@ -704,7 +708,7 @@ OpenAI text-embedding-3 & 1536 & API & Proprietary, excellent \\
 
 \begin{column}{0.48\textwidth}
 \textbf{Solutions:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Cache embeddings
     \item Semantic caching (similar queries)
     \item Incremental indexing
@@ -723,13 +727,13 @@ Start simple (Naive RAG), measure performance, iterate based on real bottlenecks
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Evaluation Metrics for RAG 📊}
+\begin{frame}[shrink=10]{Evaluation Metrics for RAG 📊}
 \textbf{How to measure RAG quality:}
 
 \vspace{0.5em}
 
 \textbf{Retrieval Quality:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Recall@k}: Are relevant docs in top-k?
     \item \textbf{MRR (Mean Reciprocal Rank)}: Where is first relevant doc?
     \item \textbf{NDCG (Normalized Discounted Cumulative Gain)}: Ranked quality
@@ -738,7 +742,7 @@ Start simple (Naive RAG), measure performance, iterate based on real bottlenecks
 \vspace{0.5em}
 
 \textbf{Generation Quality:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Factual accuracy}: Are answers correct?
     \item \textbf{Faithfulness}: Does answer match retrieved docs?
     \item \textbf{Relevance}: Does answer address the question?
@@ -748,31 +752,31 @@ Start simple (Naive RAG), measure performance, iterate based on real bottlenecks
 \vspace{0.5em}
 
 \textbf{End-to-End:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Answer correctness}: Human evaluation or LLM-as-judge
     \item \textbf{Groundedness}: Verifiable in retrieved docs
     \item \textbf{User satisfaction}: Thumbs up/down, A/B testing
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Common RAG Failure Modes ⚠️}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Common RAG Failure Modes ⚠️}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Retrieval Failures}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Wrong documents retrieved
         \item Relevant docs not in knowledge base
         \item Poor query formulation
     \end{itemize}
 
     \item \textbf{Context Problems}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Too much irrelevant context
         \item Context too long for LLM
         \item Important info not in retrieved chunks
     \end{itemize}
 
     \item \textbf{Generation Issues}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Ignores retrieved context
         \item Hallucinates despite good context
         \item Incorrect citations
@@ -780,7 +784,7 @@ Start simple (Naive RAG), measure performance, iterate based on real bottlenecks
     \end{itemize}
 
     \item \textbf{System Issues}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item High latency
         \item Embedding drift
         \item Stale index
@@ -797,35 +801,35 @@ Start simple (Naive RAG), measure performance, iterate based on real bottlenecks
 % ============================================================
 \section{Advanced RAG Topics}
 
-\begin{frame}{Multimodal RAG 🖼️📄}
+\begin{frame}[shrink=10]{Multimodal RAG 🖼️📄}
 \textbf{Beyond text: Retrieving images, tables, code, etc.}
 
 \vspace{0.5em}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Vision + Text}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use CLIP embeddings for images
         \item Retrieve relevant diagrams, charts
         \item Generate answers referencing visual content
     \end{itemize}
 
     \item \textbf{Code Retrieval}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Embed code snippets
         \item Retrieve relevant functions/examples
         \item Code completion and debugging
     \end{itemize}
 
     \item \textbf{Structured Data}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Tables, databases
         \item Knowledge graphs
         \item SQL generation from natural language
     \end{itemize}
 
     \item \textbf{Audio/Video}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Transcribe and embed
         \item Retrieve relevant segments
         \item Timestamp-aware responses
@@ -839,7 +843,7 @@ Future RAG systems will seamlessly integrate multiple modalities!
 \end{thinkbox}
 \end{frame}
 
-\begin{frame}{Graph-Based RAG 🕸️}
+\begin{frame}[shrink=10]{Graph-Based RAG 🕸️}
 \textbf{Combining knowledge graphs with RAG:}
 
 \vspace{0.5em}
@@ -853,7 +857,7 @@ Future RAG systems will seamlessly integrate multiple modalities!
 \vspace{0.5em}
 
 \textbf{Advantages:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Capture entity relationships
     \item Multi-hop reasoning (A → B → C)
     \item Better for complex queries
@@ -863,7 +867,7 @@ Future RAG systems will seamlessly integrate multiple modalities!
 \vspace{0.5em}
 
 \textbf{Implementation:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Extract entities and relations from documents
     \item Build knowledge graph
     \item Traverse graph during retrieval
@@ -875,13 +879,13 @@ Future RAG systems will seamlessly integrate multiple modalities!
 \textbf{Tools:} Neo4j, Amazon Neptune, LangChain Graph QA
 \end{frame}
 
-\begin{frame}{HyDE: Hypothetical Document Embeddings 💭}
+\begin{frame}[shrink=10]{HyDE: Hypothetical Document Embeddings 💭}
 \textbf{Clever trick: Generate a hypothetical answer first!}
 
 \vspace{0.5em}
 
 \begin{block}{HyDE Algorithm}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item User asks question
     \item LLM generates hypothetical answer (may be wrong!)
     \item Embed the \textit{hypothetical answer}
@@ -893,7 +897,7 @@ Future RAG systems will seamlessly integrate multiple modalities!
 \vspace{0.5em}
 
 \textbf{Why this works:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Answers are more similar to answers than questions to answers
     \item Bridges semantic gap between query and documents
     \item Effective for complex queries
@@ -910,7 +914,7 @@ Future RAG systems will seamlessly integrate multiple modalities!
 % ============================================================
 \section{Discussion \& Future Directions}
 
-\begin{frame}{RAG vs Fine-Tuning 🤔}
+\begin{frame}[shrink=10]{RAG vs Fine-Tuning 🤔}
 \begin{discussionbox}
 When should you use RAG vs fine-tuning your model?
 \end{discussionbox}
@@ -920,7 +924,7 @@ When should you use RAG vs fine-tuning your model?
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Use RAG when:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ Knowledge changes frequently
     \item ✅ Need citations/provenance
     \item ✅ Privacy concerns (data in DB, not weights)
@@ -932,7 +936,7 @@ When should you use RAG vs fine-tuning your model?
 
 \begin{column}{0.48\textwidth}
 \textbf{Use Fine-Tuning when:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ Need specific style/behavior
     \item ✅ Low latency critical
     \item ✅ Small, stable knowledge domain
@@ -950,35 +954,35 @@ Often the answer is \textbf{both}: Fine-tune for style/domain, RAG for knowledge
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Future of RAG 🔮}
+\begin{frame}[shrink=10]{Future of RAG 🔮}
 \textbf{Emerging trends and research directions:}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Agentic RAG}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item LLM decides retrieval strategy
         \item Multi-step reasoning with retrieval
         \item Tool use (web search, APIs, databases)
     \end{itemize}
 
     \item \textbf{Long-context RAG}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Models with 1M+ token windows
         \item Entire books as context
         \item Retrieval still useful for efficiency
     \end{itemize}
 
     \item \textbf{Personalized RAG}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item User-specific knowledge bases
         \item Privacy-preserving retrieval
         \item Federated learning
     \end{itemize}
 
     \item \textbf{Real-time RAG}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Live web scraping
         \item Streaming document updates
         \item Event-driven retrieval
@@ -986,44 +990,44 @@ Often the answer is \textbf{both}: Fine-tune for style/domain, RAG for knowledge
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Key Takeaways 🔑}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🔑}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{RAG solves fundamental LLM limitations}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Knowledge cutoff, hallucination, no citations
     \end{itemize}
 
     \item \textbf{Core pipeline: Retrieve → Augment → Generate}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Vector search for relevant documents
         \item Incorporate into prompt
     \end{itemize}
 
     \item \textbf{Many variants exist}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Naive RAG → Self-RAG → Corrective RAG → Agentic RAG
     \end{itemize}
 
     \item \textbf{Key components matter}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Chunking strategy, embedding model, vector DB
     \end{itemize}
 
     \item \textbf{Production requires careful engineering}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Latency, cost, quality evaluation
     \end{itemize}
 
     \item \textbf{RAG + Fine-tuning is powerful combo}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Fine-tune for style, RAG for knowledge
     \end{itemize}
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Readings 📖}
+\begin{frame}[shrink=10]{Readings 📖}
 \textbf{Required:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Lewis et al. (2020)}: Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
     \href{https://arxiv.org/abs/2005.11401}{[arXiv]}
 
@@ -1034,7 +1038,7 @@ Often the answer is \textbf{both}: Fine-tune for style/domain, RAG for knowledge
 \vspace{0.5em}
 
 \textbf{Recommended:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Yan et al. (2024): Corrective RAG \href{https://arxiv.org/abs/2401.15884}{[arXiv]}
     \item Gao et al. (2022): Precise Zero-Shot Dense Retrieval (HyDE) \href{https://arxiv.org/abs/2212.10496}{[arXiv]}
     \item HuggingFace RAG Tutorial \href{https://huggingface.co/learn/cookbook/advanced_rag}{[Tutorial]}

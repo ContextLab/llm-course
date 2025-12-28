@@ -399,7 +399,7 @@ jobs:
           <body>
               <div class="container">
                   <h1>🤖 LLM Course Slides</h1>
-                  <p class="subtitle">Models of Language and Conversation - PSYC 51.17</p>
+                  <p class="subtitle">Models of Language and Communication - PSYC 51.07</p>
 
                   <div class="syllabus-link">
                       <a href="admin/syllabus.pdf" target="_blank">📄 Download Course Syllabus</a>

@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{tikz}
@@ -74,15 +78,16 @@
 
 \section{Overview and Setup}
 
-\begin{frame}{What We'll Build Today 🏗️}
+\begin{frame}[shrink=10]{What We'll Build Today 🏗️}
+\small
     \begin{alertblock}{Goal}
         Implement a simplified GPT model from scratch in PyTorch!
     \end{alertblock}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Components we'll cover:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item 🔤 Tokenization (Byte-Pair Encoding)
         \item 📦 Embeddings (token + position)
         \item 👁️ Masked Multi-Head Attention
@@ -92,7 +97,7 @@
         \item 🎲 Text Generation
     \end{enumerate}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         We'll build a "nano-GPT"—small enough to train on a laptop, but with the same architecture as the real thing!
@@ -133,27 +138,28 @@ config = {
 
 \section{Tokenization}
 
-\begin{frame}{What is Tokenization? 🔤}
+\begin{frame}[shrink=10]{What is Tokenization? 🔤}
+\small
     \begin{block}{Tokenization}
         Converting text into a sequence of integer IDs that the model can process.
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Common strategies:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Word-level}: Split on spaces
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item ❌ Huge vocabulary, can't handle unknown words
         \end{itemize}
 
         \item \textbf{Character-level}: Individual characters
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item ❌ Very long sequences, loses word structure
         \end{itemize}
 
         \item \textbf{Subword-level (BPE)}: Best of both worlds! ✅
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Frequent words: one token
             \item Rare words: multiple subword tokens
             \item Can handle any word via character fallback
@@ -161,19 +167,19 @@ config = {
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Byte-Pair Encoding (BPE) 🧩}
+\begin{frame}[shrink=10]{Byte-Pair Encoding (BPE) 🧩}
     \textbf{How BPE works:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Start with characters as base vocabulary
         \item Find most frequent pair of adjacent tokens
         \item Merge this pair into a new token
         \item Repeat until desired vocabulary size
     \end{enumerate}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{block}{Example}
         \small
@@ -182,7 +188,7 @@ config = {
         \vspace{0.3cm}
 
         \textbf{Iterations:}
-        \begin{enumerate}
+        \begin{enumerate}\setlength{\itemsep}{0pt}
             \item Merge "l" + "o" → "lo"
             \item Merge "lo" + "w" → "low"
             \item Merge "low" + "e" + "r" → "lower"
@@ -379,7 +385,7 @@ print(mask)
 #         [1., 1., 1., 1., 1.]])
 \end{lstlisting}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \textbf{Key insight:} Each position can only attend to itself and previous positions!
 \end{frame}
@@ -401,10 +407,10 @@ class FeedForward(nn.Module):
         return self.net(x)
 \end{lstlisting}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \textbf{Why GELU (Gaussian Error Linear Unit)?}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Smooth, non-monotonic activation
     \item Used in BERT and GPT
     \item Slight improvement over ReLU for language models
@@ -438,7 +444,7 @@ class TransformerBlock(nn.Module):
         return x
 \end{lstlisting}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \textbf{Note:} GPT uses \textit{pre-norm} (LayerNorm before sub-layers), while original Transformer used \textit{post-norm}.
 \end{frame}
@@ -558,38 +564,38 @@ for epoch in range(config['num_epochs']):
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Training Tips 💡}
+\begin{frame}[shrink=10]{Training Tips 💡}
     \textbf{Best practices for training GPT:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Gradient clipping}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Prevents exploding gradients
             \item Clip to max norm of 1.0
         \end{itemize}
 
         \item \textbf{Learning rate schedule}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Warmup for first few thousand steps
             \item Cosine decay afterwards
         \end{itemize}
 
         \item \textbf{AdamW optimizer}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Adam with decoupled weight decay
             \item Better than standard Adam for transformers
         \end{itemize}
 
         \item \textbf{Batch size}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Larger is better (up to memory limits)
             \item Use gradient accumulation if needed
         \end{itemize}
 
         \item \textbf{Mixed precision training}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Use float16 for speed
             \item 2-3x faster on modern GPUs
         \end{itemize}
@@ -637,34 +643,34 @@ print(generated)
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Sampling Strategies 🎲}
+\begin{frame}[shrink=10]{Sampling Strategies 🎲}
     \textbf{Different ways to sample next token:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Greedy Decoding}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Always pick most likely token
             \item ✅ Deterministic, fast
             \item ❌ Repetitive, boring
         \end{itemize}
 
         \item \textbf{Temperature Sampling}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Scale logits by temperature $T$
             \item $T < 1$: More conservative (peaked distribution)
             \item $T > 1$: More random (flat distribution)
         \end{itemize}
 
         \item \textbf{Top-k Sampling}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Sample from top $k$ most likely tokens
             \item Typical: $k = 40$
         \end{itemize}
 
         \item \textbf{Nucleus (Top-p) Sampling}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Sample from smallest set with cumulative probability $\geq p$
             \item Typical: $p = 0.9$ or $p = 0.95$
             \item ✅ Best for creative generation
@@ -753,9 +759,9 @@ print(text)
 
 \section{Practical Considerations}
 
-\begin{frame}{Model Size vs. Performance 📊}
+\begin{frame}[shrink=5]{Model Size vs. Performance 📊}
     \begin{center}
-        \begin{tikzpicture}
+        \begin{tikzpicture}[scale=0.85]
             % Axes
             \draw[->] (0,0) -- (10,0) node[right] {Parameters};
             \draw[->] (0,0) -- (0,6) node[above] {Performance};
@@ -781,10 +787,10 @@ print(text)
         \end{tikzpicture}
     \end{center}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Practical model sizes for different use cases:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textbf{10M-100M}: Learning/experimentation, simple tasks
         \item \textbf{100M-1B}: Specialized domains, resource-constrained
         \item \textbf{1B-10B}: General-purpose, good quality
@@ -793,9 +799,10 @@ print(text)
 \end{frame}
 
 \begin{frame}{Computational Requirements 💻}
+\small
     \textbf{Training a 125M parameter GPT:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{table}
         \begin{tabular}{ll}
@@ -810,38 +817,38 @@ print(text)
         \end{tabular}
     \end{table}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Scaling up to GPT-3 (175B):}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item 1000x more parameters
         \item ~10,000x more compute needed
         \item Requires distributed training across many GPUs
         \item Estimated \$4.6M in compute costs
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         This is why pre-trained models are so valuable—you don't have to train from scratch!
     \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Common Issues and Debugging 🔧}
+\begin{frame}[shrink=10]{Common Issues and Debugging 🔧}
     \textbf{Problems you might encounter:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Loss not decreasing}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Check learning rate (try 1e-4 to 3e-4)
             \item Verify data pipeline
             \item Check for NaN/Inf values
         \end{itemize}
 
         \item \textbf{Out of memory}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Reduce batch size
             \item Reduce sequence length
             \item Use gradient accumulation
@@ -849,7 +856,7 @@ print(text)
         \end{itemize}
 
         \item \textbf{Poor generation quality}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Train longer
             \item Use larger model
             \item Improve data quality
@@ -857,7 +864,7 @@ print(text)
         \end{itemize}
 
         \item \textbf{Repetitive text}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Increase temperature
             \item Use nucleus sampling
             \item Add repetition penalty
@@ -865,35 +872,35 @@ print(text)
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Extensions and Improvements 🚀}
+\begin{frame}[shrink=10]{Extensions and Improvements 🚀}
     \textbf{Ways to enhance your GPT implementation:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Architectural improvements}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Rotary Position Embeddings (RoPE)
             \item Flash Attention (faster attention)
             \item Grouped-Query Attention
         \end{itemize}
 
         \item \textbf{Training techniques}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Learning rate warmup and decay
             \item Gradient accumulation
             \item Mixed precision training (FP16/BF16)
         \end{itemize}
 
         \item \textbf{Data improvements}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Data deduplication
             \item Quality filtering
             \item Curriculum learning
         \end{itemize}
 
         \item \textbf{Inference optimizations}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item KV-cache for faster generation
             \item Model quantization (int8)
             \item Speculative decoding
@@ -901,47 +908,47 @@ print(text)
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Resources for Further Learning 📚}
+\begin{frame}[shrink=10]{Resources for Further Learning 📚}
     \textbf{Recommended resources:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textbf{Andrej Karpathy's nanoGPT}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Clean, minimal GPT implementation
             \item \href{https://github.com/karpathy/nanoGPT}{github.com/karpathy/nanoGPT}
         \end{itemize}
 
         \item \textbf{Andrej Karpathy's "Let's build GPT" video}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Excellent step-by-step tutorial
             \item \href{https://www.youtube.com/watch?v=kCc8FmEb1nY}{YouTube}
         \end{itemize}
 
         \item \textbf{HuggingFace Transformers}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Production-ready implementations
             \item \href{https://huggingface.co/transformers}{huggingface.co/transformers}
         \end{itemize}
 
         \item \textbf{PyTorch Documentation}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Official tutorials and guides
             \item \href{https://pytorch.org/tutorials}{pytorch.org/tutorials}
         \end{itemize}
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Hands-On Exercise 💪}
+\begin{frame}[shrink=10]{Hands-On Exercise 💪}
     \begin{alertblock}{Your Task}
         Implement and train a small GPT model on your own text corpus!
     \end{alertblock}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Steps:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Choose a dataset (Shakespeare, Wikipedia, your own text)
         \item Set up the data pipeline
         \item Initialize the model (start small: 6 layers, 384 d\_model)
@@ -950,20 +957,20 @@ print(text)
         \item Try different sampling strategies
     \end{enumerate}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Starter code available:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Course GitHub repository
         \item Google Colab notebook
         \item Estimated time: 2-3 hours
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Key Takeaways 🔑}
-    \begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🔑}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{GPT is conceptually simple}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Stack of transformer decoder blocks
             \item Predict next token
         \end{itemize}
@@ -971,7 +978,7 @@ print(text)
         \vspace{0.3cm}
 
         \item \textbf{Key components}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item BPE tokenization
             \item Token + position embeddings
             \item Masked multi-head attention
@@ -981,7 +988,7 @@ print(text)
         \vspace{0.3cm}
 
         \item \textbf{Training requires care}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Good data, proper hyperparameters
             \item Gradient clipping, learning rate schedules
         \end{itemize}
@@ -989,7 +996,7 @@ print(text)
         \vspace{0.3cm}
 
         \item \textbf{Generation is an art}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Balance creativity and coherence
             \item Temperature, top-k, top-p sampling
         \end{itemize}
@@ -997,15 +1004,16 @@ print(text)
         \vspace{0.3cm}
 
         \item \textbf{Implementation teaches you how LLMs work}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Understanding through building!
         \end{itemize}
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Readings 📖}
+\begin{frame}[shrink=10]{Readings 📖}
+\small
     \begin{block}{Required Readings}
-        \begin{enumerate}
+        \begin{enumerate}\setlength{\itemsep}{0pt}
             \item \textbf{Vaswani et al. (2017)} - "Attention is All You Need" \\
             \href{https://arxiv.org/abs/1706.03762}{[ArXiv]}
 
@@ -1014,10 +1022,10 @@ print(text)
         \end{enumerate}
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{block}{Code Resources}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item \textbf{nanoGPT} by Andrej Karpathy \\
             \href{https://github.com/karpathy/nanoGPT}{github.com/karpathy/nanoGPT}
 
@@ -1030,23 +1038,23 @@ print(text)
     \end{block}
 \end{frame}
 
-\begin{frame}{Next Week 🔮}
+\begin{frame}[shrink=10]{Next Week 🔮}
     \textbf{Week 8: No Classes - Instructor Away}
 
-    \vspace{1cm}
+    \vspace{0.5cm}
 
     \textbf{Use this week to:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Complete the GPT implementation exercise
         \item Catch up on readings
         \item Work on assignments
         \item Experiment with different architectures
     \end{itemize}
 
-    \vspace{1cm}
+    \vspace{0.5cm}
 
     \textbf{Week 9: RAG \& Mixture of Experts}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Retrieval Augmented Generation
         \item Mixture of Experts architectures
         \item Ethics, Bias, and Safety in LLMs

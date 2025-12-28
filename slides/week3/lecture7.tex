@@ -1,13 +1,15 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{emoji}
-
 % Code listing setup
 \lstset{
   basicstyle=\ttfamily\small,
@@ -22,7 +24,7 @@
 
 \title{Classic Embeddings: LSA \& LDA}
 \subtitle{Lecture 7: The Foundations of Distributional Semantics}
-\author{LLM Course - Week 3}
+\author{PSYC 51.07: Models of Language and Communication - Week 3}
 \date{Winter 2026}
 
 \begin{document}
@@ -30,16 +32,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Lecture 📋}
+\begin{frame}[shrink=10]{Today's Lecture 📋}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 🧠 \textbf{The Distributional Hypothesis}
     \item 📊 \textbf{Vector Space Models}
     \item 📚 \textbf{Latent Semantic Analysis (LSA)}
@@ -55,19 +57,19 @@
 % ============================================================
 % FUNDAMENTAL QUESTION
 % ============================================================
-\begin{frame}{The Fundamental Question 🤔}
+\begin{frame}[shrink=10]{The Fundamental Question 🤔}
 \begin{center}
 \LARGE
 \textbf{How do we represent the meaning of words in a way that computers can understand?}
 \end{center}
 
 \pause
-\vspace{2em}
+\vspace{1em}
 
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Traditional Approach:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Dictionaries
     \item Taxonomies (WordNet)
     \item Manual feature engineering
@@ -80,7 +82,7 @@
 
 \begin{column}{0.48\textwidth}
 \textbf{Distributional Approach:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Learn from data
     \item Context-based
     \item Scalable
@@ -107,7 +109,7 @@
 \end{center}
 
 \pause
-\vspace{2em}
+\vspace{1em}
 
 \textbf{Key Idea:}
 Words that appear in similar contexts tend to have similar meanings.
@@ -115,7 +117,7 @@ Words that appear in similar contexts tend to have similar meanings.
 \vspace{1em}
 
 \begin{exampleblock}{Example}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "The \textbf{cat} sat on the mat"
     \item "The \textbf{dog} sat on the mat"
     \item "The \textbf{kitten} sat on the mat"
@@ -131,7 +133,7 @@ $\rightarrow$ \textit{cat}, \textit{dog}, \textit{kitten} are semantically relat
 % ============================================================
 % VECTOR SPACE MODEL
 % ============================================================
-\begin{frame}{From Words to Vectors 🗺️}
+\begin{frame}[shrink=5]{From Words to Vectors 🗺️}
 \textbf{Goal:} Represent each word as a point in high-dimensional space
 
 \vspace{1em}
@@ -185,7 +187,7 @@ animal & 2 & 3 & 2 & 0 \\
 \vspace{1em}
 
 \textbf{Issues:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Very sparse (mostly zeros)
     \item High dimensional (vocab size × doc count)
     \item Doesn't capture semantic relationships
@@ -246,7 +248,7 @@ Important words appear frequently in a document but rarely across all documents
 % ============================================================
 % LSA
 % ============================================================
-\begin{frame}{Latent Semantic Analysis (LSA) 📚}
+\begin{frame}[shrink=10]{Latent Semantic Analysis (LSA) 📚}
 \textbf{The OG of semantic embeddings (1990)}
 
 \vspace{1em}
@@ -254,7 +256,7 @@ Important words appear frequently in a document but rarely across all documents
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Algorithm:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Build term-document matrix $X$
     \item Apply TF-IDF weighting
     \item Perform SVD: $X = U\Sigma V^T$
@@ -264,7 +266,7 @@ Important words appear frequently in a document but rarely across all documents
 
 \vspace{0.5em}
 \textbf{Key Innovation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Discovers latent topics
     \item Solves synonymy problem
     \item Matrix factorization
@@ -300,7 +302,7 @@ Important words appear frequently in a document but rarely across all documents
 
 \vspace{0.5em}
 \textbf{Matrix Interpretation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item $U$: word-topic associations
     \item $\Sigma$: topic strengths
     \item $V^T$: topic-document associations
@@ -316,7 +318,7 @@ Important words appear frequently in a document but rarely across all documents
 % ============================================================
 % LSA EXAMPLE
 % ============================================================
-\begin{frame}{LSA: How It Works 🔍}
+\begin{frame}[shrink=10]{LSA: How It Works 🔍}
 \textbf{Example: Discovering latent topics}
 
 \vspace{1em}
@@ -324,7 +326,7 @@ Important words appear frequently in a document but rarely across all documents
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Original Dimensions:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 50,000 terms
     \item 10,000 documents
     \item Matrix: 50k × 10k
@@ -333,7 +335,7 @@ Important words appear frequently in a document but rarely across all documents
 
 \vspace{1em}
 \textbf{After LSA:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 100-300 latent dimensions
     \item Dense representation
     \item Captures semantic patterns
@@ -367,11 +369,11 @@ Words with similar topic distributions are semantically similar!
 % ============================================================
 % LSA LIMITATIONS
 % ============================================================
-\begin{frame}{LSA Limitations ⚠️}
+\begin{frame}[shrink=10]{LSA Limitations ⚠️}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Computational Issues:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item SVD is expensive: $O(min(nm^2, n^2m))$
     \item Hard to update with new documents
     \item Memory intensive for large corpora
@@ -379,7 +381,7 @@ Words with similar topic distributions are semantically similar!
 
 \vspace{1em}
 \textbf{Modeling Issues:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Linear relationships only
     \item Bag-of-words (loses word order)
     \item No polysemy handling
@@ -392,7 +394,7 @@ Words with similar topic distributions are semantically similar!
 
 \vspace{0.5em}
 \begin{exampleblock}{Word: "bank"}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Financial institution
     \item River bank
     \item Banking (airplane maneuver)
@@ -404,7 +406,7 @@ LSA gives \alert{one vector} for all meanings!
 
 \vspace{1em}
 \textbf{But...}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Still useful for many tasks
     \item Foundation for modern methods
     \item Fast for medium-sized corpora
@@ -416,7 +418,7 @@ LSA gives \alert{one vector} for all meanings!
 % ============================================================
 % LDA INTRO
 % ============================================================
-\begin{frame}{Latent Dirichlet Allocation (LDA) 🎲}
+\begin{frame}[shrink=10]{Latent Dirichlet Allocation (LDA) 🎲}
 \textbf{A probabilistic approach to topic modeling}
 
 \vspace{1em}
@@ -431,7 +433,7 @@ LSA gives \alert{one vector} for all meanings!
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Key Assumptions:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Each document is a mixture of topics
     \item Each topic is a distribution over words
     \item The mixture proportions vary per document
@@ -439,7 +441,7 @@ LSA gives \alert{one vector} for all meanings!
 
 \vspace{0.5em}
 \textbf{Advantages over LSA:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Probabilistic interpretation
     \item Non-negative weights
     \item Better for topic discovery
@@ -489,7 +491,7 @@ LSA gives \alert{one vector} for all meanings!
 % ============================================================
 % LDA GENERATIVE PROCESS
 % ============================================================
-\begin{frame}{LDA: The Generative Story 📖}
+\begin{frame}[shrink=10]{LDA: The Generative Story 📖}
 \textbf{How LDA imagines documents are created:}
 
 \vspace{1em}
@@ -497,17 +499,17 @@ LSA gives \alert{one vector} for all meanings!
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Generative Process:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Choose number of topics $K$
     \item For each topic $k$:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Draw word distribution $\phi_k \sim \text{Dir}(\beta)$
     \end{itemize}
     \item For each document $d$:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Draw topic distribution $\theta_d \sim \text{Dir}(\alpha)$
         \item For each word position $n$:
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Choose topic $z_{dn} \sim \text{Mult}(\theta_d)$
             \item Choose word $w_{dn} \sim \text{Mult}(\phi_{z_{dn}})$
         \end{itemize}
@@ -517,14 +519,14 @@ LSA gives \alert{one vector} for all meanings!
 
 \begin{column}{0.48\textwidth}
 \textbf{Key Parameters:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item $\alpha$: Document-topic density
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Low $\alpha$ $\rightarrow$ few topics per doc
         \item High $\alpha$ $\rightarrow$ many topics per doc
     \end{itemize}
     \item $\beta$: Topic-word density
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Low $\beta$ $\rightarrow$ focused topics
         \item High $\beta$ $\rightarrow$ general topics
     \end{itemize}
@@ -532,7 +534,7 @@ LSA gives \alert{one vector} for all meanings!
 
 \vspace{1em}
 \textbf{Inference:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Given documents, infer topics
     \item Use Gibbs sampling or variational inference
     \item Iterative process
@@ -619,7 +621,7 @@ for idx, topic in enumerate(lda.components_):
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{BERTopic Pipeline:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Embed documents with BERT
     \item Reduce dimensionality with UMAP
     \item Cluster with HDBSCAN
@@ -629,7 +631,7 @@ for idx, topic in enumerate(lda.components_):
 
 \vspace{0.5em}
 \textbf{Advantages:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Leverages pre-trained models
     \item Better semantic understanding
     \item Automatic topic number detection
@@ -698,7 +700,7 @@ Topic number & Fixed & Fixed & Automatic \\
 \vspace{1em}
 
 \begin{block}{Recommendations}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{LSA}: Quick exploration, large-scale retrieval
     \item \textbf{LDA}: Interpretable topics, when you know topic count
     \item \textbf{BERTopic}: State-of-the-art quality, exploratory analysis
@@ -709,24 +711,24 @@ Topic number & Fixed & Fixed & Automatic \\
 % ============================================================
 % EVALUATION
 % ============================================================
-\begin{frame}{Evaluating Topic Models 📏}
+\begin{frame}[shrink=10]{Evaluating Topic Models 📏}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Intrinsic Metrics:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Perplexity:} Lower is better
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Measures likelihood
         \item Can be misleading!
     \end{itemize}
     \item \textbf{Topic Coherence:} Higher is better
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Measures semantic similarity
         \item Better correlation with human judgment
         \item CV, UCI, UMass variants
     \end{itemize}
     \item \textbf{Topic Diversity:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Unique words across topics
         \item Avoids redundant topics
     \end{itemize}
@@ -735,7 +737,7 @@ Topic number & Fixed & Fixed & Automatic \\
 
 \begin{column}{0.48\textwidth}
 \textbf{Extrinsic Metrics:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Document classification accuracy
     \item Information retrieval performance
     \item Clustering quality
@@ -743,7 +745,7 @@ Topic number & Fixed & Fixed & Automatic \\
 
 \vspace{1em}
 \textbf{Human Evaluation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Topic interpretability
     \item Word intruder detection
     \item Topic utility for task
@@ -761,31 +763,31 @@ Always check topic coherence and interpretability.
 % ============================================================
 % APPLICATIONS
 % ============================================================
-\begin{frame}{Applications of Classic Embeddings 🚀}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Applications of Classic Embeddings 🚀}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Information Retrieval}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Semantic search
         \item Document similarity
         \item Query expansion
     \end{itemize}
 
     \item \textbf{Document Organization}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Clustering
         \item Topic discovery
         \item Trend analysis
     \end{itemize}
 
     \item \textbf{Text Mining}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Opinion mining
         \item Literature review
         \item Knowledge discovery
     \end{itemize}
 
     \item \textbf{Preprocessing}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Feature reduction for ML
         \item Noise reduction
         \item Transfer learning
@@ -794,7 +796,7 @@ Always check topic coherence and interpretability.
 
 \vspace{0.5em}
 \textbf{Real-world examples:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Academic paper recommendations (LSA)
     \item News article categorization (LDA)
     \item Social media trend detection (BERTopic)
@@ -804,7 +806,7 @@ Always check topic coherence and interpretability.
 % ============================================================
 % DISCUSSION
 % ============================================================
-\begin{frame}{Discussion Question 💬}
+\begin{frame}[shrink=10]{Discussion Question 💬}
 \begin{center}
 \Large
 \textbf{Can distributional semantics truly capture meaning?}
@@ -815,7 +817,7 @@ Always check topic coherence and interpretability.
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Arguments For:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Captures semantic similarity
     \item Works well in practice
     \item Aligns with linguistic theory
@@ -826,7 +828,7 @@ Always check topic coherence and interpretability.
 
 \begin{column}{0.48\textwidth}
 \textbf{Arguments Against:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Text-only (no grounding)
     \item Missing embodied experience
     \item No common sense reasoning
@@ -849,10 +851,10 @@ Always check topic coherence and interpretability.
 % ============================================================
 % PRACTICAL TIPS
 % ============================================================
-\begin{frame}{Practical Tips 💡}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Practical Tips 💡}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Preprocessing Matters:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Remove stopwords (but not always!)
         \item Lemmatization vs. stemming
         \item Handle punctuation carefully
@@ -860,7 +862,7 @@ Always check topic coherence and interpretability.
     \end{itemize}
 
     \item \textbf{Choosing Parameters:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Start with 10-50 topics for LDA
         \item Use perplexity for model selection
         \item Validate with coherence scores
@@ -868,7 +870,7 @@ Always check topic coherence and interpretability.
     \end{itemize}
 
     \item \textbf{Interpreting Results:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Look at top 10-20 words per topic
         \item Examine representative documents
         \item Check for duplicate/junk topics
@@ -876,7 +878,7 @@ Always check topic coherence and interpretability.
     \end{itemize}
 
     \item \textbf{When to Use What:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item LSA: Fast exploration, search
         \item LDA: Interpretable topics
         \item BERTopic: Best quality, latest research
@@ -887,28 +889,28 @@ Always check topic coherence and interpretability.
 % ============================================================
 % SUMMARY
 % ============================================================
-\begin{frame}{Summary 🎯}
+\begin{frame}[shrink=10]{Summary 🎯}
 \textbf{What we learned today:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Distributional Hypothesis:} Words in similar contexts have similar meanings
 
     \item \textbf{LSA (1990):}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item SVD on term-document matrix
         \item Linear dimensionality reduction
         \item Fast but limited interpretability
     \end{itemize}
 
     \item \textbf{LDA (2003):}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Probabilistic topic modeling
         \item Documents as mixtures of topics
         \item Highly interpretable
     \end{itemize}
 
     \item \textbf{BERTopic (2022):}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Neural embeddings + clustering
         \item State-of-the-art coherence
         \item Automatic topic detection
@@ -928,10 +930,10 @@ Always check topic coherence and interpretability.
 % ============================================================
 % REFERENCES
 % ============================================================
-\begin{frame}{Key References 📚}
+\begin{frame}[shrink=10]{Key References 📚}
 \small
 \textbf{Classic Papers:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Firth, J.R. (1957). "A synopsis of linguistic theory 1930-1955"
     \item Deerwester et al. (1990). "Indexing by Latent Semantic Analysis"
     \item Blei et al. (2003). "Latent Dirichlet Allocation"
@@ -940,7 +942,7 @@ Always check topic coherence and interpretability.
 
 \vspace{0.5em}
 \textbf{Modern Extensions:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Boleda, G. (2020). "Distributional Semantics and Linguistic Theory"
     \item Grootendorst, M. (2022). "BERTopic: Neural topic modeling with a class-based TF-IDF procedure"
     \item Grand et al. (2022). "Semantic projection recovers rich human knowledge of multiple object features"
@@ -948,7 +950,7 @@ Always check topic coherence and interpretability.
 
 \vspace{0.5em}
 \textbf{Tools \& Libraries:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Scikit-learn: \texttt{sklearn.decomposition.TruncatedSVD}, \texttt{LatentDirichletAllocation}
     \item Gensim: \texttt{gensim.models.LsiModel}, \texttt{LdaModel}
     \item BERTopic: \texttt{https://maartengr.github.io/BERTopic/}
@@ -966,7 +968,7 @@ Always check topic coherence and interpretability.
 \vspace{1em}
 Word Embeddings: Word2Vec, GloVe, FastText
 
-\vspace{2em}
+\vspace{1em}
 \textit{From count-based to prediction-based methods!}
 \end{center}
 \end{frame}

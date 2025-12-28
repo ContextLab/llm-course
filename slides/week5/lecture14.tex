@@ -1,12 +1,15 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{emoji}
 \usetikzlibrary{shapes,arrows,positioning,calc}
 
 % Code listing setup
@@ -23,7 +26,7 @@
 
 \title{Lecture 14: Training Transformers}
 \subtitle{Week 5, Lecture 3 - From Architecture to Implementation}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \date{Winter 2026}
 
 \begin{document}
@@ -31,16 +34,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Agenda 📋}
+\begin{frame}[shrink=10]{Today's Agenda 📋}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 📍 \textbf{Positional Encoding}: Injecting sequence order
     \item 🔄 \textbf{Feed-Forward Networks}: The other key component
     \item 🔗 \textbf{Layer Norm \& Residuals}: Training deep networks
@@ -56,13 +59,13 @@
 % ============================================================
 % POSITIONAL ENCODING
 % ============================================================
-\begin{frame}{Positional Encoding 📍}
+\begin{frame}[shrink=10]{Positional Encoding 📍}
 \textbf{Problem: Self-attention is permutation-invariant!}
 
 \vspace{0.5em}
 
 Without position information:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "The cat sat" = "sat cat the" = "cat the sat"
     \item Order matters in language!
 \end{itemize}
@@ -82,7 +85,7 @@ PE_{(pos, 2i+1)} &= \cos(pos / 10000^{2i/d})
 \end{align*}
 
 \textbf{Properties:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Deterministic
     \item Unique for each position
     \item Smooth changes
@@ -94,7 +97,7 @@ PE_{(pos, 2i+1)} &= \cos(pos / 10000^{2i/d})
 \textbf{Modern Approach: RoPE}
 
 Rotary Position Embedding (Su et al. 2021)
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Rotates Q and K in complex space
     \item Relative position encoding
     \item Better extrapolation
@@ -104,7 +107,7 @@ Rotary Position Embedding (Su et al. 2021)
 \vspace{1em}
 
 \textbf{Learned Positional Embeddings:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Treat positions as vocabulary
     \item Learn embeddings during training
     \item Used in: BERT, GPT
@@ -120,14 +123,14 @@ Rotary Position Embedding (Su et al. 2021)
 % ============================================================
 % WHY SINUSOIDAL
 % ============================================================
-\begin{frame}{Why Sinusoidal Positional Encoding? 🌊}
+\begin{frame}[shrink=10]{Why Sinusoidal Positional Encoding? 🌊}
 \textbf{Advantages of sine/cosine functions:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Unique Patterns}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Each position gets a unique vector
         \item Different frequencies for different dimensions
         \item Creates distinguishable position signatures
@@ -136,7 +139,7 @@ Rotary Position Embedding (Su et al. 2021)
     \vspace{0.5em}
 
     \item \textbf{Relative Position Information}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item $PE_{pos+k}$ can be expressed as linear function of $PE_{pos}$
         \item Model can learn to attend by relative position
         \item Trigonometric identity: $\sin(a+b) = \sin a \cos b + \cos a \sin b$
@@ -145,7 +148,7 @@ Rotary Position Embedding (Su et al. 2021)
     \vspace{0.5em}
 
     \item \textbf{Extrapolation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Can handle sequences longer than training length
         \item Sine/cosine continue smoothly
         \item No need to retrain for different lengths
@@ -154,7 +157,7 @@ Rotary Position Embedding (Su et al. 2021)
     \vspace{0.5em}
 
     \item \textbf{No Additional Parameters}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Deterministic, no learning required
         \item Saves memory compared to learned embeddings
     \end{itemize}
@@ -164,7 +167,7 @@ Rotary Position Embedding (Su et al. 2021)
 % ============================================================
 % POSITIONAL ENCODING VISUALIZATION
 % ============================================================
-\begin{frame}{Visualizing Positional Encodings 👁️}
+\begin{frame}[shrink=5]{Visualizing Positional Encodings 👁️}
 \textbf{Each position gets a unique pattern across dimensions}
 
 \vspace{1em}
@@ -197,7 +200,7 @@ Rotary Position Embedding (Su et al. 2021)
 \vspace{0.5em}
 
 \textbf{Key Insight:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Lower dimensions: Rapid oscillation (high frequency)
     \item Higher dimensions: Slow oscillation (low frequency)
     \item Creates a unique "barcode" for each position
@@ -208,7 +211,7 @@ Rotary Position Embedding (Su et al. 2021)
 % ============================================================
 % FEED FORWARD
 % ============================================================
-\begin{frame}{Feed-Forward Networks 🔄}
+\begin{frame}[shrink=5]{Feed-Forward Networks 🔄}
 \textbf{After attention, apply position-wise feed-forward network}
 
 \vspace{1em}
@@ -218,7 +221,7 @@ Rotary Position Embedding (Su et al. 2021)
 \text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2
 \end{align*}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Two linear transformations with ReLU activation
     \item Applied to each position independently
     \item Same network for all positions
@@ -250,14 +253,14 @@ Rotary Position Embedding (Su et al. 2021)
 % ============================================================
 % WHY FFN
 % ============================================================
-\begin{frame}{Why Feed-Forward Networks? 🤔}
+\begin{frame}[shrink=10]{Why Feed-Forward Networks? 🤔}
 \textbf{Role in the Transformer:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Add Non-linearity}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Attention is mostly linear operations (weighted sums)
         \item FFN introduces non-linear transformations
         \item ReLU/GELU activation adds expressiveness
@@ -266,7 +269,7 @@ Rotary Position Embedding (Su et al. 2021)
     \vspace{0.5em}
 
     \item \textbf{Position-wise Processing}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Attention mixes information across positions
         \item FFN processes each position independently
         \item Allows position-specific feature transformations
@@ -275,7 +278,7 @@ Rotary Position Embedding (Su et al. 2021)
     \vspace{0.5em}
 
     \item \textbf{Increase Model Capacity}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Expansion (4x) provides more parameters
         \item Can learn complex feature combinations
         \item Most parameters in transformer are in FFN layers!
@@ -284,7 +287,7 @@ Rotary Position Embedding (Su et al. 2021)
     \vspace{0.5em}
 
     \item \textbf{Feature Refinement}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Attention gathers context
         \item FFN refines and transforms the representation
         \item Two complementary operations
@@ -295,7 +298,7 @@ Rotary Position Embedding (Su et al. 2021)
 % ============================================================
 % LAYER NORM AND RESIDUALS
 % ============================================================
-\begin{frame}{Layer Normalization \& Residual Connections 🔗}
+\begin{frame}[shrink=10]{Layer Normalization \& Residual Connections 🔗}
 \textbf{Critical for training deep transformers!}
 
 \vspace{1em}
@@ -307,7 +310,7 @@ Rotary Position Embedding (Su et al. 2021)
 \text{Output} = \text{Layer}(x) + x
 \end{align*}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Allows gradients to flow directly
     \item Prevents vanishing gradients
     \item Enables very deep networks
@@ -326,7 +329,7 @@ Like highway roads for information flow!
 \text{LayerNorm}(x) = \gamma \frac{x - \mu}{\sigma} + \beta
 \end{align*}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Normalize across features
     \item Stabilizes training
     \item Faster convergence
@@ -365,7 +368,8 @@ x &\leftarrow \text{LayerNorm}(x + \text{FFN}(x))
 % ============================================================
 % PRE VS POST NORM
 % ============================================================
-\begin{frame}{Pre-Norm vs Post-Norm 🔄}
+\begin{frame}[shrink=10]{Pre-Norm vs Post-Norm 🔄}
+\small
 \textbf{Two ways to arrange LayerNorm and residual connections}
 
 \vspace{1em}
@@ -378,7 +382,7 @@ x &\leftarrow \text{LN}(x + \text{Attn}(x)) \\
 x &\leftarrow \text{LN}(x + \text{FFN}(x))
 \end{align*}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Used in original Transformer
     \item Normalization after residual
     \item Better performance when it works
@@ -394,7 +398,7 @@ x &\leftarrow x + \text{Attn}(\text{LN}(x)) \\
 x &\leftarrow x + \text{FFN}(\text{LN}(x))
 \end{align*}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Increasingly popular
     \item Normalization before sublayer
     \item \alert{More stable training}
@@ -414,7 +418,7 @@ For deep transformers (24+ layers), Pre-Norm is generally preferred due to bette
 % ============================================================
 % COMPLETE BLOCK
 % ============================================================
-\begin{frame}{Complete Transformer Block 🧱}
+\begin{frame}[shrink=5]{Complete Transformer Block 🧱}
 \textbf{Putting it all together:}
 
 \vspace{1em}
@@ -457,7 +461,7 @@ For deep transformers (24+ layers), Pre-Norm is generally preferred due to bette
 \vspace{0.5em}
 
 \textbf{Stack this block $N$ times!}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item BERT-base: 12 blocks
     \item BERT-large: 24 blocks
     \item GPT-3: 96 blocks!
@@ -467,13 +471,13 @@ For deep transformers (24+ layers), Pre-Norm is generally preferred due to bette
 % ============================================================
 % FLASH ATTENTION
 % ============================================================
-\begin{frame}{FlashAttention: Making Transformers Faster ⚡}
+\begin{frame}[shrink=10]{FlashAttention: Making Transformers Faster ⚡}
 \textbf{Problem: Standard attention is slow and memory-hungry!}
 
 \vspace{0.5em}
 
 \begin{alertblock}{Standard Attention Complexity}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Time: $O(n^2)$ where $n$ is sequence length
     \item Memory: $O(n^2)$ to store attention matrix
     \item Bottleneck: Reading/writing to GPU memory (HBM)
@@ -485,7 +489,7 @@ For deep transformers (24+ layers), Pre-Norm is generally preferred due to bette
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{FlashAttention Innovation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Tile-based computation
     \item Uses fast SRAM instead of slow HBM
     \item Fused operations
@@ -497,7 +501,7 @@ For deep transformers (24+ layers), Pre-Norm is generally preferred due to bette
 
 \begin{column}{0.48\textwidth}
 \textbf{Impact:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item GPT-3: 512 → 2048 context
     \item BERT: Faster training
     \item Long-document understanding
@@ -527,14 +531,14 @@ FlashAttn & \textbf{3x} & \textbf{0.5x} \\
 % ============================================================
 % OTHER OPTIMIZATIONS
 % ============================================================
-\begin{frame}{Other Attention Optimizations ⚙️}
+\begin{frame}[shrink=10]{Other Attention Optimizations ⚙️}
 \textbf{Addressing the $O(n^2)$ problem:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Sparse Attention}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Only attend to subset of positions
         \item Local windows + global tokens
         \item Used in: Longformer, BigBird
@@ -543,7 +547,7 @@ FlashAttn & \textbf{3x} & \textbf{0.5x} \\
     \vspace{0.5em}
 
     \item \textbf{Linear Attention}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Approximate attention with linear complexity
         \item Kernel trick to avoid materializing attention matrix
         \item Used in: Performer, Linear Transformer
@@ -552,7 +556,7 @@ FlashAttn & \textbf{3x} & \textbf{0.5x} \\
     \vspace{0.5em}
 
     \item \textbf{Low-Rank Approximation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Factorize attention matrix
         \item Reduce memory footprint
         \item Used in: Linformer
@@ -561,7 +565,7 @@ FlashAttn & \textbf{3x} & \textbf{0.5x} \\
     \vspace{0.5em}
 
     \item \textbf{Sliding Window}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Fixed-size local attention window
         \item Constant memory usage
         \item Used in: Mistral 7B
@@ -603,7 +607,7 @@ T5, BART, mT5\\
 \vspace{1em}
 
 \begin{block}{Key Difference: Attention Masking}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Encoder:} Full self-attention (bidirectional)
     \item \textbf{Decoder:} Causal/masked attention (unidirectional)
 \end{itemize}
@@ -613,7 +617,7 @@ T5, BART, mT5\\
 % ============================================================
 % VISUAL ARCHITECTURES
 % ============================================================
-\begin{frame}{Visual Comparison: Encoder vs Decoder vs Both}
+\begin{frame}[shrink=5]{Visual Comparison: Encoder vs Decoder vs Both}
 \begin{center}
 \begin{tikzpicture}[scale=0.5]
     % Encoder only (BERT)
@@ -643,7 +647,7 @@ T5, BART, mT5\\
 \vspace{1em}
 
 \textbf{Choosing the Right Architecture:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Need to understand full context? → \textbf{Encoder} (BERT)
     \item Need to generate text? → \textbf{Decoder} (GPT)
     \item Need both (translate, summarize)? → \textbf{Encoder-Decoder} (T5)
@@ -718,10 +722,10 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 % ============================================================
 % TRAINING TIPS
 % ============================================================
-\begin{frame}{Practical Tips for Training Transformers 💡}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Practical Tips for Training Transformers 💡}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Learning Rate \& Warmup}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use learning rate warmup (linear increase then decay)
         \item Typical: warmup for 10\% of training steps
         \item Peak LR: 1e-4 to 5e-4 (from scratch), 1e-5 to 5e-5 (fine-tuning)
@@ -730,7 +734,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \vspace{0.5em}
 
     \item \textbf{Optimization}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use Adam or AdamW optimizer
         \item AdamW: Adam + weight decay (better generalization)
         \item Gradient clipping to prevent exploding gradients
@@ -739,7 +743,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \vspace{0.5em}
 
     \item \textbf{Regularization}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Dropout after attention and FFN (typical: 0.1)
         \item Weight decay (typical: 0.01)
         \item Label smoothing for classification
@@ -748,7 +752,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \vspace{0.5em}
 
     \item \textbf{Mixed Precision Training}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use FP16 instead of FP32
         \item 2x speedup, 2x memory reduction
         \item Minimal accuracy loss
@@ -759,10 +763,10 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 % ============================================================
 % EFFICIENCY TIPS
 % ============================================================
-\begin{frame}{Computational Efficiency Tips ⚙️}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Computational Efficiency Tips ⚙️}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Batch Size}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Larger batches = better GPU utilization
         \item Use gradient accumulation if GPU memory limited
         \item Typical: effective batch size 256-2048 tokens
@@ -771,7 +775,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \vspace{0.5em}
 
     \item \textbf{Sequence Length}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Shorter sequences train faster (quadratic complexity!)
         \item Consider truncation or sliding windows
         \item Pack multiple examples to maximize GPU usage
@@ -780,7 +784,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \vspace{0.5em}
 
     \item \textbf{Model Size}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Start small, scale up if needed
         \item DistilBERT: 40\% smaller, 60\% faster, 97\% performance
         \item Consider model distillation for deployment
@@ -789,7 +793,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \vspace{0.5em}
 
     \item \textbf{Hardware}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item GPUs with high memory bandwidth (A100, H100)
         \item Multi-GPU training with data parallelism
         \item Use FlashAttention when available
@@ -800,10 +804,10 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 % ============================================================
 % DISCUSSION
 % ============================================================
-\begin{frame}{Discussion Questions 💭}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Discussion Questions 💭}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Positional Encoding:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Why add instead of concatenate?
         \item What happens without positional encoding?
         \item Learned vs. fixed: which is better?
@@ -812,7 +816,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \vspace{0.5em}
 
     \item \textbf{Architecture Choice:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item When would you use encoder-only vs decoder-only?
         \item Can GPT do classification? Can BERT generate?
         \item Why has decoder-only become more popular recently?
@@ -821,7 +825,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \vspace{0.5em}
 
     \item \textbf{Scaling:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Is bigger always better?
         \item What are the limits to scaling transformers?
         \item How do we make them more efficient?
@@ -830,7 +834,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \vspace{0.5em}
 
     \item \textbf{Training Stability:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Why are residual connections so important?
         \item Pre-norm vs post-norm: trade-offs?
     \end{itemize}
@@ -840,9 +844,9 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 % ============================================================
 % LOOKING AHEAD
 % ============================================================
-\begin{frame}{Looking Ahead to Week 6 🔮}
+\begin{frame}[shrink=10]{Looking Ahead to Week 6 🔮}
 \textbf{This week (Week 5) we learned:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Attention mechanisms (Lecture 12)
     \item Self-attention and transformer architecture (Lecture 13)
     \item Training transformers: all the components (Lecture 14)
@@ -851,22 +855,22 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 \vspace{1em}
 
 \textbf{Next week (Week 6):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \alert{Lecture 15 - BERT Deep Dive}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Masked Language Modeling
         \item Pre-training and fine-tuning
         \item Contextual embeddings in action
     \end{itemize}
 
     \item \alert{Lecture 16 - BERT Variants}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item RoBERTa, ALBERT, DistilBERT
         \item Improvements and optimizations
     \end{itemize}
 
     \item \alert{Lecture 17 - Applications of Encoder Models}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Real-world BERT applications
         \item Cognitive neuroscience connections
         \item Understanding vs. pattern matching
@@ -880,38 +884,38 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 % ============================================================
 % SUMMARY
 % ============================================================
-\begin{frame}{Summary 🎯}
+\begin{frame}[shrink=10]{Summary 🎯}
 \textbf{Key Takeaways:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Positional Encoding}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Sine/cosine functions inject position information
         \item Enables model to understand order
     \end{itemize}
 
     \item \textbf{Feed-Forward Networks}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Position-wise transformations
         \item Add non-linearity and capacity
     \end{itemize}
 
     \item \textbf{LayerNorm \& Residuals}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Critical for training deep networks
         \item Stabilize gradients, enable deeper models
     \end{itemize}
 
     \item \textbf{Three Architectures}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Encoder (BERT), Decoder (GPT), Both (T5)
         \item Choose based on task requirements
     \end{itemize}
 
     \item \textbf{Practical Considerations}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use HuggingFace for easy implementation
         \item FlashAttention for efficiency
         \item Careful hyperparameter tuning
@@ -922,24 +926,24 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 % ============================================================
 % REFERENCES
 % ============================================================
-\begin{frame}{References 📚}
+\begin{frame}[shrink=10]{References 📚}
 \textbf{Essential Papers:}
 
 \vspace{0.5em}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Vaswani et al. (2017)} - "Attention Is All You Need"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item The original Transformer paper
     \end{itemize}
 
     \item \textbf{Su et al. (2021)} - "RoFormer: Enhanced Transformer with Rotary Position Embedding"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Modern positional encoding approach
     \end{itemize}
 
     \item \textbf{Dao et al. (2022)} - "FlashAttention: Fast and Memory-Efficient Exact Attention"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Making transformers faster
     \end{itemize}
 \end{itemize}
@@ -947,7 +951,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 \vspace{0.5em}
 
 \textbf{Tutorials:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item HuggingFace Course: Chapters 1.4, 1.5
     \item The Illustrated Transformer: \url{https://jalammar.github.io/illustrated-transformer/}
     \item Annotated Transformer: \url{https://nlp.seas.harvard.edu/annotated-transformer/}
@@ -963,10 +967,10 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 \textbf{Discussion Time}
 \end{center}
 
-\vspace{2em}
+\vspace{1em}
 
 \textbf{Topics for discussion:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Positional encoding approaches
     \item Architecture choices
     \item Training tips and tricks
@@ -974,7 +978,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \item Assignment 4 preparation
 \end{itemize}
 
-\vspace{2em}
+\vspace{1em}
 
 \begin{center}
 \Large
