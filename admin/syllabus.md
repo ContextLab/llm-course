@@ -112,64 +112,67 @@ We strive to create an inclusive learning environment where all students feel su
   - Topics: Course overview, capabilities of LLMs, consciousness debate
   - Discussion: What is consciousness? Can machines be conscious?
   - Reading: [Fedorenko et al. (2024)](https://www.nature.com/articles/s41593-024-01711-5); [Schrimpf et al. (2021)](https://www.pnas.org/doi/10.1073/pnas.2105646118)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week1/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week1/lecture.html}{HTML}]
-
-**Thursday, January 8** (X-hour 1): ELIZA Deep Dive
-  - Topics: Extended discussion of pattern matching, implementation strategies
-  - Hands-on: Start Assignment 1
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week1/lecture1.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week1/lecture1.html}{HTML}]
 
 **Wednesday, January 7** (Lecture 2): Pattern Matching & ELIZA
   - Topics: String operations in Python, regular expressions, pattern matching
   - Reading: [Weizenbaum (1966)](https://dl.acm.org/doi/10.1145/365153.365168)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week1/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week1/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week1/lecture2.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week1/lecture2.html}{HTML}]
+
+**Thursday, January 8** (X-hour 1): ELIZA Deep Dive
+  - Topics: Extended discussion of pattern matching, implementation strategies
+  - Hands-on: Start Assignment 1
+  - Demo: [\href{https://contextlab.github.io/llm-course/slides/week1/xhour_eliza_demo.html}{Interactive Notebook}]
 
 **Friday, January 9** (Lecture 3): ELIZA Implementation & The ELIZA Effect
   - Topics: Implementing ELIZA from scratch, psychological implications
   - **📝 Assignment 1 Released:** [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Assignment\%201\%3A\%20ELIZA/README.md}{Building the ELIZA Chatbot}]
   - Reading: [Natale (2021)](https://www.tandfonline.com/doi/full/10.1080/24701475.2020.1814847)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week1/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week1/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week1/lecture3.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week1/lecture3.html}{HTML}]
 
 ### Week 2: Computational Linguistics (January 12--16)
 
 **Monday, January 12** (Lecture 4): Data Cleaning & Preprocessing
   - Topics: Web scraping with Beautiful Soup, data cleaning, text normalization
   - Reading: HuggingFace NLP Course Chapter 2
-  - Slides: [\href{https://contextlab.github.io/llm-course/week2/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week2/lecture.html}{HTML}]
-
-**Thursday, January 15** (X-hour 2): Text Classification Workshop
-  - Topics: Building classifiers, feature engineering for text
-  - Hands-on: Explore different classification approaches
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week2/lecture4.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week2/lecture4.html}{HTML}]
 
 **Wednesday, January 14** (Lecture 5): Tokenization
   - Topics: Byte-Pair Encoding (BPE), WordPiece, SentencePiece
   - Reading: [Sennrich et al. (2016)](https://aclanthology.org/P16-1162/); [Kudo & Richardson (2018)](https://aclanthology.org/D18-2012/)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week2/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week2/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week2/lecture5.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week2/lecture5.html}{HTML}]
+
+**Thursday, January 15** (X-hour 2): Text Classification Workshop
+  - Topics: Building classifiers, feature engineering for text
+  - Hands-on: Explore different classification approaches
+  - Demo: [\href{https://contextlab.github.io/llm-course/slides/week2/xhour_classification_demo.html}{Interactive Notebook}]
 
 **Friday, January 16** (Lecture 6): POS Tagging & Sentiment Analysis
   - Topics: Part-of-speech tagging, named entity recognition, sentiment analysis
   - **📝 Assignment 2 Released:** [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Assignment\%202\%3A\%20SPAM\%20classifier/README.md}{SPAM Classifier}]
   - **✅ Assignment 1 Due**
-  - Slides: [\href{https://contextlab.github.io/llm-course/week2/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week2/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week2/lecture6.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week2/lecture6.html}{HTML}]
 
 ### Week 3: Text Embeddings I (January 19--23)
 
 **Monday, January 19**: Martin Luther King Jr. Day (No Class)
 
-**Thursday, January 22** (X-hour 3): Embeddings Workshop
-  - Topics: Implementing classic embeddings (LSA, LDA)
-  - Hands-on: Compare embedding methods on real data
-
 **Wednesday, January 21** (Lecture 7): Classic Embeddings
   - Topics: Latent Semantic Analysis (LSA), Latent Dirichlet Allocation (LDA)
   - Reading: [Landauer & Dumais (1997)](https://psycnet.apa.org/record/1997-02478-006); [Blei et al. (2003)](https://www.jmlr.org/papers/v3/blei03a)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week3-4/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week3-4/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week3/lecture7.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week3/lecture7.html}{HTML}]
+
+**Thursday, January 22** (X-hour 3): Embeddings Workshop
+  - Topics: Implementing classic embeddings (LSA, LDA)
+  - Hands-on: Compare embedding methods on real data
+  - Demo: [\href{https://contextlab.github.io/llm-course/slides/week3/xhour_embeddings_demo.html}{Interactive Notebook}]
 
 **Friday, January 23** (Lecture 8): Word Embeddings
   - Topics: Word2Vec (CBOW and Skip-gram), GloVe, FastText
   - **📝 Assignment 3 Released:** [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Assignment\%203\%3A\%20Wikipedia/README.md}{Wikipedia Embeddings Comparison}]
   - **✅ Assignment 2 Due**
   - Reading: [Mikolov et al. (2013)](https://arxiv.org/abs/1301.3781); [Pennington et al. (2014)](https://aclanthology.org/D14-1162/)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week3-4/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week3-4/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week3/lecture8.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week3/lecture8.html}{HTML}]
 
 ### Week 4: Text Embeddings II (January 26--30)
 
