@@ -51,10 +51,14 @@ jobs:
           # Create fonts directory
           sudo mkdir -p /usr/share/fonts/truetype/berkeley-mono
 
-          # Note: Berkeley Mono is a commercial font
-          # If the font files exist in the repo, they would be copied here
-          # For now, we'll use a fallback font in the LaTeX compilation
-          echo "Berkeley Mono font installation skipped (commercial font)"
+          # Copy Berkeley Mono font from repo to system fonts directory
+          sudo cp admin/berkeley-mono.ttf /usr/share/fonts/truetype/berkeley-mono/
+
+          # Refresh font cache
+          sudo fc-cache -f -v
+
+          # Verify font installation
+          fc-list | grep -i "berkeley" || echo "Warning: Berkeley Mono font may not be installed correctly"
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -442,6 +446,28 @@ VIEWER_EOF
                       </div>
 
                       <div class="slide-card">
+                          <span class="emoji">🔤</span>
+                          <h2>Week 4: Text Embeddings II</h2>
+                          <p>Advanced embedding techniques and neural language models.</p>
+                          <div class="links">
+                              <a href="slides/week4/lecture9.pdf" class="btn btn-primary" target="_blank">Lecture 9 PDF</a>
+                              <a href="slides/week4/lecture10.pdf" class="btn btn-primary" target="_blank">Lecture 10 PDF</a>
+                              <a href="slides/week4/lecture11.pdf" class="btn btn-primary" target="_blank">Lecture 11 PDF</a>
+                          </div>
+                      </div>
+
+                      <div class="slide-card">
+                          <span class="emoji">🧮</span>
+                          <h2>Week 5: Neural Networks</h2>
+                          <p>Deep learning fundamentals and neural network architectures.</p>
+                          <div class="links">
+                              <a href="slides/week5/lecture12.pdf" class="btn btn-primary" target="_blank">Lecture 12 PDF</a>
+                              <a href="slides/week5/lecture13.pdf" class="btn btn-primary" target="_blank">Lecture 13 PDF</a>
+                              <a href="slides/week5/lecture14.pdf" class="btn btn-primary" target="_blank">Lecture 14 PDF</a>
+                          </div>
+                      </div>
+
+                      <div class="slide-card">
                           <span class="emoji">⚡</span>
                           <h2>Weeks 5-6: Transformers & BERT</h2>
                           <p>Attention mechanisms, transformer architecture, and context-aware models.</p>
@@ -451,20 +477,25 @@ VIEWER_EOF
                       </div>
 
                       <div class="slide-card">
-                          <span class="emoji">💬</span>
-                          <h2>Week 7: Models of Conversation</h2>
-                          <p>Pragmatics, dialogue, common ground, and thought trajectories.</p>
+                          <span class="emoji">🌐</span>
+                          <h2>Week 6: Transformers</h2>
+                          <p>Self-attention mechanisms and transformer architecture details.</p>
                           <div class="links">
-                              <a href="slides/week7/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
+                              <a href="slides/week6/lecture15.pdf" class="btn btn-primary" target="_blank">Lecture 15 PDF</a>
+                              <a href="slides/week6/lecture16.pdf" class="btn btn-primary" target="_blank">Lecture 16 PDF</a>
+                              <a href="slides/week6/lecture17.pdf" class="btn btn-primary" target="_blank">Lecture 17 PDF</a>
                           </div>
                       </div>
 
                       <div class="slide-card">
-                          <span class="emoji">🧠</span>
-                          <h2>Week 8: GPT Models</h2>
+                          <span class="emoji">💬</span>
+                          <h2>Week 7: Models of Conversation</h2>
                           <p>GPT evolution, building transformers from scratch, language models & the brain.</p>
                           <div class="links">
-                              <a href="slides/week8/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
+                              <a href="slides/week7/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
+                              <a href="slides/week7/lecture18.pdf" class="btn btn-primary" target="_blank">Lecture 18 PDF</a>
+                              <a href="slides/week7/lecture19.pdf" class="btn btn-primary" target="_blank">Lecture 19 PDF</a>
+                              <a href="slides/week7/lecture20.pdf" class="btn btn-primary" target="_blank">Lecture 20 PDF</a>
                           </div>
                       </div>
 
@@ -473,7 +504,19 @@ VIEWER_EOF
                           <h2>Week 9: RAG & MoE</h2>
                           <p>Retrieval Augmented Generation, Mixture of Experts, and the future of LLMs.</p>
                           <div class="links">
-                              <a href="slides/week9/lecture.pdf" class="btn btn-primary" target="_blank">PDF</a>
+                              <a href="slides/week9/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
+                              <a href="slides/week9/lecture21.pdf" class="btn btn-primary" target="_blank">Lecture 21 PDF</a>
+                              <a href="slides/week9/lecture22.pdf" class="btn btn-primary" target="_blank">Lecture 22 PDF</a>
+                              <a href="slides/week9/lecture23.pdf" class="btn btn-primary" target="_blank">Lecture 23 PDF</a>
+                          </div>
+                      </div>
+
+                      <div class="slide-card">
+                          <span class="emoji">🎯</span>
+                          <h2>Week 10: Advanced Topics</h2>
+                          <p>Advanced language model techniques and applications.</p>
+                          <div class="links">
+                              <a href="slides/week10/lecture24.pdf" class="btn btn-primary" target="_blank">Lecture 24 PDF</a>
                           </div>
                       </div>
                   </div>

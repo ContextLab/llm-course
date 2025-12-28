@@ -46,6 +46,13 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 🎮 **Try it:** [ELIZA Demo](https://contextlab.github.io/llm-course/demos/01-eliza/)
 - 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week1/lecture.pdf)
 
+**Thursday X-hour:** Pattern Matching Deep Dive & ELIZA Architecture
+- Extended practice with regular expressions and string manipulation
+- Decomposition and reassembly patterns (conceptual foundation)
+- ELIZA architecture overview and implementation planning
+- Q&A and preparation for Assignment 1
+- 📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week1/xhour_eliza_demo.html)
+
 **Friday (Lecture 3):** ELIZA Implementation & The ELIZA Effect
 - Implementing ELIZA: decomposition, reassembly, substitutions
 - The psychology of human-computer interaction
@@ -70,6 +77,13 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - HuggingFace: [Chapter 6: Tokenizers](https://huggingface.co/learn/nlp-course/chapter6)
 - 🎮 **Try it:** [Tokenization Explorer](https://contextlab.github.io/llm-course/demos/02-tokenization/)
 - 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week2/lecture.pdf)
+
+**Thursday X-hour:** Text Classification Workshop
+- Feature engineering for text classification (bag-of-words, TF-IDF)
+- Building classifiers with preprocessing and tokenization pipelines
+- Introduction to evaluation metrics
+- Hands-on: Explore SPAM classification approaches for Assignment 2
+- 📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week2/xhour_classification_demo.html)
 
 **Friday (Lecture 6):** POS Tagging & Sentiment Analysis
 - Part-of-speech tagging and token classification
@@ -106,6 +120,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Introduction: Word2Vec intuition and basic concepts
 - Compare: Classical vs. neural embedding approaches
 - Preview: Sets up Friday's formal treatment of Word2Vec/GloVe/FastText
+- 📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week3/xhour_embeddings_demo.html)
 
 **Friday (Lecture 8):** Word Embeddings (Word2Vec, GloVe, FastText)
 - Neural word embeddings
@@ -238,7 +253,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Tutorial: [Let's build GPT (Karpathy)](https://www.youtube.com/watch?v=kCc8FmEb1nY)
 - **Assignment 5 Released:** [Build and Train GPT](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%205%3A%20GPT) (Due: Friday, March 6)
 - 🎮 **Try it:** [GPT Playground](https://contextlab.github.io/llm-course/demos/06-gpt-playground/)
-- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week8/lecture.pdf)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week7/lecture.pdf)
 
 **Friday (Lecture 20):** Language Models & The Brain
 - Do models and brains converge?
@@ -248,7 +263,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Caucheteux & King (2022)](https://www.nature.com/articles/s42003-022-03036-1) - Brains and algorithms converge
 - Reading: [Hosseini et al. (2024)](https://direct.mit.edu/nol/article/5/1/43/119156/) - ANNs with realistic training
 - Reading: [Turing (1950)](https://www.dropbox.com/scl/fi/aflxsbnqua01bl0eh950h/Turi50.pdf?rlkey=7fft5daq3i32vehd4nrm35ii2) - Computing Machinery and Intelligence
-- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week8/lecture.pdf)
+- 📊 [Slides PDF](https://github.com/ContextLab/llm-course/blob/main/slides/week7/lecture.pdf)
 
 ---
 
@@ -304,8 +319,8 @@ All slides are available as PDF files in the GitHub repository. You can access t
 - Week 2: [slides/week2/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week2/lecture.pdf)
 - Weeks 3-4: [slides/week3-4/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week3-4/lecture.pdf)
 - Weeks 5-6: [slides/week5-6/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week5-6/lecture.pdf)
-- Week 7: [slides/week7/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week7/lecture.pdf)
-- Week 8: [slides/week8/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week8/lecture.pdf)
+- Week 7 (no class - instructor away): N/A
+- Week 8: [slides/week7/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week7/lecture.pdf)
 - Week 9: [slides/week9/lecture.pdf](https://github.com/ContextLab/llm-course/blob/main/slides/week9/lecture.pdf)
 
 Or clone the repository to access all materials locally:
@@ -370,18 +385,21 @@ X-hours will be used in the first 3 weeks to make up for missed class time (Feb 
   - Decomposition and reassembly patterns (conceptual foundation)
   - ELIZA architecture overview and implementation planning
   - Q&A and preparation for Assignment 1
+  - 📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week1/xhour_eliza_demo.html)
 
 - **Week 2 Thursday X-hour:** Text Classification Workshop
   - Feature engineering for text classification (bag-of-words, TF-IDF)
   - Building classifiers with preprocessing and tokenization pipelines
   - Introduction to evaluation metrics
   - Hands-on: Explore SPAM classification approaches for Assignment 2
+  - 📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week2/xhour_classification_demo.html)
 
 - **Week 3 Thursday X-hour:** From Classical to Modern Embeddings
   - Hands-on: Implementing and exploring LSA/LDA (review of Wednesday)
   - Introduction: Word2Vec intuition and basic concepts
   - Compare: Classical vs. neural embedding approaches
   - Preview: Sets up Friday's formal treatment of Word2Vec/GloVe/FastText
+  - 📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week3/xhour_embeddings_demo.html)
 
 Remaining X-hours may be used as hackathon time based on class interest.
 
