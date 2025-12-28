@@ -49,66 +49,125 @@ export class PatternMatcher {
   }
 
   /**
-   * Expand synonyms in pattern
+   * Check if a word matches a pattern part (handles @synonyms)
    */
-  expandSynonyms(pattern, synonyms) {
-    let expanded = pattern;
-    const regex = /@(\w+)/g;
-    let match;
+  matchWord(word, patternPart, synonyms) {
+    word = word.toLowerCase();
 
-    while ((match = regex.exec(pattern)) !== null) {
-      const synKey = match[1];
-      if (synonyms[synKey]) {
-        const alternatives = synonyms[synKey].join('|');
-        expanded = expanded.replace(match[0], `(${alternatives})`);
-      }
+    if (patternPart === '*') {
+      return 'wildcard';
     }
 
-    return expanded;
+    if (patternPart.startsWith('@')) {
+      // Synonym match
+      const synKey = patternPart.substring(1);
+      if (synonyms[synKey]) {
+        // Check if word matches the synonym group name or any synonym
+        if (word === synKey || synonyms[synKey].includes(word)) {
+          return 'synonym';
+        }
+      }
+      return false;
+    }
+
+    // Exact match
+    if (word === patternPart.toLowerCase()) {
+      return 'exact';
+    }
+
+    return false;
   }
 
   /**
-   * Convert ELIZA pattern to regex
-   */
-  patternToRegex(pattern, synonyms) {
-    // Escape special regex characters first (before synonym expansion)
-    // Note: We escape . + ^ $ { } [ ] \ but NOT * () | ? :
-    // * and () are used in ELIZA patterns, | ? : are used in synonym groups
-    let regexPattern = pattern.replace(/[.+^${}[\]\\]/g, '\\$&');
-
-    // Expand synonyms after escaping to preserve (?:...) syntax
-    regexPattern = this.expandSynonyms(regexPattern, synonyms);
-
-    // Convert ELIZA wildcards to regex
-    // * matches any sequence of words (non-greedy to match minimal text)
-    regexPattern = regexPattern.replace(/\*/g, '(.*?)');
-
-    // Add anchors
-    regexPattern = '^' + regexPattern + '$';
-
-    return new RegExp(regexPattern, 'i');
-  }
-
-  /**
-   * Match input against pattern and extract components
+   * Word-based pattern matching (like Python implementation)
+   * Pattern parts: ['*', 'i', 'am', '*', '@sad', '*']
+   * Input words: ['i', 'am', 'unhappy']
+   * Returns: { matched: true, captures: [[], [], ['unhappy'], []] }
    */
   matchPattern(input, pattern, synonyms) {
-    const regex = this.patternToRegex(pattern, synonyms);
-    // Pad input with spaces to handle patterns starting/ending with *
-    const paddedInput = ' ' + input + ' ';
-    const match = paddedInput.match(regex);
+    // Split input into words, stripping punctuation
+    const inputWords = input.toLowerCase()
+      .replace(/[.,!?;:]/g, ' ')
+      .split(/\s+/)
+      .filter(w => w.length > 0);
 
-    if (match) {
-      const captures = match.slice(1).map(g => (g || '').trim());
+    // Split pattern into parts
+    const patternParts = pattern.toLowerCase()
+      .split(/\s+/)
+      .filter(p => p.length > 0);
+
+    // Use recursive matching
+    const result = this._matchHelper(inputWords, patternParts, synonyms);
+
+    if (result.matched) {
       return {
         matched: true,
-        captures,
+        captures: result.captures,
         pattern,
-        regex: regex.toString()
+        patternParts
       };
     }
 
-    return { matched: false, pattern, regex: regex.toString() };
+    return { matched: false, pattern, patternParts };
+  }
+
+  /**
+   * Recursive helper for word-based pattern matching
+   */
+  _matchHelper(words, parts, synonyms) {
+    // Base case: no more pattern parts
+    if (parts.length === 0) {
+      // Match only if no more words either
+      return { matched: words.length === 0, captures: [] };
+    }
+
+    const [currentPart, ...remainingParts] = parts;
+
+    if (currentPart === '*') {
+      // Wildcard: try matching 0, 1, 2, ... words
+      // Try shortest match first (greedy would cause issues)
+      for (let i = 0; i <= words.length; i++) {
+        const capturedWords = words.slice(0, i);
+        const remainingWords = words.slice(i);
+
+        const result = this._matchHelper(remainingWords, remainingParts, synonyms);
+        if (result.matched) {
+          return {
+            matched: true,
+            captures: [capturedWords, ...result.captures]
+          };
+        }
+      }
+      return { matched: false, captures: [] };
+    }
+
+    // Non-wildcard: must match the first word
+    if (words.length === 0) {
+      return { matched: false, captures: [] };
+    }
+
+    const [currentWord, ...remainingWords] = words;
+    const matchType = this.matchWord(currentWord, currentPart, synonyms);
+
+    if (matchType) {
+      const result = this._matchHelper(remainingWords, remainingParts, synonyms);
+      if (result.matched) {
+        // For synonym matches, capture the matched word
+        if (matchType === 'synonym') {
+          return {
+            matched: true,
+            captures: [[currentWord], ...result.captures]
+          };
+        }
+        // For exact matches, don't capture
+        return {
+          matched: true,
+          captures: result.captures
+        };
+      }
+    }
+
+    return { matched: false, captures: [] };
   }
 
   /**
@@ -120,22 +179,37 @@ export class PatternMatcher {
       .replace(/[.,!?;:]/g, ' ')
       .split(/\s+/)
       .filter(w => w.length > 0);
-    const matchedRules = [];
 
-    // Find all rules with keywords present in input
+    // Build a map of keyword -> rule for quick lookup
+    const rulesByKeyword = new Map();
     for (const rule of rules) {
-      const keyword = rule.keyword.toLowerCase();
-      if (words.includes(keyword)) {
+      rulesByKeyword.set(rule.keyword.toLowerCase(), rule);
+    }
+
+    // Find keywords by iterating through INPUT words (like Python implementation)
+    // This ensures keywords are found in the order they appear in the input
+    const matchedRules = [];
+    const seenKeywords = new Set();
+
+    for (const word of words) {
+      const rule = rulesByKeyword.get(word);
+      if (rule && !seenKeywords.has(word)) {
         matchedRules.push(rule);
+        seenKeywords.add(word);
       }
     }
 
     // Sort by rank (higher rank = higher priority)
+    // Use stable sort so equal ranks preserve input word order
     matchedRules.sort((a, b) => (b.rank || 0) - (a.rank || 0));
 
-    // Try to match patterns for each rule
+    // Try to match patterns for each rule (in rank order)
+    // For each rule, try specific patterns first, then catch-all
     for (const rule of matchedRules) {
+      // First try specific patterns
       for (const patternObj of rule.patterns) {
+        if (patternObj.pattern === '*') continue;
+
         const matchResult = this.matchPattern(input, patternObj.pattern, synonyms);
 
         if (matchResult.matched) {
@@ -147,9 +221,24 @@ export class PatternMatcher {
           };
         }
       }
+
+      // Then try catch-all for this rule
+      for (const patternObj of rule.patterns) {
+        if (patternObj.pattern === '*') {
+          const matchResult = this.matchPattern(input, patternObj.pattern, synonyms);
+          if (matchResult.matched) {
+            return {
+              rule,
+              pattern: patternObj,
+              matchResult,
+              allTestedRules: matchedRules
+            };
+          }
+        }
+      }
     }
 
-    // No keyword matched, try catch-all patterns
+    // No keyword matched, try catch-all patterns from any rule
     for (const rule of rules) {
       for (const patternObj of rule.patterns) {
         if (patternObj.pattern === '*') {
@@ -169,6 +258,7 @@ export class PatternMatcher {
 
   /**
    * Assemble response from template and captures
+   * Captures are now arrays of words (from word-based matching)
    */
   assembleResponse(template, captures, postSubstitutions) {
     let response = template;
@@ -178,8 +268,13 @@ export class PatternMatcher {
     for (let i = 0; i < captures.length; i++) {
       const placeholder = `(${i + 1})`;
       if (response.includes(placeholder)) {
+        // Convert capture (array of words) to string
+        const captureText = Array.isArray(captures[i])
+          ? captures[i].join(' ')
+          : captures[i];
+
         // Apply post-substitutions to captured text
-        const { result } = this.applyPostSubstitutions(captures[i], postSubstitutions);
+        const { result } = this.applyPostSubstitutions(captureText, postSubstitutions);
 
         // Use a temporary marker to preserve the text that should stay lowercase
         const marker = `__CAPTURE_${i}__`;
@@ -214,21 +309,28 @@ export class PatternMatcher {
 
     const processedInput = preSubResult.result;
 
-    // Step 2: Keyword detection
+    // Step 2: Keyword detection (using input word order)
     // Split and clean words, removing punctuation
     const words = processedInput.toLowerCase()
       .replace(/[.,!?;:]/g, ' ')
       .split(/\s+/)
       .filter(w => w.length > 0);
-    const keywordsFound = [];
-    const keywordsNotFound = [];
 
+    // Build a map of keyword -> rule for quick lookup
+    const rulesByKeyword = new Map();
     for (const rule of rules) {
-      const keyword = rule.keyword.toLowerCase();
-      if (words.includes(keyword)) {
-        keywordsFound.push({ keyword, rank: rule.rank || 0, rule });
-      } else {
-        keywordsNotFound.push(keyword);
+      rulesByKeyword.set(rule.keyword.toLowerCase(), rule);
+    }
+
+    // Find keywords by iterating through INPUT words
+    const keywordsFound = [];
+    const seenKeywords = new Set();
+
+    for (const word of words) {
+      const rule = rulesByKeyword.get(word);
+      if (rule && !seenKeywords.has(word)) {
+        keywordsFound.push({ keyword: rule.keyword.toLowerCase(), rank: rule.rank || 0, rule });
+        seenKeywords.add(word);
       }
     }
 
@@ -242,21 +344,41 @@ export class PatternMatcher {
       details: `Found ${keywordsFound.length} keyword(s), testing in priority order`
     });
 
-    // Step 3: Pattern matching
+    // Step 3: Pattern matching (specific patterns first, then catch-all)
     const patternTests = [];
     let matchedRule = null;
     let matchedPattern = null;
     let matchResult = null;
 
-    // Test each keyword's patterns
+    // First pass: try specific patterns (not catch-all '*')
     for (const { keyword, rule } of keywordsFound) {
       for (const patternObj of rule.patterns) {
+        if (patternObj.pattern === '*') continue;
+
         const result = this.matchPattern(processedInput, patternObj.pattern, synonyms);
         patternTests.push({
           keyword,
           pattern: patternObj.pattern,
           matched: result.matched,
-          regex: result.regex,
+          captures: result.captures
+        });
+
+        if (result.matched && !matchedRule) {
+          matchedRule = rule;
+          matchedPattern = patternObj;
+          matchResult = result;
+        }
+      }
+
+      // Then try catch-all for this keyword
+      for (const patternObj of rule.patterns) {
+        if (patternObj.pattern !== '*') continue;
+
+        const result = this.matchPattern(processedInput, patternObj.pattern, synonyms);
+        patternTests.push({
+          keyword,
+          pattern: patternObj.pattern,
+          matched: result.matched,
           captures: result.captures
         });
 
@@ -268,7 +390,7 @@ export class PatternMatcher {
       }
     }
 
-    // If no keyword matched, try fallback patterns
+    // If no keyword matched, try catch-all patterns from any rule
     if (!matchedRule) {
       for (const rule of rules) {
         for (const patternObj of rule.patterns) {
@@ -278,7 +400,6 @@ export class PatternMatcher {
               keyword: rule.keyword,
               pattern: patternObj.pattern,
               matched: result.matched,
-              regex: result.regex,
               captures: result.captures
             });
 
@@ -308,7 +429,7 @@ export class PatternMatcher {
         description: 'Extracting parts from input',
         input: processedInput,
         output: matchResult.captures.length > 0
-          ? matchResult.captures.map((c, i) => `(${i + 1}): "${c}"`).join(', ')
+          ? matchResult.captures.map((c, i) => `(${i + 1}): "${Array.isArray(c) ? c.join(' ') : c}"`).join(', ')
           : 'No captures',
         details: `Extracted ${matchResult.captures.length} component(s)`
       });
@@ -338,13 +459,15 @@ export class PatternMatcher {
       for (let i = 0; i < matchResult.captures.length; i++) {
         const placeholder = `(${i + 1})`;
         if (assembledResponse.includes(placeholder)) {
+          // Convert capture (array of words) to string
           const capture = matchResult.captures[i];
-          const { result: reflected, steps } = this.applyPostSubstitutions(capture, postSubstitutions);
+          const captureText = Array.isArray(capture) ? capture.join(' ') : capture;
+          const { result: reflected, steps } = this.applyPostSubstitutions(captureText, postSubstitutions);
 
           if (steps.length > 0) {
             postSubSteps.push({
               capture: i + 1,
-              original: capture,
+              original: captureText,
               reflected,
               substitutions: steps
             });

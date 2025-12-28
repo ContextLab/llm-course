@@ -94,15 +94,16 @@ async function runTests() {
         console.log('Test 2: Keyword Priority (Original ELIZA Behavior)');
         console.log('-'.repeat(60));
 
-        // Original ELIZA matches keywords based on their position in the rules list
-        // and specific pattern matches. "sorry" and "apologise" are specific keywords
-        // that match apologies, while "i" is a more general keyword for first-person statements.
+        // Keywords are matched in the order they appear in the INPUT.
+        // When "i" appears first, it gets tried first. If "i" has a matching pattern
+        // (including catch-all "*" or specific patterns like "* i am * @sad *"),
+        // it will be used before later keywords.
         const priorityTests = [
-            { input: "I am sad and depressed.", expectedKeyword: "am" }, // "am" has "* am i *" pattern
+            { input: "I am sad and depressed.", expectedKeyword: "i" }, // "i" with "* i am * @sad *" matches
             { input: "I feel unhappy.", expectedKeyword: "i" },
             { input: "I need help.", expectedKeyword: "i" },
-            { input: "I'm sorry.", expectedKeyword: "sorry" }, // "sorry" matches apologies
-            { input: "I apologise.", expectedKeyword: "apologise" } // "apologise" matches apologies
+            { input: "I'm sorry.", expectedKeyword: "i" }, // "i" appears first, "* i am *" matches
+            { input: "I apologise.", expectedKeyword: "i" } // "i" appears first, catch-all matches
         ];
 
         let priorityPassed = 0;
