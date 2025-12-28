@@ -28,16 +28,35 @@ export class AliceFull {
             // Bot properties from AIML
             name: "ALICE",
             species: "robot",
+            kingdom: "robot",  // Used in "I am a {{BOT:kingdom}}"
             location: "California",
+            city: "San Francisco",
+            state: "California",
+            country: "United States",
             vocabulary: "120000",
             size: "95026",
+            ndevelopers: "100",
             developers: "100",
             birthday: "November 23, 1995",
+            birthdate: "November 23, 1995",
             birthplace: "San Francisco, California",
             botmaster: "Dr. Richard Wallace",
+            master: "Dr. Richard Wallace",
             gender: "female",
-            age: new Date().getFullYear() - 1995,
-            version: "1.0 Full"
+            age: String(new Date().getFullYear() - 1995),
+            version: "1.0 Full",
+            // Additional common properties
+            language: "English",
+            os: "Cross-platform",
+            website: "alicebot.org",
+            email: "alice@alicebot.org",
+            religion: "Pantheist",
+            job: "chat robot",
+            favoritesubject: "artificial intelligence",
+            favoritecolor: "green",
+            favoritefood: "electricity",
+            favoritemovie: "Blade Runner",
+            favoritebook: "ALICE In Wonderland"
         };
 
         this.patterns = [];
@@ -75,83 +94,111 @@ export class AliceFull {
 
     /**
      * Process template with AIML tags
+     * Uses iterative inside-out processing to handle nested tags like {{THINK:{{SET:...}}}}
      */
     processTemplate(template, wildcards = []) {
         if (!template) return "";
 
         let result = template;
+        let iterations = 0;
+        const maxIterations = 20;  // Prevent infinite loops
 
-        // Process SRAI (recursive pattern matching)
-        result = result.replace(/\{\{SRAI:([^}]+)\}\}/g, (match, srai) => {
-            return this.srai(srai);
-        });
+        // Process iteratively until no more tags remain or we hit max iterations
+        while (result.includes('{{') && iterations < maxIterations) {
+            const before = result;
 
-        // Process RANDOM
-        result = result.replace(/\{\{RANDOM:(\[.*?\])\}\}/g, (match, options) => {
-            try {
-                const optionList = JSON.parse(options);
-                return optionList[Math.floor(Math.random() * optionList.length)];
-            } catch (e) {
+            // 1. Process innermost tags first (no nested content)
+
+            // Process SET context variables (innermost - no nested allowed)
+            // Allow empty values with ([^{}]*)
+            result = result.replace(/\{\{SET:([^:{}]+):([^{}]*)\}\}/g, (match, varName, value) => {
+                this.context[varName] = value;
+                return "";  // SET should not output the value
+            });
+
+            // Process GET context variables
+            result = result.replace(/\{\{GET:([^{}]+)\}\}/g, (match, varName) => {
+                return this.context[varName] || "";
+            });
+
+            // Process BOT properties
+            result = result.replace(/\{\{BOT:([^{}]+)\}\}/g, (match, property) => {
+                return this.context[property] || this.context.botName || "";
+            });
+
+            // Process STAR (wildcard captures)
+            result = result.replace(/\{\{STAR:(\d+)\}\}/g, (match, index) => {
+                const idx = parseInt(index) - 1;
+                return wildcards[idx] || "";
+            });
+
+            // Process THAT (previous bot response)
+            result = result.replace(/\{THAT\}/g, this.context.that || "");
+
+            // 2. Process transformation tags
+
+            // Process PERSON (pronoun transformation)
+            result = result.replace(/\{\{PERSON:([^{}]+)\}\}/g, (match, text) => {
+                if (text === 'WILDCARD' && wildcards.length > 0) {
+                    return this.transformPerson(wildcards[0]);
+                }
+                return this.transformPerson(text);
+            });
+
+            // Process FORMAL (capitalize first letter)
+            result = result.replace(/\{\{FORMAL:([^{}]+)\}\}/g, (match, text) => {
+                return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+            });
+
+            // Process UPPERCASE
+            result = result.replace(/\{\{UPPERCASE:([^{}]+)\}\}/g, (match, text) => {
+                return text.toUpperCase();
+            });
+
+            // Process LOWERCASE
+            result = result.replace(/\{\{LOWERCASE:([^{}]+)\}\}/g, (match, text) => {
+                return text.toLowerCase();
+            });
+
+            // 3. Process container tags (may have nested content that's now resolved)
+
+            // Process THINK (execute but don't output) - now safe since inner tags are processed
+            result = result.replace(/\{\{THINK:([^{}]*)\}\}/g, (match, content) => {
+                // Content is already processed, just return empty
                 return "";
+            });
+
+            // Process RANDOM - must parse JSON array
+            result = result.replace(/\{\{RANDOM:(\[[^\]]*\])\}\}/g, (match, options) => {
+                try {
+                    const optionList = JSON.parse(options);
+                    return optionList[Math.floor(Math.random() * optionList.length)];
+                } catch (e) {
+                    return "";
+                }
+            });
+
+            // Process SRAI (recursive pattern matching) - do last as it may produce new tags
+            result = result.replace(/\{\{SRAI:([^{}]+)\}\}/g, (match, srai) => {
+                return this.srai(srai);
+            });
+
+            // Check if we made any progress
+            if (result === before) {
+                // No changes made, break to avoid infinite loop
+                break;
             }
-        });
 
-        // Process BOT properties
-        result = result.replace(/\{\{BOT:([^}]+)\}\}/g, (match, property) => {
-            return this.context[property] || this.context.botName || "";
-        });
+            iterations++;
+        }
 
-        // Process GET context variables
-        result = result.replace(/\{\{GET:([^}]+)\}\}/g, (match, varName) => {
-            return this.context[varName] || "";
-        });
+        // Clean up any remaining malformed template markers
+        result = result.replace(/\{\{[^{}]*\}\}/g, '');
 
-        // Process SET context variables
-        result = result.replace(/\{\{SET:([^:]+):([^}]+)\}\}/g, (match, varName, value) => {
-            this.context[varName] = value;
-            return value;
-        });
-
-        // Process PERSON (pronoun transformation)
-        result = result.replace(/\{\{PERSON:([^}]+)\}\}/g, (match, text) => {
-            if (text === 'WILDCARD' && wildcards.length > 0) {
-                return this.transformPerson(wildcards[0]);
-            }
-            return this.transformPerson(text);
-        });
-
-        // Process THINK (execute but don't output)
-        result = result.replace(/\{\{THINK:([^}]+)\}\}/g, (match, content) => {
-            this.processTemplate(content, wildcards);
-            return "";
-        });
-
-        // Process STAR (wildcard captures)
-        result = result.replace(/\{\{STAR:(\d+)\}\}/g, (match, index) => {
-            const idx = parseInt(index) - 1;
-            return wildcards[idx] || "";
-        });
-
-        // Process THAT (previous bot response)
-        result = result.replace(/\{THAT\}/g, this.context.that || "");
-
-        // Process FORMAL (capitalize first letter)
-        result = result.replace(/\{\{FORMAL:([^}]+)\}\}/g, (match, text) => {
-            return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-        });
-
-        // Process UPPERCASE
-        result = result.replace(/\{\{UPPERCASE:([^}]+)\}\}/g, (match, text) => {
-            return text.toUpperCase();
-        });
-
-        // Process LOWERCASE
-        result = result.replace(/\{\{LOWERCASE:([^}]+)\}\}/g, (match, text) => {
-            return text.toLowerCase();
-        });
-
-        // Clean up any remaining template markers
-        result = result.replace(/\{\{[^}]*\}\}/g, '');
+        // Clean up stray closing braces that might have been left behind
+        result = result.replace(/^\s*\}\}+\s*/g, '');  // Leading }}
+        result = result.replace(/\s*\}\}+\s*$/g, '');  // Trailing }}
+        result = result.replace(/\}\}+\s+/g, ' ');     // }} in middle of text
 
         return result.trim();
     }
@@ -215,9 +262,20 @@ export class AliceFull {
 
     /**
      * Match input against pattern database
+     *
+     * Pattern matching priority (AIML convention):
+     * 1. Exact matches (no wildcards)
+     * 2. Patterns with specific text + wildcards
+     * 3. Pure wildcard patterns (_, *)
      */
     matchPattern(input, isSrai = false) {
         const normalizedInput = this.normalize(input);
+
+        // Separate patterns into specific and wildcard-only
+        let bestMatch = null;
+        let bestWildcards = [];
+        let wildcardMatch = null;
+        let wildcardMatchWildcards = [];
 
         // Patterns are already sorted by priority
         for (const pattern of this.patterns) {
@@ -239,16 +297,34 @@ export class AliceFull {
                 // Extract wildcards (everything except full match)
                 const wildcards = match.slice(1);
 
-                // Process template
-                const response = this.processTemplate(pattern.template, wildcards);
+                // Check if this is a pure wildcard pattern (just _ or *)
+                const isPureWildcard = pattern.pattern === '_' || pattern.pattern === '*';
 
-                // Update context (but not for SRAI calls)
-                if (!isSrai) {
-                    this.context.that = response;
+                if (isPureWildcard) {
+                    // Save as fallback if we don't find a specific match
+                    if (!wildcardMatch) {
+                        wildcardMatch = pattern;
+                        wildcardMatchWildcards = wildcards;
+                    }
+                } else {
+                    // Found a specific match - use it
+                    bestMatch = pattern;
+                    bestWildcards = wildcards;
+                    break;  // Use first specific match
                 }
-
-                return response;
             }
+        }
+
+        // Use specific match if found, otherwise fallback to wildcard match
+        const matchedPattern = bestMatch || wildcardMatch;
+        const matchedWildcards = bestMatch ? bestWildcards : wildcardMatchWildcards;
+
+        if (matchedPattern) {
+            const response = this.processTemplate(matchedPattern.template, matchedWildcards);
+            if (!isSrai) {
+                this.context.that = response;
+            }
+            return response;
         }
 
         // No match found
