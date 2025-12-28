@@ -171,3 +171,4 @@ demos/11-analogies/data/glove.6B.*.txt
 !demos/11-analogies/data/glove-50d.json.playwright-mcp/
 node_modules/
 package-lock.json
+demos/15-chatbot-evolution/alice-aiml-original/

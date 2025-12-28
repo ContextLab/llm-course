@@ -48,8 +48,8 @@ class AIMLConverter:
                 srai_text = self.get_element_text(child)
                 result += f"{{{{SRAI:{srai_text}}}}}"
             elif child.tag == 'random':
-                # Random selection
-                options = [self.get_element_text(li) for li in child.findall('li')]
+                # Random selection - use parse_template to preserve bot/get/set tags
+                options = [self.parse_template(li) for li in child.findall('li')]
                 result += f"{{{{RANDOM:{json.dumps(options)}}}}}"
             elif child.tag == 'bot':
                 # Bot property
