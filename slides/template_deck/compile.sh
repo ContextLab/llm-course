@@ -185,6 +185,28 @@ esac
 log_info "Running marp..."
 eval $MARP_CMD
 
+# Inject auto-scaling script for HTML output
+AUTOSCALE_JS="$SCRIPT_DIR/autoscale.js"
+if [[ "$OUTPUT_FORMAT" == "html" && -f "$OUTPUT_FILE" && -f "$AUTOSCALE_JS" ]]; then
+    log_info "Injecting auto-scaling script..."
+
+    # Read the script content and wrap in <script> tags
+    SCRIPT_CONTENT=$(cat "$AUTOSCALE_JS")
+
+    # Use Python to inject the script (handles special characters properly)
+    python3 -c "
+import sys
+with open('$OUTPUT_FILE', 'r') as f:
+    content = f.read()
+script = '''<script>
+$SCRIPT_CONTENT
+</script>'''
+content = content.replace('</body>', script + '</body>')
+with open('$OUTPUT_FILE', 'w') as f:
+    f.write(content)
+"
+fi
+
 # Report success
 if [[ -f "$OUTPUT_FILE" ]]; then
     log_info "Successfully created: $OUTPUT_FILE"

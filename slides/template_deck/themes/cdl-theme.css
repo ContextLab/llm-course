@@ -704,7 +704,7 @@ section:not(.lead):not(#\31) {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    padding: 5px 40px 100px 40px !important;
+    padding: 20px 40px 100px 40px !important;
     position: relative !important;
 }
 
