@@ -516,7 +516,7 @@ b i {
     line-height: 1.1;
 }
 
-/* Multi-column layout - side by side with larger gap, centered */
+/* Multi-column layout - side by side with moderate gap, centered */
 section>div[style*="display: flex"],
 section>div[style*="display:flex"],
 section>div[style*="gap"],
@@ -527,7 +527,7 @@ section>div[style*="gap"],
     flex-direction: row !important;
     justify-content: center !important;
     align-items: flex-start !important;
-    gap: 6em !important;
+    gap: 2.5em !important;
     width: 100% !important;
     flex-wrap: nowrap !important;
 }
@@ -541,6 +541,26 @@ section>div[style*="gap"]>div,
     flex: 1 1 0 !important;
     max-width: 50% !important;
     min-width: 0 !important;
+}
+
+/* Reduce font size in multi-column layouts */
+section>div[style*="display: flex"] *,
+section>div[style*="display:flex"] *,
+section>div[style*="gap"] *,
+.columns *,
+.two-column *,
+.multi-column * {
+    font-size: 0.85em !important;
+}
+
+/* Reset font size for nested elements to prevent compounding */
+section>div[style*="display: flex"] * *,
+section>div[style*="display:flex"] * *,
+section>div[style*="gap"] * *,
+.columns * *,
+.two-column * *,
+.multi-column * * {
+    font-size: 1em !important;
 }
 
 /* KaTeX math styling to use Avenir for text parts */
@@ -763,6 +783,15 @@ section:not(.lead):not(#\31) > *:not(h1):first-of-type {
 
 section:not(.lead):not(#\31) > *:not(h1):last-of-type {
     margin-bottom: auto !important;
+}
+
+/* Reduce gap between title and table on table slides */
+section:not(.lead):not(#\31):has(> table) > h1 {
+    margin-bottom: 0.1em !important;
+}
+
+section:not(.lead):not(#\31) > table:first-of-type {
+    margin-top: 0.3em !important;
 }
 
 /* Lists should be left-aligned, not centered */
@@ -1107,4 +1136,135 @@ section:not(.lead):not(#\31) > table.split-table:last-of-type {
 .hl-err {
     color: #dc143c;
     background-color: #fdd;
+}
+
+/* ============================================
+   CALLOUT BOXES - Note, Example, Warning
+   Beamer-style callout boxes for academic presentations
+   ============================================ */
+
+/* Base callout box styling */
+.callout,
+.note-box,
+.example-box,
+.warning-box {
+    display: block !important;
+    border-radius: 8px;
+    padding: 0.8em 1.2em 0.8em 1.2em;
+    margin: 0.8em auto !important;
+    width: 85% !important;
+    max-width: 85% !important;
+    text-align: left !important;
+    font-size: 0.9em;
+    line-height: 1.4;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Callout box labels - common styling */
+.callout::before,
+.note-box::before,
+.example-box::before,
+.warning-box::before {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.4em;
+    font-size: 0.95em;
+    letter-spacing: 0.02em;
+}
+
+/* Note box - informational, subtle blue-gray tint */
+.note-box {
+    background-color: rgba(70, 130, 180, 0.12);
+    border-left: 5px solid #4682b4;
+}
+
+.note-box::before {
+    content: 'Note';
+    color: #2c5d7c;
+}
+
+/* Example box - example content, light green tint matching theme */
+.example-box {
+    background-color: rgba(0, 105, 62, 0.10);
+    border-left: 5px solid #00693e;
+}
+
+.example-box::before {
+    content: 'Example';
+    color: #00693e;
+}
+
+/* Warning box - important warnings, light amber/yellow tint */
+.warning-box {
+    background-color: rgba(218, 165, 32, 0.15);
+    border-left: 5px solid #daa520;
+}
+
+.warning-box::before {
+    content: 'Warning';
+    color: #b8860b;
+}
+
+/* Callout content paragraphs - remove extra margins */
+.callout p,
+.note-box p,
+.example-box p,
+.warning-box p {
+    margin: 0.3em 0 !important;
+    text-align: left !important;
+    width: 100% !important;
+}
+
+/* Callout lists - proper alignment */
+.callout ul,
+.callout ol,
+.note-box ul,
+.note-box ol,
+.example-box ul,
+.example-box ol,
+.warning-box ul,
+.warning-box ol {
+    margin: 0.3em 0 0.3em 1.5em !important;
+    padding: 0 !important;
+    text-align: left !important;
+}
+
+/* Callout list items */
+.callout li,
+.note-box li,
+.example-box li,
+.warning-box li {
+    margin: 0.2em 0 !important;
+}
+
+/* Code inside callouts */
+.callout code,
+.note-box code,
+.example-box code,
+.warning-box code {
+    font-size: 0.9em;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Inline code in callouts - adjust backgrounds for visibility */
+.note-box code {
+    background-color: rgba(70, 130, 180, 0.15);
+}
+
+.example-box code {
+    background-color: rgba(0, 105, 62, 0.12);
+}
+
+.warning-box code {
+    background-color: rgba(218, 165, 32, 0.18);
+}
+
+/* Override grid/flex rules for callout boxes on content slides */
+section:not(.lead):not(#\31) > .callout,
+section:not(.lead):not(#\31) > .note-box,
+section:not(.lead):not(#\31) > .example-box,
+section:not(.lead):not(#\31) > .warning-box {
+    align-self: center !important;
+    justify-self: center !important;
 }

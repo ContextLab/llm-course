@@ -149,7 +149,7 @@ $$A = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)$$
 
 # Detailed table
 
-| Model | Architecture | Training Data | Key Capabilities |
+| Model | Architecture | Training data | Key capabilities |
 |-------|--------------|---------------|------------------|
 | BERT | Encoder-only transformer | BooksCorpus, Wikipedia | Bidirectional context understanding, masked language modeling |
 | GPT-3 | Decoder-only transformer | Common Crawl, books, Wikipedia | Few-shot learning, text generation, code completion |
@@ -161,7 +161,7 @@ $$A = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)$$
 
 # Long table (auto-split demo)
 
-| Model | Architecture | Training Data | Key Capabilities |
+| Model | Architecture | Training data | Key capabilities |
 |-------|--------------|---------------|------------------|
 | BERT | Encoder-only transformer | BooksCorpus, Wikipedia | Bidirectional context, masked LM |
 | GPT-2 | Decoder-only transformer | WebText | Text generation, zero-shot |
@@ -184,7 +184,7 @@ $$A = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)$$
 
 ---
 
-# Two column layout
+# Two-column layout
 
 <div style="display: flex; gap: 2em;">
 <div>
@@ -213,8 +213,111 @@ $$A = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)$$
 
 ---
 
-# Contact
+# Callout boxes
 
-Thank you!
+<div class="note-box">
 
-jeremy@dartmouth.edu
+This is useful background information that provides additional context for the main content.
+
+</div>
+
+<div class="example-box">
+
+Consider the function `f(x) = x^2`. When `x = 3`, we get `f(3) = 9`.
+
+</div>
+
+<div class="warning-box">
+
+Training large language models requires significant computational resources and careful consideration of potential biases in training data.
+
+</div>
+
+---
+
+# Note box
+
+<div class="note-box">
+
+The attention mechanism was first introduced in the context of machine translation (Bahdanau et al., 2014), allowing models to focus on relevant parts of the input sequence.
+
+Key insight: Instead of compressing the entire input into a fixed-length vector, attention allows the decoder to "look back" at the encoder states.
+
+</div>
+
+---
+
+# Example box
+
+<div class="example-box">
+
+Computing self-attention for a sequence:
+
+- Input: "The cat sat"
+- Query for "cat": looks for related words
+- High attention to "The" (determiner) and "sat" (verb)
+- Low attention to unrelated tokens
+
+</div>
+
+---
+
+# Warning box
+
+<div class="warning-box">
+
+Common pitfalls when fine-tuning LLMs:
+
+- Overfitting on small datasets
+- Catastrophic forgetting of pre-trained knowledge
+- Learning rate too high can destabilize training
+- Always validate on held-out data!
+
+</div>
+
+---
+
+# Multiple callouts
+
+<div class="note-box">
+
+Transformers process all tokens in parallel, unlike RNNs which process sequentially.
+
+</div>
+
+<div class="warning-box">
+
+The quadratic memory complexity of attention limits context length.
+
+</div>
+
+---
+
+# Course Information
+
+<div style="display: flex; gap: 2em;">
+<div>
+
+**Next Steps**
+- Review: Chapter 3 of *Speech and Language Processing*
+- Explore: Hugging Face Transformers documentation
+- Try: Build a simple chatbot with the provided templates
+
+**Assignments**
+- Problem Set 2 due next Friday
+- Final project proposal due in 2 weeks
+
+</div>
+<div>
+
+**Course Resources**
+- Canvas: Course materials and submissions
+- GitHub: Code examples and notebooks
+- Office hours: Tuesdays 2-4pm, Moore 354
+
+**Contact**
+- Email: jeremy@dartmouth.edu
+- Slack: #psyc5107-discussion
+
+</div>
+</div>
