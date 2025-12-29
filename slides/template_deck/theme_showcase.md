@@ -217,19 +217,19 @@ $$A = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)$$
 
 <div class="note-box">
 
-This is useful background information that provides additional context for the main content.
+Background information for context.
 
 </div>
 
 <div class="example-box">
 
-Consider the function `f(x) = x^2`. When `x = 3`, we get `f(3) = 9`.
+`f(x) = x^2` means `f(3) = 9`.
 
 </div>
 
 <div class="warning-box">
 
-Training large language models requires significant computational resources and careful consideration of potential biases in training data.
+LLM training requires significant resources.
 
 </div>
 
@@ -356,12 +356,134 @@ The quadratic memory complexity of attention limits context length.
 
 ---
 
-# Course Information
+# Emoji xxl (hero) size
+
+<div class="emoji-row">
+  <div class="emoji-col">
+    <span class="emoji emoji-xxl emoji-bg emoji-bg-green">🧠</span>
+    <span class="label">xxl (192px) - Hero size</span>
+  </div>
+</div>
+
+Perfect for title slides or featuring a single concept prominently.
+
+---
+
+# Emoji grid layout
+
+<div class="emoji-grid" style="grid-template-columns: repeat(4, 1fr); width: 80%;">
+  <div class="emoji-col">
+    <span class="emoji emoji-lg emoji-bg emoji-bg-green">📝</span>
+    <span class="label">Input</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-lg emoji-bg emoji-bg-teal">⚙️</span>
+    <span class="label">Process</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-lg emoji-bg emoji-bg-blue">🔍</span>
+    <span class="label">Analyze</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-lg emoji-bg emoji-bg-orange">📊</span>
+    <span class="label">Output</span>
+  </div>
+</div>
+
+---
+
+# Emoji hierarchy structure
+
+<div class="emoji-hierarchy">
+  <div class="emoji-col">
+    <span class="emoji emoji-lg emoji-bg emoji-bg-green">🏛️</span>
+    <span class="label">Organization</span>
+  </div>
+  <div class="emoji-hierarchy-row with-connector">
+    <div class="emoji-col">
+      <span class="emoji emoji-md emoji-bg emoji-bg-teal">👥</span>
+      <span class="label">Team A</span>
+    </div>
+    <div class="emoji-col">
+      <span class="emoji emoji-md emoji-bg emoji-bg-teal">👥</span>
+      <span class="label">Team B</span>
+    </div>
+    <div class="emoji-col">
+      <span class="emoji emoji-md emoji-bg emoji-bg-teal">👥</span>
+      <span class="label">Team C</span>
+    </div>
+  </div>
+</div>
+
+---
+
+# Labeled emoji example
+
+<div class="emoji-row">
+  <div class="emoji-labeled">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">📚</span>
+    <span class="label">Training data</span>
+  </div>
+  <span class="emoji emoji-lg">➡️</span>
+  <div class="emoji-labeled">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-teal">🤖</span>
+    <span class="label">Language model</span>
+  </div>
+  <span class="emoji emoji-lg">➡️</span>
+  <div class="emoji-labeled">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-orange">💬</span>
+    <span class="label">Generated text</span>
+  </div>
+</div>
+
+---
+
+# Diagram container example
+
+<div class="diagram-container">
+
+*Diagram placeholder - external Kroki.io service unavailable*
+
+</div>
+
+<div class="diagram-caption">Diagrams rendered via Kroki.io (Mermaid, GraphViz, PlantUML)</div>
+
+Note: For working diagrams, generate URLs at [kroki.io](https://kroki.io) and embed as images.
+
+---
+
+# Chart container example
+
+<div class="chart-container">
+  <canvas id="demoChart"></canvas>
+</div>
+
+<div class="chart-caption">Model parameter comparison (Chart.js)</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+new Chart(document.getElementById('demoChart'), {
+  type: 'bar',
+  data: {
+    labels: ['GPT-2', 'GPT-3', 'LLaMA', 'Claude'],
+    datasets: [{
+      label: 'Parameters (B)',
+      data: [1.5, 175, 70, 52],
+      backgroundColor: ['#00693e', '#2d6a4f', '#1a5276', '#1b4332']
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: true }
+});
+</script>
+
+---
+
+# Course information
 
 <div style="display: flex; gap: 2em;">
 <div>
 
-**Next Steps**
+**Next steps**
 - Review: Chapter 3 of *Speech and Language Processing*
 - Explore: Hugging Face Transformers documentation
 - Try: Build a simple chatbot with the provided templates
@@ -373,7 +495,7 @@ The quadratic memory complexity of attention limits context length.
 </div>
 <div>
 
-**Course Resources**
+**Course resources**
 - Canvas: Course materials and submissions
 - GitHub: Code examples and notebooks
 - Office hours: Tuesdays 2-4pm, Moore 354

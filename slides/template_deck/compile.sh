@@ -179,10 +179,10 @@ case $OUTPUT_FORMAT in
         MARP_CMD="$MARP_CMD -o \"$OUTPUT_FILE\""
         ;;
     pdf)
-        MARP_CMD="$MARP_CMD --pdf -o \"$OUTPUT_FILE\""
+        MARP_CMD="$MARP_CMD --pdf --allow-local-files -o \"$OUTPUT_FILE\""
         ;;
     pptx)
-        MARP_CMD="$MARP_CMD --pptx -o \"$OUTPUT_FILE\""
+        MARP_CMD="$MARP_CMD --pptx --allow-local-files -o \"$OUTPUT_FILE\""
         ;;
     *)
         log_error "Unknown output format: $OUTPUT_FORMAT"

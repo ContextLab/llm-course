@@ -165,6 +165,9 @@ pre code .hljs-ln td {
 }
 
 pre code .hljs-ln-numbers {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
     text-align: right;
     color: rgba(0, 105, 62, 0.4);
@@ -245,6 +248,9 @@ pre code.has-line-numbers .line-num {
     text-align: right;
     color: rgba(0, 105, 62, 0.4);
     border-right: 1px solid rgba(0, 105, 62, 0.2);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 
@@ -563,6 +569,25 @@ section>div[style*="gap"] * *,
     font-size: 1em !important;
 }
 
+/* Multi-column slides: disable vertical centering to preserve title visibility */
+section:not(.lead):not(#\31):has(div[style*="display: flex"]),
+section:not(.lead):not(#\31):has(div[style*="display:flex"]),
+section:not(.lead):not(#\31):has(div[style*="gap"]),
+section:not(.lead):not(#\31):has(.columns),
+section:not(.lead):not(#\31):has(.two-column),
+section:not(.lead):not(#\31):has(.multi-column) {
+    justify-content: flex-start !important;
+}
+
+section:not(.lead):not(#\31):has(div[style*="display: flex"]) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(div[style*="display:flex"]) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(div[style*="gap"]) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.columns) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.two-column) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.multi-column) > *:not(h1):first-of-type {
+    margin-top: 0.5em !important;
+}
+
 /* KaTeX math styling to use Avenir for text parts */
 .katex .mathnormal,
 .katex .text,
@@ -680,35 +705,17 @@ section[id="1"] p {
    CONTENT SLIDE LAYOUT
    Title at top, content vertically centered in remaining space
    Using :not(#\31) to exclude the title slide (id="1")
+   Uses flexbox for vertical stacking within Marp's layout
+   Extra bottom padding shifts content up by ~50px
    ============================================ */
 
-/* Content slides - title at top using CSS Grid */
+/* Content slides - flexbox layout */
 section:not(.lead):not(#\31) {
-    display: grid !important;
-    grid-template-rows: auto 1fr !important;
-    grid-template-columns: 1fr !important;
-    justify-items: center !important;
-    align-items: start !important;
-    padding: 40px 70px !important;
-}
-
-/* Content slide h1 - positioned at top */
-section:not(.lead):not(#\31) h1 {
-    grid-row: 1 !important;
-    align-self: start !important;
-    justify-self: center !important;
-    margin: 0 0 0.5em 0 !important;
-    font-size: 1.72em;
-    font-weight: 500;
-    text-align: center;
-    width: 100%;
-}
-
-/* All content after h1 goes in second row, centered */
-section:not(.lead):not(#\31) > *:not(h1) {
-    grid-row: 2 !important;
-    align-self: center !important;
-    justify-self: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 20px 40px 100px 40px !important;
+    position: relative !important;
 }
 
 /* Content elements - 110% of original */
@@ -720,25 +727,6 @@ section:not(.lead):not(#\31) table,
 section:not(.lead):not(#\31) pre,
 section:not(.lead):not(#\31) div {
     font-size: 1.19em;
-}
-
-/* ============================================
-   FINAL OVERRIDES - Work within Marp's flexbox
-   Since we can't change display:flex, we use flex properties
-   and absolute positioning for h1 to pin it at top
-   Exclude both .lead class AND id="1" (title slide)
-   ============================================ */
-
-/* Content slides - use flexbox for vertical stacking
-   Title at top, content centered in remaining space
-   Extra bottom padding shifts content up by ~50px
-   ============================================ */
-section:not(.lead):not(#\31) {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    padding: 20px 40px 100px 40px !important;
-    position: relative !important;
 }
 
 /* Background image with 75% opacity using pseudo-element */
@@ -768,6 +756,8 @@ section:not(.lead):not(#\31) h1 {
     position: relative !important;
     z-index: 1 !important;
     min-height: 1.5em !important;
+    font-size: 1.72em;
+    font-weight: 500;
 }
 
 /* Content elements - stack vertically */
@@ -986,7 +976,9 @@ section:not(.lead):not(#\31) > .table-continued-indicator-last {
     padding: 0 !important;
 }
 
-/* Continuation tables - same styling as regular tables */
+/* Continuation tables - explicit styling for split tables
+   Note: Duplicates base table styling intentionally to ensure split tables
+   maintain consistent appearance regardless of CSS cascade order */
 table.table-continuation {
     border-spacing: 0;
     border-collapse: collapse;
@@ -1149,14 +1141,14 @@ section:not(.lead):not(#\31) > table.split-table:last-of-type {
 .example-box,
 .warning-box {
     display: block !important;
-    border-radius: 8px;
-    padding: 0.8em 1.2em 0.8em 1.2em;
-    margin: 0.8em auto !important;
+    border-radius: 6px;
+    padding: 0.35em 0.7em 0.35em 0.7em;
+    margin: 0.2em auto !important;
     width: 85% !important;
     max-width: 85% !important;
     text-align: left !important;
-    font-size: 0.9em;
-    line-height: 1.4;
+    font-size: 0.55em;
+    line-height: 1.25;
     position: relative;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -1168,8 +1160,8 @@ section:not(.lead):not(#\31) > table.split-table:last-of-type {
 .warning-box::before {
     display: block;
     font-weight: 700;
-    margin-bottom: 0.4em;
-    font-size: 0.95em;
+    margin-bottom: 0.2em;
+    font-size: 0.9em;
     letter-spacing: 0.02em;
 }
 
@@ -1308,11 +1300,13 @@ section:not(.lead):not(#\31) > .warning-box {
 /* Grayscale effect for "inactive" emojis */
 .emoji-gray,
 .emoji-inactive {
+    -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
     opacity: 0.7;
 }
 
 .emoji-faded {
+    -webkit-filter: grayscale(50%);
     filter: grayscale(50%);
     opacity: 0.8;
 }
@@ -1344,6 +1338,12 @@ section:not(.lead):not(#\31) > .warning-box {
     gap: 0.5em;
 }
 
+.emoji-col .label {
+    font-size: 0.6em;
+    text-align: center;
+    white-space: nowrap;
+}
+
 /* Grid layout for emoji figures */
 .emoji-grid {
     display: grid;
@@ -1364,7 +1364,8 @@ section:not(.lead):not(#\31) > .warning-box {
 .emoji-labeled .label {
     font-size: 0.6em;
     text-align: center;
-    max-width: 120px;
+    max-width: 200px;
+    white-space: nowrap;
 }
 
 /* Hierarchy/tree structure */
