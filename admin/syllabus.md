@@ -193,19 +193,19 @@ We strive to create an inclusive learning environment where all students feel su
 
   - Topics: ELMo, Universal Sentence Encoder, BERT embeddings
   - Reading: [Peters et al. (2018)](https://aclanthology.org/N18-1202/); [Cer et al. (2018)](https://arxiv.org/abs/1803.11175)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week3-4/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week3-4/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.html}{HTML}]
 
 **Wednesday, January 28** (Lecture 10): Dimensionality Reduction
 
   - Topics: PCA, t-SNE, UMAP for visualizing embeddings
   - Reading: [McInnes et al. (2018)](https://arxiv.org/abs/1802.03426)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week3-4/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week3-4/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.html}{HTML}]
 
 **Friday, January 30** (Lecture 11): Cognitive Models of Semantic Representation
 
   - Topics: Distributional semantics, neural representation of meaning
   - Reading: [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week3-4/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week3-4/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.html}{HTML}]
 
 ### Week 5: Transformers & Attention (February 2--6)
 
@@ -214,19 +214,19 @@ We strive to create an inclusive learning environment where all students feel su
   - Topics: Sequence-to-sequence models, attention mechanism fundamentals
   - **✅ Assignment 3 Due**
   - Reading: [Bahdanau et al. (2015)](https://arxiv.org/abs/1409.0473); [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week5-6/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]
 
 **Wednesday, February 4** (Lecture 13): Transformer Architecture
 
   - Topics: Multi-head attention, positional encoding, transformer blocks
   - Reading: [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762); HuggingFace NLP Course Chapter 3
-  - Slides: [\href{https://contextlab.github.io/llm-course/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week5-6/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]
 
 **Friday, February 6** (Lecture 14): Training Transformers
 
   - Topics: Pre-training objectives, masked language modeling, next token prediction
   - **📝 Assignment 4 Released:** [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Assignment\%204\%3A\%20Customer\%20Service\%20Chatbot/README.md}{Context-Aware Customer Service Chatbot}]
-  - Slides: [\href{https://contextlab.github.io/llm-course/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week5-6/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]
 
 ### Week 6: Encoder Models (February 9--13)
 
@@ -234,19 +234,19 @@ We strive to create an inclusive learning environment where all students feel su
 
   - Topics: BERT architecture, bidirectional pre-training, fine-tuning
   - Reading: [Devlin et al. (2019)](https://aclanthology.org/N19-1423/); HuggingFace NLP Course Chapter 4
-  - Slides: [\href{https://contextlab.github.io/llm-course/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week5-6/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]
 
 **Wednesday, February 11** (Lecture 16): BERT Variants
 
   - Topics: RoBERTa, ALBERT, DistilBERT, and other encoder models
   - Reading: [Liu et al. (2019)](https://arxiv.org/abs/1907.11692); [Sanh et al. (2019)](https://arxiv.org/abs/1910.01108)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week5-6/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]
 
 **Friday, February 13** (Lecture 17): Applications of Encoder Models
 
   - Topics: Classification, NER, question answering with BERT
   - **✅ Assignment 4 Due**
-  - Slides: [\href{https://contextlab.github.io/llm-course/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week5-6/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]
 
 ### Week 7: Decoder Models & GPT (February 16--20)
 
@@ -254,19 +254,19 @@ We strive to create an inclusive learning environment where all students feel su
 
   - Topics: Autoregressive language models, GPT-1 and GPT-2
   - Reading: [Radford et al. (2018)](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf); [Radford et al. (2019)](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week7/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week7/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week7/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week7/lecture.html}{HTML}]
 
 **Wednesday, February 18** (Lecture 19): Scaling Up to GPT-3 and Beyond
 
   - Topics: GPT-3, in-context learning, few-shot prompting, GPT-4 and Claude
   - **📝 Assignment 5 Released:** [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Assignment\%205\%3A\%20GPT/README.md}{Build and Train a GPT Model}]
   - Reading: [Brown et al. (2020)](https://arxiv.org/abs/2005.14165); [OpenAI (2023)](https://arxiv.org/abs/2303.08774)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week7/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week7/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week7/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week7/lecture.html}{HTML}]
 
 **Friday, February 20** (Lecture 20): Implementing GPT from Scratch
 
   - Topics: Building GPT architecture, training considerations
-  - Slides: [\href{https://contextlab.github.io/llm-course/week7/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week7/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week7/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week7/lecture.html}{HTML}]
 
 ### Week 8: No Classes (February 23--27)
 
@@ -279,19 +279,19 @@ We strive to create an inclusive learning environment where all students feel su
   - Topics: Vector databases, retrieval mechanisms, RAG architectures
   - **✅ Assignment 5 Due**
   - Reading: [Lewis et al. (2020)](https://arxiv.org/abs/2005.11401)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week9/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week9/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week9/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week9/lecture.html}{HTML}]
 
 **Wednesday, March 4** (Lecture 22): Mixture of Experts & Efficiency
 
   - Topics: MoE architectures, model compression, distillation
   - Reading: [Fedus et al. (2022)](https://arxiv.org/abs/2101.03961); [Jiang et al. (2024)](https://arxiv.org/abs/2401.04088)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week9/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week9/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week9/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week9/lecture.html}{HTML}]
 
 **Friday, March 6** (Lecture 23): Ethics, Bias, and Safety
 
   - Topics: Bias in LLMs, alignment, safety considerations
   - Reading: [Bender et al. (2021)](https://dl.acm.org/doi/10.1145/3442188.3445922)
-  - Slides: [\href{https://contextlab.github.io/llm-course/week9/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/week9/lecture.html}{HTML}]
+  - Slides: [\href{https://contextlab.github.io/llm-course/slides/week9/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week9/lecture.html}{HTML}]
 
 ### Week 10: Final Projects (March 9)
 

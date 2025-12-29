@@ -136,87 +136,86 @@ jobs:
             fi
           done
 
-      - name: Create PDF.js HTML viewers for slides
+      - name: Create HTML viewers for slides with Dartmouth branding
         run: |
-          echo "🌐 Creating HTML viewers for PDFs..."
+          echo "🌐 Creating HTML viewers for PDFs with Dartmouth branding..."
           find slides -name "*.pdf" -type f | while read -r pdf_file; do
             dir=$(dirname "$pdf_file")
             filename=$(basename "$pdf_file" .pdf)
 
-            # Create a simple HTML viewer that embeds the PDF
-            cat > "$dir/${filename}-viewer.html" << 'VIEWER_EOF'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>FILENAME_PLACEHOLDER - LLM Course</title>
-              <style>
-                  * {
-                      margin: 0;
-                      padding: 0;
-                      box-sizing: border-box;
-                  }
-                  body {
-                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                      background: #1a1a2e;
-                      color: white;
-                  }
-                  .header {
-                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                      padding: 20px;
-                      text-align: center;
-                      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-                  }
-                  .header h1 {
-                      margin-bottom: 10px;
-                  }
-                  .links {
-                      margin-top: 10px;
-                  }
-                  .links a {
-                      color: white;
-                      text-decoration: none;
-                      margin: 0 15px;
-                      padding: 8px 20px;
-                      background: rgba(255,255,255,0.2);
-                      border-radius: 20px;
-                      transition: background 0.3s;
-                  }
-                  .links a:hover {
-                      background: rgba(255,255,255,0.3);
-                  }
-                  .pdf-container {
-                      width: 100%;
-                      height: calc(100vh - 120px);
-                  }
-                  iframe {
-                      width: 100%;
-                      height: 100%;
-                      border: none;
-                  }
-              </style>
-          </head>
-          <body>
-              <div class="header">
-                  <h1>📊 FILENAME_PLACEHOLDER</h1>
-                  <div class="links">
-                      <a href="FILENAME_PLACEHOLDER.pdf" download>⬇️ Download PDF</a>
-                      <a href="../../index.html">🏠 All Slides</a>
-                      <a href="https://github.com/ContextLab/llm-course">📚 GitHub</a>
-                  </div>
-              </div>
-              <div class="pdf-container">
-                  <iframe src="FILENAME_PLACEHOLDER.pdf"></iframe>
-              </div>
-          </body>
-          </html>
-          VIEWER_EOF
+            # Create HTML viewer with Dartmouth branding (matching syllabus link format)
+            cat > "$dir/${filename}.html" << 'VIEWER_EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FILENAME_PLACEHOLDER - PSYC 51.07</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .header {
+            background: #00693e; /* Dartmouth Green */
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .header h1 {
+            color: white;
+            font-size: 1.4em;
+            font-weight: 500;
+        }
+        .header .nav {
+            display: flex;
+            gap: 10px;
+        }
+        .header a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 4px;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+        .header a:hover { background: rgba(255,255,255,0.25); }
+        .pdf-container {
+            width: 100%;
+            height: calc(100vh - 60px);
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>FILENAME_PLACEHOLDER - Models of Language and Communication</h1>
+        <div class="nav">
+            <a href="FILENAME_PLACEHOLDER.pdf" download>Download PDF</a>
+            <a href="../../index.html">All Slides</a>
+            <a href="https://github.com/ContextLab/llm-course">GitHub</a>
+        </div>
+    </div>
+    <div class="pdf-container">
+        <iframe src="FILENAME_PLACEHOLDER.pdf"></iframe>
+    </div>
+</body>
+</html>
+VIEWER_EOF
 
             # Replace placeholder with actual filename
-            sed -i "s/FILENAME_PLACEHOLDER/$filename/g" "$dir/${filename}-viewer.html"
+            sed -i "s/FILENAME_PLACEHOLDER/$filename/g" "$dir/${filename}.html"
 
-            echo "✅ Created HTML viewer for $pdf_file"
+            echo "Created HTML viewer: $dir/${filename}.html"
           done
 
       - name: Build web directory structure
@@ -257,7 +256,7 @@ jobs:
           <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>LLM Course Slides</title>
+              <title>LLM Course Slides - PSYC 51.07</title>
               <style>
                   * {
                       margin: 0;
@@ -266,8 +265,8 @@ jobs:
                   }
 
                   body {
-                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      font-family: 'Helvetica Neue', Arial, sans-serif;
+                      background: #00693e; /* Dartmouth Green */
                       min-height: 100vh;
                       padding: 40px 20px;
                   }
@@ -280,9 +279,8 @@ jobs:
                   h1 {
                       color: white;
                       text-align: center;
-                      font-size: 3em;
-                      margin-bottom: 20px;
-                      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                      font-size: 2.5em;
+                      margin-bottom: 15px;
                   }
 
                   .subtitle {
@@ -300,7 +298,7 @@ jobs:
                   .syllabus-link a {
                       display: inline-block;
                       background: white;
-                      color: #667eea;
+                      color: #00693e;
                       padding: 15px 40px;
                       border-radius: 30px;
                       text-decoration: none;
@@ -324,68 +322,71 @@ jobs:
 
                   .slide-card {
                       background: white;
-                      border-radius: 15px;
-                      padding: 30px;
-                      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                      border-radius: 8px;
+                      padding: 25px;
+                      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
                       transition: transform 0.3s ease, box-shadow 0.3s ease;
                   }
 
                   .slide-card:hover {
-                      transform: translateY(-10px);
-                      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+                      transform: translateY(-5px);
+                      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
                   }
 
                   .slide-card h2 {
-                      color: #667eea;
-                      margin-bottom: 15px;
-                      font-size: 1.5em;
+                      color: #00693e;
+                      margin-bottom: 12px;
+                      font-size: 1.3em;
                   }
 
                   .slide-card p {
-                      color: #666;
-                      line-height: 1.6;
-                      margin-bottom: 20px;
+                      color: #555;
+                      line-height: 1.5;
+                      margin-bottom: 15px;
+                      font-size: 0.95em;
                   }
 
                   .slide-card .links {
                       display: flex;
-                      gap: 10px;
+                      gap: 8px;
                       flex-wrap: wrap;
                   }
 
                   .slide-card .btn {
                       display: inline-block;
-                      padding: 10px 20px;
-                      border-radius: 20px;
+                      padding: 8px 16px;
+                      border-radius: 4px;
                       text-decoration: none;
-                      font-weight: bold;
-                      transition: opacity 0.3s ease;
-                      font-size: 0.9em;
+                      font-weight: 500;
+                      transition: opacity 0.2s ease;
+                      font-size: 0.85em;
                   }
 
                   .slide-card .btn:hover {
-                      opacity: 0.8;
+                      opacity: 0.85;
                   }
 
                   .btn-primary {
-                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      background: #00693e;
                       color: white;
                   }
 
                   .btn-secondary {
-                      background: #e0e0e0;
-                      color: #333;
+                      background: #267aba; /* River Blue */
+                      color: white;
                   }
 
-                  .emoji {
-                      font-size: 2em;
-                      margin-bottom: 15px;
-                      display: block;
+                  .week-label {
+                      font-size: 0.85em;
+                      color: #888;
+                      margin-bottom: 8px;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
                   }
 
                   footer {
                       text-align: center;
-                      color: white;
+                      color: rgba(255,255,255,0.9);
                       margin-top: 60px;
                       padding: 20px;
                   }
@@ -398,8 +399,8 @@ jobs:
           </head>
           <body>
               <div class="container">
-                  <h1>🤖 LLM Course Slides</h1>
-                  <p class="subtitle">Models of Language and Communication - PSYC 51.07</p>
+                  <h1>Models of Language and Communication</h1>
+                  <p class="subtitle">PSYC 51.07 - Dartmouth College</p>
 
                   <div class="syllabus-link">
                       <a href="admin/syllabus.pdf" target="_blank">📄 Download Course Syllabus</a>
@@ -407,129 +408,112 @@ jobs:
 
                   <div class="slides-grid">
                       <div class="slide-card">
-                          <span class="emoji">🚀</span>
-                          <h2>Week 1: Introduction</h2>
-                          <p>String manipulation, pattern matching, and the ELIZA chatbot. Is ChatGPT conscious?</p>
+                          <p class="week-label">Week 1</p>
+                          <h2>Introduction & String Manipulation</h2>
+                          <p>Pattern matching, the ELIZA chatbot, and consciousness in AI.</p>
                           <div class="links">
-                              <a href="slides/week1/lecture1.pdf" class="btn btn-primary" target="_blank">Lecture 1 PDF</a>
-                              <a href="slides/week1/lecture2.pdf" class="btn btn-primary" target="_blank">Lecture 2 PDF</a>
-                              <a href="slides/week1/lecture3.pdf" class="btn btn-primary" target="_blank">Lecture 3 PDF</a>
-                              <a href="slides/week1/xhour_eliza_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
+                              <a href="slides/week1/lecture1.pdf" class="btn btn-primary" target="_blank">Lecture 1</a>
+                              <a href="slides/week1/lecture2.pdf" class="btn btn-primary" target="_blank">Lecture 2</a>
+                              <a href="slides/week1/lecture3.pdf" class="btn btn-primary" target="_blank">Lecture 3</a>
+                              <a href="slides/week1/xhour_eliza_demo.html" class="btn btn-secondary" target="_blank">X-hour</a>
                           </div>
                       </div>
 
                       <div class="slide-card">
-                          <span class="emoji">📝</span>
-                          <h2>Week 2: Computational Linguistics</h2>
-                          <p>Tokenization, POS tagging, sentiment analysis, and statistical learning.</p>
+                          <p class="week-label">Week 2</p>
+                          <h2>Computational Linguistics</h2>
+                          <p>Tokenization, POS tagging, sentiment analysis.</p>
                           <div class="links">
-                              <a href="slides/week2/lecture4.pdf" class="btn btn-primary" target="_blank">Lecture 4 PDF</a>
-                              <a href="slides/week2/lecture5.pdf" class="btn btn-primary" target="_blank">Lecture 5 PDF</a>
-                              <a href="slides/week2/lecture6.pdf" class="btn btn-primary" target="_blank">Lecture 6 PDF</a>
-                              <a href="slides/week2/xhour_classification_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
+                              <a href="slides/week2/lecture4.pdf" class="btn btn-primary" target="_blank">Lecture 4</a>
+                              <a href="slides/week2/lecture5.pdf" class="btn btn-primary" target="_blank">Lecture 5</a>
+                              <a href="slides/week2/lecture6.pdf" class="btn btn-primary" target="_blank">Lecture 6</a>
+                              <a href="slides/week2/xhour_classification_demo.html" class="btn btn-secondary" target="_blank">X-hour</a>
                           </div>
                       </div>
 
                       <div class="slide-card">
-                          <span class="emoji">📊</span>
-                          <h2>Week 3: Text Embeddings I</h2>
-                          <p>Classical embeddings (LSA, LDA) and word embeddings (Word2Vec, GloVe, FastText).</p>
+                          <p class="week-label">Week 3</p>
+                          <h2>Text Embeddings I</h2>
+                          <p>LSA, LDA, Word2Vec, GloVe, FastText.</p>
                           <div class="links">
-                              <a href="slides/week3/lecture7.pdf" class="btn btn-primary" target="_blank">Lecture 7 PDF</a>
-                              <a href="slides/week3/lecture8.pdf" class="btn btn-primary" target="_blank">Lecture 8 PDF</a>
-                              <a href="slides/week3/xhour_embeddings_demo.html" class="btn btn-secondary" target="_blank">X-hour Demo</a>
+                              <a href="slides/week3/lecture7.pdf" class="btn btn-primary" target="_blank">Lecture 7</a>
+                              <a href="slides/week3/lecture8.pdf" class="btn btn-primary" target="_blank">Lecture 8</a>
+                              <a href="slides/week3/xhour_embeddings_demo.html" class="btn btn-secondary" target="_blank">X-hour</a>
                           </div>
                       </div>
 
                       <div class="slide-card">
-                          <span class="emoji">📈</span>
-                          <h2>Weeks 3-4: Combined Slides</h2>
-                          <p>Complete deck covering classical and modern text embeddings.</p>
+                          <p class="week-label">Week 4</p>
+                          <h2>Text Embeddings II</h2>
+                          <p>Contextual embeddings, dimensionality reduction.</p>
                           <div class="links">
-                              <a href="slides/week3-4/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
+                              <a href="slides/week4/lecture9.pdf" class="btn btn-primary" target="_blank">Lecture 9</a>
+                              <a href="slides/week4/lecture10.pdf" class="btn btn-primary" target="_blank">Lecture 10</a>
+                              <a href="slides/week4/lecture11.pdf" class="btn btn-primary" target="_blank">Lecture 11</a>
+                              <a href="slides/week3-4/lecture.pdf" class="btn btn-secondary" target="_blank">Combined</a>
                           </div>
                       </div>
 
                       <div class="slide-card">
-                          <span class="emoji">🔤</span>
-                          <h2>Week 4: Text Embeddings II</h2>
-                          <p>Advanced embedding techniques and neural language models.</p>
+                          <p class="week-label">Week 5</p>
+                          <h2>Transformers & Attention</h2>
+                          <p>Attention mechanisms, transformer architecture.</p>
                           <div class="links">
-                              <a href="slides/week4/lecture9.pdf" class="btn btn-primary" target="_blank">Lecture 9 PDF</a>
-                              <a href="slides/week4/lecture10.pdf" class="btn btn-primary" target="_blank">Lecture 10 PDF</a>
-                              <a href="slides/week4/lecture11.pdf" class="btn btn-primary" target="_blank">Lecture 11 PDF</a>
+                              <a href="slides/week5/lecture12.pdf" class="btn btn-primary" target="_blank">Lecture 12</a>
+                              <a href="slides/week5/lecture13.pdf" class="btn btn-primary" target="_blank">Lecture 13</a>
+                              <a href="slides/week5/lecture14.pdf" class="btn btn-primary" target="_blank">Lecture 14</a>
                           </div>
                       </div>
 
                       <div class="slide-card">
-                          <span class="emoji">🧮</span>
-                          <h2>Week 5: Neural Networks</h2>
-                          <p>Deep learning fundamentals and neural network architectures.</p>
+                          <p class="week-label">Week 6</p>
+                          <h2>Encoder Models & BERT</h2>
+                          <p>BERT, RoBERTa, DistilBERT, applications.</p>
                           <div class="links">
-                              <a href="slides/week5/lecture12.pdf" class="btn btn-primary" target="_blank">Lecture 12 PDF</a>
-                              <a href="slides/week5/lecture13.pdf" class="btn btn-primary" target="_blank">Lecture 13 PDF</a>
-                              <a href="slides/week5/lecture14.pdf" class="btn btn-primary" target="_blank">Lecture 14 PDF</a>
+                              <a href="slides/week6/lecture15.pdf" class="btn btn-primary" target="_blank">Lecture 15</a>
+                              <a href="slides/week6/lecture16.pdf" class="btn btn-primary" target="_blank">Lecture 16</a>
+                              <a href="slides/week6/lecture17.pdf" class="btn btn-primary" target="_blank">Lecture 17</a>
+                              <a href="slides/week5-6/lecture.pdf" class="btn btn-secondary" target="_blank">Combined</a>
                           </div>
                       </div>
 
                       <div class="slide-card">
-                          <span class="emoji">⚡</span>
-                          <h2>Weeks 5-6: Transformers & BERT</h2>
-                          <p>Attention mechanisms, transformer architecture, and context-aware models.</p>
+                          <p class="week-label">Week 7-8</p>
+                          <h2>Decoder Models & GPT</h2>
+                          <p>GPT architecture, autoregressive generation, scaling.</p>
                           <div class="links">
-                              <a href="slides/week5-6/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
+                              <a href="slides/week7/lecture18.pdf" class="btn btn-primary" target="_blank">Lecture 18</a>
+                              <a href="slides/week7/lecture19.pdf" class="btn btn-primary" target="_blank">Lecture 19</a>
+                              <a href="slides/week7/lecture20.pdf" class="btn btn-primary" target="_blank">Lecture 20</a>
+                              <a href="slides/week7/lecture.pdf" class="btn btn-secondary" target="_blank">Combined</a>
                           </div>
                       </div>
 
                       <div class="slide-card">
-                          <span class="emoji">🌐</span>
-                          <h2>Week 6: Transformers</h2>
-                          <p>Self-attention mechanisms and transformer architecture details.</p>
+                          <p class="week-label">Week 9</p>
+                          <h2>Advanced Topics</h2>
+                          <p>RAG, Mixture of Experts, ethics and safety.</p>
                           <div class="links">
-                              <a href="slides/week6/lecture15.pdf" class="btn btn-primary" target="_blank">Lecture 15 PDF</a>
-                              <a href="slides/week6/lecture16.pdf" class="btn btn-primary" target="_blank">Lecture 16 PDF</a>
-                              <a href="slides/week6/lecture17.pdf" class="btn btn-primary" target="_blank">Lecture 17 PDF</a>
+                              <a href="slides/week9/lecture21.pdf" class="btn btn-primary" target="_blank">Lecture 21</a>
+                              <a href="slides/week9/lecture22.pdf" class="btn btn-primary" target="_blank">Lecture 22</a>
+                              <a href="slides/week9/lecture23.pdf" class="btn btn-primary" target="_blank">Lecture 23</a>
+                              <a href="slides/week9/lecture.pdf" class="btn btn-secondary" target="_blank">Combined</a>
                           </div>
                       </div>
 
                       <div class="slide-card">
-                          <span class="emoji">💬</span>
-                          <h2>Week 7: Models of Conversation</h2>
-                          <p>GPT evolution, building transformers from scratch, language models & the brain.</p>
+                          <p class="week-label">Week 10</p>
+                          <h2>Final Presentations</h2>
+                          <p>Student project presentations and course wrap-up.</p>
                           <div class="links">
-                              <a href="slides/week7/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
-                              <a href="slides/week7/lecture18.pdf" class="btn btn-primary" target="_blank">Lecture 18 PDF</a>
-                              <a href="slides/week7/lecture19.pdf" class="btn btn-primary" target="_blank">Lecture 19 PDF</a>
-                              <a href="slides/week7/lecture20.pdf" class="btn btn-primary" target="_blank">Lecture 20 PDF</a>
-                          </div>
-                      </div>
-
-                      <div class="slide-card">
-                          <span class="emoji">🔍</span>
-                          <h2>Week 9: RAG & MoE</h2>
-                          <p>Retrieval Augmented Generation, Mixture of Experts, and the future of LLMs.</p>
-                          <div class="links">
-                              <a href="slides/week9/lecture.pdf" class="btn btn-primary" target="_blank">Combined PDF</a>
-                              <a href="slides/week9/lecture21.pdf" class="btn btn-primary" target="_blank">Lecture 21 PDF</a>
-                              <a href="slides/week9/lecture22.pdf" class="btn btn-primary" target="_blank">Lecture 22 PDF</a>
-                              <a href="slides/week9/lecture23.pdf" class="btn btn-primary" target="_blank">Lecture 23 PDF</a>
-                          </div>
-                      </div>
-
-                      <div class="slide-card">
-                          <span class="emoji">🎯</span>
-                          <h2>Week 10: Advanced Topics</h2>
-                          <p>Advanced language model techniques and applications.</p>
-                          <div class="links">
-                              <a href="slides/week10/lecture24.pdf" class="btn btn-primary" target="_blank">Lecture 24 PDF</a>
+                              <a href="slides/week10/lecture24.pdf" class="btn btn-primary" target="_blank">Lecture 24</a>
                           </div>
                       </div>
                   </div>
 
                   <footer>
-                      <p>📚 <a href="https://github.com/ContextLab/llm-course" target="_blank">View Course on GitHub</a></p>
-                      <p>🎮 <a href="https://contextlab.github.io/llm-course/demos/" target="_blank">Interactive Demos</a></p>
-                      <p>Built with ❤️ using LaTeX Beamer and GitHub Actions</p>
+                      <p><a href="https://github.com/ContextLab/llm-course" target="_blank">View Course on GitHub</a></p>
+                      <p><a href="https://contextlab.github.io/llm-course/demos/" target="_blank">Interactive Demos</a></p>
                   </footer>
               </div>
           </body>
