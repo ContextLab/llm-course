@@ -1,0 +1,520 @@
+/* @theme cdl-theme */
+
+@import 'uncover';
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Fira+Code:wght@300;400;500;600;700&display=swap');
+
+/* Local font face definitions for Avenir - including italic variants */
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-LightOblique.otf') format('opentype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Book.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-BookOblique.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Roman.otf') format('opentype');
+    font-weight: 450;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Oblique.otf') format('opentype');
+    font-weight: 450;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-MediumOblique.otf') format('opentype');
+    font-weight: 500;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Heavy.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-HeavyOblique.otf') format('opentype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Black.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-BlackOblique.otf') format('opentype');
+    font-weight: 900;
+    font-style: italic;
+}
+
+/* FiraCode local font face */
+@font-face {
+    font-family: 'Fira Code Local';
+    src: url('../../fonts/FiraCode-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Fira Code Local';
+    src: url('../../fonts/FiraCode-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Fira Code Local';
+    src: url('../../fonts/FiraCode-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Inline code styling - with visible background (very light Dartmouth green, almost white) */
+code {
+    display: inline-block;
+    font-family: 'Fira Code', 'Fira Code Local', monospace;
+    font-size: 0.9em;
+    letter-spacing: 0;
+    margin: 0em 0.15em;
+    padding: 0.15em 0.5em;
+    vertical-align: baseline;
+    color: #0d5f2e;
+    background-color: rgba(0, 105, 62, 0.06);
+    border-radius: 4px;
+}
+
+/* Code blocks with rounded corners - light Dartmouth green tint background */
+pre {
+    display: block;
+    margin: 1em 2em 0;
+    overflow: visible;
+    border-radius: 12px;
+    background-color: rgba(0, 105, 62, 0.06);
+    padding: 1em;
+    counter-reset: line-number;
+    border: 1px solid rgba(0, 105, 62, 0.15);
+}
+
+pre code {
+    display: block;
+    background-color: transparent;
+    color: #0a3d23;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    font-size: 30pt;
+    line-height: 1.5;
+}
+
+/* Line numbers for code blocks - using CSS counter approach */
+pre code::before {
+    counter-reset: listing;
+}
+
+pre code {
+    counter-increment: listing;
+}
+
+/* Headings */
+h1 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 1.5em;
+    font-weight: 700;
+}
+
+h2 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 1.3em;
+    font-weight: 700;
+}
+
+h3 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+h4 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 1em;
+    font-weight: 500;
+}
+
+h5 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+h6 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+p {
+    margin: 1em 3.5em 0;
+}
+
+/* Blockquotes - clean Avenir styling without background, border, or decorative quotes */
+blockquote {
+    margin: 1em auto 0;
+    padding: 0.5em 2em;
+    position: relative;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 1.1em;
+    font-style: italic;
+    font-weight: 400;
+    color: #0a3d23;
+    border-left: none;
+    background-color: transparent;
+    border-radius: 0;
+    max-width: 80%;
+}
+
+/* Decorative quotation marks - light Dartmouth green tint (almost white) */
+blockquote::before {
+    content: '"' !important;
+    display: block !important;
+    position: absolute;
+    left: -0.3em;
+    top: -0.2em;
+    font-size: 3em;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-weight: 600;
+    color: rgba(0, 105, 62, 0.15);
+    line-height: 1;
+}
+
+blockquote::after {
+    content: none !important;
+    display: none !important;
+}
+
+blockquote p {
+    margin: 0;
+}
+
+mark {
+    background: transparent;
+}
+
+/* Tables - centered horizontally */
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin: 1em auto 0;
+    font-size: 0.8em;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+}
+
+table th,
+table td {
+    padding: 0.5em 1em;
+    text-align: center;
+}
+
+/* Hyperlinks - dark Dartmouth green (almost black), underlined for clickability */
+a {
+    color: #0a2518;
+    text-decoration: underline;
+}
+
+figure {
+    height: 100px;
+    max-width: 130px;
+    padding-bottom: 10px;
+}
+
+figcaption {
+    position: relative;
+    font-size: 9pt;
+    left: -5px;
+    top: -60px;
+    overflow: visible;
+    overflow-wrap: break-word;
+    width: 90px;
+    font-weight: bold;
+}
+
+/* Main section styling - dark Dartmouth green text (almost black with green undertone) */
+section {
+    background-color: #f0f0f0;
+    color: #0a2518;
+    font-size: 35px;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-weight: 400;
+    height: 720px;
+    line-height: 1.35;
+    letter-spacing: normal;
+    padding: 70px;
+    width: 1280px;
+    word-wrap: break-word;
+    /* Content slide layout - title at top, content centered vertically */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+/* Bullet points - centered horizontally */
+section ul,
+section ol {
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
+section ul li,
+section ol li {
+    margin: 0.3em 0;
+}
+
+/* Emphasis using proper italics - requires oblique font variants */
+em,
+i {
+    font-style: italic;
+    font-weight: inherit;
+}
+
+strong,
+b {
+    font-style: inherit;
+    font-weight: 700;
+}
+
+/* Combined emphasis - bold italic */
+em strong,
+strong em,
+i b,
+b i {
+    font-style: italic;
+    font-weight: 700;
+}
+
+.note {
+    position: relative;
+    top: -35px;
+    font-size: 20pt;
+}
+
+.people_gallery {
+    display: grid;
+    grid-template-columns: repeat(11, 2.5em);
+    grid-template-rows: repeat(4, 100px);
+    position: relative;
+    grid-gap: 5px;
+    left: 0.75em;
+    top: -40px;
+}
+
+.funding_gallery {
+    display: grid;
+    grid-template-columns: repeat(8, 2.5em);
+    grid-template-rows: repeat(1, 100px);
+    position: relative;
+    grid-gap: 5px;
+    left: 2.5em;
+    top: -30px;
+}
+
+.funding_caption {
+    position: relative;
+    left: -8px !important;
+}
+
+.gallery_img {
+    max-height: 75px;
+    max-width: 75px;
+}
+
+.reference {
+    font-size: 12pt;
+    text-align: right;
+    position: fixed;
+    bottom: 0.5em;
+    right: 0.25em;
+    display: block;
+    line-height: 12pt;
+}
+
+/* Multi-column layout - side by side with gap of ~8 character widths, centered */
+section>div[style*="display: flex"],
+section>div[style*="display:flex"],
+.columns,
+.two-column,
+.multi-column {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    gap: 4ch !important;
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+}
+
+section>div[style*="display: flex"]>div,
+section>div[style*="display:flex"]>div,
+.columns>div,
+.two-column>div,
+.multi-column>div {
+    flex: 1 1 0 !important;
+    max-width: 48% !important;
+    min-width: 0 !important;
+}
+
+/* KaTeX math styling to use Avenir for text parts */
+.katex .mathnormal,
+.katex .text,
+.katex .textrm {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif !important;
+}
+
+/* Keep math symbols in their default fonts */
+.katex .mathit,
+.katex .mathbf,
+.katex .mathbb,
+.katex .mathcal,
+.katex .mathfrak,
+.katex .mathsf,
+.katex .mathtt {
+    /* Keep default KaTeX fonts for mathematical symbols */
+}
+
+/* KaTeX math - match equation font size to content text */
+.katex {
+    font-size: 1em !important;
+}
+
+/* ============================================
+   TITLE SLIDE STYLING (first slide / lead class)
+   ============================================ */
+
+/* Title slide - use lead class or first slide detection */
+section.lead,
+section:first-of-type {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 70px;
+}
+
+/* Title slide - main title (h1) - Avenir 55 Roman 84pt */
+section.lead h1,
+section:first-of-type h1 {
+    font-size: 84pt;
+    font-weight: 450;
+    margin-bottom: 0.2em;
+    letter-spacing: normal;
+}
+
+/* Title slide - course subtitle (h3) - Avenir 45 Book 36pt */
+section.lead h3,
+section:first-of-type h3 {
+    font-size: 36pt;
+    font-weight: 400;
+    letter-spacing: normal;
+    margin-top: 0;
+    margin-bottom: 1.5em;
+    color: #0a3d23;
+}
+
+/* Title slide - author/institution/date (paragraph text) - Avenir 45 Book 36pt */
+section.lead p,
+section:first-of-type p {
+    font-size: 36pt;
+    font-weight: 400;
+    margin: 0.2em 0;
+    letter-spacing: normal;
+}
+
+/* ============================================
+   CONTENT SLIDE LAYOUT
+   Title at top, content vertically centered in remaining space
+   ============================================ */
+
+/* Override uncover theme's centered layout for content slides */
+section:not(.lead):not(:first-of-type) {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding: 40px 70px 40px 70px !important;
+}
+
+/* Content slide h1 - Avenir 55 Roman 71pt, positioned at top */
+section:not(.lead):not(:first-of-type) h1 {
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 15px !important;
+    font-size: 71pt;
+    font-weight: 450;
+    text-align: center;
+    width: 100%;
+}
+
+/* Content area - fills remaining space and centers content vertically */
+section:not(.lead):not(:first-of-type)>*:not(h1):first-of-type {
+    margin-top: auto !important;
+}
+
+section:not(.lead):not(:first-of-type)>*:not(h1):last-child {
+    margin-bottom: auto !important;
+}
+
+/* Content elements - Avenir LT Std 38pt */
+section:not(.lead):not(:first-of-type) ul,
+section:not(.lead):not(:first-of-type) ol,
+section:not(.lead):not(:first-of-type) p:not(:first-child),
+section:not(.lead):not(:first-of-type) blockquote,
+section:not(.lead):not(:first-of-type) table,
+section:not(.lead):not(:first-of-type) pre,
+section:not(.lead):not(:first-of-type) div {
+    font-size: 38pt;
+}
