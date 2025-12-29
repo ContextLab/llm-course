@@ -126,7 +126,8 @@ code {
 }
 
 /* Code blocks with rounded corners - light Dartmouth green tint background */
-pre {
+section pre,
+section :is(pre, marp-pre) {
     margin: 0.5em auto 0;
     overflow: hidden;
     border-radius: 12px;
@@ -139,7 +140,7 @@ pre {
     max-width: 95%;
     max-height: 65vh;
     /* Default code font size - readable for short code */
-    font-size: 22pt;
+    font-size: 22pt !important;
 }
 
 pre code {
@@ -745,30 +746,48 @@ section:not(.lead):not(#\31) > *:not(h1) {
 }
 
 /* Code slides: stack pre and continued indicator vertically */
-section:not(.lead):not(#\31):has(.code-continued-indicator) {
-    grid-template-rows: auto 1fr auto !important;
-    padding-bottom: 10px !important;
+section:not(.lead):not(#\31):has(.code-continued-indicator),
+section:not(.lead):not(#\31):has(.code-continued-indicator-last) {
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: 30px !important;
 }
 
-section:not(.lead):not(#\31):has(.code-continued-indicator) > pre {
-    max-height: 75vh !important;
-    font-size: 16pt !important;
-    align-self: center !important;
-    justify-self: center !important;
+section:not(.lead):not(#\31):has(.code-continued-indicator) > h1 {
+    flex-shrink: 0 !important;
+}
+
+section:not(.lead):not(#\31):has(.code-continued-indicator) > pre,
+section:not(.lead):not(#\31):has(.code-continued-indicator-last) > pre {
+    max-height: 70vh !important;
+    font-size: 14pt !important;
+    flex: 0 0 auto !important;
+    margin: auto !important;
+    padding: 0.3em 1em !important;
+    height: fit-content !important;
+    width: 90% !important;
+    min-width: 90% !important;
 }
 
 section:not(.lead):not(#\31) > pre {
     align-self: center !important;
     justify-self: center !important;
+    margin: 0 auto !important;
 }
 
 section:not(.lead):not(#\31) > .code-continued-indicator {
-    grid-row: 3 !important;
-    align-self: end !important;
-    justify-self: end !important;
     position: absolute !important;
     bottom: 10px !important;
     right: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Last slide in sequence: full positioning with slight left shift */
+section:not(.lead):not(#\31) > .code-continued-indicator-last {
+    position: absolute !important;
+    bottom: 10px !important;
+    right: 20px !important;
     margin: 0 !important;
     padding: 0 !important;
 }
@@ -850,14 +869,15 @@ pre code.has-line-numbers .line-num {
 }
 
 /* Auto-split code continuation indicator */
-.code-continued-indicator {
-    display: block;
-    text-align: right;
-    margin: 0;
-    padding: 0;
-    font-size: 9pt;
-    color: #0a2518;
-    font-style: italic;
+.code-continued-indicator,
+.code-continued-indicator-last {
+    display: block !important;
+    text-align: right !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 16pt !important;
+    color: #0a2518 !important;
+    font-style: normal !important;
 }
 
 /* ============================================

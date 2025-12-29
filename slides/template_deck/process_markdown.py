@@ -196,9 +196,9 @@ def process_markdown(input_file: str, output_file: str, max_lines: int = 20, no_
                         result_lines.append("")
                         result_lines.append('<div class="code-continued-indicator">...continued...</div>')
                     elif not is_first and is_last:
-                        # Last slide (continuation, no more)
+                        # Last slide (continuation, no more) - uses different class for positioning
                         result_lines.append("")
-                        result_lines.append('<div class="code-continued-indicator">...continued</div>')
+                        result_lines.append('<div class="code-continued-indicator-last">...continued</div>')
             else:
                 # No splitting needed, but still add line numbers and syntax highlighting
                 # Remove the opening fence we already added
