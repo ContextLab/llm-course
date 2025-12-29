@@ -127,7 +127,6 @@ code {
 
 /* Code blocks with rounded corners - light Dartmouth green tint background */
 pre {
-    display: block;
     margin: 1em auto 0;
     overflow: visible;
     border-radius: 12px;
@@ -138,18 +137,17 @@ pre {
     width: fit-content;
     min-width: 60%;
     max-width: 90%;
-    font-size: 0.55em;
+    font-size: 0.2em;
 }
 
 pre code {
-    display: block;
     background-color: transparent;
     color: #0a3d23;
     padding: 0;
     margin: 0;
     border-radius: 0;
     font-size: 1em;
-    line-height: 1.5;
+    line-height: 1.1;
     text-align: left;
     counter-reset: line;
 }
@@ -228,6 +226,23 @@ pre code .token.number {
 pre code .hljs-built_in,
 pre code .token.builtin {
     color: #00693e;
+}
+
+/* JavaScript-generated line numbers */
+pre code.has-line-numbers .line {
+    display: flex !important;
+    width: 100% !important;
+}
+
+pre code.has-line-numbers .line-num {
+    display: inline-block;
+    width: 2em;
+    padding-right: 0.8em;
+    margin-right: 0.8em;
+    text-align: right;
+    color: rgba(0, 105, 62, 0.4);
+    border-right: 1px solid rgba(0, 105, 62, 0.2);
+    user-select: none;
 }
 
 /* Headings - base styling only, font-size set per slide type */
@@ -385,7 +400,7 @@ figcaption {
 
 /* Main section styling - dark Dartmouth green text (almost black with green undertone) */
 section {
-    background-color: #f0f0f0;
+    background-color: #d8d8d8;
     color: #0a2518;
     font-size: 35px;
     font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
@@ -399,7 +414,7 @@ section {
     /* Content slide layout - title at top */
     display: flex !important;
     flex-direction: column !important;
-    justify-content: flex-start !important;
+    justify-content: center !important;
     align-items: center !important;
     place-content: flex-start center !important;
 }
@@ -482,8 +497,7 @@ b i {
     position: fixed;
     bottom: 0.5em;
     right: 0.25em;
-    display: block;
-    line-height: 1.2;
+    line-height: 1.1;
 }
 
 /* Multi-column layout - side by side with larger gap, centered */
@@ -563,7 +577,7 @@ section[id="1"] h1,
 section[id="1"] marp-h1 {
     font-size: 71px !important;
     font-weight: 500 !important;
-    margin: 0 !important;
+    margin: 10px 0 0 0 !important;
     margin-block: 0 !important;
     letter-spacing: normal !important;
 }
@@ -641,28 +655,55 @@ section:not(.lead):not(#\31) div {
    Exclude both .lead class AND id="1" (title slide)
    ============================================ */
 
-/* Content slides - keep flex but use column direction with start alignment */
+/* Content slides - use CSS Grid for dynamic title height handling
+   Row 1 (auto) = title takes natural height
+   Row 2 (1fr) = remaining space for content, centered
+   ============================================ */
 section:not(.lead):not(#\31) {
-    flex-direction: column !important;
-    justify-content: flex-start !important;
-    align-items: center !important;
-    padding-top: 40px !important;
+    display: grid !important;
+    grid-template-rows: auto 1fr !important;
+    grid-template-columns: 1fr !important;
+    padding: 5px 40px 20px 40px !important;
+    position: relative !important;
 }
 
-/* Pin h1 at top using position absolute */
-section:not(.lead):not(#\31) h1 {
+/* Background image with 75% opacity using pseudo-element */
+section:not(.lead):not(#\31)::before {
+    content: '' !important;
     position: absolute !important;
-    top: 40px !important;
+    top: 0 !important;
     left: 0 !important;
     right: 0 !important;
-    text-align: center !important;
-    margin: 0 !important;
+    bottom: 0 !important;
+    background-image: url('themes/background_geometry.svg') !important;
+    background-repeat: no-repeat !important;
+    background-position: bottom center !important;
+    background-size: 100% auto !important;
+    opacity: 0.75 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
 }
 
-/* REMOVED: This rule was breaking equation, quote, and contact slides
-   by adding excessive top margin to all first content elements.
-   The grid layout handles spacing appropriately without this override.
-*/
+/* Title in grid row 1 */
+section:not(.lead):not(#\31) h1 {
+    grid-row: 1 !important;
+    grid-column: 1 !important;
+    text-align: center !important;
+    margin: 10px 0 0 0 !important;
+    align-self: start !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* All other content centered in grid row 2 */
+section:not(.lead):not(#\31) > *:not(h1) {
+    grid-row: 2 !important;
+    grid-column: 1 !important;
+    place-self: center !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
 
 /* ============================================
    EQUATION SLIDES - KaTeX display math centering
@@ -694,4 +735,57 @@ section:not(.lead):not(#\31) p {
     text-align: center !important;
     width: 100% !important;
     margin: 0.5em auto !important;
+}
+/* Ensure tight line spacing for code lines */
+pre code.has-line-numbers .line {
+    display: flex !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.1 !important;
+}
+
+pre code.has-line-numbers .line-code {
+    display: inline !important;
+}
+
+/* Ensure code element uses flex column for tight line stacking */
+pre code.has-line-numbers {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+}
+
+/* Code overflow indicator when content exceeds minimum font size */
+pre.code-overflow {
+    position: relative;
+}
+
+pre.code-overflow::after {
+    content: '⋯ continued on next slide';
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-size: 12px;
+    color: rgba(0, 105, 62, 0.6);
+    font-style: italic;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* Support for wider line numbers (for continuation) */
+pre code.has-line-numbers .line-num {
+    min-width: 2em;
+    width: auto;
+}
+
+/* Auto-split code continuation indicator */
+.code-continued-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 40px;
+    font-size: 0.7em;
+    color: rgba(0, 105, 62, 0.6);
+    font-style: italic;
 }
