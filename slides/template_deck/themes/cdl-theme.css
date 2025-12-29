@@ -758,6 +758,12 @@ section:not(.lead):not(#\31) > ol {
     margin-right: auto !important;
 }
 
+/* Lists on slides with equations need consistent width for alignment */
+section:not(.lead):not(#\31):has(.katex-display) > ul,
+section:not(.lead):not(#\31):has(.katex-display) > ol {
+    width: 80% !important;
+}
+
 /* Paragraphs and equations centered */
 section:not(.lead):not(#\31) > p {
     text-align: center !important;
