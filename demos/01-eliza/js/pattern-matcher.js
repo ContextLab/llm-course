@@ -208,51 +208,57 @@ export class PatternMatcher {
     for (const rule of matchedRules) {
       // First try specific patterns
       for (const patternObj of rule.patterns) {
-        if (patternObj.pattern === '*') continue;
+        let patternStr = patternObj.pattern;
+        let shouldSave = false;
 
-        const matchResult = this.matchPattern(input, patternObj.pattern, synonyms);
+        // Check for memory save flag ($)
+        if (patternStr.startsWith('$')) {
+          shouldSave = true;
+          patternStr = patternStr.substring(1).trim();
+        }
+
+        if (patternStr === '*') continue;
+
+        const matchResult = this.matchPattern(input, patternStr, synonyms);
 
         if (matchResult.matched) {
           return {
             rule,
             pattern: patternObj,
             matchResult,
-            allTestedRules: matchedRules
+            allTestedRules: matchedRules,
+            shouldSave
           };
         }
       }
 
       // Then try catch-all for this rule
       for (const patternObj of rule.patterns) {
-        if (patternObj.pattern === '*') {
-          const matchResult = this.matchPattern(input, patternObj.pattern, synonyms);
+        let patternStr = patternObj.pattern;
+        let shouldSave = false;
+
+        // Check for memory save flag ($)
+        if (patternStr.startsWith('$')) {
+          shouldSave = true;
+          patternStr = patternStr.substring(1).trim();
+        }
+
+        if (patternStr === '*') {
+          const matchResult = this.matchPattern(input, patternStr, synonyms);
           if (matchResult.matched) {
             return {
               rule,
               pattern: patternObj,
               matchResult,
-              allTestedRules: matchedRules
+              allTestedRules: matchedRules,
+              shouldSave
             };
           }
         }
       }
     }
 
-    // No keyword matched, try catch-all patterns from any rule
-    for (const rule of rules) {
-      for (const patternObj of rule.patterns) {
-        if (patternObj.pattern === '*') {
-          const matchResult = this.matchPattern(input, patternObj.pattern, synonyms);
-          return {
-            rule,
-            pattern: patternObj,
-            matchResult,
-            allTestedRules: []
-          };
-        }
-      }
-    }
-
+    // No keyword matched
     return null;
   }
 

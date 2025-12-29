@@ -3,6 +3,7 @@
  * Main controller for the interactive text generation demo
  */
 
+import { AutoTokenizer, AutoModelForCausalLM } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
 import { SamplingStrategies } from './sampling-strategies.js';
 import { ProbabilityVisualizer } from './probability-visualizer.js';
 
@@ -177,12 +178,14 @@ class TextGenerationPlayground {
         try {
             this.showLoading(`Loading ${modelName}...`);
 
-            // Dynamically import Transformers.js
-            const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+            // Load tokenizer
+            this.elements.loadingText.textContent = 'Loading tokenizer...';
+            this.tokenizer = await AutoTokenizer.from_pretrained(modelName);
 
-            // Load model for text generation
+            // Load model
             this.elements.loadingText.textContent = 'Loading model (this may take a minute)...';
-            this.model = await pipeline('text-generation', modelName);
+            // Use quantized version by default for browser performance unless specified
+            this.model = await AutoModelForCausalLM.from_pretrained(modelName);
 
             this.showLoading(`Model loaded: ${modelName}`, 'success');
             setTimeout(() => this.hideLoading(), 2000);
@@ -262,67 +265,110 @@ class TextGenerationPlayground {
         this.elements.generatedText.appendChild(promptSpan);
 
         try {
-            // Generate all tokens at once for better performance
-            // Note: Transformers.js doesn't expose raw logits, so we simulate probabilities
-            const output = await this.model(prompt, {
-                max_new_tokens: maxLength,
-                temperature: strategy === 'greedy' ? 0.1 : temperature,
-                top_k: strategy === 'topk' || strategy === 'combined' ? topK : 0,
-                top_p: strategy === 'topp' || strategy === 'combined' ? topP : 1.0,
-                repetition_penalty: repetitionPenalty,
-                do_sample: strategy !== 'greedy',
-                num_return_sequences: 1
+            // Encode input
+            const inputs = await this.tokenizer(prompt, {
+                return_tensors: 'pt',
+                add_special_tokens: true
             });
 
-            if (!output || output.length === 0) {
-                throw new Error('Model returned no output');
-            }
+            let input_ids = inputs.input_ids;
+            let attention_mask = inputs.attention_mask;
 
-            const generatedText = output[0].generated_text;
-            if (!generatedText) {
-                throw new Error('Generated text is empty');
-            }
+            // Generate tokens one by one
+            let new_tokens = [];
 
-            // Split the generated text into tokens (approximate)
-            // This is a simple approximation since we don't have access to the actual tokenization
-            const fullText = generatedText.substring(prompt.length);
-            const tokens = this.approximateTokenize(fullText);
-
-            // Display tokens with simulated animations
-            for (let i = 0; i < tokens.length && !this.shouldStop; i++) {
-                const token = tokens[i];
-
-                // Simulate token info (since we don't have direct access to logits)
-                const tokenInfo = this.simulateTokenInfo(token, strategy, {
-                    temperature,
-                    topK,
-                    topP
+            for (let i = 0; i < maxLength && !this.shouldStop; i++) {
+                // Forward pass
+                const outputs = await this.model({
+                    input_ids: input_ids,
+                    attention_mask: attention_mask
                 });
 
-                // Update display
-                this.displayToken(token, tokenInfo);
+                // Get logits of the last token
+                // Shape: [batch_size, seq_len, vocab_size]
+                const next_token_logits = outputs.logits.slice(null, -1, null);
 
-                // Update statistics
+                // Get the last row of logits (vocab size)
+                const last_logits = next_token_logits.data;
+
+                // Sampling
+                const samplingOptions = {
+                    temperature,
+                    topK: (strategy === 'topk' || strategy === 'combined') ? topK : undefined,
+                    topP: (strategy === 'topp' || strategy === 'combined') ? topP : undefined,
+                    repetitionPenalty
+                };
+
+                // Sample next token
+                // generatedTokens needs to be array of IDs for penalty
+                const generatedIds = new_tokens.map(t => t.id);
+                const tokenInfo = SamplingStrategies.sample(
+                    Array.from(last_logits),
+                    strategy,
+                    samplingOptions,
+                    generatedIds
+                );
+
+                const next_token_id = tokenInfo.tokenId;
+
+                // Decode token
+                const decoded = this.tokenizer.decode([next_token_id], {
+                    skip_special_tokens: true
+                });
+
+                // Update info with text
+                tokenInfo.text = decoded;
+
+                // Update UI
+                this.displayToken(decoded, tokenInfo);
                 this.updateStatistics(tokenInfo);
 
-                // Update visualizations
+                // Visualization updates
                 if (this.elements.showProbabilities.checked) {
                     this.visualizer.displayTokenProbabilities(tokenInfo, i + 1);
                 }
-
                 if (this.elements.showAlternatives.checked) {
                     this.visualizer.displayAlternatives(tokenInfo.topTokens);
                 }
-
                 if (this.elements.showEntropy.checked) {
                     this.visualizer.updateEntropyChart(tokenInfo.entropy);
                 }
 
-                // Small delay for visualization effect
-                await new Promise(resolve => setTimeout(resolve, 50));
+                // Append to sequence for next iteration
+                // We need to construct new tensors for the next step
+                // This is a simplified approach; optimal would necessitate handling BigInt/tensors properly
+                // But Transformers.js JS API handles arrays too usually
+
+                // For simplicity in this demo, strict tensor append might be tricky without full tensor ops
+                // We'll re-tokenize the full sequence or append ID if supported. 
+                // Let's rely on the tokenizer adding the new token or manually extending inputs.
+
+                // IMPORTANT: Real implementation details depend on Transformers.js tensor handling.
+                // Re-running full forward pass is slower but safer for this demo refactor.
+
+                new_tokens.push({ id: next_token_id, text: decoded });
+
+                // Update input_ids for next pass
+                // We append the new token ID to the input_ids tensor
+                // Transformers.js tensors are complex, but we can often just pass arrays to the model if we re-create them
+                // Or we can use the helper to concat.
+
+                // Creating new input_ids from scratch (easiest way to ensure correctness without deep tensor manipulation code)
+                const allIds = [...Array.from(input_ids.data), BigInt(next_token_id)];
+                // Create new Tensor
+                const { Tensor } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+                input_ids = new Tensor('int64', BigInt64Array.from(allIds), [1, allIds.length]);
+                attention_mask = new Tensor('int64', BigInt64Array.from(Array(allIds.length).fill(1n)), [1, allIds.length]);
+
+                // Small delay to prevent UI freeze and allow stop
+                await new Promise(resolve => setTimeout(resolve, 0));
+
+                // Check if EOS
+                if (next_token_id === this.tokenizer.eos_token_id) {
+                    break;
+                }
             }
 
-            // Final statistics update
             this.updateFinalStats();
 
         } catch (error) {

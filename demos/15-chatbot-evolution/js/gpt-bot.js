@@ -12,7 +12,8 @@ export class GPTBot {
     async loadModel() {
         try {
             const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1');
-            this.model = await pipeline('text-generation', 'Xenova/distilgpt2');
+            // Using LaMini-GPT-124M - an instruction-tuned model better for chat than base DistilGPT2
+            this.model = await pipeline('text-generation', 'Xenova/LaMini-GPT-124M');
             this.isReady = true;
             return true;
         } catch (error) {
