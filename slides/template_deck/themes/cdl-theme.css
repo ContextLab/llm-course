@@ -859,3 +859,100 @@ pre code.has-line-numbers .line-num {
     color: #0a2518;
     font-style: italic;
 }
+
+/* ============================================
+   Pygments Syntax Highlighting (Dartmouth theme)
+   ============================================ */
+
+/* Keywords (def, return, class, if, etc.) */
+.hl-k, .hl-kn, .hl-kp, .hl-kr, .hl-kt {
+    color: #00693e;
+    font-weight: 600;
+}
+
+/* Keyword constants (True, False, None) */
+.hl-kc {
+    color: #00693e;
+    font-weight: 600;
+}
+
+/* Function and method names */
+.hl-nf, .hl-fm, .hl-nv {
+    color: #1a5276;
+}
+
+/* Class names */
+.hl-nc {
+    color: #8b4513;
+    font-weight: 600;
+}
+
+/* Strings */
+.hl-s, .hl-s1, .hl-s2, .hl-sb, .hl-sc, .hl-dl, .hl-sa, .hl-sr {
+    color: #a0522d;
+}
+
+/* Docstrings and heredocs */
+.hl-sd, .hl-sh {
+    color: #708090;
+    font-style: italic;
+}
+
+/* Numbers */
+.hl-m, .hl-mf, .hl-mh, .hl-mi, .hl-mo, .hl-mb, .hl-mx, .hl-il {
+    color: #b8860b;
+}
+
+/* Comments */
+.hl-c, .hl-c1, .hl-cm, .hl-cp, .hl-cpf, .hl-cs, .hl-ch {
+    color: #708090;
+    font-style: italic;
+}
+
+/* Operators */
+.hl-o, .hl-ow {
+    color: #555;
+}
+
+/* Punctuation */
+.hl-p {
+    color: #333;
+}
+
+/* Built-in names (print, len, etc.) */
+.hl-nb {
+    color: #1a5276;
+}
+
+/* Built-in pseudo (self, cls) */
+.hl-bp {
+    color: #00693e;
+    font-style: italic;
+}
+
+/* Names/variables */
+.hl-n, .hl-na, .hl-ni, .hl-nl, .hl-nn, .hl-no, .hl-nt {
+    color: inherit;
+}
+
+/* Decorators */
+.hl-nd {
+    color: #9932cc;
+}
+
+/* Escape sequences */
+.hl-se {
+    color: #b8860b;
+    font-weight: 600;
+}
+
+/* Whitespace - make invisible */
+.hl-w {
+    color: transparent;
+}
+
+/* Error tokens */
+.hl-err {
+    color: #dc143c;
+    background-color: #fdd;
+}

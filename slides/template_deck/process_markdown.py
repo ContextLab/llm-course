@@ -21,9 +21,43 @@ Arguments:
 import argparse
 import re
 import sys
+from html import escape
+
+# Pygments for syntax highlighting
+try:
+    from pygments import highlight
+    from pygments.lexers import get_lexer_by_name, guess_lexer, TextLexer
+    from pygments.formatters import HtmlFormatter
+    from pygments.util import ClassNotFound
+    PYGMENTS_AVAILABLE = True
+except ImportError:
+    PYGMENTS_AVAILABLE = False
 
 
-# No JavaScript needed - line numbers handled by CSS counters in theme
+def highlight_code_line(code_line: str, lang: str) -> str:
+    """
+    Apply syntax highlighting to a single line of code.
+    Returns HTML with span tags for syntax highlighting.
+    """
+    if not PYGMENTS_AVAILABLE or not code_line.strip():
+        return escape(code_line)
+
+    try:
+        if lang:
+            lexer = get_lexer_by_name(lang, stripall=False)
+        else:
+            lexer = TextLexer()
+    except ClassNotFound:
+        lexer = TextLexer()
+
+    # Use a formatter that outputs inline styles or classes
+    formatter = HtmlFormatter(nowrap=True, classprefix='hl-')
+
+    # Highlight the line
+    highlighted = highlight(code_line, lexer, formatter)
+
+    # Remove trailing newline that Pygments adds
+    return highlighted.rstrip('\n')
 
 
 def process_markdown(input_file: str, output_file: str, max_lines: int = 20, no_split: bool = False) -> dict:
@@ -128,23 +162,22 @@ def process_markdown(input_file: str, output_file: str, max_lines: int = 20, no_
                             result_lines.append("")
 
                     if chunk_idx == 0:
-                        # First chunk: use HTML with line numbers
+                        # First chunk: use HTML with line numbers and syntax highlighting
                         lang_class = f'class="language-{code_block_lang} has-line-numbers"' if code_block_lang else 'class="has-line-numbers"'
                         result_lines.append(f'<pre><code {lang_class} data-start-line="1">')
                         for line_idx, code_line in enumerate(chunk):
                             line_num = line_idx + 1
-                            escaped = code_line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                            result_lines.append(f'<span class="line"><span class="line-num">{line_num}</span><span class="line-code">{escaped}</span></span>')
+                            highlighted = highlight_code_line(code_line, code_block_lang)
+                            result_lines.append(f'<span class="line"><span class="line-num">{line_num}</span><span class="line-code">{highlighted}</span></span>')
                         result_lines.append("</code></pre>")
                     else:
-                        # Continuation chunks: use HTML with data-start-line attribute
+                        # Continuation chunks: use HTML with data-start-line attribute and syntax highlighting
                         lang_class = f'class="language-{code_block_lang} has-line-numbers"' if code_block_lang else 'class="has-line-numbers"'
                         result_lines.append(f'<pre><code {lang_class} data-start-line="{start_line_num}">')
                         for line_idx, code_line in enumerate(chunk):
                             line_num = start_line_num + line_idx
-                            # Escape HTML entities in code
-                            escaped = code_line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                            result_lines.append(f'<span class="line"><span class="line-num">{line_num}</span><span class="line-code">{escaped}</span></span>')
+                            highlighted = highlight_code_line(code_line, code_block_lang)
+                            result_lines.append(f'<span class="line"><span class="line-num">{line_num}</span><span class="line-code">{highlighted}</span></span>')
                         result_lines.append("</code></pre>")
 
                     # Add continued indicator based on position in sequence
@@ -167,7 +200,7 @@ def process_markdown(input_file: str, output_file: str, max_lines: int = 20, no_
                         result_lines.append("")
                         result_lines.append('<div class="code-continued-indicator">...continued</div>')
             else:
-                # No splitting needed, but still add line numbers using HTML
+                # No splitting needed, but still add line numbers and syntax highlighting
                 # Remove the opening fence we already added
                 result_lines = result_lines[:code_block_start_idx]
 
@@ -175,8 +208,8 @@ def process_markdown(input_file: str, output_file: str, max_lines: int = 20, no_
                 result_lines.append(f'<pre><code {lang_class} data-start-line="1">')
                 for line_idx, code_line in enumerate(code_lines_buffer):
                     line_num = line_idx + 1
-                    escaped = code_line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                    result_lines.append(f'<span class="line"><span class="line-num">{line_num}</span><span class="line-code">{escaped}</span></span>')
+                    highlighted = highlight_code_line(code_line, code_block_lang)
+                    result_lines.append(f'<span class="line"><span class="line-num">{line_num}</span><span class="line-code">{highlighted}</span></span>')
                 result_lines.append("</code></pre>")
 
             code_lines_buffer = []
