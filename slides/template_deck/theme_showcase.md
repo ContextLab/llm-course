@@ -293,6 +293,69 @@ The quadratic memory complexity of attention limits context length.
 
 ---
 
+# Emoji figures
+
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">🎓</span>
+    <span class="label">Students</span>
+  </div>
+  <span class="emoji emoji-lg">➡️</span>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-teal">🤖</span>
+    <span class="label">LLM</span>
+  </div>
+  <span class="emoji emoji-lg">➡️</span>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-orange">💡</span>
+    <span class="label">Insights</span>
+  </div>
+</div>
+
+---
+
+# Emoji sizes and states
+
+<div class="emoji-row">
+  <div class="emoji-col">
+    <span class="emoji emoji-xs">🧠</span>
+    <span class="label">xs (24px)</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-sm">🧠</span>
+    <span class="label">sm (48px)</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-md">🧠</span>
+    <span class="label">md (72px)</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-lg">🧠</span>
+    <span class="label">lg (96px)</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl">🧠</span>
+    <span class="label">xl (128px)</span>
+  </div>
+</div>
+
+<div class="emoji-row" style="margin-top: 1em;">
+  <div class="emoji-col">
+    <span class="emoji emoji-lg">👤</span>
+    <span class="label">Normal</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-lg emoji-faded">👤</span>
+    <span class="label">Faded</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-lg emoji-gray">👤</span>
+    <span class="label">Inactive</span>
+  </div>
+</div>
+
+---
+
 # Course Information
 
 <div style="display: flex; gap: 2em;">

@@ -1268,3 +1268,183 @@ section:not(.lead):not(#\31) > .warning-box {
     align-self: center !important;
     justify-self: center !important;
 }
+
+/* ============================================
+   EMOJI FIGURES - Slime-Mold Inspired Styling
+   For creating emoji-based diagrams and figures
+   ============================================ */
+
+/* Base emoji styling - makes emojis behave as inline-blocks */
+.emoji {
+    display: inline-block;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* Emoji size classes */
+.emoji-xs { font-size: 24px; }   /* Extra small */
+.emoji-sm { font-size: 48px; }   /* Small */
+.emoji-md { font-size: 72px; }   /* Medium */
+.emoji-lg { font-size: 96px; }   /* Large */
+.emoji-xl { font-size: 128px; }  /* Extra large */
+.emoji-xxl { font-size: 192px; } /* Hero size */
+
+/* Emoji with background - colored "pedestal" effect */
+.emoji-bg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em;
+    border-radius: 8px;
+}
+
+.emoji-bg-orange { background-color: #f97316; }
+.emoji-bg-teal { background-color: #14b8a6; }
+.emoji-bg-green { background-color: #00693e; }
+.emoji-bg-blue { background-color: #3b82f6; }
+.emoji-bg-gray { background-color: #9ca3af; }
+
+/* Grayscale effect for "inactive" emojis */
+.emoji-gray,
+.emoji-inactive {
+    filter: grayscale(100%);
+    opacity: 0.7;
+}
+
+.emoji-faded {
+    filter: grayscale(50%);
+    opacity: 0.8;
+}
+
+/* Emoji figure container - for grouping emojis into diagrams */
+.emoji-figure {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    margin: 1em auto;
+}
+
+/* Row layout for emoji figures */
+.emoji-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 2em;
+}
+
+/* Column layout for emoji figures */
+.emoji-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+}
+
+/* Grid layout for emoji figures */
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 1em;
+    justify-items: center;
+    align-items: center;
+}
+
+/* Emoji with label underneath */
+.emoji-labeled {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3em;
+}
+
+.emoji-labeled .label {
+    font-size: 0.6em;
+    text-align: center;
+    max-width: 120px;
+}
+
+/* Hierarchy/tree structure */
+.emoji-hierarchy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.emoji-hierarchy-row {
+    display: flex;
+    justify-content: center;
+    gap: 3em;
+    position: relative;
+}
+
+/* Horizontal line connector for hierarchy */
+.emoji-hierarchy-row.with-connector::before {
+    content: '';
+    position: absolute;
+    top: -25px;
+    left: 25%;
+    right: 25%;
+    height: 2px;
+    background-color: #9ca3af;
+}
+
+/* Vertical line from parent */
+.emoji-hierarchy-row.with-connector::after {
+    content: '';
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    width: 2px;
+    height: 25px;
+    background-color: #9ca3af;
+    transform: translateX(-50%);
+}
+
+/* ============================================
+   DIAGRAM AND CHART STYLING
+   ============================================ */
+
+/* Kroki/Mermaid diagram containers */
+.diagram-container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 0.5em auto !important;
+}
+
+.diagram-container img {
+    max-width: 90% !important;
+    max-height: 60vh !important;
+    object-fit: contain !important;
+}
+
+/* Chart.js canvas containers */
+.chart-container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 80% !important;
+    max-height: 55vh !important;
+    margin: 0.5em auto !important;
+}
+
+.chart-container canvas {
+    max-width: 100% !important;
+    max-height: 100% !important;
+}
+
+/* Caption styling for diagrams and charts */
+.diagram-caption,
+.chart-caption {
+    text-align: center !important;
+    font-size: 0.7em !important;
+    font-style: italic !important;
+    color: #6b7c85 !important;
+    margin-top: 0.3em !important;
+}
