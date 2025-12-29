@@ -186,3 +186,4 @@ demos/15-chatbot-evolution/alice-aiml-original/
 *.synctex.gz
 luatex.*/
 .playwright-mcp/*.png
+.playwright-mcp/.playwright-mcp/*.png
