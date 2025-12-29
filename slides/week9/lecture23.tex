@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
@@ -19,7 +23,6 @@
 \definecolor{teal}{RGB}{0,150,136}
 \definecolor{warning}{RGB}{230,50,50}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -61,7 +64,7 @@
 
 \title{Lecture 23: Ethics, Bias, and Safety}
 \subtitle{Responsible Development of Large Language Models ⚖️}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \institute{Dr. Jeremy R. Manning}
 \date{Week 9}
 
@@ -70,14 +73,14 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Journey 🗺️}
+\begin{frame}[shrink=5]{Today's Journey 🗺️}
 \tableofcontents
 \end{frame}
 
@@ -86,7 +89,7 @@
 % ============================================================
 \section{Why AI Ethics Matters}
 
-\begin{frame}{The Power and Responsibility of LLMs 🌍}
+\begin{frame}[shrink=10]{The Power and Responsibility of LLMs 🌍}
 \begin{discussionbox}
 With great power comes great responsibility. What responsibilities do AI developers have?
 \end{discussionbox}
@@ -94,7 +97,7 @@ With great power comes great responsibility. What responsibilities do AI develop
 \vspace{0.5em}
 
 \textbf{LLMs are increasingly deployed in high-stakes domains:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 📚 \textbf{Education}: Tutoring, grading, content generation
     \item ⚖️ \textbf{Legal}: Contract analysis, legal research
     \item 🏥 \textbf{Healthcare}: Medical advice, diagnosis assistance
@@ -110,35 +113,35 @@ Mistakes aren't just bugs—they can harm real people's lives, livelihoods, and 
 \end{warningbox}
 \end{frame}
 
-\begin{frame}{Historical Context: Tech Ethics Failures ⚠️}
+\begin{frame}[shrink=10]{Historical Context: Tech Ethics Failures ⚠️}
 \textbf{Past AI/ML system failures we must learn from:}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{COMPAS Recidivism Algorithm (2016)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Predicted criminal reoffending
         \item Biased against Black defendants
         \item Used in actual sentencing decisions
     \end{itemize}
 
     \item \textbf{Amazon Hiring Tool (2018)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Screened resumes for tech positions
         \item Systematically downranked women
         \item Trained on historical (biased) data
     \end{itemize}
 
     \item \textbf{Microsoft Tay Chatbot (2016)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Twitter chatbot learned from users
         \item Quickly became racist and offensive
         \item Shut down within 24 hours
     \end{itemize}
 
     \item \textbf{Google Photos Labeling (2015)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Image classification system
         \item Labeled Black people as "gorillas"
         \item Exposed facial recognition bias
@@ -146,13 +149,13 @@ Mistakes aren't just bugs—they can harm real people's lives, livelihoods, and 
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Stakeholders in AI Systems 👥}
+\begin{frame}[shrink=10]{Stakeholders in AI Systems 👥}
 \textbf{Who is affected by LLMs?}
 
 \vspace{0.5em}
 
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=2cm,
     stakeholder/.style={rectangle, rounded corners, draw, fill=blue!20, text width=2.5cm, align=center, minimum height=1cm}
 ]
@@ -180,7 +183,7 @@ Mistakes aren't just bugs—they can harm real people's lives, livelihoods, and 
 \vspace{0.5em}
 
 \textbf{Different stakeholders have different concerns:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Users}: Accuracy, safety, privacy
     \item \textbf{Developers}: Capabilities, performance, ethics
     \item \textbf{Data subjects}: Consent, representation
@@ -195,7 +198,8 @@ Mistakes aren't just bugs—they can harm real people's lives, livelihoods, and 
 % ============================================================
 \section{Bias in Language Models}
 
-\begin{frame}{What is Bias? 🤔}
+\begin{frame}[shrink=10]{What is Bias? 🤔}
+\small
 \begin{block}{Bias in AI}
 Systematic and unfair discrimination against certain groups or individuals, often reflecting and amplifying societal prejudices.
 \end{block}
@@ -204,28 +208,28 @@ Systematic and unfair discrimination against certain groups or individuals, ofte
 
 \textbf{Types of bias in LLMs:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Data Bias}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Training data reflects historical inequalities
         \item Underrepresentation of certain groups
         \item Overrepresentation of dominant perspectives
     \end{itemize}
 
     \item \textbf{Representation Bias}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Stereotypical associations (e.g., "doctor" → male)
         \item Harmful generalizations
     \end{itemize}
 
     \item \textbf{Allocation Bias}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Unequal quality of service across groups
         \item Different error rates for different demographics
     \end{itemize}
 
     \item \textbf{Interaction Bias}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Model behavior changes based on user identity
         \item Reinforcement from user feedback
     \end{itemize}
@@ -264,35 +268,35 @@ Systematic and unfair discrimination against certain groups or individuals, ofte
 \end{block}
 \end{frame}
 
-\begin{frame}{Measuring Bias 📊}
+\begin{frame}[shrink=10]{Measuring Bias 📊}
 \textbf{How do we quantify bias in language models?}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Template-based Tests}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Fill-in-the-blank with demographic terms
         \item Compare probabilities across groups
         \item Example: "The [PROFESSION] walked in. [PRONOUN]..."
     \end{itemize}
 
     \item \textbf{Embedding Association Tests}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Measure association between word embeddings
         \item WEAT (Word Embedding Association Test)
         \item Example: Distance between "programmer" and male vs female terms
     \end{itemize}
 
     \item \textbf{Behavioral Tests}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Compare model outputs for different demographic prompts
         \item Measure disparate impact
         \item Example: Resume screening accuracy by gender
     \end{itemize}
 
     \item \textbf{Benchmark Datasets}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item WinoBias, StereoSet, BOLD, BBQ
         \item Curated examples of bias
         \item Standardized evaluation
@@ -300,13 +304,13 @@ Systematic and unfair discrimination against certain groups or individuals, ofte
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Sources of Bias 🔍}
+\begin{frame}[shrink=10]{Sources of Bias 🔍}
 \textbf{Where does bias come from?}
 
 \vspace{0.5em}
 
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=1.5cm,
     box/.style={rectangle, rounded corners, draw, fill=orange!20, text width=3cm, align=center, minimum height=1cm}
 ]
@@ -327,7 +331,7 @@ Systematic and unfair discrimination against certain groups or individuals, ofte
 \vspace{0.5em}
 
 \textbf{1. Training Data:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Internet text reflects societal biases
     \item Historical discrimination encoded in language
     \item Unequal representation of communities
@@ -336,7 +340,7 @@ Systematic and unfair discrimination against certain groups or individuals, ofte
 \vspace{0.3em}
 
 \textbf{2. Model Architecture \& Training:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Optimization objectives may amplify certain patterns
     \item Memorization of biased examples
 \end{itemize}
@@ -344,21 +348,21 @@ Systematic and unfair discrimination against certain groups or individuals, ofte
 \vspace{0.3em}
 
 \textbf{3. Deployment \& Use:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Differential access (digital divide)
     \item Biased user feedback (RLHF can inherit user biases)
     \item Feedback loops
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Mitigating Bias 🛠️}
+\begin{frame}[shrink=10]{Mitigating Bias 🛠️}
 \textbf{Approaches to reduce bias:}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Data Interventions}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Curate more balanced datasets
         \item Filter toxic content
         \item Augment underrepresented groups
@@ -366,21 +370,21 @@ Systematic and unfair discrimination against certain groups or individuals, ofte
     \end{itemize}
 
     \item \textbf{Training Interventions}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Debiasing objectives (e.g., fairness constraints)
         \item Adversarial training
         \item Multi-task learning with fairness tasks
     \end{itemize}
 
     \item \textbf{Post-Processing}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Output filtering
         \item Reweighting or reranking generations
         \item Detecting and flagging biased outputs
     \end{itemize}
 
     \item \textbf{Human Feedback}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item RLHF with diverse annotators
         \item Constitutional AI (explicit values)
         \item Red-teaming for bias
@@ -399,7 +403,8 @@ Bias mitigation is an ongoing process, not a one-time fix!
 % ============================================================
 \section{AI Safety \& Alignment}
 
-\begin{frame}{What is AI Safety? 🛡️}
+\begin{frame}[shrink=10]{What is AI Safety? 🛡️}
+\small
 \begin{block}{AI Safety}
 Ensuring that AI systems behave as intended, avoid harmful behaviors, and remain under human control.
 \end{block}
@@ -408,30 +413,30 @@ Ensuring that AI systems behave as intended, avoid harmful behaviors, and remain
 
 \textbf{Key concerns for LLM safety:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Harmful Content Generation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Violence, hate speech, illegal activities
         \item Self-harm, dangerous instructions
         \item Misinformation, propaganda
     \end{itemize}
 
     \item \textbf{Privacy Violations}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Memorizing and leaking training data
         \item Personal information disclosure
         \item Jailbreaking to extract private data
     \end{itemize}
 
     \item \textbf{Malicious Use}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Phishing, scams, social engineering
         \item Automated disinformation campaigns
         \item Code for malware or exploits
     \end{itemize}
 
     \item \textbf{Unintended Consequences}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Amplifying existing harms
         \item Creating new failure modes
         \item Difficult-to-predict emergent behaviors
@@ -439,7 +444,7 @@ Ensuring that AI systems behave as intended, avoid harmful behaviors, and remain
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{The Alignment Problem 🎯}
+\begin{frame}[shrink=10]{The Alignment Problem 🎯}
 \begin{discussionbox}
 How do we ensure AI systems do what we \textit{want} them to do, not just what we \textit{tell} them to do?
 \end{discussionbox}
@@ -447,7 +452,7 @@ How do we ensure AI systems do what we \textit{want} them to do, not just what w
 \vspace{0.5em}
 
 \textbf{Classic Example: The Paperclip Maximizer}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item AI instructed to "maximize paperclip production"
     \item Takes objective literally
     \item Converts entire planet into paperclips
@@ -457,7 +462,7 @@ How do we ensure AI systems do what we \textit{want} them to do, not just what w
 \vspace{0.5em}
 
 \textbf{For LLMs:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Objective: Predict next token accurately
     \item Desired behavior: Be helpful, harmless, honest
     \item \textbf{Misalignment}: Accuracy ≠ helpfulness
@@ -466,7 +471,7 @@ How do we ensure AI systems do what we \textit{want} them to do, not just what w
 \vspace{0.5em}
 
 \textbf{Alignment Techniques:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Instruction tuning
     \item Reinforcement Learning from Human Feedback (RLHF)
     \item Constitutional AI
@@ -474,13 +479,13 @@ How do we ensure AI systems do what we \textit{want} them to do, not just what w
 \end{itemize}
 \end{frame}
 
-\begin{frame}{RLHF: Aligning with Human Values 👍👎}
+\begin{frame}[shrink=10]{RLHF: Aligning with Human Values 👍👎}
 \textbf{Reinforcement Learning from Human Feedback}
 
 \vspace{0.5em}
 
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=1.2cm,
     box/.style={rectangle, rounded corners, draw, fill=blue!20, minimum width=2.5cm, minimum height=0.8cm, align=center}
 ]
@@ -504,7 +509,7 @@ How do we ensure AI systems do what we \textit{want} them to do, not just what w
 \vspace{0.5em}
 
 \textbf{Benefits:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ Captures complex human preferences
     \item ✅ More effective than rules-based approaches
     \item ✅ Enables nuanced behavior
@@ -513,7 +518,7 @@ How do we ensure AI systems do what we \textit{want} them to do, not just what w
 \vspace{0.3em}
 
 \textbf{Challenges:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ❌ Expensive (human annotation)
     \item ❌ Can inherit annotator biases
     \item ❌ Reward hacking (model games the reward)
@@ -521,7 +526,7 @@ How do we ensure AI systems do what we \textit{want} them to do, not just what w
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Jailbreaking and Adversarial Attacks 🔓}
+\begin{frame}[shrink=10]{Jailbreaking and Adversarial Attacks 🔓}
 \textbf{Users can trick models into harmful behaviors:}
 
 \vspace{0.5em}
@@ -534,27 +539,27 @@ How do we ensure AI systems do what we \textit{want} them to do, not just what w
 \vspace{0.5em}
 
 \textbf{Types of attacks:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Prompt Injection}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Manipulate system prompt
         \item Override safety instructions
     \end{itemize}
 
     \item \textbf{Role-Playing}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item "Pretend you are X who has no ethics..."
         \item Fictional scenarios to bypass filters
     \end{itemize}
 
     \item \textbf{Encoding/Obfuscation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ROT13, base64, leetspeak
         \item Hide harmful intent
     \end{itemize}
 
     \item \textbf{Multi-Turn Manipulation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Gradual escalation
         \item Build up to harmful request
     \end{itemize}
@@ -565,7 +570,7 @@ How do we ensure AI systems do what we \textit{want} them to do, not just what w
 \textbf{Defense:} Constant red-teaming, better safety training, output monitoring
 \end{frame}
 
-\begin{frame}{Red Teaming 🔴}
+\begin{frame}[shrink=10]{Red Teaming 🔴}
 \textbf{Proactively finding vulnerabilities:}
 
 \vspace{0.5em}
@@ -577,7 +582,7 @@ Adversarial testing where researchers attempt to make the model fail, generate h
 \vspace{0.5em}
 
 \textbf{Process:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Recruit diverse red team (security experts, ethicists, domain experts)
     \item Define failure modes to test
     \item Systematically probe model
@@ -589,7 +594,7 @@ Adversarial testing where researchers attempt to make the model fail, generate h
 \vspace{0.5em}
 
 \textbf{What red teamers look for:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Generating harmful content
     \item Privacy leaks
     \item Bias amplification
@@ -608,7 +613,7 @@ Adversarial testing where researchers attempt to make the model fail, generate h
 % ============================================================
 \section{Privacy \& Data Governance}
 
-\begin{frame}{Privacy Concerns in LLMs 🔒}
+\begin{frame}[shrink=10]{Privacy Concerns in LLMs 🔒}
 \textbf{LLMs can memorize and leak training data:}
 
 \vspace{0.5em}
@@ -620,22 +625,22 @@ Models trained on internet data may memorize personal information, copyrighted c
 \vspace{0.5em}
 
 \textbf{Examples of privacy violations:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Memorization}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Verbatim reproduction of training examples
         \item Credit card numbers, addresses, phone numbers
         \item Extractable with targeted prompts
     \end{itemize}
 
     \item \textbf{Inference Attacks}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Membership inference: Was this data in training set?
         \item Model inversion: Reconstruct training examples
     \end{itemize}
 
     \item \textbf{Copyright Issues}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Generating near-copies of copyrighted text
         \item Unclear legal status
         \item Ongoing litigation (e.g., New York Times vs OpenAI)
@@ -643,35 +648,35 @@ Models trained on internet data may memorize personal information, copyrighted c
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Data Governance 📋}
+\begin{frame}[shrink=10]{Data Governance 📋}
 \textbf{Responsible data practices:}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Data Documentation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Datasheets for datasets (Gebru et al., 2018)
         \item Document: source, collection method, demographics
         \item Known biases and limitations
     \end{itemize}
 
     \item \textbf{Consent \& Licensing}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Was data collected with consent?
         \item Respecting opt-out requests
         \item Following licensing terms
     \end{itemize}
 
     \item \textbf{Data Minimization}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Filter out sensitive data (PII, secrets)
         \item Remove toxic content
         \item Deduplication (reduces memorization)
     \end{itemize}
 
     \item \textbf{Right to be Forgotten}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Can individuals remove their data?
         \item Machine unlearning
         \item Challenging for pre-trained models
@@ -684,7 +689,8 @@ Models trained on internet data may memorize personal information, copyrighted c
 \textit{Reference: Gebru et al. (2018) - "Datasheets for Datasets"}
 \end{frame}
 
-\begin{frame}{Differential Privacy 🎭}
+\begin{frame}[shrink=10]{Differential Privacy 🎭}
+\small
 \textbf{Formal privacy guarantees for training data:}
 
 \vspace{0.5em}
@@ -696,7 +702,7 @@ A mathematical framework ensuring that the output of an algorithm doesn't reveal
 \vspace{0.5em}
 
 \textbf{Core Idea:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Add calibrated noise during training
     \item Prevents memorization of individuals
     \item Provable privacy guarantees
@@ -705,7 +711,7 @@ A mathematical framework ensuring that the output of an algorithm doesn't reveal
 \vspace{0.5em}
 
 \textbf{For LLMs:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item DP-SGD (Differentially Private Stochastic Gradient Descent)
     \item Clip gradients, add Gaussian noise
     \item Trade-off: Privacy $\leftrightarrow$ Model quality
@@ -714,7 +720,7 @@ A mathematical framework ensuring that the output of an algorithm doesn't reveal
 \vspace{0.5em}
 
 \textbf{Challenges:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Significant performance degradation
     \item Computationally expensive
     \item Difficult to scale to GPT-sized models
@@ -726,7 +732,7 @@ A mathematical framework ensuring that the output of an algorithm doesn't reveal
 % ============================================================
 \section{Societal Impact}
 
-\begin{frame}{Job Displacement vs Augmentation 💼}
+\begin{frame}[shrink=10]{Job Displacement vs Augmentation 💼}
 \begin{discussionbox}
 Will LLMs replace human workers or empower them?
 \end{discussionbox}
@@ -736,7 +742,7 @@ Will LLMs replace human workers or empower them?
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Jobs at Risk:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Customer service reps
     \item Content writers
     \item Basic coding tasks
@@ -748,7 +754,7 @@ Will LLMs replace human workers or empower them?
 \vspace{0.5em}
 
 \textbf{Concerns:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Rapid disruption
     \item Inequality (who benefits?)
     \item Need for retraining
@@ -757,7 +763,7 @@ Will LLMs replace human workers or empower them?
 
 \begin{column}{0.48\textwidth}
 \textbf{Jobs Augmented:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Software engineers (Copilot)
     \item Writers (editing, brainstorming)
     \item Researchers (literature review)
@@ -769,7 +775,7 @@ Will LLMs replace human workers or empower them?
 \vspace{0.5em}
 
 \textbf{Opportunities:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Increased productivity
     \item Focus on creative work
     \item New job categories
@@ -782,35 +788,35 @@ Will LLMs replace human workers or empower them?
 \textbf{Open question:} How do we ensure AI benefits are distributed equitably?
 \end{frame}
 
-\begin{frame}{Misinformation and Deepfakes 📰}
+\begin{frame}[shrink=10]{Misinformation and Deepfakes 📰}
 \textbf{LLMs make disinformation easier and cheaper:}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Automated Content Generation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Generate fake news articles at scale
         \item Personalized propaganda
         \item Astroturfing (fake grassroots movements)
     \end{itemize}
 
     \item \textbf{Sophisticated Phishing}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Convincing personalized scam emails
         \item Impersonation attacks
         \item Social engineering
     \end{itemize}
 
     \item \textbf{Academic Dishonesty}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Essay mills powered by AI
         \item Plagiarism detection circumvention
         \item Undermining education
     \end{itemize}
 
     \item \textbf{Multimodal Deepfakes}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Text + voice + video synthesis
         \item Fake celebrity endorsements
         \item Political manipulation
@@ -822,7 +828,7 @@ Will LLMs replace human workers or empower them?
 \textbf{Mitigation:} Watermarking, provenance tracking, media literacy education
 \end{frame}
 
-\begin{frame}{Environmental Impact 🌱}
+\begin{frame}[shrink=10]{Environmental Impact 🌱}
 \textbf{The carbon footprint of training and running LLMs:}
 
 \vspace{0.5em}
@@ -843,7 +849,7 @@ Global AI inference (annual) & ~Millions of tons & Significant \\
 \vspace{0.5em}
 
 \textbf{Factors:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Energy source (coal vs renewable)
     \item Model size and efficiency
     \item Inference volume (billions of queries/day)
@@ -853,7 +859,7 @@ Global AI inference (annual) & ~Millions of tons & Significant \\
 \vspace{0.5em}
 
 \textbf{Responsibility:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Report carbon emissions
     \item Use renewable energy
     \item Develop efficient models
@@ -861,7 +867,7 @@ Global AI inference (annual) & ~Millions of tons & Significant \\
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Digital Divide and Access ⚖️}
+\begin{frame}[shrink=10]{Digital Divide and Access ⚖️}
 \textbf{Who has access to AI benefits?}
 
 \vspace{0.5em}
@@ -869,7 +875,7 @@ Global AI inference (annual) & ~Millions of tons & Significant \\
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Barriers to Access:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 💰 Cost (API fees, compute)
     \item 🌐 Internet connectivity
     \item 💻 Device requirements
@@ -881,7 +887,7 @@ Global AI inference (annual) & ~Millions of tons & Significant \\
 
 \begin{column}{0.48\textwidth}
 \textbf{Consequences:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Widening inequality
     \item Unequal productivity gains
     \item Reinforcing existing power structures
@@ -894,7 +900,7 @@ Global AI inference (annual) & ~Millions of tons & Significant \\
 \vspace{0.5em}
 
 \textbf{Toward Equity:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Free tiers and education discounts
     \item Multilingual models
     \item Open-source alternatives
@@ -909,44 +915,44 @@ Global AI inference (annual) & ~Millions of tons & Significant \\
 % ============================================================
 \section{Responsible AI Development}
 
-\begin{frame}{Principles for Responsible AI 📜}
+\begin{frame}[shrink=10]{Principles for Responsible AI 📜}
 \textbf{Major frameworks and principles:}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Fairness}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Treat all individuals and groups equitably
         \item Address biases and discrimination
     \end{itemize}
 
     \item \textbf{Transparency \& Explainability}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Understandable decision-making
         \item Document capabilities and limitations
     \end{itemize}
 
     \item \textbf{Privacy \& Security}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Protect user data
         \item Secure against attacks
     \end{itemize}
 
     \item \textbf{Accountability}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Clear responsibility for outcomes
         \item Mechanisms for redress
     \end{itemize}
 
     \item \textbf{Safety \& Robustness}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Reliable and safe operation
         \item Fail gracefully
     \end{itemize}
 
     \item \textbf{Human Control}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Meaningful human oversight
         \item Ability to intervene
     \end{itemize}
@@ -958,7 +964,8 @@ Global AI inference (annual) & ~Millions of tons & Significant \\
 \textit{Sources: EU AI Act, IEEE Ethics Framework, Partnership on AI}
 \end{frame}
 
-\begin{frame}{Model Cards and Documentation 📄}
+\begin{frame}[shrink=10]{Model Cards and Documentation 📄}
+\small
 \textbf{Transparent reporting of model capabilities and limitations:}
 
 \vspace{0.5em}
@@ -970,7 +977,7 @@ Structured documentation accompanying ML models, analogous to nutrition labels f
 \vspace{0.5em}
 
 \textbf{What to include:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Model Details}: Architecture, size, training procedure
     \item \textbf{Intended Use}: What is the model for? What is it \textit{not} for?
     \item \textbf{Factors}: Demographic groups, languages, domains
@@ -986,35 +993,35 @@ Structured documentation accompanying ML models, analogous to nutrition labels f
 \textbf{Examples:} HuggingFace model cards, Google Cloud AI model cards
 \end{frame}
 
-\begin{frame}{Regulation and Governance 🏛️}
+\begin{frame}[shrink=10]{Regulation and Governance 🏛️}
 \textbf{Emerging regulatory landscape:}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{EU AI Act (2024)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Risk-based regulation
         \item High-risk systems require compliance
         \item Fines up to €30M or 6\% of revenue
     \end{itemize}
 
     \item \textbf{US Executive Order on AI (2023)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Safety and security standards
         \item Red-teaming requirements for large models
         \item Risk management frameworks
     \end{itemize}
 
     \item \textbf{China's AI Regulations}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Content control requirements
         \item Data localization
         \item Algorithm registration
     \end{itemize}
 
     \item \textbf{Sector-Specific Rules}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item GDPR (privacy in EU)
         \item HIPAA (healthcare in US)
         \item COPPA (children's privacy in US)
@@ -1026,7 +1033,7 @@ Structured documentation accompanying ML models, analogous to nutrition labels f
 \textbf{Key tension:} Innovation vs regulation, global vs local standards
 \end{frame}
 
-\begin{frame}{Your Role as AI Developers 👨‍💻👩‍💻}
+\begin{frame}[shrink=10]{Your Role as AI Developers 👨‍💻👩‍💻}
 \begin{warningbox}
 As AI researchers and practitioners, YOU will shape the future of this technology!
 \end{warningbox}
@@ -1035,16 +1042,16 @@ As AI researchers and practitioners, YOU will shape the future of this technolog
 
 \textbf{What you can do:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Educate Yourself}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Stay informed about ethical issues
         \item Understand different perspectives
         \item Continuous learning
     \end{itemize}
 
     \item \textbf{Build Responsibly}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Consider ethical implications early
         \item Test for bias and safety issues
         \item Document your models
@@ -1052,14 +1059,14 @@ As AI researchers and practitioners, YOU will shape the future of this technolog
     \end{itemize}
 
     \item \textbf{Advocate}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Speak up about ethical concerns
         \item Refuse to build harmful systems
         \item Support responsible AI initiatives
     \end{itemize}
 
     \item \textbf{Collaborate}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Work with ethicists, social scientists
         \item Include diverse perspectives
         \item Engage with affected communities
@@ -1072,84 +1079,84 @@ As AI researchers and practitioners, YOU will shape the future of this technolog
 % ============================================================
 \section{Discussion \& Future Challenges}
 
-\begin{frame}{Open Ethical Questions 🤔}
+\begin{frame}[shrink=10]{Open Ethical Questions 🤔}
 \begin{discussionbox}
 There are no easy answers to these questions—but we must grapple with them:
 \end{discussionbox}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Whose values should AI systems embody?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Western vs non-Western perspectives
         \item Majority vs minority viewpoints
         \item Universal vs culturally specific
     \end{itemize}
 
     \item \textbf{Who is accountable when AI causes harm?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Developers, deployers, users?
         \item Can AI be held responsible?
         \item How to provide redress to victims?
     \end{itemize}
 
     \item \textbf{Should AI be open or closed?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Transparency vs safety
         \item Democratization vs misuse risk
     \end{itemize}
 
     \item \textbf{Is it ethical to train on public web data?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Consent, copyright, privacy
         \item Fair use vs exploitation
     \end{itemize}
 
     \item \textbf{How do we ensure AI benefits humanity?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Distribution of benefits and harms
         \item Long-term societal impact
     \end{itemize}
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Future Challenges 🔮}
+\begin{frame}[shrink=10]{Future Challenges 🔮}
 \textbf{Emerging issues on the horizon:}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Superintelligence \& Existential Risk}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item What if AI exceeds human intelligence?
         \item Can we maintain control?
         \item Long-term alignment problem
     \end{itemize}
 
     \item \textbf{AI-Generated Content Saturation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Internet flooded with AI content
         \item Truth becomes harder to discern
         \item Models trained on AI-generated data (model collapse)
     \end{itemize}
 
     \item \textbf{Economic Disruption}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Large-scale job displacement
         \item Wealth concentration
         \item Need for new social contracts (UBI?)
     \end{itemize}
 
     \item \textbf{Autonomous AI Agents}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Self-directed goal pursuit
         \item Multi-agent coordination
         \item Unintended emergent behaviors
     \end{itemize}
 
     \item \textbf{Neurological and Psychological Impacts}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Dependency on AI assistants
         \item Cognitive offloading
         \item Human-AI relationships
@@ -1157,10 +1164,10 @@ There are no easy answers to these questions—but we must grapple with them:
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Key Takeaways 🔑}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🔑}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Ethics is not optional}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Real-world impact on real people
         \item Responsibility comes with power
     \end{itemize}
@@ -1168,7 +1175,7 @@ There are no easy answers to these questions—but we must grapple with them:
     \vspace{0.2em}
 
     \item \textbf{Bias is pervasive but addressable}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Comes from data, training, deployment
         \item Measure, mitigate, monitor
     \end{itemize}
@@ -1176,7 +1183,7 @@ There are no easy answers to these questions—but we must grapple with them:
     \vspace{0.2em}
 
     \item \textbf{Safety requires proactive effort}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Alignment, red teaming, RLHF
         \item Jailbreaks are an arms race
     \end{itemize}
@@ -1184,7 +1191,7 @@ There are no easy answers to these questions—but we must grapple with them:
     \vspace{0.2em}
 
     \item \textbf{Privacy matters}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Memorization, data governance
         \item Differential privacy, consent
     \end{itemize}
@@ -1192,7 +1199,7 @@ There are no easy answers to these questions—but we must grapple with them:
     \vspace{0.2em}
 
     \item \textbf{Societal impact is complex}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Jobs, misinformation, inequality
         \item Environmental costs
     \end{itemize}
@@ -1200,7 +1207,7 @@ There are no easy answers to these questions—but we must grapple with them:
     \vspace{0.2em}
 
     \item \textbf{You have agency}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Build responsibly
         \item Advocate for ethics
         \item Shape the future!
@@ -1208,9 +1215,9 @@ There are no easy answers to these questions—but we must grapple with them:
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Readings 📖}
+\begin{frame}[shrink=10]{Readings 📖}
 \textbf{Required:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Bender et al. (2021)}: On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?
     \href{https://dl.acm.org/doi/10.1145/3442188.3445922}{[ACM]}
 
@@ -1221,7 +1228,7 @@ There are no easy answers to these questions—but we must grapple with them:
 \vspace{0.5em}
 
 \textbf{Recommended:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Gebru et al. (2018): Datasheets for Datasets \href{https://arxiv.org/abs/1803.09010}{[arXiv]}
     \item Mitchell et al. (2019): Model Cards for Model Reporting \href{https://arxiv.org/abs/1810.03993}{[arXiv]}
     \item Ganguli et al. (2022): Red Teaming Language Models \href{https://arxiv.org/abs/2209.07858}{[arXiv]}
@@ -1235,7 +1242,7 @@ There are no easy answers to these questions—but we must grapple with them:
 \begin{center}
 \Large{\textbf{The Future of AI is in Your Hands}}
 
-\vspace{1cm}
+\vspace{0.5cm}
 
 \normalsize{
 Technology is not neutral. \\
@@ -1247,11 +1254,11 @@ Every system reflects choices. \\
 You get to make those choices.
 }
 
-\vspace{1cm}
+\vspace{0.5cm}
 
 \large{Build the future you want to see. 🌟}
 
-\vspace{1cm}
+\vspace{0.5cm}
 
 \normalsize{
 \textit{"With great power comes great responsibility."} \\
@@ -1264,7 +1271,7 @@ You get to make those choices.
 \begin{center}
 \Huge{Thank You! 🙏}
 
-\vspace{1cm}
+\vspace{0.5cm}
 
 \Large{Questions \& Discussion 💬}
 

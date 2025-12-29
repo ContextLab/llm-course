@@ -1,12 +1,16 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{colortbl}
 \usepackage{booktabs}
-\usepackage{emoji}
 \usetikzlibrary{shapes,arrows,positioning,calc}
 
 % Code listing setup
@@ -23,7 +27,7 @@
 
 \title{Context-Aware Models}
 \subtitle{Weeks 5-6: From Sequence-to-Sequence to Transformers}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \date{\today}
 
 \begin{document}
@@ -31,16 +35,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Overview 📋}
+\begin{frame}[shrink=10]{Overview 📋}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 🔄 \textbf{Sequence-to-Sequence Models}: The Foundation
     \item ⚡ \textbf{Attention Mechanisms}: The Key Innovation
     \item 🤖 \textbf{The Transformer}: Architecture Deep Dive
@@ -56,7 +60,7 @@
 % ============================================================
 % THE CONTEXT PROBLEM
 % ============================================================
-\begin{frame}{The Context Problem 🤔}
+\begin{frame}[shrink=10]{The Context Problem 🤔}
 \begin{center}
 \LARGE
 \textbf{Why do we need context-aware models?}
@@ -66,7 +70,7 @@
 \vspace{1em}
 
 \begin{exampleblock}{Example: The word "bank"}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item "I deposited money at the \textbf{bank}" (financial institution)
     \item "We sat by the river \textbf{bank}" (riverside)
     \item "The plane started to \textbf{bank} left" (tilt/turn)
@@ -78,7 +82,7 @@
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Static Embeddings (Word2Vec):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item One vector per word
     \item \alert{Can't distinguish meanings!}
     \item Context-independent
@@ -89,7 +93,7 @@
 
 \begin{column}{0.48\textwidth}
 \textbf{Context-Aware Models:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Different representation per occurrence
     \item Uses surrounding context
     \item Handles polysemy naturally
@@ -101,13 +105,13 @@
 % ============================================================
 % SEQUENCE TO SEQUENCE INTRO
 % ============================================================
-\begin{frame}{Sequence-to-Sequence Models 🔄}
+\begin{frame}[shrink=5]{Sequence-to-Sequence Models 🔄}
 \textbf{The breakthrough for variable-length input/output problems}
 
 \vspace{1em}
 
 \textbf{Applications:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Machine Translation: English → French
     \item Summarization: Long text → Short summary
     \item Question Answering: Question + Context → Answer
@@ -145,13 +149,13 @@
 % ============================================================
 % ENCODER DECODER ARCHITECTURE
 % ============================================================
-\begin{frame}{Encoder-Decoder Architecture 🏗️}
+\begin{frame}[fragile]{Encoder-Decoder Architecture 🏗️}
 \textbf{Two-part architecture: Encode then Decode}
 
 \vspace{1em}
 
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=0.8cm,
     rnn/.style={rectangle,draw,fill=blue!20,minimum width=1cm,minimum height=1cm},
     decoder/.style={rectangle,draw,fill=red!20,minimum width=1cm,minimum height=1cm}
@@ -167,7 +171,7 @@
     \node[below=of e3] {sat};
 
     % Context vector
-    \node[rectangle,draw,fill=green!20,minimum width=1.5cm,minimum height=1cm,right=of e3] (ctx) {Context\\Vector};
+    \node[rectangle,draw,fill=green!20,minimum width=1.5cm,minimum height=1cm,right=of e3,align=center] (ctx) {Context\\Vector};
 
     % Decoder
     \node[decoder,right=of ctx] (d1) {RNN};
@@ -198,7 +202,7 @@
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Encoder:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Reads input sequence
     \item Compresses to fixed-size vector
     \item Captures semantic meaning
@@ -207,7 +211,7 @@
 
 \begin{column}{0.48\textwidth}
 \textbf{Decoder:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Starts from context vector
     \item Generates output sequence
     \item One token at a time
@@ -219,13 +223,13 @@
 % ============================================================
 % SEQ2SEQ PROBLEM
 % ============================================================
-\begin{frame}{The Seq2Seq Bottleneck Problem ⚠️}
+\begin{frame}[shrink=5]{The Seq2Seq Bottleneck Problem ⚠️}
 \textbf{Challenge: All information compressed into single vector!}
 
 \vspace{1em}
 
 \begin{alertblock}{The Problem}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Long sequences → information loss
     \item Fixed-size context vector is a bottleneck
     \item Early tokens forgotten by the time we reach the end
@@ -267,7 +271,7 @@
 % ============================================================
 % ATTENTION MECHANISM
 % ============================================================
-\begin{frame}{Attention Mechanism: The Big Idea ⚡}
+\begin{frame}[shrink=5]{Attention Mechanism: The Big Idea ⚡}
 \textbf{Instead of compressing everything into one vector...}
 
 \vspace{0.5em}
@@ -277,7 +281,7 @@
 \vspace{1em}
 
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=0.5cm,
     enc/.style={rectangle,draw,fill=blue!20,minimum width=0.8cm,minimum height=0.8cm},
     dec/.style={rectangle,draw,fill=red!20,minimum width=0.8cm,minimum height=0.8cm}
@@ -323,7 +327,7 @@
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Score}: How relevant is each encoder state to current decoder state?
     \begin{align*}
     e_{t,i} = \text{score}(s_t, h_i) = s_t^T W_a h_i
@@ -373,7 +377,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
 \vspace{1em}
 
 \textbf{Observations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Diagonal pattern for similar word order
     \item Model learns alignment automatically!
     \item No need for explicit word alignment annotations
@@ -387,7 +391,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
 % ============================================================
 % TRANSFORMER INTRO
 % ============================================================
-\begin{frame}{The Transformer Revolution 🤖}
+\begin{frame}[shrink=10]{The Transformer Revolution 🤖}
 \begin{center}
 \LARGE
 \textbf{"Attention Is All You Need"}
@@ -398,7 +402,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Before Transformers (2017):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item RNNs/LSTMs with attention
     \item Sequential processing
     \item Hard to parallelize
@@ -411,7 +415,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
 
 \begin{column}{0.48\textwidth}
 \textbf{After Transformers:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \alert{Pure attention, no recurrence!}
     \item Parallel processing
     \item Scales to GPUs/TPUs
@@ -435,7 +439,7 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 % ============================================================
 % TRANSFORMER ARCHITECTURE
 % ============================================================
-\begin{frame}{Transformer Architecture Overview 🏗️}
+\begin{frame}[fragile]{Transformer Architecture Overview 🏗️}
 \begin{center}
 \begin{tikzpicture}[scale=0.65]
     % Encoder
@@ -444,10 +448,10 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 
     % Encoder components
     \node[rectangle,draw,fill=blue!20,minimum width=2.5cm] at (1.5, 7) {Feed Forward};
-    \node[rectangle,draw,fill=blue!30,minimum width=2.5cm] at (1.5, 5.5) {Multi-Head\\Attention};
+    \node[rectangle,draw,fill=blue!30,minimum width=2.5cm,align=center] at (1.5, 5.5) {Multi-Head\\Attention};
     \node[rectangle,draw,fill=blue!20,minimum width=2.5cm] at (1.5, 4) {Feed Forward};
-    \node[rectangle,draw,fill=blue!30,minimum width=2.5cm] at (1.5, 2.5) {Multi-Head\\Attention};
-    \node at (1.5, 1) {+ Positional\\Encoding};
+    \node[rectangle,draw,fill=blue!30,minimum width=2.5cm,align=center] at (1.5, 2.5) {Multi-Head\\Attention};
+    \node[align=center] at (1.5, 1) {+ Positional\\Encoding};
     \node[below] at (1.5, 0) {Input};
 
     % Decoder
@@ -456,10 +460,10 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 
     % Decoder components
     \node[rectangle,draw,fill=red!20,minimum width=2.5cm] at (6.5, 7) {Feed Forward};
-    \node[rectangle,draw,fill=red!30,minimum width=2.5cm] at (6.5, 5.8) {Cross\\Attention};
-    \node[rectangle,draw,fill=red!40,minimum width=2.5cm] at (6.5, 4.3) {Masked\\Self-Attention};
+    \node[rectangle,draw,fill=red!30,minimum width=2.5cm,align=center] at (6.5, 5.8) {Cross\\Attention};
+    \node[rectangle,draw,fill=red!40,minimum width=2.5cm,align=center] at (6.5, 4.3) {Masked\\Self-Attention};
     \node[rectangle,draw,fill=red!20,minimum width=2.5cm] at (6.5, 2.8) {Feed Forward};
-    \node[rectangle,draw,fill=red!30,minimum width=2.5cm] at (6.5, 1.3) {Masked\\Self-Attention};
+    \node[rectangle,draw,fill=red!30,minimum width=2.5cm,align=center] at (6.5, 1.3) {Masked\\Self-Attention};
     \node[below] at (6.5, 0) {Output};
 
     % Arrows
@@ -473,7 +477,7 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 \end{center}
 
 \textbf{Key Components:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Multi-Head Self-Attention}: Relate all positions to each other
     \item \textbf{Feed-Forward Networks}: Transform representations
     \item \textbf{Residual Connections \& Layer Norm}: Training stability (not shown)
@@ -484,13 +488,13 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 % ============================================================
 % SELF ATTENTION
 % ============================================================
-\begin{frame}{Self-Attention: The Core Mechanism 🎯}
+\begin{frame}[shrink=5]{Self-Attention: The Core Mechanism 🎯}
 \textbf{Key idea: Each word attends to all other words in the sequence}
 
 \vspace{1em}
 
 \textbf{Three learned projections:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Query (Q)}: What am I looking for?
     \item \textbf{Key (K)}: What do I contain?
     \item \textbf{Value (V)}: What information do I have?
@@ -534,7 +538,7 @@ Q = XW_Q, \quad K = XW_K, \quad V = XW_V
 % ============================================================
 % SELF ATTENTION EXAMPLE
 % ============================================================
-\begin{frame}{Self-Attention Example 📝}
+\begin{frame}[shrink=5]{Self-Attention Example 📝}
 \textbf{Sentence: "The animal didn't cross the street because it was too tired"}
 
 \vspace{1em}
@@ -570,7 +574,7 @@ Q = XW_Q, \quad K = XW_K, \quad V = XW_V
 \vspace{1em}
 
 \textbf{Self-attention allows the model to:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Resolve pronouns
     \item Understand long-range dependencies
     \item Capture syntactic and semantic relationships
@@ -581,7 +585,7 @@ Q = XW_Q, \quad K = XW_K, \quad V = XW_V
 % ============================================================
 % MULTI HEAD ATTENTION
 % ============================================================
-\begin{frame}{Multi-Head Attention 🎭}
+\begin{frame}[shrink=5]{Multi-Head Attention 🎭}
 \textbf{Why use multiple attention heads?}
 
 \vspace{1em}
@@ -589,7 +593,7 @@ Q = XW_Q, \quad K = XW_K, \quad V = XW_V
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Intuition:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Different heads learn different relationships
     \item Head 1: Syntactic relationships
     \item Head 2: Semantic relationships
@@ -647,10 +651,10 @@ h_i &= \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)
 % ============================================================
 % TYPES OF ATTENTION
 % ============================================================
-\begin{frame}{Three Types of Attention 🔍}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Three Types of Attention 🔍}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Self-Attention (Encoder)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Each position attends to all positions in same sequence
         \item Bidirectional: can see past and future
         \item Used in: BERT, encoder-only models
@@ -659,7 +663,7 @@ h_i &= \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)
     \vspace{0.5em}
 
     \item \textbf{Masked Self-Attention (Decoder)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Each position attends only to previous positions
         \item Prevents "looking into the future"
         \item Used in: GPT, decoder-only models
@@ -668,7 +672,7 @@ h_i &= \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)
     \vspace{0.5em}
 
     \item \textbf{Cross-Attention (Encoder-Decoder)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Decoder attends to encoder outputs
         \item Queries from decoder, Keys/Values from encoder
         \item Used in: T5, BART, machine translation
@@ -693,13 +697,13 @@ Cross-Attention & Decoder & Encoder \\
 % ============================================================
 % POSITIONAL ENCODING
 % ============================================================
-\begin{frame}{Positional Encoding 📍}
+\begin{frame}[shrink=10]{Positional Encoding 📍}
 \textbf{Problem: Self-attention is permutation-invariant!}
 
 \vspace{0.5em}
 
 Without position information:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "The cat sat" = "sat cat the" = "cat the sat"
     \item Order matters in language!
 \end{itemize}
@@ -719,7 +723,7 @@ PE_{(pos, 2i+1)} &= \cos(pos / 10000^{2i/d})
 \end{align*}
 
 \textbf{Properties:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Deterministic
     \item Unique for each position
     \item Smooth changes
@@ -731,7 +735,7 @@ PE_{(pos, 2i+1)} &= \cos(pos / 10000^{2i/d})
 \textbf{Modern Approach: RoPE}
 
 Rotary Position Embedding (Su et al. 2021)
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Rotates Q and K in complex space
     \item Relative position encoding
     \item Better extrapolation
@@ -741,7 +745,7 @@ Rotary Position Embedding (Su et al. 2021)
 \vspace{1em}
 
 \textbf{Learned Positional Embeddings:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Treat positions as vocabulary
     \item Learn embeddings during training
     \item Used in: BERT, GPT
@@ -757,7 +761,7 @@ Rotary Position Embedding (Su et al. 2021)
 % ============================================================
 % FEED FORWARD
 % ============================================================
-\begin{frame}{Feed-Forward Networks 🔄}
+\begin{frame}[fragile]{Feed-Forward Networks 🔄}
 \textbf{After attention, apply position-wise feed-forward network}
 
 \vspace{1em}
@@ -767,7 +771,7 @@ Rotary Position Embedding (Su et al. 2021)
 \text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2
 \end{align*}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Two linear transformations with ReLU activation
     \item Applied to each position independently
     \item Same network for all positions
@@ -778,15 +782,15 @@ Rotary Position Embedding (Su et al. 2021)
 
 \begin{center}
 \begin{tikzpicture}[scale=0.8]
-    \node[rectangle,draw,fill=blue!20,minimum width=2cm,minimum height=0.8cm] (input) at (0, 0) {Input\\(768 dims)};
+    \node[rectangle,draw,fill=blue!20,minimum width=2cm,minimum height=0.8cm,align=center] (input) at (0, 0) {Input\\(768 dims)};
 
-    \node[rectangle,draw,fill=green!20,minimum width=2cm,minimum height=0.8cm] (expand) at (0, 2) {Linear + ReLU\\(3072 dims)};
+    \node[rectangle,draw,fill=green!20,minimum width=2cm,minimum height=0.8cm,align=center] (expand) at (0, 2) {Linear + ReLU\\(3072 dims)};
     \draw[->] (input) -- (expand);
 
-    \node[rectangle,draw,fill=orange!20,minimum width=2cm,minimum height=0.8cm] (project) at (0, 4) {Linear\\(768 dims)};
+    \node[rectangle,draw,fill=orange!20,minimum width=2cm,minimum height=0.8cm,align=center] (project) at (0, 4) {Linear\\(768 dims)};
     \draw[->] (expand) -- (project);
 
-    \node[rectangle,draw,fill=red!20,minimum width=2cm,minimum height=0.8cm] (output) at (0, 6) {Output\\(768 dims)};
+    \node[rectangle,draw,fill=red!20,minimum width=2cm,minimum height=0.8cm,align=center] (output) at (0, 6) {Output\\(768 dims)};
     \draw[->] (project) -- (output);
 
     \node[right=0.5cm of expand] {4x expansion};
@@ -799,7 +803,7 @@ Rotary Position Embedding (Su et al. 2021)
 % ============================================================
 % LAYER NORM AND RESIDUALS
 % ============================================================
-\begin{frame}{Layer Normalization \& Residual Connections 🔗}
+\begin{frame}[shrink=10]{Layer Normalization \& Residual Connections 🔗}
 \textbf{Critical for training deep transformers!}
 
 \vspace{1em}
@@ -811,7 +815,7 @@ Rotary Position Embedding (Su et al. 2021)
 \text{Output} = \text{Layer}(x) + x
 \end{align*}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Allows gradients to flow directly
     \item Prevents vanishing gradients
     \item Enables very deep networks
@@ -830,7 +834,7 @@ Like highway roads for information flow!
 \text{LayerNorm}(x) = \gamma \frac{x - \mu}{\sigma} + \beta
 \end{align*}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Normalize across features
     \item Stabilizes training
     \item Faster convergence
@@ -869,13 +873,13 @@ x &\leftarrow \text{LayerNorm}(x + \text{FFN}(x))
 % ============================================================
 % FLASH ATTENTION
 % ============================================================
-\begin{frame}{FlashAttention: Making Transformers Faster ⚡}
+\begin{frame}[shrink=10]{FlashAttention: Making Transformers Faster ⚡}
 \textbf{Problem: Standard attention is slow and memory-hungry!}
 
 \vspace{0.5em}
 
 \begin{alertblock}{Standard Attention Complexity}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Time: $O(n^2)$ where $n$ is sequence length
     \item Memory: $O(n^2)$ to store attention matrix
     \item Bottleneck: Reading/writing to GPU memory (HBM)
@@ -887,7 +891,7 @@ x &\leftarrow \text{LayerNorm}(x + \text{FFN}(x))
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{FlashAttention Innovation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Tile-based computation
     \item Uses fast SRAM instead of slow HBM
     \item Fused operations
@@ -899,7 +903,7 @@ x &\leftarrow \text{LayerNorm}(x + \text{FFN}(x))
 
 \begin{column}{0.48\textwidth}
 \textbf{Impact:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item GPT-3: 512 → 2048 context
     \item BERT: Faster training
     \item Long-document understanding
@@ -957,7 +961,7 @@ T5, BART, mT5\\
 \vspace{1em}
 
 \begin{block}{Key Difference: Attention Masking}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Encoder:} Full self-attention (bidirectional)
     \item \textbf{Decoder:} Causal/masked attention (unidirectional)
 \end{itemize}
@@ -967,7 +971,7 @@ T5, BART, mT5\\
 % ============================================================
 % VISUAL ARCHITECTURES
 % ============================================================
-\begin{frame}{Visual Comparison: Encoder vs Decoder vs Both}
+\begin{frame}[shrink=5]{Visual Comparison: Encoder vs Decoder vs Both}
 \begin{center}
 \begin{tikzpicture}[scale=0.5]
     % Encoder only (BERT)
@@ -997,7 +1001,7 @@ T5, BART, mT5\\
 \vspace{1em}
 
 \textbf{Choosing the Right Architecture:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Need to understand full context? → \textbf{Encoder} (BERT)
     \item Need to generate text? → \textbf{Decoder} (GPT)
     \item Need both (translate, summarize)? → \textbf{Encoder-Decoder} (T5)
@@ -1040,7 +1044,7 @@ print(f"Shape: {token_embeddings.shape}")
 % ============================================================
 % BERT INTRO
 % ============================================================
-\begin{frame}{BERT: Bidirectional Encoder Representations 🎯}
+\begin{frame}[shrink=10]{BERT: Bidirectional Encoder Representations 🎯}
 \begin{center}
 \LARGE
 \textbf{BERT = Encoder-only Transformer}
@@ -1055,7 +1059,7 @@ print(f"Shape: {token_embeddings.shape}")
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Traditional Language Models:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Left-to-right (GPT)
     \item Or right-to-left
     \item \alert{Unidirectional context}
@@ -1065,7 +1069,7 @@ print(f"Shape: {token_embeddings.shape}")
 \vspace{1em}
 
 \textbf{Example:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "The cat sat on the \_\_\_"
     \item Only sees left context
 \end{itemize}
@@ -1075,7 +1079,7 @@ print(f"Shape: {token_embeddings.shape}")
 
 \begin{column}{0.48\textwidth}
 \textbf{BERT (MLM):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Mask random tokens
     \item Predict from \alert{bidirectional context}
     \item Sees both left \& right
@@ -1085,7 +1089,7 @@ print(f"Shape: {token_embeddings.shape}")
 \vspace{1em}
 
 \textbf{Example:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "The cat [MASK] on the mat"
     \item Sees: "The cat" AND "on the mat"
     \item Predicts: "sat"
@@ -1101,17 +1105,17 @@ print(f"Shape: {token_embeddings.shape}")
 % ============================================================
 % MLM TRAINING
 % ============================================================
-\begin{frame}{Masked Language Modeling (MLM) 🎭}
+\begin{frame}[shrink=10]{Masked Language Modeling (MLM) 🎭}
 \textbf{BERT's Pre-training Objective}
 
 \vspace{1em}
 
 \textbf{Training Procedure:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Take a sentence
     \item Randomly mask 15\% of tokens
     \item Of the masked tokens:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item 80\%: Replace with [MASK]
         \item 10\%: Replace with random word
         \item 10\%: Keep unchanged
@@ -1134,7 +1138,7 @@ print(f"Shape: {token_embeddings.shape}")
 \vspace{1em}
 
 \textbf{Why the 80/10/10 split?}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Prevents overfitting to [MASK] token
     \item Forces model to maintain representations for all tokens
 \end{itemize}
@@ -1143,7 +1147,7 @@ print(f"Shape: {token_embeddings.shape}")
 % ============================================================
 % BERT ARCHITECTURE
 % ============================================================
-\begin{frame}{BERT Architecture Variants 📊}
+\begin{frame}[shrink=10]{BERT Architecture Variants 📊}
 \begin{center}
 \begin{tabular}{lcccc}
 \toprule
@@ -1162,7 +1166,7 @@ DistilBERT & 6 & 768 & 12 & 66M \\
 \vspace{1em}
 
 \textbf{Architecture Details (BERT-Base):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 12 transformer encoder layers
     \item 768-dimensional hidden states
     \item 12 attention heads per layer
@@ -1175,10 +1179,10 @@ DistilBERT & 6 & 768 & 12 & 66M \\
 % ============================================================
 % BERT VARIANTS
 % ============================================================
-\begin{frame}{BERT Variants \& Improvements 🔬}
-\begin{enumerate}
+\begin{frame}[shrink=10]{BERT Variants \& Improvements 🔬}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{RoBERTa (Liu et al. 2019)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Remove Next Sentence Prediction (NSP)
         \item Train longer with bigger batches
         \item Dynamic masking
@@ -1188,7 +1192,7 @@ DistilBERT & 6 & 768 & 12 & 66M \\
     \vspace{0.5em}
 
     \item \textbf{ALBERT (Lan et al. 2019)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Parameter sharing across layers
         \item Factorized embedding parameterization
         \item \alert{12M params vs BERT's 110M}
@@ -1198,7 +1202,7 @@ DistilBERT & 6 & 768 & 12 & 66M \\
     \vspace{0.5em}
 
     \item \textbf{DistilBERT (Sanh et al. 2019)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Knowledge distillation from BERT
         \item 6 layers instead of 12
         \item \alert{40\% smaller, 60\% faster}
@@ -1256,7 +1260,8 @@ trainer.train()
 % ============================================================
 % BERT APPLICATIONS
 % ============================================================
-\begin{frame}{BERT Applications 🚀}
+\begin{frame}[shrink=10]{BERT Applications 🚀}
+\small
 \textbf{BERT excels at understanding tasks:}
 
 \vspace{1em}
@@ -1264,7 +1269,7 @@ trainer.train()
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Classification Tasks:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Sentiment Analysis
     \item Topic Classification
     \item Spam Detection
@@ -1274,7 +1279,7 @@ trainer.train()
 \vspace{0.5em}
 
 \textbf{Token-Level Tasks:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Named Entity Recognition (NER)
     \item Part-of-Speech Tagging
     \item Word Sense Disambiguation
@@ -1283,7 +1288,7 @@ trainer.train()
 
 \begin{column}{0.48\textwidth}
 \textbf{Span-Level Tasks:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Question Answering
     \item Extractive Summarization
     \item Information Extraction
@@ -1292,7 +1297,7 @@ trainer.train()
 \vspace{0.5em}
 
 \textbf{Sentence-Pair Tasks:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Semantic Similarity
     \item Natural Language Inference
     \item Paraphrase Detection
@@ -1304,7 +1309,7 @@ trainer.train()
 
 \begin{block}{Industry Impact}
 BERT powers:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Google Search (understanding queries)
     \item Customer service chatbots
     \item Content moderation
@@ -1352,7 +1357,7 @@ print(f"Similarity: {similarity:.3f}")  # Low! (~0.3-0.5)
 % ============================================================
 % COGNITIVE NEUROSCIENCE
 % ============================================================
-\begin{frame}{Cognitive Neuroscience Perspective 🧠}
+\begin{frame}[shrink=10]{Cognitive Neuroscience Perspective 🧠}
 \textbf{How do brains and models process language?}
 
 \vspace{1em}
@@ -1360,7 +1365,7 @@ print(f"Similarity: {similarity:.3f}")  # Low! (~0.3-0.5)
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Predictive Processing in the Brain:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Brain constantly predicts upcoming input
     \item N400: Neural response to unexpected words
     \item P600: Syntactic anomaly detection
@@ -1371,7 +1376,7 @@ print(f"Similarity: {similarity:.3f}")  # Low! (~0.3-0.5)
 \vspace{0.5em}
 
 \textbf{Key Brain Regions:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Left IFG}: Syntax processing
     \item \textbf{Left STG/MTG}: Semantic processing
     \item \textbf{ATL}: Conceptual knowledge
@@ -1380,7 +1385,7 @@ print(f"Similarity: {similarity:.3f}")  # Low! (~0.3-0.5)
 
 \begin{column}{0.48\textwidth}
 \textbf{Predictive Processing in Models:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item BERT: Predict masked words
     \item GPT: Predict next word
     \item Both use context to predict
@@ -1391,7 +1396,7 @@ print(f"Similarity: {similarity:.3f}")  # Low! (~0.3-0.5)
 \vspace{0.5em}
 
 \textbf{Similarities:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Both hierarchical
     \item Both context-sensitive
     \item Both predictive
@@ -1455,13 +1460,13 @@ Distributed embeddings\\
 % ============================================================
 % NEURAL ENCODING
 % ============================================================
-\begin{frame}{Neural Encoding with Language Models 🔬}
+\begin{frame}[shrink=10]{Neural Encoding with Language Models 🔬}
 \textbf{Can we predict brain activity from language models?}
 
 \vspace{1em}
 
 \textbf{Approach:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Show participants text while recording brain activity (fMRI/EEG)
     \item Extract representations from language model (e.g., BERT layer 6)
     \item Train regression model: Model embeddings → Brain activity
@@ -1471,7 +1476,7 @@ Distributed embeddings\\
 \vspace{1em}
 
 \textbf{Findings:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Better models → Better brain prediction}
     \item BERT outperforms Word2Vec at predicting brain activity
     \item Different layers correlate with different brain regions
@@ -1492,7 +1497,8 @@ Correlation ≠ Causation! Models might capture statistical regularities that br
 % ============================================================
 % WHAT DOES MODEL UNDERSTAND
 % ============================================================
-\begin{frame}{Discussion: What Does the Model "Understand"? 🤔}
+\begin{frame}[shrink=10]{Discussion: What Does the Model "Understand"? 🤔}
+\small
 \begin{center}
 \LARGE
 \textbf{Does BERT understand language?}
@@ -1503,7 +1509,7 @@ Correlation ≠ Causation! Models might capture statistical regularities that br
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Evidence FOR understanding:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Captures syntax and semantics
     \item Resolves ambiguity
     \item Handles long-range dependencies
@@ -1518,7 +1524,7 @@ Correlation ≠ Causation! Models might capture statistical regularities that br
 
 \begin{column}{0.48\textwidth}
 \textbf{Evidence AGAINST understanding:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item No grounding in physical world
     \item No sensory experience
     \item No social context
@@ -1535,7 +1541,7 @@ Correlation ≠ Causation! Models might capture statistical regularities that br
 \vspace{1em}
 
 \begin{block}{Key Questions}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item What is the difference between understanding and correlation?
     \item Can meaning exist without grounding?
     \item Is human understanding fundamentally different?
@@ -1548,35 +1554,35 @@ Correlation ≠ Causation! Models might capture statistical regularities that br
 % ============================================================
 % LIMITATIONS
 % ============================================================
-\begin{frame}{Limitations of Current Models ⚠️}
+\begin{frame}[shrink=10]{Limitations of Current Models ⚠️}
 \textbf{Despite impressive performance, transformers have limitations:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Quadratic Complexity}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Self-attention scales as $O(n^2)$
         \item Limited context windows (512-4096 tokens)
         \item Cannot process very long documents efficiently
     \end{itemize}
 
     \item \textbf{No True Understanding}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Pattern matching vs. comprehension
         \item Lack of common sense
         \item No world model
     \end{itemize}
 
     \item \textbf{Data Efficiency}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Requires massive training data
         \item Humans learn language with much less data
         \item Not biologically plausible
     \end{itemize}
 
     \item \textbf{Biases and Fairness}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Inherits biases from training data
         \item Can amplify stereotypes
         \item Ethical concerns
@@ -1587,14 +1593,14 @@ Correlation ≠ Causation! Models might capture statistical regularities that br
 % ============================================================
 % ANIMATED TRANSFORMER
 % ============================================================
-\begin{frame}{Interactive Learning Resources 🎓}
+\begin{frame}[shrink=10]{Interactive Learning Resources 🎓}
 \textbf{Great tutorials for deeper understanding:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{The Illustrated Transformer}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Blog post by Jay Alammar
         \item Visual step-by-step walkthrough
         \item \url{https://jalammar.github.io/illustrated-transformer/}
@@ -1603,7 +1609,7 @@ Correlation ≠ Causation! Models might capture statistical regularities that br
     \vspace{0.5em}
 
     \item \textbf{Animated Transformer Tutorial}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Interactive visualizations
         \item Watch attention in action
         \item \url{https://transformer-circuits.pub/}
@@ -1612,7 +1618,7 @@ Correlation ≠ Causation! Models might capture statistical regularities that br
     \vspace{0.5em}
 
     \item \textbf{HuggingFace Course}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Chapter 1.4: How do Transformers work?
         \item Hands-on coding tutorials
         \item \url{https://huggingface.co/course/chapter1/4}
@@ -1621,7 +1627,7 @@ Correlation ≠ Causation! Models might capture statistical regularities that br
     \vspace{0.5em}
 
     \item \textbf{Attention Mechanism Visualization}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item BertViz: Visualize BERT attention
         \item See which words attend to which
         \item \url{https://github.com/jessevig/bertviz}
@@ -1664,42 +1670,42 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 % ============================================================
 % ASSIGNMENT 4
 % ============================================================
-\begin{frame}{Assignment 4: Context-Aware Models 📝}
+\begin{frame}[shrink=10]{Assignment 4: Context-Aware Models 📝}
 \textbf{Hands-on experience with transformers!}
 
 \vspace{1em}
 
 \textbf{Tasks:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Implement Attention Mechanism}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Build scaled dot-product attention from scratch
         \item Visualize attention weights
     \end{itemize}
 
     \item \textbf{Fine-tune BERT}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Load pre-trained BERT
         \item Fine-tune on sentiment analysis
         \item Compare to baseline models
     \end{itemize}
 
     \item \textbf{Analyze Contextual Embeddings}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Extract embeddings for polysemous words
         \item Visualize how context changes representations
         \item Compare BERT vs Word2Vec
     \end{itemize}
 
     \item \textbf{Explore Different Architectures}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Compare BERT (encoder) vs GPT (decoder)
         \item Test on different tasks
         \item Analyze strengths/weaknesses
     \end{itemize}
 
     \item \textbf{Research Component}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Read one paper from references
         \item Write brief summary \& critical analysis
     \end{itemize}
@@ -1712,17 +1718,17 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 % ============================================================
 % PRACTICAL TIPS
 % ============================================================
-\begin{frame}{Practical Tips for Working with Transformers 💡}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Practical Tips for Working with Transformers 💡}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Start with Pre-trained Models}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Don't train from scratch (too expensive!)
         \item Use HuggingFace Model Hub
         \item Choose appropriate model size
     \end{itemize}
 
     \item \textbf{Fine-tuning Best Practices}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use small learning rate (1e-5 to 5e-5)
         \item Add warmup steps
         \item Monitor for overfitting
@@ -1730,7 +1736,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \end{itemize}
 
     \item \textbf{Computational Efficiency}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use mixed precision training (FP16)
         \item Gradient accumulation for larger batch sizes
         \item Consider DistilBERT for faster inference
@@ -1738,7 +1744,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \end{itemize}
 
     \item \textbf{Evaluation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use task-specific metrics
         \item Test on out-of-distribution data
         \item Check for biases
@@ -1750,9 +1756,9 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 % ============================================================
 % RESOURCES
 % ============================================================
-\begin{frame}{Resources \& Further Reading 📚}
+\begin{frame}[shrink=10]{Resources \& Further Reading 📚}
 \textbf{Key Papers:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Sutskever et al. (2014) - Sequence to Sequence Learning
     \item Bahdanau et al. (2015) - Neural Machine Translation by Jointly Learning to Align
     \item Vaswani et al. (2017) - Attention Is All You Need
@@ -1766,7 +1772,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 \vspace{0.5em}
 
 \textbf{Cognitive Neuroscience:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Hagoort \& Indefrey (2014) - The neurobiology of language beyond single words
     \item Kuperberg \& Jaeger (2016) - What do we mean by prediction in language comprehension?
     \item Willems et al. (2016) - Prediction during natural language comprehension
@@ -1775,7 +1781,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 \vspace{0.5em}
 
 \textbf{Tutorials:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item HuggingFace Course: Chapters 1.4, 1.5, 7.3
     \item The Illustrated Transformer: \url{https://jalammar.github.io/illustrated-transformer/}
     \item Animated Transformer: \url{https://transformer-circuits.pub/}
@@ -1785,39 +1791,39 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 % ============================================================
 % SUMMARY
 % ============================================================
-\begin{frame}{Summary 🎯}
+\begin{frame}[shrink=10]{Summary 🎯}
 \textbf{What we learned:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Evolution of Context}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Seq2Seq → Attention → Transformers
         \item From bottleneck to full parallelization
     \end{itemize}
 
     \item \textbf{Attention Mechanisms}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Self-attention, masked attention, cross-attention
         \item Query, Key, Value framework
         \item Multi-head attention for diverse relationships
     \end{itemize}
 
     \item \textbf{Transformer Architecture}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Pure attention-based architecture
         \item Encoder-only (BERT), Decoder-only (GPT), Both (T5)
         \item Positional encoding, layer norm, residual connections
     \end{itemize}
 
     \item \textbf{BERT \& Masked Language Modeling}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Bidirectional context from MLM objective
         \item Pre-train then fine-tune paradigm
         \item Variants: RoBERTa, ALBERT, DistilBERT
     \end{itemize}
 
     \item \textbf{Brain-Model Parallels}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Both use prediction
         \item Both hierarchical and context-sensitive
         \item Deep questions about understanding
@@ -1828,13 +1834,13 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 % ============================================================
 % LOOKING FORWARD
 % ============================================================
-\begin{frame}{Looking Forward 🔮}
+\begin{frame}[shrink=10]{Looking Forward 🔮}
 \textbf{Where do we go from here?}
 
 \vspace{1em}
 
 \textbf{Next Topics:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Scaling laws: Bigger models, better performance?
     \item Efficient transformers: Linear attention, sparse attention
     \item Multimodal transformers: Vision + Language
@@ -1845,7 +1851,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 \vspace{1em}
 
 \textbf{Open Questions:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item How can we make transformers more efficient?
     \item Can we combine symbolic reasoning with neural networks?
     \item How do we ensure fairness and reduce bias?
@@ -1870,10 +1876,10 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 \textbf{Discussion Time}
 \end{center}
 
-\vspace{2em}
+\vspace{1em}
 
 \textbf{Topics to discuss:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Attention mechanisms
     \item Transformer architectures
     \item BERT vs GPT: When to use which?
@@ -1881,7 +1887,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
     \item Assignment 4 questions
 \end{itemize}
 
-\vspace{2em}
+\vspace{1em}
 
 \begin{center}
 \Large

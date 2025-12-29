@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{tikz}
@@ -21,7 +25,6 @@
 \definecolor{thinkbox}{RGB}{255,245,220}
 \definecolor{discussbox}{RGB}{230,240,255}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -72,17 +75,18 @@
 
 \section{What is Language Used For?}
 
-\begin{frame}{What is Language Used For? 🎭}
+\begin{frame}[shrink=10]{What is Language Used For? 🎭}
+\small
     \begin{discussion}
         Why do we use language? What is its \textit{purpose}?
     \end{discussion}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
             \textbf{Traditional view:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item 📢 Transmitting information
                 \item 🧠 Expressing thoughts
                 \item 📝 Describing the world
@@ -92,7 +96,7 @@
 
         \begin{column}{0.5\textwidth}
             \textbf{Pragmatic view:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item 🤝 Coordinating actions
                 \item 🎯 Achieving goals
                 \item 👥 Building relationships
@@ -101,7 +105,7 @@
         \end{column}
     \end{columns}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{alertblock}{Key Insight}
         Language is fundamentally a \textbf{tool for action}, not just description!
@@ -109,11 +113,12 @@
 \end{frame}
 
 \begin{frame}{Language as Action 🎬}
+\small
     \textbf{Speech Acts (Austin, 1962; Searle, 1969):}
 
     \vspace{0.3cm}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Assertives}: Committing to truth \\
         \textit{"It's raining outside."}
 
@@ -137,13 +142,14 @@
     \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Beyond Literal Meaning 🧩}
+\begin{frame}[shrink=10]{Beyond Literal Meaning 🧩}
+\small
     \textbf{Same words, different meanings in context:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{block}{Example 1: "Can you pass the salt?"}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item \textbf{Literal meaning}: Question about ability
             \item \textbf{Pragmatic meaning}: Request for action
             \item Nobody answers: "Yes, I can" and then does nothing!
@@ -153,7 +159,7 @@
     \vspace{0.3cm}
 
     \begin{block}{Example 2: "It's getting late."}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item At dinner party $\rightarrow$ "I should leave"
             \item To children $\rightarrow$ "Go to bed"
             \item To colleague $\rightarrow$ "Let's finish this meeting"
@@ -169,14 +175,15 @@
 \section{Pragmatics and Dialogue}
 
 \begin{frame}{Pragmatics: The Study of Language in Use 📚}
+\small
     \begin{block}{Definition}
         \textbf{Pragmatics} is the study of how context influences language interpretation and use.
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Key concepts:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textbf{Context}: Physical, social, temporal, cultural
         \item \textbf{Implicature}: Implied meaning beyond literal words (Grice, 1975)
         \item \textbf{Common ground}: Shared knowledge between speakers
@@ -184,7 +191,7 @@
         \item \textbf{Alignment}: Speakers coordinating their representations
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{alertblock}{Why This Matters for LLMs}
         Modern language models excel at syntax and semantics, but struggle with pragmatics!
@@ -192,6 +199,7 @@
 \end{frame}
 
 \begin{frame}{Common Ground: Shared Knowledge 🤝}
+\small
     \begin{block}{Clark \& Brennan (1991)}
         \textit{Grounding in Communication}: Communication is a \textbf{collaborative activity} requiring common ground.
     \end{block}
@@ -199,7 +207,7 @@
     \vspace{0.3cm}
 
     \textbf{What is common ground?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Mutual knowledge, beliefs, and assumptions
         \item Shared perceptual experience
         \item Cultural knowledge
@@ -228,7 +236,7 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}{Visualizing Common Ground 🎯}
+\begin{frame}[shrink=5]{Visualizing Common Ground 🎯}
     \begin{center}
         \begin{tikzpicture}[scale=0.8]
             % Speaker A's knowledge
@@ -265,13 +273,14 @@
     \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{The Grounding Process 🏗️}
+\begin{frame}[shrink=10]{The Grounding Process 🏗️}
+\small
     \textbf{How do speakers establish common ground?}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{block}{Contribution Model (Clark \& Schaefer, 1989)}
-        \begin{enumerate}
+        \begin{enumerate}\setlength{\itemsep}{0pt}
             \item \textbf{Presentation}: Speaker presents utterance
             \item \textbf{Acceptance}: Listener provides evidence of understanding
             \item \textbf{Common ground updated}: Both parties now share this information
@@ -281,7 +290,7 @@
     \vspace{0.3cm}
 
     \textbf{Evidence of understanding:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ✅ Continued attention ("uh-huh", "mm-hmm")
         \item ✅ Relevant next contribution
         \item ✅ Acknowledgment ("okay", "right", "I see")
@@ -290,7 +299,8 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Grounding Example 💬}
+\begin{frame}[shrink=10]{Grounding Example 💬}
+\small
     \begin{block}{Real Conversation Example}
         \textbf{A:} "So we should meet at the \textit{blue} building" \\
         \textbf{B:} "The blue building?" \\
@@ -300,10 +310,10 @@
         \textbf{B:} "Got it, Moore Hall at 2pm"
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{What's happening:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item A presents vague reference ("blue building")
         \item B signals confusion/requests clarification
         \item A adds more information
@@ -337,7 +347,7 @@
         \end{tabular}
     \end{table}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         How do these constraints affect grounding with AI chatbots? What's missing?
@@ -345,6 +355,7 @@
 \end{frame}
 
 \begin{frame}{Alignment in Dialogue 🎯}
+\small
     \begin{block}{Pickering \& Garrod (2004)}
         \textit{Toward a mechanistic psychology of dialogue}: Speakers automatically \textbf{align} their representations at multiple levels.
     \end{block}
@@ -352,7 +363,7 @@
     \vspace{0.3cm}
 
     \textbf{Levels of alignment:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Lexical}: Using same words
         \item \textbf{Syntactic}: Using same sentence structures
         \item \textbf{Semantic}: Converging on same meanings
@@ -368,16 +379,17 @@
 \end{frame}
 
 \begin{frame}{Lexical Alignment Example 📝}
+\small
     \begin{block}{Example: Lexical Entrainment}
         \textbf{A:} "Can you click on the \textit{couch}?" \\
         \textbf{B:} "This \textit{couch}?" \\
         \textbf{A:} "Yes, that \textit{couch}." \\
 
-        \vspace{0.5cm}
+        \vspace{0.3cm}
 
         vs. \\
 
-        \vspace{0.5cm}
+        \vspace{0.3cm}
 
         \textbf{A:} "Can you click on the \textit{sofa}?" \\
         \textbf{B:} "This \textit{sofa}?" \\
@@ -387,7 +399,7 @@
     \vspace{0.3cm}
 
     \textbf{Key findings:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Once speakers agree on a term, they stick with it
         \item This happens even when there are synonyms available
         \item Makes communication more efficient
@@ -400,15 +412,15 @@
         \begin{column}{0.5\textwidth}
             \textbf{Experimenter uses passive:}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
 
             \textit{"The ball was kicked by the boy"}
 
-            \vspace{0.5cm}
+            \vspace{0.15cm}
 
             \textbf{Participant responds:}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
 
             \textit{"The cake was baked by the chef"} \\
             (Also passive!)
@@ -417,22 +429,22 @@
         \begin{column}{0.5\textwidth}
             \textbf{Experimenter uses active:}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
 
             \textit{"The boy kicked the ball"}
 
-            \vspace{0.5cm}
+            \vspace{0.15cm}
 
             \textbf{Participant responds:}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
 
             \textit{"The chef baked the cake"} \\
             (Also active!)
         \end{column}
     \end{columns}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         This happens \textbf{unconsciously}! We mimic the syntactic structures we hear.
@@ -441,14 +453,15 @@
     \vspace{0.3cm}
 
     \textbf{Why does this matter?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Facilitates processing
         \item Signals cooperativeness
         \item Creates smoother conversation flow
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Embodied and Situated Language 🌍}
+\begin{frame}[shrink=10]{Embodied and Situated Language 🌍}
+\small
     \begin{block}{Bisk et al. (2020)}
         \textit{Experience Grounds Language}: Language understanding requires grounding in physical and social experience.
     \end{block}
@@ -457,7 +470,7 @@
 
     \textbf{The World Scopes framework:}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Linguistic}: Text-only (current LLMs)
         \item \textbf{Physical}: Embodied in space/time
         \item \textbf{Perceptual}: Vision, hearing, touch
@@ -473,7 +486,8 @@
     \end{alertblock}
 \end{frame}
 
-\begin{frame}{Why Embodiment Matters 🤖}
+\begin{frame}[shrink=10]{Why Embodiment Matters 🤖}
+\small
     \textbf{Example: "Put the cup on the table"}
 
     \vspace{0.3cm}
@@ -481,7 +495,7 @@
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
             \textbf{Text-only LLM knows:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item ✅ "Cup" is a container
                 \item ✅ "Table" is furniture
                 \item ✅ "Put" means placement
@@ -491,7 +505,7 @@
 
         \begin{column}{0.5\textwidth}
             \textbf{Embodied agent knows:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item ✅ All text-based knowledge
                 \item ✅ Cup has weight/fragility
                 \item ✅ Table has height/surface
@@ -502,7 +516,7 @@
         \end{column}
     \end{columns}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{discussion}
         Can an LLM truly understand "Put the cup on the table" without ever experiencing physical objects, gravity, or spatial relations?
@@ -511,7 +525,8 @@
 
 \section{Language Comprehension and Inference}
 
-\begin{frame}{Comprehension is Inference 🔍}
+\begin{frame}[shrink=10]{Comprehension is Inference 🔍}
+\small
     \begin{block}{Graesser et al. (1994)}
         \textit{Constructing Inferences During Narrative Text Comprehension}: Readers actively construct meaning through inference, not passive reception.
     \end{block}
@@ -519,7 +534,7 @@
     \vspace{0.3cm}
 
     \textbf{Types of inferences:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textbf{Causal antecedent}: What caused this event?
         \item \textbf{Causal consequence}: What will happen next?
         \item \textbf{Goal}: Why is character doing this?
@@ -529,16 +544,17 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Inference Construction Example 📖}
+\begin{frame}[shrink=10]{Inference Construction Example 📖}
+\small
     \begin{block}{Text}
         "Sarah grabbed her umbrella and rushed out the door."
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{What inferences do you make?}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Causal antecedent}: It's raining (or about to rain)
         \item \textbf{Goal}: Sarah wants to stay dry
         \item \textbf{Emotional state}: Sarah is in a hurry / anxious
@@ -558,7 +574,8 @@
     \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Embodied Language Processing 👁️}
+\begin{frame}[shrink=10]{Embodied Language Processing 👁️}
+\small
     \begin{block}{Tanenhaus et al. (1995)}
         \textit{Integration of visual and linguistic information in spoken language comprehension}: Eye movements reveal real-time language processing in visual context.
     \end{block}
@@ -566,7 +583,7 @@
     \vspace{0.3cm}
 
     \textbf{The Visual World Paradigm:}
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Show participants visual scene
         \item Play spoken instruction: "Pick up the apple"
         \item Track eye movements
@@ -576,7 +593,7 @@
     \vspace{0.3cm}
 
     \textbf{Key insights:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Language processing is \textbf{incremental} (word-by-word)
         \item Visual context \textbf{immediately} influences interpretation
         \item Language and vision are \textbf{tightly coupled}
@@ -584,13 +601,13 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Referential Ambiguity Resolution 🎯}
+\begin{frame}[shrink=10]{Referential Ambiguity Resolution 🎯}
     \textbf{Example scenario:}
 
     \vspace{0.3cm}
 
     Visual scene contains:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Large red apple
         \item Small red apple
         \item Large green apple
@@ -601,12 +618,12 @@
 
     \textbf{Instruction}: "Pick up the small apple"
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
             \textbf{Human processing:}
-            \begin{enumerate}
+            \begin{enumerate}\setlength{\itemsep}{0pt}
                 \item Hears "Pick up the..."
                 \item Eyes scan objects
                 \item Hears "small..."
@@ -617,7 +634,7 @@
 
         \begin{column}{0.5\textwidth}
             \textbf{LLM processing:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item ❌ No visual scene
                 \item ❌ No eye movements
                 \item ❌ No incremental visual search
@@ -631,6 +648,7 @@
 \section{Thought Trajectories}
 
 \begin{frame}{Mental Trajectories During Comprehension 🧠}
+\small
     \begin{block}{Heusser et al. (2021)}
         \textit{Geometric models reveal behavioral and neural signatures of transforming experiences into memories}: Thoughts follow trajectories through mental space during narrative comprehension.
     \end{block}
@@ -638,7 +656,7 @@
     \vspace{0.3cm}
 
     \textbf{Key idea:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Mental representations can be modeled as points in high-dimensional space
         \item During comprehension, thoughts "move" through this space
         \item Can track these trajectories using fMRI + computational models
@@ -652,7 +670,7 @@
     \end{alertblock}
 \end{frame}
 
-\begin{frame}{Visualizing Thought Trajectories 📊}
+\begin{frame}[shrink=5]{Visualizing Thought Trajectories 📊}
     \begin{center}
         \begin{tikzpicture}[scale=0.9]
             % Axes
@@ -691,7 +709,7 @@
     \vspace{0.3cm}
 
     \textbf{Questions to explore:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Do LLM trajectories match human trajectories?
         \item Where do they diverge?
         \item What does this tell us about understanding?
@@ -713,7 +731,7 @@
 
             \textit{"I deposited money at the \underline{bank}"}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
 
             Representation: \\
             $\vec{v}_{\text{bank}} \approx$ [financial, institution, money, ...]
@@ -724,17 +742,17 @@
 
             \textit{"We sat by the river \underline{bank}"}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
 
             Representation: \\
             $\vec{v}_{\text{bank}} \approx$ [shore, edge, water, ...]
         \end{column}
     \end{columns}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Both humans and transformers:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ✅ Create context-dependent representations
         \item ✅ Resolve ambiguity using surrounding words
         \item ✅ Update interpretations incrementally
@@ -743,7 +761,7 @@
 
 \section{Positional Coding, Context, and Memory}
 
-\begin{frame}{The Problem of Position 📍}
+\begin{frame}[shrink=10]{The Problem of Position 📍}
     \textbf{Challenge for transformers:}
 
     \vspace{0.3cm}
@@ -757,7 +775,7 @@
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
             \textbf{These are different:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item "Dog bites man"
                 \item "Man bites dog"
             \end{itemize}
@@ -767,7 +785,7 @@
 
         \begin{column}{0.5\textwidth}
             \textbf{Without position info:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Transformer sees: \{dog, bites, man\}
                 \item Can't distinguish the two!
                 \item \textbf{Solution}: Add positional encoding
@@ -777,6 +795,7 @@
 \end{frame}
 
 \begin{frame}{Positional Encoding in Transformers 🔢}
+\small
     \begin{block}{Vaswani et al. (2017) - "Attention is All You Need"}
         Use sinusoidal functions to encode position:
     \end{block}
@@ -789,7 +808,7 @@
     \vspace{0.3cm}
 
     \textbf{Why this works:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Each position gets a unique pattern
         \item Relative positions have consistent relationships
         \item Model can learn to attend to relative distances
@@ -803,7 +822,7 @@
     \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Visualizing Positional Encodings 📈}
+\begin{frame}[shrink=5]{Visualizing Positional Encodings 📈}
     \begin{center}
         \begin{tikzpicture}[scale=0.8]
             % Draw heatmap-style visualization
@@ -843,7 +862,8 @@
     Each column is a position (0-9), each row is a dimension of the encoding
 \end{frame}
 
-\begin{frame}{Context and Memory in Transformers 🧠}
+\begin{frame}[shrink=10]{Context and Memory in Transformers 🧠}
+\small
     \begin{block}{Manning (2023)}
         \textit{Positional Information in Transformers}: Position encoding enables transformers to maintain context and sequence information.
     \end{block}
@@ -852,7 +872,7 @@
 
     \textbf{Types of context:}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Local context}: Nearby words (via attention)
         \item \textbf{Long-range dependencies}: Distant words (via attention)
         \item \textbf{Positional context}: Where in sequence (via PE)
@@ -862,18 +882,19 @@
     \vspace{0.3cm}
 
     \textbf{Memory limitations:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Context window: typically 2K-100K tokens
         \item Beyond this, model "forgets" earlier content
         \item Trade-off: longer context = more computation
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Human vs. Transformer Memory 🔄}
+\begin{frame}[shrink=10]{Human vs. Transformer Memory 🔄}
+\small
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
             \textbf{Human conversation memory:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Episodic memory of past conversations
                 \item Semantic knowledge from experience
                 \item Working memory (7±2 items)
@@ -886,7 +907,7 @@
 
         \begin{column}{0.5\textwidth}
             \textbf{Transformer "memory":}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Parameters (training data)
                 \item Context window (recent tokens)
                 \item No episodic memory
@@ -898,7 +919,7 @@
         \end{column}
     \end{columns}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{discussion}
         If a chatbot can't remember our previous conversation, can it truly have a "relationship" with us?
@@ -933,17 +954,18 @@
     \end{table}
 \end{frame}
 
-\begin{frame}{Can Language Models Have Common Ground? 🤔}
+\begin{frame}[shrink=10]{Can Language Models Have Common Ground? 🤔}
+\small
     \begin{discussion}
         Can a language model \textit{truly} establish common ground with a user?
     \end{discussion}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
             \textbf{Arguments for "Yes":}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Can track conversation history
                 \item Can make inferences about user knowledge
                 \item Can adapt language to user
@@ -954,7 +976,7 @@
 
         \begin{column}{0.5\textwidth}
             \textbf{Arguments for "No":}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item No persistent memory across sessions
                 \item No embodied shared experience
                 \item No genuine beliefs/knowledge
@@ -965,14 +987,15 @@
         \end{column}
     \end{columns}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         Perhaps the question is: Does it matter? If interaction feels collaborative, is that enough?
     \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Pragmatic Reasoning Example 🧩}
+\begin{frame}[shrink=10]{Pragmatic Reasoning Example 🧩}
+\small
     \begin{block}{Scenario}
         \textbf{User:} "I'm looking for a good Italian restaurant" \\
         \textbf{Chatbot:} "I'd recommend Bella Vista. Would you like the address?"
@@ -982,7 +1005,7 @@
 
     \textbf{What pragmatic inferences is chatbot making?}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item User wants to \textit{go} to restaurant (not just learn about it)
         \item User is likely nearby / asking about local options
         \item User wants recommendation (not exhaustive list)
@@ -993,7 +1016,7 @@
     \vspace{0.3cm}
 
     \textbf{But chatbot doesn't actually know:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item User's location
         \item User's food preferences
         \item User's budget
@@ -1002,6 +1025,7 @@
 \end{frame}
 
 \begin{frame}[fragile]{Interactive Pragmatic Reasoning 💡}
+\small
     \begin{block}{Better Grounding Strategy}
         \textbf{User:} "I'm looking for a good Italian restaurant" \\
         \textbf{Chatbot:} "I'd be happy to help! A few questions:" \\
@@ -1010,11 +1034,11 @@
         \textbf{Chatbot:} "- Any dietary restrictions?"
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{This mirrors human conversation!}
 
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Humans ask clarifying questions
         \item Build common ground iteratively
         \item Don't assume unstated information
@@ -1030,7 +1054,8 @@
 
 \section{Demo: ConvoKit}
 
-\begin{frame}{ConvoKit: Analyzing Real Conversations 🔬}
+\begin{frame}[shrink=10]{ConvoKit: Analyzing Real Conversations 🔬}
+\small
     \begin{block}{What is ConvoKit?}
         ConvoKit is a Python toolkit for analyzing conversations, created by researchers at Cornell.
     \end{block}
@@ -1038,7 +1063,7 @@
     \vspace{0.3cm}
 
     \textbf{Features:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Pre-loaded conversation datasets (Reddit, Wikipedia, Supreme Court, etc.)
         \item Tools for analyzing conversational dynamics
         \item Coordination measures
@@ -1050,7 +1075,7 @@
     \vspace{0.3cm}
 
     \textbf{Why useful for this course:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Study real conversational patterns
         \item Compare human vs. bot conversations
         \item Measure alignment, grounding, pragmatics
@@ -1079,7 +1104,7 @@ print(f"Number of speakers: {len(corpus.speakers)}")
     \vspace{0.3cm}
 
     \textbf{Available corpora:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Reddit conversations
         \item Wikipedia talk pages
         \item Movie dialogs
@@ -1113,7 +1138,7 @@ for convo in corpus.iter_conversations():
     \vspace{0.3cm}
 
     \textbf{What this measures:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Lexical alignment (using same words)
         \item Function word coordination
         \item Syntactic priming
@@ -1143,7 +1168,7 @@ for utterance in corpus.iter_utterances():
     \vspace{0.3cm}
 
     \textbf{Politeness strategies detected:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Please, gratitude
         \item Hedges, deference
         \item Indirect requests
@@ -1174,7 +1199,7 @@ for utterance in corpus.iter_utterances():
     \vspace{0.3cm}
 
     \textbf{Question types:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Rhetorical vs. information-seeking
         \item Yes/no vs. open-ended
         \item Clarification requests
@@ -1204,7 +1229,7 @@ for convo in corpus.iter_conversations():
     \vspace{0.3cm}
 
     \textbf{Understanding structure:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Threading (nested replies)
         \item Turn-taking patterns
         \item Response times
@@ -1212,6 +1237,7 @@ for convo in corpus.iter_conversations():
 \end{frame}
 
 \begin{frame}{ConvoKit Example: Reddit Analysis 📊}
+\small
     \textbf{Real example from Reddit data:}
 
     \vspace{0.3cm}
@@ -1228,7 +1254,7 @@ for convo in corpus.iter_conversations():
     \vspace{0.3cm}
 
     \textbf{ConvoKit analysis reveals:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item User A uses more politeness markers ("Thanks!", question marks)
         \item User C coordinates with User A (both use "WD-40")
         \item Thread structure: A $\rightarrow$ B, A $\rightarrow$ C (parallel responses)
@@ -1236,16 +1262,16 @@ for convo in corpus.iter_conversations():
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Using ConvoKit for Chatbot Evaluation 🤖}
+\begin{frame}[shrink=10]{Using ConvoKit for Chatbot Evaluation 🤖}
     \textbf{How to use ConvoKit to evaluate your chatbot:}
 
     \vspace{0.3cm}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Collect conversations} between users and your chatbot
         \item \textbf{Convert to ConvoKit format}
         \item \textbf{Compare to human-human conversations:}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Is chatbot coordinating with users?
             \item Does it use appropriate politeness?
             \item Does it ask good questions?
@@ -1294,10 +1320,11 @@ my_corpus = Corpus(utterances=utterances)
 \section{Discussion and Wrap-up}
 
 \begin{frame}{Discussion: Grounding in Human-AI Interaction 🤔}
+\small
     \begin{discussion}
         Consider these questions:
 
-        \begin{enumerate}
+        \begin{enumerate}\setlength{\itemsep}{0pt}
             \item Do you engage in grounding when talking to ChatGPT or other LLMs?
             \item Do you adjust your language when the model doesn't understand?
             \item Does the model adjust to \textit{you}?
@@ -1306,7 +1333,7 @@ my_corpus = Corpus(utterances=utterances)
         \end{enumerate}
     \end{discussion}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         Think about your most recent conversation with an AI. Did you treat it like a person, a tool, or something in between?
@@ -1314,6 +1341,7 @@ my_corpus = Corpus(utterances=utterances)
 \end{frame}
 
 \begin{frame}{The Turing Test Revisited 🎭}
+\small
     \begin{block}{Turing (1950): "Can Machines Think?"}
         Instead of defining thinking, ask: Can a machine's conversation be distinguished from a human's?
     \end{block}
@@ -1321,7 +1349,7 @@ my_corpus = Corpus(utterances=utterances)
     \vspace{0.3cm}
 
     \textbf{Modern perspective:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Many chatbots can "pass" brief Turing tests
         \item But: This tests \textit{imitation}, not understanding
         \item Pragmatics, grounding, and common ground reveal differences
@@ -1337,35 +1365,35 @@ my_corpus = Corpus(utterances=utterances)
     \end{alertblock}
 \end{frame}
 
-\begin{frame}{Future Directions 🔮}
+\begin{frame}[shrink=10]{Future Directions 🔮}
     \textbf{What would make LLM conversations more human-like?}
 
     \vspace{0.3cm}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Better grounding mechanisms}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Explicit confirmation strategies
             \item Clarification requests
             \item Incremental understanding updates
         \end{itemize}
 
         \item \textbf{Embodied and situated models}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Multimodal understanding (vision + language)
             \item Physical world knowledge
             \item Temporal and causal reasoning
         \end{itemize}
 
         \item \textbf{Persistent memory and personalization}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Long-term conversation history
             \item User models and preferences
             \item Relationship building
         \end{itemize}
 
         \item \textbf{Social and cultural awareness}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Pragmatic norms
             \item Cultural context
             \item Emotional intelligence
@@ -1373,8 +1401,8 @@ my_corpus = Corpus(utterances=utterances)
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Key Takeaways 🔑}
-    \begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🔑}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Language is for action}, not just description
 
         \item \textbf{Pragmatics} is essential: meaning depends on context
@@ -1398,8 +1426,9 @@ my_corpus = Corpus(utterances=utterances)
 \end{frame}
 
 \begin{frame}{Readings for This Week 📖}
+\small
     \begin{block}{Required Readings}
-        \begin{enumerate}
+        \begin{enumerate}\setlength{\itemsep}{0pt}
             \item \textbf{Clark \& Brennan (1991)}: Grounding in Communication \\
             \href{https://www.sciencedirect.com/science/article/pii/B9780080507378500167}{[Link]}
 
@@ -1419,8 +1448,9 @@ my_corpus = Corpus(utterances=utterances)
 \end{frame}
 
 \begin{frame}{Readings for This Week (continued) 📖}
+\small
     \begin{block}{Required Readings (continued)}
-        \begin{enumerate}
+        \begin{enumerate}\setlength{\itemsep}{0pt}
             \setcounter{enumi}{5}
             \item \textbf{Heusser et al. (2021)}: Geometric models reveal behavioral and neural signatures of transforming experiences into memories \\
             \href{https://www.nature.com/articles/s41562-021-01051-6}{[Nature Human Behaviour]}
@@ -1440,10 +1470,11 @@ my_corpus = Corpus(utterances=utterances)
     \end{block}
 \end{frame}
 
-\begin{frame}{Next Week Preview 🔮}
+\begin{frame}[shrink=10]{Next Week Preview 🔮}
+\small
     \begin{block}{Week 8: Neural Foundations of Language Models}
         We'll explore:
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Neural network basics
             \item Word embeddings (Word2Vec, GloVe)
             \item Recurrent neural networks (RNNs, LSTMs)
@@ -1452,10 +1483,10 @@ my_corpus = Corpus(utterances=utterances)
         \end{itemize}
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Preparation:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Review linear algebra (vectors, matrices, dot products)
         \item Python/NumPy basics
         \item Start thinking about final project ideas!
@@ -1466,7 +1497,7 @@ my_corpus = Corpus(utterances=utterances)
     \begin{center}
         \Large{Let's discuss!}
 
-        \vspace{1cm}
+        \vspace{0.5cm}
 
         \textbf{Contact Information:}
 
@@ -1476,11 +1507,11 @@ my_corpus = Corpus(utterances=utterances)
 
         🏢 Office Hours: By appointment (Moore Hall 349)
 
-        \vspace{1cm}
+        \vspace{0.5cm}
 
         \textbf{Try ConvoKit this week!} 🔬
 
-        \vspace{0.5cm}
+        \vspace{0.3cm}
 
         \large{See you next week! 🚀}
     \end{center}

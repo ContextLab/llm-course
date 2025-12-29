@@ -1,12 +1,15 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{emoji}
 \usetikzlibrary{shapes,arrows,positioning,calc}
 
 % Code listing setup
@@ -23,7 +26,7 @@
 
 \title{Lecture 15: BERT Deep Dive}
 \subtitle{Week 6, Lecture 1 - Bidirectional Encoder Representations}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \date{Winter 2026}
 
 \begin{document}
@@ -31,16 +34,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Agenda 📋}
+\begin{frame}[shrink=10]{Today's Agenda 📋}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 🎯 \textbf{BERT Introduction}: What makes it special?
     \item 🎭 \textbf{Masked Language Modeling}: The key training objective
     \item 🏗️ \textbf{BERT Architecture}: Model sizes and specifications
@@ -56,7 +59,7 @@
 % ============================================================
 % BERT INTRO
 % ============================================================
-\begin{frame}{BERT: Bidirectional Encoder Representations 🎯}
+\begin{frame}[shrink=10]{BERT: Bidirectional Encoder Representations 🎯}
 \begin{center}
 \LARGE
 \textbf{BERT = Encoder-only Transformer}
@@ -71,7 +74,7 @@
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Traditional Language Models:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Left-to-right (GPT)
     \item Or right-to-left
     \item \alert{Unidirectional context}
@@ -81,7 +84,7 @@
 \vspace{1em}
 
 \textbf{Example:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "The cat sat on the \_\_\_"
     \item Only sees left context
 \end{itemize}
@@ -91,7 +94,7 @@
 
 \begin{column}{0.48\textwidth}
 \textbf{BERT (MLM):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Mask random tokens
     \item Predict from \alert{bidirectional context}
     \item Sees both left \& right
@@ -101,7 +104,7 @@
 \vspace{1em}
 
 \textbf{Example:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "The cat [MASK] on the mat"
     \item Sees: "The cat" AND "on the mat"
     \item Predicts: "sat"
@@ -117,9 +120,9 @@
 % ============================================================
 % WHY BERT
 % ============================================================
-\begin{frame}{Why BERT Was Revolutionary 🚀}
+\begin{frame}[shrink=10]{Why BERT Was Revolutionary 🚀}
 \textbf{Before BERT (2018):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Feature-based approaches (use Word2Vec/GloVe as features)
     \item Task-specific architectures
     \item Limited transfer learning
@@ -129,22 +132,22 @@
 \vspace{1em}
 
 \textbf{BERT's Contributions:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Deep Bidirectionality}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item True bidirectional context at every layer
         \item Not just concatenating left-to-right and right-to-left
     \end{itemize}
 
     \item \textbf{Pre-train + Fine-tune Paradigm}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Single pre-trained model for all tasks
         \item Fine-tune with minimal architecture changes
         \item Democratized NLP (no need to train from scratch!)
     \end{itemize}
 
     \item \textbf{State-of-the-Art Results}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Beat previous best on 11 NLP tasks
         \item Large performance gains (sometimes 10+ points!)
         \item Showed power of pre-training
@@ -155,17 +158,17 @@
 % ============================================================
 % MLM TRAINING
 % ============================================================
-\begin{frame}{Masked Language Modeling (MLM) 🎭}
+\begin{frame}[shrink=10]{Masked Language Modeling (MLM) 🎭}
 \textbf{BERT's Pre-training Objective}
 
 \vspace{1em}
 
 \textbf{Training Procedure:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Take a sentence
     \item Randomly mask 15\% of tokens
     \item Of the masked tokens:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item 80\%: Replace with [MASK]
         \item 10\%: Replace with random word
         \item 10\%: Keep unchanged
@@ -188,7 +191,7 @@
 \vspace{1em}
 
 \textbf{Why the 80/10/10 split?}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Prevents overfitting to [MASK] token
     \item Forces model to maintain representations for all tokens
 \end{itemize}
@@ -197,7 +200,7 @@
 % ============================================================
 % MLM EXAMPLE
 % ============================================================
-\begin{frame}{MLM Example: Step by Step 📝}
+\begin{frame}[shrink=10]{MLM Example: Step by Step 📝}
 \textbf{Sentence:} "The quick brown fox jumps over the lazy dog"
 
 \vspace{1em}
@@ -221,7 +224,7 @@
 \vspace{1em}
 
 \textbf{Step 2: Apply Masking Strategy}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "quick" → 80\% chance → [MASK]
     \item "over" → 10\% chance → "under" (random word)
 \end{itemize}
@@ -235,7 +238,7 @@
 \vspace{1em}
 
 \textbf{Model learns:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "quick" from context: "The \_\_\_ brown" (adjective before noun)
     \item "over" from context: "jumps \_\_\_ the" (preposition in this context)
 \end{itemize}
@@ -274,7 +277,7 @@
 \vspace{1em}
 
 \textbf{Implementation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Use [CLS] token representation for classification
     \item 50\% real pairs, 50\% random pairs
     \item Binary classification task
@@ -287,7 +290,7 @@
 % ============================================================
 % BERT ARCHITECTURE
 % ============================================================
-\begin{frame}{BERT Architecture Variants 📊}
+\begin{frame}[shrink=10]{BERT Architecture Variants 📊}
 \begin{center}
 \begin{tabular}{lcccc}
 \toprule
@@ -302,7 +305,7 @@ BERT-Large & 24 & 1024 & 16 & 340M \\
 \vspace{1em}
 
 \textbf{Architecture Details (BERT-Base):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 12 transformer encoder layers
     \item 768-dimensional hidden states
     \item 12 attention heads per layer (64 dims each)
@@ -314,7 +317,7 @@ BERT-Large & 24 & 1024 & 16 & 340M \\
 \vspace{1em}
 
 \textbf{Special Tokens:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{[CLS]}: Classification token (first token, used for sequence-level tasks)
     \item \textbf{[SEP]}: Separator token (between sentences)
     \item \textbf{[MASK]}: Mask token (for MLM)
@@ -325,7 +328,7 @@ BERT-Large & 24 & 1024 & 16 & 340M \\
 % ============================================================
 % BERT INPUT
 % ============================================================
-\begin{frame}{BERT Input Representation 🔤}
+\begin{frame}[shrink=5]{BERT Input Representation 🔤}
 \textbf{Three types of embeddings are summed:}
 
 \vspace{1em}
@@ -376,7 +379,7 @@ BERT-Large & 24 & 1024 & 16 & 340M \\
 \vspace{0.5em}
 
 \textbf{Three embedding types:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Token Embeddings}: WordPiece vocabulary
     \item \textbf{Segment Embeddings}: Which sentence (A or B)?
     \item \textbf{Position Embeddings}: Learned position (0 to 511)
@@ -386,13 +389,14 @@ BERT-Large & 24 & 1024 & 16 & 340M \\
 % ============================================================
 % PRE-TRAINING
 % ============================================================
-\begin{frame}{BERT Pre-training 🏋️}
+\begin{frame}[shrink=10]{BERT Pre-training 🏋️}
+\small
 \textbf{Massive scale pre-training on unlabeled text}
 
 \vspace{1em}
 
 \textbf{Pre-training Data:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{BooksCorpus}: 800M words (novels, fiction)
     \item \textbf{English Wikipedia}: 2,500M words
     \item Total: 3.3 billion words
@@ -402,7 +406,7 @@ BERT-Large & 24 & 1024 & 16 & 340M \\
 \vspace{1em}
 
 \textbf{Training Details:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Batch size: 256 sequences (128,000 tokens)
     \item Training steps: 1M steps
     \item Optimization: Adam (lr=1e-4, warmup=10k steps)
@@ -420,7 +424,7 @@ Pre-training learns general language understanding that transfers to many downst
 % ============================================================
 % FINE-TUNING
 % ============================================================
-\begin{frame}{Fine-tuning BERT 🎓}
+\begin{frame}[shrink=5]{Fine-tuning BERT 🎓}
 \textbf{Two-stage process: Pre-train then Fine-tune}
 
 \vspace{1em}
@@ -477,7 +481,7 @@ Pre-training learns general language understanding that transfers to many downst
 \vspace{1em}
 
 \textbf{Benefits:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Pre-training is expensive but done once
     \item Fine-tuning is cheap and fast
     \item Same pre-trained model for all downstream tasks
@@ -487,35 +491,35 @@ Pre-training learns general language understanding that transfers to many downst
 % ============================================================
 % FINE-TUNING TASKS
 % ============================================================
-\begin{frame}{Fine-tuning for Different Tasks 🎯}
+\begin{frame}[shrink=10]{Fine-tuning for Different Tasks 🎯}
 \textbf{Minimal architecture changes needed!}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Single Sentence Classification}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Input: [CLS] sentence [SEP]
         \item Output: [CLS] representation → classifier
         \item Example: Sentiment analysis
     \end{itemize}
 
     \item \textbf{Sentence Pair Classification}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Input: [CLS] sentence A [SEP] sentence B [SEP]
         \item Output: [CLS] representation → classifier
         \item Example: Natural Language Inference
     \end{itemize}
 
     \item \textbf{Question Answering}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Input: [CLS] question [SEP] passage [SEP]
         \item Output: Token-level predictions for start/end positions
         \item Example: SQuAD
     \end{itemize}
 
     \item \textbf{Token Classification}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Input: [CLS] sentence [SEP]
         \item Output: Each token representation → classifier
         \item Example: Named Entity Recognition
@@ -625,7 +629,7 @@ CoNLL-2003 (NER) & F1 & 92.6 & \textbf{92.8} \\
 \vspace{1em}
 
 \textbf{Key Observations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Largest gains on tasks requiring understanding (QA, NLI)
     \item Improvements even on well-studied benchmarks
     \item BERT-Large generally better than BERT-Base
@@ -642,16 +646,16 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
 % ============================================================
 % WHAT BERT LEARNS
 % ============================================================
-\begin{frame}{What Does BERT Learn? 🧠}
+\begin{frame}[shrink=10]{What Does BERT Learn? 🧠}
 \textbf{Probing BERT's internal representations}
 
 \vspace{1em}
 
 \textbf{Research has shown BERT captures:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Syntactic Information}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Part-of-speech tags
         \item Constituent structure
         \item Dependency relations
@@ -659,7 +663,7 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
     \end{itemize}
 
     \item \textbf{Semantic Information}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Word sense disambiguation
         \item Semantic roles
         \item Entity types
@@ -667,14 +671,14 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
     \end{itemize}
 
     \item \textbf{Pragmatic Information}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Coreference resolution
         \item Discourse relations
         \item Higher layers encode more pragmatics
     \end{itemize}
 
     \item \textbf{World Knowledge}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Factual knowledge (to some extent)
         \item Common sense reasoning (limited)
     \end{itemize}
@@ -688,7 +692,7 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
 % ============================================================
 % LAYER ANALYSIS
 % ============================================================
-\begin{frame}{BERT Layer Analysis 📊}
+\begin{frame}[shrink=5]{BERT Layer Analysis 📊}
 \textbf{Different layers capture different linguistic properties}
 
 \vspace{1em}
@@ -720,7 +724,7 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
 \vspace{1em}
 
 \textbf{Observations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Lower layers: surface features (word forms, POS)
     \item Middle layers: syntax (phrase structure, dependencies)
     \item Higher layers: semantics and task-specific features
@@ -734,10 +738,10 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
 % ============================================================
 % DISCUSSION
 % ============================================================
-\begin{frame}{Discussion Questions 💭}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Discussion Questions 💭}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{MLM vs. Autoregressive:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Why is MLM better for understanding tasks?
         \item Can BERT generate text like GPT?
         \item What are the trade-offs?
@@ -746,7 +750,7 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
     \vspace{0.5em}
 
     \item \textbf{The 80/10/10 Masking Strategy:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Why not just use 100\% [MASK]?
         \item What problem does the random replacement solve?
         \item Could we improve this strategy?
@@ -755,7 +759,7 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
     \vspace{0.5em}
 
     \item \textbf{Pre-training Data:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Why use books and Wikipedia?
         \item Would social media text work as well?
         \item How does data quality affect pre-training?
@@ -764,7 +768,7 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
     \vspace{0.5em}
 
     \item \textbf{Fine-tuning:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Why does fine-tuning work so well?
         \item When might fine-tuning fail?
         \item How much labeled data do we need?
@@ -775,9 +779,9 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
 % ============================================================
 % LOOKING AHEAD
 % ============================================================
-\begin{frame}{Looking Ahead 🔮}
+\begin{frame}[shrink=10]{Looking Ahead 🔮}
 \textbf{Today we learned:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item BERT architecture and innovations
     \item Masked Language Modeling
     \item Pre-training and fine-tuning
@@ -788,7 +792,7 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
 \vspace{1em}
 
 \textbf{Next lecture (Lecture 16 - BERT Variants):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \alert{RoBERTa}: Optimized BERT training
     \item \alert{ALBERT}: Parameter-efficient BERT
     \item \alert{DistilBERT}: Smaller, faster BERT
@@ -807,39 +811,39 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
 % ============================================================
 % SUMMARY
 % ============================================================
-\begin{frame}{Summary 🎯}
+\begin{frame}[shrink=10]{Summary 🎯}
 \textbf{Key Takeaways:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{BERT = Encoder-only Transformer}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Bidirectional self-attention
         \item Trained with Masked Language Modeling
     \end{itemize}
 
     \item \textbf{Pre-train + Fine-tune Paradigm}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Expensive pre-training on unlabeled data (once)
         \item Cheap fine-tuning on task-specific data (per task)
     \end{itemize}
 
     \item \textbf{Contextual Embeddings}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Different representations based on context
         \item Solves polysemy problem
     \end{itemize}
 
     \item \textbf{Hierarchical Learning}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Lower layers: syntax
         \item Higher layers: semantics
         \item Learns linguistic structure automatically
     \end{itemize}
 
     \item \textbf{Revolutionary Impact}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Established pre-training as standard
         \item Democratized NLP research
         \item Foundation for modern LLMs
@@ -850,14 +854,14 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
 % ============================================================
 % REFERENCES
 % ============================================================
-\begin{frame}{References 📚}
+\begin{frame}[shrink=10]{References 📚}
 \textbf{Essential Papers:}
 
 \vspace{0.5em}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Devlin et al. (2019)} - "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item The original BERT paper
         \item Introduced MLM and NSP
     \end{itemize}
@@ -865,7 +869,7 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
     \vspace{0.3em}
 
     \item \textbf{Tenney et al. (2019)} - "BERT Rediscovers the Classical NLP Pipeline"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Analysis of what BERT learns
         \item Layer-wise linguistic properties
     \end{itemize}
@@ -873,7 +877,7 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
     \vspace{0.3em}
 
     \item \textbf{Clark et al. (2019)} - "What Does BERT Look At? An Analysis of BERT's Attention"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Understanding BERT's attention patterns
     \end{itemize}
 \end{itemize}
@@ -881,7 +885,7 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
 \vspace{0.5em}
 
 \textbf{Tutorials:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item HuggingFace Course: Chapter 1 (Transformer Models)
     \item Jay Alammar: "The Illustrated BERT, ELMo, and co."
     \item BertViz: Interactive attention visualization
@@ -897,10 +901,10 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
 \textbf{Discussion Time}
 \end{center}
 
-\vspace{2em}
+\vspace{1em}
 
 \textbf{Topics for discussion:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Masked Language Modeling
     \item Pre-training vs fine-tuning
     \item Contextual embeddings
@@ -908,7 +912,7 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
     \item Implementation questions
 \end{itemize}
 
-\vspace{2em}
+\vspace{1em}
 
 \begin{center}
 \Large

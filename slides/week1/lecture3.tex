@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 
 % Packages
 \usepackage{fontspec}
@@ -12,7 +16,6 @@
 \usetikzlibrary{shapes,arrows,positioning,calc,decorations.pathreplacing}
 
 % Font settings
-\setmainfont{Arial}
 \setmonofont{Courier New}
 
 % Code listing settings
@@ -51,27 +54,28 @@
 % Title page information
 \title{Lecture 3: ELIZA Implementation}
 \subtitle{The ELIZA Effect \& Your First Assignment 🎭}
-\author{PSYC 51.17}
+\author{PSYC 51.07: Models of Language and Communication}
 \institute{Dr. Jeremy R. Manning}
 \date{Week 1 - Day 3}
 
 \begin{document}
 
 % Title slide
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % Table of contents
-\begin{frame}{Today's Journey 🗺️}
+\begin{frame}[shrink=5]{Today's Journey 🗺️}
 \tableofcontents
 \end{frame}
 
 \section{Recap: Pattern Matching Fundamentals}
 
 \begin{frame}{Last Time... 🔄}
+\small
 \begin{block}{Key Concepts from Lecture 2}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item String manipulation and replacement
     \item Regular expressions for flexible patterns
     \item Capture groups for extracting information
@@ -80,7 +84,7 @@
 \end{itemize}
 \end{block}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{discussion}
 Today we'll complete the ELIZA implementation and explore its psychological impact!
@@ -128,7 +132,7 @@ def eliza_respond(user_input, rules):
 \begin{frame}[fragile]{Synonym Substitutions 📝}
 \begin{block}{The Problem}
 Users express the same idea in different ways:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "I am sad" vs "I am unhappy" vs "I am depressed"
     \item "My family" vs "My relatives" vs "My kin"
 \end{itemize}
@@ -228,19 +232,19 @@ class ElizaBot:
 \textbf{ELIZA:} Earlier you mentioned your mother. Let's discuss that.
 \end{block}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{thinkaboutit}
 This simple memory creates the illusion of ELIZA "thinking about" what you said earlier! But it's just storing and randomly retrieving strings.
 \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Complete ELIZA Flow with Memory 🔄}
+\begin{frame}[shrink=5]{Complete ELIZA Flow with Memory 🔄}
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=1.1cm,
-    box/.style={rectangle, draw, fill=blue!20, minimum width=2.5cm, minimum height=0.7cm, align=center, font=\small},
-    membox/.style={rectangle, draw, fill=green!20, minimum width=2cm, minimum height=0.7cm, align=center, font=\small},
+    box/.style={rectangle, draw, fill=blue!20, minimum width=2.5cm, minimum height=0.7cm, align=center, font=\footnotesize},
+    membox/.style={rectangle, draw, fill=green!20, minimum width=2cm, minimum height=0.7cm, align=center, font=\footnotesize},
     arrow/.style={->, >=stealth, very thick}
 ]
 
@@ -342,7 +346,7 @@ QUIT_RESPONSES = [
     "That will be $200. See you next week!",
     "Take care!"
 ]
-\end{lstlisting>
+\end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Main Conversation Loop 🔁}
@@ -382,14 +386,15 @@ if __name__ == "__main__":
 \section{The ELIZA Effect}
 
 \begin{frame}{The ELIZA Effect 😮}
+\small
 \begin{block}{Definition: ELIZA Effect}
 The tendency of humans to attribute human-like understanding to computer programs, even when they know the program is simple.
 \end{block}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \textbf{What happened with ELIZA:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item People formed \textbf{emotional bonds} with ELIZA
     \item Users shared \textbf{intimate details} of their lives
     \item Some \textbf{refused to believe} it was "just" a program
@@ -397,35 +402,36 @@ The tendency of humans to attribute human-like understanding to computer program
     \item Some therapists thought ELIZA could \textbf{replace human therapists}
 \end{itemize}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{thinkaboutit}
 Why are we so eager to see intelligence and understanding in machines?
 \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Why the ELIZA Effect Happens 🧠}
+\begin{frame}[shrink=5]{Why the ELIZA Effect Happens 🧠}
 \begin{center}
 \begin{tikzpicture}[scale=0.9]
 % Circle diagram showing factors
 \node[circle, draw, thick, minimum size=6cm] at (0,0) {};
 
 % Center
-\node[font=\Large\bfseries] at (0,0) {ELIZA\\Effect};
+\node[font=\Large\bfseries, align=center] at (0,0) {ELIZA\\Effect};
 
 % Surrounding factors
-\node[align=center, font=\small] at (0,2.3) {\textbf{Anthropomorphization}\\We see humans everywhere};
-\node[align=center, font=\small] at (2.3,1.3) {\textbf{Confirmation Bias}\\Remember hits,\\forget misses};
-\node[align=center, font=\small] at (2.3,-1.3) {\textbf{Social Expectations}\\Respond as if human};
-\node[align=center, font=\small] at (0,-2.3) {\textbf{Need for Connection}\\Lonely humans seek\\companionship};
-\node[align=center, font=\small] at (-2.3,-1.3) {\textbf{Linguistic Cues}\\Language implies mind};
-\node[align=center, font=\small] at (-2.3,1.3) {\textbf{Low Threshold}\\Easy to convince};
+\node[align=center, font=\footnotesize] at (0,2.3) {\textbf{Anthropomorphization}\\We see humans everywhere};
+\node[align=center, font=\footnotesize] at (2.3,1.3) {\textbf{Confirmation Bias}\\Remember hits,\\forget misses};
+\node[align=center, font=\footnotesize] at (2.3,-1.3) {\textbf{Social Expectations}\\Respond as if human};
+\node[align=center, font=\footnotesize] at (0,-2.3) {\textbf{Need for Connection}\\Lonely humans seek\\companionship};
+\node[align=center, font=\footnotesize] at (-2.3,-1.3) {\textbf{Linguistic Cues}\\Language implies mind};
+\node[align=center, font=\footnotesize] at (-2.3,1.3) {\textbf{Low Threshold}\\Easy to convince};
 
 \end{tikzpicture}
 \end{center}
 \end{frame}
 
-\begin{frame}{Weizenbaum's Reaction 😨}
+\begin{frame}[shrink=10]{Weizenbaum's Reaction 😨}
+\small
 \begin{alertblock}{A Shocking Discovery}
 Joseph Weizenbaum was \textbf{horrified} by people's reactions to ELIZA.
 \end{alertblock}
@@ -433,7 +439,7 @@ Joseph Weizenbaum was \textbf{horrified} by people's reactions to ELIZA.
 \vspace{0.3cm}
 
 \textbf{His initial goal:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Demonstrate the \textit{superficiality} of human-computer interaction
     \item Show that simulation $\neq$ understanding
     \item Critique overreliance on computers
@@ -442,7 +448,7 @@ Joseph Weizenbaum was \textbf{horrified} by people's reactions to ELIZA.
 \vspace{0.3cm}
 
 \textbf{What actually happened:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item People treated ELIZA as if it understood them
     \item Some therapists wanted to use it with real patients
     \item His secretary became emotionally attached to it
@@ -457,6 +463,7 @@ Weizenbaum spent the rest of his career warning about the dangers of AI!
 \end{frame}
 
 \begin{frame}{Weizenbaum's Warning ⚠️}
+\small
 \begin{block}{From "Computer Power and Human Reason" (1976)}
 \textit{"The computer programmer is a creator of universes for which he alone is responsible. Universes of virtually unlimited complexity can be created in the form of computer programs."}
 \end{block}
@@ -464,7 +471,7 @@ Weizenbaum spent the rest of his career warning about the dangers of AI!
 \vspace{0.3cm}
 
 \textbf{His concerns:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item People mistake \textbf{simulation for understanding}
     \item Risk of replacing \textbf{human relationships} with machines
     \item Danger of trusting AI with decisions \textbf{it doesn't understand}
@@ -479,14 +486,15 @@ Are these concerns still relevant today with ChatGPT, Claude, and other modern L
 \end{discussion}
 \end{frame}
 
-\begin{frame}{The ELIZA Effect Today 📱}
+\begin{frame}[shrink=10]{The ELIZA Effect Today 📱}
+\small
 \begin{block}{Modern Examples}
 The ELIZA effect is alive and well:
 \end{block}
 
 \vspace{0.3cm}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 💬 People form bonds with \textbf{Replika} (AI companion app)
     \item 🤖 Users anthropomorphize \textbf{ChatGPT} and \textbf{Claude}
     \item 📞 Customers get frustrated with \textbf{chatbots} for "not understanding"
@@ -495,16 +503,16 @@ The ELIZA effect is alive and well:
     \item 🏠 People thank \textbf{Alexa} and \textbf{Siri}
 \end{itemize}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{thinkaboutit}
 Have you ever caught yourself treating an AI as if it understands you? Why did you do it? How did it feel?
 \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Simulation vs. Understanding 🎭}
+\begin{frame}[shrink=5]{Simulation vs. Understanding 🎭}
 \begin{center}
-\begin{tikzpicture}[scale=1.0]
+\begin{tikzpicture}[scale=0.90]
 % Two boxes
 \node[draw, thick, fill=blue!20, minimum width=3.5cm, minimum height=2.5cm, align=center] at (0,0) {
     \textbf{Simulation}\\[0.3cm]
@@ -525,8 +533,8 @@ Have you ever caught yourself treating an AI as if it understands you? Why did y
 \node[below, red, font=\Large\bfseries] at (3,-1.8) {Not the same!};
 
 % Examples below
-\node[below, font=\small, align=center] at (0,-2.3) {ELIZA\\ChatGPT(?)};
-\node[below, font=\small, align=center] at (6,-2.3) {Humans\\Animals(?)};
+\node[below, font=\footnotesize, align=center] at (0,-2.3) {ELIZA\\ChatGPT(?)};
+\node[below, font=\footnotesize, align=center] at (6,-2.3) {Humans\\Animals(?)};
 
 \end{tikzpicture}
 \end{center}
@@ -538,7 +546,7 @@ Is there a clear line between simulation and understanding? Or is it a spectrum?
 
 \section{From ELIZA to Modern LLMs}
 
-\begin{frame}{The Evolution of Chatbots 📈}
+\begin{frame}[shrink=5]{The Evolution of Chatbots 📈}
 \begin{center}
 \begin{tikzpicture}[scale=0.85]
 % Timeline
@@ -546,22 +554,22 @@ Is there a clear line between simulation and understanding? Or is it a spectrum?
 
 % Markers
 \node[above] at (1,0.1) {\textbf{1966}};
-\node[below, align=center, font=\small] at (1,-0.1) {ELIZA\\Pattern\\matching};
+\node[below, align=center, font=\footnotesize] at (1,-0.1) {ELIZA\\Pattern\\matching};
 
 \node[above] at (3,0.1) {\textbf{1995}};
-\node[below, align=center, font=\small] at (3,-0.1) {A.L.I.C.E.\\AIML};
+\node[below, align=center, font=\footnotesize] at (3,-0.1) {A.L.I.C.E.\\AIML};
 
 \node[above] at (5,0.1) {\textbf{2001}};
-\node[below, align=center, font=\small] at (5,-0.1) {SmarterChild\\Early IM bot};
+\node[below, align=center, font=\footnotesize] at (5,-0.1) {SmarterChild\\Early IM bot};
 
 \node[above] at (7,0.1) {\textbf{2011}};
-\node[below, align=center, font=\small] at (7,-0.1) {Siri\\Voice\\assistant};
+\node[below, align=center, font=\footnotesize] at (7,-0.1) {Siri\\Voice\\assistant};
 
 \node[above] at (9,0.1) {\textbf{2022}};
-\node[below, align=center, font=\small] at (9,-0.1) {ChatGPT\\LLM};
+\node[below, align=center, font=\footnotesize] at (9,-0.1) {ChatGPT\\LLM};
 
 \node[above] at (10.5,0.1) {\textbf{2024}};
-\node[below, align=center, font=\small] at (10.5,-0.1) {GPT-4\\Claude\\Opus};
+\node[below, align=center, font=\footnotesize] at (10.5,-0.1) {GPT-4\\Claude\\Opus};
 
 % Complexity curve
 \draw[thick, blue, domain=0.5:10.5, samples=100]
@@ -583,11 +591,12 @@ We've moved from hand-crafted rules to learned patterns, but the fundamental ide
 \end{block}
 \end{frame}
 
-\begin{frame}{ELIZA vs Modern LLMs: Comparison 📊}
+\begin{frame}[shrink=10]{ELIZA vs Modern LLMs: Comparison 📊}
+\small
 \begin{columns}
 \begin{column}{0.48\textwidth}
 \textbf{ELIZA (1966):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✍️ Hand-written rules
     \item 🔢 $\sim$200 patterns
     \item 🎯 Domain-specific (therapy)
@@ -602,7 +611,7 @@ We've moved from hand-crafted rules to learned patterns, but the fundamental ide
 
 \begin{column}{0.48\textwidth}
 \textbf{GPT-4 (2023):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 🤖 Learned from data
     \item 🔢 1.7+ trillion parameters
     \item 🌍 General purpose
@@ -616,21 +625,22 @@ We've moved from hand-crafted rules to learned patterns, but the fundamental ide
 \end{column}
 \end{columns}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{thinkaboutit}
 GPT-4 is incomparably more sophisticated, but does it truly "understand" or is it just better pattern matching?
 \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{What ELIZA Teaches Us 🎓}
+\begin{frame}[shrink=10]{What ELIZA Teaches Us 🎓}
+\small
 \begin{block}{Lessons from a 60-Year-Old Program}
 ELIZA remains relevant because it reveals fundamental truths:
 \end{block}
 
 \vspace{0.3cm}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Behavior $\neq$ Understanding}: Looking intelligent is not the same as being intelligent
     \item \textbf{Human Psychology}: We \textit{want} to believe machines understand us
     \item \textbf{Simplicity is powerful}: You don't need complexity to create illusions
@@ -648,15 +658,16 @@ By building ELIZA, you'll understand what AI \textit{really} is—and what it is
 
 \section{Assignment 1: Build Your Own ELIZA}
 
-\begin{frame}{Assignment 1: Build ELIZA 🛠️}
+\begin{frame}[shrink=10]{Assignment 1: Build ELIZA 🛠️}
+\small
 \begin{alertblock}{Your First Assignment}
 You will implement your own version of the ELIZA chatbot!
 \end{alertblock}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \textbf{What you'll do:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Read rules from a configuration file
     \item Implement pre-substitutions
     \item Handle synonym substitutions
@@ -674,11 +685,12 @@ This will be challenging but incredibly rewarding! You'll truly understand how c
 \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Assignment Structure 📋}
+\begin{frame}[shrink=10]{Assignment Structure 📋}
+\small
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \textbf{Technical requirements:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Python implementation
     \item Use provided \texttt{instructions.txt}
     \item Pattern matching with regex
@@ -692,7 +704,7 @@ This will be challenging but incredibly rewarding! You'll truly understand how c
 
 \begin{column}{0.5\textwidth}
 \textbf{Deliverable:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Single Jupyter notebook
     \item Runnable in Google Colab
     \item Markdown explanations
@@ -704,7 +716,7 @@ This will be challenging but incredibly rewarding! You'll truly understand how c
 \end{column}
 \end{columns}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{block}{Due Date}
 Check Canvas for the exact due date! Usually 2 weeks from today.
@@ -764,14 +776,14 @@ Reflection \& analysis & 10 \\
 \vspace{0.3cm}
 
 \textbf{Bonus (up to +10):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Memory implementation (+5)
     \item Particularly creative patterns (+5)
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Tips for Success 💡}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Tips for Success 💡}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Start early!} Pattern matching can be tricky
     \item \textbf{Test incrementally}: Build one piece at a time
     \item \textbf{Use print statements}: Debug by seeing what patterns match
@@ -786,8 +798,9 @@ Reflection \& analysis & 10 \\
 \end{frame}
 
 \begin{frame}{Common Pitfalls to Avoid ⚠️}
+\small
 \begin{alertblock}{Watch Out For:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Escaping special regex characters}: Use \texttt{r"..."} for raw strings
     \item \textbf{Substitution order}: Pre-subs before matching, post-subs after
     \item \textbf{Greedy vs. non-greedy matching}: \texttt{(.*)} vs \texttt{(.*?)}
@@ -804,7 +817,7 @@ Reflection \& analysis & 10 \\
 \begin{thinkaboutit}
 Testing is your friend! Try lots of different inputs to find bugs.
 \end{thinkaboutit}
-\end{frame>
+\end{frame}
 
 \begin{frame}[fragile]{Example: Testing Your Implementation 🧪}
 \begin{lstlisting}[basicstyle=\ttfamily\tiny]
@@ -836,10 +849,11 @@ for user_input in test_inputs:
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Reflection Questions 💭}
+\begin{frame}[shrink=10]{Reflection Questions 💭}
+\small
 \textbf{Include in your notebook:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item What was the most challenging part of the implementation?
     \item What surprised you about how ELIZA works?
     \item Did you experience the "ELIZA effect" when testing your bot?
@@ -856,10 +870,10 @@ The reflection is as important as the code! It shows your critical thinking abou
 \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Extension Ideas (Optional) 🌟}
+\begin{frame}[shrink=10]{Extension Ideas (Optional) 🌟}
 \textbf{If you want to go further:}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 🧠 \textbf{Smarter memory}: Track topics and their sentiment
     \item 🎭 \textbf{Multiple personas}: Different rule sets for different "personalities"
     \item 📊 \textbf{Conversation analysis}: Track which patterns are used most
@@ -880,9 +894,10 @@ These are optional enrichment activities—not required for full credit!
 \section{Looking Ahead}
 
 \begin{frame}{What's Next? 🔮}
+\small
 \begin{block}{Week 2: Computational Linguistics}
 We'll move beyond simple pattern matching to explore:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Tokenization}: How to split text into meaningful units
     \item \textbf{N-grams}: Patterns across multiple words
     \item \textbf{Statistical language models}: Predicting what comes next
@@ -898,9 +913,10 @@ Week 1 showed you pattern matching by hand. Week 2 shows you how to find pattern
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Resources for Learning 📚}
+\begin{frame}[shrink=10]{Resources for Learning 📚}
+\small
 \begin{block}{Essential Reading}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Weizenbaum (1966)}: ELIZA paper - The original!
     \item \textbf{Python regex docs}: \href{https://docs.python.org/3/library/re.html}{docs.python.org/3/library/re.html}
     \item \textbf{Regex101}: \href{https://regex101.com}{regex101.com} - Test your patterns
@@ -911,7 +927,7 @@ Week 1 showed you pattern matching by hand. Week 2 shows you how to find pattern
 \vspace{0.3cm}
 
 \begin{block}{Optional Fun Stuff}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Try talking to original ELIZA: \href{https://www.masswerk.at/elizabot/}{masswerk.at/elizabot}
     \item Watch: "How ELIZA Worked" on YouTube
     \item Read: "Computer Power and Human Reason" by Weizenbaum
@@ -919,8 +935,8 @@ Week 1 showed you pattern matching by hand. Week 2 shows you how to find pattern
 \end{block}
 \end{frame}
 
-\begin{frame}{Key Takeaways 🔑}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🔑}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{ELIZA is simple but powerful}: Pattern matching creates convincing illusions
     \item \textbf{The ELIZA Effect is real}: We anthropomorphize machines easily
     \item \textbf{Weizenbaum was prescient}: His warnings about AI are still relevant
@@ -930,7 +946,7 @@ Week 1 showed you pattern matching by hand. Week 2 shows you how to find pattern
     \item \textbf{This is just the start}: Each week builds toward true understanding
 \end{enumerate}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{alertblock}{Remember}
 The goal isn't just to build ELIZA—it's to \textit{understand} what conversation, intelligence, and understanding really mean!
@@ -939,7 +955,7 @@ The goal isn't just to build ELIZA—it's to \textit{understand} what conversati
 
 \begin{frame}{Final Thoughts 💡}
 \begin{center}
-\begin{tikzpicture}
+\begin{tikzpicture}[scale=0.85]
 % Quote box
 \node[draw, thick, fill=blue!10, rounded corners, text width=10cm, align=center] at (0,0) {
     \large\textit{"The computer programmer is a creator of universes for which he alone is responsible..."}
@@ -951,7 +967,7 @@ The goal isn't just to build ELIZA—it's to \textit{understand} what conversati
 \end{tikzpicture}
 \end{center}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{discussion}
 As you build your ELIZA, remember: You're creating a small universe. What responsibilities come with that?
@@ -964,7 +980,7 @@ How does it feel to create something that might deceive users into thinking it u
 \begin{center}
 \Large{Let's discuss!}
 
-\vspace{1cm}
+\vspace{0.5cm}
 
 \textbf{Contact Information:}
 
@@ -974,11 +990,11 @@ How does it feel to create something that might deceive users into thinking it u
 
 🏢 Office Hours: By appointment (Moore Hall 349)
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \textbf{Assignment 1 is now available on Canvas!}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \large{Good luck building ELIZA! 🚀}
 \end{center}

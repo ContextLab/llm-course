@@ -1,12 +1,15 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{emoji}
 \usetikzlibrary{shapes,arrows,positioning,calc}
 
 % Code listing setup
@@ -23,7 +26,7 @@
 
 \title{Lecture 12: Attention Mechanisms}
 \subtitle{Week 5, Lecture 1 - From Seq2Seq to Attention}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \date{Winter 2026}
 
 \begin{document}
@@ -31,16 +34,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Agenda 📋}
+\begin{frame}[shrink=10]{Today's Agenda 📋}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 🤔 \textbf{The Context Problem}: Why static embeddings aren't enough
     \item 🔄 \textbf{Sequence-to-Sequence Models}: The foundation
     \item ⚠️ \textbf{The Bottleneck Problem}: Why vanilla Seq2Seq struggles
@@ -56,7 +59,7 @@
 % ============================================================
 % THE CONTEXT PROBLEM
 % ============================================================
-\begin{frame}{The Context Problem 🤔}
+\begin{frame}[shrink=10]{The Context Problem 🤔}
 \begin{center}
 \LARGE
 \textbf{Why do we need context-aware models?}
@@ -66,7 +69,7 @@
 \vspace{1em}
 
 \begin{exampleblock}{Example: The word "bank"}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item "I deposited money at the \textbf{bank}" (financial institution)
     \item "We sat by the river \textbf{bank}" (riverside)
     \item "The plane started to \textbf{bank} left" (tilt/turn)
@@ -78,7 +81,7 @@
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Static Embeddings (Word2Vec):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item One vector per word
     \item \alert{Can't distinguish meanings!}
     \item Context-independent
@@ -89,7 +92,7 @@
 
 \begin{column}{0.48\textwidth}
 \textbf{Context-Aware Models:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Different representation per occurrence
     \item Uses surrounding context
     \item Handles polysemy naturally
@@ -101,13 +104,13 @@
 % ============================================================
 % SEQUENCE TO SEQUENCE INTRO
 % ============================================================
-\begin{frame}{Sequence-to-Sequence Models 🔄}
+\begin{frame}[shrink=5]{Sequence-to-Sequence Models 🔄}
 \textbf{The breakthrough for variable-length input/output problems}
 
 \vspace{1em}
 
 \textbf{Applications:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Machine Translation: English → French
     \item Summarization: Long text → Short summary
     \item Question Answering: Question + Context → Answer
@@ -145,13 +148,13 @@
 % ============================================================
 % ENCODER DECODER ARCHITECTURE
 % ============================================================
-\begin{frame}{Encoder-Decoder Architecture 🏗️}
+\begin{frame}[shrink=10]{Encoder-Decoder Architecture 🏗️}
 \textbf{Two-part architecture: Encode then Decode}
 
 \vspace{1em}
 
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=0.8cm,
     rnn/.style={rectangle,draw,fill=blue!20,minimum width=1cm,minimum height=1cm},
     decoder/.style={rectangle,draw,fill=red!20,minimum width=1cm,minimum height=1cm}
@@ -198,7 +201,7 @@
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Encoder:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Reads input sequence
     \item Compresses to fixed-size vector
     \item Captures semantic meaning
@@ -207,7 +210,7 @@
 
 \begin{column}{0.48\textwidth}
 \textbf{Decoder:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Starts from context vector
     \item Generates output sequence
     \item One token at a time
@@ -219,13 +222,13 @@
 % ============================================================
 % SEQ2SEQ PROBLEM
 % ============================================================
-\begin{frame}{The Seq2Seq Bottleneck Problem ⚠️}
+\begin{frame}[shrink=5]{The Seq2Seq Bottleneck Problem ⚠️}
 \textbf{Challenge: All information compressed into single vector!}
 
 \vspace{1em}
 
 \begin{alertblock}{The Problem}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Long sequences → information loss
     \item Fixed-size context vector is a bottleneck
     \item Early tokens forgotten by the time we reach the end
@@ -267,7 +270,7 @@
 % ============================================================
 % ATTENTION MECHANISM
 % ============================================================
-\begin{frame}{Attention Mechanism: The Big Idea ⚡}
+\begin{frame}[shrink=5]{Attention Mechanism: The Big Idea ⚡}
 \textbf{Instead of compressing everything into one vector...}
 
 \vspace{0.5em}
@@ -277,7 +280,7 @@
 \vspace{1em}
 
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=0.5cm,
     enc/.style={rectangle,draw,fill=blue!20,minimum width=0.8cm,minimum height=0.8cm},
     dec/.style={rectangle,draw,fill=red!20,minimum width=0.8cm,minimum height=0.8cm}
@@ -323,7 +326,7 @@
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Score}: How relevant is each encoder state to current decoder state?
     \begin{align*}
     e_{t,i} = \text{score}(s_t, h_i) = s_t^T W_a h_i
@@ -353,17 +356,17 @@
 % ============================================================
 % ATTENTION TYPES
 % ============================================================
-\begin{frame}{Attention Score Functions 📐}
+\begin{frame}[shrink=10]{Attention Score Functions 📐}
 \textbf{Different ways to compute the score}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Additive Attention (Bahdanau et al. 2015):}
     \begin{align*}
     \text{score}(s_t, h_i) = v^T \tanh(W_1 s_t + W_2 h_i)
     \end{align*}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Learns alignment jointly with translation
         \item More parameters, more flexibility
     \end{itemize}
@@ -374,7 +377,7 @@
     \begin{align*}
     \text{score}(s_t, h_i) = s_t^T W h_i
     \end{align*}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Simpler, faster computation
         \item Works well in practice
     \end{itemize}
@@ -385,7 +388,7 @@
     \begin{align*}
     \text{score}(s_t, h_i) = \frac{s_t^T h_i}{\sqrt{d}}
     \end{align*}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Used in Transformers (coming next lecture!)
         \item Scaling prevents vanishing gradients
     \end{itemize}
@@ -418,7 +421,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
 \vspace{1em}
 
 \textbf{Observations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Diagonal pattern for similar word order
     \item Model learns alignment automatically!
     \item No need for explicit word alignment annotations
@@ -432,10 +435,10 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
 % ============================================================
 % ATTENTION BENEFITS
 % ============================================================
-\begin{frame}{Benefits of Attention Mechanisms ✅}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Benefits of Attention Mechanisms ✅}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Solves the Bottleneck Problem}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Decoder has access to all encoder states
         \item No information compression into single vector
         \item Works well for long sequences
@@ -444,7 +447,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
     \vspace{0.5em}
 
     \item \textbf{Improves Performance}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Better BLEU scores on translation tasks
         \item Handles long-range dependencies
         \item More robust to sequence length
@@ -453,7 +456,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
     \vspace{0.5em}
 
     \item \textbf{Provides Interpretability}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Can visualize what the model focuses on
         \item Helps debug and understand model behavior
         \item Builds trust in model predictions
@@ -462,7 +465,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
     \vspace{0.5em}
 
     \item \textbf{Enables Better Alignment}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Learns source-target correspondences
         \item No need for external alignment tools
         \item Works across different language pairs
@@ -476,7 +479,8 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
 % ============================================================
 % REAL WORLD IMPACT
 % ============================================================
-\begin{frame}{Real-World Impact of Attention 🌍}
+\begin{frame}[shrink=10]{Real-World Impact of Attention 🌍}
+\small
 \textbf{Attention mechanisms revolutionized multiple domains:}
 
 \vspace{1em}
@@ -484,7 +488,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Machine Translation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Google Translate (2016)
     \item DeepL
     \item Facebook translations
@@ -494,7 +498,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
 \vspace{0.5em}
 
 \textbf{Text Summarization:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item News article summarization
     \item Document understanding
     \item Email auto-responses
@@ -503,7 +507,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
 
 \begin{column}{0.48\textwidth}
 \textbf{Question Answering:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Reading comprehension
     \item Search engines
     \item Virtual assistants
@@ -512,7 +516,7 @@ l'européen & 0.05 & 0.05 & 0.1 & \cellcolor{orange!80}0.8 \\
 \vspace{0.5em}
 
 \textbf{Speech Recognition:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Attend to acoustic features
     \item Better transcription accuracy
     \item Listen, Attend and Spell models
@@ -567,10 +571,10 @@ class BahdanauAttention(nn.Module):
 % ============================================================
 % DISCUSSION
 % ============================================================
-\begin{frame}{Discussion Questions 💭}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Discussion Questions 💭}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Why is attention called "soft alignment"?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item How is it different from hard alignment?
         \item What are the advantages of soft vs. hard?
     \end{itemize}
@@ -578,7 +582,7 @@ class BahdanauAttention(nn.Module):
     \vspace{0.5em}
 
     \item \textbf{Computational Cost:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item What is the time complexity of attention?
         \item How does it scale with sequence length?
         \item When might this be a problem?
@@ -587,7 +591,7 @@ class BahdanauAttention(nn.Module):
     \vspace{0.5em}
 
     \item \textbf{Interpretability:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Can we always trust attention weights as explanations?
         \item What about when attention is uniform across all inputs?
     \end{itemize}
@@ -595,7 +599,7 @@ class BahdanauAttention(nn.Module):
     \vspace{0.5em}
 
     \item \textbf{Beyond Seq2Seq:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Where else might attention be useful?
         \item Can we apply it within a single sequence?
         \item (Spoiler: Yes! That's self-attention → next lecture!)
@@ -606,13 +610,13 @@ class BahdanauAttention(nn.Module):
 % ============================================================
 % LOOKING AHEAD
 % ============================================================
-\begin{frame}{Looking Ahead 🔮}
+\begin{frame}[shrink=10]{Looking Ahead 🔮}
 \textbf{What's Next?}
 
 \vspace{1em}
 
 \textbf{Today we learned:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item The context problem in NLP
     \item Sequence-to-sequence architecture
     \item The bottleneck problem
@@ -623,7 +627,7 @@ class BahdanauAttention(nn.Module):
 \vspace{1em}
 
 \textbf{Next lecture (Lecture 13):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \alert{Self-Attention}: Attention within a sequence
     \item \alert{The Transformer}: "Attention is All You Need"
     \item \alert{Query, Key, Value}: The new framework
@@ -642,33 +646,33 @@ class BahdanauAttention(nn.Module):
 % ============================================================
 % SUMMARY
 % ============================================================
-\begin{frame}{Summary 🎯}
+\begin{frame}[shrink=10]{Summary 🎯}
 \textbf{Key Takeaways:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Context Matters}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Static embeddings can't capture context-dependent meanings
         \item Need dynamic representations based on context
     \end{itemize}
 
     \item \textbf{Seq2Seq Bottleneck}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Fixed-size context vector limits performance
         \item Information loss for long sequences
     \end{itemize}
 
     \item \textbf{Attention is the Solution}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Dynamic access to all encoder states
         \item Weighted combination based on relevance
         \item Attention weights sum to 1.0 (probability distribution)
     \end{itemize}
 
     \item \textbf{Benefits}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Better performance on long sequences
         \item Automatic alignment learning
         \item Model interpretability
@@ -682,14 +686,14 @@ class BahdanauAttention(nn.Module):
 % ============================================================
 % REFERENCES
 % ============================================================
-\begin{frame}{References 📚}
+\begin{frame}[shrink=10]{References 📚}
 \textbf{Key Papers:}
 
 \vspace{0.5em}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Sutskever et al. (2014)} - "Sequence to Sequence Learning with Neural Networks"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Introduced encoder-decoder architecture
         \item Foundation for seq2seq models
     \end{itemize}
@@ -697,7 +701,7 @@ class BahdanauAttention(nn.Module):
     \vspace{0.3em}
 
     \item \textbf{Bahdanau et al. (2015)} - "Neural Machine Translation by Jointly Learning to Align and Translate"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Introduced additive attention mechanism
         \item Solved the bottleneck problem
     \end{itemize}
@@ -705,7 +709,7 @@ class BahdanauAttention(nn.Module):
     \vspace{0.3em}
 
     \item \textbf{Luong et al. (2015)} - "Effective Approaches to Attention-based Neural Machine Translation"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Multiplicative attention variants
         \item Global vs. local attention
     \end{itemize}
@@ -713,7 +717,7 @@ class BahdanauAttention(nn.Module):
     \vspace{0.3em}
 
     \item \textbf{Vaswani et al. (2017)} - "Attention Is All You Need"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item The Transformer architecture (next lecture!)
         \item Scaled dot-product attention
     \end{itemize}
@@ -722,7 +726,7 @@ class BahdanauAttention(nn.Module):
 \vspace{0.5em}
 
 \textbf{Additional Resources:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Jay Alammar's blog: "Visualizing A Neural Machine Translation Model"
     \item Distill.pub: "Attention and Augmented Recurrent Neural Networks"
 \end{itemize}
@@ -737,17 +741,17 @@ class BahdanauAttention(nn.Module):
 \textbf{Discussion Time}
 \end{center}
 
-\vspace{2em}
+\vspace{1em}
 
 \textbf{Office Hours Topics:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Implementing attention from scratch
     \item Different attention mechanisms
     \item Debugging attention-based models
     \item Assignment 4 preparation
 \end{itemize}
 
-\vspace{2em}
+\vspace{1em}
 
 \begin{center}
 \Large

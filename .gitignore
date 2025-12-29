@@ -172,3 +172,16 @@ demos/11-analogies/data/glove.6B.*.txt
 node_modules/
 package-lock.json
 demos/15-chatbot-evolution/alice-aiml-original/
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+luatex.*/

@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{tikz}
@@ -21,7 +25,6 @@
 \definecolor{thinkbox}{RGB}{255,245,220}
 \definecolor{discussbox}{RGB}{230,240,255}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -41,14 +44,14 @@
 \newtcolorbox{thinkaboutit}{
     colback=thinkbox,
     colframe=orange,
-    title=💭 Think about it!,
+    title=Think about it!,
     fonttitle=\bfseries
 }
 
 \newtcolorbox{discussion}{
     colback=discussbox,
     colframe=blue,
-    title=💬 Discussion,
+    title=Discussion,
     fonttitle=\bfseries
 }
 
@@ -77,17 +80,17 @@
         What made GPT different from previous language models?
     \end{discussion}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Key Innovation: Pre-training + Fine-tuning}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item 📚 \textbf{Pre-train} on massive unlabeled text (unsupervised)
         \item 🎯 \textbf{Fine-tune} on specific tasks (supervised)
         \item 🔄 Transfer learning for NLP
         \item 🎨 One model, many tasks
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{alertblock}{Paradigm Shift}
         Before GPT: Task-specific models trained from scratch \\
@@ -100,11 +103,12 @@
     \textit{Reference: Radford et al. (2018) - "Improving Language Understanding by Generative Pre-Training"}
 \end{frame}
 
-\begin{frame}{From BERT to GPT: Different Approaches 🔀}
+\begin{frame}[shrink=10]{From BERT to GPT: Different Approaches 🔀}
+\small
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \textbf{BERT (2018):}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item 🎭 \textbf{Masked Language Model}
                 \item Bidirectional context
                 \item Fill in the blank
@@ -112,7 +116,7 @@
                 \item Not designed for generation
             \end{itemize}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
 
             \textit{Example:}
             "The [MASK] sat on the mat"
@@ -120,7 +124,7 @@
 
         \begin{column}{0.48\textwidth}
             \textbf{GPT (2018):}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item ➡️ \textbf{Autoregressive Model}
                 \item Left-to-right (causal)
                 \item Predict next token
@@ -128,24 +132,24 @@
                 \item Can also understand
             \end{itemize}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
 
             \textit{Example:}
             "The cat sat" → predict "on"
         \end{column}
     \end{columns}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         Why is autoregressive modeling more natural for text generation?
     \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{The Transformer Decoder 🏗️}
+\begin{frame}[shrink=5]{The Transformer Decoder 🏗️}
     \textbf{GPT uses the Transformer \textit{decoder} architecture}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{center}
         \begin{tikzpicture}[scale=0.9]
@@ -187,10 +191,10 @@
 
 \section{GPT Architecture Details}
 
-\begin{frame}{Masked Self-Attention 👀}
+\begin{frame}[shrink=5]{Masked Self-Attention 👀}
     \textbf{The Core Innovation: Causal Masking}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{center}
         \begin{tikzpicture}[scale=0.7]
@@ -220,14 +224,14 @@
     \vspace{0.3cm}
 
     \textbf{Each token can only attend to itself and previous tokens}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Ensures autoregressive property
         \item No information leakage from future
         \item Allows parallel training
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Position Encoding in GPT 📍}
+\begin{frame}[shrink=10]{Position Encoding in GPT 📍}
     \textbf{Why we need position information:}
 
     \vspace{0.3cm}
@@ -236,23 +240,23 @@
         Self-attention is \textit{permutation invariant}—it doesn't inherently know word order!
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{GPT's Solution: Learned Position Embeddings}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Each position gets a learnable embedding
         \item Added to token embeddings: $x_i = \text{token}_i + \text{pos}_i$
         \item Model learns position patterns during training
         \item Maximum sequence length: 512 tokens (GPT-1)
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
             \textbf{Alternative: Sinusoidal} \\
             \small (Used in original Transformer)
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Fixed function
                 \item Generalizes to longer sequences
             \end{itemize}
@@ -260,7 +264,7 @@
         \begin{column}{0.5\textwidth}
             \textbf{GPT: Learned} \\
             \small (More flexible)
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Learned from data
                 \item Task-specific patterns
             \end{itemize}
@@ -286,7 +290,7 @@
         \end{tabular}
     \end{table}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Training objective:}
     $$\mathcal{L} = \sum_{i} \log P(t_i | t_{<i}; \Theta)$$
@@ -332,9 +336,9 @@ class GPT(nn.Module):
 
 \section{Pre-training and Fine-tuning}
 
-\begin{frame}{Two-Stage Training 🎓}
+\begin{frame}[shrink=5]{Two-Stage Training 🎓}
     \begin{center}
-        \begin{tikzpicture}[node distance=2cm]
+        \begin{tikzpicture}[scale=0.85,node distance=2cm]
             % Stage 1
             \node[draw, rectangle, fill=lightblue!30, minimum width=4cm, minimum height=1.5cm, align=center] (pretrain)
                 {\textbf{Stage 1: Pre-training} \\ Unsupervised learning \\ on massive text corpus};
@@ -357,20 +361,21 @@ class GPT(nn.Module):
         \end{tikzpicture}
     \end{center}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Why this works:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Pre-training learns general language understanding
         \item Fine-tuning adapts to specific task format
         \item Much less task data needed!
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Pre-training: Language Modeling 📚}
+\begin{frame}[shrink=10]{Pre-training: Language Modeling 📚}
+\small
     \textbf{Objective: Predict next token}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{block}{Example Training Sequence}
         \textbf{Text:} "The quick brown fox jumps over the lazy dog"
@@ -378,7 +383,7 @@ class GPT(nn.Module):
         \vspace{0.3cm}
 
         \textbf{Training examples:}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item "The" → predict "quick"
             \item "The quick" → predict "brown"
             \item "The quick brown" → predict "fox"
@@ -387,10 +392,10 @@ class GPT(nn.Module):
         \end{itemize}
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Self-supervised learning:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item No manual labels needed!
         \item Every text provides training signal
         \item Can use web-scale data
@@ -401,7 +406,7 @@ class GPT(nn.Module):
 \begin{frame}{Fine-tuning for Downstream Tasks 🎯}
     \textbf{Task Format: Input + Delimiter + Label}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
@@ -410,17 +415,17 @@ class GPT(nn.Module):
             \small
             \texttt{[START] This movie is amazing! [DELIM] [LABEL]}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
             Model predicts: "Positive"
 
-            \vspace{0.5cm}
+            \vspace{0.15cm}
 
             \textbf{Entailment:}
 
             \small
             \texttt{[START] Premise [DELIM] Hypothesis [DELIM] [LABEL]}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
             Model predicts: "Entailment" / "Contradiction" / "Neutral"
         \end{column}
 
@@ -430,36 +435,36 @@ class GPT(nn.Module):
             \small
             \texttt{[START] Context [DELIM] Question [DELIM] [ANSWER]}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
             Model predicts answer span
 
-            \vspace{0.5cm}
+            \vspace{0.15cm}
 
             \textbf{Similarity:}
 
             \small
             \texttt{[START] Text1 [DELIM] Text2 [DELIM] [LABEL]}
 
-            \vspace{0.3cm}
+            \vspace{0.15cm}
             Model predicts similarity score
         \end{column}
     \end{columns}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{alertblock}{Key Insight}
         All tasks can be framed as text completion! 🎯
     \end{alertblock}
 \end{frame}
 
-\begin{frame}{Fine-tuning Implementation Details ⚙️}
+\begin{frame}[shrink=10]{Fine-tuning Implementation Details ⚙️}
     \textbf{What changes during fine-tuning?}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Add task-specific input transformations}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Format inputs with delimiters
             \item Add special tokens
         \end{itemize}
@@ -467,7 +472,7 @@ class GPT(nn.Module):
         \vspace{0.3cm}
 
         \item \textbf{Add classification head (optional)}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Linear layer for classification
             \item Or use language modeling head
         \end{itemize}
@@ -475,17 +480,17 @@ class GPT(nn.Module):
         \vspace{0.3cm}
 
         \item \textbf{Train with supervised objective}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Cross-entropy loss
             \item Much lower learning rate
             \item Few epochs (3-5)
         \end{itemize}
     \end{enumerate}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Hyperparameters:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Learning rate: 6.25e-5 (much lower than pre-training!)
         \item Batch size: 32
         \item Max epochs: 3
@@ -498,7 +503,7 @@ class GPT(nn.Module):
 \begin{frame}{GPT-1 Results 📊}
     \textbf{Performance on GLUE Benchmark:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{table}
         \small
@@ -514,10 +519,10 @@ class GPT(nn.Module):
         \end{tabular}
     \end{table}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{alertblock}{Key Findings}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item GPT achieved SOTA on 9 out of 12 tasks studied
             \item Large improvements on tasks with less training data
             \item Transfer learning works for NLP!
@@ -530,37 +535,38 @@ class GPT(nn.Module):
     \textit{Reference: Radford et al. (2018) - "Improving Language Understanding by Generative Pre-Training"}
 \end{frame}
 
-\begin{frame}{Zero-Shot and Few-Shot Learning 🎯}
+\begin{frame}[shrink=10]{Zero-Shot and Few-Shot Learning 🎯}
+\small
     \begin{discussion}
         What if we could use the model \textit{without} fine-tuning?
     \end{discussion}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Definitions:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textbf{Zero-shot}: No task-specific training examples
         \item \textbf{Few-shot}: A few examples (1-10) as context
         \item \textbf{Fine-tuning}: Full supervised training
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{GPT-1 observations:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ✅ Fine-tuning works best
         \item ⚠️ Zero-shot performance is weak
         \item 💡 Model has learned a lot, but needs task formatting
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         This limitation motivated GPT-2 and GPT-3: Can we make models that work zero-shot?
     \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Visualizing What GPT Learns 🎨}
+\begin{frame}[shrink=5]{Visualizing What GPT Learns 🎨}
     \begin{center}
         \begin{tikzpicture}[scale=0.9]
             % Layer representations
@@ -580,10 +586,10 @@ class GPT(nn.Module):
         \end{tikzpicture}
     \end{center}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \textbf{Layer analysis shows:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Early layers: Syntactic patterns
         \item Middle layers: Semantic understanding
         \item Later layers: Task-specific reasoning
@@ -591,14 +597,14 @@ class GPT(nn.Module):
     \end{itemize}
 \end{frame}
 
-\begin{frame}{The Generative Pre-training Paradigm 🌟}
+\begin{frame}[shrink=10]{The Generative Pre-training Paradigm 🌟}
     \textbf{Why "Generative Pre-Training" was revolutionary:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Unified Architecture}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Same model for all tasks
             \item vs. task-specific architectures
         \end{itemize}
@@ -606,7 +612,7 @@ class GPT(nn.Module):
         \vspace{0.3cm}
 
         \item \textbf{Transfer Learning}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Learn once, apply many times
             \item vs. training from scratch
         \end{itemize}
@@ -614,7 +620,7 @@ class GPT(nn.Module):
         \vspace{0.3cm}
 
         \item \textbf{Scalability}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item More data → Better performance
             \item Clear path to improvement
         \end{itemize}
@@ -622,13 +628,13 @@ class GPT(nn.Module):
         \vspace{0.3cm}
 
         \item \textbf{Simplicity}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Just predict next token
             \item No complex objectives
         \end{itemize}
     \end{enumerate}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{alertblock}{This paradigm enabled GPT-2, GPT-3, and beyond!}
     \end{alertblock}
@@ -636,12 +642,13 @@ class GPT(nn.Module):
 
 \section{Discussion and Extensions}
 
-\begin{frame}{Limitations of GPT-1 ⚠️}
+\begin{frame}[shrink=10]{Limitations of GPT-1 ⚠️}
+\small
     \textbf{What GPT-1 couldn't do well:}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ❌ \textbf{Zero-shot performance}: Needed fine-tuning for each task
         \item ❌ \textbf{Model size}: 117M parameters (small by today's standards)
         \item ❌ \textbf{Training data}: Limited to ~5B tokens
@@ -650,7 +657,7 @@ class GPT(nn.Module):
         \item ❌ \textbf{Factual accuracy}: Prone to hallucinations
     \end{itemize}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{discussion}
         How would you address these limitations? \\
@@ -676,7 +683,7 @@ class GPT(nn.Module):
         \end{tabular}
     \end{table}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{thinkaboutit}
         BERT dominated understanding tasks (2018-2019), but GPT's approach proved more scalable and versatile. Why?
@@ -687,10 +694,10 @@ class GPT(nn.Module):
     \textbf{Answer:} Autoregressive modeling naturally supports generation, which unlocks zero-shot and few-shot capabilities!
 \end{frame}
 
-\begin{frame}{Key Takeaways 🔑}
-    \begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🔑}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{GPT introduced generative pre-training}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Transformer decoder architecture
             \item Autoregressive language modeling
         \end{itemize}
@@ -698,7 +705,7 @@ class GPT(nn.Module):
         \vspace{0.3cm}
 
         \item \textbf{Two-stage training paradigm}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Unsupervised pre-training on massive text
             \item Supervised fine-tuning on task data
         \end{itemize}
@@ -706,7 +713,7 @@ class GPT(nn.Module):
         \vspace{0.3cm}
 
         \item \textbf{Masked self-attention is key}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Enables autoregressive generation
             \item Prevents information leakage
         \end{itemize}
@@ -714,7 +721,7 @@ class GPT(nn.Module):
         \vspace{0.3cm}
 
         \item \textbf{Transfer learning for NLP}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Learn general patterns once
             \item Apply to many tasks
         \end{itemize}
@@ -722,7 +729,7 @@ class GPT(nn.Module):
         \vspace{0.3cm}
 
         \item \textbf{Foundation for modern LLMs}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item GPT-2, GPT-3, ChatGPT all build on this
         \end{itemize}
     \end{enumerate}
@@ -734,10 +741,10 @@ class GPT(nn.Module):
         \href{https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf}{[PDF]}
     \end{block}
 
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \begin{block}{Recommended Readings}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item \textbf{Vaswani et al. (2017)} - "Attention is All You Need" \\
             \href{https://arxiv.org/abs/1706.03762}{[ArXiv]}
 
@@ -751,8 +758,9 @@ class GPT(nn.Module):
 \end{frame}
 
 \begin{frame}{Next Lecture Preview 🔮}
+\small
     \begin{block}{Lecture 19: Scaling Up to GPT-3 and Beyond}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item GPT-2: Language models as unsupervised multitask learners
             \item GPT-3: Few-shot learning at scale
             \item Scaling laws: Why bigger is better
@@ -761,7 +769,7 @@ class GPT(nn.Module):
         \end{itemize}
     \end{block}
 
-    \vspace{1cm}
+    \vspace{0.5cm}
 
     \begin{center}
         \Large{Questions? 💬}

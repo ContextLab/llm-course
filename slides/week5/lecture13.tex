@@ -1,12 +1,15 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{emoji}
 \usetikzlibrary{shapes,arrows,positioning,calc}
 
 % Code listing setup
@@ -23,7 +26,7 @@
 
 \title{Lecture 13: Transformer Architecture}
 \subtitle{Week 5, Lecture 2 - Attention Is All You Need}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \date{Winter 2026}
 
 \begin{document}
@@ -31,16 +34,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Agenda 📋}
+\begin{frame}[shrink=10]{Today's Agenda 📋}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 🤖 \textbf{The Transformer Revolution}: Why it changed everything
     \item 🏗️ \textbf{Architecture Overview}: Encoder, Decoder, and components
     \item 🎯 \textbf{Self-Attention}: The core mechanism (Q, K, V)
@@ -56,7 +59,7 @@
 % ============================================================
 % TRANSFORMER INTRO
 % ============================================================
-\begin{frame}{The Transformer Revolution 🤖}
+\begin{frame}[shrink=10]{The Transformer Revolution 🤖}
 \begin{center}
 \LARGE
 \textbf{"Attention Is All You Need"}
@@ -67,7 +70,7 @@
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Before Transformers (2017):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item RNNs/LSTMs with attention
     \item Sequential processing
     \item Hard to parallelize
@@ -80,7 +83,7 @@
 
 \begin{column}{0.48\textwidth}
 \textbf{After Transformers:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \alert{Pure attention, no recurrence!}
     \item Parallel processing
     \item Scales to GPUs/TPUs
@@ -104,14 +107,14 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 % ============================================================
 % WHY NO RNN
 % ============================================================
-\begin{frame}{Why Get Rid of RNNs? 🚫}
+\begin{frame}[shrink=10]{Why Get Rid of RNNs? 🚫}
 \textbf{Limitations of Recurrent Architectures:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Sequential Bottleneck}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Must process token $t$ before token $t+1$
         \item Cannot parallelize across sequence
         \item Slow on modern GPUs/TPUs
@@ -120,7 +123,7 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
     \vspace{0.5em}
 
     \item \textbf{Long-Range Dependencies}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Information must flow through many steps
         \item Gradient vanishing/exploding problems
         \item Hard to learn dependencies 100+ tokens apart
@@ -129,7 +132,7 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
     \vspace{0.5em}
 
     \item \textbf{Memory Constraints}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Hidden state must remember everything
         \item Limited by fixed-size representation
         \item Even with attention, RNN is the bottleneck
@@ -144,7 +147,7 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 % ============================================================
 % TRANSFORMER ARCHITECTURE
 % ============================================================
-\begin{frame}{Transformer Architecture Overview 🏗️}
+\begin{frame}[shrink=5]{Transformer Architecture Overview 🏗️}
 \begin{center}
 \begin{tikzpicture}[scale=0.65]
     % Encoder
@@ -182,7 +185,7 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 \end{center}
 
 \textbf{Key Components:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Multi-Head Self-Attention}: Relate all positions to each other
     \item \textbf{Feed-Forward Networks}: Transform representations
     \item \textbf{Residual Connections \& Layer Norm}: Training stability (not shown)
@@ -193,13 +196,13 @@ Replace sequential RNNs with \textbf{self-attention} layers that process all pos
 % ============================================================
 % SELF ATTENTION
 % ============================================================
-\begin{frame}{Self-Attention: The Core Mechanism 🎯}
+\begin{frame}[shrink=5]{Self-Attention: The Core Mechanism 🎯}
 \textbf{Key idea: Each word attends to all other words in the sequence}
 
 \vspace{1em}
 
 \textbf{Three learned projections:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Query (Q)}: What am I looking for?
     \item \textbf{Key (K)}: What do I contain?
     \item \textbf{Value (V)}: What information do I have?
@@ -243,7 +246,8 @@ Q = XW_Q, \quad K = XW_K, \quad V = XW_V
 % ============================================================
 % QKV INTUITION
 % ============================================================
-\begin{frame}{Understanding Query, Key, Value 🔑}
+\begin{frame}[shrink=10]{Understanding Query, Key, Value 🔑}
+\small
 \textbf{Analogy: Database lookup or information retrieval}
 
 \vspace{1em}
@@ -251,7 +255,7 @@ Q = XW_Q, \quad K = XW_K, \quad V = XW_V
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Information Retrieval:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Query}: Your search query
     \item \textbf{Key}: Document titles/keywords
     \item \textbf{Value}: Document contents
@@ -260,7 +264,7 @@ Q = XW_Q, \quad K = XW_K, \quad V = XW_V
 \vspace{0.5em}
 
 \textbf{Process:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Compare query to all keys
     \item Get similarity scores
     \item Weight values by scores
@@ -270,7 +274,7 @@ Q = XW_Q, \quad K = XW_K, \quad V = XW_V
 
 \begin{column}{0.48\textwidth}
 \textbf{Self-Attention:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Query}: What token $i$ is looking for
     \item \textbf{Key}: What token $j$ offers
     \item \textbf{Value}: Information from token $j$
@@ -279,7 +283,7 @@ Q = XW_Q, \quad K = XW_K, \quad V = XW_V
 \vspace{0.5em}
 
 \textbf{Process:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Compare $Q_i$ to all $K_j$
     \item Get attention scores
     \item Weight all $V_j$ by scores
@@ -292,7 +296,7 @@ Q = XW_Q, \quad K = XW_K, \quad V = XW_V
 
 \begin{block}{Key Insight}
 Each token simultaneously acts as:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item A query (what it needs from other tokens)
     \item A key (how it should be retrieved)
     \item A value (what information it provides)
@@ -303,7 +307,7 @@ Each token simultaneously acts as:
 % ============================================================
 % SCALED DOT PRODUCT
 % ============================================================
-\begin{frame}{Scaled Dot-Product Attention 📐}
+\begin{frame}[shrink=10]{Scaled Dot-Product Attention 📐}
 \textbf{Step-by-step computation:}
 
 \vspace{1em}
@@ -314,28 +318,28 @@ Each token simultaneously acts as:
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Compute scores}: $S = QK^T$
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Matrix multiplication: $[n \times d_k] \times [d_k \times n] = [n \times n]$
         \item Each element $S_{ij}$ = similarity between token $i$ and $j$
     \end{itemize}
 
     \item \textbf{Scale}: $S' = S / \sqrt{d_k}$
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Prevents gradients from becoming too small
         \item When $d_k$ is large, dot products grow large
         \item Scaling keeps softmax gradients stable
     \end{itemize}
 
     \item \textbf{Softmax}: $A = \text{softmax}(S')$
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Convert to probability distribution (rows sum to 1)
         \item Each row = attention distribution for one token
     \end{itemize}
 
     \item \textbf{Weighted sum}: $\text{Output} = AV$
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item $[n \times n] \times [n \times d_v] = [n \times d_v]$
         \item Each output is a weighted combination of all values
     \end{itemize}
@@ -345,7 +349,7 @@ Each token simultaneously acts as:
 % ============================================================
 % SELF ATTENTION EXAMPLE
 % ============================================================
-\begin{frame}{Self-Attention Example 📝}
+\begin{frame}[shrink=5]{Self-Attention Example 📝}
 \textbf{Sentence: "The animal didn't cross the street because it was too tired"}
 
 \vspace{1em}
@@ -381,7 +385,7 @@ Each token simultaneously acts as:
 \vspace{1em}
 
 \textbf{Self-attention allows the model to:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Resolve pronouns
     \item Understand long-range dependencies
     \item Capture syntactic and semantic relationships
@@ -415,7 +419,7 @@ mat & 0.05 & 0.05 & 0.1 & 0.2 & 0.2 & \cellcolor{orange!80}0.4 \\
 \vspace{1em}
 
 \textbf{Observations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Each row sums to 1.0 (probability distribution)
     \item Diagonal elements often high (self-attention)
     \item "cat" attends to itself and "The" (determiner-noun relationship)
@@ -427,7 +431,7 @@ mat & 0.05 & 0.05 & 0.1 & 0.2 & 0.2 & \cellcolor{orange!80}0.4 \\
 % ============================================================
 % MULTI HEAD ATTENTION
 % ============================================================
-\begin{frame}{Multi-Head Attention 🎭}
+\begin{frame}[shrink=5]{Multi-Head Attention 🎭}
 \textbf{Why use multiple attention heads?}
 
 \vspace{1em}
@@ -435,7 +439,7 @@ mat & 0.05 & 0.05 & 0.1 & 0.2 & 0.2 & \cellcolor{orange!80}0.4 \\
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Intuition:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Different heads learn different relationships
     \item Head 1: Syntactic relationships
     \item Head 2: Semantic relationships
@@ -493,7 +497,8 @@ h_i &= \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)
 % ============================================================
 % WHY MULTI HEAD
 % ============================================================
-\begin{frame}{Why Multiple Heads? 🤔}
+\begin{frame}[shrink=10]{Why Multiple Heads? 🤔}
+\small
 \textbf{Example: Different heads learn different patterns}
 
 \vspace{1em}
@@ -505,7 +510,7 @@ h_i &= \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Head 1: Syntactic Dependencies}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "cat" → "The" (noun-determiner)
     \item "sat" → "cat" (verb-subject)
     \item "mat" → "the" (noun-determiner)
@@ -515,7 +520,7 @@ h_i &= \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)
 \vspace{0.5em}
 
 \textbf{Head 2: Semantic Relations}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "sat" → "mat" (action-location)
     \item "cat" → "mat" (agent-location)
     \item Learns meaning relationships
@@ -524,7 +529,7 @@ h_i &= \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)
 
 \begin{column}{0.48\textwidth}
 \textbf{Head 3: Local Context}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Each word → neighbors
     \item Short-range dependencies
     \item N-gram like patterns
@@ -533,7 +538,7 @@ h_i &= \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)
 \vspace{0.5em}
 
 \textbf{Head 4: Long-Range}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Distant word relationships
     \item Document-level context
     \item Coreference resolution
@@ -551,10 +556,10 @@ Multiple heads provide a richer, more diverse representation by attending to dif
 % ============================================================
 % TYPES OF ATTENTION
 % ============================================================
-\begin{frame}{Three Types of Attention 🔍}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Three Types of Attention 🔍}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Self-Attention (Encoder)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Each position attends to all positions in same sequence
         \item Bidirectional: can see past and future
         \item Used in: BERT, encoder-only models
@@ -563,7 +568,7 @@ Multiple heads provide a richer, more diverse representation by attending to dif
     \vspace{0.5em}
 
     \item \textbf{Masked Self-Attention (Decoder)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Each position attends only to previous positions
         \item Prevents "looking into the future"
         \item Used in: GPT, decoder-only models
@@ -572,7 +577,7 @@ Multiple heads provide a richer, more diverse representation by attending to dif
     \vspace{0.5em}
 
     \item \textbf{Cross-Attention (Encoder-Decoder)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Decoder attends to encoder outputs
         \item Queries from decoder, Keys/Values from encoder
         \item Used in: T5, BART, machine translation
@@ -631,7 +636,7 @@ $t_4$ & 0.15 & 0.25 & 0.3 & 0.35 \\
 \vspace{1em}
 
 \textbf{Result:} Token at position $t$ can only attend to positions $\leq t$
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Maintains autoregressive property
     \item Enables parallel training while preserving causality
 \end{itemize}
@@ -640,7 +645,7 @@ $t_4$ & 0.15 & 0.25 & 0.3 & 0.35 \\
 % ============================================================
 % CROSS ATTENTION
 % ============================================================
-\begin{frame}{Cross-Attention 🔗}
+\begin{frame}[shrink=5]{Cross-Attention 🔗}
 \textbf{Connecting encoder and decoder in seq2seq models}
 
 \vspace{1em}
@@ -671,7 +676,7 @@ $t_4$ & 0.15 & 0.25 & 0.3 & 0.35 \\
 \vspace{1em}
 
 \textbf{Key Properties:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Q} comes from decoder (what decoder needs)
     \item \textbf{K, V} come from encoder (what input provides)
     \item Allows decoder to "look at" relevant parts of input
@@ -730,7 +735,7 @@ class SelfAttention(nn.Module):
 % ============================================================
 % COMPLEXITY
 % ============================================================
-\begin{frame}{Computational Complexity ⚙️}
+\begin{frame}[shrink=10]{Computational Complexity ⚙️}
 \textbf{Understanding the cost of self-attention}
 
 \vspace{1em}
@@ -757,7 +762,7 @@ where $n$ = sequence length, $d$ = embedding dimension
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Pros of Self-Attention:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Parallelizable (all positions at once)
     \item Direct connections between all tokens
     \item No vanishing gradients
@@ -766,7 +771,7 @@ where $n$ = sequence length, $d$ = embedding dimension
 
 \begin{column}{0.48\textwidth}
 \textbf{Cons of Self-Attention:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Quadratic in sequence length
     \item Memory intensive for long sequences
     \item Limits context window size
@@ -777,7 +782,7 @@ where $n$ = sequence length, $d$ = embedding dimension
 \vspace{1em}
 
 \textbf{Typical limits:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item BERT: 512 tokens
     \item GPT-2: 1024 tokens
     \item GPT-3: 2048 tokens
@@ -788,10 +793,10 @@ where $n$ = sequence length, $d$ = embedding dimension
 % ============================================================
 % DISCUSSION
 % ============================================================
-\begin{frame}{Discussion Questions 💭}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Discussion Questions 💭}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Self-Attention vs RNN Attention:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item What's the key difference?
         \item Why is self-attention more powerful?
         \item When might RNNs still be useful?
@@ -800,7 +805,7 @@ where $n$ = sequence length, $d$ = embedding dimension
     \vspace{0.5em}
 
     \item \textbf{Query, Key, Value Framework:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Why three separate projections instead of one?
         \item What if we used $Q = K = V = X$?
         \item How does this relate to information retrieval?
@@ -809,7 +814,7 @@ where $n$ = sequence length, $d$ = embedding dimension
     \vspace{0.5em}
 
     \item \textbf{Multi-Head Attention:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Why not just use one big attention head?
         \item How many heads is optimal?
         \item Can we interpret what each head learns?
@@ -818,7 +823,7 @@ where $n$ = sequence length, $d$ = embedding dimension
     \vspace{0.5em}
 
     \item \textbf{Scalability:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item $O(n^2)$ is problematic for long documents. Solutions?
         \item Sparse attention? Local attention? Other ideas?
     \end{itemize}
@@ -828,13 +833,13 @@ where $n$ = sequence length, $d$ = embedding dimension
 % ============================================================
 % LOOKING AHEAD
 % ============================================================
-\begin{frame}{Looking Ahead 🔮}
+\begin{frame}[shrink=10]{Looking Ahead 🔮}
 \textbf{What's Next?}
 
 \vspace{1em}
 
 \textbf{Today we learned:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Why transformers replaced RNNs
     \item Self-attention mechanism (Q, K, V)
     \item Multi-head attention
@@ -844,7 +849,7 @@ where $n$ = sequence length, $d$ = embedding dimension
 \vspace{1em}
 
 \textbf{Next lecture (Lecture 14 - Training Transformers):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \alert{Positional Encoding}: How to inject position information
     \item \alert{Feed-Forward Networks}: The other key component
     \item \alert{Layer Normalization \& Residuals}: Training stability
@@ -864,34 +869,34 @@ where $n$ = sequence length, $d$ = embedding dimension
 % ============================================================
 % SUMMARY
 % ============================================================
-\begin{frame}{Summary 🎯}
+\begin{frame}[shrink=10]{Summary 🎯}
 \textbf{Key Takeaways:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Transformer Revolution}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Pure attention, no recurrence
         \item Parallel processing, faster training
     \end{itemize}
 
     \item \textbf{Self-Attention Mechanism}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Query, Key, Value framework
         \item Each token attends to all others
         \item Scaled dot-product: $\text{softmax}(QK^T/\sqrt{d_k})V$
     \end{itemize}
 
     \item \textbf{Multi-Head Attention}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Multiple heads learn diverse relationships
         \item Concatenate and project back
         \item Richer representations
     \end{itemize}
 
     \item \textbf{Three Attention Types}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Self (encoder), Masked (decoder), Cross (encoder-decoder)
         \item Different uses for different architectures
     \end{itemize}
@@ -904,14 +909,14 @@ where $n$ = sequence length, $d$ = embedding dimension
 % ============================================================
 % REFERENCES
 % ============================================================
-\begin{frame}{References 📚}
+\begin{frame}[shrink=10]{References 📚}
 \textbf{Essential Papers:}
 
 \vspace{0.5em}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Vaswani et al. (2017)} - "Attention Is All You Need"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item The original Transformer paper
         \item Introduced self-attention, multi-head attention
         \item Foundation of modern NLP
@@ -920,7 +925,7 @@ where $n$ = sequence length, $d$ = embedding dimension
     \vspace{0.3em}
 
     \item \textbf{Bahdanau et al. (2015)} - "Neural Machine Translation by Jointly Learning to Align and Translate"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Original attention mechanism (for comparison)
     \end{itemize}
 \end{itemize}
@@ -928,9 +933,9 @@ where $n$ = sequence length, $d$ = embedding dimension
 \vspace{0.5em}
 
 \textbf{Tutorials and Resources:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{The Illustrated Transformer} by Jay Alammar
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \url{https://jalammar.github.io/illustrated-transformer/}
         \item Visual step-by-step explanation
     \end{itemize}
@@ -938,7 +943,7 @@ where $n$ = sequence length, $d$ = embedding dimension
     \vspace{0.3em}
 
     \item \textbf{Annotated Transformer} by Harvard NLP
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \url{https://nlp.seas.harvard.edu/annotated-transformer/}
         \item Line-by-line implementation
     \end{itemize}
@@ -946,7 +951,7 @@ where $n$ = sequence length, $d$ = embedding dimension
     \vspace{0.3em}
 
     \item \textbf{HuggingFace Course} - Chapter 1.4
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item How Transformers work
     \end{itemize}
 \end{itemize}
@@ -961,10 +966,10 @@ where $n$ = sequence length, $d$ = embedding dimension
 \textbf{Discussion Time}
 \end{center}
 
-\vspace{2em}
+\vspace{1em}
 
 \textbf{Topics for discussion:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Self-attention mechanism
     \item Query, Key, Value intuition
     \item Multi-head attention
@@ -972,7 +977,7 @@ where $n$ = sequence length, $d$ = embedding dimension
     \item Implementation questions
 \end{itemize}
 
-\vspace{2em}
+\vspace{1em}
 
 \begin{center}
 \Large

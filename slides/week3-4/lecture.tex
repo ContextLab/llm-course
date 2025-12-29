@@ -1,13 +1,15 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{emoji}
-
 % Code listing setup
 \lstset{
   basicstyle=\ttfamily\small,
@@ -22,7 +24,7 @@
 
 \title{Dimensionality Reduction \& Text Embeddings}
 \subtitle{Weeks 3-4: From Distributional Semantics to Word Vectors}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \date{\today}
 
 \begin{document}
@@ -30,16 +32,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Overview 📋}
+\begin{frame}[shrink=10]{Overview 📋}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 🧠 \textbf{Distributional Semantics}: The Foundation
     \item 📊 \textbf{Dimensionality Reduction}: PCA, UMAP, t-SNE
     \item 📚 \textbf{Classic Methods}: LSA \& LDA
@@ -56,19 +58,19 @@
 % ============================================================
 % FUNDAMENTAL QUESTION
 % ============================================================
-\begin{frame}{The Fundamental Question 🤔}
+\begin{frame}[shrink=10]{The Fundamental Question 🤔}
 \begin{center}
 \LARGE
 \textbf{How do we represent the meaning of words in a way that computers can understand?}
 \end{center}
 
 \pause
-\vspace{2em}
+\vspace{1em}
 
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Traditional Approach:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Dictionaries
     \item Taxonomies (WordNet)
     \item Manual feature engineering
@@ -77,7 +79,7 @@
 
 \begin{column}{0.48\textwidth}
 \textbf{Distributional Approach:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Learn from data
     \item Context-based
     \item Scalable
@@ -100,7 +102,7 @@
 \end{center}
 
 \pause
-\vspace{2em}
+\vspace{1em}
 
 \textbf{Key Idea:}
 Words that appear in similar contexts tend to have similar meanings.
@@ -108,7 +110,7 @@ Words that appear in similar contexts tend to have similar meanings.
 \vspace{1em}
 
 \begin{exampleblock}{Example}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item "The \textbf{cat} sat on the mat"
     \item "The \textbf{dog} sat on the mat"
     \item "The \textbf{kitten} sat on the mat"
@@ -124,11 +126,11 @@ $\rightarrow$ \textit{cat}, \textit{dog}, \textit{kitten} are semantically relat
 % ============================================================
 % COGNITIVE VS COMPUTATIONAL
 % ============================================================
-\begin{frame}{Cognitive vs. Computational Perspectives 🧠💻}
+\begin{frame}[shrink=10]{Cognitive vs. Computational Perspectives 🧠💻}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Human Cognition:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Grounded in experience
     \item Multimodal (vision, sound, touch)
     \item Embodied understanding
@@ -144,7 +146,7 @@ $\rightarrow$ \textit{cat}, \textit{dog}, \textit{kitten} are semantically relat
 
 \begin{column}{0.48\textwidth}
 \textbf{Computational Models:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Patterns in text data
     \item Co-occurrence statistics
     \item Vector representations
@@ -169,7 +171,7 @@ $\rightarrow$ \textit{cat}, \textit{dog}, \textit{kitten} are semantically relat
 % ============================================================
 % VECTOR SPACE MODEL
 % ============================================================
-\begin{frame}{From Words to Vectors 🗺️}
+\begin{frame}[shrink=5]{From Words to Vectors 🗺️}
 \textbf{Goal:} Represent each word as a point in high-dimensional space
 
 \vspace{1em}
@@ -201,11 +203,11 @@ $\rightarrow$ We need \textbf{dimensionality reduction} 📉
 % ============================================================
 % DIMENSIONALITY REDUCTION INTRO
 % ============================================================
-\begin{frame}{Why Dimensionality Reduction? 📊}
+\begin{frame}[shrink=10]{Why Dimensionality Reduction? 📊}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{The Curse of Dimensionality:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Vocabulary: 50,000 words
     \item Context features: 50,000+
     \item Matrix: 50k × 50k = 2.5B entries!
@@ -217,7 +219,7 @@ $\rightarrow$ We need \textbf{dimensionality reduction} 📉
 
 \begin{column}{0.48\textwidth}
 \textbf{Solution:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Compress to \textasciitilde50-300 dimensions
     \item Preserve semantic relationships
     \item Dense representations
@@ -238,7 +240,7 @@ $\rightarrow$ We need \textbf{dimensionality reduction} 📉
 % ============================================================
 % PCA
 % ============================================================
-\begin{frame}{Principal Component Analysis (PCA) 📈}
+\begin{frame}[shrink=10]{Principal Component Analysis (PCA) 📈}
 \textbf{Intuition:} Find the directions of maximum variance
 
 \vspace{1em}
@@ -264,7 +266,7 @@ $\rightarrow$ We need \textbf{dimensionality reduction} 📉
 
 \begin{column}{0.48\textwidth}
 \textbf{Algorithm:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Center the data
     \item Compute covariance matrix
     \item Find eigenvectors
@@ -273,7 +275,7 @@ $\rightarrow$ We need \textbf{dimensionality reduction} 📉
 
 \vspace{0.5em}
 \textbf{Properties:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Linear transformation
     \item Preserves global structure
     \item Fast \& interpretable
@@ -288,7 +290,7 @@ $\rightarrow$ We need \textbf{dimensionality reduction} 📉
 % ============================================================
 % UMAP
 % ============================================================
-\begin{frame}{UMAP: Uniform Manifold Approximation \& Projection 🗺️}
+\begin{frame}[fragile,shrink=10]{UMAP: Uniform Manifold Approximation \& Projection 🗺️}
 \textbf{Better for visualizing complex, non-linear structure in text data}
 
 \vspace{0.5em}
@@ -296,7 +298,7 @@ $\rightarrow$ We need \textbf{dimensionality reduction} 📉
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Key Advantages:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Preserves both local \& global structure
     \item Non-linear dimensionality reduction
     \item Faster than t-SNE
@@ -306,7 +308,7 @@ $\rightarrow$ We need \textbf{dimensionality reduction} 📉
 
 \vspace{0.5em}
 \textbf{Use Cases:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Visualizing word embeddings
     \item Topic modeling
     \item Clustering analysis
@@ -367,7 +369,7 @@ Scalability & Excellent & Poor & Good \\
 \vspace{1em}
 
 \begin{block}{Recommendation}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{PCA}: First pass, quick exploration, preprocessing
     \item \textbf{t-SNE}: 2D/3D visualization (small datasets)
     \item \textbf{UMAP}: Best of both worlds - use for most NLP tasks!
@@ -378,7 +380,7 @@ Scalability & Excellent & Poor & Good \\
 % ============================================================
 % LSA
 % ============================================================
-\begin{frame}{Latent Semantic Analysis (LSA) 📚}
+\begin{frame}[shrink=10]{Latent Semantic Analysis (LSA) 📚}
 \textbf{The OG of semantic embeddings (1990)}
 
 \vspace{1em}
@@ -386,7 +388,7 @@ Scalability & Excellent & Poor & Good \\
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Algorithm:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Build term-document matrix $X$
     \item Apply TF-IDF weighting
     \item Perform SVD: $X = U\Sigma V^T$
@@ -396,7 +398,7 @@ Scalability & Excellent & Poor & Good \\
 
 \vspace{0.5em}
 \textbf{Key Innovation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Discovers latent topics
     \item Solves synonymy problem
     \item Matrix factorization
@@ -431,7 +433,7 @@ Scalability & Excellent & Poor & Good \\
 
 \vspace{0.5em}
 \textbf{Limitations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Linear relationships only
     \item Bag-of-words (no order)
     \item Computationally expensive
@@ -448,7 +450,7 @@ Scalability & Excellent & Poor & Good \\
 % ============================================================
 % LDA
 % ============================================================
-\begin{frame}{Latent Dirichlet Allocation (LDA) 🎲}
+\begin{frame}[fragile,shrink=10]{Latent Dirichlet Allocation (LDA) 🎲}
 \textbf{Probabilistic topic modeling}
 
 \vspace{0.5em}
@@ -456,13 +458,13 @@ Scalability & Excellent & Poor & Good \\
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Generative Story:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item For each document:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Draw topic distribution $\theta \sim \text{Dir}(\alpha)$
     \end{itemize}
     \item For each word in document:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Choose topic $z \sim \text{Mult}(\theta)$
         \item Choose word $w \sim \text{Mult}(\phi_z)$
     \end{itemize}
@@ -470,7 +472,7 @@ Scalability & Excellent & Poor & Good \\
 
 \vspace{0.5em}
 \textbf{Key Ideas:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Documents are mixtures of topics
     \item Topics are distributions over words
     \item Bayesian inference
@@ -542,7 +544,7 @@ for idx, topic in enumerate(
 % ============================================================
 % MODERN TOPIC MODELING
 % ============================================================
-\begin{frame}{Modern Topic Modeling 🎨}
+\begin{frame}[fragile,shrink=10]{Modern Topic Modeling 🎨}
 \textbf{Combining neural embeddings with topic models}
 
 \vspace{1em}
@@ -550,7 +552,7 @@ for idx, topic in enumerate(
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Top2Vec:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Embed documents with Doc2Vec
     \item Cluster in embedding space
     \item Topics = cluster centroids
@@ -573,7 +575,7 @@ topics = model.get_topics()
 
 \begin{column}{0.48\textwidth}
 \textbf{BERTopic:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Embed with transformers (BERT)
     \item Reduce with UMAP
     \item Cluster with HDBSCAN
@@ -604,7 +606,7 @@ topics, probs = model.fit_transform(
 % ============================================================
 % WORD2VEC INTRO
 % ============================================================
-\begin{frame}{Word2Vec: The Revolution 🚀}
+\begin{frame}[shrink=10]{Word2Vec: The Revolution 🚀}
 \begin{center}
 \LARGE
 \textbf{2013: Everything changed}
@@ -615,7 +617,7 @@ topics, probs = model.fit_transform(
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Key Innovation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Neural network approach
     \item Predict context from word (CBOW)
     \item Predict word from context (Skip-gram)
@@ -634,7 +636,7 @@ $\vec{king} - \vec{man} + \vec{woman} \approx \vec{queen}$
 
 \vspace{1em}
 \textbf{Other Examples:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item $\vec{Paris} - \vec{France} + \vec{Italy} \approx \vec{Rome}$
     \item $\vec{walking} - \vec{walk} + \vec{swim} \approx \vec{swimming}$
 \end{itemize}
@@ -649,7 +651,7 @@ $\vec{king} - \vec{man} + \vec{woman} \approx \vec{queen}$
 % ============================================================
 % WORD2VEC ARCHITECTURES
 % ============================================================
-\begin{frame}{Word2Vec Architectures 🏗️}
+\begin{frame}[shrink=5]{Word2Vec Architectures 🏗️}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{CBOW (Continuous Bag of Words):}
@@ -715,7 +717,7 @@ Predict context from center word
 \vspace{1em}
 
 \textbf{Training Trick:} Negative sampling - don't update all weights!
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Sample a few "negative" examples (words that don't appear in context)
     \item Much faster than full softmax over entire vocabulary
 \end{itemize}
@@ -759,7 +761,7 @@ custom_model = Word2Vec(
 % ============================================================
 % GLOVE
 % ============================================================
-\begin{frame}{GloVe: Global Vectors 🌍}
+\begin{frame}[shrink=10]{GloVe: Global Vectors 🌍}
 \textbf{Combining count-based \& prediction-based methods}
 
 \vspace{1em}
@@ -767,7 +769,7 @@ custom_model = Word2Vec(
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Key Insight:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Word2Vec uses local context windows
     \item But global statistics matter too!
     \item Ratios of co-occurrence probabilities are meaningful
@@ -775,7 +777,7 @@ custom_model = Word2Vec(
 
 \vspace{0.5em}
 \textbf{Example:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item $P(\text{solid}|\text{ice})$ is high
     \item $P(\text{solid}|\text{steam})$ is low
     \item $\frac{P(\text{solid}|\text{ice})}{P(\text{solid}|\text{steam})}$ is very high!
@@ -789,7 +791,7 @@ J = \sum_{i,j=1}^{V} f(X_{ij}) (\vec{w}_i^T \tilde{\vec{w}}_j + b_i + \tilde{b}_
 \end{align*}
 
 where:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item $X_{ij}$ = co-occurrence count
     \item $f$ = weighting function
     \item $\vec{w}_i$ = word vector
@@ -798,7 +800,7 @@ where:
 
 \vspace{0.5em}
 \textbf{Result:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Similar performance to Word2Vec
     \item More interpretable
     \item Faster training on large corpora
@@ -814,7 +816,7 @@ where:
 % ============================================================
 % FASTTEXT
 % ============================================================
-\begin{frame}{FastText: Subword Information 🔤}
+\begin{frame}[fragile,shrink=10]{FastText: Subword Information 🔤}
 \textbf{Word2Vec's limitation: Can't handle unknown words!}
 
 \vspace{1em}
@@ -822,7 +824,7 @@ where:
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Innovation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Represent words as bag of character n-grams
     \item Word = sum of n-gram vectors
     \item Can generate embeddings for OOV words
@@ -831,7 +833,7 @@ where:
 
 \vspace{0.5em}
 \textbf{Example:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Word: "where"
     \item 3-grams: <wh, whe, her, ere, re>
     \item $\vec{where} = \sum \vec{n\text{-}gram}$
@@ -861,7 +863,7 @@ vec = model.wv['unknownword']
 
 \vspace{0.5em}
 \textbf{Advantages:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Handles rare words better
     \item Morphological awareness
     \item More robust
@@ -897,7 +899,7 @@ FastText & 2017 & Neural & ✓ & Static & Fast & 100-300 \\
 \vspace{1em}
 
 \begin{block}{Key Takeaway}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Static embeddings:} One vector per word (Word2Vec, GloVe, FastText)
     \item \textbf{Contextual embeddings:} Different vectors based on context (BERT, GPT)
     \item We'll cover contextual embeddings in detail next week!
@@ -908,7 +910,7 @@ FastText & 2017 & Neural & ✓ & Static & Fast & 100-300 \\
 % ============================================================
 % VISUALIZATION EXAMPLE
 % ============================================================
-\begin{frame}{Visualizing Embeddings with UMAP 🎨}
+\begin{frame}[fragile,shrink=5]{Visualizing Embeddings with UMAP 🎨}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Example: Word2Vec + UMAP}
@@ -947,7 +949,7 @@ plt.show()
 
 \begin{column}{0.48\textwidth}
 \textbf{What you'll see:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Semantic clusters
     \item Gender relationships
     \item Animal groupings
@@ -984,18 +986,19 @@ plt.show()
 % ============================================================
 % EVALUATION
 % ============================================================
-\begin{frame}{How Do We Evaluate Embeddings? 📏}
+\begin{frame}[shrink=10]{How Do We Evaluate Embeddings? 📏}
+\small
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Intrinsic Evaluation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Word Similarity:} Compare to human judgments
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item WordSim-353
         \item SimLex-999
     \end{itemize}
     \item \textbf{Analogies:} $a:b :: c:d$
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Google Analogy Dataset
         \item Semantic \& Syntactic
     \end{itemize}
@@ -1005,7 +1008,7 @@ plt.show()
 
 \begin{column}{0.48\textwidth}
 \textbf{Extrinsic Evaluation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Use embeddings in downstream tasks
     \item \textbf{Classification:} Sentiment analysis
     \item \textbf{NER:} Named entity recognition
@@ -1022,7 +1025,7 @@ plt.show()
 
 \begin{block}{Important Note}
 No single "best" embedding for all tasks! Choice depends on:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Domain (general vs. specialized)
     \item Task requirements
     \item Computational constraints
@@ -1033,13 +1036,13 @@ No single "best" embedding for all tasks! Choice depends on:
 % ============================================================
 % LIMITATIONS
 % ============================================================
-\begin{frame}{Limitations of Static Embeddings ⚠️}
+\begin{frame}[shrink=10]{Limitations of Static Embeddings ⚠️}
 \textbf{The fundamental problem: One vector per word}
 
 \vspace{1em}
 
 \begin{exampleblock}{Example: "bank"}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item "I deposited money at the \textbf{bank}" (financial institution)
     \item "We sat by the river \textbf{bank}" (riverside)
 \end{enumerate}
@@ -1051,7 +1054,7 @@ Both get the \alert{same vector}! This is wrong.
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Other Issues:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item No compositional semantics
     \item Can't handle phrases well
     \item Bias in embeddings
@@ -1062,7 +1065,7 @@ Both get the \alert{same vector}! This is wrong.
 
 \begin{column}{0.48\textwidth}
 \textbf{Solution:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \alert{Contextual embeddings!}
     \item Different vector for each occurrence
     \item Transformer models (BERT, GPT)
@@ -1075,7 +1078,7 @@ Both get the \alert{same vector}! This is wrong.
 % ============================================================
 % PREVIEW TRANSFORMERS
 % ============================================================
-\begin{frame}{Preview: Transformer Embeddings 🔮}
+\begin{frame}[fragile]{Preview: Transformer Embeddings 🔮}
 \textbf{The next evolution: Context-aware representations}
 
 \vspace{1em}
@@ -1124,7 +1127,7 @@ vec2 = get_embedding(model, tokenizer, sent2, 'bank')
 % ============================================================
 % INTERACTIVE QUESTION
 % ============================================================
-\begin{frame}{Discussion: How Do Humans Represent Meaning? 🤔}
+\begin{frame}[shrink=10]{Discussion: How Do Humans Represent Meaning? 🤔}
 \begin{center}
 \Large
 \textbf{Think about the word "coffee"}
@@ -1133,7 +1136,7 @@ vec2 = get_embedding(model, tokenizer, sent2, 'bank')
 \vspace{1em}
 
 \textbf{What comes to mind?}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Visual: brown liquid, mug, beans
     \item Olfactory: aroma, smell
     \item Gustatory: taste, bitter
@@ -1147,7 +1150,7 @@ vec2 = get_embedding(model, tokenizer, sent2, 'bank')
 
 \begin{alertblock}{Key Question}
 How does this compare to how Word2Vec represents "coffee"?
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Word2Vec: "coffee" = [0.23, -0.45, 0.67, ..., 0.12] (300 numbers)
     \item Learned purely from text co-occurrence
     \item Missing grounding in sensory experience!
@@ -1161,35 +1164,35 @@ How does this compare to how Word2Vec represents "coffee"?
 % ============================================================
 % PRACTICAL TIPS
 % ============================================================
-\begin{frame}{Practical Tips for Using Embeddings 💡}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Practical Tips for Using Embeddings 💡}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Start with pre-trained models}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Word2Vec: Google News (3B words)
         \item GloVe: Common Crawl (840B tokens)
         \item FastText: Available in 157 languages
     \end{itemize}
 
     \item \textbf{Fine-tune if you have domain-specific data}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Medical texts, legal documents, etc.
         \item Can significantly improve performance
     \end{itemize}
 
     \item \textbf{Choose dimensions wisely}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item More dims = more expressiveness, more data needed
         \item Typical: 100-300 dimensions
     \end{itemize}
 
     \item \textbf{Normalize vectors}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use cosine similarity, not Euclidean distance
         \item $\text{similarity}(u,v) = \frac{u \cdot v}{||u|| \cdot ||v||}$
     \end{itemize}
 
     \item \textbf{Be aware of biases}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Embeddings reflect biases in training data
         \item Gender, race, cultural biases can be encoded
     \end{itemize}
@@ -1199,39 +1202,39 @@ How does this compare to how Word2Vec represents "coffee"?
 % ============================================================
 % ASSIGNMENT 3
 % ============================================================
-\begin{frame}{Assignment 3: Exploring Text Embeddings ✍️}
+\begin{frame}[shrink=10]{Assignment 3: Exploring Text Embeddings ✍️}
 \textbf{Hands-on practice with everything we've learned!}
 
 \vspace{1em}
 
 \textbf{Tasks:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Build a term-document matrix} from a corpus
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Implement TF-IDF weighting
         \item Visualize with PCA
     \end{itemize}
 
     \item \textbf{Train your own Word2Vec model}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Compare CBOW vs Skip-gram
         \item Explore word analogies
     \end{itemize}
 
     \item \textbf{Visualize embeddings with UMAP}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Create 2D plots
         \item Identify semantic clusters
     \end{itemize}
 
     \item \textbf{Topic modeling with LDA}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Extract topics from documents
         \item Interpret topic coherence
     \end{itemize}
 
     \item \textbf{Compare embedding methods}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Word2Vec vs GloVe vs FastText
         \item Evaluate on similarity tasks
     \end{itemize}
@@ -1244,9 +1247,9 @@ How does this compare to how Word2Vec represents "coffee"?
 % ============================================================
 % RESOURCES
 % ============================================================
-\begin{frame}{Resources \& Further Reading 📚}
+\begin{frame}[shrink=10]{Resources \& Further Reading 📚}
 \textbf{Key Papers:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Deerwester et al. (1990) - Latent Semantic Analysis
     \item Blei et al. (2003) - Latent Dirichlet Allocation
     \item Mikolov et al. (2013a,b) - Word2Vec
@@ -1260,7 +1263,7 @@ How does this compare to how Word2Vec represents "coffee"?
 \vspace{0.5em}
 
 \textbf{Tutorials \& Tools:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item HuggingFace Course: Chapters 2.2, 5.6
     \item Gensim documentation: \url{https://radimrehurek.com/gensim/}
     \item UMAP documentation: \url{https://umap-learn.readthedocs.io/}
@@ -1271,22 +1274,22 @@ How does this compare to how Word2Vec represents "coffee"?
 % ============================================================
 % SUMMARY
 % ============================================================
-\begin{frame}{Summary 🎯}
+\begin{frame}[shrink=10]{Summary 🎯}
 \textbf{What we learned:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Distributional Hypothesis:} Words in similar contexts have similar meanings
 
     \item \textbf{Dimensionality Reduction:} PCA (linear), UMAP (non-linear), t-SNE (visualization)
 
     \item \textbf{Classic Methods:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item LSA: SVD on term-document matrix
         \item LDA: Probabilistic topic modeling
     \end{itemize}
 
     \item \textbf{Neural Embeddings:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Word2Vec: CBOW \& Skip-gram
         \item GloVe: Global co-occurrence statistics
         \item FastText: Subword information
@@ -1312,7 +1315,7 @@ How does this compare to how Word2Vec represents "coffee"?
 
 \vspace{1em}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Recurrent Neural Networks (RNNs)
     \item Long Short-Term Memory (LSTMs)
     \item Sequence-to-Sequence models
@@ -1320,7 +1323,7 @@ How does this compare to how Word2Vec represents "coffee"?
     \item The path to transformers...
 \end{itemize}
 
-\vspace{2em}
+\vspace{1em}
 
 \begin{center}
 \Large

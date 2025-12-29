@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{tikz}
@@ -7,8 +11,6 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{fontspec}
-\usepackage{emoji}
-
 \usetikzlibrary{shapes.geometric, arrows, positioning}
 
 % Color scheme
@@ -18,7 +20,6 @@
 \definecolor{orange}{RGB}{255,152,0}
 \definecolor{lightred}{RGB}{239,83,80}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -36,7 +37,7 @@
 
 \title{Lecture 4: Data Cleaning \& Preprocessing}
 \subtitle{Week 2: Computational Linguistics}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \date{}
 
 \begin{document}
@@ -50,7 +51,7 @@
 \begin{frame}{Learning Objectives 🎯}
     By the end of this lecture, you will be able to:
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Understand why data cleaning is critical for NLP tasks
         \item Apply common preprocessing techniques to raw text
         \item Use web scraping to collect text data
@@ -63,13 +64,13 @@
 \end{frame}
 
 % Introduction
-\begin{frame}{Why Data Cleaning Matters 📝}
+\begin{frame}[shrink=10]{Why Data Cleaning Matters 📝}
     \textbf{Real-world text is messy!}
 
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \textbf{Common problems:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item HTML/XML tags: \texttt{<p>text</p>}
                 \item Special characters: \&nbsp; \&amp;
                 \item Inconsistent formatting
@@ -81,7 +82,7 @@
         \end{column}
         \begin{column}{0.48\textwidth}
             \textbf{Consequences of dirty data:}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Models learn noise, not signal
                 \item Reduced accuracy
                 \item Inconsistent predictions
@@ -97,9 +98,9 @@
     \end{center}
 \end{frame}
 
-\begin{frame}{The Data Cleaning Pipeline 🔄}
+\begin{frame}[shrink=5]{The Data Cleaning Pipeline 🔄}
     \begin{center}
-        \begin{tikzpicture}[
+        \begin{tikzpicture}[scale=0.85,
             node distance=1.5cm,
             box/.style={rectangle, draw, fill=lightblue!30, text width=2.5cm, align=center, minimum height=1cm},
             arrow/.style={->, >=stealth, thick}
@@ -153,9 +154,9 @@
 \end{frame}
 
 % Web Scraping
-\begin{frame}{Collecting Data: Web Scraping 🌐}
+\begin{frame}[shrink=10]{Collecting Data: Web Scraping 🌐}
     \textbf{Why web scraping?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Web = massive source of text data
         \item News articles, reviews, social media, forums...
         \item Fresh, diverse, domain-specific content
@@ -163,7 +164,7 @@
 
     \vspace{0.5em}
     \textbf{Popular tools:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textbf{Beautiful Soup:} Parse HTML/XML, extract text
         \item \textbf{Requests:} Fetch web pages
         \item \textbf{Scrapy:} Full-featured web scraping framework
@@ -172,7 +173,7 @@
 
     \vspace{0.5em}
     \textbf{⚠️ Important considerations:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Check \texttt{robots.txt} and terms of service
         \item Respect rate limits (don't overwhelm servers)
         \item Be ethical: respect privacy and copyright
@@ -233,10 +234,10 @@ print(article_text)
     \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Handling Text Encodings 🔤}
+\begin{frame}[shrink=10]{Handling Text Encodings 🔤}
     \textbf{Common encoding issues:}
 
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item UTF-8 vs. ASCII vs. Latin-1
         \item Special characters: é, ñ, 中文
         \item Emoji: 😊 (requires Unicode support)
@@ -244,7 +245,7 @@ print(article_text)
 
     \vspace{0.5em}
     \textbf{Best practices:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Always use UTF-8 when possible
         \item Detect encoding: \texttt{chardet} library
         \item Normalize Unicode: NFKC vs. NFD forms
@@ -261,37 +262,37 @@ print(article_text)
 \end{frame}
 
 % Common Preprocessing Steps
-\begin{frame}{Common Preprocessing Steps 🔧}
+\begin{frame}[shrink=10]{Common Preprocessing Steps 🔧}
     \textbf{1. HTML/XML Tag Removal}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Strip markup: \texttt{<p>Hello</p>} → \texttt{Hello}
         \item Tools: Beautiful Soup, regex, html2text
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{2. Whitespace Normalization}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Remove extra spaces, tabs, newlines
         \item \texttt{"Hello\ \ \ world\textbackslash n"} → \texttt{"Hello world"}
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{3. Punctuation Handling}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Keep for sentiment: "Great!" vs. "Great"
         \item Remove for topic modeling
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{4. Case Normalization}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Lowercase: "Apple" and "apple" → same token
         \item Preserve for NER: "Apple Inc." vs. "apple fruit"
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{5. Special Characters}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item URLs, email addresses, numbers
         \item Replace or remove based on task
     \end{itemize}
@@ -327,13 +328,13 @@ print(clean)  # "check out amazing deals!!"
 \end{frame}
 
 % Stemming and Lemmatization
-\begin{frame}{Reducing Words to Base Forms 🌱}
+\begin{frame}[shrink=10]{Reducing Words to Base Forms 🌱}
     \textbf{Goal:} Reduce inflected/derived words to root form
 
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \textbf{Stemming ✂️}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Rule-based, crude chopping
                 \item Fast, simple
                 \item May produce non-words
@@ -343,7 +344,7 @@ print(clean)  # "check out amazing deals!!"
         \end{column}
         \begin{column}{0.48\textwidth}
             \textbf{Lemmatization 🧠}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item Uses vocabulary + morphology
                 \item Slower, more accurate
                 \item Produces real words
@@ -355,7 +356,7 @@ print(clean)  # "check out amazing deals!!"
 
     \vspace{1em}
     \textbf{When to use which?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Stemming: Speed matters, approximate matching OK
         \item Lemmatization: Need interpretable, real words
     \end{itemize}
@@ -469,9 +470,9 @@ for token in doc:
     It's faster, more accurate, and easier to use in production.
 \end{frame}
 
-\begin{frame}{Stop Words Removal 🛑}
+\begin{frame}[shrink=10]{Stop Words Removal 🛑}
     \textbf{What are stop words?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Common words with little semantic value
         \item Examples: "the", "a", "is", "in", "and", "or"
         \item Language-specific
@@ -479,7 +480,7 @@ for token in doc:
 
     \vspace{0.5em}
     \textbf{When to remove?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ✅ Topic modeling, text classification
         \item ✅ Search engines, information retrieval
         \item ❌ Sentiment analysis ("not good" vs. "good")
@@ -530,7 +531,7 @@ print("spaCy:", filtered_spacy)
 
     \vspace{0.5em}
     \textbf{Preprocessing decisions:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ✅ Keep: Punctuation (!), emoji (😍), capitalization (emphasis)
         \item ❌ Remove: URLs, HTML tags
         \item 🤔 Maybe: Extra repeated punctuation (!!!)
@@ -545,64 +546,64 @@ print("spaCy:", filtered_spacy)
     Preserves emotion and intensity!
 \end{frame}
 
-\begin{frame}{Discussion: Preprocessing Trade-offs 🤔}
+\begin{frame}[shrink=10]{Discussion: Preprocessing Trade-offs 🤔}
     \textbf{Questions to consider:}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Information loss:} What do we lose when we lowercase everything?
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Think: "US" (United States) vs. "us" (pronoun)
         \end{itemize}
 
         \item \textbf{Task dependency:} Why does preprocessing differ by task?
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Hint: What signals matter for sentiment vs. topic modeling?
         \end{itemize}
 
         \item \textbf{Modern models:} Do transformer models still need heavy preprocessing?
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Consider: BERT handles subwords, capitalization, punctuation...
         \end{itemize}
 
         \item \textbf{Bias introduction:} Can preprocessing introduce bias?
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Example: Removing slang might remove cultural markers
         \end{itemize}
     \end{enumerate}
 \end{frame}
 
 % Practical Tips
-\begin{frame}{Practical Tips for Data Cleaning 💡}
+\begin{frame}[shrink=10]{Practical Tips for Data Cleaning 💡}
     \textbf{Best practices:}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Inspect your data first!} 👀
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Look at samples before deciding on preprocessing
         \end{itemize}
 
         \item \textbf{Keep raw data separate} 💾
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Never overwrite originals—you might need them!
         \end{itemize}
 
         \item \textbf{Document your pipeline} 📝
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Track what preprocessing you applied and why
         \end{itemize}
 
         \item \textbf{Experiment!} 🧪
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Try different approaches, measure impact on task
         \end{itemize}
 
         \item \textbf{Validate incrementally} ✅
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Check results after each preprocessing step
         \end{itemize}
 
         \item \textbf{Consider automation} 🤖
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Use libraries: spaCy, NLTK, HuggingFace tokenizers
         \end{itemize}
     \end{enumerate}
@@ -637,10 +638,10 @@ class TextPreprocessor:
     \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Preprocessing Checklist ✅}
+\begin{frame}[shrink=10]{Preprocessing Checklist ✅}
     Before starting your project, ask:
 
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item[$\square$] What is my task? (classification, generation, extraction...)
         \item[$\square$] What signals are important? (sentiment, topics, entities...)
         \item[$\square$] Should I lowercase? (preserve case for names?)
@@ -657,16 +658,16 @@ class TextPreprocessor:
 \end{frame}
 
 % Resources
-\begin{frame}{Tools and Libraries 🛠️}
+\begin{frame}[shrink=10]{Tools and Libraries 🛠️}
     \textbf{Web Scraping:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Beautiful Soup: \url{https://www.crummy.com/software/BeautifulSoup/}
         \item Scrapy: \url{https://scrapy.org/}
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{Text Processing:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item spaCy: \url{https://spacy.io/}
         \item NLTK: \url{https://www.nltk.org/}
         \item TextBlob: \url{https://textblob.readthedocs.io/}
@@ -674,62 +675,62 @@ class TextPreprocessor:
 
     \vspace{0.3em}
     \textbf{Encoding:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item chardet: Character encoding detection
         \item ftfy: Fixes broken Unicode
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{HuggingFace Resources:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \href{https://huggingface.co/learn/nlp-course/chapter3/2}{Chapter 3.2: Processing Data}
         \item \href{https://huggingface.co/learn/nlp-course/chapter2/4}{Chapter 2.4: Tokenizers}
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Primary References 📚}
+\begin{frame}[shrink=10]{Primary References 📚}
     \textbf{Classic papers:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Porter, M. F. (1980). An algorithm for suffix stripping. \textit{Program}, 14(3), 130-137.
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item The original Porter Stemmer algorithm
         \end{itemize}
 
         \item Manning, C. D., Raghavan, P., \& Schütze, H. (2008). \textit{Introduction to Information Retrieval}. Cambridge University Press.
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Chapter 2: Text preprocessing fundamentals
         \end{itemize}
     \end{itemize}
 
     \vspace{0.5em}
     \textbf{Modern resources:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item spaCy documentation: Industrial-strength NLP
         \item HuggingFace NLP Course: Modern preprocessing with transformers
     \end{itemize}
 
     \vspace{0.5em}
     \textbf{Ethical considerations:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Liang et al. (2020). "Towards Debiasing Sentence Representations"
         \item Consider how preprocessing choices affect fairness
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Hands-On Exercise 🧪}
+\begin{frame}[shrink=10]{Hands-On Exercise 🧪}
     \textbf{Try this yourself:}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Choose a website (news, blog, Reddit...)
         \item Scrape 10-20 articles/posts
         \item Apply different preprocessing pipelines:
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Minimal: Just remove HTML
             \item Moderate: + normalize whitespace, lowercase
             \item Heavy: + lemmatize, remove stop words
         \end{itemize}
         \item Compare the results:
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item How does vocabulary size change?
             \item What information is lost/preserved?
             \item Which would work best for sentiment analysis? Topic modeling?
@@ -741,31 +742,31 @@ class TextPreprocessor:
 \end{frame}
 
 % Summary
-\begin{frame}{Key Takeaways 🎯}
-    \begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🎯}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Preprocessing is crucial} but task-dependent
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item No universal pipeline—adapt to your needs!
         \end{itemize}
 
         \item \textbf{Balance cleaning vs. information loss}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item More preprocessing ≠ always better
         \end{itemize}
 
         \item \textbf{Stemming vs. Lemmatization}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Stemming: fast, approximate
             \item Lemmatization: slow, accurate
         \end{itemize}
 
         \item \textbf{Modern models are robust}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Transformers can handle messy text better than older models
         \end{itemize}
 
         \item \textbf{Always validate}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Inspect data before and after preprocessing
         \end{itemize}
     \end{enumerate}
@@ -777,7 +778,7 @@ class TextPreprocessor:
 \begin{frame}[standout]
     Questions? 🤔
 
-    \vspace{2em}
+    \vspace{1em}
 
     \normalsize
     Next: Lecture 5 - Tokenization

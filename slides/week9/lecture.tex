@@ -1,13 +1,18 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{emoji}
 \usepackage{hyperref}
 \usepackage{tcolorbox}
 
@@ -19,7 +24,6 @@
 \definecolor{purple}{RGB}{156,39,176}
 \definecolor{teal}{RGB}{0,150,136}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -61,7 +65,7 @@
 
 \title{Week 9: RAG \& Mixture of Experts}
 \subtitle{Enhancing LLMs with Retrieval and Routing 🔍🚀}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \date{}
 
 \begin{document}
@@ -69,16 +73,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Journey 🗺️}
+\begin{frame}[shrink=10]{Today's Journey 🗺️}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 🔍 \textbf{Retrieval Augmented Generation (RAG)}: Grounding LLMs in external knowledge
     \item 🎯 \textbf{Mixture of Experts (MoE)}: Efficient scaling through specialization
     \item 📊 \textbf{Self-Supervised Learning}: SimCLR and contrastive methods
@@ -98,7 +102,7 @@
 % ============================================================
 \section{Retrieval Augmented Generation}
 
-\begin{frame}{The Limits of Parametric Memory 🧠}
+\begin{frame}[shrink=10]{The Limits of Parametric Memory 🧠}
 \begin{discussionbox}
 \textbf{What are the limits of parametric memory?}
 
@@ -108,7 +112,7 @@ Consider: An LLM's knowledge is frozen at training time...
 \vspace{0.5em}
 
 \textbf{Problems with purely parametric models:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ❌ \textbf{Knowledge cutoff}: No information after training
     \item ❌ \textbf{Hallucinations}: Models confidently generate false information
     \item ❌ \textbf{No source attribution}: Can't cite where information comes from
@@ -121,7 +125,7 @@ Consider: An LLM's knowledge is frozen at training time...
 \textbf{Solution:} Combine parametric knowledge with non-parametric retrieval! 🔍
 \end{frame}
 
-\begin{frame}{What is RAG? 📚}
+\begin{frame}[shrink=10]{What is RAG? 📚}
 \begin{block}{Retrieval Augmented Generation}
 A technique that enhances LLMs by retrieving relevant documents from an external knowledge base and using them to inform generation.
 \end{block}
@@ -135,7 +139,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 \begin{columns}[T]
 \begin{column}{0.45\textwidth}
 \textbf{Traditional LLM:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Question → Model → Answer
     \item Only parametric knowledge
     \item Fixed at training time
@@ -144,7 +148,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 
 \begin{column}{0.45\textwidth}
 \textbf{RAG Pipeline:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Question → Retrieve Docs
     \item Docs + Question → Model
     \item Grounded Answer
@@ -157,9 +161,9 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 \textit{Reference: Lewis et al. (2020) - "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"}
 \end{frame}
 
-\begin{frame}{RAG Architecture 🏗️}
+\begin{frame}[shrink=5]{RAG Architecture 🏗️}
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=1.5cm,
     box/.style={rectangle, rounded corners, draw, fill=blue!20, text width=2.5cm, align=center, minimum height=1cm},
     databox/.style={rectangle, draw, fill=green!20, text width=2.5cm, align=center, minimum height=1cm},
@@ -205,7 +209,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 
 \vspace{0.5em}
 \textbf{Steps:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Embed user query
     \item Search vector database for similar documents
     \item Retrieve top-k most relevant documents
@@ -259,11 +263,11 @@ print("\nSources:", result['source_documents'])
 \textit{Tutorial: HuggingFace Advanced RAG - \url{https://huggingface.co/learn/cookbook/advanced_rag}}
 \end{frame}
 
-\begin{frame}{Advanced RAG Techniques 🚀}
+\begin{frame}[shrink=10]{Advanced RAG Techniques 🚀}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Self-RAG} (Asai et al., 2023)
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Model decides \textit{when} to retrieve
     \item Self-reflects on retrieval quality
     \item Critique and refine generations
@@ -278,7 +282,7 @@ Not every query needs retrieval!
 
 \begin{column}{0.48\textwidth}
 \textbf{Corrective RAG} (Yan et al., 2024)
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Evaluates retrieved documents
     \item Filters irrelevant content
     \item Re-retrieves if needed
@@ -304,10 +308,10 @@ The field is moving toward more autonomous, self-correcting systems!
 \textit{References: Asai et al. (2023) - Self-RAG; Yan et al. (2024) - Corrective RAG}
 \end{frame}
 
-\begin{frame}{RAG Components Deep Dive 🔬}
-\begin{enumerate}
+\begin{frame}[shrink=10]{RAG Components Deep Dive 🔬}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Document Processing}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Chunking strategies (fixed, semantic, recursive)
         \item Metadata extraction
         \item Deduplication
@@ -316,7 +320,7 @@ The field is moving toward more autonomous, self-correcting systems!
     \vspace{0.3em}
 
     \item \textbf{Embedding Models}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Dense retrieval: Sentence-BERT, E5, BGE
         \item Sparse retrieval: BM25, TF-IDF
         \item Hybrid approaches
@@ -325,7 +329,7 @@ The field is moving toward more autonomous, self-correcting systems!
     \vspace{0.3em}
 
     \item \textbf{Vector Databases}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item FAISS, ChromaDB, Pinecone, Weaviate, Qdrant
         \item Indexing strategies (IVF, HNSW)
         \item Approximate nearest neighbor search
@@ -334,7 +338,7 @@ The field is moving toward more autonomous, self-correcting systems!
     \vspace{0.3em}
 
     \item \textbf{Prompt Engineering}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item How to format retrieved context
         \item Instruction templates
         \item Source attribution
@@ -371,13 +375,13 @@ What's the right balance for your use case?
 \end{thinkbox}
 \end{frame}
 
-\begin{frame}{RAG in Production 🏭}
+\begin{frame}[shrink=10]{RAG in Production 🏭}
 \textbf{Real-world considerations:}
 
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Challenges:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 💰 Cost: Embedding + storage + inference
     \item ⚡ Latency: Retrieval adds overhead
     \item 📏 Context window limits
@@ -389,7 +393,7 @@ What's the right balance for your use case?
 
 \begin{column}{0.48\textwidth}
 \textbf{Solutions:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Caching embeddings
     \item Semantic caching
     \item Incremental indexing
@@ -418,7 +422,7 @@ Start simple (Naive RAG), measure performance, then optimize based on actual bot
 \begin{frame}{The Scaling Challenge 📈}
 \begin{discussionbox}
 Larger models are better... but training 100B+ parameter models is:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Computationally expensive 💸
     \item Energy intensive 🔥
     \item Slow to train ⏳
@@ -442,9 +446,9 @@ A neural network architecture where different "expert" sub-networks specialize i
 \textit{Reference: Shazeer et al. (2017) - "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer"}
 \end{frame}
 
-\begin{frame}{MoE Architecture 🏗️}
+\begin{frame}[shrink=5]{MoE Architecture 🏗️}
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=1.2cm,
     expert/.style={rectangle, rounded corners, draw, fill=blue!30, minimum width=1.8cm, minimum height=0.8cm, align=center},
     router/.style={rectangle, rounded corners, draw, fill=orange!40, minimum width=2.5cm, minimum height=0.8cm, align=center},
@@ -483,24 +487,24 @@ A neural network architecture where different "expert" sub-networks specialize i
 \draw[->, thick, gray, dashed] (expertn) |- (output);
 
 % Formula
-\node[below=0.3cm of input, font=\small] {$y = \sum_{i=1}^{N} g(x)_i \cdot E_i(x)$};
+\node[below=0.3cm of input, font=\footnotesize] {$y = \sum_{i=1}^{N} g(x)_i \cdot E_i(x)$};
 
 \end{tikzpicture}
 \end{center}
 
 \vspace{0.5em}
 \textbf{Key Components:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Experts}: Specialized feed-forward networks (typically only top-2 are active)
     \item \textbf{Router}: Learned gating function that assigns weights to experts
     \item \textbf{Sparse Activation}: Only a few experts process each token
 \end{itemize}
 \end{frame}
 
-\begin{frame}{How MoE Works: The Router 🎯}
+\begin{frame}[shrink=10]{How MoE Works: The Router 🎯}
 \textbf{Routing Mechanism:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item For input $x$, router computes scores: $h(x) = W_g \cdot x$
     \item Apply softmax to get probabilities: $g(x) = \text{softmax}(h(x))$
     \item Select top-$k$ experts (typically $k=2$)
@@ -511,7 +515,7 @@ A neural network architecture where different "expert" sub-networks specialize i
 \vspace{1em}
 
 \textbf{Benefits:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ \textbf{Sparse computation}: Only 2 out of N experts active
     \item ✅ \textbf{Scalable}: Can add more experts without increasing per-token cost
     \item ✅ \textbf{Specialization}: Experts learn different capabilities
@@ -525,13 +529,13 @@ A neural network architecture where different "expert" sub-networks specialize i
 \end{thinkbox}
 \end{frame}
 
-\begin{frame}{MoE Challenges \& Solutions ⚠️}
+\begin{frame}[shrink=10]{MoE Challenges \& Solutions ⚠️}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Challenges:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Load Balancing}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Some experts overused
         \item Others underutilized
     \end{itemize}
@@ -539,7 +543,7 @@ A neural network architecture where different "expert" sub-networks specialize i
     \vspace{0.3em}
 
     \item \textbf{Training Instability}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Routing collapse
         \item Expert specialization
     \end{itemize}
@@ -547,7 +551,7 @@ A neural network architecture where different "expert" sub-networks specialize i
     \vspace{0.3em}
 
     \item \textbf{Memory Requirements}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item All experts in memory
         \item High bandwidth needs
     \end{itemize}
@@ -556,9 +560,9 @@ A neural network architecture where different "expert" sub-networks specialize i
 
 \begin{column}{0.48\textwidth}
 \textbf{Solutions:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Load Balancing Loss}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Auxiliary loss term
         \item Encourages uniform usage
     \end{itemize}
@@ -566,7 +570,7 @@ A neural network architecture where different "expert" sub-networks specialize i
     \vspace{0.3em}
 
     \item \textbf{Expert Capacity}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Limit tokens per expert
         \item Dynamic capacity buffers
     \end{itemize}
@@ -574,7 +578,7 @@ A neural network architecture where different "expert" sub-networks specialize i
     \vspace{0.3em}
 
     \item \textbf{Expert Parallelism}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Distribute experts across GPUs
         \item Optimize communication
     \end{itemize}
@@ -599,7 +603,7 @@ A state-of-the-art sparse mixture of experts model with 8 experts, each 7B param
 \vspace{0.5em}
 
 \textbf{Architecture:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Total parameters}: 47B (8 experts × 7B, minus shared layers)
     \item \textbf{Active parameters}: 13B (only 2 experts active per token)
     \item \textbf{Performance}: Matches or exceeds Llama 2 70B
@@ -628,9 +632,9 @@ Mixtral 8x7B & 13B & 70.6 & 6× \\
 \textit{Blog: \url{https://huggingface.co/blog/moe}}
 \end{frame}
 
-\begin{frame}{MoE vs Dense Models 📊}
+\begin{frame}[shrink=10]{MoE vs Dense Models 📊}
 \begin{center}
-\begin{tikzpicture}
+\begin{tikzpicture}[scale=0.85]
     \begin{axis}[
         width=0.9\textwidth,
         height=6cm,
@@ -660,7 +664,7 @@ Mixtral 8x7B & 13B & 70.6 & 6× \\
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{MoE Advantages:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Better compute efficiency
     \item Faster training
     \item Faster inference
@@ -670,7 +674,7 @@ Mixtral 8x7B & 13B & 70.6 & 6× \\
 
 \begin{column}{0.48\textwidth}
 \textbf{Dense Advantages:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Simpler architecture
     \item Easier to train
     \item Lower memory usage
@@ -685,7 +689,8 @@ Mixtral 8x7B & 13B & 70.6 & 6× \\
 % ============================================================
 \section{Self-Supervised \& Contrastive Learning}
 
-\begin{frame}{Self-Supervised Learning 🔄}
+\begin{frame}[shrink=10]{Self-Supervised Learning 🔄}
+\small
 \begin{block}{Self-Supervised Learning}
 Learning representations from unlabeled data by creating pretext tasks where the data itself provides the supervision signal.
 \end{block}
@@ -693,7 +698,7 @@ Learning representations from unlabeled data by creating pretext tasks where the
 \vspace{1em}
 
 \textbf{Why is this important?}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Labeled data is expensive and scarce
     \item Unlabeled data is abundant
     \item Learn general-purpose representations
@@ -703,42 +708,42 @@ Learning representations from unlabeled data by creating pretext tasks where the
 \vspace{1em}
 
 \textbf{Examples of pretext tasks:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Language}: Masked language modeling (BERT), next token prediction (GPT)
     \item \textbf{Vision}: Predicting rotations, colorization, jigsaw puzzles
     \item \textbf{Contrastive}: Making similar things close, dissimilar things far apart
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Contrastive Learning 🎯}
+\begin{frame}[shrink=5]{Contrastive Learning 🎯}
 \begin{center}
 \textbf{Core Idea:} Learn by contrasting positive pairs against negative pairs
 
 \vspace{1em}
 
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=1.5cm,
     imgnode/.style={rectangle, draw, fill=blue!20, minimum size=1cm},
-    anchor/.style={rectangle, draw, fill=green!40, minimum size=1cm},
-    pos/.style={rectangle, draw, fill=green!20, minimum size=1cm},
-    neg/.style={rectangle, draw, fill=red!20, minimum size=1cm}
+    anchornode/.style={rectangle, draw, fill=green!40, minimum size=1cm},
+    posnode/.style={rectangle, draw, fill=green!20, minimum size=1cm},
+    negnode/.style={rectangle, draw, fill=red!20, minimum size=1cm}
 ]
 
 % Anchor
-\node[anchor] (anchor) {🐕};
+\node[anchornode] (anchor) {🐕};
 \node[below=0.1cm of anchor, font=\tiny] {Anchor};
 
 % Positive
-\node[pos, right=2cm of anchor] (pos) {🐕};
+\node[posnode, right=2cm of anchor] (pos) {🐕};
 \node[below=0.1cm of pos, font=\tiny] {Positive};
 
 % Negatives
-\node[neg, above right=0.5cm and 3.5cm of anchor] (neg1) {🐱};
-\node[neg, right=3.5cm of anchor] (neg2) {🚗};
-\node[neg, below right=0.5cm and 3.5cm of anchor] (neg3) {🌳};
+\node[negnode, above right=0.5cm and 3.5cm of anchor] (neg1) {🐱};
+\node[negnode, right=3.5cm of anchor] (neg2) {🚗};
+\node[negnode, below right=0.5cm and 3.5cm of anchor] (neg3) {🌳};
 
 % Arrows
-\draw[->, thick, green!60!black] (anchor) -- (pos) node[midway, above, font=\small] {Pull together};
+\draw[->, thick, green!60!black] (anchor) -- (pos) node[midway, above, font=\footnotesize] {Pull together};
 \draw[->, thick, red!60!black] (anchor) -- (neg1) node[midway, above, font=\tiny] {Push apart};
 \draw[->, thick, red!60!black] (anchor) -- (neg2) node[midway, above, font=\tiny] {Push apart};
 \draw[->, thick, red!60!black] (anchor) -- (neg3) node[midway, below, font=\tiny] {Push apart};
@@ -753,13 +758,13 @@ Learning representations from unlabeled data by creating pretext tasks where the
 where $z_i$ is anchor, $z_i^+$ is positive, and $\{z_j\}$ includes negatives.
 \end{frame}
 
-\begin{frame}{SimCLR: Simple Contrastive Learning 🔬}
+\begin{frame}[shrink=10]{SimCLR: Simple Contrastive Learning 🔬}
 \begin{block}{SimCLR (Chen et al., 2020)}
 "A Simple Framework for Contrastive Learning of Visual Representations"
 \end{block}
 
 \textbf{Method:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Take an image
     \item Apply two different random augmentations (crop, color, blur, etc.)
     \item Encode both views with a neural network
@@ -770,7 +775,7 @@ where $z_i$ is anchor, $z_i^+$ is positive, and $\{z_j\}$ includes negatives.
 \vspace{0.5em}
 
 \textbf{Key Innovations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Strong data augmentation is crucial
     \item Learnable projection head improves performance
     \item Large batch sizes help (more negatives)
@@ -785,7 +790,7 @@ where $z_i$ is anchor, $z_i^+$ is positive, and $\{z_j\}$ includes negatives.
 \textit{Reference: Chen et al. (2020) - "A Simple Framework for Contrastive Learning of Visual Representations"}
 \end{frame}
 
-\begin{frame}{CLIP: Connecting Vision \& Language 🖼️📝}
+\begin{frame}[shrink=5]{CLIP: Connecting Vision \& Language 🖼️📝}
 \begin{block}{CLIP (Radford et al., 2021)}
 "Learning Transferable Visual Models From Natural Language Supervision"
 \end{block}
@@ -795,7 +800,7 @@ where $z_i$ is anchor, $z_i^+$ is positive, and $\{z_j\}$ includes negatives.
 \vspace{0.5em}
 
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=1cm,
     box/.style={rectangle, rounded corners, draw, fill=blue!20, minimum width=2cm, minimum height=0.8cm, align=center},
     encoder/.style={rectangle, rounded corners, draw, fill=orange!30, minimum width=2.5cm, minimum height=1.2cm, align=center}
@@ -822,7 +827,7 @@ where $z_i$ is anchor, $z_i^+$ is positive, and $\{z_j\}$ includes negatives.
 \node[circle, draw, fill=green!30, left=1cm of txtenc] (txtemb) {$T$};
 
 % Similarity matrix
-\node[above=2cm of imgemb, font=\small] (matrix) {
+\node[above=2cm of imgemb, font=\footnotesize] (matrix) {
 \begin{tabular}{c|ccc}
     & $T_1$ & $T_2$ & $T_3$ \\
 \hline
@@ -852,13 +857,13 @@ $I_3$ & × & × & ✓ \\
 \textit{Reference: Radford et al. (2021) - "Learning Transferable Visual Models From Natural Language Supervision"}
 \end{frame}
 
-\begin{frame}{CLIP Training \& Applications 🎨}
+\begin{frame}[shrink=10]{CLIP Training \& Applications 🎨}
 \textbf{Training Data:} 400 million (image, text) pairs from the internet
 
 \vspace{0.5em}
 
 \textbf{Training Objective:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Given a batch of $N$ (image, text) pairs
     \item Maximize similarity for $N$ correct pairs
     \item Minimize similarity for $N^2 - N$ incorrect pairs
@@ -870,9 +875,9 @@ $I_3$ & × & × & ✓ \\
 \textbf{Applications:}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Zero-shot classification}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item No training on target dataset!
         \item Competes with supervised models
     \end{itemize}
@@ -882,9 +887,9 @@ $I_3$ & × & × & ✓ \\
 \end{column}
 
 \begin{column}{0.48\textwidth}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Foundation for generative models}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item DALL-E, Stable Diffusion
         \item Text-guided editing
     \end{itemize}
@@ -907,9 +912,9 @@ What other modalities can we align? (Audio? Code? Protein structures?)
 % ============================================================
 \section{What's Next for LLMs?}
 
-\begin{frame}{Current State of LLMs 📍}
+\begin{frame}[shrink=10]{Current State of LLMs 📍}
 \textbf{Where we are in 2024:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ Strong language understanding and generation
     \item ✅ Multimodal capabilities (text, image, audio)
     \item ✅ Long context windows (100k+ tokens)
@@ -920,7 +925,7 @@ What other modalities can we align? (Audio? Code? Protein structures?)
 \vspace{1em}
 
 \textbf{But still limitations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ❌ Reasoning on complex, multi-step problems
     \item ❌ Factual accuracy and hallucinations
     \item ❌ Limited "world models" and common sense
@@ -930,13 +935,13 @@ What other modalities can we align? (Audio? Code? Protein structures?)
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Future Direction 1: Multimodality 🎨🔊}
+\begin{frame}[shrink=10]{Future Direction 1: Multimodality 🎨🔊}
 \begin{futurebox}
 \textbf{Beyond text:} Unified models that understand and generate across all modalities
 \end{futurebox}
 
 \textbf{Current trends:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Vision-Language Models}: GPT-4V, Gemini, Claude 3
     \item \textbf{Audio}: Whisper, AudioLM, MusicLM
     \item \textbf{Video}: VideoLLM, video understanding
@@ -946,7 +951,7 @@ What other modalities can we align? (Audio? Code? Protein structures?)
 \vspace{0.5em}
 
 \textbf{Research questions:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item How to effectively align different modalities?
     \item What's the right architecture for true multimodality?
     \item Can we achieve "any-to-any" generation?
@@ -959,13 +964,13 @@ What other modalities can we align? (Audio? Code? Protein structures?)
 Robots that understand instructions, AR/VR applications, accessibility tools, creative assistants
 \end{frame}
 
-\begin{frame}{Future Direction 2: Reasoning \& Planning 🧠}
+\begin{frame}[shrink=10]{Future Direction 2: Reasoning \& Planning 🧠}
 \begin{futurebox}
 \textbf{Moving beyond pattern matching:} True reasoning, planning, and problem-solving
 \end{futurebox}
 
 \textbf{Current approaches:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Chain-of-Thought}: Prompting for step-by-step reasoning
     \item \textbf{Tree-of-Thoughts}: Exploring multiple reasoning paths
     \item \textbf{Tool Use}: Augmenting with calculators, search, code execution
@@ -976,7 +981,7 @@ Robots that understand instructions, AR/VR applications, accessibility tools, cr
 \vspace{0.5em}
 
 \textbf{Open challenges:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Abstract reasoning (ARC benchmark)
     \item Long-horizon planning
     \item Causal reasoning vs. correlation
@@ -990,13 +995,13 @@ Will scaling alone give us reasoning, or do we need fundamentally new architectu
 \end{thinkbox}
 \end{frame}
 
-\begin{frame}{Future Direction 3: Agents \& Autonomy 🤖}
+\begin{frame}[shrink=10]{Future Direction 3: Agents \& Autonomy 🤖}
 \begin{futurebox}
 \textbf{LLMs as autonomous agents:} Acting in environments, pursuing goals, learning from feedback
 \end{futurebox}
 
 \textbf{Components of LLM agents:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Perception}: Understanding environment state
     \item \textbf{Planning}: Decomposing goals into sub-tasks
     \item \textbf{Action}: Using tools and APIs
@@ -1007,7 +1012,7 @@ Will scaling alone give us reasoning, or do we need fundamentally new architectu
 \vspace{0.5em}
 
 \textbf{Applications:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Personal assistants that manage your tasks
     \item Coding agents that build software
     \item Research agents that synthesize literature
@@ -1019,7 +1024,7 @@ Will scaling alone give us reasoning, or do we need fundamentally new architectu
 \textbf{Challenges:} Safety, alignment, sandboxing, evaluation
 \end{frame}
 
-\begin{frame}{Future Direction 4: Efficiency \& Sustainability 🌱}
+\begin{frame}[shrink=10]{Future Direction 4: Efficiency \& Sustainability 🌱}
 \begin{futurebox}
 \textbf{Democratizing AI:} Making powerful models accessible and sustainable
 \end{futurebox}
@@ -1028,7 +1033,7 @@ Will scaling alone give us reasoning, or do we need fundamentally new architectu
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Model-level:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Mixture of Experts
     \item Quantization (4-bit, 3-bit)
     \item Knowledge distillation
@@ -1039,7 +1044,7 @@ Will scaling alone give us reasoning, or do we need fundamentally new architectu
 
 \begin{column}{0.48\textwidth}
 \textbf{System-level:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Better hardware (TPUs, GPUs)
     \item Flash attention
     \item KV cache optimization
@@ -1052,7 +1057,7 @@ Will scaling alone give us reasoning, or do we need fundamentally new architectu
 \vspace{0.5em}
 
 \textbf{Environmental considerations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Carbon footprint of training
     \item Energy consumption at inference
     \item E-waste from hardware
@@ -1065,13 +1070,13 @@ The most powerful models shouldn't only be accessible to big tech companies!
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Future Direction 5: Personalization \& Memory 💾}
+\begin{frame}[shrink=10]{Future Direction 5: Personalization \& Memory 💾}
 \begin{futurebox}
 \textbf{LLMs that know you:} Persistent context, preferences, and relationships
 \end{futurebox}
 
 \textbf{Challenges:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Current models are stateless (reset every conversation)
     \item Limited context windows
     \item Privacy concerns with personal data
@@ -1081,7 +1086,7 @@ The most powerful models shouldn't only be accessible to big tech companies!
 \vspace{0.5em}
 
 \textbf{Potential solutions:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{RAG over personal data}: Your documents, emails, notes
     \item \textbf{Fine-tuning on user data}: Personal writing style
     \item \textbf{Memory modules}: Explicit long-term memory storage
@@ -1093,11 +1098,11 @@ The most powerful models shouldn't only be accessible to big tech companies!
 \textbf{Vision:} An AI assistant that truly understands your context, preferences, and history—while respecting your privacy!
 \end{frame}
 
-\begin{frame}{Speculative: What Could Go Wrong? ⚠️}
+\begin{frame}[shrink=10]{Speculative: What Could Go Wrong? ⚠️}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Technical Risks:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Scaling plateaus
     \item Inability to solve core reasoning
     \item Data quality degradation
@@ -1108,7 +1113,7 @@ The most powerful models shouldn't only be accessible to big tech companies!
 
 \begin{column}{0.48\textwidth}
 \textbf{Societal Risks:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Job displacement
     \item Misinformation at scale
     \item Concentration of power
@@ -1139,7 +1144,7 @@ As future AI researchers and practitioners, you have a responsibility to think a
 
 \vspace{0.5em}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Most low-hanging fruit has been picked, but huge opportunities remain
     \item Fundamental questions are still open
     \item New architectures are being discovered
@@ -1168,7 +1173,7 @@ What contribution do you want to make?
 % ============================================================
 \section{Final Project}
 
-\begin{frame}{Final Project Overview 🎓}
+\begin{frame}[shrink=10]{Final Project Overview 🎓}
 \begin{alertblock}{The Capstone}
 Your final project is a chance to explore a topic deeply, conduct original research or build something novel, and demonstrate what you've learned!
 \end{alertblock}
@@ -1176,7 +1181,7 @@ Your final project is a chance to explore a topic deeply, conduct original resea
 \vspace{0.5em}
 
 \textbf{Project Types:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Research Project}: Investigate a question, run experiments, analyze results
     \item \textbf{Application Project}: Build a working system that solves a real problem
     \item \textbf{Reproduction Study}: Replicate a recent paper and extend it
@@ -1186,7 +1191,7 @@ Your final project is a chance to explore a topic deeply, conduct original resea
 \vspace{0.5em}
 
 \textbf{Team Formation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Work individually or in teams of 2-3
     \item Diverse skill sets are valuable!
     \item Start forming teams TODAY
@@ -1213,7 +1218,7 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{Grading Breakdown:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Proposal: 10\%
     \item Presentation: 30\%
     \item Final Report: 50\%
@@ -1221,9 +1226,9 @@ Finals Week & Final Report & 8-10 page report \\
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Project Ideas: RAG Applications 🔍}
+\begin{frame}[shrink=10]{Project Ideas: RAG Applications 🔍}
 \textbf{1. Domain-Specific RAG Systems}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Build RAG for medical literature, legal documents, or technical docs
     \item Compare embedding models and retrieval strategies
     \item Evaluate accuracy and source attribution
@@ -1232,7 +1237,7 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{2. Advanced RAG Techniques}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Implement and compare Self-RAG vs. Corrective RAG
     \item Explore hybrid retrieval (sparse + dense)
     \item Study the effect of chunk size and overlap
@@ -1241,16 +1246,16 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{3. RAG for Multimodal Content}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Retrieve images, diagrams, or videos along with text
     \item Use CLIP embeddings for visual retrieval
     \item Generate answers that reference visual content
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Project Ideas: Model Architectures 🏗️}
+\begin{frame}[shrink=10]{Project Ideas: Model Architectures 🏗️}
 \textbf{4. Mixture of Experts Analysis}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Study how experts specialize in Mixtral or similar models
     \item Visualize routing decisions
     \item Experiment with different routing mechanisms
@@ -1259,7 +1264,7 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{5. Efficient Fine-tuning}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Compare LoRA, QLoRA, prefix tuning, and full fine-tuning
     \item Study the performance/efficiency trade-off
     \item Apply to a specific task
@@ -1268,16 +1273,16 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{6. State Space Models}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Investigate Mamba or other SSM architectures
     \item Compare to Transformers on long sequences
     \item Hybrid architectures
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Project Ideas: Reasoning \& Agents 🤖}
+\begin{frame}[shrink=10]{Project Ideas: Reasoning \& Agents 🤖}
 \textbf{7. Reasoning Enhancement}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Implement Tree-of-Thoughts or Graph-of-Thoughts
     \item Benchmark on reasoning tasks (GSM8K, ARC, etc.)
     \item Analyze failure modes
@@ -1286,7 +1291,7 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{8. LLM Agents}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Build an agent for a specific task (coding, research, planning)
     \item Implement tool use and memory
     \item Evaluate on complex multi-step tasks
@@ -1295,16 +1300,16 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{9. Interactive Learning}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Study learning from human feedback
     \item Implement RLHF or DPO
     \item Explore alternatives to RLHF
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Project Ideas: Multimodal \& Creative 🎨}
+\begin{frame}[shrink=10]{Project Ideas: Multimodal \& Creative 🎨}
 \textbf{10. Vision-Language Models}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Fine-tune CLIP for a specific domain
     \item Build visual question answering system
     \item Explore compositional understanding
@@ -1313,7 +1318,7 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{11. Text-to-X Generation}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Text-to-image, text-to-music, text-to-3D
     \item Study controllability and quality
     \item Novel conditioning mechanisms
@@ -1322,7 +1327,7 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{12. Creative Applications}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Story generation with consistency
     \item Code generation and debugging
     \item Scientific writing assistant
@@ -1330,9 +1335,9 @@ Finals Week & Final Report & 8-10 page report \\
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Project Ideas: Analysis \& Safety 🔬}
+\begin{frame}[shrink=10]{Project Ideas: Analysis \& Safety 🔬}
 \textbf{13. Model Interpretability}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Probe what models learn at different layers
     \item Visualize attention patterns
     \item Study emergence of capabilities
@@ -1341,7 +1346,7 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{14. Bias \& Fairness}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Measure and mitigate biases in LLMs
     \item Study fairness across demographics
     \item Propose debiasing techniques
@@ -1350,17 +1355,17 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{15. Robustness \& Safety}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Adversarial attacks on LLMs
     \item Jailbreak detection and prevention
     \item Output filtering and safety layers
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Making Your Project Stand Out 🌟}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Making Your Project Stand Out 🌟}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Clear Research Question}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item What specific question are you answering?
         \item Why does it matter?
     \end{itemize}
@@ -1368,7 +1373,7 @@ Finals Week & Final Report & 8-10 page report \\
     \vspace{0.3em}
 
     \item \textbf{Rigorous Evaluation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use established benchmarks
         \item Compare to baselines
         \item Statistical significance
@@ -1377,7 +1382,7 @@ Finals Week & Final Report & 8-10 page report \\
     \vspace{0.3em}
 
     \item \textbf{Insightful Analysis}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Don't just report numbers
         \item Understand WHY things work or fail
         \item Error analysis and case studies
@@ -1386,7 +1391,7 @@ Finals Week & Final Report & 8-10 page report \\
     \vspace{0.3em}
 
     \item \textbf{Clear Communication}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Write for your peers
         \item Good visualizations
         \item Reproducible results
@@ -1394,9 +1399,9 @@ Finals Week & Final Report & 8-10 page report \\
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Resources \& Support 💪}
+\begin{frame}[shrink=10]{Resources \& Support 💪}
 \textbf{Computational Resources:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Google Colab (free tier + Pro)
     \item HuggingFace Spaces
     \item University compute cluster (contact instructor)
@@ -1406,7 +1411,7 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{Getting Help:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Office hours: Weekly check-ins on progress
     \item Discord: \#final-project channel
     \item Peer review: Exchange proposals with other teams
@@ -1416,52 +1421,52 @@ Finals Week & Final Report & 8-10 page report \\
 \vspace{0.5em}
 
 \textbf{Code \& Data:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item HuggingFace Hub: Pre-trained models, datasets
     \item Papers with Code: Implementations of recent papers
     \item GitHub: Open-source projects to build on
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Proposal Requirements 📝}
+\begin{frame}[shrink=10]{Proposal Requirements 📝}
 \textbf{Your 2-page proposal should include:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Title \& Team Members}
 
     \item \textbf{Problem Statement} (1 paragraph)
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item What problem are you solving?
         \item Why is it important?
     \end{itemize}
 
     \item \textbf{Related Work} (1 paragraph)
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item What has been done before?
         \item How is your work different?
     \end{itemize}
 
     \item \textbf{Approach} (1-2 paragraphs)
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item What methods will you use?
         \item What data/models will you need?
     \end{itemize}
 
     \item \textbf{Evaluation Plan} (1 paragraph)
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item How will you measure success?
         \item What metrics and baselines?
     \end{itemize}
 
     \item \textbf{Timeline} (bullet points)
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Week-by-week plan
         \item Who does what (if team project)
     \end{itemize}
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Tips for Success 💡}
+\begin{frame}[shrink=10]{Tips for Success 💡}
 \begin{alertblock}{Start Early!}
 The best projects come from iteration and refinement. Don't wait until the last minute!
 \end{alertblock}
@@ -1469,7 +1474,7 @@ The best projects come from iteration and refinement. Don't wait until the last 
 \vspace{0.5em}
 
 \textbf{Do:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ Pick a topic you're genuinely interested in
     \item ✅ Start with a simple baseline and iterate
     \item ✅ Keep a research log of what you try
@@ -1480,7 +1485,7 @@ The best projects come from iteration and refinement. Don't wait until the last 
 \vspace{0.5em}
 
 \textbf{Don't:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ❌ Pick something too ambitious for the timeframe
     \item ❌ Rely on things you can't access (massive compute, proprietary data)
     \item ❌ Wait until the last week to start experiments
@@ -1493,10 +1498,10 @@ The best projects come from iteration and refinement. Don't wait until the last 
 % ============================================================
 \section{Wrap-Up}
 
-\begin{frame}{Key Takeaways 🔑}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🔑}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{RAG} extends LLMs with external knowledge
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Solves knowledge cutoff and hallucination problems
         \item Many variations: Self-RAG, Corrective RAG, Agentic RAG
     \end{itemize}
@@ -1504,7 +1509,7 @@ The best projects come from iteration and refinement. Don't wait until the last 
     \vspace{0.3em}
 
     \item \textbf{Mixture of Experts} enables efficient scaling
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Sparse activation → better compute efficiency
         \item Successful in practice (Mixtral, GPT-4 likely uses MoE)
     \end{itemize}
@@ -1512,7 +1517,7 @@ The best projects come from iteration and refinement. Don't wait until the last 
     \vspace{0.3em}
 
     \item \textbf{Self-supervised learning} powers modern AI
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Contrastive methods align modalities (CLIP)
         \item Unlocks learning from unlabeled data
     \end{itemize}
@@ -1520,16 +1525,16 @@ The best projects come from iteration and refinement. Don't wait until the last 
     \vspace{0.3em}
 
     \item \textbf{The future is multimodal, agentic, and efficient}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Many open problems remain
         \item You can contribute!
     \end{itemize}
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Readings for This Week 📖}
+\begin{frame}[shrink=10]{Readings for This Week 📖}
 \textbf{Required:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Lewis et al. (2020)}: Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
     \href{https://arxiv.org/abs/2005.11401}{[arXiv]}
 
@@ -1543,7 +1548,7 @@ The best projects come from iteration and refinement. Don't wait until the last 
 \vspace{0.5em}
 
 \textbf{Recommended:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Asai et al. (2023): Self-RAG \href{https://arxiv.org/abs/2310.11511}{[arXiv]}
     \item Yan et al. (2024): Corrective RAG \href{https://arxiv.org/abs/2401.15884}{[arXiv]}
     \item Jiang et al. (2024): Mixtral of Experts \href{https://arxiv.org/abs/2401.04088}{[arXiv]}
@@ -1554,7 +1559,7 @@ The best projects come from iteration and refinement. Don't wait until the last 
 
 \begin{frame}{Next Steps 🚀}
 \begin{alertblock}{Action Items for This Week}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Read the required papers
     \item Form final project teams
     \item Brainstorm project ideas
@@ -1589,7 +1594,7 @@ Questions?
 \Large
 Good luck with your final projects!
 
-\vspace{1cm}
+\vspace{0.5cm}
 
 \normalsize
 📧 Contact: [Your Email]
@@ -1598,7 +1603,7 @@ Good luck with your final projects!
 
 🏢 Office Hours: [Your Schedule]
 
-\vspace{1cm}
+\vspace{0.5cm}
 
 \large
 Let's build the future together! 🚀

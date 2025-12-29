@@ -1,13 +1,15 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{emoji}
-
 % Code listing setup
 \lstset{
   basicstyle=\ttfamily\small,
@@ -22,7 +24,7 @@
 
 \title{Contextual Embeddings: ELMo, USE, BERT}
 \subtitle{Lecture 9: Beyond Static Word Representations}
-\author{LLM Course - Week 4}
+\author{PSYC 51.07: Models of Language and Communication - Week 4}
 \date{Winter 2026}
 
 \begin{document}
@@ -30,16 +32,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Lecture 📋}
+\begin{frame}[shrink=10]{Today's Lecture 📋}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 🔄 \textbf{From Static to Contextual}
     \item 🧬 \textbf{Language Models as Feature Extractors}
     \item 🔮 \textbf{ELMo: Embeddings from Language Models}
@@ -55,13 +57,13 @@
 % ============================================================
 % THE POLYSEMY PROBLEM
 % ============================================================
-\begin{frame}{The Polysemy Problem Revisited 🤔}
+\begin{frame}[shrink=5]{The Polysemy Problem Revisited 🤔}
 \textbf{Recall: Static embeddings assign ONE vector per word}
 
 \vspace{1em}
 
 \begin{exampleblock}{Example: "bank"}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item "I deposited money at the \textbf{bank}" \hfill (financial institution)
     \item "We sat by the river \textbf{bank}" \hfill (riverside)
     \item "The plane will \textbf{bank} left" \hfill (tilt/turn)
@@ -103,7 +105,7 @@
 % ============================================================
 % STATIC VS CONTEXTUAL
 % ============================================================
-\begin{frame}{Static vs. Contextual Embeddings 🔄}
+\begin{frame}[fragile]{Static vs. Contextual Embeddings 🔄}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Static (Word2Vec, GloVe, FastText):}
@@ -120,7 +122,7 @@ assert vec1 == vec2  # True!
 
 \vspace{0.5em}
 \textbf{Characteristics:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item One vector per word type
     \item Context-independent
     \item Fast lookup (dictionary)
@@ -148,7 +150,7 @@ assert vec1 != vec2  # True!
 
 \vspace{0.5em}
 \textbf{Characteristics:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Different vector per occurrence
     \item Context-dependent
     \item Requires forward pass
@@ -162,7 +164,7 @@ assert vec1 != vec2  # True!
 % ============================================================
 % LANGUAGE MODELS
 % ============================================================
-\begin{frame}{Language Models as Feature Extractors 🧬}
+\begin{frame}[shrink=10]{Language Models as Feature Extractors 🧬}
 \textbf{Key Insight:} Train a language model, use its internal states as embeddings
 
 \vspace{1em}
@@ -180,9 +182,9 @@ $P(w_t | w_1, w_2, ..., w_{t-1})$
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Why This Works:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item To predict next word, model must understand:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Syntax (grammar)
         \item Semantics (meaning)
         \item Context (discourse)
@@ -214,7 +216,7 @@ $P(w_t | w_1, w_2, ..., w_{t-1})$
 
     % Predictions
     \foreach \x/\word in {0/cat, 1.5/sat, 3/on, 4.5/the}
-        \node[font=\small] at (\x, 0.8) {\word};
+        \node[font=\footnotesize] at (\x, 0.8) {\word};
 
     \foreach \x in {0, 1.5, 3, 4.5}
         \draw[->] (\x, 1.5) -- (\x, 1.1);
@@ -234,7 +236,7 @@ $P(w_t | w_1, w_2, ..., w_{t-1})$
 % ============================================================
 % ELMO INTRO
 % ============================================================
-\begin{frame}{ELMo: Embeddings from Language Models 🔮}
+\begin{frame}[shrink=10]{ELMo: Embeddings from Language Models 🔮}
 \textbf{The first widely-adopted contextual embedding (2018)}
 
 \vspace{1em}
@@ -242,7 +244,7 @@ $P(w_t | w_1, w_2, ..., w_{t-1})$
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Key Ideas:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Train deep \alert{bidirectional LSTM} language model
     \item Use \alert{all layer} activations
     \item Weighted combination per task
@@ -251,7 +253,7 @@ $P(w_t | w_1, w_2, ..., w_{t-1})$
 
 \vspace{0.5em}
 \textbf{Architecture:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 2-layer biLSTM
     \item Forward LM: $P(w_t | w_1...w_{t-1})$
     \item Backward LM: $P(w_t | w_{t+1}...w_n)$
@@ -289,7 +291,7 @@ $P(w_t | w_1, w_2, ..., w_{t-1})$
 
     % ELMo output
     \draw[fill=green!20] (-1, 4.5) rectangle (1, 5.2);
-    \node[font=\small] at (0, 4.85) {ELMo};
+    \node[font=\footnotesize] at (0, 4.85) {ELMo};
 
     \draw[->] (-0.9, 3.9) -- (0, 4.5);
     \draw[->] (0.9, 3.9) -- (0, 4.5);
@@ -318,11 +320,11 @@ Learned task-specific weights!
 % ============================================================
 % ELMO DETAILS
 % ============================================================
-\begin{frame}{ELMo: How It Works 🔍}
+\begin{frame}[shrink=10]{ELMo: How It Works 🔍}
 \textbf{Training:}
 
 \vspace{0.5em}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Pre-train on large corpus (1B Word Benchmark)
     \item Minimize combined forward \& backward LM loss:
     \begin{align*}
@@ -336,10 +338,10 @@ Learned task-specific weights!
 \textbf{Usage (downstream tasks):}
 
 \vspace{0.5em}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Freeze ELMo weights
     \item For each token, compute:
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Character-based representation
         \item 2 forward LSTM hidden states
         \item 2 backward LSTM hidden states
@@ -393,7 +395,7 @@ bank2 = embeddings['elmo_representations'][0][1, 5, :]  # second sentence
 % ============================================================
 % UNIVERSAL SENTENCE ENCODER
 % ============================================================
-\begin{frame}{Universal Sentence Encoder (USE) 🌐}
+\begin{frame}[shrink=10]{Universal Sentence Encoder (USE) 🌐}
 \textbf{Sentence-level embeddings for semantic similarity}
 
 \vspace{1em}
@@ -401,7 +403,7 @@ bank2 = embeddings['elmo_representations'][0][1, 5, :]  # second sentence
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Motivation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Word embeddings: good for words
     \item But what about sentences?
     \item Average of word vectors? Too simple!
@@ -413,7 +415,7 @@ bank2 = embeddings['elmo_representations'][0][1, 5, :]  # second sentence
 
 \vspace{0.3em}
 \textbf{1. Transformer-based:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Higher accuracy
     \item Slower (compute intensive)
     \item Better for quality
@@ -421,7 +423,7 @@ bank2 = embeddings['elmo_representations'][0][1, 5, :]  # second sentence
 
 \vspace{0.3em}
 \textbf{2. Deep Averaging Network (DAN):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Lower accuracy
     \item Much faster
     \item Better for scale
@@ -430,7 +432,7 @@ bank2 = embeddings['elmo_representations'][0][1, 5, :]  # second sentence
 
 \begin{column}{0.48\textwidth}
 \textbf{Training Objectives:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Unsupervised: Skip-thought
     \item Supervised: SNLI (entailment)
     \item Multi-task learning
@@ -438,7 +440,7 @@ bank2 = embeddings['elmo_representations'][0][1, 5, :]  # second sentence
 
 \vspace{0.5em}
 \textbf{Output:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 512-dimensional vector
     \item Fixed-length (any sentence length)
     \item Optimized for similarity tasks
@@ -446,7 +448,7 @@ bank2 = embeddings['elmo_representations'][0][1, 5, :]  # second sentence
 
 \vspace{0.5em}
 \textbf{Use Cases:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Semantic search
     \item Question answering
     \item Text classification
@@ -508,7 +510,7 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 % ============================================================
 % BERT INTRO
 % ============================================================
-\begin{frame}{BERT: Bidirectional Encoder Representations 🎭}
+\begin{frame}[shrink=10]{BERT: Bidirectional Encoder Representations 🎭}
 \begin{center}
 \LARGE
 \textbf{The model that changed everything (2018)}
@@ -519,7 +521,7 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Key Innovations:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \alert{Bidirectional} context (not just left-to-right)
     \item \alert{Transformer} architecture (attention)
     \item \alert{Masked language model} pre-training
@@ -529,7 +531,7 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 
 \vspace{0.5em}
 \textbf{Impact:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item SOTA on 11 NLP tasks
     \item Sparked the "BERT-era"
     \item 1000+ variants (RoBERTa, ALBERT, DistilBERT, ...)
@@ -552,7 +554,7 @@ BERT-Large & 24 & 1024 \\
 
 \vspace{1em}
 \textbf{Training Data:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item BooksCorpus (800M words)
     \item English Wikipedia (2.5B words)
     \item Total: 3.3B words
@@ -560,7 +562,7 @@ BERT-Large & 24 & 1024 \\
 
 \vspace{0.5em}
 \textbf{Training Time:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 4 days on 64 TPU chips
     \item Or 4 weeks on 8 GPUs
 \end{itemize}
@@ -575,13 +577,13 @@ BERT-Large & 24 & 1024 \\
 % ============================================================
 % MASKED LM
 % ============================================================
-\begin{frame}{Masked Language Modeling (MLM) 🎭}
+\begin{frame}[shrink=10]{Masked Language Modeling (MLM) 🎭}
 \textbf{BERT's key training innovation}
 
 \vspace{1em}
 
 \textbf{The Problem with Traditional LM:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Left-to-right: Only sees previous words
     \item Right-to-left: Only sees next words
     \item Want: See both directions simultaneously
@@ -605,7 +607,7 @@ BERT-Large & 24 & 1024 \\
 \vspace{1em}
 
 \textbf{Training Procedure:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Randomly select 15\% of tokens
     \item Replace 80\% with [MASK], 10\% with random word, 10\% unchanged
     \item Predict original tokens
@@ -646,7 +648,7 @@ BERT-Large & 24 & 1024 \\
 \vspace{1em}
 
 \textbf{Why This Helps:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Captures discourse relationships
     \item Useful for QA, NLI, etc.
     \item Models sentence-level coherence
@@ -657,13 +659,13 @@ BERT-Large & 24 & 1024 \\
 % ============================================================
 % BERT ARCHITECTURE
 % ============================================================
-\begin{frame}{BERT Architecture 🏗️}
+\begin{frame}[shrink=5]{BERT Architecture 🏗️}
 \begin{center}
 \begin{tikzpicture}[scale=0.7]
     % Input
     \node at (-3, 0) {Input:};
     \foreach \x/\word in {0/[CLS], 1.5/The, 3/cat, 4.5/[MASK], 6/on, 7.5/mat, 9/[SEP]}
-        \node[font=\small] at (\x, 0) {\word};
+        \node[font=\footnotesize] at (\x, 0) {\word};
 
     % Token Embeddings
     \foreach \x in {0, 1.5, 3, 4.5, 6, 7.5, 9}
@@ -703,10 +705,10 @@ BERT-Large & 24 & 1024 \\
 
     % Task heads
     \draw[->] (0, 8) -- (0, 8.5);
-    \node[font=\small] at (0, 9) {Classification};
+    \node[font=\footnotesize] at (0, 9) {Classification};
 
     \draw[->] (4.5, 8) -- (4.5, 8.5);
-    \node[font=\small] at (4.5, 9) {Predict: sat};
+    \node[font=\footnotesize] at (4.5, 9) {Predict: sat};
 \end{tikzpicture}
 \end{center}
 \end{frame}
@@ -757,7 +759,7 @@ print(f"Similarity: {sim:.3f}")  # Lower than with static embeddings
 % ============================================================
 % FINE-TUNING
 % ============================================================
-\begin{frame}{Fine-tuning BERT 🎯}
+\begin{frame}[fragile]{Fine-tuning BERT 🎯}
 \textbf{Two ways to use BERT:}
 
 \vspace{1em}
@@ -765,7 +767,7 @@ print(f"Similarity: {sim:.3f}")  # Lower than with static embeddings
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{1. Feature Extraction:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Freeze BERT weights
     \item Use embeddings as features
     \item Train classifier on top
@@ -788,7 +790,7 @@ optimizer = Adam(classifier.parameters())
 
 \begin{column}{0.48\textwidth}
 \textbf{2. Fine-tuning:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Update BERT weights
     \item Add task-specific head
     \item Train end-to-end
@@ -844,7 +846,7 @@ Year & 2018 & 2018 & 2018 \\
 \vspace{1em}
 
 \begin{block}{Recommendations}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{ELMo:} Legacy systems, character-aware needs
     \item \textbf{USE:} Sentence similarity, semantic search, fast inference
     \item \textbf{BERT:} State-of-the-art quality, most NLP tasks (now superseded by larger models)
@@ -855,7 +857,7 @@ Year & 2018 & 2018 & 2018 \\
 % ============================================================
 % IMPACT
 % ============================================================
-\begin{frame}{Impact on NLP 🌟}
+\begin{frame}[shrink=10]{Impact on NLP 🌟}
 \textbf{BERT revolutionized NLP:}
 
 \vspace{1em}
@@ -863,7 +865,7 @@ Year & 2018 & 2018 & 2018 \\
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Before BERT (pre-2018):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Task-specific architectures
     \item Train from scratch
     \item Static embeddings (Word2Vec, GloVe)
@@ -873,7 +875,7 @@ Year & 2018 & 2018 & 2018 \\
 
 \vspace{1em}
 \textbf{Tasks that improved:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Question Answering (+1.5 F1 on SQuAD)
     \item NER (+0.3 F1)
     \item Sentiment Analysis (+2\% accuracy)
@@ -884,7 +886,7 @@ Year & 2018 & 2018 & 2018 \\
 
 \begin{column}{0.48\textwidth}
 \textbf{After BERT (post-2018):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Pre-train, then fine-tune
     \item Transfer learning standard
     \item Contextual embeddings
@@ -894,7 +896,7 @@ Year & 2018 & 2018 & 2018 \\
 
 \vspace{1em}
 \textbf{BERT Variants:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item RoBERTa: Better training
     \item ALBERT: Parameter sharing
     \item DistilBERT: Smaller, faster
@@ -914,38 +916,38 @@ Year & 2018 & 2018 & 2018 \\
 % ============================================================
 % APPLICATIONS
 % ============================================================
-\begin{frame}{Real-World Applications 🚀}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Real-World Applications 🚀}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Search \& Information Retrieval:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Google Search uses BERT for query understanding
         \item Semantic search engines
         \item Document ranking
     \end{itemize}
 
     \item \textbf{Question Answering:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Reading comprehension (SQuAD)
         \item Customer support chatbots
         \item FAQ systems
     \end{itemize}
 
     \item \textbf{Text Classification:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Sentiment analysis
         \item Intent detection
         \item Content moderation
     \end{itemize}
 
     \item \textbf{Named Entity Recognition:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Extract people, places, organizations
         \item Medical entity extraction
         \item Legal document processing
     \end{itemize}
 
     \item \textbf{Semantic Similarity:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Duplicate detection
         \item Paraphrase identification
         \item Recommendation systems
@@ -956,7 +958,7 @@ Year & 2018 & 2018 & 2018 \\
 % ============================================================
 % DISCUSSION
 % ============================================================
-\begin{frame}{Discussion Question 💬}
+\begin{frame}[shrink=10]{Discussion Question 💬}
 \begin{center}
 \Large
 \textbf{Do contextual embeddings truly "understand" language?}
@@ -965,7 +967,7 @@ Year & 2018 & 2018 & 2018 \\
 \vspace{1em}
 
 \textbf{Consider:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item BERT can distinguish "bank" (financial) from "bank" (riverside)
     \item It achieves human-level performance on many benchmarks
     \item But it's trained only on text co-occurrence patterns
@@ -976,7 +978,7 @@ Year & 2018 & 2018 & 2018 \\
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Arguments For:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Captures complex semantic relationships
     \item Generalizes to new contexts
     \item Emergent linguistic capabilities
@@ -986,7 +988,7 @@ Year & 2018 & 2018 & 2018 \\
 
 \begin{column}{0.48\textwidth}
 \textbf{Arguments Against:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item No grounding in physical world
     \item No common sense reasoning
     \item Exploits statistical shortcuts
@@ -1009,10 +1011,10 @@ Even with contextual embeddings, we still lack true grounding in experience, per
 % ============================================================
 % PRACTICAL TIPS
 % ============================================================
-\begin{frame}{Practical Tips 💡}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Practical Tips 💡}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Choosing a Model:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item BERT-base: Good balance, 110M params
         \item DistilBERT: 40\% smaller, 60\% faster, 97\% performance
         \item RoBERTa: Better than BERT, longer training
@@ -1020,7 +1022,7 @@ Even with contextual embeddings, we still lack true grounding in experience, per
     \end{itemize}
 
     \item \textbf{Fine-tuning Best Practices:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Small learning rate (2e-5 typical)
         \item Few epochs (2-4)
         \item Batch size: 16 or 32
@@ -1029,7 +1031,7 @@ Even with contextual embeddings, we still lack true grounding in experience, per
     \end{itemize}
 
     \item \textbf{Computational Considerations:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item BERT-base: ~110M params, 512 max tokens
         \item Needs GPU (1-4 GB VRAM minimum)
         \item Batching for efficiency
@@ -1037,7 +1039,7 @@ Even with contextual embeddings, we still lack true grounding in experience, per
     \end{itemize}
 
     \item \textbf{Using HuggingFace:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Easy access to 1000+ pre-trained models
         \item Standardized API
         \item Good documentation and community
@@ -1048,28 +1050,28 @@ Even with contextual embeddings, we still lack true grounding in experience, per
 % ============================================================
 % SUMMARY
 % ============================================================
-\begin{frame}{Summary 🎯}
+\begin{frame}[shrink=10]{Summary 🎯}
 \textbf{What we learned today:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Contextual vs. Static:} Different vectors per occurrence
 
     \item \textbf{ELMo (2018):}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item BiLSTM language models
         \item Character-based, handles OOV
         \item Task-specific weighting
     \end{itemize}
 
     \item \textbf{Universal Sentence Encoder (2018):}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Sentence-level embeddings
         \item Two variants: Transformer \& DAN
         \item Optimized for semantic similarity
     \end{itemize}
 
     \item \textbf{BERT (2018):}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Masked language modeling
         \item Deep bidirectional transformers
         \item Pre-train + fine-tune paradigm
@@ -1085,10 +1087,10 @@ Even with contextual embeddings, we still lack true grounding in experience, per
 % ============================================================
 % REFERENCES
 % ============================================================
-\begin{frame}{Key References 📚}
+\begin{frame}[shrink=10]{Key References 📚}
 \small
 \textbf{Foundational Papers:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Peters et al. (2018). "Deep contextualized word representations" (ELMo)
     \item Cer et al. (2018). "Universal Sentence Encoder"
     \item Devlin et al. (2018). "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
@@ -1096,7 +1098,7 @@ Even with contextual embeddings, we still lack true grounding in experience, per
 
 \vspace{0.5em}
 \textbf{BERT Variants:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Liu et al. (2019). "RoBERTa: A Robustly Optimized BERT Pretraining Approach"
     \item Sanh et al. (2019). "DistilBERT, a distilled version of BERT"
     \item Lan et al. (2019). "ALBERT: A Lite BERT for Self-supervised Learning"
@@ -1104,14 +1106,14 @@ Even with contextual embeddings, we still lack true grounding in experience, per
 
 \vspace{0.5em}
 \textbf{Critical Perspectives:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Bender \& Koller (2020). "Climbing towards NLU: On Meaning, Form, and Understanding"
     \item Bender et al. (2021). "On the Dangers of Stochastic Parrots"
 \end{itemize}
 
 \vspace{0.5em}
 \textbf{Resources:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item HuggingFace Transformers: \url{https://huggingface.co/transformers/}
     \item BERT Paper: \url{https://arxiv.org/abs/1810.04805}
 \end{itemize}
@@ -1128,7 +1130,7 @@ Even with contextual embeddings, we still lack true grounding in experience, per
 \vspace{1em}
 Dimensionality Reduction: PCA, t-SNE, UMAP
 
-\vspace{2em}
+\vspace{1em}
 \textit{Visualizing high-dimensional embeddings!}
 \end{center}
 \end{frame}

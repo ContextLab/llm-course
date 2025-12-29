@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 
 % Packages
 \usepackage{fontspec}
@@ -12,7 +16,6 @@
 \usetikzlibrary{shapes,arrows,positioning,calc,automata}
 
 % Font settings
-\setmainfont{Arial}
 \setmonofont{Courier New}
 
 % Code listing settings
@@ -51,27 +54,28 @@
 % Title page information
 \title{Lecture 2: Pattern Matching \& ELIZA}
 \subtitle{The Fundamentals of Conversational AI 🔧}
-\author{PSYC 51.17}
+\author{PSYC 51.07: Models of Language and Communication}
 \institute{Dr. Jeremy R. Manning}
 \date{Week 1 - Day 2}
 
 \begin{document}
 
 % Title slide
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % Table of contents
-\begin{frame}{Today's Journey 🗺️}
+\begin{frame}[shrink=5]{Today's Journey 🗺️}
 \tableofcontents
 \end{frame}
 
 \section{Recap: Language vs. Understanding}
 
 \begin{frame}{Last Time... 🔄}
+\small
 \begin{block}{Key Ideas from Lecture 1}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Consciousness is complex and hard to define
     \item Language and thought are separable but interactive
     \item Current LLMs are not conscious
@@ -79,7 +83,7 @@
 \end{itemize}
 \end{block}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{discussion}
 Today we'll see \textit{how} pattern matching can create these illusions by building our own simple conversational system!
@@ -88,12 +92,12 @@ Today we'll see \textit{how} pattern matching can create these illusions by buil
 
 \section{How Computers Process Language}
 
-\begin{frame}{The Fundamental Challenge 💻}
+\begin{frame}[shrink=5]{The Fundamental Challenge 💻}
 \begin{block}{Core Problem}
 Computers don't "understand" meaning—they manipulate \textbf{strings of characters}.
 \end{block}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{center}
 \begin{tikzpicture}[scale=0.9]
@@ -123,15 +127,16 @@ Computers don't "understand" meaning—they manipulate \textbf{strings of charac
 \end{frame}
 
 \begin{frame}{Everything Starts with Patterns 🎯}
+\small
 \textbf{Basic text operations:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Finding} specific words or phrases
     \item \textbf{Replacing} parts of text
     \item \textbf{Extracting} information
     \item \textbf{Transforming} input to output
 \end{enumerate}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{alertblock}{Important Insight}
 Even sophisticated models like GPT-4 are (at their core) doing \textit{pattern matching}—just at a much more complex level!
@@ -156,10 +161,10 @@ print(response)
 # Output: "Why are you feeling sad"
 \end{lstlisting}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \textbf{What happened here?}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Found the substring "I am"
     \item Replaced it with "Why are you"
     \item Everything else stayed the same
@@ -264,7 +269,7 @@ match = re.search(pattern, text)
 # Matches: joe@example.com
 \end{lstlisting}
 
-\vspace{0.3cm}
+\vspace{0.15cm}
 
 \textbf{Example 2: Phone numbers}
 \begin{lstlisting}[basicstyle=\ttfamily\tiny]
@@ -286,7 +291,7 @@ if match:
     obj = match.group(2)    # "family"
 \end{lstlisting}
 
-\vspace{0.3cm}
+\vspace{0.15cm}
 
 \textbf{Example 4: Optional parts}
 \begin{lstlisting}[basicstyle=\ttfamily\tiny]
@@ -297,7 +302,7 @@ pattern = r"I'?m? (sad|happy)"
 \end{column}
 \end{columns}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{thinkaboutit}
 With these patterns, we can handle much more variation in user input!
@@ -319,14 +324,14 @@ if match:
 # Output: "Tell me more about your family."
 \end{lstlisting}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{thinkaboutit}
 This is remarkably simple, yet it can create the \textit{illusion} of understanding! The bot seems to know what you're talking about!
 \end{thinkaboutit}
 \end{frame}
 
-\begin{frame}{Regex State Machine Visualization 🔧}
+\begin{frame}[shrink=5]{Regex State Machine Visualization 🔧}
 \begin{center}
 \begin{tikzpicture}[scale=0.8, ->, >=stealth', shorten >=1pt, auto, node distance=2.5cm, semithick]
 \tikzstyle{every state}=[fill=blue!20, draw=blue, text=black, minimum size=1cm]
@@ -415,11 +420,11 @@ for old, new in post_subs.items():
 \textbf{Note:} This is still imperfect, but good enough for ELIZA!
 \end{frame}
 
-\begin{frame}{The Substitution Pipeline 🔧}
+\begin{frame}[shrink=5]{The Substitution Pipeline 🔧}
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=1.5cm,
-    every node/.style={font=\small},
+    every node/.style={font=\footnotesize},
     box/.style={rectangle, draw, fill=blue!20, minimum width=3cm, minimum height=1cm, align=center}
 ]
 
@@ -445,16 +450,17 @@ for old, new in post_subs.items():
 \section{Introduction to ELIZA}
 
 \begin{frame}{ELIZA: A Revolutionary Program 🎭}
+\small
 \begin{columns}
 \begin{column}{0.6\textwidth}
 \begin{block}{Weizenbaum (1966)}
 \textit{ELIZA — A Computer Program For the Study of Natural Language Communication Between Man and Machine}
 \end{block}
 
-\vspace{0.3cm}
+\vspace{0.15cm}
 
 \textbf{What was ELIZA?}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item First "chatbot" (1964-1966)
     \item Simulated a Rogerian psychotherapist
     \item Used pattern matching \& string manipulation
@@ -473,6 +479,7 @@ Instead, people became emotionally attached to it!
 \end{frame}
 
 \begin{frame}{Why a Rogerian Therapist? 🧠}
+\small
 \begin{block}{Carl Rogers' Approach}
 Rogerian therapy is \textit{non-directive}—the therapist mainly reflects what the patient says back to them.
 \end{block}
@@ -480,7 +487,7 @@ Rogerian therapy is \textit{non-directive}—the therapist mainly reflects what 
 \vspace{0.3cm}
 
 \textbf{Perfect for a chatbot because:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ Doesn't require understanding the problem
     \item ✅ Can use simple reflection ("Tell me more about X")
     \item ✅ Asks open-ended questions
@@ -488,7 +495,7 @@ Rogerian therapy is \textit{non-directive}—the therapist mainly reflects what 
     \item ✅ Pattern matching is sufficient!
 \end{itemize}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{discussion}
 \textbf{Patient:} I'm sad about my mother.\\
@@ -498,11 +505,11 @@ Rogerian therapy is \textit{non-directive}—the therapist mainly reflects what 
 \end{discussion}
 \end{frame}
 
-\begin{frame}{How ELIZA Works: High Level 🔧}
+\begin{frame}[shrink=5]{How ELIZA Works: High Level 🔧}
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=1.2cm,
-    box/.style={rectangle, draw, fill=blue!20, minimum width=2.5cm, minimum height=0.8cm, align=center, font=\small},
+    box/.style={rectangle, draw, fill=blue!20, minimum width=2.5cm, minimum height=0.8cm, align=center, font=\footnotesize},
     arrow/.style={->, >=stealth, very thick}
 ]
 
@@ -538,7 +545,8 @@ ELIZA had \textbf{zero} understanding. It's pure pattern transformation!
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Pattern Priority and Ranking 🎯}
+\begin{frame}[shrink=10]{Pattern Priority and Ranking 🎯}
+\small
 \begin{block}{Multiple Pattern Problem}
 What if more than one pattern matches the input?
 \end{block}
@@ -548,7 +556,7 @@ What if more than one pattern matches the input?
 \textbf{Example input:} "I am sad about my mother"
 
 \textbf{Multiple matches:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Pattern 1: \texttt{I am (.*)} - Very general
     \item Pattern 2: \texttt{(.*) mother (.*)} - Specific keyword
     \item Pattern 3: \texttt{I am (.*) about (.*)} - More specific
@@ -557,7 +565,7 @@ What if more than one pattern matches the input?
 \vspace{0.3cm}
 
 \textbf{ELIZA's solution:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Each pattern has a \textbf{rank} (priority score)
     \item Keywords like "mother", "father", "family" get higher ranks
     \item More specific patterns generally rank higher
@@ -584,7 +592,7 @@ What if more than one pattern matches the input?
 \vspace{0.3cm}
 
 \textbf{How it works:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \texttt{pattern}: Regex to match input
     \item \texttt{rank}: Priority level (higher = more important)
     \item \texttt{responses}: List of possible response templates
@@ -614,14 +622,14 @@ What if more than one pattern matches the input?
 \end{block}
 \end{frame}
 
-\begin{frame}{Breaking Down the Conversation 🔍}
+\begin{frame}[shrink=10]{Breaking Down the Conversation 🔍}
 \textbf{Let's analyze what happened:}
 
 \vspace{0.3cm}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{User:} "I am feeling sad"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Pattern: \texttt{I am (.*)}
         \item Captures: "feeling sad"
         \item Response template: "Why do you \{1\}?"
@@ -630,7 +638,7 @@ What if more than one pattern matches the input?
     \vspace{0.2cm}
 
     \item \textbf{User:} "I can't stop thinking about my family"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Pattern: \texttt{(.*) my family (.*)}
         \item Higher rank due to keyword "family"
         \item Response: "Tell me more about your family."
@@ -639,7 +647,7 @@ What if more than one pattern matches the input?
     \vspace{0.2cm}
 
     \item \textbf{User:} "My mother never understood me"
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Pattern: \texttt{my (mother|father) (.*) me}
         \item Response: "Who else in your family \{2\} you?"
         \item Post-sub: "me" stays "you"
@@ -650,6 +658,7 @@ What if more than one pattern matches the input?
 \section{The Power of Simple Patterns}
 
 \begin{frame}{Why Does This Work? 🤔}
+\small
 \begin{block}{The Psychology Behind ELIZA}
 Humans are pattern-seeking creatures who project understanding onto machines.
 \end{block}
@@ -657,7 +666,7 @@ Humans are pattern-seeking creatures who project understanding onto machines.
 \vspace{0.3cm}
 
 \textbf{Factors that create the illusion:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Context}: We assume the bot understands context
     \item \textbf{Expectations}: We expect intelligence from human-like responses
     \item \textbf{Language structure}: Natural language has inherent patterns
@@ -695,7 +704,7 @@ Pattern matching works surprisingly well, but it fundamentally lacks understandi
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Comparison: ELIZA vs Modern LLMs 📊}
+\begin{frame}[shrink=5]{Comparison: ELIZA vs Modern LLMs 📊}
 \begin{center}
 \begin{tikzpicture}[scale=0.85]
 % Create comparison table
@@ -742,8 +751,8 @@ Both lack consciousness, but GPT-4 is vastly more sophisticated. Does this diffe
 
 \section{Looking Ahead}
 
-\begin{frame}{What You've Learned Today 🎓}
-\begin{enumerate}
+\begin{frame}[shrink=10]{What You've Learned Today 🎓}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{String manipulation}: Basic text transformations
     \item \textbf{Regular expressions}: Flexible pattern matching
     \item \textbf{Capture groups}: Extracting information from patterns
@@ -753,17 +762,18 @@ Both lack consciousness, but GPT-4 is vastly more sophisticated. Does this diffe
     \item \textbf{Limitations}: Where pattern matching breaks down
 \end{enumerate}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{alertblock}{The Foundation}
 These simple techniques form the foundation for all NLP systems, even modern ones!
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Next Lecture: Deep Dive into ELIZA 🔮}
+\begin{frame}[shrink=10]{Next Lecture: Deep Dive into ELIZA 🔮}
+\small
 \begin{block}{Lecture 3: ELIZA Implementation \& The ELIZA Effect}
 We'll cover:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Complete implementation details
     \item Synonym substitutions
     \item Memory and context (primitive state)
@@ -776,7 +786,7 @@ We'll cover:
 \vspace{0.3cm}
 
 \textbf{To prepare:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Read Weizenbaum (1966) - Focus on Section 3
     \item Practice regex with online tools (regex101.com)
     \item Think about conversation patterns
@@ -784,8 +794,9 @@ We'll cover:
 \end{frame}
 
 \begin{frame}{Practice Exercises 💪}
+\small
 \begin{block}{Try These Before Next Class}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Write a regex to match: "I think about X" where X can be anything
     \item Create pre-substitutions for: "gonna", "wanna", "gotta"
     \item Design a response template for: "I hate my X"
@@ -801,8 +812,9 @@ Try your patterns on \href{https://regex101.com}{regex101.com} - it has excellen
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Key Takeaways 🔑}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🔑}
+\small
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Pattern matching can create \textbf{convincing illusions} of understanding
     \item Regular expressions are \textbf{essential tools} for NLP
     \item ELIZA was \textbf{revolutionary} despite being simple
@@ -811,7 +823,7 @@ Try your patterns on \href{https://regex101.com}{regex101.com} - it has excellen
     \item Understanding the basics helps you \textbf{think critically} about AI
 \end{enumerate}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 \begin{discussion}
 After today, when you interact with ChatGPT or other AI, can you spot the "ELIZA moments"—where it's clearly pattern matching without understanding?
@@ -822,7 +834,7 @@ After today, when you interact with ChatGPT or other AI, can you spot the "ELIZA
 \begin{center}
 \Large{Let's discuss!}
 
-\vspace{1cm}
+\vspace{0.5cm}
 
 \textbf{Contact Information:}
 
@@ -832,7 +844,7 @@ After today, when you interact with ChatGPT or other AI, can you spot the "ELIZA
 
 🏢 Office Hours: By appointment (Moore Hall 349)
 
-\vspace{1cm}
+\vspace{0.5cm}
 
 \large{See you next class! 🚀}
 \end{center}

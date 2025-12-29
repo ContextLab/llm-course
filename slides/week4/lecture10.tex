@@ -1,13 +1,15 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{emoji}
-
 % Code listing setup
 \lstset{
   basicstyle=\ttfamily\small,
@@ -22,7 +24,7 @@
 
 \title{Dimensionality Reduction for NLP}
 \subtitle{Lecture 10: PCA, t-SNE, and UMAP}
-\author{LLM Course - Week 4}
+\author{PSYC 51.07: Models of Language and Communication - Week 4}
 \date{Winter 2026}
 
 \begin{document}
@@ -30,16 +32,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Lecture 📋}
+\begin{frame}[shrink=10]{Today's Lecture 📋}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 📉 \textbf{The Curse of Dimensionality}
     \item 📊 \textbf{Principal Component Analysis (PCA)}
     \item 🎨 \textbf{t-SNE: Stochastic Neighbor Embedding}
@@ -55,7 +57,7 @@
 % ============================================================
 % CURSE OF DIMENSIONALITY
 % ============================================================
-\begin{frame}{The Curse of Dimensionality 📉}
+\begin{frame}[shrink=10]{The Curse of Dimensionality 📉}
 \textbf{The Problem:}
 
 \vspace{1em}
@@ -63,7 +65,7 @@
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Word Embeddings:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Word2Vec: 300 dimensions
     \item GloVe: 300 dimensions
     \item FastText: 300 dimensions
@@ -73,7 +75,7 @@
 
 \vspace{0.5em}
 \textbf{Challenges:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Can't visualize 300D space
     \item Distances behave strangely
     \item Computation expensive
@@ -84,7 +86,7 @@
 
 \begin{column}{0.48\textwidth}
 \textbf{Interesting Properties:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item In high dimensions, most points are far apart
     \item Volume concentrates in corners
     \item Random vectors nearly orthogonal
@@ -94,7 +96,7 @@
 \vspace{1em}
 \begin{exampleblock}{Example}
 In 300D space with uniform distribution:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Expected distance to nearest neighbor: $\approx$ distance to farthest!
     \item All points approximately equidistant
 \end{itemize}
@@ -112,11 +114,12 @@ In 300D space with uniform distribution:
 % ============================================================
 % WHY REDUCE
 % ============================================================
-\begin{frame}{Why Dimensionality Reduction? 🎯}
+\begin{frame}[shrink=10]{Why Dimensionality Reduction? 🎯}
+\small
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Visualization:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 2D/3D plots
     \item Explore semantic structure
     \item Identify clusters
@@ -126,7 +129,7 @@ In 300D space with uniform distribution:
 
 \vspace{0.5em}
 \textbf{Computation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Faster algorithms
     \item Less memory
     \item Enable real-time systems
@@ -136,7 +139,7 @@ In 300D space with uniform distribution:
 
 \begin{column}{0.48\textwidth}
 \textbf{Machine Learning:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Reduce overfitting
     \item Feature selection
     \item Improve generalization
@@ -146,7 +149,7 @@ In 300D space with uniform distribution:
 
 \vspace{0.5em}
 \textbf{Interpretation:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Understand relationships
     \item Identify important dimensions
     \item Communicate results
@@ -165,7 +168,7 @@ Reduce from $d$ dimensions (e.g., 300) to $k$ dimensions (e.g., 2 or 3) while \a
 % ============================================================
 % PCA INTRO
 % ============================================================
-\begin{frame}{Principal Component Analysis (PCA) 📊}
+\begin{frame}[shrink=10]{Principal Component Analysis (PCA) 📊}
 \textbf{The classic linear dimensionality reduction method}
 
 \vspace{1em}
@@ -173,7 +176,7 @@ Reduce from $d$ dimensions (e.g., 300) to $k$ dimensions (e.g., 2 or 3) while \a
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Intuition:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Find directions of maximum variance
     \item Project data onto these directions
     \item First PC: most variance
@@ -183,7 +186,7 @@ Reduce from $d$ dimensions (e.g., 300) to $k$ dimensions (e.g., 2 or 3) while \a
 
 \vspace{0.5em}
 \textbf{Properties:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Linear transformation
     \item Preserves global structure
     \item Deterministic
@@ -223,33 +226,33 @@ PC2 captures remaining variation (orthogonal to PC1)
 % ============================================================
 % PCA ALGORITHM
 % ============================================================
-\begin{frame}{PCA: The Algorithm 🔧}
+\begin{frame}[shrink=10]{PCA: The Algorithm 🔧}
 \textbf{Mathematical formulation:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Center the data:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Subtract mean: $\tilde{X} = X - \bar{X}$
         \item Each dimension has mean 0
     \end{itemize}
 
     \item \textbf{Compute covariance matrix:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item $C = \frac{1}{n-1} \tilde{X}^T \tilde{X}$
         \item Captures correlations between dimensions
     \end{itemize}
 
     \item \textbf{Eigenvalue decomposition:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item $C = V \Lambda V^T$
         \item $V$: eigenvectors (principal components)
         \item $\Lambda$: eigenvalues (variance explained)
     \end{itemize}
 
     \item \textbf{Project onto top k eigenvectors:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Sort by eigenvalues (descending)
         \item Keep top $k$: $V_k$
         \item Project: $X_{reduced} = \tilde{X} V_k$
@@ -306,11 +309,11 @@ plt.show()
 % ============================================================
 % PCA LIMITATIONS
 % ============================================================
-\begin{frame}{PCA Limitations ⚠️}
+\begin{frame}[shrink=10]{PCA Limitations ⚠️}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Assumes Linearity:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Only captures linear relationships
     \item Word embeddings often have non-linear structure
     \item May miss important patterns
@@ -333,21 +336,21 @@ plt.show()
 
 \begin{column}{0.48\textwidth}
 \textbf{Other Issues:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Variance ≠ Importance:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Preserves variance, not semantic structure
         \item Noisy dimensions may have high variance
     \end{itemize}
 
     \item \textbf{Global focus:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item May lose local structure
         \item Clusters can become blurred
     \end{itemize}
 
     \item \textbf{Interpretability:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item PCs are linear combinations
         \item Hard to interpret semantically
     \end{itemize}
@@ -355,7 +358,7 @@ plt.show()
 
 \vspace{1em}
 \begin{alertblock}{When to Use PCA}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Quick first exploration
     \item Preprocessing for other methods
     \item When speed is critical
@@ -369,7 +372,7 @@ plt.show()
 % ============================================================
 % TSNE INTRO
 % ============================================================
-\begin{frame}{t-SNE: t-Distributed Stochastic Neighbor Embedding 🎨}
+\begin{frame}[shrink=10]{t-SNE: t-Distributed Stochastic Neighbor Embedding 🎨}
 \textbf{Non-linear dimensionality reduction for visualization}
 
 \vspace{1em}
@@ -377,7 +380,7 @@ plt.show()
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Key Idea:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Model similarity as probability
     \item High-D: Gaussian similarity
     \item Low-D: t-distribution similarity
@@ -387,7 +390,7 @@ plt.show()
 
 \vspace{0.5em}
 \textbf{Advantages:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Beautiful visualizations
     \item Reveals clusters
     \item Non-linear mappings
@@ -400,7 +403,7 @@ plt.show()
 \textbf{How it works:}
 
 \vspace{0.3em}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Compute pairwise similarities in high-D:
     \begin{align*}
     p_{j|i} = \frac{\exp(-||x_i - x_j||^2 / 2\sigma_i^2)}{\sum_{k \neq i} \exp(-||x_i - x_k||^2 / 2\sigma_i^2)}
@@ -429,7 +432,7 @@ plt.show()
 % ============================================================
 % TSNE DETAILS
 % ============================================================
-\begin{frame}{t-SNE: Key Concepts 🔍}
+\begin{frame}[shrink=10]{t-SNE: Key Concepts 🔍}
 \textbf{Why t-distribution in low-D?}
 
 \vspace{1em}
@@ -437,7 +440,7 @@ plt.show()
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Crowding Problem:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item High-D: many points at medium distance
     \item Low-D: not enough space
     \item Gaussian would squash together
@@ -471,7 +474,7 @@ plt.show()
 
 \vspace{0.3em}
 \textbf{1. Perplexity (most important):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Roughly: number of nearest neighbors
     \item Typical: 5-50
     \item Small dataset: 5-20
@@ -481,7 +484,7 @@ plt.show()
 
 \vspace{0.5em}
 \textbf{2. Number of iterations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Minimum: 1000
     \item Recommended: 2000-5000
     \item More = better (but slower)
@@ -489,7 +492,7 @@ plt.show()
 
 \vspace{0.5em}
 \textbf{3. Learning rate:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Typical: 10-1000
     \item Default: 200
     \item May need tuning
@@ -551,31 +554,31 @@ plt.show()
 % ============================================================
 % TSNE LIMITATIONS
 % ============================================================
-\begin{frame}{t-SNE Limitations and Caveats ⚠️}
-\begin{enumerate}
+\begin{frame}[shrink=10]{t-SNE Limitations and Caveats ⚠️}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Slow:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item $O(n^2)$ complexity
         \item Prohibitive for $>$10k points
         \item Solution: Use PCA first to reduce to 50D, then t-SNE
     \end{itemize}
 
     \item \textbf{Non-deterministic:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Different runs $\rightarrow$ different results
         \item Random initialization matters
         \item Set random seed for reproducibility
     \end{itemize}
 
     \item \textbf{Hyperparameter sensitive:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Perplexity dramatically affects results
         \item No "correct" value
         \item Need to try multiple values
     \end{itemize}
 
     \item \textbf{Interpretation pitfalls:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \alert{Distances between clusters are meaningless!}
         \item Only local structure is preserved
         \item Cluster sizes can be misleading
@@ -583,7 +586,7 @@ plt.show()
     \end{itemize}
 
     \item \textbf{Not for dimensionality reduction in ML:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item No out-of-sample extension
         \item Can't transform new points
         \item Use only for visualization!
@@ -594,7 +597,7 @@ plt.show()
 % ============================================================
 % UMAP INTRO
 % ============================================================
-\begin{frame}{UMAP: Uniform Manifold Approximation \& Projection 🗺️}
+\begin{frame}[shrink=10]{UMAP: Uniform Manifold Approximation \& Projection 🗺️}
 \textbf{Modern alternative to t-SNE (2018)}
 
 \vspace{1em}
@@ -602,7 +605,7 @@ plt.show()
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Key Advantages over t-SNE:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \alert{Much faster} ($O(n \log n)$ vs $O(n^2)$)
     \item Preserves \alert{both} local and global structure
     \item Can transform new points
@@ -613,7 +616,7 @@ plt.show()
 
 \vspace{0.5em}
 \textbf{When to Use:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Large datasets ($>$10k points)
     \item Need global structure
     \item Production systems
@@ -626,7 +629,7 @@ plt.show()
 \textbf{How it Works:}
 
 \vspace{0.3em}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Construct fuzzy topological representation of high-D data
     \item Find low-D representation with similar topology
     \item Use Riemannian geometry
@@ -638,7 +641,7 @@ plt.show()
 
 \vspace{0.3em}
 \textbf{1. n\_neighbors (15):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Local vs. global balance
     \item Small: local structure
     \item Large: global structure
@@ -646,7 +649,7 @@ plt.show()
 
 \vspace{0.3em}
 \textbf{2. min\_dist (0.1):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item How tightly to pack points
     \item Small: tight clusters
     \item Large: loose, spread out
@@ -733,7 +736,7 @@ Interpretation & Medium & Hard & Medium \\
 \vspace{1em}
 
 \begin{block}{Recommendations}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{PCA}: Quick first pass, preprocessing, need speed
     \item \textbf{t-SNE}: Small datasets ($<$10k), only care about local clusters
     \item \textbf{UMAP}: \alert{Default choice!} Fast, scalable, preserves structure
@@ -747,24 +750,24 @@ Interpretation & Medium & Hard & Medium \\
 % ============================================================
 % VISUALIZATION BEST PRACTICES
 % ============================================================
-\begin{frame}{Visualization Best Practices 🎨}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Visualization Best Practices 🎨}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Preprocessing:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Standardize features (mean=0, std=1)
         \item Remove outliers (optional)
         \item For very large datasets: sample or use PCA first
     \end{itemize}
 
     \item \textbf{Try multiple hyperparameters:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item t-SNE perplexity: 5, 10, 30, 50
         \item UMAP n\_neighbors: 5, 15, 30, 50
         \item Different views reveal different structure
     \end{itemize}
 
     \item \textbf{Color intelligently:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item By semantic category
         \item By cluster assignment
         \item By frequency (size)
@@ -772,7 +775,7 @@ Interpretation & Medium & Hard & Medium \\
     \end{itemize}
 
     \item \textbf{Interactive visualization:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use plotly, bokeh for interactivity
         \item Hover tooltips with word info
         \item Zoom and pan
@@ -780,7 +783,7 @@ Interpretation & Medium & Hard & Medium \\
     \end{itemize}
 
     \item \textbf{Annotate selectively:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Too many labels = clutter
         \item Show representative words
         \item Use repel/adjust\_text to avoid overlap
@@ -841,10 +844,10 @@ fig.write_html('embeddings_viz.html')
 % ============================================================
 % APPLICATIONS
 % ============================================================
-\begin{frame}{Applications in NLP 🚀}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Applications in NLP 🚀}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Embedding Quality Assessment:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Visualize to check if similar words cluster
         \item Identify anomalies and outliers
         \item Compare different embedding methods
@@ -852,7 +855,7 @@ fig.write_html('embeddings_viz.html')
     \end{itemize}
 
     \item \textbf{Exploratory Data Analysis:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Discover themes in corpus
         \item Identify semantic groupings
         \item Find polysemous words (appear in multiple clusters)
@@ -860,21 +863,21 @@ fig.write_html('embeddings_viz.html')
     \end{itemize}
 
     \item \textbf{Topic Modeling Visualization:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Visualize document embeddings
         \item Show topic distributions
         \item Interactive topic browsers (pyLDAvis, BERTopic viz)
     \end{itemize}
 
     \item \textbf{Model Interpretation:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Visualize attention patterns
         \item Show layer representations in transformers
         \item Understand what models learn
     \end{itemize}
 
     \item \textbf{Presentation \& Communication:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Explain models to stakeholders
         \item Publication figures
         \item Teaching and demos
@@ -885,7 +888,7 @@ fig.write_html('embeddings_viz.html')
 % ============================================================
 % CASE STUDY
 % ============================================================
-\begin{frame}{Case Study: Visualizing BERT Layers 🔬}
+\begin{frame}[fragile]{Case Study: Visualizing BERT Layers 🔬}
 \textbf{Question:} What do different BERT layers capture?
 
 \vspace{1em}
@@ -893,7 +896,7 @@ fig.write_html('embeddings_viz.html')
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Approach:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item Extract embeddings from each layer
     \item Apply UMAP to each layer separately
     \item Visualize and compare
@@ -901,7 +904,7 @@ fig.write_html('embeddings_viz.html')
 
 \vspace{0.5em}
 \textbf{Typical Findings:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Layer 0-2:} Syntactic (POS tags cluster)
     \item \textbf{Layer 3-8:} Semantic (meaning clusters)
     \item \textbf{Layer 9-12:} Task-specific
@@ -909,7 +912,7 @@ fig.write_html('embeddings_viz.html')
 
 \vspace{0.5em}
 \textbf{Insights:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Lower layers: syntax
     \item Middle layers: semantics
     \item Upper layers: task adaptation
@@ -958,7 +961,7 @@ for layer_idx in range(13):
 % ============================================================
 % DISCUSSION
 % ============================================================
-\begin{frame}{Discussion Question 💬}
+\begin{frame}[shrink=10]{Discussion Question 💬}
 \begin{center}
 \Large
 \textbf{What does a 2D visualization actually tell us about 300D space?}
@@ -967,7 +970,7 @@ for layer_idx in range(13):
 \vspace{1em}
 
 \textbf{Consider:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item We compress 300 dimensions into 2
     \item Massive information loss (>99\%)
     \item Different methods show different views
@@ -979,7 +982,7 @@ for layer_idx in range(13):
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{What we CAN conclude:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Rough semantic groupings
     \item Relative proximities
     \item Cluster existence
@@ -990,7 +993,7 @@ for layer_idx in range(13):
 
 \begin{column}{0.48\textwidth}
 \textbf{What we CANNOT conclude:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Exact distances
     \item True high-D structure
     \item Cluster sizes (t-SNE)
@@ -1010,45 +1013,45 @@ Dimensionality reduction is a \alert{lossy transformation}. Always combine visua
 % ============================================================
 % PRACTICAL TIPS
 % ============================================================
-\begin{frame}{Practical Tips 💡}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Practical Tips 💡}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Choose the right tool:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Default: UMAP (fast, balanced)
         \item Need speed: PCA
         \item Small dataset, only local: t-SNE
     \end{itemize}
 
     \item \textbf{Preprocessing matters:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item StandardScaler for PCA
         \item Consider normalization for UMAP/t-SNE
         \item Remove extreme outliers
     \end{itemize}
 
     \item \textbf{Try multiple settings:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Run with different hyperparameters
         \item Compare results
         \item Don't cherry-pick!
     \end{itemize}
 
     \item \textbf{Use color wisely:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Semantic categories
         \item Continuous values (frequency, sentiment)
         \item Consider colorblind-friendly palettes
     \end{itemize}
 
     \item \textbf{Save your random seeds:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Makes results reproducible
         \item Important for publications
         \item Helps debugging
     \end{itemize}
 
     \item \textbf{Computational tips:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item For $>$100k points: PCA first to 50D, then UMAP
         \item Use n\_jobs=-1 for parallel computation
         \item Consider approximate nearest neighbors (Annoy, FAISS)
@@ -1059,34 +1062,34 @@ Dimensionality reduction is a \alert{lossy transformation}. Always combine visua
 % ============================================================
 % SUMMARY
 % ============================================================
-\begin{frame}{Summary 🎯}
+\begin{frame}[shrink=10]{Summary 🎯}
 \textbf{What we learned today:}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Curse of Dimensionality:} High-D space is weird, need reduction
 
     \item \textbf{PCA:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Linear, fast, preserves global structure
         \item Good for preprocessing and quick exploration
     \end{itemize}
 
     \item \textbf{t-SNE:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Non-linear, preserves local structure
         \item Beautiful visualizations but slow
         \item Sensitive to hyperparameters
     \end{itemize}
 
     \item \textbf{UMAP:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Fast, scalable, balanced local+global
         \item Best default choice for NLP
         \item Can transform new points
     \end{itemize}
 
     \item \textbf{Best Practices:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Try multiple methods and parameters
         \item Use interactive visualizations
         \item Don't over-interpret 2D projections
@@ -1102,10 +1105,10 @@ Dimensionality reduction is a \alert{lossy transformation}. Always combine visua
 % ============================================================
 % REFERENCES
 % ============================================================
-\begin{frame}{Key References 📚}
+\begin{frame}[shrink=10]{Key References 📚}
 \small
 \textbf{Foundational Papers:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Pearson, K. (1901). "On Lines and Planes of Closest Fit to Systems of Points in Space" (PCA)
     \item van der Maaten \& Hinton (2008). "Visualizing Data using t-SNE"
     \item McInnes et al. (2018). "UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction"
@@ -1113,14 +1116,14 @@ Dimensionality reduction is a \alert{lossy transformation}. Always combine visua
 
 \vspace{0.5em}
 \textbf{Applications:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Jawahar et al. (2019). "What Does BERT Learn about the Structure of Language?"
     \item Coenen et al. (2019). "Visualizing and Measuring the Geometry of BERT"
 \end{itemize}
 
 \vspace{0.5em}
 \textbf{Guides \& Tutorials:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Wattenberg et al. (2016). "How to Use t-SNE Effectively" (Distill)
     \item UMAP documentation: \url{https://umap-learn.readthedocs.io/}
     \item Scikit-learn User Guide: \url{https://scikit-learn.org/stable/modules/manifold.html}
@@ -1128,7 +1131,7 @@ Dimensionality reduction is a \alert{lossy transformation}. Always combine visua
 
 \vspace{0.5em}
 \textbf{Tools:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Scikit-learn: PCA, t-SNE
     \item UMAP-learn: \texttt{pip install umap-learn}
     \item Plotly: \texttt{pip install plotly}
@@ -1146,7 +1149,7 @@ Dimensionality reduction is a \alert{lossy transformation}. Always combine visua
 \vspace{1em}
 Cognitive Models of Semantic Representation
 
-\vspace{2em}
+\vspace{1em}
 \textit{How do humans represent meaning?}
 \end{center}
 \end{frame}

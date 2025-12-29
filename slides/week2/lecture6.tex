@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{tikz}
@@ -7,8 +11,6 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{fontspec}
-\usepackage{emoji}
-
 \usetikzlibrary{shapes.geometric, arrows, positioning, chains, fit, decorations.pathreplacing}
 
 % Color scheme
@@ -19,7 +21,6 @@
 \definecolor{purple}{RGB}{156,39,176}
 \definecolor{lightred}{RGB}{239,83,80}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -37,7 +38,7 @@
 
 \title{Lecture 6: POS Tagging \& Sentiment Analysis}
 \subtitle{Week 2: From Structure to Meaning}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \date{}
 
 \begin{document}
@@ -48,10 +49,10 @@
 \end{frame}
 
 % Learning Objectives
-\begin{frame}{Learning Objectives 🎯}
+\begin{frame}[shrink=10]{Learning Objectives 🎯}
     By the end of this lecture, you will:
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item Understand part-of-speech (POS) tagging and its applications
         \item Explore how neural networks learn grammatical structure
         \item Apply sentiment analysis to real-world text
@@ -61,16 +62,16 @@
 
     \vspace{1em}
     \textbf{Central questions:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Can statistical patterns capture grammatical knowledge? 🤔
         \item What does it mean for a model to "understand" emotion? 😊😢
     \end{itemize}
 \end{frame}
 
 % Part 1: POS Tagging
-\begin{frame}{Part-of-Speech (POS) Tagging 🎯}
+\begin{frame}[shrink=10]{Part-of-Speech (POS) Tagging 🎯}
     \textbf{What is POS tagging?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Assigning grammatical category to each word
         \item Categories: noun, verb, adjective, adverb, pronoun, preposition, etc.
         \item A fundamental NLP task
@@ -79,13 +80,13 @@
     \vspace{0.5em}
     \textbf{Example:}
     \begin{center}
-        \begin{tikzpicture}
-            \node[font=\small] at (0,1) {The};
-            \node[font=\small] at (1.2,1) {cat};
-            \node[font=\small] at (2.4,1) {sat};
-            \node[font=\small] at (3.6,1) {on};
-            \node[font=\small] at (4.8,1) {the};
-            \node[font=\small] at (6,1) {mat};
+        \begin{tikzpicture}[scale=0.85]
+            \node[font=\footnotesize] at (0,1) {The};
+            \node[font=\footnotesize] at (1.2,1) {cat};
+            \node[font=\footnotesize] at (2.4,1) {sat};
+            \node[font=\footnotesize] at (3.6,1) {on};
+            \node[font=\footnotesize] at (4.8,1) {the};
+            \node[font=\footnotesize] at (6,1) {mat};
 
             \draw[->, thick] (0,0.8) -- (0,0.2);
             \draw[->, thick] (1.2,0.8) -- (1.2,0.2);
@@ -94,29 +95,29 @@
             \draw[->, thick] (4.8,0.8) -- (4.8,0.2);
             \draw[->, thick] (6,0.8) -- (6,0.2);
 
-            \node[font=\small, color=darkblue] at (0,0) {DET};
-            \node[font=\small, color=darkgreen] at (1.2,0) {NOUN};
-            \node[font=\small, color=orange] at (2.4,0) {VERB};
-            \node[font=\small, color=purple] at (3.6,0) {ADP};
-            \node[font=\small, color=darkblue] at (4.8,0) {DET};
-            \node[font=\small, color=darkgreen] at (6,0) {NOUN};
+            \node[font=\footnotesize, color=darkblue] at (0,0) {DET};
+            \node[font=\footnotesize, color=darkgreen] at (1.2,0) {NOUN};
+            \node[font=\footnotesize, color=orange] at (2.4,0) {VERB};
+            \node[font=\footnotesize, color=purple] at (3.6,0) {ADP};
+            \node[font=\footnotesize, color=darkblue] at (4.8,0) {DET};
+            \node[font=\footnotesize, color=darkgreen] at (6,0) {NOUN};
         \end{tikzpicture}
     \end{center}
 
     \vspace{0.5em}
     \textbf{Why it matters:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Disambiguation: "book" as noun vs. verb
         \item Syntax parsing and understanding
         \item Information extraction, machine translation
     \end{itemize}
 \end{frame}
 
-\begin{frame}{POS Tagsets: Universal vs. Fine-Grained 📋}
+\begin{frame}[shrink=10]{POS Tagsets: Universal vs. Fine-Grained 📋}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \textbf{Universal POS Tags (17 tags):}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item ADJ: adjective
                 \item ADP: adposition
                 \item ADV: adverb
@@ -133,7 +134,7 @@
         \end{column}
         \begin{column}{0.48\textwidth}
             \textbf{Penn Treebank (45+ tags):}
-            \begin{itemize}
+            \begin{itemize}\setlength{\itemsep}{0pt}
                 \item NN: noun, singular
                 \item NNS: noun, plural
                 \item NNP: proper noun, singular
@@ -209,9 +210,9 @@ for token in doc:
     Notice: "book" correctly identified as VERB! ✅
 \end{frame}
 
-\begin{frame}{How Do POS Taggers Work? 🧠}
+\begin{frame}[shrink=10]{How Do POS Taggers Work? 🧠}
     \textbf{Traditional approaches (pre-neural):}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Rule-based: Hand-crafted grammar rules
         \item Hidden Markov Models (HMMs): Probabilistic sequences
         \item Conditional Random Fields (CRFs): Structured prediction
@@ -219,7 +220,7 @@ for token in doc:
 
     \vspace{0.5em}
     \textbf{Modern neural approaches:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Recurrent Neural Networks (RNNs/LSTMs): Process sequences
         \item Transformers (BERT, etc.): Bidirectional context
         \item Fine-tune pre-trained models on POS data
@@ -227,7 +228,7 @@ for token in doc:
 
     \vspace{0.5em}
     \textbf{Advantages of neural methods:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Learn patterns from data (no hand-crafted rules)
         \item Capture long-range dependencies
         \item Handle ambiguity through context
@@ -242,11 +243,11 @@ for token in doc:
     \textbf{Classic test:} Subject-verb agreement (Linzen et al., 2016)
 
     \begin{center}
-        \begin{tikzpicture}
-            \node[align=left, font=\small] at (0,2) {
+        \begin{tikzpicture}[scale=0.85]
+            \node[align=left, font=\footnotesize] at (0,2) {
                 "The key to the cabinets \textcolor{darkgreen}{\textbf{is}} on the table" ✅
             };
-            \node[align=left, font=\small] at (0,1) {
+            \node[align=left, font=\footnotesize] at (0,1) {
                 "The key to the cabinets \textcolor{lightred}{\textbf{are}} on the table" ❌
             };
 
@@ -258,7 +259,7 @@ for token in doc:
     \vspace{0.5em}
     \textbf{Challenge:} Distractor nouns between subject and verb
 
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Model must identify "key" (singular) as subject
         \item Ignore "cabinets" (plural distractor)
         \item Predict correct verb form "is" (not "are")
@@ -273,7 +274,7 @@ for token in doc:
 
 \begin{frame}{BLiMP: Testing Linguistic Knowledge 📊}
     \textbf{BLiMP Dataset} (Warstadt et al., 2020):
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Benchmark of Linguistic Minimal Pairs
         \item 67,000 sentence pairs across 67 paradigms
         \item Tests syntax, semantics, morphology
@@ -327,32 +328,32 @@ for result in results:
 # looking         VERB     (confidence: 0.997)
 # at              ADP      (confidence: 0.999)
 # ...
-    \end{lstlisting>
+    \end{lstlisting}
 
     📖 \href{https://huggingface.co/learn/nlp-course/chapter7/2}{HuggingFace Chapter 7.2: Token Classification}
 \end{frame}
 
-\begin{frame}{Discussion: Do Models "Understand" Grammar? 🤔}
+\begin{frame}[shrink=10]{Discussion: Do Models "Understand" Grammar? 🤔}
     \textbf{Perspectives to consider:}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Chomsky's view:} Grammar requires innate, symbolic rules
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Can statistical patterns truly capture grammatical knowledge?
         \end{itemize}
 
         \item \textbf{Emergentist view:} Grammar emerges from usage patterns
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Maybe neural networks learn similarly to humans?
         \end{itemize}
 
         \item \textbf{Functional perspective:} If it works, does it matter?
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Models perform well on tasks—is that "understanding"?
         \end{itemize}
 
         \item \textbf{Limitations:} Models still fail on edge cases
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item What does this tell us about their knowledge?
         \end{itemize}
     \end{enumerate}
@@ -362,9 +363,9 @@ for result in results:
 \end{frame}
 
 % Part 2: Sentiment Analysis
-\begin{frame}{Sentiment Analysis: From Structure to Emotion 😊😢}
+\begin{frame}[shrink=10]{Sentiment Analysis: From Structure to Emotion 😊😢}
     \textbf{What is sentiment analysis?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Determining emotional tone of text
         \item Classification task: positive, negative, neutral (or fine-grained)
         \item Moves beyond structure to \textit{meaning}
@@ -372,7 +373,7 @@ for result in results:
 
     \vspace{0.5em}
     \textbf{Applications:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item 📱 Social media monitoring
         \item 🛍️ Customer feedback analysis
         \item 📈 Market research and stock prediction
@@ -382,44 +383,44 @@ for result in results:
 
     \vspace{0.5em}
     \textbf{Granularity levels:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Binary: positive vs. negative
         \item Ternary: positive, negative, neutral
         \item Fine-grained: 1-5 stars, or continuous score
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Sentiment Analysis Challenges 🚧}
+\begin{frame}[shrink=10]{Sentiment Analysis Challenges 🚧}
     \textbf{1. Sarcasm and irony:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item "Oh great, another meeting 🙄" (negative, despite "great")
         \item "This is the best movie I've ever fallen asleep to" (negative!)
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{2. Context-dependent sentiment:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item "This movie is sick!" (positive in slang, negative literally)
         \item "The book was long" (neutral? negative?)
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{3. Mixed sentiment:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item "Great food but terrible service" (both positive and negative)
         \item Aspect-based sentiment: food=positive, service=negative
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{4. Negation:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item "not good" vs. "good"
         \item "I don't dislike it" (double negative = positive?)
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{5. Domain specificity:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item "Explosive growth" (positive in business, negative in safety)
         \item Different domains have different sentiment patterns
     \end{itemize}
@@ -430,7 +431,7 @@ for result in results:
 
     \vspace{0.5em}
     \textbf{Popular lexicons:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textbf{AFINN:} Words rated from -5 (very negative) to +5 (very positive)
         \item \textbf{SentiWordNet:} Assigns positive/negative/neutral scores
         \item \textbf{VADER:} Designed for social media text (handles emoji, slang)
@@ -483,9 +484,9 @@ for text in texts:
     \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Modern Approach: Pre-trained Models 🤖}
+\begin{frame}[fragile]{Modern Approach: Pre-trained Models 🤖}
     \textbf{Neural network advantages:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Learn context-dependent representations
         \item Capture word order and negation
         \item Handle sarcasm better (though still imperfect)
@@ -495,10 +496,10 @@ for text in texts:
     \vspace{0.5em}
     \textbf{Typical architecture:}
     \begin{center}
-        \begin{tikzpicture}[node distance=1.5cm]
+        \begin{tikzpicture}[scale=0.85,node distance=1.5cm]
             \node[rectangle, draw, fill=lightblue!30, minimum width=2.5cm] (input) {Input Text};
-            \node[rectangle, draw, fill=orange!30, minimum width=2.5cm, below of=input] (bert) {Pre-trained Model\\(BERT, RoBERTa)};
-            \node[rectangle, draw, fill=darkgreen!30, minimum width=2.5cm, below of=bert] (cls) {Classification Head\\(Dense + Softmax)};
+            \node[rectangle, draw, fill=orange!30, minimum width=2.5cm, below of=input, align=center] (bert) {Pre-trained Model\\(BERT, RoBERTa)};
+            \node[rectangle, draw, fill=darkgreen!30, minimum width=2.5cm, below of=bert, align=center] (cls) {Classification Head\\(Dense + Softmax)};
             \node[rectangle, draw, fill=purple!30, minimum width=2.5cm, below of=cls] (output) {Sentiment Label};
 
             \draw[->, thick] (input) -- (bert);
@@ -567,7 +568,7 @@ for text in texts:
 
     \vspace{0.5em}
     \textbf{Why it works:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Domain-specific vocabulary ("bullish" in finance = positive)
         \item Different sentiment expressions
         \item Adapted to domain conventions
@@ -603,35 +604,35 @@ for text in texts:
     \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Fine-Tuning for Sentiment Analysis 🎓}
+\begin{frame}[shrink=10]{Fine-Tuning for Sentiment Analysis 🎓}
     \textbf{Process overview:}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Start with pre-trained model} (e.g., BERT, RoBERTa)
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Already knows language structure from pre-training
         \end{itemize}
 
         \item \textbf{Prepare labeled dataset}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Text + sentiment labels (positive/negative/neutral)
             \item Examples: IMDb reviews, Amazon products, Twitter data
         \end{itemize}
 
         \item \textbf{Add classification head}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Dense layer on top of model
             \item Outputs: probability distribution over classes
         \end{itemize}
 
         \item \textbf{Fine-tune on sentiment data}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Update model weights to predict sentiment
             \item Much faster than training from scratch!
         \end{itemize}
 
         \item \textbf{Evaluate on test set}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Accuracy, precision, recall, F1-score
         \end{itemize}
     \end{enumerate}
@@ -672,10 +673,10 @@ trainer.train()
     \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Evaluation Metrics for Sentiment Analysis 📏}
+\begin{frame}[shrink=10]{Evaluation Metrics for Sentiment Analysis 📏}
     \textbf{Beyond accuracy:}
 
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textbf{Precision:} Of predicted positives, how many are truly positive?
         \[
         \text{Precision} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Positives}}
@@ -694,39 +695,39 @@ trainer.train()
 
     \vspace{0.5em}
     \textbf{Why not just accuracy?}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Imbalanced datasets (e.g., 90\% positive reviews)
         \item Different costs for false positives vs. false negatives
         \item F1 gives balanced view of model performance
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Confusion Matrix Example 🎭}
+\begin{frame}[shrink=5]{Confusion Matrix Example 🎭}
     \begin{center}
-        \begin{tikzpicture}
+        \begin{tikzpicture}[scale=0.85]
             % Matrix
             \draw[thick] (0,0) rectangle (4,4);
             \draw[thick] (0,2) -- (4,2);
             \draw[thick] (2,0) -- (2,4);
 
             % Labels
-            \node[font=\small] at (1,4.5) {Predicted Negative};
-            \node[font=\small] at (3,4.5) {Predicted Positive};
-            \node[font=\small, rotate=90] at (-0.7,3) {Actual Negative};
-            \node[font=\small, rotate=90] at (-0.7,1) {Actual Positive};
+            \node[font=\footnotesize] at (1,4.5) {Predicted Negative};
+            \node[font=\footnotesize] at (3,4.5) {Predicted Positive};
+            \node[font=\footnotesize, rotate=90] at (-0.7,3) {Actual Negative};
+            \node[font=\footnotesize, rotate=90] at (-0.7,1) {Actual Positive};
 
             % Values
             \node[font=\Large] at (1,3) {850};
-            \node[font=\small, below] at (1,2.5) {True Negative};
+            \node[font=\footnotesize, below] at (1,2.5) {True Negative};
 
             \node[font=\Large] at (3,3) {50};
-            \node[font=\small, below] at (3,2.5) {False Positive};
+            \node[font=\footnotesize, below] at (3,2.5) {False Positive};
 
             \node[font=\Large] at (1,1) {100};
-            \node[font=\small, below] at (1,0.5) {False Negative};
+            \node[font=\footnotesize, below] at (1,0.5) {False Negative};
 
             \node[font=\Large] at (3,1) {900};
-            \node[font=\small, below] at (3,0.5) {True Positive};
+            \node[font=\footnotesize, below] at (3,0.5) {True Positive};
 
             % Color coding
             \fill[darkgreen!20] (2,0) rectangle (4,2);
@@ -740,7 +741,7 @@ trainer.train()
     Accuracy = 92\% | Precision = 95\% | Recall = 90\% | F1 = 92\%
 \end{frame}
 
-\begin{frame}{Aspect-Based Sentiment Analysis 🔍}
+\begin{frame}[shrink=10]{Aspect-Based Sentiment Analysis 🔍}
     \textbf{Problem:} Reviews often mention multiple aspects with different sentiments
 
     \vspace{0.5em}
@@ -751,7 +752,7 @@ trainer.train()
 
     \vspace{0.5em}
     \textbf{Aspect-based approach:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Food: \textcolor{darkgreen}{Positive} ✅
         \item Service: \textcolor{lightred}{Negative} ❌
         \item Atmosphere: \textcolor{orange}{Neutral} 😐
@@ -759,7 +760,7 @@ trainer.train()
 
     \vspace{0.5em}
     \textbf{Applications:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Restaurant reviews: food, service, ambiance, price
         \item Product reviews: quality, price, shipping, customer service
         \item Hotel reviews: room, location, staff, cleanliness
@@ -769,9 +770,9 @@ trainer.train()
     \textbf{More nuanced than overall sentiment!} Provides actionable insights.
 \end{frame}
 
-\begin{frame}{Real-World Application: Product Review Analysis 🛍️}
+\begin{frame}[shrink=5]{Real-World Application: Product Review Analysis 🛍️}
     \textbf{Business value:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Identify product strengths and weaknesses
         \item Track sentiment trends over time
         \item Compare against competitors
@@ -781,7 +782,7 @@ trainer.train()
     \vspace{0.5em}
     \textbf{Example insights from Amazon reviews:}
     \begin{center}
-        \begin{tikzpicture}
+        \begin{tikzpicture}[scale=0.85]
             \draw[->, thick] (0,0) -- (8,0) node[right] {Time};
             \draw[->, thick] (0,0) -- (0,3) node[above] {Sentiment};
 
@@ -803,25 +804,25 @@ trainer.train()
     Product B: Declining sentiment → investigate quality issues!
 \end{frame}
 
-\begin{frame}{Hands-On Exercise 🧪}
+\begin{frame}[shrink=10]{Hands-On Exercise 🧪}
     \textbf{Try this yourself:}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Collect data:}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Scrape product reviews (Amazon, Yelp)
             \item Or use public dataset (IMDb, Twitter)
         \end{itemize}
 
         \item \textbf{Compare approaches:}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Lexicon-based (VADER)
             \item General pre-trained model (HuggingFace pipeline)
             \item Domain-specific model (if available)
         \end{itemize}
 
         \item \textbf{Analyze results:}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Where do models disagree?
             \item Which handles sarcasm better?
             \item Which is most accurate for your domain?
@@ -831,29 +832,29 @@ trainer.train()
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Discussion: Understanding Emotion 💭}
+\begin{frame}[shrink=10]{Discussion: Understanding Emotion 💭}
     \textbf{Philosophical questions:}
 
-    \begin{enumerate}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{Can models "feel" sentiment?}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item They predict labels, but do they understand emotion?
         \end{itemize}
 
         \item \textbf{Is sentiment objective or subjective?}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Different annotators may disagree on sentiment
             \item How do models handle ambiguity?
         \end{itemize}
 
         \item \textbf{Cultural and linguistic variation:}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Sentiment expressions vary across cultures
             \item Can models capture these nuances?
         \end{itemize}
 
         \item \textbf{Ethical considerations:}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Automated sentiment analysis in hiring, lending...
             \item Risks of bias and discrimination
             \item Should we trust model judgments?
@@ -862,11 +863,11 @@ trainer.train()
 \end{frame}
 
 % Week 2 Wrap-up
-\begin{frame}{Week 2 Integration: Putting It All Together 🧩}
+\begin{frame}[shrink=5]{Week 2 Integration: Putting It All Together 🧩}
     \textbf{How the pieces connect:}
 
     \begin{center}
-        \begin{tikzpicture}[node distance=1cm]
+        \begin{tikzpicture}[scale=0.85,node distance=1cm]
             \node[rectangle, draw, fill=lightblue!30, minimum width=2.5cm] (clean) {Data Cleaning};
             \node[rectangle, draw, fill=orange!30, minimum width=2.5cm, below of=clean] (token) {Tokenization};
             \node[rectangle, draw, fill=purple!30, minimum width=2.5cm, below of=token] (pos) {POS Tagging};
@@ -887,12 +888,12 @@ trainer.train()
     Each step builds on the previous one!
 \end{frame}
 
-\begin{frame}{Assignment 2: SPAM Email Classifier 📧}
+\begin{frame}[shrink=10]{Assignment 2: SPAM Email Classifier 📧}
     \textbf{Your task:} Build a classifier to detect spam emails
 
     \vspace{0.5em}
     \textbf{Apply this week's concepts:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \textbf{Data cleaning:} Remove HTML tags, normalize text
         \item \textbf{Tokenization:} Try different tokenizers (word, subword)
         \item \textbf{Features:} Extract useful signals (POS patterns, sentiment?)
@@ -901,7 +902,7 @@ trainer.train()
 
     \vspace{0.5em}
     \textbf{Think about:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item What makes spam different from legitimate emails?
         \item How does preprocessing affect accuracy?
         \item Can you use sentiment as a feature?
@@ -912,66 +913,66 @@ trainer.train()
     \textbf{Link:} \href{https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment\%202\%3A\%20SPAM\%20classifier}{Assignment 2: SPAM classifier}
 \end{frame}
 
-\begin{frame}{Key Takeaways 🎯}
-    \begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🎯}
+    \begin{enumerate}\setlength{\itemsep}{0pt}
         \item \textbf{POS tagging reveals grammatical structure}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Neural networks can learn syntax from data
             \item But do they "understand" grammar? Debatable!
         \end{itemize}
 
         \item \textbf{Sentiment analysis extracts emotional meaning}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item From lexicons to neural networks
             \item Domain-specific fine-tuning improves accuracy
         \end{itemize}
 
         \item \textbf{Statistical learning powers modern NLP}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Models learn patterns without explicit rules
             \item Similar to how infants learn language?
         \end{itemize}
 
         \item \textbf{Context is crucial}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Words are ambiguous—meaning comes from context
             \item Transformers excel at capturing context
         \end{itemize}
 
         \item \textbf{Critical thinking matters}
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0pt}
             \item Question what "understanding" means
             \item Be aware of limitations and biases
         \end{itemize}
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Primary References 📚}
+\begin{frame}[shrink=10]{Primary References 📚}
     \textbf{POS Tagging and Syntax:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Linzen, Dupoux, \& Goldberg (2016). Assessing the Ability of LSTMs to Learn Syntax-Sensitive Dependencies. \textit{TACL}.
         \item Warstadt et al. (2020). BLiMP: The Benchmark of Linguistic Minimal Pairs. \textit{TACL}.
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{Sentiment Analysis:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Pang \& Lee (2008). Opinion Mining and Sentiment Analysis. \textit{Foundations and Trends in IR}.
         \item Hutto \& Gilbert (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis. \textit{ICWSM}.
     \end{itemize}
 
     \vspace{0.3em}
     \textbf{HuggingFace Resources:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item \href{https://huggingface.co/learn/nlp-course/chapter1/2}{Chapter 1.2: NLP Tasks with Pipeline}
         \item \href{https://huggingface.co/learn/nlp-course/chapter3/2}{Chapter 3.2: Processing Data for Fine-tuning}
         \item \href{https://huggingface.co/learn/nlp-course/chapter7/2}{Chapter 7.2: Token Classification}
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Looking Ahead: Weeks 3-4 🔮}
+\begin{frame}[shrink=10]{Looking Ahead: Weeks 3-4 🔮}
     \textbf{Next topics:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Dimensionality reduction (PCA, UMAP)
         \item Bag-of-words and TF-IDF
         \item Word embeddings (Word2Vec, GloVe)
@@ -988,16 +989,16 @@ trainer.train()
 
     \vspace{1em}
     \textbf{Prepare by:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Completing Assignment 2
         \item Thinking about: What is "meaning"? How would you define it?
         \item Exploring: Vector representations and semantic similarity
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Additional Resources 🔗}
+\begin{frame}[shrink=10]{Additional Resources 🔗}
     \textbf{Tools and libraries:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item spaCy: \url{https://spacy.io/}
         \item HuggingFace Transformers: \url{https://huggingface.co/docs/transformers/}
         \item VADER Sentiment: \url{https://github.com/cjhutto/vaderSentiment}
@@ -1005,7 +1006,7 @@ trainer.train()
 
     \vspace{0.5em}
     \textbf{Datasets:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item IMDb Movie Reviews: \url{https://ai.stanford.edu/~amaas/data/sentiment/}
         \item Amazon Product Reviews: \url{https://registry.opendata.aws/amazon-reviews/}
         \item Stanford Sentiment Treebank: \url{https://nlp.stanford.edu/sentiment/}
@@ -1013,7 +1014,7 @@ trainer.train()
 
     \vspace{0.5em}
     \textbf{Interactive demos:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item HuggingFace Spaces: Try models in your browser!
         \item \url{https://huggingface.co/spaces}
     \end{itemize}
@@ -1022,7 +1023,7 @@ trainer.train()
 \begin{frame}[standout]
     \Huge Thank you! 🎉
 
-    \vspace{2em}
+    \vspace{1em}
 
     \large Questions?
 

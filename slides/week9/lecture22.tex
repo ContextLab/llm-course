@@ -1,5 +1,9 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
@@ -20,7 +24,6 @@
 \definecolor{purple}{RGB}{156,39,176}
 \definecolor{teal}{RGB}{0,150,136}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -55,7 +58,7 @@
 
 \title{Lecture 22: Mixture of Experts \& Efficiency}
 \subtitle{Scaling Efficiently with Sparse Models 🚀}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \institute{Dr. Jeremy R. Manning}
 \date{Week 9}
 
@@ -64,14 +67,14 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Journey 🗺️}
+\begin{frame}[shrink=5]{Today's Journey 🗺️}
 \tableofcontents
 \end{frame}
 
@@ -88,7 +91,7 @@ Larger models perform better... but at what cost?
 \vspace{0.5em}
 
 \textbf{Training a 175B parameter model (GPT-3 scale):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 💰 Cost: \$4-12 million in compute
     \item 🔥 Energy: Equivalent to 120 homes for a year
     \item ⏳ Time: Weeks to months on thousands of GPUs
@@ -107,7 +110,7 @@ Can we get the benefits of scale without the full computational cost?
 \textbf{Key Insight:} Not all parameters need to be active for every input!
 \end{frame}
 
-\begin{frame}{Dense vs Sparse Models 🎯}
+\begin{frame}[shrink=10]{Dense vs Sparse Models 🎯}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Dense Models (e.g., GPT-3):}
@@ -133,7 +136,7 @@ Can we get the benefits of scale without the full computational cost?
 
 \vspace{0.3em}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item All parameters used
     \item High compute per token
     \item Expensive inference
@@ -167,7 +170,7 @@ Can we get the benefits of scale without the full computational cost?
 
 \vspace{0.3em}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Subset of parameters
     \item Lower compute per token
     \item Faster, cheaper
@@ -188,7 +191,7 @@ MoE: More total parameters, but fewer active parameters per forward pass!
 % ============================================================
 \section{Mixture of Experts (MoE)}
 
-\begin{frame}{What is Mixture of Experts? 🧠}
+\begin{frame}[shrink=10]{What is Mixture of Experts? 🧠}
 \begin{block}{Mixture of Experts (MoE)}
 A neural network architecture where different "expert" sub-networks specialize in different parts of the input space, with a gating mechanism that routes inputs to the appropriate experts.
 \end{block}
@@ -196,7 +199,7 @@ A neural network architecture where different "expert" sub-networks specialize i
 \vspace{0.5em}
 
 \textbf{Key Components:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Experts}: Multiple specialized feed-forward networks
     \item \textbf{Router/Gate}: Learned function that assigns inputs to experts
     \item \textbf{Sparse Activation}: Only top-k experts process each input
@@ -205,7 +208,7 @@ A neural network architecture where different "expert" sub-networks specialize i
 \vspace{0.5em}
 
 \textbf{Intuition:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Different experts become good at different things
     \item Math expert, code expert, language expert, etc.
     \item Router learns which expert(s) to use for each input
@@ -216,9 +219,9 @@ A neural network architecture where different "expert" sub-networks specialize i
 \textit{Reference: Shazeer et al. (2017) - "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer"}
 \end{frame}
 
-\begin{frame}{MoE Architecture 🏗️}
+\begin{frame}[shrink=5]{MoE Architecture 🏗️}
 \begin{center}
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=1.2cm,
     expert/.style={rectangle, rounded corners, draw, fill=blue!30, minimum width=1.8cm, minimum height=0.8cm, align=center},
     router/.style={rectangle, rounded corners, draw, fill=orange!40, minimum width=2.5cm, minimum height=0.8cm, align=center},
@@ -257,7 +260,7 @@ A neural network architecture where different "expert" sub-networks specialize i
 \draw[->, thick, gray, dashed] (expertn) |- (output);
 
 % Formula
-\node[below=0.3cm of input, font=\small] {$y = \sum_{i=1}^{N} g(x)_i \cdot E_i(x)$};
+\node[below=0.3cm of input, font=\footnotesize] {$y = \sum_{i=1}^{N} g(x)_i \cdot E_i(x)$};
 
 \end{tikzpicture}
 \end{center}
@@ -293,7 +296,7 @@ $$y = \sum_{i \in \text{top-k}} g(x)_i \cdot E_i(x)$$
 \vspace{0.5em}
 
 \textbf{Benefits:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ Sparse computation: Only 2 out of N experts active
     \item ✅ Scalable: Can add more experts without increasing per-token cost
     \item ✅ Specialization: Experts learn different capabilities
@@ -386,7 +389,7 @@ class MoELayer(nn.Module):
 \vspace{0.5em}
 
 \begin{center}
-\begin{tikzpicture}
+\begin{tikzpicture}[scale=0.85]
     \begin{axis}[
         ybar,
         width=0.7\textwidth,
@@ -416,7 +419,7 @@ class MoELayer(nn.Module):
 \vspace{0.3em}
 
 \textbf{Why this is bad:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Inefficient use of capacity
     \item Some experts undertrained
     \item Bottlenecks at popular experts
@@ -424,13 +427,13 @@ class MoELayer(nn.Module):
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Load Balancing Solutions 🔧}
+\begin{frame}[shrink=10]{Load Balancing Solutions 🔧}
 \textbf{1. Auxiliary Load Balancing Loss}
 
 $$\mathcal{L}_{\text{balance}} = \alpha \cdot \sum_{i=1}^{N} f_i \cdot P_i$$
 
 where:
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item $f_i$ = fraction of tokens routed to expert $i$
     \item $P_i$ = expert $i$'s average routing probability
     \item $\alpha$ = balancing coefficient (e.g., 0.01)
@@ -439,7 +442,7 @@ where:
 \vspace{0.5em}
 
 \textbf{2. Expert Capacity}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Limit number of tokens per expert
     \item Capacity $C = \frac{\text{tokens per batch}}{\text{num experts}} \times \text{capacity factor}$
     \item Overflow tokens routed to next-best expert or skipped
@@ -448,38 +451,38 @@ where:
 \vspace{0.5em}
 
 \textbf{3. Random Routing (with probability)}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Add noise to routing decisions
     \item Prevents complete collapse to few experts
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Training Instability ⚠️}
+\begin{frame}[shrink=10]{Training Instability ⚠️}
 \textbf{Challenges in training MoE:}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Routing Collapse}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item All tokens routed to one or few experts
         \item \textit{Solution:} Load balancing loss, initialization
     \end{itemize}
 
     \item \textbf{Expert Imbalance}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Some experts undertrained
         \item \textit{Solution:} Balanced batching, capacity limits
     \end{itemize}
 
     \item \textbf{High Variance Gradients}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Discrete routing decisions
         \item \textit{Solution:} Softmax gating, larger batch sizes
     \end{itemize}
 
     \item \textbf{Dead Experts}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Expert never gets activated
         \item \textit{Solution:} Expert dropout, random routing
     \end{itemize}
@@ -490,7 +493,7 @@ where:
 \textbf{Best Practice:} Start with dense model, then convert to MoE for fine-tuning
 \end{frame}
 
-\begin{frame}{Memory and Communication 💾}
+\begin{frame}[shrink=10]{Memory and Communication 💾}
 \textbf{MoE Memory Requirements:}
 
 \vspace{0.5em}
@@ -502,7 +505,7 @@ All experts must be in memory, even if only 2 are active!
 \vspace{0.5em}
 
 \textbf{Example: Mixtral 8x7B}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 8 experts × 7B parameters each = 56B total
     \item But only 2 experts active → 14B active parameters
     \item \textbf{Memory:} Need to store all 56B parameters
@@ -512,7 +515,7 @@ All experts must be in memory, even if only 2 are active!
 \vspace{0.5em}
 
 \textbf{Solutions:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Expert Parallelism}: Distribute experts across GPUs
     \item \textbf{Offloading}: Keep inactive experts on CPU/disk
     \item \textbf{Quantization}: Reduce precision (int8, int4)
@@ -525,7 +528,7 @@ All experts must be in memory, even if only 2 are active!
 % ============================================================
 \section{Mixtral: MoE in Action}
 
-\begin{frame}{Mixtral 8x7B 🎬}
+\begin{frame}[shrink=10]{Mixtral 8x7B 🎬}
 \begin{block}{Mixtral (Jiang et al., 2024)}
 A state-of-the-art sparse MoE model from Mistral AI with 8 experts, each 7B parameters.
 \end{block}
@@ -533,7 +536,7 @@ A state-of-the-art sparse MoE model from Mistral AI with 8 experts, each 7B para
 \vspace{0.5em}
 
 \textbf{Architecture:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Total parameters}: 47B (8 experts × 7B, minus shared layers)
     \item \textbf{Active parameters}: 13B (only 2 experts active per token)
     \item \textbf{Layers}: 32 transformer blocks
@@ -544,7 +547,7 @@ A state-of-the-art sparse MoE model from Mistral AI with 8 experts, each 7B para
 \vspace{0.5em}
 
 \textbf{Training:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Open weights (Apache 2.0 license)
     \item Multilingual (English, French, German, Spanish, Italian)
     \item Code-capable
@@ -577,7 +580,7 @@ Llama 2 70B & 70B & 70B & 69.7 & 0.16× \\
 \vspace{0.5em}
 
 \textbf{Key Results:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ Matches/exceeds Llama 2 70B quality
     \item ✅ 6× faster inference (13B active vs 70B)
     \item ✅ Better cost/performance ratio
@@ -591,14 +594,14 @@ MoE achieves 70B-model quality with 13B-model inference cost!
 \end{thinkbox}
 \end{frame}
 
-\begin{frame}{What Do Experts Learn? 🔬}
+\begin{frame}[shrink=10]{What Do Experts Learn? 🔬}
 \textbf{Do experts actually specialize?}
 
 \vspace{0.5em}
 
 \textbf{Analysis of Mixtral experts:}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Language-specific}: Some experts prefer French vs English
     \item \textbf{Domain-specific}: Code, math, natural language
     \item \textbf{Syntactic}: Different parts of speech
@@ -608,7 +611,7 @@ MoE achieves 70B-model quality with 13B-model inference cost!
 \vspace{0.5em}
 
 \textbf{Interesting findings:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Specialization emerges without explicit supervision!
     \item Different tokens in same sentence may route to different experts
     \item Some experts are "generalists," others highly specialized
@@ -627,70 +630,70 @@ How could we encourage specific types of specialization during training?
 % ============================================================
 \section{Other Efficiency Techniques}
 
-\begin{frame}{Model Compression Methods 🗜️}
+\begin{frame}[shrink=10]{Model Compression Methods 🗜️}
 \textbf{Beyond MoE: Other ways to make models efficient}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Quantization}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Reduce precision: FP16, INT8, INT4
         \item 4-bit quantization: 4× memory reduction!
         \item QLoRA: Efficient fine-tuning with quantization
     \end{itemize}
 
     \item \textbf{Pruning}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Remove unimportant weights
         \item Structured (entire layers) vs unstructured (individual weights)
         \item Up to 50-90\% sparsity with minimal quality loss
     \end{itemize}
 
     \item \textbf{Distillation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Train small model to mimic large model
         \item DistilBERT, DistilGPT
         \item 40\% size, 95\% performance
     \end{itemize}
 
     \item \textbf{Parameter Sharing}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ALBERT: Share weights across layers
         \item Reduces parameters, not computation
     \end{itemize}
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Inference Optimizations ⚡}
+\begin{frame}[shrink=10]{Inference Optimizations ⚡}
 \textbf{Making generation faster:}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{KV Cache}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Store key-value pairs from previous tokens
         \item Avoid recomputing attention for past tokens
         \item Essential for autoregressive generation
     \end{itemize}
 
     \item \textbf{Flash Attention}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Fused attention kernel
         \item 2-4× faster, less memory
         \item FlashAttention-2 even better
     \end{itemize}
 
     \item \textbf{Speculative Decoding}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Use small model to draft tokens
         \item Large model verifies in parallel
         \item 2-3× speedup with no quality loss
     \end{itemize}
 
     \item \textbf{Batch Processing}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Continuous batching (vLLM)
         \item Better GPU utilization
         \item Higher throughput
@@ -698,7 +701,7 @@ How could we encourage specific types of specialization during training?
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{State Space Models: Mamba 🐍}
+\begin{frame}[shrink=10]{State Space Models: Mamba 🐍}
 \textbf{Alternative to Transformers with linear-time complexity}
 
 \vspace{0.5em}
@@ -710,7 +713,7 @@ State space models that can match Transformer performance with $O(n)$ instead of
 \vspace{0.5em}
 
 \textbf{Why this matters:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Attention scales quadratically with sequence length
     \item SSMs scale linearly
     \item Better for long sequences (100K+ tokens)
@@ -720,7 +723,7 @@ State space models that can match Transformer performance with $O(n)$ instead of
 \vspace{0.5em}
 
 \textbf{Trade-offs:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ❌ Less expressive than full attention (for some tasks)
     \item ❌ Newer, less mature
     \item ✅ Much more efficient
@@ -732,9 +735,9 @@ State space models that can match Transformer performance with $O(n)$ instead of
 \textit{Reference: Gu \& Dao (2023) - "Mamba: Linear-Time Sequence Modeling with Selective State Spaces"}
 \end{frame}
 
-\begin{frame}{Efficiency Trade-off Landscape 🗺️}
+\begin{frame}[shrink=5]{Efficiency Trade-off Landscape 🗺️}
 \begin{center}
-\begin{tikzpicture}
+\begin{tikzpicture}[scale=0.85]
     \begin{axis}[
         width=0.9\textwidth,
         height=6cm,
@@ -816,7 +819,7 @@ Llama 2 & ~539 & 120 cars for 1 year \\
 \vspace{0.5em}
 
 \textbf{Factors affecting carbon footprint:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Model size (more parameters = more compute)
     \item Training time
     \item Hardware efficiency (newer GPUs more efficient)
@@ -830,7 +833,7 @@ Llama 2 & ~539 & 120 cars for 1 year \\
 \textit{Source: Strubell et al. (2019) - "Energy and Policy Considerations for Deep Learning in NLP"}
 \end{frame}
 
-\begin{frame}{Democratizing Access 🔓}
+\begin{frame}[shrink=10]{Democratizing Access 🔓}
 \begin{discussionbox}
 Should powerful AI be accessible to everyone, or only large organizations?
 \end{discussionbox}
@@ -838,7 +841,7 @@ Should powerful AI be accessible to everyone, or only large organizations?
 \vspace{0.5em}
 
 \textbf{Current reality:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Training GPT-3 scale model: \$4-12M
     \item Requires 1000+ GPUs
     \item Only big tech companies can afford
@@ -848,7 +851,7 @@ Should powerful AI be accessible to everyone, or only large organizations?
 \vspace{0.5em}
 
 \textbf{Efficiency enables democratization:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ Smaller models on consumer hardware
     \item ✅ Open-source weights (Llama, Mixtral, Mistral)
     \item ✅ Efficient fine-tuning (LoRA, QLoRA)
@@ -863,11 +866,11 @@ Make AI accessible to researchers, startups, and developing nations—not just b
 \end{alertblock}
 \end{frame}
 
-\begin{frame}{Open vs Closed Models 🤔}
+\begin{frame}[shrink=10]{Open vs Closed Models 🤔}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \textbf{Closed (GPT-4, Claude):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ Better safety control
     \item ✅ Monetization easier
     \item ✅ Protect IP
@@ -881,7 +884,7 @@ Make AI accessible to researchers, startups, and developing nations—not just b
 
 \begin{column}{0.48\textwidth}
 \textbf{Open (Llama, Mixtral):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ✅ Transparency
     \item ✅ Community innovation
     \item ✅ Full control
@@ -897,7 +900,7 @@ Make AI accessible to researchers, startups, and developing nations—not just b
 \vspace{0.5em}
 
 \textbf{The debate:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Mirrors open-source software vs proprietary
     \item But higher stakes (safety, dual-use concerns)
     \item Trend: Moving toward more open models
@@ -910,34 +913,34 @@ Make AI accessible to researchers, startups, and developing nations—not just b
 % ============================================================
 \section{Future Directions}
 
-\begin{frame}{Future of Efficient LLMs 🔮}
+\begin{frame}[shrink=10]{Future of Efficient LLMs 🔮}
 \textbf{Where is the field heading?}
 
 \vspace{0.5em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Hybrid Architectures}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Combine MoE + attention + SSMs
         \item Use different mechanisms for different parts
         \item Dynamic architecture selection
     \end{itemize}
 
     \item \textbf{Conditional Computation}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Adjust depth/width based on input difficulty
         \item Early exit for easy examples
         \item More compute for hard problems
     \end{itemize}
 
     \item \textbf{Neural Architecture Search}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Automatically find efficient architectures
         \item Multi-objective optimization (quality + speed + size)
     \end{itemize}
 
     \item \textbf{Hardware Co-Design}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Design models for specific hardware
         \item Custom chips for LLMs (TPUs, Groq, Cerebras)
         \item Edge-specific models
@@ -945,10 +948,10 @@ Make AI accessible to researchers, startups, and developing nations—not just b
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Key Takeaways 🔑}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Key Takeaways 🔑}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{MoE enables efficient scaling}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item More parameters, fewer active per token
         \item Better quality/compute ratio
     \end{itemize}
@@ -956,7 +959,7 @@ Make AI accessible to researchers, startups, and developing nations—not just b
     \vspace{0.2em}
 
     \item \textbf{Challenges exist but solvable}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Load balancing, training instability
         \item Solutions: auxiliary losses, capacity limits
     \end{itemize}
@@ -964,7 +967,7 @@ Make AI accessible to researchers, startups, and developing nations—not just b
     \vspace{0.2em}
 
     \item \textbf{Mixtral proves MoE works at scale}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item 70B-quality with 13B-cost
         \item Open weights accelerate adoption
     \end{itemize}
@@ -972,7 +975,7 @@ Make AI accessible to researchers, startups, and developing nations—not just b
     \vspace{0.2em}
 
     \item \textbf{Many paths to efficiency}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Quantization, pruning, distillation
         \item Flash attention, speculative decoding
         \item SSMs, hybrid architectures
@@ -981,16 +984,16 @@ Make AI accessible to researchers, startups, and developing nations—not just b
     \vspace{0.2em}
 
     \item \textbf{Efficiency enables democratization}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Lower costs, environmental impact
         \item Accessible to more researchers
     \end{itemize}
 \end{enumerate}
 \end{frame}
 
-\begin{frame}{Readings 📖}
+\begin{frame}[shrink=10]{Readings 📖}
 \textbf{Required:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Shazeer et al. (2017)}: Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer
     \href{https://arxiv.org/abs/1701.06538}{[arXiv]}
 
@@ -1001,7 +1004,7 @@ Make AI accessible to researchers, startups, and developing nations—not just b
 \vspace{0.5em}
 
 \textbf{Recommended:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Fedus et al. (2022): Switch Transformers \href{https://arxiv.org/abs/2101.03961}{[arXiv]}
     \item Gu \& Dao (2023): Mamba \href{https://arxiv.org/abs/2312.00752}{[arXiv]}
     \item Dao et al. (2022): FlashAttention \href{https://arxiv.org/abs/2205.14135}{[arXiv]}

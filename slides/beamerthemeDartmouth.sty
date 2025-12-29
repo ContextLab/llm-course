@@ -1,0 +1,272 @@
+% Dartmouth Beamer Theme
+% Based on Dartmouth College Visual Identity Guidelines
+% https://communications.dartmouth.edu/guides-and-tools/design-guidelines/dartmouth-colors
+
+\mode<presentation>
+
+% Required packages
+\RequirePackage{tikz}
+\RequirePackage{fontspec}
+\RequirePackage{etoolbox}
+
+% ============================================================================
+% Color Definitions (from Dartmouth Style Guide)
+% ============================================================================
+
+% Primary Color
+\definecolor{DartmouthGreen}{RGB}{0,105,62}        % #00693e
+
+% Secondary Colors
+\definecolor{ForestGreen}{RGB}{18,49,43}           % #12312b
+\definecolor{RichForestGreen}{RGB}{13,30,28}       % #0D1E1C
+\definecolor{SnowWhite}{RGB}{255,255,255}          % #ffffff
+\definecolor{MidnightBlack}{RGB}{0,0,0}            % #000000
+
+% Tertiary Colors (Accent Colors)
+\definecolor{RiverBlue}{RGB}{38,122,186}           % #267aba
+\definecolor{RiverNavy}{RGB}{0,60,115}             % #003c73
+\definecolor{SpringGreen}{RGB}{196,221,136}        % #c4dd88
+\definecolor{RichSpringGreen}{RGB}{165,215,95}     % #a5d75f
+\definecolor{SummerYellow}{RGB}{245,220,105}       % #f5dc69
+\definecolor{BonfireOrange}{RGB}{255,160,15}       % #ffa00f
+\definecolor{BonfireRed}{RGB}{157,22,46}           % #9d162e
+\definecolor{TuckOrange}{RGB}{216,71,38}           % #d94415
+\definecolor{Violet}{RGB}{138,105,150}             % #8a6996
+\definecolor{AutumnBrown}{RGB}{100,60,32}          % #643c20
+\definecolor{GraniteGray}{RGB}{66,65,65}           % #424141
+\definecolor{Gray1}{RGB}{247,247,247}              % #f7f7f7
+\definecolor{Gray2}{RGB}{226,226,226}              % #e2e2e2
+\definecolor{Gray3}{RGB}{112,112,112}              % #707070
+
+% ============================================================================
+% Font Configuration
+% ============================================================================
+
+% Set up emoji fallback using luaotfload
+% This allows emojis to render in the main font
+% Uses Noto Color Emoji (Linux/CI) and Apple Color Emoji (macOS) as fallbacks
+\directlua{
+    luaotfload.add_fallback("emojifallback", {
+        "NotoColorEmoji:mode=harf;",
+        "Noto Color Emoji:mode=harf;",
+        "Apple Color Emoji:mode=harf;"
+    })
+}
+
+% Dartmouth Ruzicka font with emoji fallback
+% Path relative to the compiled lecture file (which is in slides/weekN/)
+\setsansfont{DartmouthRuzicka}[
+    Path=../../admin/,
+    Extension=.ttf,
+    UprightFont=*-Regular,
+    BoldFont=*-Bold,
+    ItalicFont=*-RegularItalic,
+    BoldItalicFont=*-BoldItalic,
+    RawFeature={fallback=emojifallback}
+]
+
+% ============================================================================
+% Color Theme Settings
+% ============================================================================
+
+% Background colors
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=MidnightBlack}
+
+% Structure colors (main theme color)
+\setbeamercolor{structure}{fg=DartmouthGreen}
+
+% Title page colors
+\setbeamercolor{title}{fg=DartmouthGreen}
+\setbeamercolor{subtitle}{fg=GraniteGray}
+\setbeamercolor{author}{fg=MidnightBlack}
+\setbeamercolor{institute}{fg=GraniteGray}
+\setbeamercolor{date}{fg=GraniteGray}
+
+% Frame title colors
+\setbeamercolor{frametitle}{fg=SnowWhite, bg=DartmouthGreen}
+\setbeamercolor{framesubtitle}{fg=Gray2}
+
+% Block colors
+\setbeamercolor{block title}{fg=SnowWhite, bg=DartmouthGreen}
+\setbeamercolor{block body}{fg=MidnightBlack, bg=Gray1}
+
+% Alert block colors (using Bonfire Orange)
+\setbeamercolor{block title alerted}{fg=SnowWhite, bg=BonfireOrange}
+\setbeamercolor{block body alerted}{fg=MidnightBlack, bg=Gray1}
+
+% Example block colors (using River Blue)
+\setbeamercolor{block title example}{fg=SnowWhite, bg=RiverBlue}
+\setbeamercolor{block body example}{fg=MidnightBlack, bg=Gray1}
+
+% Item colors
+\setbeamercolor{item}{fg=DartmouthGreen}
+\setbeamercolor{subitem}{fg=DartmouthGreen}
+\setbeamercolor{subsubitem}{fg=DartmouthGreen}
+
+% Table of contents colors
+\setbeamercolor{section in toc}{fg=DartmouthGreen}
+\setbeamercolor{subsection in toc}{fg=GraniteGray}
+
+% Bibliography colors
+\setbeamercolor{bibliography entry author}{fg=MidnightBlack}
+\setbeamercolor{bibliography entry title}{fg=DartmouthGreen}
+\setbeamercolor{bibliography entry location}{fg=GraniteGray}
+\setbeamercolor{bibliography entry note}{fg=GraniteGray}
+
+% Footline colors
+\setbeamercolor{footline}{fg=GraniteGray}
+\setbeamercolor{page number in head/foot}{fg=GraniteGray}
+
+% ============================================================================
+% Font Theme Settings
+% ============================================================================
+
+\setbeamerfont{title}{size=\LARGE, series=\bfseries}
+\setbeamerfont{subtitle}{size=\large}
+\setbeamerfont{author}{size=\normalsize}
+\setbeamerfont{institute}{size=\small}
+\setbeamerfont{date}{size=\small}
+\setbeamerfont{frametitle}{size=\Large, series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\normalsize}
+\setbeamerfont{block title}{size=\normalsize, series=\bfseries}
+\setbeamerfont{block title alerted}{size=\normalsize, series=\bfseries}
+\setbeamerfont{block title example}{size=\normalsize, series=\bfseries}
+
+% ============================================================================
+% Inner Theme Settings
+% ============================================================================
+
+% Itemize items: use circles filled with Dartmouth Green
+\setbeamertemplate{itemize item}{\small\raise0.5pt\hbox{\textbullet}}
+\setbeamertemplate{itemize subitem}{\tiny\raise1pt\hbox{\textbullet}}
+\setbeamertemplate{itemize subsubitem}{\tiny\raise1pt\hbox{\textbullet}}
+
+% Enumerate items: use Dartmouth Green numbers
+\setbeamertemplate{enumerate item}{\insertenumlabel.}
+\setbeamertemplate{enumerate subitem}{\insertenumlabel.\insertsubenumlabel}
+\setbeamertemplate{enumerate subsubitem}{\insertenumlabel.\insertsubenumlabel.\insertsubsubenumlabel}
+
+% Blocks with rounded corners
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+% ============================================================================
+% Outer Theme Settings
+% ============================================================================
+
+% Title page template
+\setbeamertemplate{title page}{
+    \begin{minipage}[b][\paperheight]{\textwidth}
+        \vfill
+        \ifx\inserttitle\@empty\else
+            \usebeamercolor[fg]{title}\usebeamerfont{title}\inserttitle\par
+        \fi
+        \ifx\insertsubtitle\@empty\else
+            \vskip0.25em
+            \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\insertsubtitle\par
+        \fi
+        \vskip1em
+        \ifx\insertauthor\@empty\else
+            \usebeamercolor[fg]{author}\usebeamerfont{author}\insertauthor\par
+        \fi
+        \ifx\insertinstitute\@empty\else
+            \vskip0.25em
+            \usebeamercolor[fg]{institute}\usebeamerfont{institute}\insertinstitute\par
+        \fi
+        \ifx\insertdate\@empty\else
+            \vskip0.25em
+            \usebeamercolor[fg]{date}\usebeamerfont{date}\insertdate\par
+        \fi
+        \vfill
+        \vspace*{1cm}
+    \end{minipage}
+}
+
+% Frame title template with Dartmouth Green bar
+\setbeamertemplate{frametitle}{
+    \nointerlineskip
+    \begin{beamercolorbox}[wd=\paperwidth,sep=8pt,leftskip=8pt,rightskip=8pt]{frametitle}
+        \usebeamerfont{frametitle}\insertframetitle
+        \ifx\insertframesubtitle\@empty\else
+            \par\vskip-2pt
+            \usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle
+        \fi
+    \end{beamercolorbox}
+}
+
+% Footline with slide numbers
+\setbeamertemplate{footline}{
+    \leavevmode%
+    \hbox{%
+        \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,left,leftskip=1em]{footline}%
+            \usebeamerfont{footline}\insertshortauthor~--~\insertshorttitle
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,right,rightskip=1em]{footline}%
+            \usebeamerfont{page number in head/foot}\insertframenumber{} / \inserttotalframenumber
+        \end{beamercolorbox}%
+    }%
+    \vskip0pt%
+}
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% Progress bar at the top (similar to metropolis theme)
+\makeatletter
+\def\progressbar@progressbar{} % Initialize progress bar
+\newcount\progressbar@tmpcounta
+\newcount\progressbar@tmpcountb
+\newdimen\progressbar@pbht
+\newdimen\progressbar@pbwd
+\newdimen\progressbar@tmpdim
+
+\progressbar@pbwd=\paperwidth
+\progressbar@pbht=2pt
+
+\def\progressbar@progressbar{%
+    \progressbar@tmpcounta=\insertframenumber
+    \progressbar@tmpcountb=\inserttotalframenumber
+    \progressbar@tmpdim=\progressbar@pbwd
+    \multiply\progressbar@tmpdim by \progressbar@tmpcounta
+    \divide\progressbar@tmpdim by \progressbar@tmpcountb
+
+    \begin{tikzpicture}[very thin]
+        \shade[left color=DartmouthGreen,right color=DartmouthGreen] (0, 0) rectangle (\progressbar@tmpdim, \progressbar@pbht);
+    \end{tikzpicture}%
+}
+
+\addtobeamertemplate{frametitle}{}
+{%
+    \vspace*{-1.5ex}
+    \begin{beamercolorbox}[wd=\paperwidth,ht=0pt,dp=0pt]{frametitle}
+        \progressbar@progressbar
+    \end{beamercolorbox}
+}%
+\makeatother
+
+% ============================================================================
+% Standout Frame Template (similar to Metropolis theme)
+% ============================================================================
+
+% Define standout frame option
+\makeatletter
+\define@key{beamerframe}{standout}[true]{%
+    \setbeamercolor{background canvas}{bg=DartmouthGreen}%
+    \setbeamercolor{normal text}{fg=SnowWhite}%
+    \setbeamercolor{frametitle}{fg=SnowWhite, bg=DartmouthGreen}%
+    \usebeamercolor[fg]{normal text}%
+}
+\makeatother
+
+% ============================================================================
+% Hyperref Colors
+% ============================================================================
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=DartmouthGreen,
+    urlcolor=RiverBlue,
+    citecolor=GraniteGray
+}
+
+\mode<all>

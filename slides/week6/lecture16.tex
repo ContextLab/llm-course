@@ -1,12 +1,15 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{metropolis}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{emoji}
 \usetikzlibrary{shapes,arrows,positioning,calc}
 
 % Code listing setup
@@ -23,7 +26,7 @@
 
 \title{Lecture 16: BERT Variants}
 \subtitle{Week 6, Lecture 2 - Improvements and Optimizations}
-\author{LLM Course}
+\author{PSYC 51.07: Models of Language and Communication}
 \date{Winter 2026}
 
 \begin{document}
@@ -31,16 +34,16 @@
 % ============================================================
 % TITLE SLIDE
 % ============================================================
-\begin{frame}
+\begin{frame}[shrink=10]
 \titlepage
 \end{frame}
 
 % ============================================================
 % OVERVIEW
 % ============================================================
-\begin{frame}{Today's Agenda 📋}
+\begin{frame}[shrink=10]{Today's Agenda 📋}
 \large
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item 🚀 \textbf{RoBERTa}: Robustly Optimized BERT
     \item 🔬 \textbf{ALBERT}: A Lite BERT with parameter sharing
     \item ⚡ \textbf{DistilBERT}: Knowledge distillation for efficiency
@@ -56,14 +59,14 @@
 % ============================================================
 % BERT LIMITATIONS
 % ============================================================
-\begin{frame}{BERT's Limitations ⚠️}
+\begin{frame}[shrink=10]{BERT's Limitations ⚠️}
 \textbf{What could be improved?}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Training Procedure}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Some choices seemed arbitrary
         \item NSP task might not be useful
         \item Static masking (same masks every epoch)
@@ -72,7 +75,7 @@
     \vspace{0.5em}
 
     \item \textbf{Model Size}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item 110M (Base) or 340M (Large) parameters
         \item Large memory footprint
         \item Slow inference
@@ -81,7 +84,7 @@
     \vspace{0.5em}
 
     \item \textbf{Training Efficiency}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Only 15\% of tokens are predicted
         \item 85\% of computation "wasted"?
         \item Could we learn more efficiently?
@@ -90,7 +93,7 @@
     \vspace{0.5em}
 
     \item \textbf{Data and Compute}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Trained on limited data (3.3B words)
         \item Modern datasets much larger
         \item Could benefit from more training
@@ -104,16 +107,16 @@
 % ============================================================
 % ROBERTA
 % ============================================================
-\begin{frame}{RoBERTa: Robustly Optimized BERT 🚀}
+\begin{frame}[shrink=10]{RoBERTa: Robustly Optimized BERT 🚀}
 \textbf{Key idea: Better training = Better performance}
 
 \vspace{1em}
 
 \textbf{RoBERTa's Improvements (Liu et al. 2019):}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Remove NSP Task}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Next Sentence Prediction hurt performance
         \item Use only Masked Language Modeling
         \item Full sentences (don't need sentence pairs)
@@ -122,7 +125,7 @@
     \vspace{0.5em}
 
     \item \textbf{Dynamic Masking}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Generate masking pattern every time
         \item BERT: static masks (same for every epoch)
         \item More diverse training signal
@@ -131,7 +134,7 @@
     \vspace{0.5em}
 
     \item \textbf{Larger Batches, More Data}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Batch size: 8K sequences (vs BERT's 256)
         \item 160GB text (vs BERT's 16GB)
         \item Longer training (500K steps vs 100K)
@@ -140,7 +143,7 @@
     \vspace{0.5em}
 
     \item \textbf{Longer Sequences}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Train with longer sequences
         \item Better for downstream tasks
     \end{itemize}
@@ -154,6 +157,7 @@
 % ROBERTA RESULTS
 % ============================================================
 \begin{frame}{RoBERTa Results 📈}
+\small
 \textbf{Consistent improvements over BERT}
 
 \vspace{1em}
@@ -175,7 +179,7 @@ RACE & 72.0 & \textbf{83.2} & +11.2 \\
 \vspace{1em}
 
 \textbf{Key Findings:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \alert{Removing NSP improves performance}
     \item Dynamic masking better than static
     \item More data + longer training = better results
@@ -193,7 +197,7 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
 % ============================================================
 % DYNAMIC MASKING
 % ============================================================
-\begin{frame}{Dynamic vs Static Masking 🎭}
+\begin{frame}[shrink=10]{Dynamic vs Static Masking 🎭}
 \textbf{How masking patterns are generated}
 
 \vspace{1em}
@@ -205,7 +209,7 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
 \vspace{0.5em}
 
 \textbf{Preprocessing:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Mask tokens once
     \item Save masked dataset
     \item Same masks every epoch
@@ -222,7 +226,7 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
 \vspace{0.5em}
 
 \textbf{Problem:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Model sees same masks repeatedly
     \item Less diverse training signal
     \item Potential overfitting to mask patterns
@@ -235,7 +239,7 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
 \vspace{0.5em}
 
 \textbf{On-the-fly:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Generate masks during training
     \item Different masks each time
     \item More variety
@@ -252,7 +256,7 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
 \vspace{0.5em}
 
 \textbf{Benefits:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item More diverse training examples
     \item Better generalization
     \item Prevents memorization
@@ -268,16 +272,16 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
 % ============================================================
 % ALBERT
 % ============================================================
-\begin{frame}{ALBERT: A Lite BERT 🔬}
+\begin{frame}[shrink=10]{ALBERT: A Lite BERT 🔬}
 \textbf{Key idea: Parameter sharing for efficiency}
 
 \vspace{1em}
 
 \textbf{ALBERT's Innovations (Lan et al. 2019):}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Factorized Embedding Parameterization}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item BERT: Vocabulary embedding = Hidden size (30K × 768)
         \item ALBERT: Vocab → Small (30K × 128) → Hidden (128 × 768)
         \item Saves parameters, especially for large hidden sizes
@@ -286,7 +290,7 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
     \vspace{0.5em}
 
     \item \textbf{Cross-Layer Parameter Sharing}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Share all parameters across layers
         \item Same attention and FFN weights for all layers
         \item \alert{Massive parameter reduction!}
@@ -295,7 +299,7 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
     \vspace{0.5em}
 
     \item \textbf{Sentence Order Prediction (SOP)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Replace NSP with SOP
         \item Predict if two sentences are in correct order
         \item More challenging task than NSP
@@ -309,7 +313,8 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
 % ============================================================
 % ALBERT COMPARISON
 % ============================================================
-\begin{frame}{ALBERT Parameter Efficiency 📊}
+\begin{frame}[shrink=10]{ALBERT Parameter Efficiency 📊}
+\small
 \textbf{Dramatic parameter reduction!}
 
 \vspace{1em}
@@ -333,7 +338,7 @@ ALBERT-xxlarge & 12 & 4096 & \textbf{235M} \\
 \vspace{1em}
 
 \textbf{Key Observations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item ALBERT-base: \alert{89\% fewer parameters} than BERT-base
     \item Can train much larger hidden sizes with same memory
     \item ALBERT-xxlarge: 4096 hidden dim, still only 235M params
@@ -343,7 +348,7 @@ ALBERT-xxlarge & 12 & 4096 & \textbf{235M} \\
 \vspace{0.5em}
 
 \begin{block}{Benefits}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Lower memory footprint
     \item Easier to deploy
     \item Can scale to larger hidden dimensions
@@ -367,7 +372,7 @@ ALBERT-xxlarge & 12 & 4096 & \textbf{235M} \\
 \begin{tikzpicture}[scale=0.6]
     \foreach \y/\label in {0/Layer 1, 1.5/Layer 2, 3/Layer 3} {
         \node[rectangle,draw,fill=blue!30,minimum width=3cm,minimum height=1cm] at (0, \y) {\label};
-        \node[right=0.2cm of {(1.5, \y)}] {\tiny Different weights};
+        \node at (3.5, \y) {\tiny Different weights};
     }
 
     \node at (0, 4.5) {Each layer has};
@@ -378,7 +383,7 @@ ALBERT-xxlarge & 12 & 4096 & \textbf{235M} \\
 \vspace{0.5em}
 
 \textbf{Parameters:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 12 × (Attention + FFN)
     \item Total: $\sim$110M params
 \end{itemize}
@@ -389,7 +394,7 @@ ALBERT-xxlarge & 12 & 4096 & \textbf{235M} \\
 
 \begin{center}
 \begin{tikzpicture}[scale=0.6]
-    \node[rectangle,draw,fill=green!30,minimum width=3cm,minimum height=1cm] (shared) at (3, 1.5) {Shared\\Parameters};
+    \node[rectangle,draw,fill=green!30,minimum width=3cm,minimum height=1cm,align=center] (shared) at (3, 1.5) {Shared\\Parameters};
 
     \foreach \y/\label in {0/Layer 1, 1.5/Layer 2, 3/Layer 3} {
         \node[rectangle,draw,fill=orange!30,minimum width=2cm,minimum height=1cm] (layer\y) at (0, \y) {\label};
@@ -404,7 +409,7 @@ ALBERT-xxlarge & 12 & 4096 & \textbf{235M} \\
 \vspace{0.5em}
 
 \textbf{Parameters:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item 1 × (Attention + FFN)
     \item Total: $\sim$12M params
 \end{itemize}
@@ -414,7 +419,7 @@ ALBERT-xxlarge & 12 & 4096 & \textbf{235M} \\
 \vspace{1em}
 
 \textbf{Questions:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Does this hurt performance? \alert{Sometimes slightly, but often comparable!}
     \item What's the intuition? Layers learn similar transformations
     \item Trade-off: Memory vs. expressiveness
@@ -424,18 +429,18 @@ ALBERT-xxlarge & 12 & 4096 & \textbf{235M} \\
 % ============================================================
 % DISTILBERT
 % ============================================================
-\begin{frame}{DistilBERT: Knowledge Distillation ⚡}
+\begin{frame}[shrink=10]{DistilBERT: Knowledge Distillation ⚡}
 \textbf{Key idea: Train small model to mimic large model}
 
 \vspace{1em}
 
 \textbf{Knowledge Distillation Process (Sanh et al. 2019):}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Teacher Model:} Large, pre-trained BERT
     \item \textbf{Student Model:} Smaller model (6 layers instead of 12)
     \item \textbf{Training Objective:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Student learns to match teacher's output distributions
         \item Not just hard labels, but soft probabilities
         \item Also uses MLM loss on original task
@@ -538,7 +543,7 @@ MNLI (Acc) & 86.7 & 82.2 \\
 \vspace{1em}
 
 \textbf{When to Use DistilBERT:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item Production deployment (latency-critical)
     \item Edge devices (limited memory)
     \item High-throughput scenarios
@@ -549,14 +554,14 @@ MNLI (Acc) & 86.7 & 82.2 \\
 % ============================================================
 % ELECTRA
 % ============================================================
-\begin{frame}{ELECTRA: Efficient Learning 🔌}
+\begin{frame}[shrink=5]{ELECTRA: Efficient Learning 🔌}
 \textbf{Key idea: Learn from all tokens, not just 15\%}
 
 \vspace{1em}
 
 \textbf{ELECTRA's Approach (Clark et al. 2020):}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Replace Token Detection} instead of Masked LM
     \item Use a small generator to replace some tokens
     \item Discriminator learns to detect which tokens were replaced
@@ -612,15 +617,16 @@ MNLI (Acc) & 86.7 & 82.2 \\
 % ============================================================
 % ELECTRA BENEFITS
 % ============================================================
-\begin{frame}{ELECTRA Benefits ⚡}
+\begin{frame}[shrink=10]{ELECTRA Benefits ⚡}
+\small
 \textbf{More efficient pre-training}
 
 \vspace{1em}
 
 \textbf{Advantages:}
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Sample Efficiency}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Learn from all tokens (100\%) vs only masked (15\%)
         \item Reaches same performance with less data
         \item Faster convergence
@@ -629,7 +635,7 @@ MNLI (Acc) & 86.7 & 82.2 \\
     \vspace{0.5em}
 
     \item \textbf{Better Performance}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ELECTRA-Small outperforms BERT-Small
         \item ELECTRA-Base competitive with BERT-Large
         \item With same compute, ELECTRA is better
@@ -638,7 +644,7 @@ MNLI (Acc) & 86.7 & 82.2 \\
     \vspace{0.5em}
 
     \item \textbf{Computational Efficiency}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Smaller generator (1/4 to 1/2 size of discriminator)
         \item Faster to train than BERT
         \item Lower computational cost for same quality
@@ -697,7 +703,7 @@ Limited pre-training compute \\
 \vspace{1em}
 
 \textbf{General Guidelines:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Best quality:} RoBERTa-Large
     \item \textbf{Best efficiency:} DistilBERT
     \item \textbf{Limited memory:} ALBERT
@@ -709,14 +715,14 @@ Limited pre-training compute \\
 % ============================================================
 % OTHER VARIANTS
 % ============================================================
-\begin{frame}{Other Notable BERT Variants 🌟}
+\begin{frame}[shrink=10]{Other Notable BERT Variants 🌟}
 \textbf{The BERT family keeps growing!}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{DeBERTa (Microsoft, 2020)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Disentangled attention (separate content and position)
         \item Enhanced mask decoder
         \item State-of-the-art on SuperGLUE
@@ -725,7 +731,7 @@ Limited pre-training compute \\
     \vspace{0.5em}
 
     \item \textbf{ERNIE (Baidu, 2019)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Entity-level and phrase-level masking
         \item Knowledge enhancement
         \item Strong on Chinese NLP tasks
@@ -734,7 +740,7 @@ Limited pre-training compute \\
     \vspace{0.5em}
 
     \item \textbf{SpanBERT (Facebook, 2019)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Mask random spans instead of random tokens
         \item Span boundary objective
         \item Better for span-based tasks (QA, coreference)
@@ -743,7 +749,7 @@ Limited pre-training compute \\
     \vspace{0.5em}
 
     \item \textbf{BART (Facebook, 2019)}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Encoder-decoder (not encoder-only)
         \item Denoising autoencoder with various corruptions
         \item Excellent for generation tasks
@@ -754,7 +760,7 @@ Limited pre-training compute \\
 % ============================================================
 % MODEL SELECTION
 % ============================================================
-\begin{frame}{Model Selection Guide 🎯}
+\begin{frame}[shrink=5]{Model Selection Guide 🎯}
 \textbf{How to choose the right model for your task}
 
 \vspace{1em}
@@ -796,7 +802,7 @@ Limited pre-training compute \\
 \vspace{1em}
 
 \textbf{Additional Considerations:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Domain:} Consider domain-specific pre-trained models (BioBERT, SciBERT, etc.)
     \item \textbf{Language:} Multilingual? Use mBERT, XLM-R
     \item \textbf{Task type:} Generation? Consider BART/T5 instead
@@ -841,10 +847,10 @@ outputs = model(**inputs)
 % ============================================================
 % DISCUSSION
 % ============================================================
-\begin{frame}{Discussion Questions 💭}
-\begin{enumerate}
+\begin{frame}[shrink=10]{Discussion Questions 💭}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{Training vs Architecture:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item RoBERTa shows training matters. Is architecture overrated?
         \item How much can we improve with just better training?
         \item What's the right balance?
@@ -853,7 +859,7 @@ outputs = model(**inputs)
     \vspace{0.5em}
 
     \item \textbf{Parameter Efficiency:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item ALBERT shares all layers. Why does this work?
         \item What are the limits of parameter sharing?
         \item Is there a "sweet spot"?
@@ -862,7 +868,7 @@ outputs = model(**inputs)
     \vspace{0.5em}
 
     \item \textbf{Knowledge Distillation:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Why does student learn better from teacher than from labels?
         \item What information is in the soft probabilities?
         \item Can we distill even further?
@@ -871,7 +877,7 @@ outputs = model(**inputs)
     \vspace{0.5em}
 
     \item \textbf{Model Selection:}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item How do you decide which model to use?
         \item Is it worth fine-tuning multiple variants?
         \item What about model ensembles?
@@ -882,9 +888,9 @@ outputs = model(**inputs)
 % ============================================================
 % LOOKING AHEAD
 % ============================================================
-\begin{frame}{Looking Ahead 🔮}
+\begin{frame}[shrink=10]{Looking Ahead 🔮}
 \textbf{Today we learned:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item RoBERTa: Better training matters
     \item ALBERT: Parameter sharing for efficiency
     \item DistilBERT: Knowledge distillation
@@ -895,7 +901,7 @@ outputs = model(**inputs)
 \vspace{1em}
 
 \textbf{Next lecture (Lecture 17 - Applications of Encoder Models):}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \alert{Real-world BERT applications}
     \item \alert{Classification, NER, QA, and more}
     \item \alert{Cognitive neuroscience connections}
@@ -915,39 +921,39 @@ outputs = model(**inputs)
 % ============================================================
 % SUMMARY
 % ============================================================
-\begin{frame}{Summary 🎯}
+\begin{frame}[shrink=10]{Summary 🎯}
 \textbf{Key Takeaways:}
 
 \vspace{1em}
 
-\begin{enumerate}
+\begin{enumerate}\setlength{\itemsep}{0pt}
     \item \textbf{RoBERTa}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Training procedure matters as much as architecture
         \item Remove NSP, dynamic masking, more data = better results
     \end{itemize}
 
     \item \textbf{ALBERT}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Parameter sharing dramatically reduces model size
         \item Factorized embeddings for efficiency
         \item 89\% fewer parameters than BERT
     \end{itemize}
 
     \item \textbf{DistilBERT}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Knowledge distillation for deployment
         \item 40\% smaller, 60\% faster, 97\% performance
     \end{itemize}
 
     \item \textbf{ELECTRA}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Replace token detection more sample-efficient
         \item Learn from all tokens, not just 15\%
     \end{itemize}
 
     \item \textbf{Model Selection}
-    \begin{itemize}
+    \begin{itemize}\setlength{\itemsep}{0pt}
         \item Choose based on constraints (quality, speed, memory)
         \item HuggingFace makes it easy to experiment
     \end{itemize}
@@ -957,12 +963,12 @@ outputs = model(**inputs)
 % ============================================================
 % REFERENCES
 % ============================================================
-\begin{frame}{References 📚}
+\begin{frame}[shrink=10]{References 📚}
 \textbf{Essential Papers:}
 
 \vspace{0.5em}
 
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item \textbf{Liu et al. (2019)} - "RoBERTa: A Robustly Optimized BERT Pretraining Approach"
     \item \textbf{Lan et al. (2019)} - "ALBERT: A Lite BERT for Self-supervised Learning"
     \item \textbf{Sanh et al. (2019)} - "DistilBERT, a distilled version of BERT"
@@ -973,7 +979,7 @@ outputs = model(**inputs)
 \vspace{0.5em}
 
 \textbf{Resources:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item HuggingFace Model Hub: \url{https://huggingface.co/models}
     \item Papers With Code: BERT variants leaderboard
     \item Model Cards: Detailed documentation for each variant
@@ -989,10 +995,10 @@ outputs = model(**inputs)
 \textbf{Discussion Time}
 \end{center}
 
-\vspace{2em}
+\vspace{1em}
 
 \textbf{Topics for discussion:}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0pt}
     \item BERT variants and improvements
     \item Model selection strategies
     \item Knowledge distillation
@@ -1000,7 +1006,7 @@ outputs = model(**inputs)
     \item Implementation questions
 \end{itemize}
 
-\vspace{2em}
+\vspace{1em}
 
 \begin{center}
 \Large
