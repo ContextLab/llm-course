@@ -1,0 +1,208 @@
+\documentclass[aspectratio=169]{beamer}
+% Add slides directory to search path for Dartmouth theme
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+\usetheme{Dartmouth}
+
+% Packages
+\usepackage{fontspec}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+
+% Font settings
+\setmonofont{Courier New}
+
+% Title page information
+\title{Theme Showcase}
+\subtitle{Dartmouth Beamer Theme}
+\author{PSYC 51.07}
+\institute{Dr. Jeremy R. Manning}
+\date{Template Deck}
+
+\begin{document}
+
+% ==============================================================================
+% TITLE SLIDE
+% ==============================================================================
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ==============================================================================
+% SECTION DIVIDER
+% ==============================================================================
+\section{Typography}
+
+\begin{frame}[standout]
+\centering
+\Huge Typography
+\end{frame}
+
+% ==============================================================================
+% SIMPLE BULLET SLIDE
+% ==============================================================================
+\begin{frame}{Simple Bullet Points}
+\begin{itemize}
+    \item First main point
+    \item Second main point
+    \item Third main point
+\end{itemize}
+\end{frame}
+
+% ==============================================================================
+% EMPHASIS EXAMPLES
+% ==============================================================================
+\begin{frame}{Text Emphasis}
+\begin{itemize}
+    \item Use \textbf{bold} for strong emphasis
+    \item Use \emph{italics} for subtle emphasis
+    \item Use \strong{Dartmouth green} for key terms
+\end{itemize}
+\end{frame}
+
+% ==============================================================================
+% ANIMATED BULLETS (opt-in example)
+% ==============================================================================
+\begin{frame}{Building Content Step-by-Step}
+\begin{itemize}[<+->]
+    \item This point appears first
+    \item Then this point
+    \item Finally this point
+\end{itemize}
+
+\onslide<4->
+\begin{block}{Note}
+Use animations sparingly for emphasis.
+\end{block}
+\end{frame}
+
+% ==============================================================================
+% BLOCK TYPES
+% ==============================================================================
+\section{Blocks}
+
+\begin{frame}{Standard Block}
+\begin{block}{Definition}
+A language model predicts the probability of word sequences.
+\end{block}
+\end{frame}
+
+\begin{frame}{Example Block}
+\begin{exampleblock}{Example}
+GPT-4 is a large language model trained on internet text.
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Alert Block}
+\begin{alertblock}{Warning}
+Always verify AI-generated content for accuracy.
+\end{alertblock}
+\end{frame}
+
+% ==============================================================================
+% TWO-COLUMN LAYOUT
+% ==============================================================================
+\section{Layouts}
+
+\begin{frame}{Two-Column Layout}
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\textbf{Left Column}
+\begin{itemize}
+    \item Point A
+    \item Point B
+\end{itemize}
+\end{column}
+
+\begin{column}{0.45\textwidth}
+\textbf{Right Column}
+\begin{itemize}
+    \item Point X
+    \item Point Y
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ==============================================================================
+% TABLE
+% ==============================================================================
+\begin{frame}{Simple Table}
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Model} & \textbf{Year} & \textbf{Params} \\
+\midrule
+GPT-2 & 2019 & 1.5B \\
+GPT-3 & 2020 & 175B \\
+GPT-4 & 2023 & Unknown \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+% ==============================================================================
+% CODE BLOCK
+% ==============================================================================
+\section{Code}
+
+\begin{frame}[fragile]{Code Example}
+\begin{dartmouthcode}[python]
+def hello():
+    """Simple function example."""
+    print("Hello, Dartmouth!")
+    return True
+\end{dartmouthcode}
+\end{frame}
+
+% ==============================================================================
+% EQUATION
+% ==============================================================================
+\section{Math}
+
+\begin{frame}{Equation}
+The attention mechanism:
+
+\vspace{0.5cm}
+\begin{center}
+$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$
+\end{center}
+\end{frame}
+
+% ==============================================================================
+% SIMPLE TIKZ DIAGRAM
+% ==============================================================================
+\begin{frame}{Simple Diagram}
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2cm,
+    box/.style={rectangle, draw=DartmouthGreen, fill=DartmouthGreen!10,
+                minimum width=2cm, minimum height=0.8cm, thick}
+]
+\node[box] (input) {Input};
+\node[box, right of=input] (process) {Process};
+\node[box, right of=process] (output) {Output};
+
+\draw[->, thick, DartmouthGreen] (input) -- (process);
+\draw[->, thick, DartmouthGreen] (process) -- (output);
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+% ==============================================================================
+% FINAL SLIDE
+% ==============================================================================
+\begin{frame}{Contact}
+\centering
+\Large Thank you!
+
+\vspace{1cm}
+
+\normalsize
+jeremy@dartmouth.edu
+\end{frame}
+
+\end{document}

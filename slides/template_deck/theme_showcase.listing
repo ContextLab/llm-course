@@ -1,0 +1,4 @@
+def hello():
+    """Simple function example."""
+    print("Hello, Dartmouth!")
+    return True
