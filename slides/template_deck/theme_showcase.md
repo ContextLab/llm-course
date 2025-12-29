@@ -99,6 +99,44 @@ $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
 
 ---
 
+# Interleaved text and equations
+
+The softmax function normalizes scores into probabilities:
+
+$$\text{softmax}(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}$$
+
+We scale by the square root of dimension to prevent vanishing gradients:
+
+$$\text{score} = \frac{QK^T}{\sqrt{d_k}}$$
+
+This keeps variance stable during training.
+
+---
+
+# Equations in bullet lists
+
+- The dot product measures similarity between vectors
+- Attention scores: $\text{score}(q, k) = q \cdot k$
+- Scaled version prevents large values:
+
+$$\text{score}(q, k) = \frac{q \cdot k}{\sqrt{d_k}}$$
+
+- Output is weighted sum of values
+
+---
+
+# Equations in numbered lists
+
+1. Compute query, key, value projections
+2. Calculate attention scores:
+
+$$A = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)$$
+
+3. Apply attention to values: $\text{output} = AV$
+4. Project back to model dimension
+
+---
+
 # Simple table
 
 | Model | Year | Params |
