@@ -24,7 +24,6 @@
 \definecolor{purple}{RGB}{156,39,176}
 \definecolor{teal}{RGB}{0,150,136}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -164,7 +163,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 
 \begin{frame}[shrink=5]{RAG Architecture 🏗️}
 \begin{center}
-\begin{tikzpicture}[scale=0.85][
+\begin{tikzpicture}[scale=0.85,
     node distance=1.5cm,
     box/.style={rectangle, rounded corners, draw, fill=blue!20, text width=2.5cm, align=center, minimum height=1cm},
     databox/.style={rectangle, draw, fill=green!20, text width=2.5cm, align=center, minimum height=1cm},
@@ -449,7 +448,7 @@ A neural network architecture where different "expert" sub-networks specialize i
 
 \begin{frame}[shrink=5]{MoE Architecture 🏗️}
 \begin{center}
-\begin{tikzpicture}[scale=0.85][
+\begin{tikzpicture}[scale=0.85,
     node distance=1.2cm,
     expert/.style={rectangle, rounded corners, draw, fill=blue!30, minimum width=1.8cm, minimum height=0.8cm, align=center},
     router/.style={rectangle, rounded corners, draw, fill=orange!40, minimum width=2.5cm, minimum height=0.8cm, align=center},
@@ -722,7 +721,7 @@ Learning representations from unlabeled data by creating pretext tasks where the
 
 \vspace{1em}
 
-\begin{tikzpicture}[scale=0.85][
+\begin{tikzpicture}[scale=0.85,
     node distance=1.5cm,
     imgnode/.style={rectangle, draw, fill=blue!20, minimum size=1cm},
     anchornode/.style={rectangle, draw, fill=green!40, minimum size=1cm},
@@ -801,7 +800,7 @@ where $z_i$ is anchor, $z_i^+$ is positive, and $\{z_j\}$ includes negatives.
 \vspace{0.5em}
 
 \begin{center}
-\begin{tikzpicture}[scale=0.85][
+\begin{tikzpicture}[scale=0.85,
     node distance=1cm,
     box/.style={rectangle, rounded corners, draw, fill=blue!20, minimum width=2cm, minimum height=0.8cm, align=center},
     encoder/.style={rectangle, rounded corners, draw, fill=orange!30, minimum width=2.5cm, minimum height=1.2cm, align=center}

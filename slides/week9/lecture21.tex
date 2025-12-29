@@ -22,7 +22,6 @@
 \definecolor{purple}{RGB}{156,39,176}
 \definecolor{teal}{RGB}{0,150,136}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -189,7 +188,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 
 \begin{frame}[shrink=5]{RAG Architecture 🏗️}
 \begin{center}
-\begin{tikzpicture}[scale=0.85][
+\begin{tikzpicture}[scale=0.85,
     node distance=1.5cm,
     box/.style={rectangle, rounded corners, draw, fill=blue!20, text width=2.5cm, align=center, minimum height=1cm},
     databox/.style={rectangle, draw, fill=green!20, text width=2.5cm, align=center, minimum height=1cm},
@@ -355,7 +354,7 @@ for doc in result['source_documents']:
 
 \begin{frame}{Evolution of RAG Approaches 📈}
 \begin{center}
-\begin{tikzpicture}[scale=0.85][node distance=2.5cm]
+\begin{tikzpicture}[scale=0.85,node distance=2.5cm]
     % Naive RAG
     \node[draw, rectangle, fill=blue!20, text width=3cm, align=center] (naive) {
         \textbf{Naive RAG}\\

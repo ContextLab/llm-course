@@ -25,7 +25,6 @@
 \definecolor{thinkbox}{RGB}{255,245,220}
 \definecolor{discussbox}{RGB}{230,240,255}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -45,14 +44,14 @@
 \newtcolorbox{thinkaboutit}{
     colback=thinkbox,
     colframe=orange,
-    title=💭 Think about it!,
+    title=Think about it!,
     fonttitle=\bfseries
 }
 
 \newtcolorbox{discussion}{
     colback=discussbox,
     colframe=blue,
-    title=💬 Discussion,
+    title=Discussion,
     fonttitle=\bfseries
 }
 
@@ -339,7 +338,7 @@ class GPT(nn.Module):
 
 \begin{frame}[shrink=5]{Two-Stage Training 🎓}
     \begin{center}
-        \begin{tikzpicture}[scale=0.85][node distance=2cm]
+        \begin{tikzpicture}[scale=0.85,node distance=2cm]
             % Stage 1
             \node[draw, rectangle, fill=lightblue!30, minimum width=4cm, minimum height=1.5cm, align=center] (pretrain)
                 {\textbf{Stage 1: Pre-training} \\ Unsupervised learning \\ on massive text corpus};

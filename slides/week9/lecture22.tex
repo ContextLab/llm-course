@@ -24,7 +24,6 @@
 \definecolor{purple}{RGB}{156,39,176}
 \definecolor{teal}{RGB}{0,150,136}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -222,7 +221,7 @@ A neural network architecture where different "expert" sub-networks specialize i
 
 \begin{frame}[shrink=5]{MoE Architecture 🏗️}
 \begin{center}
-\begin{tikzpicture}[scale=0.85][
+\begin{tikzpicture}[scale=0.85,
     node distance=1.2cm,
     expert/.style={rectangle, rounded corners, draw, fill=blue!30, minimum width=1.8cm, minimum height=0.8cm, align=center},
     router/.style={rectangle, rounded corners, draw, fill=orange!40, minimum width=2.5cm, minimum height=0.8cm, align=center},

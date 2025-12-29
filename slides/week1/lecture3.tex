@@ -241,7 +241,7 @@ This simple memory creates the illusion of ELIZA "thinking about" what you said 
 
 \begin{frame}[shrink=5]{Complete ELIZA Flow with Memory 🔄}
 \begin{center}
-\begin{tikzpicture}[scale=0.85][
+\begin{tikzpicture}[scale=0.85,
     node distance=1.1cm,
     box/.style={rectangle, draw, fill=blue!20, minimum width=2.5cm, minimum height=0.7cm, align=center, font=\footnotesize},
     membox/.style={rectangle, draw, fill=green!20, minimum width=2cm, minimum height=0.7cm, align=center, font=\footnotesize},
@@ -416,7 +416,7 @@ Why are we so eager to see intelligence and understanding in machines?
 \node[circle, draw, thick, minimum size=6cm] at (0,0) {};
 
 % Center
-\node[font=\Large\bfseries] at (0,0) {ELIZA\\Effect};
+\node[font=\Large\bfseries, align=center] at (0,0) {ELIZA\\Effect};
 
 % Surrounding factors
 \node[align=center, font=\footnotesize] at (0,2.3) {\textbf{Anthropomorphization}\\We see humans everywhere};
@@ -817,7 +817,7 @@ Reflection \& analysis & 10 \\
 \begin{thinkaboutit}
 Testing is your friend! Try lots of different inputs to find bugs.
 \end{thinkaboutit}
-\end{frame>
+\end{frame}
 
 \begin{frame}[fragile]{Example: Testing Your Implementation 🧪}
 \begin{lstlisting}[basicstyle=\ttfamily\tiny]

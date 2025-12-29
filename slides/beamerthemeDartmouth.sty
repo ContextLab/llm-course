@@ -7,6 +7,7 @@
 % Required packages
 \RequirePackage{tikz}
 \RequirePackage{fontspec}
+\RequirePackage{etoolbox}
 
 % ============================================================================
 % Color Definitions (from Dartmouth Style Guide)
@@ -41,50 +42,28 @@
 % Font Configuration
 % ============================================================================
 
-% Check if Dartmouth Ruzicka fonts are available, otherwise fallback
-\IfFontExistsTF{DartmouthRuzicka-Regular}{
-    \setsansfont{DartmouthRuzicka}[
-        Path=/Users/jmanning/llm-course/admin/,
-        Extension=.ttf,
-        UprightFont=*-Regular,
-        BoldFont=*-Bold,
-        ItalicFont=*-RegularItalic,
-        BoldItalicFont=*-BoldItalic
-    ]
-    % Set up emoji font fallback for LuaLaTeX
-    % Try multiple emoji fonts for cross-platform compatibility
-    \newfontfamily\emojifont{Noto Color Emoji}[Renderer=Harfbuzz]
-    \directlua{
-        luaotfload.add_fallback("emojifallback", {
-            "Noto Color Emoji:mode=harf;",
-            "Apple Color Emoji:mode=harf;",
-            "Segoe UI Emoji:mode=harf;"
-        })
-    }
-    \setsansfont{DartmouthRuzicka}[
-        Path=/Users/jmanning/llm-course/admin/,
-        Extension=.ttf,
-        UprightFont=*-Regular,
-        BoldFont=*-Bold,
-        ItalicFont=*-RegularItalic,
-        BoldItalicFont=*-BoldItalic,
-        RawFeature={fallback=emojifallback}
-    ]
-}{
-    % Fallback to system fonts if Ruzicka not available
-    % Set up emoji font fallback for LuaLaTeX
-    \newfontfamily\emojifont{Noto Color Emoji}[Renderer=Harfbuzz]
-    \directlua{
-        luaotfload.add_fallback("emojifallback", {
-            "Noto Color Emoji:mode=harf;",
-            "Apple Color Emoji:mode=harf;",
-            "Segoe UI Emoji:mode=harf;"
-        })
-    }
-    \setsansfont{Helvetica Neue}[
-        RawFeature={fallback=emojifallback}
-    ]
+% Set up emoji fallback using luaotfload
+% This allows emojis to render in the main font
+% Uses Noto Color Emoji (Linux/CI) and Apple Color Emoji (macOS) as fallbacks
+\directlua{
+    luaotfload.add_fallback("emojifallback", {
+        "NotoColorEmoji:mode=harf;",
+        "Noto Color Emoji:mode=harf;",
+        "Apple Color Emoji:mode=harf;"
+    })
 }
+
+% Dartmouth Ruzicka font with emoji fallback
+% Path relative to the compiled lecture file (which is in slides/weekN/)
+\setsansfont{DartmouthRuzicka}[
+    Path=../../admin/,
+    Extension=.ttf,
+    UprightFont=*-Regular,
+    BoldFont=*-Bold,
+    ItalicFont=*-RegularItalic,
+    BoldItalicFont=*-BoldItalic,
+    RawFeature={fallback=emojifallback}
+]
 
 % ============================================================================
 % Color Theme Settings
@@ -263,6 +242,20 @@
         \progressbar@progressbar
     \end{beamercolorbox}
 }%
+\makeatother
+
+% ============================================================================
+% Standout Frame Template (similar to Metropolis theme)
+% ============================================================================
+
+% Define standout frame option
+\makeatletter
+\define@key{beamerframe}{standout}[true]{%
+    \setbeamercolor{background canvas}{bg=DartmouthGreen}%
+    \setbeamercolor{normal text}{fg=SnowWhite}%
+    \setbeamercolor{frametitle}{fg=SnowWhite, bg=DartmouthGreen}%
+    \usebeamercolor[fg]{normal text}%
+}
 \makeatother
 
 % ============================================================================

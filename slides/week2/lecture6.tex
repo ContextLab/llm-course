@@ -21,7 +21,6 @@
 \definecolor{purple}{RGB}{156,39,176}
 \definecolor{lightred}{RGB}{239,83,80}
 
-\setbeamercolor{frametitle}{bg=darkblue}
 \setbeamercolor{progress bar}{fg=lightblue,bg=lightblue!30}
 
 % Code listing settings
@@ -497,7 +496,7 @@ for text in texts:
     \vspace{0.5em}
     \textbf{Typical architecture:}
     \begin{center}
-        \begin{tikzpicture}[scale=0.85][node distance=1.5cm]
+        \begin{tikzpicture}[scale=0.85,node distance=1.5cm]
             \node[rectangle, draw, fill=lightblue!30, minimum width=2.5cm] (input) {Input Text};
             \node[rectangle, draw, fill=orange!30, minimum width=2.5cm, below of=input, align=center] (bert) {Pre-trained Model\\(BERT, RoBERTa)};
             \node[rectangle, draw, fill=darkgreen!30, minimum width=2.5cm, below of=bert, align=center] (cls) {Classification Head\\(Dense + Softmax)};
@@ -868,7 +867,7 @@ trainer.train()
     \textbf{How the pieces connect:}
 
     \begin{center}
-        \begin{tikzpicture}[scale=0.85][node distance=1cm]
+        \begin{tikzpicture}[scale=0.85,node distance=1cm]
             \node[rectangle, draw, fill=lightblue!30, minimum width=2.5cm] (clean) {Data Cleaning};
             \node[rectangle, draw, fill=orange!30, minimum width=2.5cm, below of=clean] (token) {Tokenization};
             \node[rectangle, draw, fill=purple!30, minimum width=2.5cm, below of=token] (pos) {POS Tagging};

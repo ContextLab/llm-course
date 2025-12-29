@@ -359,7 +359,7 @@ ALBERT-xxlarge & 12 & 4096 & \textbf{235M} \\
 % ============================================================
 % PARAMETER SHARING
 % ============================================================
-\begin{frame}[shrink=10]{Cross-Layer Parameter Sharing 🔗}
+\begin{frame}{Cross-Layer Parameter Sharing 🔗}
 \textbf{How ALBERT achieves parameter efficiency}
 
 \vspace{1em}
@@ -372,7 +372,7 @@ ALBERT-xxlarge & 12 & 4096 & \textbf{235M} \\
 \begin{tikzpicture}[scale=0.6]
     \foreach \y/\label in {0/Layer 1, 1.5/Layer 2, 3/Layer 3} {
         \node[rectangle,draw,fill=blue!30,minimum width=3cm,minimum height=1cm] at (0, \y) {\label};
-        \node[right=0.2cm of {(1.5, \y)}] {\tiny Different weights};
+        \node at (3.5, \y) {\tiny Different weights};
     }
 
     \node at (0, 4.5) {Each layer has};
@@ -394,7 +394,7 @@ ALBERT-xxlarge & 12 & 4096 & \textbf{235M} \\
 
 \begin{center}
 \begin{tikzpicture}[scale=0.6]
-    \node[rectangle,draw,fill=green!30,minimum width=3cm,minimum height=1cm] (shared) at (3, 1.5) {Shared\\Parameters};
+    \node[rectangle,draw,fill=green!30,minimum width=3cm,minimum height=1cm,align=center] (shared) at (3, 1.5) {Shared\\Parameters};
 
     \foreach \y/\label in {0/Layer 1, 1.5/Layer 2, 3/Layer 3} {
         \node[rectangle,draw,fill=orange!30,minimum width=2cm,minimum height=1cm] (layer\y) at (0, \y) {\label};
