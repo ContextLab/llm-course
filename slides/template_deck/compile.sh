@@ -1,10 +1,11 @@
 #!/bin/bash
 #
-# compile.sh - Marp Presentation Compiler with Code Block Processing
+# compile.sh - Marp Presentation Compiler with Code Block and Table Processing
 #
 # This script compiles Marp markdown presentations with automatic features:
 # - Line numbering for all code blocks
 # - Auto-splitting of long code blocks across multiple slides
+# - Auto-splitting of long tables across multiple slides
 # - Continued line numbering across split slides
 # - "continued..." indicators on slides with more content
 #
@@ -17,6 +18,7 @@
 # Options:
 #   -o, --output      Output file (default: <input_basename>.html)
 #   -l, --lines       Max lines per slide for code blocks (default: 20)
+#   -r, --rows        Max data rows per slide for tables (default: 8)
 #   -f, --format      Output format: html, pdf, pptx (default: html)
 #   -t, --theme       Theme directory (default: ./themes/)
 #   -h, --help        Show this help message
@@ -28,6 +30,7 @@
 #   ./compile.sh my_deck.md                # Compile my_deck.md to HTML
 #   ./compile.sh deck.md -o output.html    # Specify output file
 #   ./compile.sh deck.md -l 15             # Use 15 lines per slide for code
+#   ./compile.sh deck.md -r 6              # Use 6 data rows per slide for tables
 #   ./compile.sh deck.md -f pdf            # Output as PDF
 #
 # Requirements:
@@ -47,6 +50,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INPUT_FILE="theme_showcase.md"
 OUTPUT_FILE=""
 MAX_LINES_PER_SLIDE=20
+MAX_TABLE_ROWS=8
 OUTPUT_FORMAT="html"
 THEME_DIR="./themes/"
 NO_SPLIT=false
@@ -86,6 +90,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -l|--lines)
             MAX_LINES_PER_SLIDE="$2"
+            shift 2
+            ;;
+        -r|--rows)
+            MAX_TABLE_ROWS="$2"
             shift 2
             ;;
         -f|--format)
@@ -150,9 +158,10 @@ trap "if [[ \$KEEP_TEMP != true ]]; then rm -f '$TEMP_FILE'; fi" EXIT
 log_info "Processing: $INPUT_FILE"
 log_info "Output: $OUTPUT_FILE"
 log_info "Max lines per slide: $MAX_LINES_PER_SLIDE"
+log_info "Max table rows per slide: $MAX_TABLE_ROWS"
 
 # Build Python processing command
-PYTHON_CMD="python3 \"$PROCESS_SCRIPT\" \"$INPUT_FILE\" \"$TEMP_FILE\" --max-lines $MAX_LINES_PER_SLIDE"
+PYTHON_CMD="python3 \"$PROCESS_SCRIPT\" \"$INPUT_FILE\" \"$TEMP_FILE\" --max-lines $MAX_LINES_PER_SLIDE --max-table-rows $MAX_TABLE_ROWS"
 if [[ "$NO_SPLIT" == true ]]; then
     PYTHON_CMD="$PYTHON_CMD --no-split"
 fi

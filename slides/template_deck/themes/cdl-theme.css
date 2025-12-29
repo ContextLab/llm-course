@@ -343,17 +343,30 @@ mark {
 table {
     border-spacing: 0;
     border-collapse: collapse;
-    margin: 1em auto 0;
-    font-size: 0.8em;
+    margin: 0.5em auto 0;
+    font-size: 0.7em;
     font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
-    border: 4px solid #0a2518;
+    border: 3px solid #0a2518;
+    width: 95%;
+    max-width: 95%;
+    table-layout: fixed;
 }
 
 table th,
 table td {
-    padding: 0.5em 1em;
+    padding: 0.4em 0.6em;
     text-align: center;
-    border: 3px solid #0a2518;
+    vertical-align: middle;
+    border: 2px solid #0a2518;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+/* Wrapped cells get left-aligned via JavaScript adding this class */
+table td.wrapped-text {
+    text-align: left !important;
+    vertical-align: top;
 }
 
 table th {
@@ -725,14 +738,16 @@ section:not(.lead):not(#\31)::before {
     pointer-events: none !important;
 }
 
-/* Title at top */
+/* Title at top - ensure minimum spacing from slide edge */
 section:not(.lead):not(#\31) h1 {
     flex-shrink: 0 !important;
     text-align: center !important;
-    margin: 10px 0 0.5em 0 !important;
+    margin: 0 0 0.3em 0 !important;
+    padding-top: 15px !important;
     width: 100% !important;
     position: relative !important;
     z-index: 1 !important;
+    min-height: 1.5em !important;
 }
 
 /* Content elements - stack vertically */
@@ -903,6 +918,98 @@ pre code.has-line-numbers .line-num {
     font-size: 16pt !important;
     color: #0a2518 !important;
     font-style: normal !important;
+}
+
+/* Auto-split table continuation indicator */
+.table-continued-indicator,
+.table-continued-indicator-last {
+    display: block !important;
+    text-align: right !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 16pt !important;
+    color: #0a2518 !important;
+    font-style: normal !important;
+}
+
+/* Table slides: stack table and continued indicator vertically */
+section:not(.lead):not(#\31):has(.table-continued-indicator),
+section:not(.lead):not(#\31):has(.table-continued-indicator-last) {
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: 100px !important;
+}
+
+section:not(.lead):not(#\31) > .table-continued-indicator {
+    position: absolute !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Last slide in table sequence: full positioning with slight left shift */
+section:not(.lead):not(#\31) > .table-continued-indicator-last {
+    position: absolute !important;
+    bottom: 10px !important;
+    right: 20px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Continuation tables - same styling as regular tables */
+table.table-continuation {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin: 0.5em auto 0;
+    font-size: 0.7em;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    border: 3px solid #0a2518;
+    width: 95%;
+    max-width: 95%;
+    table-layout: fixed;
+}
+
+/* Split tables - prevent vertical centering and auto-scaling */
+/* These tables are part of a multi-slide sequence and should maintain consistent sizing */
+
+/* The slide containing a split table should NOT vertically center its content */
+section:not(.lead):not(#\31):has(table.split-table) {
+    justify-content: flex-start !important;
+    align-content: flex-start !important;
+}
+
+/* Override the auto margins that cause vertical centering */
+section:not(.lead):not(#\31):has(table.split-table) > *:not(h1):first-of-type {
+    margin-top: 0.5em !important;
+}
+
+section:not(.lead):not(#\31):has(table.split-table) > *:not(h1):last-of-type {
+    margin-bottom: 0 !important;
+}
+
+table.split-table {
+    margin-top: 0.5em !important;
+    margin-bottom: 0 !important;
+    align-self: flex-start !important;
+    /* Fixed font size for split tables - must fit 8 rows consistently */
+    font-size: 0.55em !important;
+}
+
+/* Override flexbox centering for slides containing split tables */
+section:not(.lead):not(#\31):has(table.split-table) > table.split-table {
+    align-self: flex-start !important;
+    margin-top: 0.5em !important;
+    margin-bottom: 0 !important;
+}
+
+/* Prevent the first-of-type auto margin from centering split tables */
+section:not(.lead):not(#\31) > table.split-table:first-of-type {
+    margin-top: 0.5em !important;
+}
+
+section:not(.lead):not(#\31) > table.split-table:last-of-type {
+    margin-bottom: 0 !important;
 }
 
 /* ============================================

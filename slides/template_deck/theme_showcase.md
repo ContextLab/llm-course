@@ -147,6 +147,43 @@ $$A = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)$$
 
 ---
 
+# Detailed table
+
+| Model | Architecture | Training Data | Key Capabilities |
+|-------|--------------|---------------|------------------|
+| BERT | Encoder-only transformer | BooksCorpus, Wikipedia | Bidirectional context understanding, masked language modeling |
+| GPT-3 | Decoder-only transformer | Common Crawl, books, Wikipedia | Few-shot learning, text generation, code completion |
+| T5 | Encoder-decoder transformer | C4 (Colossal Clean Crawled Corpus) | Text-to-text framework, translation, summarization |
+| LLaMA | Decoder-only transformer | Publicly available data only | Open weights, efficient inference, fine-tuning friendly |
+| Claude | Decoder-only transformer | Web, books, code, conversations | Constitutional AI, long context, instruction following |
+
+---
+
+# Long table (auto-split demo)
+
+| Model | Architecture | Training Data | Key Capabilities |
+|-------|--------------|---------------|------------------|
+| BERT | Encoder-only transformer | BooksCorpus, Wikipedia | Bidirectional context, masked LM |
+| GPT-2 | Decoder-only transformer | WebText | Text generation, zero-shot |
+| GPT-3 | Decoder-only transformer | Common Crawl, books | Few-shot learning, code completion |
+| T5 | Encoder-decoder transformer | C4 Corpus | Text-to-text, translation |
+| XLNet | Transformer-XL | BooksCorpus, Wikipedia | Permutation LM, long context |
+| RoBERTa | Encoder-only transformer | Extended pretraining | Robust optimization of BERT |
+| ALBERT | Encoder-only transformer | Same as BERT | Parameter sharing, efficient |
+| ELECTRA | Encoder-only transformer | Same as BERT | Replaced token detection |
+| DeBERTa | Encoder-only transformer | Wikipedia, books | Disentangled attention |
+| LLaMA | Decoder-only transformer | Public data only | Open weights, efficient |
+| LLaMA 2 | Decoder-only transformer | 2T tokens | RLHF, chat-optimized |
+| Mistral | Decoder-only transformer | Undisclosed | Sliding window attention |
+| Claude | Decoder-only transformer | Web, books, code | Constitutional AI |
+| Claude 2 | Decoder-only transformer | Extended training | Longer context, improved |
+| GPT-4 | Decoder-only transformer | Undisclosed | Multimodal, reasoning |
+| Gemini | Decoder-only transformer | Multimodal data | Native multimodal |
+| PaLM | Decoder-only transformer | 780B tokens | Pathways, chain-of-thought |
+| Falcon | Decoder-only transformer | RefinedWeb | Open source, efficient |
+
+---
+
 # Two column layout
 
 <div style="display: flex; gap: 2em;">
