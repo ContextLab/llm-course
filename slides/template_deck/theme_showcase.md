@@ -300,12 +300,12 @@ The quadratic memory complexity of attention limits context length.
     <span class="emoji emoji-xl emoji-bg emoji-bg-green">🎓</span>
     <span class="label">Students</span>
   </div>
-  <span class="emoji emoji-lg">➡️</span>
+  <span class="flow-arrow-lg"></span>
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-teal">🤖</span>
     <span class="label">LLM</span>
   </div>
-  <span class="emoji emoji-lg">➡️</span>
+  <span class="flow-arrow-lg"></span>
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-orange">💡</span>
     <span class="label">Insights</span>
@@ -424,12 +424,12 @@ Perfect for title slides or featuring a single concept prominently.
     <span class="emoji emoji-xl emoji-bg emoji-bg-green">📚</span>
     <span class="label">Training data</span>
   </div>
-  <span class="emoji emoji-lg">➡️</span>
+  <span class="flow-arrow-lg"></span>
   <div class="emoji-labeled">
     <span class="emoji emoji-xl emoji-bg emoji-bg-teal">🤖</span>
     <span class="label">Language model</span>
   </div>
-  <span class="emoji emoji-lg">➡️</span>
+  <span class="flow-arrow-lg"></span>
   <div class="emoji-labeled">
     <span class="emoji emoji-xl emoji-bg emoji-bg-orange">💬</span>
     <span class="label">Generated text</span>
@@ -438,41 +438,247 @@ Perfect for title slides or featuring a single concept prominently.
 
 ---
 
-# Diagram container example
+# Diagram example (local SVG)
 
 <div class="diagram-container">
 
-*Diagram placeholder - external Kroki.io service unavailable*
+![Simple flowchart: Input to Process to Output](images/flowchart_local.svg)
 
 </div>
 
-<div class="diagram-caption">Diagrams rendered via Kroki.io (Mermaid, GraphViz, PlantUML)</div>
+<div class="diagram-caption">Local SVG diagram - works offline without external services</div>
 
-Note: For working diagrams, generate URLs at [kroki.io](https://kroki.io) and embed as images.
+Tip: Store diagrams as SVG files in the `images/` folder for reliable offline rendering.
 
 ---
 
-# Chart container example
+# Bar chart example
 
 <div class="chart-container">
-  <canvas id="demoChart"></canvas>
+  <canvas id="barChart"></canvas>
 </div>
 
-<div class="chart-caption">Model parameter comparison (Chart.js)</div>
+<div class="chart-caption">Model parameter comparison (billions)</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-new Chart(document.getElementById('demoChart'), {
+new Chart(document.getElementById('barChart'), {
   type: 'bar',
   data: {
-    labels: ['GPT-2', 'GPT-3', 'LLaMA', 'Claude'],
+    labels: ['GPT-2', 'GPT-3', 'LLaMA', 'Mistral', 'Claude'],
     datasets: [{
-      label: 'Parameters (B)',
-      data: [1.5, 175, 70, 52],
-      backgroundColor: ['#00693e', '#2d6a4f', '#1a5276', '#1b4332']
+      data: [1.5, 175, 70, 7, 52],
+      backgroundColor: ['#00693e', '#14b8a6', '#0a2518', '#00693e', '#14b8a6'],
+      borderColor: ['#00693e', '#14b8a6', '#0a2518', '#00693e', '#14b8a6'],
+      borderWidth: 2
     }]
   },
-  options: { responsive: true, maintainAspectRatio: true }
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {
+        ticks: { font: { size: 18, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        grid: { display: false }
+      },
+      y: {
+        ticks: { font: { size: 16, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        title: { display: true, text: 'Parameters (B)', font: { size: 18, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        grid: { color: 'rgba(0, 105, 62, 0.15)' }
+      }
+    }
+  }
+});
+</script>
+
+---
+
+# Line chart example
+
+<div class="chart-container">
+  <canvas id="lineChart"></canvas>
+</div>
+
+<div class="chart-caption">Training loss over epochs</div>
+
+<script>
+new Chart(document.getElementById('lineChart'), {
+  type: 'line',
+  data: {
+    labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+    datasets: [{
+      label: 'Training Loss',
+      data: [2.8, 2.1, 1.6, 1.3, 1.1, 0.95, 0.85, 0.78, 0.73, 0.70],
+      borderColor: '#00693e',
+      backgroundColor: 'rgba(0, 105, 62, 0.1)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 6,
+      pointBackgroundColor: '#00693e',
+      borderWidth: 3
+    }, {
+      label: 'Validation Loss',
+      data: [2.9, 2.3, 1.9, 1.6, 1.45, 1.35, 1.30, 1.28, 1.27, 1.27],
+      borderColor: '#14b8a6',
+      backgroundColor: 'rgba(20, 184, 166, 0.1)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 6,
+      pointBackgroundColor: '#14b8a6',
+      borderWidth: 3
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        labels: { font: { size: 16, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518', usePointStyle: true, padding: 20 }
+      }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Epoch', font: { size: 18, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        ticks: { font: { size: 16, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        grid: { color: 'rgba(0, 105, 62, 0.1)' }
+      },
+      y: {
+        title: { display: true, text: 'Loss', font: { size: 18, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        ticks: { font: { size: 16, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        grid: { color: 'rgba(0, 105, 62, 0.15)' }
+      }
+    }
+  }
+});
+</script>
+
+---
+
+# Scatter plot example
+
+<div class="chart-container">
+  <canvas id="scatterChart"></canvas>
+</div>
+
+<div class="chart-caption">Model size vs. benchmark performance</div>
+
+<script>
+new Chart(document.getElementById('scatterChart'), {
+  type: 'scatter',
+  data: {
+    datasets: [{
+      label: 'Open Source',
+      data: [
+        {x: 7, y: 62}, {x: 13, y: 68}, {x: 34, y: 75}, {x: 70, y: 82}, {x: 8, y: 64}
+      ],
+      backgroundColor: '#00693e',
+      borderColor: '#00693e',
+      pointRadius: 12,
+      pointHoverRadius: 15
+    }, {
+      label: 'Proprietary',
+      data: [
+        {x: 175, y: 86}, {x: 52, y: 84}, {x: 340, y: 90}, {x: 540, y: 92}
+      ],
+      backgroundColor: '#14b8a6',
+      borderColor: '#14b8a6',
+      pointRadius: 12,
+      pointHoverRadius: 15
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        labels: { font: { size: 16, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518', usePointStyle: true, padding: 20 }
+      }
+    },
+    scales: {
+      x: {
+        type: 'logarithmic',
+        title: { display: true, text: 'Parameters (B)', font: { size: 18, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        ticks: { font: { size: 16, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        grid: { color: 'rgba(0, 105, 62, 0.1)' }
+      },
+      y: {
+        title: { display: true, text: 'Benchmark Score', font: { size: 18, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        ticks: { font: { size: 16, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        grid: { color: 'rgba(0, 105, 62, 0.15)' },
+        min: 50,
+        max: 100
+      }
+    }
+  }
+});
+</script>
+
+---
+
+# Grouped bar chart example
+
+<div class="chart-container">
+  <canvas id="groupedBarChart"></canvas>
+</div>
+
+<div class="chart-caption">Model performance across different tasks</div>
+
+<script>
+new Chart(document.getElementById('groupedBarChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Reasoning', 'Coding', 'Math', 'Writing'],
+    datasets: [{
+      label: 'GPT-4',
+      data: [92, 88, 85, 90],
+      backgroundColor: '#00693e',
+      borderColor: '#00693e',
+      borderWidth: 2
+    }, {
+      label: 'Claude',
+      data: [90, 85, 82, 93],
+      backgroundColor: '#14b8a6',
+      borderColor: '#14b8a6',
+      borderWidth: 2
+    }, {
+      label: 'LLaMA',
+      data: [78, 72, 70, 76],
+      backgroundColor: '#0a2518',
+      borderColor: '#0a2518',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        labels: { font: { size: 16, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518', padding: 20 }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { font: { size: 18, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        grid: { display: false }
+      },
+      y: {
+        title: { display: true, text: 'Score (%)', font: { size: 18, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        ticks: { font: { size: 16, family: 'Avenir LT Std, Avenir, sans-serif' }, color: '#0a2518' },
+        grid: { color: 'rgba(0, 105, 62, 0.15)' },
+        min: 50,
+        max: 100
+      }
+    }
+  }
 });
 </script>
 
@@ -480,29 +686,28 @@ new Chart(document.getElementById('demoChart'), {
 
 # Course information
 
-<div style="display: flex; gap: 2em;">
-<div>
-
-**Next steps**
-- Review: Chapter 3 of *Speech and Language Processing*
-- Explore: Hugging Face Transformers documentation
-- Try: Build a simple chatbot with the provided templates
-
-**Assignments**
-- Problem Set 2 due next Friday
-- Final project proposal due in 2 weeks
-
+<div class="emoji-row" style="margin-top: 0.5em;">
+  <div class="emoji-col">
+    <span class="emoji emoji-lg emoji-bg emoji-bg-green">📚</span>
+    <span class="label"><strong>Resources</strong></span>
+    <span class="label">Canvas &bull; GitHub</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-lg emoji-bg emoji-bg-teal">🕐</span>
+    <span class="label"><strong>Office hours</strong></span>
+    <span class="label">Tue 2-4pm, Moore 354</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-lg emoji-bg emoji-bg-blue">✉️</span>
+    <span class="label"><strong>Contact</strong></span>
+    <span class="label">jeremy@dartmouth.edu</span>
+  </div>
 </div>
-<div>
 
-**Course resources**
-- Canvas: Course materials and submissions
-- GitHub: Code examples and notebooks
-- Office hours: Tuesdays 2-4pm, Moore 354
+<div class="note-box" style="margin-top: 1.5em;">
 
-**Contact**
-- Email: jeremy@dartmouth.edu
-- Slack: #psyc5107-discussion
+**This week:** Review Chapter 3 of *Speech and Language Processing* and explore the Hugging Face docs.
 
-</div>
+**Due soon:** Problem Set 2 (next Friday) &bull; Project proposal (2 weeks)
+
 </div>

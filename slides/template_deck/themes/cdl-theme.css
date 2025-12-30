@@ -522,7 +522,7 @@ b i {
     line-height: 1.1;
 }
 
-/* Multi-column layout - side by side with moderate gap, centered */
+/* Multi-column layout - side by side with compact gap, centered */
 section>div[style*="display: flex"],
 section>div[style*="display:flex"],
 section>div[style*="gap"],
@@ -533,9 +533,11 @@ section>div[style*="gap"],
     flex-direction: row !important;
     justify-content: center !important;
     align-items: flex-start !important;
-    gap: 2.5em !important;
-    width: 100% !important;
+    gap: 1.5em !important;
+    width: auto !important;
+    max-width: 100% !important;
     flex-wrap: nowrap !important;
+    margin: 0 auto !important;
 }
 
 section>div[style*="display: flex"]>div,
@@ -544,8 +546,8 @@ section>div[style*="gap"]>div,
 .columns>div,
 .two-column>div,
 .multi-column>div {
-    flex: 1 1 0 !important;
-    max-width: 50% !important;
+    flex: 0 1 auto !important;
+    max-width: 45% !important;
     min-width: 0 !important;
 }
 
@@ -719,13 +721,14 @@ section:not(.lead):not(#\31) {
 }
 
 /* Content elements - 110% of original */
+/* Note: Exclude callout boxes from div scaling - they have their own sizing */
 section:not(.lead):not(#\31) ul,
 section:not(.lead):not(#\31) ol,
 section:not(.lead):not(#\31) p,
 section:not(.lead):not(#\31) blockquote,
 section:not(.lead):not(#\31) table,
 section:not(.lead):not(#\31) pre,
-section:not(.lead):not(#\31) div {
+section:not(.lead):not(#\31) div:not(.callout):not(.note-box):not(.example-box):not(.warning-box) {
     font-size: 1.19em;
 }
 
@@ -1034,6 +1037,49 @@ section:not(.lead):not(#\31) > table.split-table:last-of-type {
 }
 
 /* ============================================
+   DENSE CONTENT SLIDES - Prevent title cut-off
+   For slides with tables (auto-scaled) or callout boxes,
+   disable vertical centering to keep titles visible.
+   This matches the split-table behavior but applies to
+   non-split tables and callout boxes.
+   ============================================ */
+
+/* Regular table slides (non-split) - prevent vertical centering */
+/* The :not(.split-table) ensures we don't double-apply to split tables */
+section:not(.lead):not(#\31):has(table:not(.split-table)) {
+    justify-content: flex-start !important;
+    align-content: flex-start !important;
+}
+
+section:not(.lead):not(#\31):has(table:not(.split-table)) > *:not(h1):first-of-type {
+    margin-top: 0.5em !important;
+}
+
+section:not(.lead):not(#\31):has(table:not(.split-table)) > *:not(h1):last-of-type {
+    margin-bottom: 0 !important;
+}
+
+/* Callout box slides - prevent vertical centering */
+section:not(.lead):not(#\31):has(.note-box),
+section:not(.lead):not(#\31):has(.example-box),
+section:not(.lead):not(#\31):has(.warning-box) {
+    justify-content: flex-start !important;
+    align-content: flex-start !important;
+}
+
+section:not(.lead):not(#\31):has(.note-box) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.example-box) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.warning-box) > *:not(h1):first-of-type {
+    margin-top: 0.5em !important;
+}
+
+section:not(.lead):not(#\31):has(.note-box) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.example-box) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.warning-box) > *:not(h1):last-of-type {
+    margin-bottom: 0 !important;
+}
+
+/* ============================================
    Pygments Syntax Highlighting (Dartmouth theme)
    ============================================ */
 
@@ -1136,21 +1182,29 @@ section:not(.lead):not(#\31) > table.split-table:last-of-type {
    ============================================ */
 
 /* Base callout box styling */
+/* Note: Callout boxes are excluded from the 1.19em div scaling rule */
 .callout,
 .note-box,
 .example-box,
 .warning-box {
     display: block !important;
     border-radius: 6px;
-    padding: 0.35em 0.7em 0.35em 0.7em;
-    margin: 0.2em auto !important;
+    padding: 0.5em 0.8em 0.6em 0.8em;
+    margin: 0.3em auto !important;
     width: 85% !important;
     max-width: 85% !important;
     text-align: left !important;
-    font-size: 0.55em;
-    line-height: 1.25;
+    /* Use relative em sizing - without 1.19em scaling, 0.65em = ~22.75px */
+    font-size: 0.65em;
+    line-height: 1.3;
     position: relative;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Ensure content fits within box - allow box to grow */
+    overflow: visible;
+    height: auto !important;
+    min-height: fit-content !important;
+    /* Prevent box from being cut off by slide boundaries */
+    max-height: none !important;
 }
 
 /* Callout box labels - common styling */
@@ -1252,6 +1306,32 @@ section:not(.lead):not(#\31) > table.split-table:last-of-type {
     background-color: rgba(218, 165, 32, 0.18);
 }
 
+/* Slides with callout boxes: disable vertical centering to prevent bottom cutoff */
+/* Note: Must override the general content slide padding which uses !important */
+section:not(.lead):not(#\31):has(> .callout),
+section:not(.lead):not(#\31):has(> .note-box),
+section:not(.lead):not(#\31):has(> .example-box),
+section:not(.lead):not(#\31):has(> .warning-box) {
+    justify-content: flex-start !important;
+    /* Reduce bottom padding to give more room for content - use full padding declaration */
+    padding: 20px 40px 30px 40px !important;
+}
+
+/* Override auto-margin vertical centering for callout slides */
+section:not(.lead):not(#\31):has(> .callout) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .note-box) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .example-box) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .warning-box) > *:not(h1):first-of-type {
+    margin-top: 0.3em !important;
+}
+
+section:not(.lead):not(#\31):has(> .callout) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .note-box) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .example-box) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .warning-box) > *:not(h1):last-of-type {
+    margin-bottom: 0 !important;
+}
+
 /* Override grid/flex rules for callout boxes on content slides */
 section:not(.lead):not(#\31) > .callout,
 section:not(.lead):not(#\31) > .note-box,
@@ -1259,6 +1339,14 @@ section:not(.lead):not(#\31) > .example-box,
 section:not(.lead):not(#\31) > .warning-box {
     align-self: center !important;
     justify-self: center !important;
+    /* Ensure proper sizing and no overflow */
+    height: auto !important;
+    min-height: fit-content !important;
+    max-height: none !important;
+    overflow: visible !important;
+    /* Proper margins */
+    margin-top: 0.3em !important;
+    margin-bottom: 0.3em !important;
 }
 
 /* ============================================
@@ -1291,11 +1379,105 @@ section:not(.lead):not(#\31) > .warning-box {
     border-radius: 8px;
 }
 
-.emoji-bg-orange { background-color: #f97316; }
-.emoji-bg-teal { background-color: #14b8a6; }
-.emoji-bg-green { background-color: #00693e; }
-.emoji-bg-blue { background-color: #3b82f6; }
-.emoji-bg-gray { background-color: #9ca3af; }
+.emoji-bg-orange { background-color: rgba(249, 115, 22, 0.5); }
+.emoji-bg-teal { background-color: rgba(20, 184, 166, 0.5); }
+.emoji-bg-green { background-color: rgba(0, 105, 62, 0.5); }
+.emoji-bg-blue { background-color: rgba(59, 130, 246, 0.5); }
+.emoji-bg-gray { background-color: rgba(156, 163, 175, 0.5); }
+
+/* CSS Arrow for flow diagrams - replaces arrow emoji */
+.flow-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    align-self: center;
+}
+
+/* Triangle arrow using CSS borders - Dartmouth green */
+.flow-arrow::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 30px solid #00693e;
+}
+
+/* Arrow with stem for more visibility */
+.flow-arrow-stem {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 60px;
+    align-self: center;
+    position: relative;
+}
+
+.flow-arrow-stem::before {
+    content: '';
+    display: block;
+    width: 35px;
+    height: 8px;
+    background-color: #00693e;
+    position: absolute;
+    left: 10px;
+}
+
+.flow-arrow-stem::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 18px solid transparent;
+    border-bottom: 18px solid transparent;
+    border-left: 28px solid #00693e;
+    position: absolute;
+    right: 10px;
+}
+
+/* Smaller arrow variant */
+.flow-arrow-sm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    align-self: center;
+}
+
+.flow-arrow-sm::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 14px solid transparent;
+    border-bottom: 14px solid transparent;
+    border-left: 22px solid #00693e;
+}
+
+/* Large arrow variant */
+.flow-arrow-lg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    align-self: center;
+}
+
+.flow-arrow-lg::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 26px solid transparent;
+    border-bottom: 26px solid transparent;
+    border-left: 40px solid #00693e;
+}
 
 /* Grayscale effect for "inactive" emojis */
 .emoji-gray,
@@ -1373,7 +1555,23 @@ section:not(.lead):not(#\31) > .warning-box {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5em;
+    gap: 2em;
+}
+
+/* Parent node in hierarchy - add vertical stem going down */
+.emoji-hierarchy > .emoji-col {
+    position: relative;
+}
+
+.emoji-hierarchy > .emoji-col::after {
+    content: '';
+    position: absolute;
+    bottom: -2em;
+    left: 50%;
+    width: 4px;
+    height: calc(2em + 25px);
+    background-color: #00693e;
+    transform: translateX(-50%);
 }
 
 .emoji-hierarchy-row {
@@ -1383,26 +1581,35 @@ section:not(.lead):not(#\31) > .warning-box {
     position: relative;
 }
 
-/* Horizontal line connector for hierarchy */
+/* Horizontal line connector for hierarchy - spans full width of children */
 .emoji-hierarchy-row.with-connector::before {
     content: '';
     position: absolute;
     top: -25px;
-    left: 25%;
-    right: 25%;
-    height: 2px;
-    background-color: #9ca3af;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: #00693e;
 }
 
-/* Vertical line from parent */
+/* Remove the center vertical connector - parent handles this now */
 .emoji-hierarchy-row.with-connector::after {
+    content: none;
+}
+
+/* Each child in the hierarchy row gets a vertical drop line */
+.emoji-hierarchy-row.with-connector > .emoji-col {
+    position: relative;
+}
+
+.emoji-hierarchy-row.with-connector > .emoji-col::before {
     content: '';
     position: absolute;
     top: -25px;
     left: 50%;
-    width: 2px;
+    width: 4px;
     height: 25px;
-    background-color: #9ca3af;
+    background-color: #00693e;
     transform: translateX(-50%);
 }
 
@@ -1430,9 +1637,10 @@ section:not(.lead):not(#\31) > .warning-box {
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    width: 80% !important;
-    max-height: 55vh !important;
-    margin: 0.5em auto !important;
+    width: 85% !important;
+    height: 65vh !important;
+    max-height: 65vh !important;
+    margin: 0.3em auto !important;
 }
 
 .chart-container canvas {
@@ -1441,11 +1649,18 @@ section:not(.lead):not(#\31) > .warning-box {
 }
 
 /* Caption styling for diagrams and charts */
-.diagram-caption,
-.chart-caption {
+.diagram-caption {
     text-align: center !important;
     font-size: 0.7em !important;
     font-style: italic !important;
     color: #6b7c85 !important;
+    margin-top: 0.3em !important;
+}
+
+.chart-caption {
+    text-align: center !important;
+    font-size: 0.7em !important;
+    font-style: normal !important;
+    color: rgba(10, 37, 24, 0.8) !important;
     margin-top: 0.3em !important;
 }

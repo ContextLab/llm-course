@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="600" height="200">
+  <!-- CDL Theme Colors: Dartmouth Green #00693e, Teal #14b8a6, Blue #3b82f6 -->
+
+  <!-- Definitions for arrow markers -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#00693e"/>
+    </marker>
+  </defs>
+
+  <!-- Input Box -->
+  <rect x="30" y="60" width="140" height="80" rx="10" ry="10"
+        fill="rgba(0, 105, 62, 0.15)" stroke="#00693e" stroke-width="3"/>
+  <text x="100" y="105" font-family="Arial, sans-serif" font-size="20"
+        font-weight="bold" fill="#00693e" text-anchor="middle">Input</text>
+
+  <!-- Arrow 1: Input to Process -->
+  <line x1="170" y1="100" x2="210" y2="100" stroke="#00693e" stroke-width="3" marker-end="url(#arrowhead)"/>
+
+  <!-- Process Box -->
+  <rect x="230" y="60" width="140" height="80" rx="10" ry="10"
+        fill="rgba(20, 184, 166, 0.15)" stroke="#14b8a6" stroke-width="3"/>
+  <text x="300" y="105" font-family="Arial, sans-serif" font-size="20"
+        font-weight="bold" fill="#0d7377" text-anchor="middle">Process</text>
+
+  <!-- Arrow 2: Process to Output -->
+  <line x1="370" y1="100" x2="410" y2="100" stroke="#00693e" stroke-width="3" marker-end="url(#arrowhead)"/>
+
+  <!-- Output Box -->
+  <rect x="430" y="60" width="140" height="80" rx="10" ry="10"
+        fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="3"/>
+  <text x="500" y="105" font-family="Arial, sans-serif" font-size="20"
+        font-weight="bold" fill="#2563eb" text-anchor="middle">Output</text>
+</svg>
