@@ -26,16 +26,16 @@ Winter 2026
 **Associate Professor, Psychological and Brain Sciences**
 Dartmouth College
 
-<div class="info-box" data-title="Lab">
+<div class="info-box" data-title="Contextual Dynamics Lab">
 
-**Contextual Dynamics Lab** | Moore Hall 416
+Moore Hall 416
 <span class="emoji-inline">&#x1F310;</span> [context-lab.com](https://www.context-lab.com) | <span class="emoji-inline">&#x1F4BB;</span> [github.com/ContextLab](https://github.com/ContextLab)
 
 </div>
 
 <div class="logo-row" style="margin-top: 0.3em;">
 <img src="../../figures/cdl_logo.png" alt="CDL" title="Contextual Dynamics Lab" style="min-height: 55px; height: auto;">
-<img src="../../figures/github_logo.jpg" alt="GitHub" title="GitHub" style="min-height: 55px; height: auto;">
+<img src="../../figures/github_logo.png" alt="GitHub" title="GitHub" style="min-height: 55px; height: auto;">
 </div>
 
 </div>
@@ -95,30 +95,44 @@ Dartmouth College
 
 </div>
 
+</div>
+
+---
+
+# Research and collaborations
+
+<div class="instructor-grid">
+
 <div>
 
 #### Industry collaborations
 
-<div class="logo-row">
-<img src="../../figures/intel_labs_logo.png" alt="Intel Labs" title="Intel Labs" style="min-height: 45px; height: auto;">
-<img src="../../figures/meta_logo.png" alt="Meta" title="Meta" style="min-height: 45px; height: auto;">
-<img src="../../figures/google_logo.webp" alt="Google" title="Google" style="min-height: 45px; height: auto;">
-<img src="../../figures/amazon_logo.png" alt="Amazon" title="Amazon" style="min-height: 45px; height: auto;">
+<div class="logo-row logo-row-md">
+<img src="../../figures/intel_labs_logo.png" alt="Intel Labs" title="Intel Labs">
+<img src="../../figures/meta_logo.png" alt="Meta" title="Meta">
+<img src="../../figures/google_logo.webp" alt="Google" title="Google">
+<img src="../../figures/amazon_logo.png" alt="Amazon" title="Amazon">
 </div>
 
 </div>
 
 <div>
 
-#### Funding
+#### Research funding
 
-<div class="logo-row">
-<img src="../../figures/nih_logo.png" alt="NIH" title="National Institutes of Health" style="min-height: 50px; height: auto;">
-<img src="../../figures/nsf_logo.webp" alt="NSF" title="National Science Foundation" style="min-height: 50px; height: auto;">
-<img src="../../figures/darpa_logo.jpg" alt="DARPA" title="DARPA" style="min-height: 50px; height: auto;">
+<div class="logo-row logo-row-md">
+<img src="../../figures/nih_logo.png" alt="NIH" title="National Institutes of Health">
+<img src="../../figures/nsf_logo.png" alt="NSF" title="National Science Foundation">
+<img src="../../figures/darpa_logo.png" alt="DARPA" title="DARPA">
 </div>
 
 </div>
+
+</div>
+
+<div class="tip-box" style="margin-top: 1em;">
+
+**Open source software and open courses:** All lab code is freely available on GitHub, and course materials are openly accessible to promote reproducible science and education.
 
 </div>
 
