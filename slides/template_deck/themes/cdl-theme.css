@@ -2726,53 +2726,99 @@ section:not(.lead):not(#\31):has(.instructor-grid)>*:not(h1):last-of-type {
     border-bottom-color: var(--dartmouth-green);
 }
 
-/* Main Content Grid: 2 columns */
+/* Main Content Grid */
 .content-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.2em;
-    /* Slightly narrower column gap */
-    flex-grow: 1;
-    /* Ensure grid takes up remaining height to allow columns to stretch */
+    flex-grow: 0;
+    /* Disable grow to allow margin centering */
     height: auto;
-    align-items: start;
-    /* Allow columns to be uneven height naturally, or stretch? If 'height: auto' on col-flex, they won't stretch.
-                           User wants bottoms brought up. This implies independent heights are okay, OR strictly packed.
-                           Let's align start. */
+    /* content-defined height */
+    margin: auto 0;
+    /* Center vertically */
+    align-items: stretch;
+    /* Force columns to be equal height */
+    transform: translateY(20px);
+    /* Shift down for optical centering per user request */
 }
 
-/* Column Wrapper for Vertical Alignment */
+/* ... existing code ... */
+
+/* Logo grid fix - UPDATED to match tighter spacing */
+section:not(.lead):not(#\31) .instructor-container .logo-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0.3em !important;
+    /* Enforce tighter gap override */
+}
+
+/* Column Wrapper */
 .col-flex {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    /* Pack to top */
-    height: auto;
-    /* Allow shrinking to content */
+    justify-content: space-between;
+    /* Align tops and bottoms */
+    height: 100%;
+    /* Fill the grid cell */
     gap: 0.8em;
-    /* Uniform gap */
-    align-items: stretch;
-    /* Stretch children to fill width */
     width: 100%;
 }
 
 /* Styled Generic Box */
 .info-box-styled {
     background-color: rgba(0, 105, 62, 0.03);
-    /* Light Dartmouth Green tint */
     border: 1px solid rgba(0, 105, 62, 0.15);
     border-radius: 6px;
-    /* Tighter radius */
-    padding: 0.6em;
-    /* Reduced horizontal padding to reduce perceived indentation */
+    padding: 0.4em;
+    /* Reduced padding */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     display: block !important;
-    /* Ensure it's not a flex container centered */
     text-align: left !important;
     width: 100%;
-    /* Fill the container width */
     box-sizing: border-box;
-    /* Ensure padding doesn't overflow */
+}
+
+/* Target Left Column cards to stretch */
+.col-flex:first-child .info-box-styled {
+    flex: 1;
+    /* Stretch to fill column */
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    /* Center content vertically if stretched? */
+}
+
+/* Target Right Column cards to NOT stretch (be compact) but push apart */
+.col-flex:last-child .info-box-styled {
+    flex: 0 0 auto;
+    /* Do not stretch */
+}
+
+/* ... headers ... */
+
+/* Tighter Training Grid */
+.training-grid {
+    display: grid;
+    grid-template-columns: 45px 1fr;
+    gap: 0.5em;
+    row-gap: 0.1em;
+    /* Drastically reduced */
+    align-items: center;
+}
+
+/* ... */
+
+/* Tighter Logo Grids */
+.logo-grid,
+.funding-logo-grid {
+    gap: 0.3em;
+    /* Reduced */
+}
+
+.combined-card-spacer {
+    height: 0.2em;
+    /* Reduced */
 }
 
 .info-box-styled h4 {
@@ -2832,7 +2878,7 @@ section:not(.lead):not(#\31):has(.instructor-grid)>*:not(h1):last-of-type {
     grid-template-columns: 45px 1fr;
     /* Narrower logo col */
     gap: 0.5em;
-    row-gap: 0.3em;
+    row-gap: 0.1em;
     /* Decreased further */
     align-items: center;
 }
