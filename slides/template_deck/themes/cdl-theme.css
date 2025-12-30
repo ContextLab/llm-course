@@ -2128,3 +2128,230 @@ section:not(.lead):not(#\31) > .definition-box {
 .note-box.course-info-notes {
     margin-top: 1.2em !important;
 }
+
+/* ============================================
+   INSTRUCTOR SLIDE STYLING
+   Compact layouts for dense content slides
+   ============================================ */
+
+/* Small logo sizing for inline display */
+.logo-xs { height: 20px; width: auto; vertical-align: middle; }
+.logo-sm { height: 28px; width: auto; vertical-align: middle; }
+.logo-md { height: 40px; width: auto; vertical-align: middle; }
+.logo-lg { height: 56px; width: auto; vertical-align: middle; }
+
+/* Logo row - horizontal inline logos with spacing */
+.logo-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8em;
+    margin: 0.3em 0;
+}
+
+.logo-row img {
+    height: 40px !important;
+    width: auto !important;
+    max-width: 100px !important;
+    object-fit: contain !important;
+}
+
+.logo-row.logo-row-sm img { height: 32px !important; max-width: 85px !important; }
+.logo-row.logo-row-md img { height: 48px !important; max-width: 110px !important; }
+.logo-row.logo-row-lg img { height: 56px !important; max-width: 130px !important; }
+
+/* Override instructor-grid scaling for logo rows */
+.instructor-grid .logo-row img {
+    height: 40px !important;
+    max-width: 100px !important;
+}
+.instructor-grid .logo-row.logo-row-sm img { height: 32px !important; max-width: 85px !important; }
+.instructor-grid .logo-row.logo-row-md img { height: 48px !important; max-width: 110px !important; }
+.instructor-grid .logo-row.logo-row-lg img { height: 56px !important; max-width: 130px !important; }
+
+/* Compact section - tighter spacing */
+.compact-section {
+    margin: 0.15em 0 !important;
+    line-height: 1.2 !important;
+}
+
+.compact-section p {
+    margin: 0.1em 0 !important;
+}
+
+/* Instructor grid - 2 column layout for instructor info */
+.instructor-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5em 1.2em !important;
+    width: 96% !important;
+    margin: 0.2em auto !important;
+    font-size: 0.5em !important;
+    line-height: 1.2 !important;
+}
+
+/* Ensure images in instructor grid are not scaled by font-size */
+.instructor-grid img {
+    font-size: initial !important;
+}
+
+.instructor-grid > div {
+    padding: 0.3em 0;
+}
+
+/* Instructor section headers */
+.instructor-grid h4 {
+    font-size: 1em !important;
+    font-weight: 600 !important;
+    margin: 0 0 0.2em 0 !important;
+    color: var(--dartmouth-green, #00693e);
+    border-bottom: 2px solid var(--dartmouth-green, #00693e);
+    padding-bottom: 0.15em;
+}
+
+/* Info box with custom title support */
+.info-box {
+    display: block !important;
+    border-radius: 5px;
+    padding: 0.3em 0.5em;
+    margin: 0.15em 0 !important;
+    text-align: left !important;
+    font-size: 0.95em;
+    line-height: 1.2;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    background-color: rgba(38, 122, 186, 0.10);
+    border-left: 3px solid var(--river-blue, #267aba);
+}
+
+.info-box[data-title]::before {
+    content: attr(data-title);
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.1em;
+    font-size: 0.8em;
+    color: var(--river-navy, #003c73);
+}
+
+/* Emoji inline - small emojis for inline use */
+.emoji-inline {
+    font-size: 1.1em;
+    vertical-align: middle;
+    margin-right: 0.2em;
+}
+
+/* Compact bullet list */
+.compact-list {
+    margin: 0.1em 0 !important;
+    padding-left: 1.2em !important;
+    line-height: 1.2 !important;
+}
+
+.compact-list li {
+    margin: 0.05em 0 !important;
+}
+
+/* Section with icon header */
+.icon-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4em;
+}
+
+.icon-section .section-icon {
+    font-size: 1.4em;
+    flex-shrink: 0;
+}
+
+.icon-section .section-content {
+    flex: 1;
+}
+
+/* Training timeline - compact horizontal */
+.training-timeline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.3em;
+    flex-wrap: wrap;
+}
+
+.training-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    min-width: 60px;
+}
+
+.training-item img {
+    height: 32px;
+    width: auto;
+    max-width: 55px;
+    margin-bottom: 0.15em;
+    object-fit: contain;
+}
+
+.training-item .training-degree {
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.training-item .training-field {
+    font-size: 0.75em;
+    color: #555;
+}
+
+/* Quote block for core question */
+.core-question {
+    font-style: italic;
+    text-align: center;
+    padding: 0.4em 0.8em;
+    margin: 0.3em auto !important;
+    background-color: rgba(0, 105, 62, 0.08);
+    border-radius: 6px;
+    border-left: 4px solid var(--dartmouth-green, #00693e);
+    font-size: 0.95em;
+    width: 90%;
+}
+
+/* Approaches/methods tags */
+.approach-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    justify-content: center;
+    margin: 0.2em 0;
+}
+
+.approach-tag {
+    display: inline-block;
+    padding: 0.15em 0.5em;
+    background-color: rgba(0, 105, 62, 0.12);
+    border-radius: 12px;
+    font-size: 0.85em;
+    color: var(--dartmouth-green, #00693e);
+    font-weight: 500;
+}
+
+/* Disable vertical centering for instructor slides */
+section:not(.lead):not(#\31):has(.instructor-grid) {
+    justify-content: flex-start !important;
+    padding: 15px 35px 25px 35px !important;
+}
+
+section:not(.lead):not(#\31):has(.instructor-grid) > h1 {
+    margin-bottom: 0.15em !important;
+    padding-top: 8px !important;
+    min-height: 1.2em !important;
+}
+
+section:not(.lead):not(#\31):has(.instructor-grid) > *:not(h1):first-of-type {
+    margin-top: 0.2em !important;
+}
+
+section:not(.lead):not(#\31):has(.instructor-grid) > *:not(h1):last-of-type {
+    margin-bottom: 0 !important;
+}

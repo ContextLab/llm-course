@@ -17,42 +17,108 @@ Winter 2026
 
 # About the instructor
 
-<div style="display: flex; gap: 2em;">
+<div class="instructor-grid">
+
 <div>
 
-**Jeremy R. Manning, Ph.D.**
-Associate Professor, Psychological and Brain Sciences
-Director, Contextual Dynamics Lab
+#### Jeremy R. Manning, Ph.D.
 
-**Research interests:**
-- Memory and learning
-- Brain network dynamics
-- Natural language processing
+**Associate Professor, Psychological and Brain Sciences**
+Dartmouth College
+
+<div class="info-box" data-title="Lab">
+
+**Contextual Dynamics Lab** | Moore Hall 416
+<span class="emoji-inline">&#x1F310;</span> [context-lab.com](https://www.context-lab.com) | <span class="emoji-inline">&#x1F4BB;</span> [github.com/ContextLab](https://github.com/ContextLab)
 
 </div>
+
+<div class="logo-row" style="margin-top: 0.3em;">
+<img src="../../figures/cdl_logo.png" alt="CDL" title="Contextual Dynamics Lab" style="min-height: 55px; height: auto;">
+<img src="../../figures/github_logo.jpg" alt="GitHub" title="GitHub" style="min-height: 55px; height: auto;">
+</div>
+
+</div>
+
 <div>
 
-<div class="emoji-figure" style="margin-top: 0;">
-  <div class="emoji-col">
-    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F9E0;</span>
-    <span class="label">Memory</span>
-  </div>
-  <div class="emoji-col">
-    <span class="emoji emoji-xl emoji-bg emoji-bg-blue">&#x1F4CA;</span>
-    <span class="label">Data science</span>
-  </div>
-  <div class="emoji-col">
-    <span class="emoji emoji-xl emoji-bg emoji-bg-orange">&#x1F916;</span>
-    <span class="label">NLP</span>
-  </div>
+#### Research focus
+
+<div class="core-question">
+
+"How do our brains support our ongoing conscious thoughts, and how (and what) do we remember?"
+
+</div>
+
+<div class="approach-tags">
+<span class="approach-tag">Theory</span>
+<span class="approach-tag">Models</span>
+<span class="approach-tag">Experiments</span>
+<span class="approach-tag">Neuroimaging</span>
 </div>
 
 </div>
+
+<div>
+
+#### Key areas
+
+<span class="emoji-inline">&#x1F9E0;</span> Learning and memory<br>
+<span class="emoji-inline">&#x1F4DA;</span> Education technology<br>
+<span class="emoji-inline">&#x1F310;</span> Brain network dynamics<br>
+<span class="emoji-inline">&#x1F4CA;</span> Data science<br>
+<span class="emoji-inline">&#x1F4AC;</span> Natural language processing
+
 </div>
 
-<div class="note-box">
+<div>
 
-**Lab website:** [context-lab.com](https://www.context-lab.com) | **GitHub:** [ContextLab](https://github.com/ContextLab)
+#### Training
+
+<div class="training-timeline">
+<div class="training-item">
+<img src="../../figures/brandeis_logo.svg" alt="Brandeis">
+<span class="training-degree">B.S.</span>
+<span class="training-field">CS, Neuro</span>
+</div>
+<div class="training-item">
+<img src="../../figures/upenn_logo.png" alt="UPenn">
+<span class="training-degree">Ph.D.</span>
+<span class="training-field">Neuroscience</span>
+</div>
+<div class="training-item">
+<img src="../../figures/princeton_logo.svg" alt="Princeton">
+<span class="training-degree">Postdoc</span>
+<span class="training-field">CS, Neuro</span>
+</div>
+</div>
+
+</div>
+
+<div>
+
+#### Industry collaborations
+
+<div class="logo-row">
+<img src="../../figures/intel_labs_logo.png" alt="Intel Labs" title="Intel Labs" style="min-height: 45px; height: auto;">
+<img src="../../figures/meta_logo.png" alt="Meta" title="Meta" style="min-height: 45px; height: auto;">
+<img src="../../figures/google_logo.webp" alt="Google" title="Google" style="min-height: 45px; height: auto;">
+<img src="../../figures/amazon_logo.png" alt="Amazon" title="Amazon" style="min-height: 45px; height: auto;">
+</div>
+
+</div>
+
+<div>
+
+#### Funding
+
+<div class="logo-row">
+<img src="../../figures/nih_logo.png" alt="NIH" title="National Institutes of Health" style="min-height: 50px; height: auto;">
+<img src="../../figures/nsf_logo.webp" alt="NSF" title="National Science Foundation" style="min-height: 50px; height: auto;">
+<img src="../../figures/darpa_logo.jpg" alt="DARPA" title="DARPA" style="min-height: 50px; height: auto;">
+</div>
+
+</div>
 
 </div>
 
