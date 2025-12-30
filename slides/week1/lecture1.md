@@ -374,7 +374,7 @@ Language categories affect *perception*, not just description!
 
 <div class="tip-box">
 
-If language and thought are separable, can an LLM have sophisticated language *without* sophisticated thought?
+Can an LLM have sophisticated language *without* sophisticated thought?
 
 </div>
 

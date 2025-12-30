@@ -2098,10 +2098,10 @@ section:not(.lead):not(#\31) > .definition-box {
     font-size: 0.7em !important;
     font-style: normal !important;
     color: rgba(10, 37, 24, 0.8) !important;
-    /* Negative margin pulls caption closer to diagram above (overcomes SVG empty space + line-height) */
-    margin-top: -5.5em !important;
+    /* Small positive margin to separate caption from diagram above */
+    margin-top: 0.5em !important;
     /* Adequate space below caption to separate from following content */
-    margin-bottom: 1.5em !important;
+    margin-bottom: 0.5em !important;
     /* Ensure tight line-height doesn't add extra space */
     line-height: 1.2 !important;
 }
