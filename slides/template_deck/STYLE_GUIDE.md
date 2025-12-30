@@ -374,6 +374,26 @@ Always validate your model on held-out data before deployment.
 </div>
 ```
 
+### Custom Titles
+
+Override the default box title using the `data-title` attribute:
+
+```markdown
+<div class="note-box" data-title="Course content">
+
+Custom title instead of "Note"
+
+</div>
+
+<div class="warning-box" data-title="Important deadline">
+
+Custom title instead of "Warning"
+
+</div>
+```
+
+This works with all callout box types: `note-box`, `example-box`, `warning-box`, `tip-box`, `important-box`, `definition-box`, and `callout`.
+
 ### Multiple Callouts
 
 Multiple callout boxes can appear on the same slide.
