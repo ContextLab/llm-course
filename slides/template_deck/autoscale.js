@@ -1,6 +1,7 @@
 // Auto-scale slide CONTENT to fit within bounds
 // Handles tables specially by adjusting font-size
 // Detects wrapped text cells and applies left-alignment
+// Triggers Chart.js animations on slide transitions
 document.addEventListener("DOMContentLoaded", function() {
   const MIN_PADDING_TOP = 30;
   const MIN_PADDING_BOTTOM = 20;
@@ -195,4 +196,233 @@ document.addEventListener("DOMContentLoaded", function() {
       requestAnimationFrame(scaleSlides);
     });
   }
+
+  // ==========================================================================
+  // CHART.JS ANIMATION REPLAY ON SLIDE TRANSITIONS
+  // ==========================================================================
+
+  // Store chart instances by canvas ID for re-animation
+  var chartRegistry = {};
+  var lastSlideId = null;
+
+  /**
+   * Get the current slide ID from the URL hash
+   * Marp uses hashes like #1, #2, etc.
+   */
+  function getCurrentSlideId() {
+    var hash = window.location.hash;
+    if (hash && hash.length > 1) {
+      return hash.substring(1); // Remove the '#'
+    }
+    return '1'; // Default to first slide
+  }
+
+  /**
+   * Find the slide section element by ID
+   */
+  function getSlideById(slideId) {
+    return document.querySelector('section[id="' + slideId + '"]');
+  }
+
+  /**
+   * Find all Chart.js canvas elements on a given slide
+   */
+  function getChartsOnSlide(slideElement) {
+    if (!slideElement) return [];
+    return slideElement.querySelectorAll('canvas');
+  }
+
+  /**
+   * Get the Chart.js instance for a canvas element
+   * Chart.js stores the instance on the canvas element
+   */
+  function getChartInstance(canvas) {
+    // Check if Chart.js is available
+    if (typeof Chart === 'undefined') return null;
+
+    // Chart.js 3.x+ stores instances in Chart.instances
+    // and also on the canvas element
+    if (Chart.getChart) {
+      return Chart.getChart(canvas);
+    }
+
+    // Fallback: check our registry
+    if (canvas.id && chartRegistry[canvas.id]) {
+      return chartRegistry[canvas.id];
+    }
+
+    return null;
+  }
+
+  /**
+   * Replay animation for a single chart
+   */
+  function replayChartAnimation(chart) {
+    if (!chart) return;
+
+    try {
+      // Reset the chart to initial state (all values at 0 or hidden)
+      chart.reset();
+
+      // Trigger the animation to play
+      // 'active' mode ensures the animation plays
+      chart.update('active');
+    } catch (e) {
+      console.warn('Failed to replay chart animation:', e);
+    }
+  }
+
+  /**
+   * Handle slide transition - replay animations for charts on the new slide
+   */
+  function onSlideChange(newSlideId) {
+    // Don't replay if we're still on the same slide
+    if (newSlideId === lastSlideId) return;
+
+    lastSlideId = newSlideId;
+
+    var slideElement = getSlideById(newSlideId);
+    if (!slideElement) return;
+
+    var canvases = getChartsOnSlide(slideElement);
+    if (canvases.length === 0) return;
+
+    // Small delay to ensure the slide is fully visible
+    // and any CSS transitions have started
+    setTimeout(function() {
+      canvases.forEach(function(canvas) {
+        var chart = getChartInstance(canvas);
+        if (chart) {
+          replayChartAnimation(chart);
+        }
+      });
+    }, 50);
+  }
+
+  /**
+   * Register a chart instance for tracking
+   * Called by chart creation code or by intercepting Chart constructor
+   */
+  function registerChart(canvasId, chartInstance) {
+    chartRegistry[canvasId] = chartInstance;
+  }
+
+  // Expose registerChart globally for manual registration if needed
+  window.registerChartForSlideAnimation = registerChart;
+
+  /**
+   * Intercept Chart.js constructor to automatically register charts
+   */
+  function interceptChartConstructor() {
+    if (typeof Chart === 'undefined') return;
+
+    // Store reference to the current Chart constructor
+    // (may be wrapped by chart-defaults.js already)
+    var OriginalChart = window.Chart;
+
+    // Create our wrapper
+    window.Chart = function(ctx, config) {
+      // Call the original constructor
+      var instance = new OriginalChart(ctx, config);
+
+      // Register the chart
+      var canvas = (typeof ctx === 'string') ? document.getElementById(ctx) : ctx;
+      if (canvas && canvas.id) {
+        registerChart(canvas.id, instance);
+      }
+
+      return instance;
+    };
+
+    // Copy static properties
+    Object.setPrototypeOf(window.Chart, OriginalChart);
+    Object.keys(OriginalChart).forEach(function(key) {
+      window.Chart[key] = OriginalChart[key];
+    });
+
+    // Preserve prototype chain
+    window.Chart.prototype = OriginalChart.prototype;
+  }
+
+  /**
+   * Set up IntersectionObserver to detect when slides become visible
+   * This is a backup/complement to hashchange for smooth detection
+   */
+  function setupIntersectionObserver() {
+    if (!('IntersectionObserver' in window)) return;
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+          var section = entry.target;
+          var slideId = section.getAttribute('id');
+          if (slideId) {
+            onSlideChange(slideId);
+          }
+        }
+      });
+    }, {
+      threshold: [0.5] // Trigger when 50% visible
+    });
+
+    // Observe all slide sections
+    var slides = document.querySelectorAll('section[id]');
+    slides.forEach(function(slide) {
+      observer.observe(slide);
+    });
+  }
+
+  /**
+   * Initialize chart animation replay system
+   */
+  function initChartAnimationReplay() {
+    // Wait for Chart.js to be available
+    if (typeof Chart === 'undefined') {
+      // Chart.js not yet loaded - wait and retry
+      var retries = 0;
+      var maxRetries = 50; // 5 seconds max wait
+
+      var checkInterval = setInterval(function() {
+        retries++;
+        if (typeof Chart !== 'undefined') {
+          clearInterval(checkInterval);
+          interceptChartConstructor();
+          setupListeners();
+        } else if (retries >= maxRetries) {
+          clearInterval(checkInterval);
+          // Chart.js never loaded, but still set up hash listener
+          // in case charts are added later
+          setupListeners();
+        }
+      }, 100);
+    } else {
+      interceptChartConstructor();
+      setupListeners();
+    }
+  }
+
+  /**
+   * Set up event listeners for slide transitions
+   */
+  function setupListeners() {
+    // Listen for hash changes (primary Marp navigation method)
+    window.addEventListener('hashchange', function() {
+      var slideId = getCurrentSlideId();
+      onSlideChange(slideId);
+    });
+
+    // Also set up IntersectionObserver for visibility-based detection
+    setupIntersectionObserver();
+
+    // Initialize with current slide (in case page loads on a specific slide)
+    var initialSlideId = getCurrentSlideId();
+    lastSlideId = initialSlideId;
+
+    // Don't auto-play on initial load - let the normal Chart.js animation play
+    // The hashchange/intersection will handle subsequent navigations
+  }
+
+  // Initialize the chart animation replay system
+  // Use a small delay to ensure chart-defaults.js has already wrapped Chart
+  setTimeout(initChartAnimationReplay, 50);
 });

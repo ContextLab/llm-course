@@ -194,6 +194,29 @@ esac
 log_info "Running marp..."
 eval $MARP_CMD
 
+# Inject chart-defaults script FIRST (must run before any chart creation scripts)
+CHART_DEFAULTS_JS="$SCRIPT_DIR/chart-defaults.js"
+if [[ "$OUTPUT_FORMAT" == "html" && -f "$OUTPUT_FILE" && -f "$CHART_DEFAULTS_JS" ]]; then
+    log_info "Injecting chart-defaults script into head..."
+
+    # Use Python to inject the script into <head> (before any inline scripts run)
+    python3 -c "
+with open('$CHART_DEFAULTS_JS', 'r') as f:
+    chart_script = f.read()
+
+with open('$OUTPUT_FILE', 'r') as f:
+    content = f.read()
+
+script_block = '<script>\\n' + chart_script + '\\n</script>'
+
+if '</head>' in content:
+    content = content.replace('</head>', script_block + '\\n</head>')
+
+with open('$OUTPUT_FILE', 'w') as f:
+    f.write(content)
+"
+fi
+
 # Inject auto-scaling script for HTML output
 AUTOSCALE_JS="$SCRIPT_DIR/autoscale.js"
 if [[ "$OUTPUT_FORMAT" == "html" && -f "$OUTPUT_FILE" && -f "$AUTOSCALE_JS" ]]; then

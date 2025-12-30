@@ -2054,7 +2054,7 @@ section:not(.lead):not(#\31) > .definition-box {
     align-items: center !important;
     width: 100% !important;
     max-width: 100% !important;
-    margin: 0.5em auto !important;
+    margin: 0.5em auto 0.1em auto !important;
     overflow: visible !important;
     box-sizing: border-box !important;
     padding: 0 40px !important;
@@ -2098,8 +2098,12 @@ section:not(.lead):not(#\31) > .definition-box {
     font-size: 0.7em !important;
     font-style: normal !important;
     color: rgba(10, 37, 24, 0.8) !important;
-    margin-top: 0.1em !important;
-    margin-bottom: 0.6em !important;
+    /* Negative margin pulls caption closer to diagram above (overcomes SVG empty space + line-height) */
+    margin-top: -5.5em !important;
+    /* Adequate space below caption to separate from following content */
+    margin-bottom: 1.5em !important;
+    /* Ensure tight line-height doesn't add extra space */
+    line-height: 1.2 !important;
 }
 
 .chart-caption {
