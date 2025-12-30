@@ -21,6 +21,7 @@ A comprehensive style guide for creating presentations using the Contextual Dyna
 15. [Charts (Automated Styling)](#charts-automated-styling)
 16. [Best Practices](#best-practices)
 17. [Dartmouth Color Reference](#dartmouth-color-reference)
+18. [Diagram and Figure Color Guidelines](#diagram-and-figure-color-guidelines)
 
 ---
 
@@ -807,6 +808,271 @@ Complete Dartmouth tertiary color palette used throughout the theme:
 | Violet | `--violet` | `#8a6996` |
 | Autumn Brown | `--autumn-brown` | `#643c20` |
 | Granite Gray | `--granite-gray` | `#424141` |
+
+---
+
+## Diagram and Figure Color Guidelines
+
+This section provides guidelines for consistent, meaningful color use across all diagrams and figures in presentations.
+
+### Core Principles
+
+1. **Semantic consistency** - Colors should mean the same thing throughout a presentation
+2. **Minimal palette** - Use 3-5 colors maximum per diagram
+3. **Accessibility** - Ensure sufficient contrast and avoid relying on color alone
+4. **Purpose over decoration** - Every color should convey meaning, not just look pretty
+
+---
+
+### Semantic Color Assignments
+
+Use these colors consistently based on their semantic meaning:
+
+| Meaning | Color | Hex | Flow Syntax | Use Cases |
+|---------|-------|-----|-------------|-----------|
+| **Start/Origin/Input** | Dartmouth Green | `#00693e` | `:green` | Initial states, inputs, data sources |
+| **Process/Action** | River Blue | `#267aba` | `:blue` | Processing steps, transformations, actions |
+| **Success/Positive/Output** | Rich Spring Green | `#a5d75f` | `:teal` | Successful outcomes, outputs, completions |
+| **Warning/Caution** | Bonfire Orange | `#ffa00f` | `:orange` | Warnings, attention needed, intermediate states |
+| **Error/Stop/Critical** | Bonfire Red | `#9d162e` | `:red` | Errors, failures, critical alerts, endpoints |
+| **Neutral/Context** | Granite Gray | `#424141` | `:gray` | Background info, optional steps, context |
+| **Abstract/Conceptual** | Violet | `#8a6996` | `:violet` | Theoretical concepts, abstractions, models |
+
+---
+
+### Flow Diagram Color Patterns
+
+#### Sequential Progressions
+
+For timelines or step-by-step processes, use a consistent color progression:
+
+**Learning/Growth progression:**
+```flow
+[Basic:green] --> [Intermediate:teal] --> [Advanced:blue] --> [Expert:violet]
+```
+
+**Pipeline/Process progression:**
+```flow
+[Input:green] --> [Process:blue] --> [Validate:orange] --> [Output:teal]
+```
+
+**Historical/Timeline progression:**
+```flow
+[Past:gray] --> [Present:green] --> [Future:blue]
+```
+
+#### Decision Flows
+
+For diagrams with branching decisions:
+
+```flow
+[Decision:blue] --> [Success path:teal]
+[Decision:blue] --> [Failure path:red]
+```
+
+Use:
+- **Blue** for decision points
+- **Teal/Green** for positive outcomes
+- **Red** for negative outcomes or errors
+- **Orange** for conditional/warning paths
+
+---
+
+### Comparison Diagrams
+
+#### Humans vs AI/Machines
+
+| Entity | Color | Rationale |
+|--------|-------|-----------|
+| Human | River Blue (`#267aba`) | Calm, trustworthy, organic |
+| AI/Machine | Violet (`#8a6996`) | Abstract, technological |
+| Collaboration | Dartmouth Green (`#00693e`) | Positive combination |
+
+**Example:**
+```flow
+[Human input:blue] --> [AI processing:violet] --> [Combined output:green]
+```
+
+#### Before vs After
+
+| State | Color |
+|-------|-------|
+| Before/Old | Gray or Orange |
+| After/New | Green or Teal |
+
+#### Pros vs Cons
+
+| Type | Color |
+|------|-------|
+| Pros/Advantages | Teal or Green |
+| Cons/Disadvantages | Orange or Red |
+
+---
+
+### Chart Color Guidelines
+
+Charts automatically use theme colors via `chart-defaults.js`. For semantic consistency:
+
+| Chart Type | Recommended Colors | Notes |
+|------------|-------------------|-------|
+| **Single metric** | Dartmouth Green | Primary brand color |
+| **Two comparisons** | Green + Blue | High contrast pair |
+| **Multiple categories** | Auto-cycle | Let system assign |
+| **Good vs Bad** | Teal vs Red | Clear semantic meaning |
+| **Trend lines** | Blue (primary), Orange (secondary) | Distinguishable in B&W |
+
+---
+
+### Color Quantity Guidelines
+
+| Diagram Type | Recommended Colors | Maximum |
+|--------------|-------------------|---------|
+| Simple flow (3-4 nodes) | 2-3 | 3 |
+| Complex flow (5+ nodes) | 3-4 | 5 |
+| Comparison | 2 | 3 |
+| Timeline | 3-4 (progression) | 5 |
+| Pie/Doughnut chart | 4-5 | 6 |
+| Bar/Line chart | 2-3 datasets | 4 |
+
+**Rule of thumb:** If you need more than 5 colors, consider splitting into multiple diagrams.
+
+---
+
+### Good Examples
+
+#### Course Roadmap (Timeline)
+```flow
+[ELIZA:green] --> [Tokenization:teal] --> [Embeddings:blue] --> [Attention:orange] --> [GPT:violet]
+```
+**Why it works:** Uses a consistent color progression from simple (green) to complex (violet), creating visual narrative of increasing sophistication.
+
+#### Data Pipeline (Process)
+```flow
+[Raw data:gray] --> [Clean:green] --> [Transform:blue] --> [Model:violet] --> [Output:teal]
+```
+**Why it works:** Gray for raw/unprocessed, green for cleaned start, blue for processing, violet for model abstraction, teal for successful output.
+
+#### Concept Spectrum (Continuum)
+```flow
+[Strong position:green] --> [Moderate:teal] --> [Evidence:blue] --> [Weak position:orange] --> [Opposite:violet]
+```
+**Why it works:** Shows progression across a conceptual spectrum with smooth color transitions.
+
+---
+
+### Anti-Patterns to Avoid
+
+#### 1. Rainbow Diagrams
+**Bad:**
+```flow
+[A:green] --> [B:red] --> [C:blue] --> [D:orange] --> [E:violet] --> [F:yellow]
+```
+**Problem:** Random colors with no semantic meaning. Visually chaotic.
+
+**Fix:** Use consistent progression or group by meaning.
+
+#### 2. Inconsistent Semantics
+**Bad:** Using green for "error" on one slide and "success" on another.
+
+**Fix:** Establish color meanings and stick to them throughout the presentation.
+
+#### 3. Too Many Colors
+**Bad:** 8+ colors in a single diagram.
+
+**Problem:** Cognitive overload, impossible to track meaning.
+
+**Fix:** Group related items, use the same color for similar concepts.
+
+#### 4. Low Contrast Pairs
+**Bad:** Teal (`#a5d75f`) next to Spring Green (`#c4dd88`).
+
+**Problem:** Colors too similar to distinguish.
+
+**Fix:** Choose colors from different parts of the palette (e.g., green + blue, not green + teal).
+
+#### 5. Color as Only Differentiator
+**Bad:** Relying solely on color to distinguish elements without labels or shapes.
+
+**Problem:** Inaccessible to colorblind viewers.
+
+**Fix:** Always use labels; consider shapes or patterns for additional differentiation.
+
+#### 6. Decorative Colors
+**Bad:** Adding colors just to make the diagram "prettier."
+
+**Problem:** Undermines semantic meaning system.
+
+**Fix:** If an element does not need semantic distinction, use gray or the default auto-color.
+
+---
+
+### Emoji Figure Color Consistency
+
+When using emoji figures with backgrounds, follow the same semantic rules:
+
+| Concept Type | Background Class | Example |
+|--------------|-----------------|---------|
+| Positive/Success | `emoji-bg-green` or `emoji-bg-teal` | Achievements, completions |
+| Information/Neutral | `emoji-bg-blue` | Facts, data, communication |
+| Warning/Attention | `emoji-bg-orange` | Cautions, considerations |
+| Critical/Important | `emoji-bg-red` | Errors, urgent items |
+| Abstract/Conceptual | `emoji-bg-violet` | Ideas, theories, models |
+| Supporting/Context | `emoji-bg-gray` | Background info |
+
+**Example - Capability domains:**
+```html
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-blue">&#x1F4AC;</span>
+    <span class="label">Language</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F9E0;</span>
+    <span class="label">Reasoning</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-orange">&#x1F465;</span>
+    <span class="label">Social</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-violet">&#x1F4CA;</span>
+    <span class="label">Math</span>
+  </div>
+</div>
+```
+
+---
+
+### Quick Reference: Color Selection
+
+**Ask yourself these questions:**
+
+1. **Is this a starting point?** Use green.
+2. **Is this an action or process?** Use blue.
+3. **Is this a successful outcome?** Use teal.
+4. **Does this need attention/caution?** Use orange.
+5. **Is this an error or critical warning?** Use red.
+6. **Is this abstract or conceptual?** Use violet.
+7. **Is this context or optional?** Use gray.
+
+**When in doubt:**
+- Let the auto-color system handle it (for simple diagrams)
+- Use green for first item, blue for middle steps, teal for final output
+- Limit yourself to 3 colors and use labels
+
+---
+
+### Presentation-Wide Consistency Checklist
+
+Before finalizing a presentation, verify:
+
+- [ ] Green always means the same thing (start/positive)
+- [ ] Red always means the same thing (error/critical/end)
+- [ ] No diagram uses more than 5 colors
+- [ ] Comparison diagrams use consistent color pairs
+- [ ] Human vs AI comparisons use blue vs violet
+- [ ] Timeline progressions flow from one color family to another
+- [ ] All critical distinctions have labels, not just colors
 
 ---
 

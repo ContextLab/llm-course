@@ -2,7 +2,7 @@
 // Handles tables specially by adjusting font-size
 // Detects wrapped text cells and applies left-alignment
 // Triggers Chart.js animations on slide transitions
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   const MIN_PADDING_TOP = 30;
   const MIN_PADDING_BOTTOM = 20;
   const TITLE_HEIGHT = 90; // Reserved space for title
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Check all data cells (skip header row)
     for (let r = 1; r < rows.length; r++) {
       const cells = rows[r].querySelectorAll('td');
-      cells.forEach(function(cell, colIndex) {
+      cells.forEach(function (cell, colIndex) {
         if (columnHasWrap[colIndex]) return; // Already marked
 
         const text = cell.textContent.trim();
@@ -50,9 +50,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Apply left-alignment to entire columns that have wrapped text
-    rows.forEach(function(row, rowIndex) {
+    rows.forEach(function (row, rowIndex) {
       const cells = row.querySelectorAll('th, td');
-      cells.forEach(function(cell, colIndex) {
+      cells.forEach(function (cell, colIndex) {
         cell.classList.remove('wrapped-text');
         if (columnHasWrap[colIndex] && rowIndex > 0) {
           // Only apply to data cells, not headers
@@ -63,9 +63,9 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   function scaleSlides() {
-    const slides = document.querySelectorAll("section:not(.lead):not([id='1'])");
+    const slides = document.querySelectorAll("section:not(.lead):not([id='1']):not(.manual-layout)");
 
-    slides.forEach(function(slide) {
+    slides.forEach(function (slide) {
       const slideHeight = slide.clientHeight;
       const slideWidth = slide.clientWidth;
 
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
       const tables = slide.querySelectorAll('table');
 
       if (tables.length > 0) {
-        tables.forEach(function(table) {
+        tables.forEach(function (table) {
           // Skip autoscaling for split tables - they should maintain consistent sizing
           // across all slides in the split sequence
           if (table.classList.contains('split-table')) {
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function() {
         let contentBottom = 0;
 
         const children = slide.querySelectorAll(':scope > *');
-        children.forEach(function(child) {
+        children.forEach(function (child) {
           if (child.offsetHeight === 0) return;
           const style = window.getComputedStyle(child);
           if (style.position === 'absolute' || style.position === 'fixed') return;
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function() {
           const scale = Math.min(availableHeight / contentHeight, 1);
 
           if (scale < 0.95) {
-            children.forEach(function(child) {
+            children.forEach(function (child) {
               if (child.offsetHeight === 0) return;
               const style = window.getComputedStyle(child);
               if (style.position === 'absolute' || style.position === 'fixed') return;
@@ -186,13 +186,13 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   // Run after layout is complete
-  requestAnimationFrame(function() {
+  requestAnimationFrame(function () {
     requestAnimationFrame(scaleSlides);
   });
 
   // Run after fonts load
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(function() {
+    document.fonts.ready.then(function () {
       requestAnimationFrame(scaleSlides);
     });
   }
@@ -289,8 +289,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Small delay to ensure the slide is fully visible
     // and any CSS transitions have started
-    setTimeout(function() {
-      canvases.forEach(function(canvas) {
+    setTimeout(function () {
+      canvases.forEach(function (canvas) {
         var chart = getChartInstance(canvas);
         if (chart) {
           replayChartAnimation(chart);
@@ -321,7 +321,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var OriginalChart = window.Chart;
 
     // Create our wrapper
-    window.Chart = function(ctx, config) {
+    window.Chart = function (ctx, config) {
       // Call the original constructor
       var instance = new OriginalChart(ctx, config);
 
@@ -336,7 +336,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Copy static properties
     Object.setPrototypeOf(window.Chart, OriginalChart);
-    Object.keys(OriginalChart).forEach(function(key) {
+    Object.keys(OriginalChart).forEach(function (key) {
       window.Chart[key] = OriginalChart[key];
     });
 
@@ -351,8 +351,8 @@ document.addEventListener("DOMContentLoaded", function() {
   function setupIntersectionObserver() {
     if (!('IntersectionObserver' in window)) return;
 
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
         if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
           var section = entry.target;
           var slideId = section.getAttribute('id');
@@ -367,7 +367,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Observe all slide sections
     var slides = document.querySelectorAll('section[id]');
-    slides.forEach(function(slide) {
+    slides.forEach(function (slide) {
       observer.observe(slide);
     });
   }
@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", function() {
       var retries = 0;
       var maxRetries = 50; // 5 seconds max wait
 
-      var checkInterval = setInterval(function() {
+      var checkInterval = setInterval(function () {
         retries++;
         if (typeof Chart !== 'undefined') {
           clearInterval(checkInterval);
@@ -406,7 +406,7 @@ document.addEventListener("DOMContentLoaded", function() {
    */
   function setupListeners() {
     // Listen for hash changes (primary Marp navigation method)
-    window.addEventListener('hashchange', function() {
+    window.addEventListener('hashchange', function () {
       var slideId = getCurrentSlideId();
       onSlideChange(slideId);
     });

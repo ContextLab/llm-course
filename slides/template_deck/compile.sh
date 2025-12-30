@@ -19,19 +19,20 @@
 #   -o, --output      Output file (default: <input_basename>.html)
 #   -l, --lines       Max lines per slide for code blocks (default: 20)
 #   -r, --rows        Max data rows per slide for tables (default: 8)
-#   -f, --format      Output format: html, pdf, pptx (default: html)
+#   -f, --format      Output format: html, pdf, pptx, both (default: both)
 #   -t, --theme       Theme directory (default: ./themes/)
 #   -h, --help        Show this help message
 #   --no-split        Disable auto-splitting (use JavaScript-only approach)
 #   --keep-temp       Keep temporary processed file for debugging
 #
 # Examples:
-#   ./compile.sh                           # Compile theme_showcase.md to HTML
-#   ./compile.sh my_deck.md                # Compile my_deck.md to HTML
+#   ./compile.sh                           # Compile theme_showcase.md to HTML+PDF
+#   ./compile.sh my_deck.md                # Compile my_deck.md to HTML+PDF
 #   ./compile.sh deck.md -o output.html    # Specify output file
 #   ./compile.sh deck.md -l 15             # Use 15 lines per slide for code
 #   ./compile.sh deck.md -r 6              # Use 6 data rows per slide for tables
-#   ./compile.sh deck.md -f pdf            # Output as PDF
+#   ./compile.sh deck.md -f pdf            # Output as PDF only
+#   ./compile.sh deck.md -f html           # Output as HTML only
 #
 # Requirements:
 #   - marp-cli (npm install -g @marp-team/marp-cli)
@@ -51,7 +52,7 @@ INPUT_FILE="theme_showcase.md"
 OUTPUT_FILE=""
 MAX_LINES_PER_SLIDE=20
 MAX_TABLE_ROWS=8
-OUTPUT_FORMAT="html"
+OUTPUT_FORMAT="both"
 THEME_DIR="./themes/"
 NO_SPLIT=false
 KEEP_TEMP=false
@@ -135,7 +136,12 @@ fi
 # Set default output file if not specified
 if [[ -z "$OUTPUT_FILE" ]]; then
     BASENAME="${INPUT_FILE%.md}"
-    OUTPUT_FILE="${BASENAME}.${OUTPUT_FORMAT}"
+    if [[ "$OUTPUT_FORMAT" == "both" ]]; then
+        OUTPUT_FILE="${BASENAME}.html"
+        PDF_OUTPUT_FILE="${BASENAME}.pdf"
+    else
+        OUTPUT_FILE="${BASENAME}.${OUTPUT_FORMAT}"
+    fi
 fi
 
 # Check for marp-cli
@@ -170,33 +176,46 @@ fi
 log_info "Processing markdown..."
 eval $PYTHON_CMD
 
-# Build marp command
-MARP_CMD="marp \"$TEMP_FILE\" --theme-set \"$THEME_DIR\" --html"
+# Build marp command base
+MARP_BASE="marp \"$TEMP_FILE\" --theme-set \"$THEME_DIR\" --html"
 
-# Add output format specific options
-case $OUTPUT_FORMAT in
-    html)
-        MARP_CMD="$MARP_CMD -o \"$OUTPUT_FILE\""
-        ;;
-    pdf)
-        MARP_CMD="$MARP_CMD --pdf --allow-local-files -o \"$OUTPUT_FILE\""
-        ;;
-    pptx)
-        MARP_CMD="$MARP_CMD --pptx --allow-local-files -o \"$OUTPUT_FILE\""
-        ;;
-    *)
-        log_error "Unknown output format: $OUTPUT_FORMAT"
-        exit 1
-        ;;
-esac
+# Function to run marp for a specific format
+run_marp() {
+    local format=$1
+    local output=$2
+    local cmd="$MARP_BASE"
 
-# Run marp
-log_info "Running marp..."
-eval $MARP_CMD
+    case $format in
+        html)
+            cmd="$cmd -o \"$output\""
+            ;;
+        pdf)
+            cmd="$cmd --pdf --allow-local-files -o \"$output\""
+            ;;
+        pptx)
+            cmd="$cmd --pptx --allow-local-files -o \"$output\""
+            ;;
+        *)
+            log_error "Unknown output format: $format"
+            return 1
+            ;;
+    esac
+
+    log_info "Generating $format: $output"
+    eval $cmd
+}
+
+# Run marp for the specified format(s)
+if [[ "$OUTPUT_FORMAT" == "both" ]]; then
+    run_marp "html" "$OUTPUT_FILE"
+    run_marp "pdf" "$PDF_OUTPUT_FILE"
+else
+    run_marp "$OUTPUT_FORMAT" "$OUTPUT_FILE"
+fi
 
 # Inject chart-defaults script FIRST (must run before any chart creation scripts)
 CHART_DEFAULTS_JS="$SCRIPT_DIR/chart-defaults.js"
-if [[ "$OUTPUT_FORMAT" == "html" && -f "$OUTPUT_FILE" && -f "$CHART_DEFAULTS_JS" ]]; then
+if [[ ("$OUTPUT_FORMAT" == "html" || "$OUTPUT_FORMAT" == "both") && -f "$OUTPUT_FILE" && -f "$CHART_DEFAULTS_JS" ]]; then
     log_info "Injecting chart-defaults script into head..."
 
     # Use Python to inject the script into <head> (before any inline scripts run)
@@ -219,7 +238,7 @@ fi
 
 # Inject auto-scaling script for HTML output
 AUTOSCALE_JS="$SCRIPT_DIR/autoscale.js"
-if [[ "$OUTPUT_FORMAT" == "html" && -f "$OUTPUT_FILE" && -f "$AUTOSCALE_JS" ]]; then
+if [[ ("$OUTPUT_FORMAT" == "html" || "$OUTPUT_FORMAT" == "both") && -f "$OUTPUT_FILE" && -f "$AUTOSCALE_JS" ]]; then
     log_info "Injecting auto-scaling script..."
 
     # Read the script content and wrap in <script> tags
@@ -241,15 +260,18 @@ fi
 
 # Report success
 if [[ -f "$OUTPUT_FILE" ]]; then
-    log_info "Successfully created: $OUTPUT_FILE"
-    if [[ "$KEEP_TEMP" == true ]]; then
-        log_info "Temporary file kept: $TEMP_FILE"
-    fi
+    FILE_SIZE=$(ls -lh "$OUTPUT_FILE" | awk '{print $5}')
+    log_info "Successfully created: $OUTPUT_FILE ($FILE_SIZE)"
 else
-    log_error "Failed to create output file"
+    log_error "Failed to create output file: $OUTPUT_FILE"
     exit 1
 fi
 
-# Print summary
-FILE_SIZE=$(ls -lh "$OUTPUT_FILE" | awk '{print $5}')
-log_info "Output file size: $FILE_SIZE"
+if [[ "$OUTPUT_FORMAT" == "both" && -f "$PDF_OUTPUT_FILE" ]]; then
+    PDF_SIZE=$(ls -lh "$PDF_OUTPUT_FILE" | awk '{print $5}')
+    log_info "Successfully created: $PDF_OUTPUT_FILE ($PDF_SIZE)"
+fi
+
+if [[ "$KEEP_TEMP" == true ]]; then
+    log_info "Temporary file kept: $TEMP_FILE"
+fi

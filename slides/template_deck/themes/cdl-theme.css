@@ -42,27 +42,44 @@
        Ordered for maximum visual distinction
        ============================================ */
     /* Primary series (most common use) */
-    --chart-color-1: #00693e;      /* Dartmouth Green - primary brand */
-    --chart-color-2: #267aba;      /* River Blue */
-    --chart-color-3: #ffa00f;      /* Bonfire Orange */
-    --chart-color-4: #9d162e;      /* Bonfire Red */
-    --chart-color-5: #8a6996;      /* Violet */
-    --chart-color-6: #a5d75f;      /* Rich Spring Green */
+    --chart-color-1: #00693e;
+    /* Dartmouth Green - primary brand */
+    --chart-color-2: #267aba;
+    /* River Blue */
+    --chart-color-3: #ffa00f;
+    /* Bonfire Orange */
+    --chart-color-4: #9d162e;
+    /* Bonfire Red */
+    --chart-color-5: #8a6996;
+    /* Violet */
+    --chart-color-6: #a5d75f;
+    /* Rich Spring Green */
 
     /* Extended series (for charts with more categories) */
-    --chart-color-7: #003c73;      /* River Navy */
-    --chart-color-8: #d94415;      /* Tuck Orange */
-    --chart-color-9: #643c20;      /* Autumn Brown */
-    --chart-color-10: #c4dd88;     /* Spring Green */
-    --chart-color-11: #f5dc69;     /* Summer Yellow */
-    --chart-color-12: #424141;     /* Granite Gray */
+    --chart-color-7: #003c73;
+    /* River Navy */
+    --chart-color-8: #d94415;
+    /* Tuck Orange */
+    --chart-color-9: #643c20;
+    /* Autumn Brown */
+    --chart-color-10: #c4dd88;
+    /* Spring Green */
+    --chart-color-11: #f5dc69;
+    /* Summer Yellow */
+    --chart-color-12: #424141;
+    /* Granite Gray */
 
     /* Semantic chart colors */
-    --chart-positive: #00693e;     /* Dartmouth Green */
-    --chart-negative: #9d162e;     /* Bonfire Red */
-    --chart-neutral: #424141;      /* Granite Gray */
-    --chart-highlight: #ffa00f;    /* Bonfire Orange */
-    --chart-secondary: #267aba;    /* River Blue */
+    --chart-positive: #00693e;
+    /* Dartmouth Green */
+    --chart-negative: #9d162e;
+    /* Bonfire Red */
+    --chart-neutral: #424141;
+    /* Granite Gray */
+    --chart-highlight: #ffa00f;
+    /* Bonfire Orange */
+    --chart-secondary: #267aba;
+    /* River Blue */
 
     /* Background variants (50% opacity for fills) */
     --chart-bg-1: rgba(0, 105, 62, 0.5);
@@ -660,21 +677,21 @@ section:not(.lead):not(#\31):has(.multi-column) {
 }
 
 /* Multi-column content: use auto margins for vertical centering */
-section:not(.lead):not(#\31):has(div[style*="display: flex"]) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(div[style*="display:flex"]) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(div[style*="gap"]) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(.columns) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(.two-column) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(.multi-column) > *:not(h1):first-of-type {
+section:not(.lead):not(#\31):has(div[style*="display: flex"])>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(div[style*="display:flex"])>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(div[style*="gap"])>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.columns)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.two-column)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.multi-column)>*:not(h1):first-of-type {
     margin-top: auto !important;
 }
 
-section:not(.lead):not(#\31):has(div[style*="display: flex"]) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(div[style*="display:flex"]) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(div[style*="gap"]) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(.columns) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(.two-column) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(.multi-column) > *:not(h1):last-of-type {
+section:not(.lead):not(#\31):has(div[style*="display: flex"])>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(div[style*="display:flex"])>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(div[style*="gap"])>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.columns)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.two-column)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.multi-column)>*:not(h1):last-of-type {
     margin-bottom: auto !important;
 }
 
@@ -852,47 +869,47 @@ section:not(.lead):not(#\31) h1 {
 }
 
 /* Content elements - stack vertically */
-section:not(.lead):not(#\31) > *:not(h1) {
+section:not(.lead):not(#\31)>*:not(h1) {
     position: relative !important;
     z-index: 1 !important;
 }
 
 /* Content group vertical centering - shifted up slightly */
-section:not(.lead):not(#\31) > *:not(h1):first-of-type {
+section:not(.lead):not(#\31)>*:not(h1):first-of-type {
     margin-top: auto !important;
 }
 
-section:not(.lead):not(#\31) > *:not(h1):last-of-type {
+section:not(.lead):not(#\31)>*:not(h1):last-of-type {
     margin-bottom: auto !important;
 }
 
 /* Reduce gap between title and table on table slides */
-section:not(.lead):not(#\31):has(> table) > h1 {
+section:not(.lead):not(#\31):has(> table)>h1 {
     margin-bottom: 0 !important;
     padding-top: 8px !important;
     min-height: 1.2em !important;
 }
 
-section:not(.lead):not(#\31) > table:first-of-type {
+section:not(.lead):not(#\31)>table:first-of-type {
     margin-top: 0.15em !important;
 }
 
 /* Lists should be left-aligned, not centered */
-section:not(.lead):not(#\31) > ul,
-section:not(.lead):not(#\31) > ol {
+section:not(.lead):not(#\31)>ul,
+section:not(.lead):not(#\31)>ol {
     text-align: left !important;
     margin-left: auto !important;
     margin-right: auto !important;
 }
 
 /* Lists on slides with equations need consistent width for alignment */
-section:not(.lead):not(#\31):has(.katex-display) > ul,
-section:not(.lead):not(#\31):has(.katex-display) > ol {
+section:not(.lead):not(#\31):has(.katex-display)>ul,
+section:not(.lead):not(#\31):has(.katex-display)>ol {
     width: 80% !important;
 }
 
 /* Paragraphs and equations centered */
-section:not(.lead):not(#\31) > p {
+section:not(.lead):not(#\31)>p {
     text-align: center !important;
     margin: 0.3em auto !important;
 }
@@ -905,12 +922,12 @@ section:not(.lead):not(#\31):has(.code-continued-indicator-last) {
     padding-bottom: 100px !important;
 }
 
-section:not(.lead):not(#\31):has(.code-continued-indicator) > h1 {
+section:not(.lead):not(#\31):has(.code-continued-indicator)>h1 {
     flex-shrink: 0 !important;
 }
 
-section:not(.lead):not(#\31):has(.code-continued-indicator) > pre,
-section:not(.lead):not(#\31):has(.code-continued-indicator-last) > pre {
+section:not(.lead):not(#\31):has(.code-continued-indicator)>pre,
+section:not(.lead):not(#\31):has(.code-continued-indicator-last)>pre {
     max-height: 70vh !important;
     font-size: 14pt !important;
     flex: 0 0 auto !important;
@@ -921,13 +938,13 @@ section:not(.lead):not(#\31):has(.code-continued-indicator-last) > pre {
     min-width: 90% !important;
 }
 
-section:not(.lead):not(#\31) > pre {
+section:not(.lead):not(#\31)>pre {
     align-self: center !important;
     justify-self: center !important;
     margin: 0 auto !important;
 }
 
-section:not(.lead):not(#\31) > .code-continued-indicator {
+section:not(.lead):not(#\31)>.code-continued-indicator {
     position: absolute !important;
     bottom: 10px !important;
     right: 10px !important;
@@ -936,7 +953,7 @@ section:not(.lead):not(#\31) > .code-continued-indicator {
 }
 
 /* Last slide in sequence: full positioning with slight left shift */
-section:not(.lead):not(#\31) > .code-continued-indicator-last {
+section:not(.lead):not(#\31)>.code-continued-indicator-last {
     position: absolute !important;
     bottom: 10px !important;
     right: 20px !important;
@@ -976,6 +993,7 @@ section:not(.lead):not(#\31) p {
     width: 100% !important;
     margin: 0.2em auto !important;
 }
+
 /* Ensure tight line spacing for code lines */
 pre code.has-line-numbers .line {
     display: flex !important;
@@ -1052,7 +1070,7 @@ section:not(.lead):not(#\31):has(.table-continued-indicator-last) {
     padding-bottom: 100px !important;
 }
 
-section:not(.lead):not(#\31) > .table-continued-indicator {
+section:not(.lead):not(#\31)>.table-continued-indicator {
     position: absolute !important;
     bottom: 10px !important;
     right: 10px !important;
@@ -1061,7 +1079,7 @@ section:not(.lead):not(#\31) > .table-continued-indicator {
 }
 
 /* Last slide in table sequence: full positioning with slight left shift */
-section:not(.lead):not(#\31) > .table-continued-indicator-last {
+section:not(.lead):not(#\31)>.table-continued-indicator-last {
     position: absolute !important;
     bottom: 10px !important;
     right: 20px !important;
@@ -1094,11 +1112,11 @@ section:not(.lead):not(#\31):has(table.split-table) {
 }
 
 /* Override the auto margins that cause vertical centering */
-section:not(.lead):not(#\31):has(table.split-table) > *:not(h1):first-of-type {
+section:not(.lead):not(#\31):has(table.split-table)>*:not(h1):first-of-type {
     margin-top: 0.5em !important;
 }
 
-section:not(.lead):not(#\31):has(table.split-table) > *:not(h1):last-of-type {
+section:not(.lead):not(#\31):has(table.split-table)>*:not(h1):last-of-type {
     margin-bottom: 0 !important;
 }
 
@@ -1111,18 +1129,18 @@ table.split-table {
 }
 
 /* Override flexbox centering for slides containing split tables */
-section:not(.lead):not(#\31):has(table.split-table) > table.split-table {
+section:not(.lead):not(#\31):has(table.split-table)>table.split-table {
     align-self: flex-start !important;
     margin-top: 0.5em !important;
     margin-bottom: 0 !important;
 }
 
 /* Prevent the first-of-type auto margin from centering split tables */
-section:not(.lead):not(#\31) > table.split-table:first-of-type {
+section:not(.lead):not(#\31)>table.split-table:first-of-type {
     margin-top: 0.5em !important;
 }
 
-section:not(.lead):not(#\31) > table.split-table:last-of-type {
+section:not(.lead):not(#\31)>table.split-table:last-of-type {
     margin-bottom: 0 !important;
 }
 
@@ -1141,11 +1159,11 @@ section:not(.lead):not(#\31):has(table:not(.split-table)) {
     align-content: flex-start !important;
 }
 
-section:not(.lead):not(#\31):has(table:not(.split-table)) > *:not(h1):first-of-type {
+section:not(.lead):not(#\31):has(table:not(.split-table))>*:not(h1):first-of-type {
     margin-top: 0.5em !important;
 }
 
-section:not(.lead):not(#\31):has(table:not(.split-table)) > *:not(h1):last-of-type {
+section:not(.lead):not(#\31):has(table:not(.split-table))>*:not(h1):last-of-type {
     margin-bottom: 0 !important;
 }
 
@@ -1157,15 +1175,15 @@ section:not(.lead):not(#\31):has(.warning-box) {
     align-content: flex-start !important;
 }
 
-section:not(.lead):not(#\31):has(.note-box) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(.example-box) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(.warning-box) > *:not(h1):first-of-type {
+section:not(.lead):not(#\31):has(.note-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.example-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.warning-box)>*:not(h1):first-of-type {
     margin-top: 0.5em !important;
 }
 
-section:not(.lead):not(#\31):has(.note-box) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(.example-box) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(.warning-box) > *:not(h1):last-of-type {
+section:not(.lead):not(#\31):has(.note-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.example-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.warning-box)>*:not(h1):last-of-type {
     margin-bottom: 0 !important;
 }
 
@@ -1174,7 +1192,11 @@ section:not(.lead):not(#\31):has(.warning-box) > *:not(h1):last-of-type {
    ============================================ */
 
 /* Keywords (def, return, class, if, etc.) */
-.hl-k, .hl-kn, .hl-kp, .hl-kr, .hl-kt {
+.hl-k,
+.hl-kn,
+.hl-kp,
+.hl-kr,
+.hl-kt {
     color: #00693e;
     font-weight: 600;
 }
@@ -1186,7 +1208,9 @@ section:not(.lead):not(#\31):has(.warning-box) > *:not(h1):last-of-type {
 }
 
 /* Function and method names */
-.hl-nf, .hl-fm, .hl-nv {
+.hl-nf,
+.hl-fm,
+.hl-nv {
     color: #1a5276;
 }
 
@@ -1197,29 +1221,51 @@ section:not(.lead):not(#\31):has(.warning-box) > *:not(h1):last-of-type {
 }
 
 /* Strings */
-.hl-s, .hl-s1, .hl-s2, .hl-sb, .hl-sc, .hl-dl, .hl-sa, .hl-sr {
+.hl-s,
+.hl-s1,
+.hl-s2,
+.hl-sb,
+.hl-sc,
+.hl-dl,
+.hl-sa,
+.hl-sr {
     color: #a0522d;
 }
 
 /* Docstrings and heredocs */
-.hl-sd, .hl-sh {
+.hl-sd,
+.hl-sh {
     color: #708090;
     font-style: italic;
 }
 
 /* Numbers */
-.hl-m, .hl-mf, .hl-mh, .hl-mi, .hl-mo, .hl-mb, .hl-mx, .hl-il {
+.hl-m,
+.hl-mf,
+.hl-mh,
+.hl-mi,
+.hl-mo,
+.hl-mb,
+.hl-mx,
+.hl-il {
     color: #b8860b;
 }
 
 /* Comments */
-.hl-c, .hl-c1, .hl-cm, .hl-cp, .hl-cpf, .hl-cs, .hl-ch {
+.hl-c,
+.hl-c1,
+.hl-cm,
+.hl-cp,
+.hl-cpf,
+.hl-cs,
+.hl-ch {
     color: #708090;
     font-style: italic;
 }
 
 /* Operators */
-.hl-o, .hl-ow {
+.hl-o,
+.hl-ow {
     color: #555;
 }
 
@@ -1240,7 +1286,13 @@ section:not(.lead):not(#\31):has(.warning-box) > *:not(h1):last-of-type {
 }
 
 /* Names/variables */
-.hl-n, .hl-na, .hl-ni, .hl-nl, .hl-nn, .hl-no, .hl-nt {
+.hl-n,
+.hl-na,
+.hl-ni,
+.hl-nl,
+.hl-nn,
+.hl-no,
+.hl-nt {
     color: inherit;
 }
 
@@ -1528,27 +1580,33 @@ section:not(.lead):not(#\31) .definition-box li,
 /* Inline code in callouts - adjust backgrounds for visibility */
 /* Using Dartmouth tertiary colors */
 .note-box code {
-    background-color: rgba(38, 122, 186, 0.15);  /* River Blue */
+    background-color: rgba(38, 122, 186, 0.15);
+    /* River Blue */
 }
 
 .example-box code {
-    background-color: rgba(0, 105, 62, 0.12);    /* Dartmouth Green */
+    background-color: rgba(0, 105, 62, 0.12);
+    /* Dartmouth Green */
 }
 
 .warning-box code {
-    background-color: rgba(255, 160, 15, 0.18);  /* Bonfire Orange */
+    background-color: rgba(255, 160, 15, 0.18);
+    /* Bonfire Orange */
 }
 
 .tip-box code {
-    background-color: rgba(165, 215, 95, 0.18);  /* Rich Spring Green */
+    background-color: rgba(165, 215, 95, 0.18);
+    /* Rich Spring Green */
 }
 
 .important-box code {
-    background-color: rgba(157, 22, 46, 0.15);   /* Bonfire Red */
+    background-color: rgba(157, 22, 46, 0.15);
+    /* Bonfire Red */
 }
 
 .definition-box code {
-    background-color: rgba(138, 105, 150, 0.15); /* Violet */
+    background-color: rgba(138, 105, 150, 0.15);
+    /* Violet */
 }
 
 /* Slides with callout boxes: disable vertical centering to prevent bottom cutoff */
@@ -1566,34 +1624,34 @@ section:not(.lead):not(#\31):has(> .definition-box) {
 }
 
 /* Override auto-margin vertical centering for callout slides */
-section:not(.lead):not(#\31):has(> .callout) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(> .note-box) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(> .example-box) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(> .warning-box) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(> .tip-box) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(> .important-box) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(> .definition-box) > *:not(h1):first-of-type {
+section:not(.lead):not(#\31):has(> .callout)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .note-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .example-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .warning-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .tip-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .important-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .definition-box)>*:not(h1):first-of-type {
     margin-top: 0.3em !important;
 }
 
-section:not(.lead):not(#\31):has(> .callout) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(> .note-box) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(> .example-box) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(> .warning-box) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(> .tip-box) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(> .important-box) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(> .definition-box) > *:not(h1):last-of-type {
+section:not(.lead):not(#\31):has(> .callout)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .note-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .example-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .warning-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .tip-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .important-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .definition-box)>*:not(h1):last-of-type {
     margin-bottom: 0 !important;
 }
 
 /* Override grid/flex rules for callout boxes on content slides */
-section:not(.lead):not(#\31) > .callout,
-section:not(.lead):not(#\31) > .note-box,
-section:not(.lead):not(#\31) > .example-box,
-section:not(.lead):not(#\31) > .warning-box,
-section:not(.lead):not(#\31) > .tip-box,
-section:not(.lead):not(#\31) > .important-box,
-section:not(.lead):not(#\31) > .definition-box {
+section:not(.lead):not(#\31)>.callout,
+section:not(.lead):not(#\31)>.note-box,
+section:not(.lead):not(#\31)>.example-box,
+section:not(.lead):not(#\31)>.warning-box,
+section:not(.lead):not(#\31)>.tip-box,
+section:not(.lead):not(#\31)>.important-box,
+section:not(.lead):not(#\31)>.definition-box {
     align-self: center !important;
     justify-self: center !important;
     /* Ensure proper sizing and no overflow */
@@ -1620,12 +1678,36 @@ section:not(.lead):not(#\31) > .definition-box {
 }
 
 /* Emoji size classes */
-.emoji-xs { font-size: 24px; }   /* Extra small */
-.emoji-sm { font-size: 48px; }   /* Small */
-.emoji-md { font-size: 72px; }   /* Medium */
-.emoji-lg { font-size: 96px; }   /* Large */
-.emoji-xl { font-size: 128px; }  /* Extra large */
-.emoji-xxl { font-size: 192px; } /* Hero size */
+.emoji-xs {
+    font-size: 24px;
+}
+
+/* Extra small */
+.emoji-sm {
+    font-size: 48px;
+}
+
+/* Small */
+.emoji-md {
+    font-size: 72px;
+}
+
+/* Medium */
+.emoji-lg {
+    font-size: 96px;
+}
+
+/* Large */
+.emoji-xl {
+    font-size: 128px;
+}
+
+/* Extra large */
+.emoji-xxl {
+    font-size: 192px;
+}
+
+/* Hero size */
 
 /* Emoji with background - colored "pedestal" effect */
 .emoji-bg {
@@ -1638,46 +1720,150 @@ section:not(.lead):not(#\31) > .definition-box {
 
 /* Dartmouth Tertiary Color Backgrounds */
 /* Primary brand color */
-.emoji-bg-green { background-color: rgba(0, 105, 62, 0.5); }           /* Dartmouth Green */
+.emoji-bg-green {
+    background-color: rgba(0, 105, 62, 0.5);
+}
+
+/* Dartmouth Green */
 
 /* Blues */
-.emoji-bg-blue { background-color: rgba(38, 122, 186, 0.5); }          /* River Blue */
-.emoji-bg-river-blue { background-color: rgba(38, 122, 186, 0.5); }    /* River Blue */
-.emoji-bg-navy { background-color: rgba(0, 60, 115, 0.5); }            /* River Navy */
-.emoji-bg-river-navy { background-color: rgba(0, 60, 115, 0.5); }      /* River Navy */
+.emoji-bg-blue {
+    background-color: rgba(38, 122, 186, 0.5);
+}
+
+/* River Blue */
+.emoji-bg-river-blue {
+    background-color: rgba(38, 122, 186, 0.5);
+}
+
+/* River Blue */
+.emoji-bg-navy {
+    background-color: rgba(0, 60, 115, 0.5);
+}
+
+/* River Navy */
+.emoji-bg-river-navy {
+    background-color: rgba(0, 60, 115, 0.5);
+}
+
+/* River Navy */
 
 /* Greens */
-.emoji-bg-spring { background-color: rgba(196, 221, 136, 0.5); }       /* Spring Green */
-.emoji-bg-spring-green { background-color: rgba(196, 221, 136, 0.5); } /* Spring Green */
-.emoji-bg-rich-spring { background-color: rgba(165, 215, 95, 0.5); }   /* Rich Spring Green */
-.emoji-bg-forest { background-color: rgba(18, 49, 43, 0.5); }          /* Forest Green */
+.emoji-bg-spring {
+    background-color: rgba(196, 221, 136, 0.5);
+}
+
+/* Spring Green */
+.emoji-bg-spring-green {
+    background-color: rgba(196, 221, 136, 0.5);
+}
+
+/* Spring Green */
+.emoji-bg-rich-spring {
+    background-color: rgba(165, 215, 95, 0.5);
+}
+
+/* Rich Spring Green */
+.emoji-bg-forest {
+    background-color: rgba(18, 49, 43, 0.5);
+}
+
+/* Forest Green */
 
 /* Warm colors */
-.emoji-bg-yellow { background-color: rgba(245, 220, 105, 0.5); }       /* Summer Yellow */
-.emoji-bg-summer { background-color: rgba(245, 220, 105, 0.5); }       /* Summer Yellow */
-.emoji-bg-orange { background-color: rgba(255, 160, 15, 0.5); }        /* Bonfire Orange */
-.emoji-bg-bonfire { background-color: rgba(255, 160, 15, 0.5); }       /* Bonfire Orange */
-.emoji-bg-red { background-color: rgba(157, 22, 46, 0.5); }            /* Bonfire Red */
-.emoji-bg-bonfire-red { background-color: rgba(157, 22, 46, 0.5); }    /* Bonfire Red */
-.emoji-bg-tuck { background-color: rgba(217, 68, 21, 0.5); }           /* Tuck Orange */
-.emoji-bg-tuck-orange { background-color: rgba(217, 68, 21, 0.5); }    /* Tuck Orange */
+.emoji-bg-yellow {
+    background-color: rgba(245, 220, 105, 0.5);
+}
+
+/* Summer Yellow */
+.emoji-bg-summer {
+    background-color: rgba(245, 220, 105, 0.5);
+}
+
+/* Summer Yellow */
+.emoji-bg-orange {
+    background-color: rgba(255, 160, 15, 0.5);
+}
+
+/* Bonfire Orange */
+.emoji-bg-bonfire {
+    background-color: rgba(255, 160, 15, 0.5);
+}
+
+/* Bonfire Orange */
+.emoji-bg-red {
+    background-color: rgba(157, 22, 46, 0.5);
+}
+
+/* Bonfire Red */
+.emoji-bg-bonfire-red {
+    background-color: rgba(157, 22, 46, 0.5);
+}
+
+/* Bonfire Red */
+.emoji-bg-tuck {
+    background-color: rgba(217, 68, 21, 0.5);
+}
+
+/* Tuck Orange */
+.emoji-bg-tuck-orange {
+    background-color: rgba(217, 68, 21, 0.5);
+}
+
+/* Tuck Orange */
 
 /* Other colors */
-.emoji-bg-violet { background-color: rgba(138, 105, 150, 0.5); }       /* Violet */
-.emoji-bg-purple { background-color: rgba(138, 105, 150, 0.5); }       /* Violet (alias) */
-.emoji-bg-brown { background-color: rgba(100, 60, 32, 0.5); }          /* Autumn Brown */
-.emoji-bg-autumn { background-color: rgba(100, 60, 32, 0.5); }         /* Autumn Brown */
+.emoji-bg-violet {
+    background-color: rgba(138, 105, 150, 0.5);
+}
+
+/* Violet */
+.emoji-bg-purple {
+    background-color: rgba(138, 105, 150, 0.5);
+}
+
+/* Violet (alias) */
+.emoji-bg-brown {
+    background-color: rgba(100, 60, 32, 0.5);
+}
+
+/* Autumn Brown */
+.emoji-bg-autumn {
+    background-color: rgba(100, 60, 32, 0.5);
+}
+
+/* Autumn Brown */
 
 /* Grays */
-.emoji-bg-gray { background-color: rgba(66, 65, 65, 0.5); }            /* Granite Gray */
-.emoji-bg-granite { background-color: rgba(66, 65, 65, 0.5); }         /* Granite Gray */
-.emoji-bg-gray-light { background-color: rgba(226, 226, 226, 0.5); }   /* Gray 2 */
-.emoji-bg-gray-dark { background-color: rgba(112, 112, 112, 0.5); }    /* Gray 3 */
+.emoji-bg-gray {
+    background-color: rgba(66, 65, 65, 0.5);
+}
+
+/* Granite Gray */
+.emoji-bg-granite {
+    background-color: rgba(66, 65, 65, 0.5);
+}
+
+/* Granite Gray */
+.emoji-bg-gray-light {
+    background-color: rgba(226, 226, 226, 0.5);
+}
+
+/* Gray 2 */
+.emoji-bg-gray-dark {
+    background-color: rgba(112, 112, 112, 0.5);
+}
+
+/* Gray 3 */
 
 /* Legacy alias for backwards compatibility
    Note: "teal" maps to Rich Spring Green, not a true blue-green teal.
    Dartmouth's palette doesn't include a teal; use 'blue' (River Blue) for blue-green tones. */
-.emoji-bg-teal { background-color: rgba(165, 215, 95, 0.5); }          /* Rich Spring Green (legacy "teal" alias) */
+.emoji-bg-teal {
+    background-color: rgba(165, 215, 95, 0.5);
+}
+
+/* Rich Spring Green (legacy "teal" alias) */
 
 /* CSS Arrow for flow diagrams - uses arrow.svg image */
 .flow-arrow {
@@ -1758,10 +1944,14 @@ section:not(.lead):not(#\31) > .definition-box {
 
 /* Base scalable SVG arrow - uses CSS custom property for width */
 .svg-arrow {
-    --arrow-width: 100px;       /* Total arrow width - customizable */
-    --arrow-head-width: 24px;   /* Fixed arrowhead width */
-    --arrow-height: 34px;       /* Arrow height (matches arrowhead SVG) */
-    --arrow-stem-height: 10px;  /* Stem thickness */
+    --arrow-width: 100px;
+    /* Total arrow width - customizable */
+    --arrow-head-width: 24px;
+    /* Fixed arrowhead width */
+    --arrow-height: 34px;
+    /* Arrow height (matches arrowhead SVG) */
+    --arrow-stem-height: 10px;
+    /* Stem thickness */
 
     display: inline-flex;
     align-items: center;
@@ -1790,13 +1980,44 @@ section:not(.lead):not(#\31) > .definition-box {
 }
 
 /* Preset width variants */
-.svg-arrow-40  { --arrow-width: 55px;  --arrow-height: 24px; --arrow-head-width: 16px; --arrow-stem-height: 6px; }
-.svg-arrow-60  { --arrow-width: 75px;  --arrow-height: 28px; --arrow-head-width: 19px; --arrow-stem-height: 7px; }
-.svg-arrow-80  { --arrow-width: 100px; --arrow-height: 34px; }
-.svg-arrow-100 { --arrow-width: 120px; --arrow-height: 38px; }
-.svg-arrow-120 { --arrow-width: 140px; --arrow-height: 42px; }
-.svg-arrow-150 { --arrow-width: 170px; --arrow-height: 46px; }
-.svg-arrow-200 { --arrow-width: 220px; --arrow-height: 52px; }
+.svg-arrow-40 {
+    --arrow-width: 55px;
+    --arrow-height: 24px;
+    --arrow-head-width: 16px;
+    --arrow-stem-height: 6px;
+}
+
+.svg-arrow-60 {
+    --arrow-width: 75px;
+    --arrow-height: 28px;
+    --arrow-head-width: 19px;
+    --arrow-stem-height: 7px;
+}
+
+.svg-arrow-80 {
+    --arrow-width: 100px;
+    --arrow-height: 34px;
+}
+
+.svg-arrow-100 {
+    --arrow-width: 120px;
+    --arrow-height: 38px;
+}
+
+.svg-arrow-120 {
+    --arrow-width: 140px;
+    --arrow-height: 42px;
+}
+
+.svg-arrow-150 {
+    --arrow-width: 170px;
+    --arrow-height: 46px;
+}
+
+.svg-arrow-200 {
+    --arrow-width: 220px;
+    --arrow-height: 52px;
+}
 
 /* Small variant - proportionally smaller */
 .svg-arrow-sm {
@@ -1873,7 +2094,8 @@ section:not(.lead):not(#\31) > .definition-box {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: flex-start;  /* Align to top - arrows use margin-top for centering */
+    align-items: flex-start;
+    /* Align to top - arrows use margin-top for centering */
     gap: 1em;
     margin: 1em auto;
 }
@@ -1882,27 +2104,31 @@ section:not(.lead):not(#\31) > .definition-box {
    emoji-xl (128px) + emoji-bg padding (0.3em * 2 = ~77px) = ~205px total
    Arrow should be at center: (205px / 2) - (arrow-height / 2)
    For flow-arrow-lg (40px): 102.5 - 20 = ~82px */
-.emoji-figure > .flow-arrow,
-.emoji-figure > .flow-arrow-sm,
-.emoji-figure > .flow-arrow-lg,
-.emoji-figure > .svg-arrow {
+.emoji-figure>.flow-arrow,
+.emoji-figure>.flow-arrow-sm,
+.emoji-figure>.flow-arrow-lg,
+.emoji-figure>.svg-arrow {
     align-self: flex-start;
 }
 
-.emoji-figure > .flow-arrow {
-    margin-top: 87px;  /* (205 - 30) / 2 for 30px arrow */
+.emoji-figure>.flow-arrow {
+    margin-top: 87px;
+    /* (205 - 30) / 2 for 30px arrow */
 }
 
-.emoji-figure > .flow-arrow-sm {
-    margin-top: 92px;  /* (205 - 20) / 2 for 20px arrow */
+.emoji-figure>.flow-arrow-sm {
+    margin-top: 92px;
+    /* (205 - 20) / 2 for 20px arrow */
 }
 
-.emoji-figure > .flow-arrow-lg {
-    margin-top: 82px;  /* (205 - 40) / 2 for 40px arrow */
+.emoji-figure>.flow-arrow-lg {
+    margin-top: 82px;
+    /* (205 - 40) / 2 for 40px arrow */
 }
 
-.emoji-figure > .svg-arrow {
-    margin-top: 85px;  /* (205 - 34) / 2 for ~34px default arrow */
+.emoji-figure>.svg-arrow {
+    margin-top: 85px;
+    /* (205 - 34) / 2 for ~34px default arrow */
 }
 
 /* Row layout for emoji figures */
@@ -1910,7 +2136,8 @@ section:not(.lead):not(#\31) > .definition-box {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: flex-start;  /* Align to top - arrows use margin-top for centering */
+    align-items: flex-start;
+    /* Align to top - arrows use margin-top for centering */
     gap: 2em;
 }
 
@@ -1918,27 +2145,31 @@ section:not(.lead):not(#\31) > .definition-box {
    emoji-xl (128px) + emoji-bg padding (0.3em * 2 = ~77px) = ~205px total
    Arrow should be at center: (205px / 2) - (arrow-height / 2)
    For flow-arrow-lg (40px): 102.5 - 20 = ~82px */
-.emoji-row > .flow-arrow,
-.emoji-row > .flow-arrow-sm,
-.emoji-row > .flow-arrow-lg,
-.emoji-row > .svg-arrow {
+.emoji-row>.flow-arrow,
+.emoji-row>.flow-arrow-sm,
+.emoji-row>.flow-arrow-lg,
+.emoji-row>.svg-arrow {
     align-self: flex-start;
 }
 
-.emoji-row > .flow-arrow {
-    margin-top: 87px;  /* (205 - 30) / 2 for 30px arrow */
+.emoji-row>.flow-arrow {
+    margin-top: 87px;
+    /* (205 - 30) / 2 for 30px arrow */
 }
 
-.emoji-row > .flow-arrow-sm {
-    margin-top: 92px;  /* (205 - 20) / 2 for 20px arrow */
+.emoji-row>.flow-arrow-sm {
+    margin-top: 92px;
+    /* (205 - 20) / 2 for 20px arrow */
 }
 
-.emoji-row > .flow-arrow-lg {
-    margin-top: 82px;  /* (205 - 40) / 2 for 40px arrow */
+.emoji-row>.flow-arrow-lg {
+    margin-top: 82px;
+    /* (205 - 40) / 2 for 40px arrow */
 }
 
-.emoji-row > .svg-arrow {
-    margin-top: 85px;  /* (205 - 34) / 2 for ~34px default arrow */
+.emoji-row>.svg-arrow {
+    margin-top: 85px;
+    /* (205 - 34) / 2 for ~34px default arrow */
 }
 
 /* Column layout for emoji figures */
@@ -1946,7 +2177,8 @@ section:not(.lead):not(#\31) > .definition-box {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.2em;  /* Reduced from 0.5em for tighter label spacing */
+    gap: 0.2em;
+    /* Reduced from 0.5em for tighter label spacing */
 }
 
 .emoji-col .label {
@@ -1969,7 +2201,8 @@ section:not(.lead):not(#\31) > .definition-box {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.15em;  /* Reduced from 0.3em for tighter label spacing */
+    gap: 0.15em;
+    /* Reduced from 0.3em for tighter label spacing */
 }
 
 .emoji-labeled .label {
@@ -1988,18 +2221,20 @@ section:not(.lead):not(#\31) > .definition-box {
 }
 
 /* Parent node in hierarchy - add vertical stem going down */
-.emoji-hierarchy > .emoji-col {
+.emoji-hierarchy>.emoji-col {
     position: relative;
 }
 
 /* Vertical line from parent to horizontal connector - starts below label, ends at horizontal line */
-.emoji-hierarchy > .emoji-col::after {
+.emoji-hierarchy>.emoji-col::after {
     content: '';
     position: absolute;
-    top: 100%;  /* Start at the bottom of the emoji-col (below the label) */
+    top: 100%;
+    /* Start at the bottom of the emoji-col (below the label) */
     left: 50%;
     width: 4px;
-    height: calc(2em - 21px);  /* Gap (2em) minus 25px above children + 4px overlap with horizontal line */
+    height: calc(2em - 21px);
+    /* Gap (2em) minus 25px above children + 4px overlap with horizontal line */
     background-color: #0a2518;
     transform: translateX(-50%);
 }
@@ -2028,11 +2263,11 @@ section:not(.lead):not(#\31) > .definition-box {
 }
 
 /* Each child in the hierarchy row gets a vertical drop line */
-.emoji-hierarchy-row.with-connector > .emoji-col {
+.emoji-hierarchy-row.with-connector>.emoji-col {
     position: relative;
 }
 
-.emoji-hierarchy-row.with-connector > .emoji-col::before {
+.emoji-hierarchy-row.with-connector>.emoji-col::before {
     content: '';
     position: absolute;
     top: -25px;
@@ -2068,7 +2303,7 @@ section:not(.lead):not(#\31) > .definition-box {
 
 /* Inline SVGs within diagram containers - ensure they scale properly */
 /* Uses !important to override any inline width/height attributes */
-.diagram-container > svg {
+.diagram-container>svg {
     max-width: 100% !important;
     max-height: 60vh !important;
     height: auto !important;
@@ -2135,10 +2370,29 @@ section:not(.lead):not(#\31) > .definition-box {
    ============================================ */
 
 /* Small logo sizing for inline display */
-.logo-xs { height: 20px; width: auto; vertical-align: middle; }
-.logo-sm { height: 28px; width: auto; vertical-align: middle; }
-.logo-md { height: 40px; width: auto; vertical-align: middle; }
-.logo-lg { height: 56px; width: auto; vertical-align: middle; }
+.logo-xs {
+    height: 20px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.logo-sm {
+    height: 28px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.logo-md {
+    height: 40px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.logo-lg {
+    height: 56px;
+    width: auto;
+    vertical-align: middle;
+}
 
 /* Logo row - horizontal inline logos with spacing */
 .logo-row {
@@ -2157,18 +2411,41 @@ section:not(.lead):not(#\31) > .definition-box {
     object-fit: contain !important;
 }
 
-.logo-row.logo-row-sm img { height: 32px !important; max-width: 85px !important; }
-.logo-row.logo-row-md img { height: 48px !important; max-width: 110px !important; }
-.logo-row.logo-row-lg img { height: 56px !important; max-width: 130px !important; }
+.logo-row.logo-row-sm img {
+    height: 32px !important;
+    max-width: 85px !important;
+}
+
+.logo-row.logo-row-md img {
+    height: 48px !important;
+    max-width: 110px !important;
+}
+
+.logo-row.logo-row-lg img {
+    height: 56px !important;
+    max-width: 130px !important;
+}
 
 /* Override instructor-grid scaling for logo rows */
 .instructor-grid .logo-row img {
     height: 40px !important;
     max-width: 100px !important;
 }
-.instructor-grid .logo-row.logo-row-sm img { height: 32px !important; max-width: 85px !important; }
-.instructor-grid .logo-row.logo-row-md img { height: 48px !important; max-width: 110px !important; }
-.instructor-grid .logo-row.logo-row-lg img { height: 56px !important; max-width: 130px !important; }
+
+.instructor-grid .logo-row.logo-row-sm img {
+    height: 32px !important;
+    max-width: 85px !important;
+}
+
+.instructor-grid .logo-row.logo-row-md img {
+    height: 48px !important;
+    max-width: 110px !important;
+}
+
+.instructor-grid .logo-row.logo-row-lg img {
+    height: 56px !important;
+    max-width: 130px !important;
+}
 
 /* Compact section - tighter spacing */
 .compact-section {
@@ -2196,7 +2473,7 @@ section:not(.lead):not(#\31) > .definition-box {
     font-size: initial !important;
 }
 
-.instructor-grid > div {
+.instructor-grid>div {
     padding: 0.3em 0;
 }
 
@@ -2342,16 +2619,382 @@ section:not(.lead):not(#\31):has(.instructor-grid) {
     padding: 15px 35px 25px 35px !important;
 }
 
-section:not(.lead):not(#\31):has(.instructor-grid) > h1 {
+section:not(.lead):not(#\31):has(.instructor-grid)>h1 {
     margin-bottom: 0.15em !important;
     padding-top: 8px !important;
     min-height: 1.2em !important;
 }
 
-section:not(.lead):not(#\31):has(.instructor-grid) > *:not(h1):first-of-type {
+section:not(.lead):not(#\31):has(.instructor-grid)>*:not(h1):first-of-type {
     margin-top: 0.2em !important;
 }
 
-section:not(.lead):not(#\31):has(.instructor-grid) > *:not(h1):last-of-type {
+section:not(.lead):not(#\31):has(.instructor-grid)>*:not(h1):last-of-type {
     margin-bottom: 0 !important;
+}
+
+/* ============================================
+   REFRESHED INSTRUCTOR SLIDE LAYOUT (2025)
+   Dense single-slide layout for "About the instructor"
+   ============================================ */
+
+/* Wrapper for the entire fused slide content */
+.instructor-container {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    height: 100%;
+    gap: 0.1em;
+    /* Minimal gap between header and content - Round 4 Tightening */
+    font-size: 0.8em;
+    /* Reduced base font size */
+}
+
+/* Helper to force left alignment in the container */
+.instructor-container * {
+    text-align: left !important;
+}
+
+/* Top header section */
+.instructor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    /* Align bottom to match text baselines */
+    border-bottom: 2px solid rgba(0, 105, 62, 0.2);
+    padding-bottom: 0.1em;
+    /* Minimal padding */
+    margin-bottom: 0.1em;
+}
+
+.instructor-header-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.instructor-header-left h3 {
+    margin: 0;
+    color: var(--dartmouth-green);
+    /* Matches slide title color */
+    font-size: 1.4em;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+/* Info bar with inline logo support */
+.instructor-header-left p {
+    margin: 0;
+    font-size: 1.05em;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    /* Vertically align text with logo */
+    gap: 0.3em;
+}
+
+.instructor-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Right-align the container */
+    gap: 0;
+}
+
+.header-link-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+/* Generic Header Icon Class */
+.header-icon {
+    height: 1em;
+    /* Matches text height roughly */
+    width: auto;
+    object-fit: contain;
+}
+
+.header-link {
+    font-size: 0.95em;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1px dotted transparent;
+    transition: border-color 0.2s;
+}
+
+.header-link:hover {
+    border-bottom-color: var(--dartmouth-green);
+}
+
+/* Main Content Grid: 2 columns */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2em;
+    /* Slightly narrower column gap */
+    flex-grow: 1;
+    /* Ensure grid takes up remaining height to allow columns to stretch */
+    height: auto;
+    align-items: start;
+    /* Allow columns to be uneven height naturally, or stretch? If 'height: auto' on col-flex, they won't stretch.
+                           User wants bottoms brought up. This implies independent heights are okay, OR strictly packed.
+                           Let's align start. */
+}
+
+/* Column Wrapper for Vertical Alignment */
+.col-flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /* Pack to top */
+    height: auto;
+    /* Allow shrinking to content */
+    gap: 0.8em;
+    /* Uniform gap */
+    align-items: stretch;
+    /* Stretch children to fill width */
+    width: 100%;
+}
+
+/* Styled Generic Box */
+.info-box-styled {
+    background-color: rgba(0, 105, 62, 0.03);
+    /* Light Dartmouth Green tint */
+    border: 1px solid rgba(0, 105, 62, 0.15);
+    border-radius: 6px;
+    /* Tighter radius */
+    padding: 0.6em;
+    /* Reduced horizontal padding to reduce perceived indentation */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    display: block !important;
+    /* Ensure it's not a flex container centered */
+    text-align: left !important;
+    width: 100%;
+    /* Fill the container width */
+    box-sizing: border-box;
+    /* Ensure padding doesn't overflow */
+}
+
+.info-box-styled h4 {
+    margin: 0 0 0.2em 0;
+    color: var(--dartmouth-green);
+    font-size: 1.05em;
+    border-bottom: 1px solid rgba(0, 105, 62, 0.1);
+    padding-bottom: 0.1em;
+    font-weight: 600;
+    text-align: left !important;
+    /* Ensure headers are left-aligned */
+    display: block !important;
+}
+
+/* Standard Paragraph Content */
+.info-box-styled p {
+    margin: 0;
+    padding: 0;
+    line-height: 1.25;
+    /* Tighter line height */
+    color: var(--text-primary);
+    text-align: left !important;
+    /* STRICT LEFT ALIGNMENT */
+    display: block !important;
+    /* Ensure it behaves like a block for text alignment */
+    font-size: 0.95em;
+    width: 100%;
+    /* force fill breadth */
+}
+
+/* Research Areas & Approach List */
+.research-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.research-list li {
+    margin-bottom: 0.5em;
+    /* Improved whitespace */
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    line-height: 1.4;
+}
+
+.research-list li .emoji-inline {
+    font-size: 1.1em;
+    width: 1.2em;
+    /* Fixed width for alignment */
+    text-align: center;
+}
+
+/* Training Grid Layout */
+.training-grid {
+    display: grid;
+    grid-template-columns: 45px 1fr;
+    /* Narrower logo col */
+    gap: 0.5em;
+    row-gap: 0.3em;
+    /* Decreased further */
+    align-items: center;
+}
+
+.training-logo-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 1.6em;
+    /* Reduced height */
+}
+
+.training-logo {
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
+.training-text {
+    font-size: 0.9em;
+    color: var(--text-primary);
+    line-height: 1.1;
+    /* Tighter line height for text */
+    text-align: left !important;
+}
+
+/* Collaboration Logos */
+.logo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6em;
+    /* Tighter gap */
+    align-items: center;
+    justify-items: center;
+    padding-top: 0.1em;
+}
+
+.logo-grid img {
+    max-height: 40px;
+    /* Increased from 24px */
+    width: auto;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+
+.logo-grid img:hover {
+    opacity: 1;
+}
+
+/* Funding Logo Grid */
+.funding-logo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* Changed to 4 columns for Brainfit */
+    gap: 0.8em;
+    /* Tighter gap */
+    align-items: center;
+    justify-items: center;
+    padding-top: 0.1em;
+}
+
+.funding-logo-grid img {
+    max-height: 42px;
+    /* Increased from 26px */
+    width: auto;
+    max-width: 100%;
+}
+
+/* Strict Padding Override & Title Compactness */
+section:not(.lead):not(#\31):has(.instructor-container) {
+    justify-content: flex-start !important;
+    padding: 10px 40px 5px 40px !important;
+    overflow: hidden;
+}
+
+section:not(.lead):not(#\31):has(.instructor-container)>h1,
+section h1,
+.marp-h1 {
+    margin-bottom: 0 !important;
+    font-size: 1.5em !important;
+    min-height: auto !important;
+    padding-top: 0 !important;
+    color: #001c12 !important;
+    /* Ensure Title uses standard green */
+}
+
+/* Ensure Name Matches Title Exactly */
+.instructor-header-left h3 {
+    margin: 0;
+    color: var(--dartmouth-green) !important;
+    /* MATCH Title Color Exact Variable */
+    font-size: 1.4em;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+/* Spacing for combined Funding & Collaborators card */
+.combined-card-spacer {
+    height: 0.6em;
+    /* Reduced spacing */
+}
+
+/* EXACT BOTTOM ALIGNMENT LOGIC */
+.col-flex>.info-box-styled:last-child {
+    margin-bottom: 0;
+    /* Ensure the last card sits at the bottom of the flex container */
+    flex-grow: 1;
+    /* Allow last card to expand slightly if needed to flush bottom */
+    display: flex !important;
+    /* Flex to allow content alignment if grown */
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* ============================================
+   INSTRUCTOR SLIDE OVERRIDES
+   High-specificity rules to battle Marp defaults
+   ============================================ */
+
+/* Force font sizing relative to the container for ALL children */
+section:not(.lead):not(#\31) .instructor-container {
+    font-size: 22px !important;
+}
+
+section:not(.lead):not(#\31) .instructor-container p,
+section:not(.lead):not(#\31) .instructor-container ul,
+section:not(.lead):not(#\31) .instructor-container ol,
+section:not(.lead):not(#\31) .instructor-container li,
+section:not(.lead):not(#\31) .instructor-container div {
+    font-size: 1em !important;
+    line-height: 1.3 !important;
+    margin-top: 0.2em !important;
+    margin-bottom: 0.2em !important;
+}
+
+/* Header specific sizing */
+section:not(.lead):not(#\31) .instructor-container .instructor-header h3 {
+    font-size: 1.6em !important;
+    margin-bottom: 0.1em !important;
+}
+
+section:not(.lead):not(#\31) .instructor-container .instructor-header p {
+    font-size: 1.1em !important;
+    color: #555 !important;
+}
+
+/* Box titles */
+section:not(.lead):not(#\31) .instructor-container h4 {
+    font-size: 1.1em !important;
+    margin-bottom: 0.3em !important;
+}
+
+/* Research list specific fix */
+section:not(.lead):not(#\31) .instructor-container .research-list li {
+    font-size: 0.95em !important;
+    margin: 0.2em 0 !important;
+}
+
+/* Logo grid fix */
+section:not(.lead):not(#\31) .instructor-container .logo-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 1em !important;
 }

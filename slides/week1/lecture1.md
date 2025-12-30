@@ -16,123 +16,86 @@ Winter 2026
 ---
 
 # About the instructor
+<!-- _class: manual-layout -->
 
-<div class="instructor-grid">
+<div class="instructor-container">
 
-<div>
-
-#### Jeremy R. Manning, Ph.D.
-
-**Associate Professor, Psychological and Brain Sciences**
-Dartmouth College
-
-<div class="info-box" data-title="Contextual Dynamics Lab">
-
-Moore Hall 416
-<span class="emoji-inline">&#x1F310;</span> [context-lab.com](https://www.context-lab.com) | <span class="emoji-inline">&#x1F4BB;</span> [github.com/ContextLab](https://github.com/ContextLab)
-
+<div class="instructor-header">
+<div class="instructor-header-left">
+<h3 style="color: #001c12 !important; margin: 0;">Jeremy R. Manning, Ph.D.</h3>
+<p>
+Associate Professor | Psychological &amp; Brain Sciences | <img src="../../figures/dartmouth_logo.png" style="height: 1.2em; vertical-align: middle; margin: 0 0.1em;"> | Moore 349
+</p>
+</div>
+<div class="instructor-header-right">
+<div class="header-link-row">
+<img src="../../figures/cdl_logo.png" class="header-icon">
+<a href="https://www.context-lab.com" class="header-link">context-lab.com</a>
+</div>
+<div class="header-link-row">
+<img src="../../figures/github_logo.png" class="header-icon">
+<a href="https://github.com/ContextLab" class="header-link">ContextLab</a>
+</div>
+</div>
 </div>
 
-<div class="logo-row" style="margin-top: 0.3em;">
-<img src="../../figures/cdl_logo.png" alt="CDL" title="Contextual Dynamics Lab" style="min-height: 55px; height: auto;">
-<img src="../../figures/github_logo.png" alt="GitHub" title="GitHub" style="min-height: 55px; height: auto;">
+<div class="content-grid">
+
+<div class="col-flex">
+
+<div class="info-box-styled" style="text-align: left !important;">
+<h4>Research focus</h4>
+<p style="text-align: left !important; display: block; margin: 0;">How do our brains support our ongoing conscious thoughts, and how (and what) do we remember?</p>
 </div>
 
+<div class="info-box-styled" style="text-align: left !important;">
+<h4>Key areas</h4>
+<p style="text-align: left !important; display: block; margin: 0;">Learning and memory, education technology, brain network dynamics, data science, NLP</p>
 </div>
 
-<div>
-
-#### Research focus
-
-<div class="core-question">
-
-"How do our brains support our ongoing conscious thoughts, and how (and what) do we remember?"
-
-</div>
-
-<div class="approach-tags">
-<span class="approach-tag">Theory</span>
-<span class="approach-tag">Models</span>
-<span class="approach-tag">Experiments</span>
-<span class="approach-tag">Neuroimaging</span>
-</div>
-
-</div>
-
-<div>
-
-#### Key areas
-
-<span class="emoji-inline">&#x1F9E0;</span> Learning and memory<br>
-<span class="emoji-inline">&#x1F4DA;</span> Education technology<br>
-<span class="emoji-inline">&#x1F310;</span> Brain network dynamics<br>
-<span class="emoji-inline">&#x1F4CA;</span> Data science<br>
-<span class="emoji-inline">&#x1F4AC;</span> Natural language processing
-
-</div>
-
-<div>
-
-#### Training
-
-<div class="training-timeline">
-<div class="training-item">
-<img src="../../figures/brandeis_logo.svg" alt="Brandeis">
-<span class="training-degree">B.S.</span>
-<span class="training-field">CS, Neuro</span>
-</div>
-<div class="training-item">
-<img src="../../figures/upenn_logo.png" alt="UPenn">
-<span class="training-degree">Ph.D.</span>
-<span class="training-field">Neuroscience</span>
-</div>
-<div class="training-item">
-<img src="../../figures/princeton_logo.svg" alt="Princeton">
-<span class="training-degree">Postdoc</span>
-<span class="training-field">CS, Neuro</span>
-</div>
+<div class="info-box-styled" style="text-align: left !important;">
+<h4>Approach</h4>
+<p style="text-align: left !important; display: block; margin: 0;">Theory, models, experiments, neuroimaging</p>
 </div>
 
 </div>
 
+<div class="col-flex">
+
+<div class="info-box-styled" style="text-align: left !important;">
+<h4>Training</h4>
+<div class="training-grid">
+<div class="training-logo-cell"><img src="../../figures/brandeis_logo.svg" alt="Brandeis" class="training-logo"></div>
+<div class="training-text" style="text-align: left !important;">B.S., Neuroscience &amp; Computer Science</div>
+
+<div class="training-logo-cell"><img src="../../figures/upenn_logo.png" alt="Penn" class="training-logo"></div>
+<div class="training-text">Ph.D., Neuroscience</div>
+
+<div class="training-logo-cell"><img src="../../figures/princeton_logo.svg" alt="Princeton" class="training-logo"></div>
+<div class="training-text">Postdoc, Computer Science &amp; Neuroscience</div>
+</div>
 </div>
 
----
-
-# Research and collaborations
-
-<div class="instructor-grid">
-
-<div>
-
-#### Industry collaborations
-
-<div class="logo-row logo-row-md">
-<img src="../../figures/intel_labs_logo.png" alt="Intel Labs" title="Intel Labs">
-<img src="../../figures/meta_logo.png" alt="Meta" title="Meta">
-<img src="../../figures/google_logo.webp" alt="Google" title="Google">
-<img src="../../figures/amazon_logo.png" alt="Amazon" title="Amazon">
+<div class="info-box-styled">
+<h4>Funding &amp; collaborators</h4>
+<div class="funding-logo-grid">
+<img src="../../figures/nih_logo.png" alt="NIH" style="max-height: 45px;">
+<img src="../../figures/nsf_logo.png" alt="NSF" style="max-height: 65px;">
+<img src="../../figures/darpa_logo.png" alt="DARPA" style="max-height: 30px;">
+<img src="../../figures/brainfit_logo.png" alt="BrainFit" style="max-height: 48px;">
 </div>
-
+<div class="combined-card-spacer"></div>
+<div class="logo-grid">
+<img src="../../figures/intel_labs_logo.png" alt="Intel Labs" title="Intel Labs" style="max-height: 28px;">
+<img src="../../figures/meta_logo.png" alt="Meta" title="Meta" style="max-height: 22px;">
+<img src="../../figures/google_logo.webp" alt="Google" title="Google" style="max-height: 32px;">
+<img src="../../figures/amazon_logo.png" alt="Amazon" title="Amazon" style="max-height: 30px;">
 </div>
-
-<div>
-
-#### Research funding
-
-<div class="logo-row logo-row-md">
-<img src="../../figures/nih_logo.png" alt="NIH" title="National Institutes of Health">
-<img src="../../figures/nsf_logo.png" alt="NSF" title="National Science Foundation">
-<img src="../../figures/darpa_logo.png" alt="DARPA" title="DARPA">
 </div>
 
 </div>
 
 </div>
-
-<div class="tip-box" style="margin-top: 1em;">
-
-**Open source software and open courses:** All lab code is freely available on GitHub, and course materials are openly accessible to promote reproducible science and education.
 
 </div>
 
