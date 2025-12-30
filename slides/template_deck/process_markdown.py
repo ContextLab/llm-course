@@ -8,6 +8,7 @@ This script processes Marp markdown files to:
 3. Inject JavaScript for line numbering
 4. Maintain continued line numbers across split code blocks
 5. Add "continued..." indicators
+6. Convert simple flow diagram syntax to themed SVG diagrams
 
 Usage:
     python3 process_markdown.py input.md output.md [--max-lines N] [--max-table-rows N] [--no-split]
@@ -18,6 +19,18 @@ Arguments:
     --max-lines      Maximum lines per code block before splitting (default: 20)
     --max-table-rows Maximum data rows per table before splitting (default: 8)
     --no-split       Disable code block and table splitting
+
+Flow Diagram Syntax:
+    ```flow
+    [Input] --> [Process] --> [Output]
+    ```
+
+    This generates an auto-styled SVG flowchart matching the CDL theme.
+    Supported features:
+    - Multiple nodes: [Node1] --> [Node2] --> [Node3]
+    - Vertical flow: [Node1] ==> [Node2]  (downward arrow)
+    - Custom colors: [Node:green], [Node:teal], [Node:blue], [Node:orange]
+    - Multi-line diagrams for complex flows
 """
 
 import argparse
@@ -34,6 +47,318 @@ try:
     PYGMENTS_AVAILABLE = True
 except ImportError:
     PYGMENTS_AVAILABLE = False
+
+
+# =============================================================================
+# FLOW DIAGRAM GENERATION
+# =============================================================================
+
+# CDL Theme color palette for flow diagrams - Dartmouth Tertiary Colors
+# These colors match the emoji-bg-* classes in cdl-theme.css (using 0.15 opacity for flow diagrams)
+# Note: CSS emoji-bg uses 0.5 opacity; flow diagrams use 0.15 for subtler backgrounds
+FLOW_COLORS = {
+    # Primary brand color
+    'green': {'fill': 'rgba(0, 105, 62, 0.15)', 'stroke': '#00693e', 'text': '#00693e'},           # Dartmouth Green
+
+    # Blues - River Blue and River Navy
+    'blue': {'fill': 'rgba(38, 122, 186, 0.15)', 'stroke': '#267aba', 'text': '#003c73'},          # River Blue
+    'river-blue': {'fill': 'rgba(38, 122, 186, 0.15)', 'stroke': '#267aba', 'text': '#003c73'},    # River Blue (alias)
+    'navy': {'fill': 'rgba(0, 60, 115, 0.15)', 'stroke': '#003c73', 'text': '#003c73'},            # River Navy
+    'river-navy': {'fill': 'rgba(0, 60, 115, 0.15)', 'stroke': '#003c73', 'text': '#003c73'},      # River Navy (alias)
+
+    # Greens - Spring Green and Rich Spring Green
+    'spring': {'fill': 'rgba(196, 221, 136, 0.15)', 'stroke': '#c4dd88', 'text': '#6a8a3a'},       # Spring Green
+    'spring-green': {'fill': 'rgba(196, 221, 136, 0.15)', 'stroke': '#c4dd88', 'text': '#6a8a3a'}, # Spring Green (alias)
+    'rich-spring': {'fill': 'rgba(165, 215, 95, 0.15)', 'stroke': '#a5d75f', 'text': '#5a8a2a'},   # Rich Spring Green
+    'teal': {'fill': 'rgba(0, 128, 128, 0.15)', 'stroke': '#008080', 'text': '#006666'},           # Teal (blue-green)
+
+    # Warm colors - Yellows and Oranges
+    'yellow': {'fill': 'rgba(245, 220, 105, 0.15)', 'stroke': '#f5dc69', 'text': '#8a7a30'},       # Summer Yellow
+    'summer': {'fill': 'rgba(245, 220, 105, 0.15)', 'stroke': '#f5dc69', 'text': '#8a7a30'},       # Summer Yellow (alias)
+    'orange': {'fill': 'rgba(255, 160, 15, 0.15)', 'stroke': '#ffa00f', 'text': '#d94415'},        # Bonfire Orange
+    'bonfire': {'fill': 'rgba(255, 160, 15, 0.15)', 'stroke': '#ffa00f', 'text': '#d94415'},       # Bonfire Orange (alias)
+    'tuck': {'fill': 'rgba(217, 68, 21, 0.15)', 'stroke': '#d94415', 'text': '#d94415'},           # Tuck Orange
+    'tuck-orange': {'fill': 'rgba(217, 68, 21, 0.15)', 'stroke': '#d94415', 'text': '#d94415'},    # Tuck Orange (alias)
+
+    # Reds
+    'red': {'fill': 'rgba(157, 22, 46, 0.15)', 'stroke': '#9d162e', 'text': '#9d162e'},            # Bonfire Red
+    'bonfire-red': {'fill': 'rgba(157, 22, 46, 0.15)', 'stroke': '#9d162e', 'text': '#9d162e'},    # Bonfire Red (alias)
+
+    # Other colors
+    'violet': {'fill': 'rgba(138, 105, 150, 0.15)', 'stroke': '#8a6996', 'text': '#6a4d7a'},       # Violet
+    'purple': {'fill': 'rgba(138, 105, 150, 0.15)', 'stroke': '#8a6996', 'text': '#6a4d7a'},       # Violet (alias)
+    'brown': {'fill': 'rgba(100, 60, 32, 0.15)', 'stroke': '#643c20', 'text': '#643c20'},          # Autumn Brown
+    'autumn': {'fill': 'rgba(100, 60, 32, 0.15)', 'stroke': '#643c20', 'text': '#643c20'},         # Autumn Brown (alias)
+
+    # Grays
+    'gray': {'fill': 'rgba(66, 65, 65, 0.15)', 'stroke': '#424141', 'text': '#424141'},            # Granite Gray
+    'granite': {'fill': 'rgba(66, 65, 65, 0.15)', 'stroke': '#424141', 'text': '#424141'},         # Granite Gray (alias)
+}
+
+# Default color sequence for auto-coloring nodes
+DEFAULT_COLOR_SEQUENCE = ['green', 'teal', 'blue', 'orange', 'gray']
+
+
+def parse_flow_node(node_text: str) -> dict:
+    """
+    Parse a flow diagram node from text like [Label] or [Label:color].
+
+    Args:
+        node_text: Text like "Input" or "Process:teal"
+
+    Returns:
+        dict with 'label' and optional 'color'
+    """
+    if ':' in node_text:
+        parts = node_text.rsplit(':', 1)
+        label = parts[0].strip()
+        color = parts[1].strip().lower()
+        if color not in FLOW_COLORS:
+            color = None  # Will use auto-color
+    else:
+        label = node_text.strip()
+        color = None
+
+    return {'label': label, 'color': color}
+
+
+def parse_flow_line(line: str) -> list:
+    """
+    Parse a line of flow diagram syntax into nodes and arrows.
+
+    Supported syntax:
+        [A] --> [B] --> [C]     Horizontal flow
+        [A] ==> [B]             Vertical flow (down)
+
+    Args:
+        line: A line of flow diagram syntax
+
+    Returns:
+        List of dicts with 'type' (node/arrow_h/arrow_v) and content
+    """
+    elements = []
+    line = line.strip()
+
+    if not line:
+        return elements
+
+    # Pattern to match nodes [text] or [text:color]
+    node_pattern = r'\[([^\]]+)\]'
+    # Pattern to match arrows
+    arrow_h_pattern = r'-->'  # Horizontal arrow
+    arrow_v_pattern = r'==>'  # Vertical arrow
+
+    # Tokenize the line
+    pos = 0
+    while pos < len(line):
+        # Skip whitespace
+        while pos < len(line) and line[pos].isspace():
+            pos += 1
+        if pos >= len(line):
+            break
+
+        # Check for node
+        node_match = re.match(node_pattern, line[pos:])
+        if node_match:
+            node_text = node_match.group(1)
+            elements.append({'type': 'node', 'content': parse_flow_node(node_text)})
+            pos += node_match.end()
+            continue
+
+        # Check for horizontal arrow
+        if line[pos:pos+3] == '-->':
+            elements.append({'type': 'arrow_h', 'content': None})
+            pos += 3
+            continue
+
+        # Check for vertical arrow
+        if line[pos:pos+3] == '==>':
+            elements.append({'type': 'arrow_v', 'content': None})
+            pos += 3
+            continue
+
+        # Skip unknown characters
+        pos += 1
+
+    return elements
+
+
+def calculate_text_width(text: str, font_size: int = 22) -> int:
+    """Estimate text width in pixels based on character count."""
+    # Rough approximation: average character width is about 0.6 of font size for sans-serif
+    avg_char_width = font_size * 0.55
+    return int(len(text) * avg_char_width)
+
+
+def generate_flow_svg(flow_lines: list, caption: str = None) -> str:
+    """
+    Generate an SVG flow diagram from parsed flow diagram syntax.
+
+    Args:
+        flow_lines: List of lines, each containing flow elements
+        caption: Optional caption for the diagram
+
+    Returns:
+        HTML string containing the SVG diagram in a container div
+    """
+    # Parse all lines
+    all_elements = []
+    for line in flow_lines:
+        elements = parse_flow_line(line)
+        if elements:
+            all_elements.append(elements)
+
+    if not all_elements:
+        return ''
+
+    # Collect all nodes and determine layout
+    all_nodes = []
+    for row_elements in all_elements:
+        row_nodes = [e for e in row_elements if e['type'] == 'node']
+        all_nodes.extend(row_nodes)
+
+    # Auto-assign colors to nodes without explicit colors
+    color_idx = 0
+    for node in all_nodes:
+        if node['content']['color'] is None:
+            node['content']['color'] = DEFAULT_COLOR_SEQUENCE[color_idx % len(DEFAULT_COLOR_SEQUENCE)]
+            color_idx += 1
+
+    # Calculate dimensions
+    # Node dimensions
+    min_node_width = 120
+    node_height = 70
+    node_padding = 20  # Extra padding for text
+    node_spacing = 60  # Space between nodes (including arrow)
+    arrow_width = 50   # Width of arrow
+
+    # Calculate node widths based on text
+    for node in all_nodes:
+        text_width = calculate_text_width(node['content']['label'])
+        node['width'] = max(min_node_width, text_width + node_padding * 2)
+
+    # For horizontal rows, calculate total width
+    max_row_width = 0
+    row_widths = []
+    for row_elements in all_elements:
+        row_nodes = [e for e in row_elements if e['type'] == 'node']
+        num_arrows = len([e for e in row_elements if e['type'] in ('arrow_h', 'arrow_v')])
+
+        # Sum up node widths and arrows
+        row_width = sum(n['width'] for n in row_nodes)
+        row_width += num_arrows * (arrow_width + 20)  # Arrow + spacing
+        row_widths.append(row_width)
+        max_row_width = max(max_row_width, row_width)
+
+    # SVG dimensions with padding
+    # Extra padding accounts for stroke width (3px centered = 1.5px outside)
+    svg_padding = 40
+    svg_width = max_row_width + svg_padding * 2
+    row_height = node_height + 40  # Row height including spacing
+    svg_height = len(all_elements) * row_height + svg_padding * 2
+
+    # Start building SVG
+    # Note: We omit explicit width/height attributes to allow CSS to control sizing
+    # The viewBox provides the aspect ratio, and CSS max-width/max-height constrain it
+    svg_parts = []
+    svg_parts.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {svg_width} {svg_height}" style="max-width: 100%; height: auto;">')
+
+    # Add arrow symbol definition
+    svg_parts.append('''  <defs>
+    <symbol id="flow-arrow" viewBox="0 0 76.41 27.12">
+      <path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
+    </symbol>
+  </defs>''')
+
+    # Render each row
+    y_offset = svg_padding + node_height // 2
+    global_node_idx = 0
+
+    for row_idx, row_elements in enumerate(all_elements):
+        # Center the row horizontally within the viewBox
+        # Note: svg_width already includes padding, so just center the row
+        row_width = row_widths[row_idx]
+        x_offset = (svg_width - row_width) // 2
+
+        for elem in row_elements:
+            if elem['type'] == 'node':
+                node_data = elem['content']
+                color_name = node_data['color']
+                colors = FLOW_COLORS[color_name]
+                width = elem['width'] if 'width' in elem else min_node_width
+
+                # Draw rounded rectangle
+                rect_x = x_offset
+                rect_y = y_offset - node_height // 2
+                svg_parts.append(f'  <rect x="{rect_x}" y="{rect_y}" width="{width}" height="{node_height}" rx="12" ry="12"')
+                svg_parts.append(f'        fill="{colors["fill"]}" stroke="{colors["stroke"]}" stroke-width="3"/>')
+
+                # Draw text
+                text_x = rect_x + width // 2
+                text_y = y_offset + 7  # Vertically centered with slight adjustment
+                svg_parts.append(f'  <text x="{text_x}" y="{text_y}" font-family="\'Avenir LT Std\', Avenir, \'Avenir Next\', sans-serif" font-size="22"')
+                svg_parts.append(f'        font-weight="600" fill="{colors["text"]}" text-anchor="middle">{escape(node_data["label"])}</text>')
+
+                x_offset += width + 10  # Move past this node
+
+            elif elem['type'] == 'arrow_h':
+                # Horizontal arrow
+                arrow_x = x_offset
+                arrow_y = y_offset - 14  # Center arrow vertically
+                svg_parts.append(f'  <use href="#flow-arrow" x="{arrow_x}" y="{arrow_y}" width="{arrow_width}" height="28" style="color: #0a2518"/>')
+                x_offset += arrow_width + 10
+
+            elif elem['type'] == 'arrow_v':
+                # Vertical arrow (rotated) - will be rendered between rows
+                # For now, just move position
+                x_offset += 20
+
+        y_offset += row_height
+
+    svg_parts.append('</svg>')
+
+    # Wrap in diagram container
+    svg_content = '\n'.join(svg_parts)
+    result = f'<div class="diagram-container">\n{svg_content}\n</div>'
+
+    if caption:
+        result += f'\n<div class="diagram-caption">{escape(caption)}</div>'
+
+    return result
+
+
+def process_flow_blocks(content: str) -> tuple:
+    """
+    Process ```flow code blocks and convert them to SVG diagrams.
+
+    Args:
+        content: The full markdown content
+
+    Returns:
+        Tuple of (processed_content, number_of_diagrams_processed)
+    """
+    # Pattern to match flow code blocks
+    # Supports optional caption after the closing ```
+    flow_pattern = r'```flow\n(.*?)```(?:\s*\n\s*<!--\s*caption:\s*(.*?)\s*-->)?'
+
+    diagrams_processed = 0
+
+    def replace_flow_block(match):
+        nonlocal diagrams_processed
+        flow_content = match.group(1)
+        caption = match.group(2) if match.lastindex >= 2 else None
+
+        # Split into lines and filter empty ones
+        lines = [line for line in flow_content.strip().split('\n') if line.strip()]
+
+        if not lines:
+            return ''
+
+        diagrams_processed += 1
+        return generate_flow_svg(lines, caption)
+
+    processed = re.sub(flow_pattern, replace_flow_block, content, flags=re.DOTALL)
+    return processed, diagrams_processed
 
 
 def parse_markdown_table(lines: list) -> dict:
@@ -258,6 +583,66 @@ def highlight_code_line(code_line: str, lang: str) -> str:
     return highlighted.rstrip('\n')
 
 
+def process_arrow_syntax(line: str) -> str:
+    """
+    Process arrow shorthand syntax in a line of markdown.
+
+    Supported syntax:
+      --[80]->      Arrow with specific width in pixels
+      --[lg]->      Arrow with named size variant (sm, md, lg, xl)
+      --[100,lg]->  Arrow with width and additional class
+
+    Note: Plain --> is NOT converted (conflicts with markdown/code syntax).
+    Use --[]-> for default arrow or --[md]-> for medium.
+
+    Returns:
+        The line with arrow syntax replaced by HTML span elements
+    """
+    # Pattern for arrows with size specification in brackets
+    # Only matches --[spec]-> to avoid conflicts with plain --> in markdown/code
+    arrow_pattern = r'--\[([^\]]*)\]->'
+
+    def replace_arrow(match):
+        spec = match.group(1)  # The content inside brackets, or None
+
+        classes = ['svg-arrow']
+        style = ''
+
+        if spec:
+            # Parse the specification
+            parts = [p.strip() for p in spec.split(',')]
+            for part in parts:
+                if part.isdigit():
+                    # Numeric width in pixels
+                    width = int(part)
+                    style = f'--arrow-width: {width}px;'
+                elif part in ('sm', 'md', 'lg', 'xl'):
+                    # Named size variant
+                    classes.append(f'svg-arrow-{part}')
+                elif part in ('40', '60', '80', '100', '120', '150', '200'):
+                    # Preset width class
+                    classes.append(f'svg-arrow-{part}')
+                elif part in ('up', 'down', 'left'):
+                    # Direction variant
+                    classes.append(f'svg-arrow-{part}')
+                elif part in ('gray', 'light'):
+                    # Color variant
+                    classes.append(f'svg-arrow-{part}')
+                else:
+                    # Try to parse as width with units or custom class
+                    if 'px' in part or 'em' in part or 'rem' in part:
+                        style = f'--arrow-width: {part};'
+                    else:
+                        # Treat as custom class
+                        classes.append(part)
+
+        class_str = ' '.join(classes)
+        style_attr = f' style="{style}"' if style else ''
+        return f'<span class="{class_str}"{style_attr}></span>'
+
+    return re.sub(arrow_pattern, replace_arrow, line)
+
+
 def process_markdown(input_file: str, output_file: str, max_lines: int = 20, max_table_rows: int = 8, no_split: bool = False) -> dict:
     """
     Process a markdown file for Marp presentation.
@@ -275,6 +660,9 @@ def process_markdown(input_file: str, output_file: str, max_lines: int = 20, max
     # Read input file
     with open(input_file, "r", encoding="utf-8") as f:
         content = f.read()
+
+    # Process flow diagram blocks first (before line-by-line processing)
+    content, flow_diagrams_processed = process_flow_blocks(content)
 
     # Parse the file into lines
     lines = content.split("\n")
@@ -313,7 +701,14 @@ def process_markdown(input_file: str, output_file: str, max_lines: int = 20, max
         "tables_found": 0,
         "tables_split": 0,
         "slides_added": 0,
+        "arrows_processed": 0,
+        "flow_diagrams_processed": flow_diagrams_processed,
     }
+
+    # Count arrows in input for statistics
+    arrow_pattern = r'--\[([^\]]*)\]->'
+    for line in lines:
+        stats["arrows_processed"] += len(re.findall(arrow_pattern, line))
 
     i = 0
     while i < len(lines):
@@ -463,11 +858,11 @@ def process_markdown(input_file: str, output_file: str, max_lines: int = 20, max
 
                 table_lines_buffer = []
 
-                # Now add the current non-table line
-                result_lines.append(line)
+                # Now add the current non-table line (with arrow processing)
+                result_lines.append(process_arrow_syntax(line))
             else:
                 # Regular line (not in code block, not table)
-                result_lines.append(line)
+                result_lines.append(process_arrow_syntax(line))
 
         i += 1
 
@@ -544,6 +939,10 @@ def main():
             print(f"Tables split: {stats['tables_split']}")
         if stats['slides_added'] > 0:
             print(f"Additional slides created: {stats['slides_added']}")
+        if stats['arrows_processed'] > 0:
+            print(f"Arrows processed: {stats['arrows_processed']}")
+        if stats['flow_diagrams_processed'] > 0:
+            print(f"Flow diagrams generated: {stats['flow_diagrams_processed']}")
 
     except FileNotFoundError as e:
         print(f"Error: {e}", file=sys.stderr)

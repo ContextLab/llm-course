@@ -17,7 +17,10 @@ A comprehensive style guide for creating presentations using the Contextual Dyna
 11. [Emoji Figures](#emoji-figures)
 12. [Quotes](#quotes)
 13. [Diagrams](#diagrams)
-14. [Best Practices](#best-practices)
+14. [Flow Diagrams](#flow-diagrams-auto-generated)
+15. [Charts (Automated Styling)](#charts-automated-styling)
+16. [Best Practices](#best-practices)
+17. [Dartmouth Color Reference](#dartmouth-color-reference)
 
 ---
 
@@ -159,23 +162,34 @@ All titles and labels should use **sentence case** (capitalize only the first wo
 | Light Gray | `#d8d8d8` | Slide background |
 | Code Background | `#2a2f38` | Code blocks |
 
-### Callout Box Colors
+### Callout Box Colors (Dartmouth Palette)
 
-| Type | Background | Border |
-|------|------------|--------|
-| Note | `rgba(70, 130, 180, 0.12)` | `#4682b4` |
-| Example | `rgba(0, 105, 62, 0.10)` | `#00693e` |
-| Warning | `rgba(218, 165, 32, 0.15)` | `#daa520` |
+| Type | Dartmouth Color | Border Hex |
+|------|-----------------|------------|
+| `.note-box` | River Blue | `#267aba` |
+| `.example-box` | Dartmouth Green | `#00693e` |
+| `.warning-box` | Bonfire Orange | `#ffa00f` |
+| `.tip-box` | Rich Spring Green | `#a5d75f` |
+| `.important-box` | Bonfire Red | `#9d162e` |
+| `.definition-box` | Violet | `#8a6996` |
 
-### Emoji Background Colors
+### Emoji Background Colors (Dartmouth Tertiary Palette)
 
-| Class | Color | Hex |
-|-------|-------|-----|
+| Class | Dartmouth Color | Hex |
+|-------|-----------------|-----|
 | `emoji-bg-green` | Dartmouth Green | `#00693e` |
-| `emoji-bg-teal` | Teal | `#14b8a6` |
-| `emoji-bg-orange` | Orange | `#f97316` |
-| `emoji-bg-blue` | Blue | `#3b82f6` |
-| `emoji-bg-gray` | Gray | `#9ca3af` |
+| `emoji-bg-blue`, `emoji-bg-river-blue` | River Blue | `#267aba` |
+| `emoji-bg-navy`, `emoji-bg-river-navy` | River Navy | `#003c73` |
+| `emoji-bg-spring`, `emoji-bg-spring-green` | Spring Green | `#c4dd88` |
+| `emoji-bg-rich-spring`, `emoji-bg-teal` | Rich Spring Green | `#a5d75f` |
+| `emoji-bg-yellow`, `emoji-bg-summer` | Summer Yellow | `#f5dc69` |
+| `emoji-bg-orange`, `emoji-bg-bonfire` | Bonfire Orange | `#ffa00f` |
+| `emoji-bg-red`, `emoji-bg-bonfire-red` | Bonfire Red | `#9d162e` |
+| `emoji-bg-tuck`, `emoji-bg-tuck-orange` | Tuck Orange | `#d94415` |
+| `emoji-bg-violet`, `emoji-bg-purple` | Violet | `#8a6996` |
+| `emoji-bg-brown`, `emoji-bg-autumn` | Autumn Brown | `#643c20` |
+| `emoji-bg-gray`, `emoji-bg-granite` | Granite Gray | `#424141` |
+| `emoji-bg-forest` | Forest Green | `#12312b` |
 
 ---
 
@@ -329,6 +343,36 @@ Common pitfalls when fine-tuning LLMs:
 </div>
 ```
 
+### Tip Box
+
+```markdown
+<div class="tip-box">
+
+Use gradient checkpointing to reduce memory usage during training.
+
+</div>
+```
+
+### Important Box
+
+```markdown
+<div class="important-box">
+
+Always validate your model on held-out data before deployment.
+
+</div>
+```
+
+### Definition Box
+
+```markdown
+<div class="definition-box">
+
+**Attention mechanism**: A technique that allows models to focus on relevant parts of the input when producing output.
+
+</div>
+```
+
 ### Multiple Callouts
 
 Multiple callout boxes can appear on the same slide.
@@ -421,7 +465,7 @@ Multiple callout boxes can appear on the same slide.
 
 ### Recommended Approach: Kroki.io
 
-For diagrams (Mermaid, GraphViz, PlantUML), use pre-rendered SVGs via Kroki.io:
+For complex diagrams (Mermaid, GraphViz, PlantUML), use pre-rendered SVGs via Kroki.io:
 
 ```markdown
 <div class="diagram-container">
@@ -431,9 +475,88 @@ For diagrams (Mermaid, GraphViz, PlantUML), use pre-rendered SVGs via Kroki.io:
 </div>
 ```
 
-### Chart.js (Interactive Charts)
+---
 
-```markdown
+## Flow Diagrams (Auto-Generated)
+
+The CDL theme includes automatic flow diagram generation from simple markdown syntax. Write intuitive syntax and have it rendered as themed SVG diagrams.
+
+### Basic Flow Diagram
+
+````markdown
+```flow
+[Input] --> [Process] --> [Output]
+```
+````
+
+This generates a horizontal flowchart with automatically colored nodes (cycles through: green, teal, blue, orange, gray).
+
+### Custom Colors
+
+Override automatic colors by specifying a color after the label:
+
+````markdown
+```flow
+[Training Data:green] --> [Model:blue] --> [Fine-tuning:orange] --> [Deployment:violet]
+```
+````
+
+### Available Flow Diagram Colors (Dartmouth Palette)
+
+| Color Name | Dartmouth Color | Hex Code |
+|------------|-----------------|----------|
+| `green` | Dartmouth Green | `#00693e` |
+| `teal` | Rich Spring Green | `#a5d75f` |
+| `blue` | River Blue | `#267aba` |
+| `orange` | Bonfire Orange | `#ffa00f` |
+| `gray` | Granite Gray | `#424141` |
+| `red` | Bonfire Red | `#9d162e` |
+| `violet` | Violet | `#8a6996` |
+| `navy` | River Navy | `#003c73` |
+| `yellow` | Summer Yellow | `#f5dc69` |
+| `brown` | Autumn Brown | `#643c20` |
+| `spring` | Spring Green | `#c4dd88` |
+
+### Adding Captions
+
+Add an optional caption using an HTML comment immediately after the flow block:
+
+````markdown
+```flow
+[A] --> [B] --> [C]
+```
+<!-- caption: Description of the diagram -->
+````
+
+### Flow Diagram Features
+
+- **Simple syntax** - `[Label] --> [Label]` for horizontal flow
+- **Auto-coloring** - Nodes automatically cycle through theme colors
+- **Custom colors** - Override with `[Label:color]` syntax
+- **Dynamic sizing** - Node width adjusts based on text length
+- **Theme matching** - Uses CDL theme fonts and color palette
+- **Inline SVG** - No external files or services needed
+
+---
+
+## Charts (Automated Styling)
+
+The CDL theme includes an automated chart styling system. Include the Chart.js library and `chart-defaults.js`, and all charts will automatically use Dartmouth theme colors, fonts, and sizing.
+
+### Setup (once per presentation)
+
+Add these script tags to your first chart slide:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="chart-defaults.js"></script>
+```
+
+### Basic Chart (Auto-Styled)
+
+Just provide your data - colors, fonts, grid styling, and sizing are automatic:
+
+```html
 <div class="chart-container">
   <canvas id="myChart"></canvas>
 </div>
@@ -441,9 +564,119 @@ For diagrams (Mermaid, GraphViz, PlantUML), use pre-rendered SVGs via Kroki.io:
 <script>
 new Chart(document.getElementById('myChart'), {
   type: 'bar',
-  data: { /* ... */ }
+  data: {
+    labels: ['GPT-2', 'GPT-3', 'LLaMA', 'Claude'],
+    datasets: [{ data: [1.5, 175, 70, 52] }]  // Colors auto-applied!
+  },
+  options: {
+    plugins: { legend: { display: false } }
+  }
 });
 </script>
+```
+
+### Multi-Dataset Charts
+
+Each dataset automatically gets a distinct theme color:
+
+```html
+<script>
+new Chart(document.getElementById('lineChart'), {
+  type: 'line',
+  data: {
+    labels: ['1', '2', '3', '4', '5'],
+    datasets: [
+      { label: 'Training', data: [2.8, 2.1, 1.6, 1.3, 1.1] },  // First color
+      { label: 'Validation', data: [2.9, 2.3, 1.9, 1.6, 1.4] } // Second color
+    ]
+  }
+});
+</script>
+```
+
+### Quick Helper Functions
+
+For even simpler syntax, use `CDLChart` helpers:
+
+```javascript
+// Bar chart - just labels and data
+CDLChart.bar('canvasId', ['A', 'B', 'C'], [10, 20, 30]);
+
+// Line chart with multiple series
+CDLChart.line('canvasId', ['1', '2', '3'], [
+  { label: 'Series 1', data: [1, 2, 3] },
+  { label: 'Series 2', data: [3, 2, 1] }
+]);
+
+// Pie chart - each slice gets a theme color
+CDLChart.pie('canvasId', ['Web', 'Books', 'Code'], [45, 30, 25]);
+
+// Scatter plot
+CDLChart.scatter('canvasId', [
+  { label: 'Group A', data: [{x: 1, y: 2}, {x: 3, y: 4}] }
+]);
+
+// Doughnut chart
+CDLChart.doughnut('canvasId', ['A', 'B', 'C'], [40, 35, 25]);
+
+// Radar chart
+CDLChart.radar('canvasId', ['Speed', 'Power', 'Range'], [
+  { label: 'Model A', data: [80, 90, 70] }
+]);
+```
+
+### Accessing Theme Colors
+
+If you need to manually access theme colors:
+
+```javascript
+// Get all chart colors
+CDLChart.colors  // Array of 12 theme colors
+
+// Get specific color by index
+CDLChart.getColor(0)  // First color (Dartmouth Green)
+CDLChart.getColor(2)  // Third color (Bonfire Orange)
+
+// Get color with transparency
+CDLChart.getColorWithAlpha('#00693e', 0.5)
+
+// Get N colors
+CDLChart.getColors(5)  // Array of first 5 colors
+```
+
+### Theme Color Palette
+
+The chart system uses Dartmouth tertiary colors for maximum distinction:
+
+| Index | Color | Hex | Name |
+|-------|-------|-----|------|
+| 1 | Primary | `#00693e` | Dartmouth Green |
+| 2 | Accent | `#267aba` | River Blue |
+| 3 | Warm | `#ffa00f` | Bonfire Orange |
+| 4 | Alert | `#9d162e` | Bonfire Red |
+| 5 | Tertiary | `#8a6996` | Violet |
+| 6 | Light | `#a5d75f` | Rich Spring Green |
+
+### Overriding Defaults
+
+You can still override any setting when needed:
+
+```javascript
+new Chart(document.getElementById('myChart'), {
+  type: 'bar',
+  data: {
+    labels: ['A', 'B', 'C'],
+    datasets: [{
+      data: [10, 20, 30],
+      backgroundColor: '#ff0000'  // Override auto-color
+    }]
+  },
+  options: {
+    scales: {
+      y: { min: 0, max: 50 }  // Custom scale
+    }
+  }
+});
 ```
 
 See `notes/diagrams_and_charts_research.md` for detailed implementation guidance.
@@ -512,12 +745,15 @@ author: Your Name
 
 | Class | Purpose |
 |-------|---------|
-| `.note-box` | Informational callout |
-| `.example-box` | Example callout |
-| `.warning-box` | Warning callout |
+| `.note-box` | Informational callout (River Blue) |
+| `.example-box` | Example callout (Dartmouth Green) |
+| `.warning-box` | Warning callout (Bonfire Orange) |
+| `.tip-box` | Tip callout (Rich Spring Green) |
+| `.important-box` | Important callout (Bonfire Red) |
+| `.definition-box` | Definition callout (Violet) |
 | `.emoji` | Base emoji class |
 | `.emoji-{size}` | Size: xs, sm, md, lg, xl, xxl |
-| `.emoji-bg-{color}` | Background: green, teal, orange, blue, gray |
+| `.emoji-bg-{color}` | Background: green, blue, orange, teal, violet, red, navy, etc. |
 | `.emoji-gray` | Grayscale (inactive) |
 | `.emoji-faded` | Partially faded |
 | `.emoji-figure` | Emoji container |
@@ -526,7 +762,53 @@ author: Your Name
 | `.diagram-container` | Diagram wrapper |
 | `.chart-container` | Chart.js wrapper |
 
+### Flow Diagram Syntax
+
+| Syntax | Description |
+|--------|-------------|
+| `` ```flow `` | Start flow diagram block |
+| `[Label]` | Node with auto-color |
+| `[Label:color]` | Node with custom color |
+| `-->` | Arrow connecting nodes |
+| `<!-- caption: text -->` | Optional caption below diagram |
+
+### Chart Helper Functions
+
+| Function | Purpose |
+|----------|---------|
+| `CDLChart.bar(id, labels, data)` | Simple bar chart |
+| `CDLChart.line(id, labels, datasets)` | Line chart with multiple series |
+| `CDLChart.pie(id, labels, data)` | Pie chart |
+| `CDLChart.doughnut(id, labels, data)` | Doughnut chart |
+| `CDLChart.scatter(id, datasets)` | Scatter plot |
+| `CDLChart.radar(id, labels, datasets)` | Radar chart |
+| `CDLChart.colors` | Array of theme colors |
+| `CDLChart.getColor(index)` | Get specific theme color |
+| `CDLChart.getColors(count)` | Get N theme colors |
+
+---
+
+## Dartmouth Color Reference
+
+Complete Dartmouth tertiary color palette used throughout the theme:
+
+| Color Name | CSS Variable | Hex Code |
+|------------|--------------|----------|
+| Dartmouth Green | `--dartmouth-green` | `#00693e` |
+| Forest Green | `--forest-green` | `#12312b` |
+| River Blue | `--river-blue` | `#267aba` |
+| River Navy | `--river-navy` | `#003c73` |
+| Spring Green | `--spring-green` | `#c4dd88` |
+| Rich Spring Green | `--rich-spring-green` | `#a5d75f` |
+| Summer Yellow | `--summer-yellow` | `#f5dc69` |
+| Bonfire Orange | `--bonfire-orange` | `#ffa00f` |
+| Bonfire Red | `--bonfire-red` | `#9d162e` |
+| Tuck Orange | `--tuck-orange` | `#d94415` |
+| Violet | `--violet` | `#8a6996` |
+| Autumn Brown | `--autumn-brown` | `#643c20` |
+| Granite Gray | `--granite-gray` | `#424141` |
+
 ---
 
 *Last updated: December 2025*
-*CDL Theme v1.0*
+*CDL Theme v1.2 - Added flow diagrams, expanded callout boxes, Dartmouth color palette*

@@ -4,6 +4,84 @@
 /* @import 'uncover'; */
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Fira+Code:wght@300;400;500;600;700&display=swap');
 
+/* ============================================
+   DARTMOUTH COLOR PALETTE - CSS CUSTOM PROPERTIES
+   Official Dartmouth brand colors for consistent theming
+   ============================================ */
+:root {
+    /* Primary Brand Color */
+    --dartmouth-green: #00693e;
+
+    /* Secondary Colors */
+    --forest-green: #12312b;
+    --rich-forest-green: #0D1E1C;
+
+    /* Tertiary Colors */
+    --river-blue: #267aba;
+    --river-navy: #003c73;
+    --spring-green: #c4dd88;
+    --rich-spring-green: #a5d75f;
+    --summer-yellow: #f5dc69;
+    --bonfire-orange: #ffa00f;
+    --bonfire-red: #9d162e;
+    --tuck-orange: #d94415;
+    --violet: #8a6996;
+    --autumn-brown: #643c20;
+    --granite-gray: #424141;
+    --gray-1: #f7f7f7;
+    --gray-2: #e2e2e2;
+    --gray-3: #707070;
+
+    /* Derived text colors (dark variants for readability) */
+    --text-primary: #0a2518;
+    --text-secondary: #0a3d23;
+
+    /* ============================================
+       CHART DEFAULT COLORS
+       Dartmouth tertiary palette for data visualization
+       Ordered for maximum visual distinction
+       ============================================ */
+    /* Primary series (most common use) */
+    --chart-color-1: #00693e;      /* Dartmouth Green - primary brand */
+    --chart-color-2: #267aba;      /* River Blue */
+    --chart-color-3: #ffa00f;      /* Bonfire Orange */
+    --chart-color-4: #9d162e;      /* Bonfire Red */
+    --chart-color-5: #8a6996;      /* Violet */
+    --chart-color-6: #a5d75f;      /* Rich Spring Green */
+
+    /* Extended series (for charts with more categories) */
+    --chart-color-7: #003c73;      /* River Navy */
+    --chart-color-8: #d94415;      /* Tuck Orange */
+    --chart-color-9: #643c20;      /* Autumn Brown */
+    --chart-color-10: #c4dd88;     /* Spring Green */
+    --chart-color-11: #f5dc69;     /* Summer Yellow */
+    --chart-color-12: #424141;     /* Granite Gray */
+
+    /* Semantic chart colors */
+    --chart-positive: #00693e;     /* Dartmouth Green */
+    --chart-negative: #9d162e;     /* Bonfire Red */
+    --chart-neutral: #424141;      /* Granite Gray */
+    --chart-highlight: #ffa00f;    /* Bonfire Orange */
+    --chart-secondary: #267aba;    /* River Blue */
+
+    /* Background variants (50% opacity for fills) */
+    --chart-bg-1: rgba(0, 105, 62, 0.5);
+    --chart-bg-2: rgba(38, 122, 186, 0.5);
+    --chart-bg-3: rgba(255, 160, 15, 0.5);
+    --chart-bg-4: rgba(157, 22, 46, 0.5);
+    --chart-bg-5: rgba(138, 105, 150, 0.5);
+    --chart-bg-6: rgba(165, 215, 95, 0.5);
+
+    /* Grid and axis styling */
+    --chart-grid-light: rgba(0, 105, 62, 0.1);
+    --chart-grid-medium: rgba(0, 105, 62, 0.15);
+    --chart-grid-dark: rgba(0, 105, 62, 0.2);
+    --chart-axis-color: #0a2518;
+
+    /* Font stacks for charts */
+    --chart-font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 /* Local font face definitions for Avenir - including italic variants */
 @font-face {
     font-family: 'Avenir LT Std';
@@ -546,8 +624,8 @@ section>div[style*="gap"]>div,
 .columns>div,
 .two-column>div,
 .multi-column>div {
-    flex: 0 1 auto !important;
-    max-width: 45% !important;
+    flex: 1 1 auto !important;
+    max-width: 48% !important;
     min-width: 0 !important;
 }
 
@@ -571,7 +649,7 @@ section>div[style*="gap"] * *,
     font-size: 1em !important;
 }
 
-/* Multi-column slides: disable vertical centering to preserve title visibility */
+/* Multi-column slides: vertically center content below title */
 section:not(.lead):not(#\31):has(div[style*="display: flex"]),
 section:not(.lead):not(#\31):has(div[style*="display:flex"]),
 section:not(.lead):not(#\31):has(div[style*="gap"]),
@@ -581,13 +659,23 @@ section:not(.lead):not(#\31):has(.multi-column) {
     justify-content: flex-start !important;
 }
 
+/* Multi-column content: use auto margins for vertical centering */
 section:not(.lead):not(#\31):has(div[style*="display: flex"]) > *:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(div[style*="display:flex"]) > *:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(div[style*="gap"]) > *:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(.columns) > *:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(.two-column) > *:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(.multi-column) > *:not(h1):first-of-type {
-    margin-top: 0.5em !important;
+    margin-top: auto !important;
+}
+
+section:not(.lead):not(#\31):has(div[style*="display: flex"]) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(div[style*="display:flex"]) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(div[style*="gap"]) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.columns) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.two-column) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.multi-column) > *:not(h1):last-of-type {
+    margin-bottom: auto !important;
 }
 
 /* KaTeX math styling to use Avenir for text parts */
@@ -780,11 +868,13 @@ section:not(.lead):not(#\31) > *:not(h1):last-of-type {
 
 /* Reduce gap between title and table on table slides */
 section:not(.lead):not(#\31):has(> table) > h1 {
-    margin-bottom: 0.1em !important;
+    margin-bottom: 0 !important;
+    padding-top: 8px !important;
+    min-height: 1.2em !important;
 }
 
 section:not(.lead):not(#\31) > table:first-of-type {
-    margin-top: 0.3em !important;
+    margin-top: 0.15em !important;
 }
 
 /* Lists should be left-aligned, not centered */
@@ -1219,50 +1309,171 @@ section:not(.lead):not(#\31):has(.warning-box) > *:not(h1):last-of-type {
     letter-spacing: 0.02em;
 }
 
-/* Note box - informational, subtle blue-gray tint */
+/* Note box - informational, River Blue accent */
 .note-box {
-    background-color: rgba(70, 130, 180, 0.12);
-    border-left: 5px solid #4682b4;
+    background-color: rgba(38, 122, 186, 0.12);
+    border-left: 5px solid var(--river-blue, #267aba);
 }
 
 .note-box::before {
     content: 'Note';
-    color: #2c5d7c;
+    color: var(--river-navy, #003c73);
 }
 
-/* Example box - example content, light green tint matching theme */
+/* Example box - example content, Dartmouth Green accent */
 .example-box {
     background-color: rgba(0, 105, 62, 0.10);
-    border-left: 5px solid #00693e;
+    border-left: 5px solid var(--dartmouth-green, #00693e);
 }
 
 .example-box::before {
     content: 'Example';
-    color: #00693e;
+    color: var(--dartmouth-green, #00693e);
 }
 
-/* Warning box - important warnings, light amber/yellow tint */
+/* Warning box - important warnings, Bonfire Orange accent */
 .warning-box {
-    background-color: rgba(218, 165, 32, 0.15);
-    border-left: 5px solid #daa520;
+    background-color: rgba(255, 160, 15, 0.15);
+    border-left: 5px solid var(--bonfire-orange, #ffa00f);
 }
 
 .warning-box::before {
     content: 'Warning';
-    color: #b8860b;
+    color: var(--tuck-orange, #d94415);
 }
 
-/* Callout content paragraphs - remove extra margins */
+/* Additional callout box types using Dartmouth tertiary colors */
+
+/* Tip box - helpful hints, Rich Spring Green accent */
+.tip-box {
+    display: block !important;
+    border-radius: 6px;
+    padding: 0.5em 0.8em 0.6em 0.8em;
+    margin: 0.3em auto !important;
+    width: 85% !important;
+    max-width: 85% !important;
+    text-align: left !important;
+    font-size: 0.65em;
+    line-height: 1.3;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: visible;
+    height: auto !important;
+    min-height: fit-content !important;
+    max-height: none !important;
+    background-color: rgba(165, 215, 95, 0.15);
+    border-left: 5px solid var(--rich-spring-green, #a5d75f);
+}
+
+.tip-box::before {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.2em;
+    font-size: 0.9em;
+    letter-spacing: 0.02em;
+    content: 'Tip';
+    color: #5a8a2a;
+}
+
+/* Important box - critical information, Bonfire Red accent */
+.important-box {
+    display: block !important;
+    border-radius: 6px;
+    padding: 0.5em 0.8em 0.6em 0.8em;
+    margin: 0.3em auto !important;
+    width: 85% !important;
+    max-width: 85% !important;
+    text-align: left !important;
+    font-size: 0.65em;
+    line-height: 1.3;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: visible;
+    height: auto !important;
+    min-height: fit-content !important;
+    max-height: none !important;
+    background-color: rgba(157, 22, 46, 0.12);
+    border-left: 5px solid var(--bonfire-red, #9d162e);
+}
+
+.important-box::before {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.2em;
+    font-size: 0.9em;
+    letter-spacing: 0.02em;
+    content: 'Important';
+    color: var(--bonfire-red, #9d162e);
+}
+
+/* Definition box - terminology, Violet accent */
+.definition-box {
+    display: block !important;
+    border-radius: 6px;
+    padding: 0.5em 0.8em 0.6em 0.8em;
+    margin: 0.3em auto !important;
+    width: 85% !important;
+    max-width: 85% !important;
+    text-align: left !important;
+    font-size: 0.65em;
+    line-height: 1.3;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: visible;
+    height: auto !important;
+    min-height: fit-content !important;
+    max-height: none !important;
+    background-color: rgba(138, 105, 150, 0.12);
+    border-left: 5px solid var(--violet, #8a6996);
+}
+
+.definition-box::before {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.2em;
+    font-size: 0.9em;
+    letter-spacing: 0.02em;
+    content: 'Definition';
+    color: #6a4d7a;
+}
+
+/* Callout content paragraphs - remove extra margins and ensure left alignment */
+/* Must be more specific than section:not(.lead):not(#\31) p rule to override center alignment */
+section:not(.lead):not(#\31) .callout p,
+section:not(.lead):not(#\31) .note-box p,
+section:not(.lead):not(#\31) .example-box p,
+section:not(.lead):not(#\31) .warning-box p,
+section:not(.lead):not(#\31) .tip-box p,
+section:not(.lead):not(#\31) .important-box p,
+section:not(.lead):not(#\31) .definition-box p,
 .callout p,
 .note-box p,
 .example-box p,
-.warning-box p {
+.warning-box p,
+.tip-box p,
+.important-box p,
+.definition-box p {
     margin: 0.3em 0 !important;
     text-align: left !important;
     width: 100% !important;
 }
 
-/* Callout lists - proper alignment */
+/* Callout lists - proper alignment and indentation */
+/* Must be more specific to override global section ul/ol rules */
+section:not(.lead):not(#\31) .callout ul,
+section:not(.lead):not(#\31) .callout ol,
+section:not(.lead):not(#\31) .note-box ul,
+section:not(.lead):not(#\31) .note-box ol,
+section:not(.lead):not(#\31) .example-box ul,
+section:not(.lead):not(#\31) .example-box ol,
+section:not(.lead):not(#\31) .warning-box ul,
+section:not(.lead):not(#\31) .warning-box ol,
+section:not(.lead):not(#\31) .tip-box ul,
+section:not(.lead):not(#\31) .tip-box ol,
+section:not(.lead):not(#\31) .important-box ul,
+section:not(.lead):not(#\31) .important-box ol,
+section:not(.lead):not(#\31) .definition-box ul,
+section:not(.lead):not(#\31) .definition-box ol,
 .callout ul,
 .callout ol,
 .note-box ul,
@@ -1270,40 +1481,74 @@ section:not(.lead):not(#\31):has(.warning-box) > *:not(h1):last-of-type {
 .example-box ul,
 .example-box ol,
 .warning-box ul,
-.warning-box ol {
-    margin: 0.3em 0 0.3em 1.5em !important;
-    padding: 0 !important;
+.warning-box ol,
+.tip-box ul,
+.tip-box ol,
+.important-box ul,
+.important-box ol,
+.definition-box ul,
+.definition-box ol {
+    margin: 0.3em 0 0.3em 0 !important;
+    padding-left: 1.5em !important;
     text-align: left !important;
+    display: block !important;
 }
 
-/* Callout list items */
+/* Callout list items - proper indentation */
+section:not(.lead):not(#\31) .callout li,
+section:not(.lead):not(#\31) .note-box li,
+section:not(.lead):not(#\31) .example-box li,
+section:not(.lead):not(#\31) .warning-box li,
+section:not(.lead):not(#\31) .tip-box li,
+section:not(.lead):not(#\31) .important-box li,
+section:not(.lead):not(#\31) .definition-box li,
 .callout li,
 .note-box li,
 .example-box li,
-.warning-box li {
+.warning-box li,
+.tip-box li,
+.important-box li,
+.definition-box li {
     margin: 0.2em 0 !important;
+    text-align: left !important;
 }
 
 /* Code inside callouts */
 .callout code,
 .note-box code,
 .example-box code,
-.warning-box code {
+.warning-box code,
+.tip-box code,
+.important-box code,
+.definition-box code {
     font-size: 0.9em;
     background-color: rgba(255, 255, 255, 0.5);
 }
 
 /* Inline code in callouts - adjust backgrounds for visibility */
+/* Using Dartmouth tertiary colors */
 .note-box code {
-    background-color: rgba(70, 130, 180, 0.15);
+    background-color: rgba(38, 122, 186, 0.15);  /* River Blue */
 }
 
 .example-box code {
-    background-color: rgba(0, 105, 62, 0.12);
+    background-color: rgba(0, 105, 62, 0.12);    /* Dartmouth Green */
 }
 
 .warning-box code {
-    background-color: rgba(218, 165, 32, 0.18);
+    background-color: rgba(255, 160, 15, 0.18);  /* Bonfire Orange */
+}
+
+.tip-box code {
+    background-color: rgba(165, 215, 95, 0.18);  /* Rich Spring Green */
+}
+
+.important-box code {
+    background-color: rgba(157, 22, 46, 0.15);   /* Bonfire Red */
+}
+
+.definition-box code {
+    background-color: rgba(138, 105, 150, 0.15); /* Violet */
 }
 
 /* Slides with callout boxes: disable vertical centering to prevent bottom cutoff */
@@ -1311,7 +1556,10 @@ section:not(.lead):not(#\31):has(.warning-box) > *:not(h1):last-of-type {
 section:not(.lead):not(#\31):has(> .callout),
 section:not(.lead):not(#\31):has(> .note-box),
 section:not(.lead):not(#\31):has(> .example-box),
-section:not(.lead):not(#\31):has(> .warning-box) {
+section:not(.lead):not(#\31):has(> .warning-box),
+section:not(.lead):not(#\31):has(> .tip-box),
+section:not(.lead):not(#\31):has(> .important-box),
+section:not(.lead):not(#\31):has(> .definition-box) {
     justify-content: flex-start !important;
     /* Reduce bottom padding to give more room for content - use full padding declaration */
     padding: 20px 40px 30px 40px !important;
@@ -1321,14 +1569,20 @@ section:not(.lead):not(#\31):has(> .warning-box) {
 section:not(.lead):not(#\31):has(> .callout) > *:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(> .note-box) > *:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(> .example-box) > *:not(h1):first-of-type,
-section:not(.lead):not(#\31):has(> .warning-box) > *:not(h1):first-of-type {
+section:not(.lead):not(#\31):has(> .warning-box) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .tip-box) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .important-box) > *:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .definition-box) > *:not(h1):first-of-type {
     margin-top: 0.3em !important;
 }
 
 section:not(.lead):not(#\31):has(> .callout) > *:not(h1):last-of-type,
 section:not(.lead):not(#\31):has(> .note-box) > *:not(h1):last-of-type,
 section:not(.lead):not(#\31):has(> .example-box) > *:not(h1):last-of-type,
-section:not(.lead):not(#\31):has(> .warning-box) > *:not(h1):last-of-type {
+section:not(.lead):not(#\31):has(> .warning-box) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .tip-box) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .important-box) > *:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .definition-box) > *:not(h1):last-of-type {
     margin-bottom: 0 !important;
 }
 
@@ -1336,7 +1590,10 @@ section:not(.lead):not(#\31):has(> .warning-box) > *:not(h1):last-of-type {
 section:not(.lead):not(#\31) > .callout,
 section:not(.lead):not(#\31) > .note-box,
 section:not(.lead):not(#\31) > .example-box,
-section:not(.lead):not(#\31) > .warning-box {
+section:not(.lead):not(#\31) > .warning-box,
+section:not(.lead):not(#\31) > .tip-box,
+section:not(.lead):not(#\31) > .important-box,
+section:not(.lead):not(#\31) > .definition-box {
     align-self: center !important;
     justify-self: center !important;
     /* Ensure proper sizing and no overflow */
@@ -1379,64 +1636,81 @@ section:not(.lead):not(#\31) > .warning-box {
     border-radius: 8px;
 }
 
-.emoji-bg-orange { background-color: rgba(249, 115, 22, 0.5); }
-.emoji-bg-teal { background-color: rgba(20, 184, 166, 0.5); }
-.emoji-bg-green { background-color: rgba(0, 105, 62, 0.5); }
-.emoji-bg-blue { background-color: rgba(59, 130, 246, 0.5); }
-.emoji-bg-gray { background-color: rgba(156, 163, 175, 0.5); }
+/* Dartmouth Tertiary Color Backgrounds */
+/* Primary brand color */
+.emoji-bg-green { background-color: rgba(0, 105, 62, 0.5); }           /* Dartmouth Green */
 
-/* CSS Arrow for flow diagrams - replaces arrow emoji */
+/* Blues */
+.emoji-bg-blue { background-color: rgba(38, 122, 186, 0.5); }          /* River Blue */
+.emoji-bg-river-blue { background-color: rgba(38, 122, 186, 0.5); }    /* River Blue */
+.emoji-bg-navy { background-color: rgba(0, 60, 115, 0.5); }            /* River Navy */
+.emoji-bg-river-navy { background-color: rgba(0, 60, 115, 0.5); }      /* River Navy */
+
+/* Greens */
+.emoji-bg-spring { background-color: rgba(196, 221, 136, 0.5); }       /* Spring Green */
+.emoji-bg-spring-green { background-color: rgba(196, 221, 136, 0.5); } /* Spring Green */
+.emoji-bg-rich-spring { background-color: rgba(165, 215, 95, 0.5); }   /* Rich Spring Green */
+.emoji-bg-forest { background-color: rgba(18, 49, 43, 0.5); }          /* Forest Green */
+
+/* Warm colors */
+.emoji-bg-yellow { background-color: rgba(245, 220, 105, 0.5); }       /* Summer Yellow */
+.emoji-bg-summer { background-color: rgba(245, 220, 105, 0.5); }       /* Summer Yellow */
+.emoji-bg-orange { background-color: rgba(255, 160, 15, 0.5); }        /* Bonfire Orange */
+.emoji-bg-bonfire { background-color: rgba(255, 160, 15, 0.5); }       /* Bonfire Orange */
+.emoji-bg-red { background-color: rgba(157, 22, 46, 0.5); }            /* Bonfire Red */
+.emoji-bg-bonfire-red { background-color: rgba(157, 22, 46, 0.5); }    /* Bonfire Red */
+.emoji-bg-tuck { background-color: rgba(217, 68, 21, 0.5); }           /* Tuck Orange */
+.emoji-bg-tuck-orange { background-color: rgba(217, 68, 21, 0.5); }    /* Tuck Orange */
+
+/* Other colors */
+.emoji-bg-violet { background-color: rgba(138, 105, 150, 0.5); }       /* Violet */
+.emoji-bg-purple { background-color: rgba(138, 105, 150, 0.5); }       /* Violet (alias) */
+.emoji-bg-brown { background-color: rgba(100, 60, 32, 0.5); }          /* Autumn Brown */
+.emoji-bg-autumn { background-color: rgba(100, 60, 32, 0.5); }         /* Autumn Brown */
+
+/* Grays */
+.emoji-bg-gray { background-color: rgba(66, 65, 65, 0.5); }            /* Granite Gray */
+.emoji-bg-granite { background-color: rgba(66, 65, 65, 0.5); }         /* Granite Gray */
+.emoji-bg-gray-light { background-color: rgba(226, 226, 226, 0.5); }   /* Gray 2 */
+.emoji-bg-gray-dark { background-color: rgba(112, 112, 112, 0.5); }    /* Gray 3 */
+
+/* Legacy alias for backwards compatibility
+   Note: "teal" maps to Rich Spring Green, not a true blue-green teal.
+   Dartmouth's palette doesn't include a teal; use 'blue' (River Blue) for blue-green tones. */
+.emoji-bg-teal { background-color: rgba(165, 215, 95, 0.5); }          /* Rich Spring Green (legacy "teal" alias) */
+
+/* CSS Arrow for flow diagrams - uses arrow.svg image */
 .flow-arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 30px;
     align-self: center;
+    background: url('images/arrow-clean.svg') no-repeat center;
+    background-size: contain;
 }
 
-/* Triangle arrow using CSS borders - Dartmouth green */
+/* No ::after needed - using background image */
 .flow-arrow::after {
-    content: '';
-    display: block;
-    width: 0;
-    height: 0;
-    border-top: 20px solid transparent;
-    border-bottom: 20px solid transparent;
-    border-left: 30px solid #00693e;
+    content: none;
 }
 
-/* Arrow with stem for more visibility */
+/* Arrow with stem - same as flow-arrow now, using SVG */
 .flow-arrow-stem {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 60px;
+    width: 100px;
+    height: 36px;
     align-self: center;
-    position: relative;
+    background: url('images/arrow-clean.svg') no-repeat center;
+    background-size: contain;
 }
 
-.flow-arrow-stem::before {
-    content: '';
-    display: block;
-    width: 35px;
-    height: 8px;
-    background-color: #00693e;
-    position: absolute;
-    left: 10px;
-}
-
+.flow-arrow-stem::before,
 .flow-arrow-stem::after {
-    content: '';
-    display: block;
-    width: 0;
-    height: 0;
-    border-top: 18px solid transparent;
-    border-bottom: 18px solid transparent;
-    border-left: 28px solid #00693e;
-    position: absolute;
-    right: 10px;
+    content: none;
 }
 
 /* Smaller arrow variant */
@@ -1444,19 +1718,15 @@ section:not(.lead):not(#\31) > .warning-box {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 55px;
+    height: 20px;
     align-self: center;
+    background: url('images/arrow-clean.svg') no-repeat center;
+    background-size: contain;
 }
 
 .flow-arrow-sm::after {
-    content: '';
-    display: block;
-    width: 0;
-    height: 0;
-    border-top: 14px solid transparent;
-    border-bottom: 14px solid transparent;
-    border-left: 22px solid #00693e;
+    content: none;
 }
 
 /* Large arrow variant */
@@ -1464,19 +1734,124 @@ section:not(.lead):not(#\31) > .warning-box {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 80px;
+    width: 110px;
+    height: 40px;
     align-self: center;
+    background: url('images/arrow-clean.svg') no-repeat center;
+    background-size: contain;
 }
 
 .flow-arrow-lg::after {
+    content: none;
+}
+
+/* ==========================================================================
+   SVG-BASED SCALABLE ARROWS
+   Uses arrow-stem.svg + arrow-head.svg for arrows that stretch the stem
+   while keeping arrowhead size fixed.
+
+   Usage in markdown:
+     <span class="svg-arrow" style="--arrow-width: 100px;"></span>
+     <span class="svg-arrow svg-arrow-80"></span>
+     <span class="svg-arrow svg-arrow-120"></span>
+   ========================================================================== */
+
+/* Base scalable SVG arrow - uses CSS custom property for width */
+.svg-arrow {
+    --arrow-width: 100px;       /* Total arrow width - customizable */
+    --arrow-head-width: 24px;   /* Fixed arrowhead width */
+    --arrow-height: 34px;       /* Arrow height (matches arrowhead SVG) */
+    --arrow-stem-height: 10px;  /* Stem thickness */
+
+    display: inline-flex;
+    align-items: center;
+    width: var(--arrow-width);
+    height: var(--arrow-height);
+    position: relative;
+    align-self: center;
+    flex-shrink: 0;
+}
+
+/* Arrow image using the provided arrow.svg design */
+.svg-arrow::before {
     content: '';
-    display: block;
-    width: 0;
-    height: 0;
-    border-top: 26px solid transparent;
-    border-bottom: 26px solid transparent;
-    border-left: 40px solid #00693e;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: url('images/arrow-clean.svg') no-repeat center;
+    background-size: contain;
+}
+
+/* No ::after needed - single image arrow */
+.svg-arrow::after {
+    content: none;
+}
+
+/* Preset width variants */
+.svg-arrow-40  { --arrow-width: 55px;  --arrow-height: 24px; --arrow-head-width: 16px; --arrow-stem-height: 6px; }
+.svg-arrow-60  { --arrow-width: 75px;  --arrow-height: 28px; --arrow-head-width: 19px; --arrow-stem-height: 7px; }
+.svg-arrow-80  { --arrow-width: 100px; --arrow-height: 34px; }
+.svg-arrow-100 { --arrow-width: 120px; --arrow-height: 38px; }
+.svg-arrow-120 { --arrow-width: 140px; --arrow-height: 42px; }
+.svg-arrow-150 { --arrow-width: 170px; --arrow-height: 46px; }
+.svg-arrow-200 { --arrow-width: 220px; --arrow-height: 52px; }
+
+/* Small variant - proportionally smaller */
+.svg-arrow-sm {
+    --arrow-width: 65px;
+    --arrow-head-width: 17px;
+    --arrow-height: 26px;
+    --arrow-stem-height: 7px;
+}
+
+/* Medium variant (default sizing) */
+.svg-arrow-md {
+    --arrow-width: 100px;
+    --arrow-head-width: 24px;
+    --arrow-height: 34px;
+    --arrow-stem-height: 10px;
+}
+
+/* Large variant - proportionally larger */
+.svg-arrow-lg {
+    --arrow-width: 130px;
+    --arrow-head-width: 30px;
+    --arrow-height: 42px;
+    --arrow-stem-height: 12px;
+}
+
+/* Extra large variant */
+.svg-arrow-xl {
+    --arrow-width: 180px;
+    --arrow-head-width: 38px;
+    --arrow-height: 52px;
+    --arrow-stem-height: 15px;
+}
+
+/* Vertical arrows - rotated versions */
+.svg-arrow-down {
+    transform: rotate(90deg);
+}
+
+.svg-arrow-up {
+    transform: rotate(-90deg);
+}
+
+.svg-arrow-left {
+    transform: rotate(180deg);
+}
+
+/* Color variants using CSS filters */
+.svg-arrow-gray::before,
+.svg-arrow-gray::after {
+    filter: grayscale(100%) brightness(0.7);
+}
+
+.svg-arrow-light::before,
+.svg-arrow-light::after {
+    filter: brightness(1.3) saturate(0.8);
 }
 
 /* Grayscale effect for "inactive" emojis */
@@ -1498,9 +1873,36 @@ section:not(.lead):not(#\31) > .warning-box {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;  /* Align to top - arrows use margin-top for centering */
     gap: 1em;
     margin: 1em auto;
+}
+
+/* Arrows in emoji-figure - calculate margin-top to center on emoji-bg
+   emoji-xl (128px) + emoji-bg padding (0.3em * 2 = ~77px) = ~205px total
+   Arrow should be at center: (205px / 2) - (arrow-height / 2)
+   For flow-arrow-lg (40px): 102.5 - 20 = ~82px */
+.emoji-figure > .flow-arrow,
+.emoji-figure > .flow-arrow-sm,
+.emoji-figure > .flow-arrow-lg,
+.emoji-figure > .svg-arrow {
+    align-self: flex-start;
+}
+
+.emoji-figure > .flow-arrow {
+    margin-top: 87px;  /* (205 - 30) / 2 for 30px arrow */
+}
+
+.emoji-figure > .flow-arrow-sm {
+    margin-top: 92px;  /* (205 - 20) / 2 for 20px arrow */
+}
+
+.emoji-figure > .flow-arrow-lg {
+    margin-top: 82px;  /* (205 - 40) / 2 for 40px arrow */
+}
+
+.emoji-figure > .svg-arrow {
+    margin-top: 85px;  /* (205 - 34) / 2 for ~34px default arrow */
 }
 
 /* Row layout for emoji figures */
@@ -1508,8 +1910,35 @@ section:not(.lead):not(#\31) > .warning-box {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: flex-end;
+    align-items: flex-start;  /* Align to top - arrows use margin-top for centering */
     gap: 2em;
+}
+
+/* Arrows in emoji-row - calculate margin-top to center on emoji-bg
+   emoji-xl (128px) + emoji-bg padding (0.3em * 2 = ~77px) = ~205px total
+   Arrow should be at center: (205px / 2) - (arrow-height / 2)
+   For flow-arrow-lg (40px): 102.5 - 20 = ~82px */
+.emoji-row > .flow-arrow,
+.emoji-row > .flow-arrow-sm,
+.emoji-row > .flow-arrow-lg,
+.emoji-row > .svg-arrow {
+    align-self: flex-start;
+}
+
+.emoji-row > .flow-arrow {
+    margin-top: 87px;  /* (205 - 30) / 2 for 30px arrow */
+}
+
+.emoji-row > .flow-arrow-sm {
+    margin-top: 92px;  /* (205 - 20) / 2 for 20px arrow */
+}
+
+.emoji-row > .flow-arrow-lg {
+    margin-top: 82px;  /* (205 - 40) / 2 for 40px arrow */
+}
+
+.emoji-row > .svg-arrow {
+    margin-top: 85px;  /* (205 - 34) / 2 for ~34px default arrow */
 }
 
 /* Column layout for emoji figures */
@@ -1517,7 +1946,7 @@ section:not(.lead):not(#\31) > .warning-box {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5em;
+    gap: 0.2em;  /* Reduced from 0.5em for tighter label spacing */
 }
 
 .emoji-col .label {
@@ -1540,7 +1969,7 @@ section:not(.lead):not(#\31) > .warning-box {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.3em;
+    gap: 0.15em;  /* Reduced from 0.3em for tighter label spacing */
 }
 
 .emoji-labeled .label {
@@ -1563,14 +1992,15 @@ section:not(.lead):not(#\31) > .warning-box {
     position: relative;
 }
 
+/* Vertical line from parent to horizontal connector - starts below label, ends at horizontal line */
 .emoji-hierarchy > .emoji-col::after {
     content: '';
     position: absolute;
-    bottom: -2em;
+    top: 100%;  /* Start at the bottom of the emoji-col (below the label) */
     left: 50%;
     width: 4px;
-    height: calc(2em + 25px);
-    background-color: #00693e;
+    height: calc(2em - 21px);  /* Gap (2em) minus 25px above children + 4px overlap with horizontal line */
+    background-color: #0a2518;
     transform: translateX(-50%);
 }
 
@@ -1589,7 +2019,7 @@ section:not(.lead):not(#\31) > .warning-box {
     left: 0;
     right: 0;
     height: 4px;
-    background-color: #00693e;
+    background-color: #0a2518;
 }
 
 /* Remove the center vertical connector - parent handles this now */
@@ -1609,7 +2039,7 @@ section:not(.lead):not(#\31) > .warning-box {
     left: 50%;
     width: 4px;
     height: 25px;
-    background-color: #00693e;
+    background-color: #0a2518;
     transform: translateX(-50%);
 }
 
@@ -1623,13 +2053,27 @@ section:not(.lead):not(#\31) > .warning-box {
     justify-content: center !important;
     align-items: center !important;
     width: 100% !important;
+    max-width: 100% !important;
     margin: 0.5em auto !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    padding: 0 40px !important;
 }
 
 .diagram-container img {
-    max-width: 90% !important;
+    max-width: 100% !important;
     max-height: 60vh !important;
     object-fit: contain !important;
+}
+
+/* Inline SVGs within diagram containers - ensure they scale properly */
+/* Uses !important to override any inline width/height attributes */
+.diagram-container > svg {
+    max-width: 100% !important;
+    max-height: 60vh !important;
+    height: auto !important;
+    width: auto !important;
+    flex-shrink: 1 !important;
 }
 
 /* Chart.js canvas containers */
@@ -1652,9 +2096,10 @@ section:not(.lead):not(#\31) > .warning-box {
 .diagram-caption {
     text-align: center !important;
     font-size: 0.7em !important;
-    font-style: italic !important;
-    color: #6b7c85 !important;
-    margin-top: 0.3em !important;
+    font-style: normal !important;
+    color: rgba(10, 37, 24, 0.8) !important;
+    margin-top: 0.1em !important;
+    margin-bottom: 0.6em !important;
 }
 
 .chart-caption {
@@ -1663,4 +2108,19 @@ section:not(.lead):not(#\31) > .warning-box {
     font-style: normal !important;
     color: rgba(10, 37, 24, 0.8) !important;
     margin-top: 0.3em !important;
+}
+
+/* ============================================
+   COURSE INFORMATION SLIDE STYLING
+   Special styling for course info slides with emoji columns
+   ============================================ */
+
+/* Tighter spacing between emoji label and text underneath */
+.emoji-col.tight-labels {
+    gap: 0.1em;
+}
+
+/* Course info note box - increased top margin for spacing from emoji row */
+.note-box.course-info-notes {
+    margin-top: 1.2em !important;
 }
