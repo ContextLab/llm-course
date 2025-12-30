@@ -250,12 +250,18 @@ def generate_flow_svg(flow_lines: list, caption: str = None) -> str:
         row_widths.append(row_width)
         max_row_width = max(max_row_width, row_width)
 
-    # SVG dimensions with padding
-    # Extra padding accounts for stroke width (3px centered = 1.5px outside)
-    svg_padding = 40
-    svg_width = max_row_width + svg_padding * 2
-    row_height = node_height + 40  # Row height including spacing
-    svg_height = len(all_elements) * row_height + svg_padding * 2
+    # SVG dimensions - use tight bounding box with small border
+    # Border of 5px prevents stroke cutoff (3px stroke = 1.5px outside) plus small margin
+    svg_border = 5
+    row_height = node_height + 20  # Reduced row spacing for multi-row diagrams
+
+    # Calculate tight content bounds
+    content_width = max_row_width
+    content_height = len(all_elements) * row_height - 20  # Remove trailing spacing
+
+    # Final SVG dimensions with tight border
+    svg_width = content_width + svg_border * 2
+    svg_height = content_height + svg_border * 2
 
     # Start building SVG
     # Note: We omit explicit width/height attributes to allow CSS to control sizing
@@ -271,7 +277,7 @@ def generate_flow_svg(flow_lines: list, caption: str = None) -> str:
   </defs>''')
 
     # Render each row
-    y_offset = svg_padding + node_height // 2
+    y_offset = svg_border + node_height // 2
     global_node_idx = 0
 
     for row_idx, row_elements in enumerate(all_elements):

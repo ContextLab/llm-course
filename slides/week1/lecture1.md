@@ -129,16 +129,14 @@ We will explore how machines can understand and generate human language:
 <!-- caption: Five projects, building from pattern matching to transformer models -->
 
 <div style="display: flex; gap: 2em; margin-top: 0.5em;">
-<div class="note-box" style="flex: 1;">
+<div class="note-box" data-title="Grading" style="flex: 1; font-size: 0.55em;">
 
-**Grading**
 - Problem sets (5): 75%
 - Final project: 25%
 
 </div>
-<div class="tip-box" style="flex: 1;">
+<div class="tip-box" data-title="Tools" style="flex: 1; font-size: 0.55em;">
 
-**Tools**
 - Google Colaboratory
 - HuggingFace
 - GitHub / Discord
