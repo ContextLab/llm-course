@@ -157,8 +157,10 @@ if [[ ! -f "$PROCESS_SCRIPT" ]]; then
     exit 1
 fi
 
-# Create temporary file
-TEMP_FILE=$(mktemp "/tmp/marp_processed_XXXXXX.md")
+# Create temporary file in the same directory as input to preserve relative paths
+# This is crucial for PDF generation where relative image paths must resolve correctly
+INPUT_DIR="$(cd "$(dirname "$INPUT_FILE")" && pwd)"
+TEMP_FILE=$(mktemp "${INPUT_DIR}/.marp_processed_XXXXXX.md")
 trap "if [[ \$KEEP_TEMP != true ]]; then rm -f '$TEMP_FILE'; fi" EXIT
 
 log_info "Processing: $INPUT_FILE"

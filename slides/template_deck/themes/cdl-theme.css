@@ -107,12 +107,7 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: 'Avenir LT Std';
-    src: url('../../fonts/AvenirLTStd-LightOblique.otf') format('opentype');
-    font-weight: 300;
-    font-style: italic;
-}
+/* Note: LightOblique variant not available - browser will synthesize italic */
 
 @font-face {
     font-family: 'Avenir LT Std';
@@ -121,12 +116,7 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: 'Avenir LT Std';
-    src: url('../../fonts/AvenirLTStd-BookOblique.otf') format('opentype');
-    font-weight: 400;
-    font-style: italic;
-}
+/* Note: BookOblique variant not available - browser will synthesize italic */
 
 @font-face {
     font-family: 'Avenir LT Std';
@@ -135,12 +125,7 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: 'Avenir LT Std';
-    src: url('../../fonts/AvenirLTStd-Oblique.otf') format('opentype');
-    font-weight: 450;
-    font-style: italic;
-}
+/* Note: Oblique variant not available - browser will synthesize italic */
 
 @font-face {
     font-family: 'Avenir LT Std';
@@ -149,12 +134,7 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: 'Avenir LT Std';
-    src: url('../../fonts/AvenirLTStd-MediumOblique.otf') format('opentype');
-    font-weight: 500;
-    font-style: italic;
-}
+/* Note: MediumOblique variant not available - browser will synthesize italic */
 
 @font-face {
     font-family: 'Avenir LT Std';
@@ -163,12 +143,7 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: 'Avenir LT Std';
-    src: url('../../fonts/AvenirLTStd-HeavyOblique.otf') format('opentype');
-    font-weight: 700;
-    font-style: italic;
-}
+/* Note: HeavyOblique variant not available - browser will synthesize italic */
 
 @font-face {
     font-family: 'Avenir LT Std';
@@ -177,12 +152,7 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: 'Avenir LT Std';
-    src: url('../../fonts/AvenirLTStd-BlackOblique.otf') format('opentype');
-    font-weight: 900;
-    font-style: italic;
-}
+/* Note: BlackOblique variant not available - browser will synthesize italic */
 
 /* FiraCode local font face */
 @font-face {
@@ -1691,6 +1661,38 @@ section:not(.lead):not(#\31)>.definition-box {
     /* Proper margins */
     margin-top: 0.3em !important;
     margin-bottom: 0.3em !important;
+}
+
+/* ============================================
+   FLEX CONTAINER CALLOUT BOX OVERRIDES
+   When callout boxes are inside a flex container,
+   allow them to expand to fill available space
+   ============================================ */
+
+/* Callout boxes inside flex containers should fill available space */
+[style*="display: flex"] > .callout,
+[style*="display: flex"] > .note-box,
+[style*="display: flex"] > .example-box,
+[style*="display: flex"] > .warning-box,
+[style*="display: flex"] > .tip-box,
+[style*="display: flex"] > .important-box,
+[style*="display: flex"] > .definition-box,
+[style*="display:flex"] > .callout,
+[style*="display:flex"] > .note-box,
+[style*="display:flex"] > .example-box,
+[style*="display:flex"] > .warning-box,
+[style*="display:flex"] > .tip-box,
+[style*="display:flex"] > .important-box,
+[style*="display:flex"] > .definition-box {
+    width: auto !important;
+    max-width: none !important;
+    min-width: fit-content !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    flex: 1 1 auto !important;
+    /* Increase horizontal padding for better text breathing room */
+    padding-left: 1.2em !important;
+    padding-right: 1.2em !important;
 }
 
 /* ============================================

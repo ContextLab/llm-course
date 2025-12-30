@@ -126,20 +126,28 @@ We will explore how machines can understand and generate human language:
 ```flow
 [ELIZA:green] --> [SPAM:teal] --> [Wikipedia:blue] --> [Chatbot:orange] --> [GPT:violet]
 ```
-<!-- caption: Five projects, building from pattern matching to transformer models -->
+<!-- caption: We'll build from pattern matching to transformer-based models through our 5 main projects -->
 
-<div style="display: flex; gap: 2em; margin-top: 0.5em;">
-<div class="note-box" data-title="Grading" style="flex: 1; font-size: 0.55em;">
+<style scoped>
+.small-boxes ul { font-size: 0.65em !important; }
+.small-boxes li { font-size: inherit !important; }
+</style>
 
-- Problem sets (5): 75%
+<div class="small-boxes" style="display: flex; gap: 1.5em; margin-top: 0.5em; width: 100%;">
+<div class="note-box" data-title="Grading" style="flex: 1;">
+
+- Bi-weekly short projects (5): 75%
 - Final project: 25%
+- Can work individually or in groups
+- See [syllabus](../../syllabus.pdf) for additional details
 
 </div>
-<div class="tip-box" data-title="Tools" style="flex: 1; font-size: 0.55em;">
+<div class="tip-box" data-title="Tools" style="flex: 1;">
 
 - Google Colaboratory
 - HuggingFace
 - GitHub / Discord
+- GenAI (Claude, ChatGPT, Gemini)
 
 </div>
 </div>
