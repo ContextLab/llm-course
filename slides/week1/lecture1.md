@@ -156,29 +156,35 @@ We will explore how machines can understand and generate human language:
 
 # The big questions
 
-Throughout this course, we will grapple with:
-
 1. Can machines truly *understand* language?
-2. What is the relationship between language and thought?
-3. How do statistical patterns capture meaning?
-4. Can AI be conscious?
+2. What is the relationship between **language** and **thought**?
+3. Can statistical patterns capture **meaning**? How? Under which circumstances?
+4. Can AI be conscious? If so, what are the implications?
 
-These are not just philosophical questions--they are at the heart of cognitive science!
+<div class="note-box">
+
+These are not just "fluff" questions: they are at the heart of cognitive science, philosophy, psychology, and neuroscience!
+
+</div>
 
 ---
 
 # Discussion: Is ChatGPT conscious?
 
-<div class="note-box">
-
-**Discussion:** Let's start with a provocative question: **Is ChatGPT conscious?**
-
-</div>
-
-**Think about:**
 - What does "conscious" even mean?
 - How would we test for consciousness?
 - Does it matter if ChatGPT *seems* conscious?
+
+<div class="note-box" data-title="For further consideration">
+
+What are the implications for
+
+- Ourselves
+- Other animals
+- Other life forms in general (aliens? synthetic life?)
+- Policy, ethics, and society more broadly
+
+</div>
 
 ---
 
