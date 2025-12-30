@@ -1394,6 +1394,35 @@ section:not(.lead):not(#\31):has(.warning-box)>*:not(h1):last-of-type {
     color: var(--tuck-orange, #d94415);
 }
 
+/* Custom title support for callout boxes via data-title attribute */
+.note-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.warning-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.example-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.tip-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.important-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.definition-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.callout[data-title]::before {
+    content: attr(data-title);
+}
+
 /* Additional callout box types using Dartmouth tertiary colors */
 
 /* Tip box - helpful hints, Rich Spring Green accent */

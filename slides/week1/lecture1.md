@@ -103,7 +103,7 @@ Associate Professor | Psychological &amp; Brain Sciences | <img src="../../figur
 
 # What is this course about?
 
-<div class="note-box">
+<div class="note-box" data-title="Course content">
 
 We will explore how machines can understand and generate human language:
 - Building conversational agents from scratch
@@ -113,7 +113,7 @@ We will explore how machines can understand and generate human language:
 
 </div>
 
-<div class="warning-box">
+<div class="warning-box" data-title="Course design">
 
 **This course is experiential!** You will learn by doing: coding, experimenting, discussing, and researching.
 
