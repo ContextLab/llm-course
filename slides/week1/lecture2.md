@@ -1,780 +1,335 @@
 ---
 marp: true
 theme: cdl-theme
-paginate: true
-header: 'PSYC 51.07: Models of Language and Communication'
-footer: 'Week 1 - Day 2'
+math: katex
+transition: fade 0.25s
+author: Contextual Dynamics Lab
 ---
 
-<!-- _class: lead -->
+# Lecture 2: Pattern matching and ELIZA
+### PSYC 51.07: Models of language and communication
 
-# Lecture 2: Pattern Matching \& ELIZA
-## The Fundamentals of Conversational AI 🔧
-
-**PSYC 51.07: Models of Language and Communication**
-
-Week 1 - Day 2
-
----
-
-# Today's Journey 🗺️
-
-<!-- TODO: Add manual table of contents or navigation -->
-
+Jeremy R. Manning
+Dartmouth College
+Winter 2026
 
 ---
 
-# Last Time... 🔄
+# Recap from Lecture 1
 
+<div class="note-box" data-title="Key ideas">
 
-
-<div class="callout info">
-<div class="callout-title">Key Ideas from Lecture 1</div>
-
-- Consciousness is complex and hard to define
-- Language and thought are separable but interactive
-- Current LLMs are not conscious
-- Pattern matching can create illusions of understanding
+- **Consciousness is complex:** multiple types, hard to define
+- **Language $\neq$ Thought:** but they interact in interesting ways
+- **Grounding matters:** meaning comes from experience
 
 </div>
 
-<div class="callout info">
-<div class="callout-title">Discussion</div>
+<div class="tip-box" data-title="Central insight">
 
-Today we'll see *how* pattern matching can create these illusions by building our own simple conversational system!
+Pattern matching can create powerful *illusions* of understanding, even without any "real" comprehension.
 
 </div>
-
 
 ---
 
-# The Fundamental Challenge 💻
+# The fundamental challenge
 
+<div style="display: flex; gap: 2em;">
+<div>
 
-<div class="callout info">
-<div class="callout-title">Core Problem</div>
-
-Computers don't "understand" meaning—they manipulate **strings of characters**.
+**Humans**
+- Derive meaning from experience
+- Connect words to memories, emotions, senses
+- Understand context and nuance
 
 </div>
+<div>
 
-```
-"I am sad" 
-    *( -> ['I', ' ', 'a', 'm', ' ', -> Gap!
-```
+**Computers**
+- Manipulate strings (sequences of characters)
+- Have no direct experience of the world
+- Process symbols without inherent meaning
 
-\end{center*
+</div>
+</div>
 
-**The question:** How do we bridge this gap?
+<div class="note-box" data-title="The key question">
+
+How do we bridge this gap? How can symbol manipulation create the *appearance* of understanding?
+
+</div>
 
 ---
 
-# Everything Starts with Patterns 🎯
+# String manipulation basics
 
+Text processing is the foundation of computational linguistics:
 
-
-**Basic text operations:**
-1. **Finding** specific words or phrases
-2. **Replacing** parts of text
-3. **Extracting** information
-4. **Transforming** input to output
-
-<div class="callout warning">
-<div class="callout-title">Important Insight</div>
-
-Even sophisticated models like GPT-4 are (at their core) doing *pattern matching*—just at a much more complex level!
-
-</div>
-
-<div class="callout tip">
-<div class="callout-title">Think about it!</div>
-
-If you can master simple patterns, you'll understand the foundations of ALL natural language processing!
-
-</div>
-
-
----
-
-# Simple String Replacement 🔧
-
-
-**Example 1: Direct replacement**
+- **Finding:** Locate patterns within text
+- **Replacing:** Substitute one pattern for another
+- **Extracting:** Pull out specific parts of text
+- **Transforming:** Convert text to different formats
 
 ```python
-user_input = "I am feeling sad"
-response = user_input.replace("I am", "Why are you")
-print(response)
-# Output: "Why are you feeling sad"
+text = "Hello, how are you today?"
+
+# Finding
+"how" in text              # True
+
+# Replacing
+text.replace("you", "we")  # "Hello, how are we today?"
+
+# Extracting
+text.split(", ")[1]        # "how are you today?"
 ```
-
-**What happened here?**
-- Found the substring "I am"
-- Replaced it with "Why are you"
-- Everything else stayed the same
-
-<div class="callout tip">
-<div class="callout-title">Think about it!</div>
-
-This seems intelligent! But is it? What are the limitations?
-
-</div>
-
 
 ---
 
-# The Problem with Direct Replacement ❌
+# Why string manipulation matters
 
-
-**What if the input is slightly different?**
-
-```python
-# Works
-user_input = "I am sad"
-response = user_input.replace("I am", "Why are you")
-# "Why are you sad" ✓
-
-# Doesn't work
-user_input = "I'm sad"
-response = user_input.replace("I am", "Why are you")
-# "I'm sad" (unchanged!) ✗
-
-# Doesn't work
-user_input = "I am very very sad"
-response = user_input.replace("I am", "Why are you")
-# "Why are you very very sad"
-# (But we only wanted to capture "sad") ✗
+```flow
+[User input:green] --> [Pattern matching:blue] --> [Response generation:orange] --> [Output:teal]
 ```
+<!-- caption: Basic conversational AI pipeline -->
 
-**Solution:** We need more flexible patterns! → **Regular Expressions**
+<div class="note-box">
 
----
-
-# Introduction to Regular Expressions 🎯
-
-
-<div class="callout info">
-<div class="callout-title">What are Regular Expressions?</div>
-
-A powerful language for describing patterns in text, not just exact matches.
+Every conversational AI system, from ELIZA to ChatGPT, fundamentally processes text through some form of pattern matching, though with vastly different sophistication.
 
 </div>
 
-**Example: Matching with wildcards**
+---
+
+# Regular expressions
+
+<div class="definition-box" data-title="Regular expression (regex)">
+
+A sequence of characters that defines a search pattern. Regular expressions provide flexible, powerful pattern matching for text processing.
+
+</div>
+
+<div class="tip-box" data-title="Key syntax">
+
+| Symbol | Meaning | Example |
+|--------|---------|---------|
+| `.` | Any character | `h.t` matches "hat", "hit", "hot" |
+| `*` | Zero or more | `ab*c` matches "ac", "abc", "abbc" |
+| `()` | Capture group | `(hello)` captures "hello" |
+| `\|` | Alternation | `cat\|dog` matches "cat" or "dog" |
+
+</div>
+
+---
+
+# Regular expressions in Python
 
 ```python
 import re
 
-pattern = r"I am (.*)"
-match = re.search(pattern, "I am feeling sad")
+text = "I am feeling very happy today"
 
+# Simple pattern matching
+if re.search(r"happy|sad|angry", text):
+    print("Found an emotion!")
+
+# Capture groups - extract parts of a match
+match = re.search(r"I am feeling (.*?) today", text)
 if match:
-    feeling = match.group(1)  # Captures "feeling sad"
-    response = f"Why are you {feeling}?"
-    print(response)
-# Output: "Why are you feeling sad?"
+    emotion = match.group(1)  # "very happy"
+
+# Substitution
+new_text = re.sub(r"I am", "You are", text)
+# "You are feeling very happy today"
 ```
 
-**Key: ** The `(.*)` captures *anything* after "I am"!
+---
+
+# Meet ELIZA
+
+<div class="note-box" data-title="Historical context">
+
+**ELIZA** was created by Joseph Weizenbaum at MIT in 1966. It was one of the first programs to attempt natural language processing.
+
+</div>
+
+<div style="display: flex; gap: 2em;">
+<div>
+
+**Why a Rogerian therapist?**
+- Non-directive therapy style
+- Reflects statements back to patient
+- Asks open-ended questions
+- Avoids making claims about the world
+
+</div>
+<div>
+
+**Key insight**
+- Rogerian style requires no real knowledge
+- Simply reflect and rephrase
+- Let the human do the "heavy lifting"
+
+</div>
+</div>
 
 ---
 
-# Regex Syntax Basics 📝
+# Reading: Weizenbaum (1966)
 
+<div class="note-box" data-title="Required reading">
 
-
-| * | Zero or more of previous | ca*t matches "ct", "cat", "caat" |
-| --- | --- | --- |
-| + | One or more of previous | ca+t matches "cat", "caat" |
-| ? | Zero or one of previous | ca?t matches "ct", "cat" |
-| () | Capture group | (cat) captures "cat" |
-| | | Or | cat|dog matches "cat" or "dog" |
-| [] | Character class | [abc] matches "a", "b", or "c" |
-| \^{} | Start of string | \^{cat} matches "cat" at start |
-| $ | End of string | cat$ matches "cat" at end |
-
-<div class="callout warning">
-<div class="callout-title">Practice Makes Perfect</div>
-
-Regex can be tricky at first, but it's an essential skill for NLP!
+[Weizenbaum, J. (1966). ELIZA&mdash;A computer program for the study of natural language communication between man and machine. *Communications of the ACM*, 9(1), 36-45.](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf)
 
 </div>
 
+**Pay attention to:**
+- How does ELIZA select responses?
+- What are "scripts" in ELIZA's architecture?
+- Why did Weizenbaum choose the DOCTOR script?
+- What did Weizenbaum observe about user reactions?
 
 ---
 
-# Regex Examples 💡
+# Live demo
 
+<div class="tip-box" data-title="Try it yourself!">
 
-<div class="columns">
-<div class="column">
-
-**Example 1: Email addresses**
-```python
-[basicstyle=\ttfamily]
-pattern = r"\w+@\w+\.\w+"
-text = "Email: joe@example.com"
-match = re.search(pattern, text)
-# Matches: joe@example.com
-```
-
-**Example 2: Phone numbers**
-```python
-[basicstyle=\ttfamily]
-pattern = r"--"
-text = "Call 555-123-4567"
-match = re.search(pattern, text)
-# Matches: 555-123-4567
-```
-
-</div>
-<div class="column">
-
-**Example 3: Multiple captures**
-```python
-[basicstyle=\ttfamily]
-pattern = r"I (.*) my (.*)"
-text = "I love my family"
-match = re.search(pattern, text)
-if match:
-    verb = match.group(1)   # "love"
-    obj = match.group(2)    # "family"
-```
-
-**Example 4: Optional parts**
-```python
-[basicstyle=\ttfamily]
-pattern = r"I'?m? (sad|happy)"
-# Matches: "I am sad", "I'm sad",
-#          "I am happy", "I'm happy"
-```
-
-</div>
-</div>
-
-<div class="callout tip">
-<div class="callout-title">Think about it!</div>
-
-With these patterns, we can handle much more variation in user input!
+[ELIZA Demo](https://contextlab.github.io/llm-course/demos/01-eliza/)
 
 </div>
 
+**Discussion prompts:**
+- What does ELIZA do surprisingly well?
+- What reveals its limitations?
+- Can you "trick" ELIZA? How?
+- What kinds of inputs break the illusion?
+
+<div class="warning-box">
+
+Try to have a "real" conversation. At what point does the illusion break down?
+
+</div>
 
 ---
 
-# Capturing and Using Patterns 🎯
+# The ELIZA effect
 
+<div class="definition-box" data-title="The ELIZA effect">
 
-**The power of capture groups:**
-
-```python
-pattern = r"I (.*) my (.*)"
-match = re.search(pattern, "I love my family")
-
-if match:
-    verb = match.group(1)      # "love"
-    object = match.group(2)    # "family"
-    response = f"Tell me more about your {object}."
-    print(response)
-# Output: "Tell me more about your family."
-```
-
-<div class="callout tip">
-<div class="callout-title">Think about it!</div>
-
-This is remarkably simple, yet it can create the *illusion* of understanding! The bot seems to know what you're talking about!
+The tendency to unconsciously assume that computer behaviors are analogous to human behaviors; to attribute human-like understanding to programs that merely simulate it.
 
 </div>
 
+<div class="note-box" data-title="Weizenbaum's observation">
+
+Weizenbaum was surprised (and disturbed) by how quickly users became emotionally involved with ELIZA. His secretary reportedly asked him to leave the room so she could have a private conversation with the program!
+
+</div>
 
 ---
 
-# Regex State Machine Visualization 🔧
+# Why do we anthropomorphize machines?
 
-
-
-<!-- DIAGRAM: TikZ conversion needed -->
-<!-- Original TikZ code preserved for reference:
-
-=[fill=blue!20, draw=blue, text=black, minimum size=1cm]
-
-% Pattern: I am (.*)
-
-\node[below=0...
--->
-
-```
-[Diagram placeholder - manual conversion required]
-```
-
-<div class="callout info">
-<div class="callout-title">How It Works</div>
-
-The regex engine steps through the input character by character, tracking which state it's in. When it matches the pattern, it captures the specified groups.
-
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-blue">🗣️</span>
+    <span class="label">Language cues</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">🧠</span>
+    <span class="label">Pattern recognition</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-orange">💭</span>
+    <span class="label">Social instincts</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-violet">🎭</span>
+    <span class="label">Theory of mind</span>
+  </div>
 </div>
 
+<div class="note-box">
+
+Humans are social creatures. We evolved to detect minds and intentions, and we often over-apply this tendency, even to clearly non-conscious entities.
+
+</div>
 
 ---
 
-# Pre-Substitutions: Normalizing Input 🔄
+# Discussion
 
+<div class="note-box" data-title="Reflect on your experience">
 
-<div class="callout info">
-<div class="callout-title">Why Pre-Substitutions?</div>
-
-Users type in many different ways. We need to normalize input before pattern matching.
+Have you experienced the ELIZA effect with modern AI systems (ChatGPT, Claude, Siri, Alexa)?
 
 </div>
 
-```python
-pre_subs = {
-    "dont": "don't",
-    "cant": "can't",
-    "wont": "won't",
-    "im": "I'm",
-    "youre": "you're"
-}
+**Consider:**
+- When have you felt like an AI "understood" you?
+- What broke the illusion?
+- What is the difference between *seeming* intelligent and *being* intelligent?
 
-user_input = "I dont know"
-for old, new in pre_subs.items():
-    user_input = user_input.replace(old, new)
-# Result: "I don't know"
-```
+<div class="warning-box" data-title="The hard question">
 
-**Benefit:** Now our patterns can assume standardized input!
+How would we know if an AI truly understood us?
+
+</div>
 
 ---
 
-# Post-Substitutions: Fixing Grammar 🔄
+# Up next
 
+<div class="note-box" data-title="Lecture 3 (Thursday X-hour)">
 
-<div class="callout info">
-<div class="callout-title">Why Post-Substitutions?</div>
-
-When we mirror user input, we need to flip pronouns and verb forms.
+**How ELIZA actually works**
+- Complete architecture walkthrough
+- Pattern matching and response selection
+- The role of scripts and keywords
+- We will build it ourselves!
 
 </div>
 
-```python
-post_subs = {
-    " i ": " you ",
-    " my ": " your ",
-    " am ": " are ",
-    " was ": " were ",
-    " I ": " you "
-}
+<div class="tip-box" data-title="Prepare for next time">
 
-# User said: "I am sad"
-# We extracted: "am sad"
-# Initial response: "Why are you am sad" (WRONG!)
+- Finish reading Weizenbaum (1966)
+- Play with the ELIZA demo
+- Think about: What would YOU add to ELIZA?
 
-response = " Why are you am sad "
-for old, new in post_subs.items():
-    response = response.replace(old, new)
-# Result: "Why are you are sad" (BETTER!)
-```
-
-**Note:** This is still imperfect, but good enough for ELIZA!
+</div>
 
 ---
 
-# The Substitution Pipeline 🔧
+# Key takeaways
 
-
-
-```
-User Input ``i dont know' -> Pre-Subs ``I don't know'' -> Pattern Match captures: ` -> Template ``Why don't you. -> Post-Subs ``Why don't you -> Output Display to user
-```
-
-
----
-
-# ELIZA: A Revolutionary Program 🎭
-
-
-
-<div class="columns">
-<div class="column">
-
-<div class="callout info">
-<div class="callout-title">Weizenbaum (1966)</div>
-
-*ELIZA — A Computer Program For the Study of Natural Language Communication Between Man and Machine*
-
-</div>
-
-**What was ELIZA?**
-- First "chatbot" (1964-1966)
-- Simulated a Rogerian psychotherapist
-- Used pattern matching & string manipulation
-- Created by Joseph Weizenbaum at MIT
-
-</div>
-<div class="column">
-
-<div class="callout tip">
-<div class="callout-title">Think about it!</div>
-
-ELIZA was meant to *demonstrate* the superficiality of human-computer interaction.
-
-Instead, people became emotionally attached to it!
-
-</div>
-
-</div>
-</div>
-
+1. **String manipulation is foundational:** All text-based AI builds on finding, replacing, and extracting patterns
+2. **Regular expressions are powerful:** Flexible pattern matching enables sophisticated text processing
+3. **ELIZA demonstrated the power of simplicity:** A few clever rules can create convincing illusions
+4. **The ELIZA effect is real:** We naturally anthropomorphize systems that use language
+5. **Seeming $\neq$ Being:** Appearing intelligent does not require actual understanding
 
 ---
 
-# Why a Rogerian Therapist? 🧠
+# Questions? Want to chat more?
 
-
-
-<div class="callout info">
-<div class="callout-title">Carl Rogers' Approach</div>
-
-Rogerian therapy is *non-directive*—the therapist mainly reflects what the patient says back to them.
-
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">📧</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a> me</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">💬</span>
+    <span class="label">Join our <a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">💁</span>
+    <span class="label">Come to <a href="context-lab.youcanbook.me">office hours</a></span>
+  </div>
 </div>
 
-**Perfect for a chatbot because:**
-- ✅ Doesn't require understanding the problem
-- ✅ Can use simple reflection ("Tell me more about X")
-- ✅ Asks open-ended questions
-- ✅ Minimal need for world knowledge
-- ✅ Pattern matching is sufficient!
+<div class="tip-box">
 
-<div class="callout info">
-<div class="callout-title">Discussion</div>
-
-**Patient:** I'm sad about my mother.\\
-**Therapist:** Tell me more about your mother.\\
-**Pattern:** `I am (.*) about my (.*)`\\
-**Response:** `Tell me more about your {2\`.}
+This course will move *very* quickly. **Please** reach out if you have questions, comments, concerns, or just want to chat!
 
 </div>
-
-
----
-
-# How ELIZA Works: High Level 🔧
-
-
-
-```
-User Input -> Pre-Subs -> Pattern Match -> Decompose -> Reassemble -> Post-Subs -> Output -> Normalize contractions
-```
-
-<div class="callout warning">
-<div class="callout-title">No Understanding Required!</div>
-
-ELIZA had **zero** understanding. It's pure pattern transformation!
-
-</div>
-
-
----
-
-# Pattern Priority and Ranking 🎯
-
-
-
-<div class="callout info">
-<div class="callout-title">Multiple Pattern Problem</div>
-
-What if more than one pattern matches the input?
-
-</div>
-
-**Example input:** "I am sad about my mother"
-
-**Multiple matches:**
-- Pattern 1: `I am (.*)` - Very general
-- Pattern 2: `(.*) mother (.*)` - Specific keyword
-- Pattern 3: `I am (.*) about (.*)` - More specific
-
-**ELIZA's solution:**
-1. Each pattern has a **rank** (priority score)
-2. Keywords like "mother", "father", "family" get higher ranks
-3. More specific patterns generally rank higher
-4. Choose the highest-ranking pattern that matches
-
-
----
-
-# ELIZA Pattern Structure 📋
-
-
-**A typical ELIZA rule:**
-
-```python, basicstyle=\ttfamily
-{
-    "pattern": r"(.*) my (mother|father|family) (.*)",
-    "rank": 100,  # High priority for family keywords
-    "responses": [
-        "Tell me more about your {2}.",
-        "How do you feel about your {2}?",
-        "What role does your {2} play in this?",
-        "Does your {2} influence how you feel?"
-    ]
-}
-```
-
-**How it works:**
-1. `pattern`: Regex to match input
-2. `rank`: Priority level (higher = more important)
-3. `responses`: List of possible response templates
-4. `{2\`}: Placeholder for captured group 2
-
-
----
-
-# Example ELIZA Conversation 💬
-
-
-<div class="callout info">
-<div class="callout-title">Sample Interaction</div>
-
-**ELIZA:** Welcome. What brings you here today?
-
-**User:** I am feeling sad.
-
-**ELIZA:** Why do you feel sad?
-
-**User:** I can't stop thinking about my family.
-
-**ELIZA:** Tell me more about your family.
-
-**User:** My mother never understood me.
-
-**ELIZA:** Who else in your family never understood you?
-
-**User:** I have to go now.
-
-**ELIZA:** That will be $200. See you again next week.
-
-</div>
-
-
----
-
-# Breaking Down the Conversation 🔍
-
-
-**Let's analyze what happened:**
-
-1. **User:** "I am feeling sad"
-    - Pattern: `I am (.*)`
-- Captures: "feeling sad"
-- Response template: "Why do you {1}?"
-
-    
-
-2. **User:** "I can't stop thinking about my family"
-    - Pattern: `(.*) my family (.*)`
-- Higher rank due to keyword "family"
-- Response: "Tell me more about your family."
-
-    
-
-3. **User:** "My mother never understood me"
-    - Pattern: `my (mother|father) (.*) me`
-- Response: "Who else in your family {2} you?"
-- Post-sub: "me" stays "you"
-
-
----
-
-# Why Does This Work? 🤔
-
-
-
-<div class="callout info">
-<div class="callout-title">The Psychology Behind ELIZA</div>
-
-Humans are pattern-seeking creatures who project understanding onto machines.
-
-</div>
-
-**Factors that create the illusion:**
-1. **Context**: We assume the bot understands context
-2. **Expectations**: We expect intelligence from human-like responses
-3. **Language structure**: Natural language has inherent patterns
-4. **Confirmation bias**: We remember hits, forget misses
-5. **Anthropomorphization**: We attribute human qualities to machines
-
-<div class="callout tip">
-<div class="callout-title">Think about it!</div>
-
-The "intelligence" is often in the *interpreter* (you!), not the program!
-
-</div>
-
-
----
-
-# When Pattern Matching Fails 💥
-
-
-<div class="callout info">
-<div class="callout-title">Example Failure Cases</div>
-
-**User:** My mother and father are fighting.\\
-**ELIZA:** Tell me more about your father. *(Only caught "father")*
-
-**User:** I saw a mother duck with her babies.\\
-**ELIZA:** Tell me more about your mother. *(Wrong context!)*
-
-**User:** Why do you keep asking about my family?\\
-**ELIZA:** Tell me more about your family. *(Recursive failure)*
-
-</div>
-
-<div class="callout warning">
-<div class="callout-title">Important Lesson</div>
-
-Pattern matching works surprisingly well, but it fundamentally lacks understanding. It can't handle context, sarcasm, or complex reasoning.
-
-</div>
-
-
----
-
-# Comparison: ELIZA vs Modern LLMs 📊
-
-
-
-<!-- DIAGRAM: TikZ conversion needed -->
-<!-- Original TikZ code preserved for reference:
-
-% Create comparison table
-
-% Rows
-
-...
--->
-
-```
-[Diagram placeholder - manual conversion required]
-```
-
-<div class="callout tip">
-<div class="callout-title">Think about it!</div>
-
-Both lack consciousness, but GPT-4 is vastly more sophisticated. Does this difference in degree create a difference in kind?
-
-</div>
-
-
----
-
-# What You've Learned Today 🎓
-
-
-1. **String manipulation**: Basic text transformations
-2. **Regular expressions**: Flexible pattern matching
-3. **Capture groups**: Extracting information from patterns
-4. **Pre/post substitutions**: Normalizing input and output
-5. **ELIZA architecture**: How a simple chatbot works
-6. **Pattern ranking**: Choosing between multiple matches
-7. **Limitations**: Where pattern matching breaks down
-
-<div class="callout warning">
-<div class="callout-title">The Foundation</div>
-
-These simple techniques form the foundation for all NLP systems, even modern ones!
-
-</div>
-
-
----
-
-# Next Lecture: Deep Dive into ELIZA 🔮
-
-
-
-<div class="callout info">
-<div class="callout-title">Lecture 3: ELIZA Implementation & The ELIZA Effect</div>
-
-We'll cover:
-- Complete implementation details
-- Synonym substitutions
-- Memory and context (primitive state)
-- The ELIZA Effect and its implications
-- Weizenbaum's warnings
-- Assignment 1: Building your own ELIZA
-
-</div>
-
-**To prepare:**
-- Read Weizenbaum (1966) - Focus on Section 3
-- Practice regex with online tools (regex101.com)
-- Think about conversation patterns
-
-
----
-
-# Practice Exercises 💪
-
-
-
-<div class="callout info">
-<div class="callout-title">Try These Before Next Class</div>
-
-1. Write a regex to match: "I think about X" where X can be anything
-2. Create pre-substitutions for: "gonna", "wanna", "gotta"
-3. Design a response template for: "I hate my X"
-4. Think of 3 patterns a therapist might use
-5. Find cases where simple pattern matching would fail
-
-</div>
-
-<div class="callout warning">
-<div class="callout-title">Hint</div>
-
-Try your patterns on [regex101.com](https://regex101.com) - it has excellent visualization and explanations!
-
-</div>
-
-
----
-
-# Key Takeaways 🔑
-
-
-
-1. Pattern matching can create **convincing illusions** of understanding
-2. Regular expressions are **essential tools** for NLP
-3. ELIZA was **revolutionary** despite being simple
-4. The **gap between behavior and understanding** is crucial
-5. Even modern AI fundamentally relies on **pattern matching**
-6. Understanding the basics helps you **think critically** about AI
-
-<div class="callout info">
-<div class="callout-title">Discussion</div>
-
-After today, when you interact with ChatGPT or other AI, can you spot the "ELIZA moments"—where it's clearly pattern matching without understanding?
-
-</div>
-
-
----
-
-# Questions? 🤔
-
-
-
-Let's discuss!
-
-**Contact Information:**
-
-📧 jeremy@dartmouth.edu
-
-💬 Discord: [https://discord.gg/sftEk9Ygdw](https://discord.gg/sftEk9Ygdw)
-
-🏢 Office Hours: By appointment (Moore Hall 349)
-
-See you next class! 🚀
-
