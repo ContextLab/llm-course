@@ -1,0 +1,402 @@
+File,Line#,Emoji,Context,Category,Action,Notes
+slides/week1/lecture.tex,38,💭,tcolorbox title Think about it!,semantic,keep,Used consistently for thought-provoking boxes
+slides/week1/lecture.tex,45,💬,tcolorbox title Discussion,semantic,keep,Used consistently for discussion boxes
+slides/week1/lecture.tex,51,🤖,subtitle Models of Language and Conversation,semantic,keep,Represents AI/conversational agents concept
+slides/week1/lecture.tex,64,🗺️,frame title Today's Journey,decorative,remove,Decorates heading - no semantic value
+slides/week1/lecture.tex,70,👋,frame title Welcome!,decorative,remove,Decorates greeting heading
+slides/week1/lecture.tex,75,🤖,list item Building conversational agents,semantic,keep,Represents AI concept
+slides/week1/lecture.tex,76,🧠,list item Understanding how language relates to thought,semantic,keep,Represents cognition
+slides/week1/lecture.tex,77,💻,list item Hands-on programming,semantic,keep,Represents coding
+slides/week1/lecture.tex,78,🤔,list item Critical thinking about AI,semantic,keep,Represents thinking/questioning
+slides/week1/lecture.tex,79,🔬,list item Research applications,semantic,keep,Represents research
+slides/week1/lecture.tex,85,🎯,alertblock This course is experiential!,semantic,keep,Represents focus/target
+slides/week1/lecture.tex,90,📚,frame title Course Structure,decorative,remove,Decorates heading
+slides/week1/lecture.tex,105,📝,list item 5 Problem Sets,semantic,keep,Represents writing/assignments
+slides/week1/lecture.tex,106,🎓,list item Final Project,semantic,keep,Represents graduation/education
+slides/week1/lecture.tex,123,🌟,frame title The Big Questions,decorative,remove,Decorates heading
+slides/week1/lecture.tex,144,🤖💭,frame title Discussion: Is ChatGPT Conscious?,semantic,keep,Represents AI + thought combination
+slides/week1/lecture.tex,164,🧠,frame title What is Consciousness?,decorative,remove,Decorates heading - brain already implied by topic
+slides/week1/lecture.tex,187,💡,frame title The Hard Problem,semantic,keep,Represents insight/idea
+slides/week1/lecture.tex,206,❌,list item Completely different biology,semantic,keep,Represents negation in comparison
+slides/week1/lecture.tex,207,❌,list item No shared evolutionary history,semantic,keep,Represents negation
+slides/week1/lecture.tex,208,✅,list item Can produce human-like behavior,semantic,keep,Represents affirmation
+slides/week1/lecture.tex,209,❓,list item Does the substrate matter?,semantic,keep,Represents question
+slides/week1/lecture.tex,213,📊,frame title Current Scientific Consensus,decorative,remove,Decorates heading
+slides/week1/lecture.tex,238,🗣️💭,frame title Language and Thought,semantic,keep,Represents speech + thought
+slides/week1/lecture.tex,265,🧠,frame title Evidence: The Language Network,decorative,remove,Repeats brain concept
+slides/week1/lecture.tex,291,👁️,frame title Evidence: Language Shapes Perception,semantic,keep,Represents visual perception
+slides/week1/lecture.tex,317,🤖,frame title So What About LLMs?,decorative,remove,Already established robot emoji usage
+slides/week1/lecture.tex,329,✅,list item LLMs are very good at language patterns,semantic,keep,Represents affirmation
+slides/week1/lecture.tex,330,❓,list item LLMs may have some internal representations,semantic,keep,Represents uncertainty
+slides/week1/lecture.tex,331,❌,list item LLMs lack grounding,semantic,keep,Represents negation
+slides/week1/lecture.tex,332,❌,list item LLMs don't have persistent goals,semantic,keep,Represents negation
+slides/week1/lecture.tex,333,❌,list item No evidence of phenomenal consciousness,semantic,keep,Represents negation
+slides/week1/lecture.tex,341,💻,frame title How Do Computers Process Language?,decorative,remove,Decorates heading
+slides/week1/lecture.tex,362,🔧,frame title Basic String Manipulation,decorative,remove,Decorates heading
+slides/week1/lecture.tex,389,🎯,frame title More Complex Patterns,decorative,remove,Decorates heading
+slides/week1/lecture.tex,411,🔄,frame title Substitutions: Pre and Post,decorative,remove,Decorates heading
+slides/week1/lecture.tex,438,💪,frame title The Power of Simple Patterns,decorative,remove,Decorates heading
+slides/week1/lecture.tex,463,🎭,frame title ELIZA: A Revolutionary Program,semantic,keep,Represents theater/acting - relevant to simulation
+slides/week1/lecture.tex,492,🔧,frame title How ELIZA Worked,decorative,remove,Decorates heading
+slides/week1/lecture.tex,512,💬,frame title Example ELIZA Conversation,semantic,keep,Represents conversation
+slides/week1/lecture.tex,534,😮,frame title The ELIZA Effect,semantic,keep,Represents surprise/realization
+slides/week1/lecture.tex,557,⚠️,frame title Weizenbaum's Warning,semantic,keep,Represents warning/caution
+slides/week1/lecture.tex,582,📈,frame title From ELIZA to Modern LLMs,decorative,remove,Decorates heading
+slides/week1/lecture.tex,617,🎯,frame title Why Start with ELIZA?,decorative,remove,Decorates heading
+slides/week1/lecture.tex,638,🛠️,frame title Assignment 1: Build ELIZA,semantic,keep,Represents tools/building
+slides/week1/lecture.tex,657,📋,frame title Assignment Details,decorative,remove,Decorates heading
+slides/week1/lecture.tex,691,💡,frame title Tips for Success,semantic,keep,Represents ideas/tips
+slides/week1/lecture.tex,710,🎓,frame title Learning Objectives,decorative,remove,Decorates heading
+slides/week1/lecture.tex,714,✅,list item Understand basic NLP,semantic,keep,Represents completion/check
+slides/week1/lecture.tex,715,✅,list item Master regular expressions,semantic,keep,Represents completion/check
+slides/week1/lecture.tex,716,✅,list item Appreciate difference between simulation and understanding,semantic,keep,Represents completion/check
+slides/week1/lecture.tex,717,✅,list item Gain hands-on experience,semantic,keep,Represents completion/check
+slides/week1/lecture.tex,718,✅,list item Develop critical thinking,semantic,keep,Represents completion/check
+slides/week1/lecture.tex,719,✅,list item Build foundation for more complex models,semantic,keep,Represents completion/check
+slides/week1/lecture.tex,732,🔑,frame title Key Takeaways,decorative,remove,Decorates heading
+slides/week1/lecture.tex,749,🔮,frame title Next Week Preview,decorative,remove,Decorates heading
+slides/week1/lecture.tex,772,📖,frame title Readings for This Week,decorative,remove,Decorates heading
+slides/week1/lecture.tex,791,🤔,frame title Questions?,decorative,remove,Decorates heading
+slides/week1/lecture.tex,807,🚀,text Happy coding!,decorative,remove,Generic excitement
+slides/week1/lecture1.tex,43,💭,tcolorbox title Think about it!,semantic,keep,Consistent box identifier
+slides/week1/lecture1.tex,50,💬,tcolorbox title Discussion,semantic,keep,Consistent box identifier
+slides/week1/lecture1.tex,56,🤖💭,subtitle Is ChatGPT Conscious?,semantic,keep,Represents AI + thought
+slides/week1/lecture1.tex,69,🗺️,frame title Today's Journey,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,75,👋,frame title Welcome!,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,80,🤖,list item Building conversational agents,semantic,keep,Represents AI concept
+slides/week1/lecture1.tex,81,🧠,list item Understanding how language relates to thought,semantic,keep,Represents cognition
+slides/week1/lecture1.tex,82,💻,list item Hands-on programming,semantic,keep,Represents coding
+slides/week1/lecture1.tex,83,🤔,list item Critical thinking about AI,semantic,keep,Represents questioning
+slides/week1/lecture1.tex,84,🔬,list item Research applications,semantic,keep,Represents research
+slides/week1/lecture1.tex,90,🎯,alertblock This course is experiential!,semantic,keep,Represents target/focus
+slides/week1/lecture1.tex,95,📚,frame title Course Structure,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,110,📝,list item 5 Problem Sets,semantic,keep,Represents writing
+slides/week1/lecture1.tex,111,🎓,list item Final Project,semantic,keep,Represents education
+slides/week1/lecture1.tex,128,🗺️,frame title Course Roadmap,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,161,🌟,frame title The Big Questions,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,182,🤖💭,frame title Discussion: Is ChatGPT Conscious?,semantic,keep,AI + thought
+slides/week1/lecture1.tex,202,🧠,frame title What is Consciousness?,decorative,remove,Topic already implies brain
+slides/week1/lecture1.tex,225,🎯,frame title Types of Consciousness,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,257,💡,frame title The Hard Problem,semantic,keep,Represents insight
+slides/week1/lecture1.tex,276,❌,list item Completely different biology,semantic,keep,Represents negation
+slides/week1/lecture1.tex,277,❌,list item No shared evolutionary history,semantic,keep,Represents negation
+slides/week1/lecture1.tex,278,✅,list item Can produce human-like behavior,semantic,keep,Represents affirmation
+slides/week1/lecture1.tex,279,❓,list item Does the substrate matter?,semantic,keep,Represents question
+slides/week1/lecture1.tex,283,🏮,frame title The Chinese Room Argument,semantic,keep,Represents the Chinese Room concept
+slides/week1/lecture1.tex,336,📊,frame title Current Scientific Consensus,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,361,🗣️💭,frame title Language and Thought,semantic,keep,Speech + thought
+slides/week1/lecture1.tex,388,📊,frame title The Language-Thought Spectrum,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,417,🧠,frame title Evidence: The Language Network,decorative,remove,Repeats brain concept
+slides/week1/lecture1.tex,443,🧠,frame title Brain Networks,decorative,remove,Repeats brain concept
+slides/week1/lecture1.tex,480,👁️,frame title Evidence: Language Shapes Perception,semantic,keep,Visual perception
+slides/week1/lecture1.tex,506,🎨,frame title The Russian Blue Example,semantic,keep,Represents color/art concept
+slides/week1/lecture1.tex,538,🤖,frame title So What About LLMs?,decorative,remove,Already established usage
+slides/week1/lecture1.tex,551,✅,list item LLMs are very good at language patterns,semantic,keep,Affirmation
+slides/week1/lecture1.tex,552,❓,list item LLMs may have some internal representations,semantic,keep,Question
+slides/week1/lecture1.tex,553,❌,list item LLMs lack grounding,semantic,keep,Negation
+slides/week1/lecture1.tex,554,❌,list item LLMs don't have persistent goals,semantic,keep,Negation
+slides/week1/lecture1.tex,555,❌,list item No evidence of phenomenal consciousness,semantic,keep,Negation
+slides/week1/lecture1.tex,560,🌍,frame title The Grounding Problem,semantic,keep,Represents world/grounding
+slides/week1/lecture1.tex,620,🎯,frame title Our Approach,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,643,📈,frame title From Simple to Complex,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,686,🤗,frame title HuggingFace: Your Learning Companion,semantic,keep,Represents HuggingFace brand
+slides/week1/lecture1.tex,712,🔮,frame title Next Lectures This Week,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,735,📖,frame title Readings for This Week,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,755,🔑,frame title Key Takeaways,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,773,🤔,frame title Questions?,decorative,remove,Decorates heading
+slides/week1/lecture1.tex,789,🚀,text See you next class!,decorative,remove,Generic excitement
+slides/week1/lecture2.tex,43,💭,tcolorbox title Think about it!,semantic,keep,Consistent box identifier
+slides/week1/lecture2.tex,50,💬,tcolorbox title Discussion,semantic,keep,Consistent box identifier
+slides/week1/lecture2.tex,56,🔧,subtitle The Fundamentals of Conversational AI,decorative,remove,Decorates subtitle
+slides/week1/lecture2.tex,69,🗺️,frame title Today's Journey,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,75,🔄,frame title Last Time...,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,95,💻,frame title The Fundamental Challenge,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,129,🎯,frame title Everything Starts with Patterns,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,154,🔧,frame title Simple String Replacement,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,180,❌,frame title The Problem with Direct Replacement,semantic,keep,Represents problem/negation
+slides/week1/lecture2.tex,208,🎯,frame title Introduction to Regular Expressions,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,235,📝,frame title Regex Syntax Basics,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,261,💡,frame title Regex Examples,semantic,keep,Represents ideas/examples
+slides/week1/lecture2.tex,312,🎯,frame title Capturing and Using Patterns,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,334,🔧,frame title Regex State Machine Visualization,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,365,🔄,frame title Pre-Substitutions: Normalizing Input,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,392,🔄,frame title Post-Substitutions: Fixing Grammar,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,423,🔧,frame title The Substitution Pipeline,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,452,🎭,frame title ELIZA: A Revolutionary Program,semantic,keep,Theater/simulation
+slides/week1/lecture2.tex,481,🧠,frame title Why a Rogerian Therapist?,decorative,remove,Topic implies brain
+slides/week1/lecture2.tex,508,🔧,frame title How ELIZA Works: High Level,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,548,🎯,frame title Pattern Priority and Ranking,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,576,📋,frame title ELIZA Pattern Structure,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,603,💬,frame title Example ELIZA Conversation,semantic,keep,Represents conversation
+slides/week1/lecture2.tex,625,🔍,frame title Breaking Down the Conversation,semantic,keep,Represents analysis
+slides/week1/lecture2.tex,660,🤔,frame title Why Does This Work?,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,684,💥,frame title When Pattern Matching Fails,semantic,keep,Represents failure/problem
+slides/week1/lecture2.tex,707,📊,frame title Comparison: ELIZA vs Modern LLMs,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,754,🎓,frame title What You've Learned Today,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,772,🔮,frame title Next Lecture: Deep Dive into ELIZA,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,796,💪,frame title Practice Exercises,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,815,🔑,frame title Key Takeaways,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,833,🤔,frame title Questions?,decorative,remove,Decorates heading
+slides/week1/lecture2.tex,849,🚀,text See you next class!,decorative,remove,Generic excitement
+slides/week1/lecture3.tex,43,💭,tcolorbox title Think about it!,semantic,keep,Consistent box identifier
+slides/week1/lecture3.tex,50,💬,tcolorbox title Discussion,semantic,keep,Consistent box identifier
+slides/week1/lecture3.tex,56,🎭,subtitle The ELIZA Effect & Your First Assignment,semantic,keep,Theater/simulation
+slides/week1/lecture3.tex,69,🗺️,frame title Today's Journey,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,75,🔄,frame title Last Time...,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,96,🔧,frame title ELIZA Algorithm: Complete Version,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,132,📝,frame title Synonym Substitutions,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,161,🔨,frame title Building Patterns from Synonyms,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,190,🧠,frame title Memory and Context,semantic,keep,Represents memory concept
+slides/week1/lecture3.tex,223,💡,frame title Memory in Action,semantic,keep,Represents idea/insight
+slides/week1/lecture3.tex,242,🔄,frame title Complete ELIZA Flow with Memory,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,286,🎲,frame title Default Responses,semantic,keep,Represents randomness
+slides/week1/lecture3.tex,318,🚪,frame title Quit Detection,semantic,keep,Represents exit/door
+slides/week1/lecture3.tex,352,🔁,frame title Main Conversation Loop,semantic,keep,Represents loop/repeat
+slides/week1/lecture3.tex,388,😮,frame title The ELIZA Effect,semantic,keep,Represents surprise
+slides/week1/lecture3.tex,412,🧠,frame title Why the ELIZA Effect Happens,decorative,remove,Topic implies psychology
+slides/week1/lecture3.tex,433,😨,frame title Weizenbaum's Reaction,semantic,keep,Represents shock/horror
+slides/week1/lecture3.tex,465,⚠️,frame title Weizenbaum's Warning,semantic,keep,Represents warning
+slides/week1/lecture3.tex,489,📱,frame title The ELIZA Effect Today,semantic,keep,Represents modern tech
+slides/week1/lecture3.tex,513,🎭,frame title Simulation vs. Understanding,semantic,keep,Theater/acting
+slides/week1/lecture3.tex,549,📈,frame title The Evolution of Chatbots,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,594,📊,frame title ELIZA vs Modern LLMs: Comparison,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,635,🎓,frame title What ELIZA Teaches Us,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,661,🛠️,frame title Assignment 1: Build ELIZA,semantic,keep,Represents tools/building
+slides/week1/lecture3.tex,688,📋,frame title Assignment Structure,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,726,📄,frame title The Configuration File Format,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,755,✅,frame title Grading Rubric,semantic,keep,Represents completion/check
+slides/week1/lecture3.tex,785,💡,frame title Tips for Success,semantic,keep,Represents ideas/tips
+slides/week1/lecture3.tex,800,⚠️,frame title Common Pitfalls to Avoid,semantic,keep,Represents warning
+slides/week1/lecture3.tex,822,🧪,frame title Example: Testing Your Implementation,semantic,keep,Represents testing/science
+slides/week1/lecture3.tex,852,💭,frame title Reflection Questions,semantic,keep,Represents thinking
+slides/week1/lecture3.tex,873,🌟,frame title Extension Ideas (Optional),decorative,remove,Decorates heading
+slides/week1/lecture3.tex,896,🔮,frame title What's Next?,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,916,📚,frame title Resources for Learning,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,938,🔑,frame title Key Takeaways,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,956,💡,frame title Final Thoughts,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,979,🤔,frame title Questions?,decorative,remove,Decorates heading
+slides/week1/lecture3.tex,999,🚀,text Good luck building ELIZA!,decorative,remove,Generic excitement
+slides/week2/lecture.tex,48,🗺️,frame title This Week's Journey,decorative,remove,Decorates heading
+slides/week2/lecture.tex,53,📝,list item Data cleaning & preprocessing,semantic,keep,Represents writing/documentation
+slides/week2/lecture.tex,54,🔤,list item Tokenization techniques,semantic,keep,Represents text/characters
+slides/week2/lecture.tex,55,🎯,list item Part-of-speech tagging,semantic,keep,Represents targeting/tagging
+slides/week2/lecture.tex,56,😊😢,list item Sentiment analysis,semantic,keep,Represents sentiment/emotion - clustered
+slides/week2/lecture.tex,62,👶,list item Statistical learning in infants,semantic,keep,Represents infant/child
+slides/week2/lecture.tex,63,🧠,list item How humans learn language patterns,semantic,keep,Represents cognition
+slides/week2/lecture.tex,64,🤔,list item Bridging computation & cognition,semantic,keep,Represents thinking
+slides/week2/lecture.tex,76,📝,frame title Data Cleaning & Preprocessing,decorative,remove,Decorates heading - already in list
+slides/week2/lecture.tex,96,🌐,frame title Web Scraping Demo,semantic,keep,Represents web/internet
+slides/week2/lecture.tex,117,💡,text Try it!,semantic,keep,Represents idea/encouragement
+slides/week2/lecture.tex,120,🌱,frame title Lemmatization: Getting to the Root,semantic,keep,Represents growth/root concept
+slides/week2/lecture.tex,144,⚖️,frame title Lemmatization vs. Stemming,semantic,keep,Represents comparison/balance
+slides/week2/lecture.tex,170,🔤,frame title Tokenization: Breaking Text into Pieces,decorative,remove,Already established emoji usage
+slides/week2/lecture.tex,188,🎯,text Solution: Subword tokenization!,semantic,keep,Represents solution/target
+slides/week2/lecture.tex,191,🔍,frame title Tokenization Example: Word vs. Subword,semantic,keep,Represents examination
+slides/week2/lecture.tex,217,📊,frame title Visual: How unhappiness Gets Tokenized,decorative,remove,Decorates heading
+slides/week2/lecture.tex,252,🔧,frame title Byte-Pair Encoding (BPE),decorative,remove,Decorates heading
+slides/week2/lecture.tex,274,📖,text Reference,semantic,keep,Represents reading/reference
+slides/week2/lecture.tex,277,📋,frame title Tokenization Methods Comparison,decorative,remove,Decorates heading
+slides/week2/lecture.tex,298,📖,text References,semantic,keep,Represents reading/reference
+slides/week2/lecture.tex,306,💡,frame title Try It: Comparing Tokenizers,semantic,keep,Represents idea/encouragement
+slides/week2/lecture.tex,335,🎯,frame title Part-of-Speech (POS) Tagging,decorative,remove,Already established usage
+slides/week2/lecture.tex,362,🚀,frame title POS Tagging in Action,decorative,remove,Decorates heading
+slides/week2/lecture.tex,386,🧠,frame title Syntactic Dependencies in Neural Networks,decorative,remove,Topic implies brain
+slides/week2/lecture.tex,393,✓,text example sentence correct,semantic,keep,Represents correctness
+slides/week2/lecture.tex,394,✗,text example sentence incorrect,semantic,keep,Represents incorrectness
+slides/week2/lecture.tex,412,📖,text Resources,semantic,keep,Represents reading/reference
+slides/week2/lecture.tex,415,🤔,frame title Discussion: Grammar Without Rules?,semantic,keep,Represents questioning
+slides/week2/lecture.tex,434,😊😢,frame title Sentiment Analysis,semantic,keep,Represents sentiment - clustered
+slides/week2/lecture.tex,454,🙄,text sarcasm example Oh great,semantic,keep,Represents sarcasm/eye roll
+slides/week2/lecture.tex,460,🤗,frame title Sentiment Analysis with HuggingFace,semantic,keep,HuggingFace brand
+slides/week2/lecture.tex,488,🎯,frame title Fine-tuning for Sentiment Analysis,decorative,remove,Already established usage
+slides/week2/lecture.tex,516,💡,frame title Try It: Domain-Specific Sentiment,semantic,keep,Represents idea
+slides/week2/lecture.tex,544,👶,frame title Statistical Learning in Infants,decorative,remove,Already established usage
+slides/week2/lecture.tex,569,📊,frame title Statistical Regularities: The Numbers,decorative,remove,Decorates heading
+slides/week2/lecture.tex,604,🔄,frame title Connecting Infants to NLP,semantic,keep,Represents connection/cycle
+slides/week2/lecture.tex,607,👶,column header Infant Learning,semantic,keep,Represents infant concept
+slides/week2/lecture.tex,617,🤖,column header Neural Networks,semantic,keep,Represents AI
+slides/week2/lecture.tex,638,🔍,frame title From Statistical Learning to Modern Tokenization,decorative,remove,Decorates heading
+slides/week2/lecture.tex,668,🛠️,frame title Hands-On Practice,semantic,keep,Represents tools/practice
+slides/week2/lecture.tex,679,💡,text Try combining them!,semantic,keep,Represents idea
+slides/week2/lecture.tex,687,📰,frame title Mini-Project Idea: News Sentiment Tracker,semantic,keep,Represents news
+slides/week2/lecture.tex,716,📧,frame title Assignment 2: SPAM Email Classifier,semantic,keep,Represents email
+slides/week2/lecture.tex,742,🚀,frame title Assignment 2: Getting Started,decorative,remove,Decorates heading
+slides/week2/lecture.tex,764,🎯,frame title Key Takeaways,decorative,remove,Already established usage
+slides/week2/lecture.tex,782,🔮,frame title Looking Ahead: Week 3-4,decorative,remove,Decorates heading
+slides/week2/lecture.tex,800,📚,frame title Additional Resources,decorative,remove,Decorates heading
+slides/week2/lecture.tex,821,💭,frame title Discussion: Open Questions,semantic,keep,Represents thinking
+slides/week2/lecture.tex,841,🎉,standout frame Thank you!,decorative,remove,Generic celebration
+slides/week2/lecture4.tex,51,🎯,frame title Learning Objectives,decorative,remove,Decorates heading
+slides/week2/lecture4.tex,63,🗑️➡️📊,text Key theme: Garbage in garbage out!,semantic,keep,Represents transformation concept
+slides/week2/lecture4.tex,67,📝,frame title Why Data Cleaning Matters,decorative,remove,Already in overview
+slides/week2/lecture4.tex,80,😊🎉,list item Emoji and Unicode,semantic,keep,Self-referential emoji example
+slides/week2/lecture4.tex,101,🔄,frame title The Data Cleaning Pipeline,semantic,keep,Represents cycle/flow
+slides/week2/lecture4.tex,108,📄,TikZ node Raw Text,semantic,keep,Represents document
+slides/week2/lecture4.tex,109,🏷️,TikZ node Remove Tags,semantic,keep,Represents tagging
+slides/week2/lecture4.tex,110,🔧,TikZ node Normalize,semantic,keep,Represents tools
+slides/week2/lecture4.tex,111,✂️,TikZ node Tokenize,semantic,keep,Represents cutting/splitting
+slides/week2/lecture4.tex,112,🌱,TikZ node Lemmatize,semantic,keep,Represents growth/root
+slides/week2/lecture4.tex,113,✅,TikZ node Clean Text,semantic,keep,Represents completion
+slides/week2/lecture4.tex,127,🎯,frame title Task-Specific Preprocessing,decorative,remove,Already established usage
+slides/week2/lecture4.tex,153,🔑,text Key principle,semantic,keep,Represents key insight
+slides/week2/lecture4.tex,157,🌐,frame title Collecting Data: Web Scraping,decorative,remove,Already established usage
+slides/week2/lecture4.tex,175,⚠️,text Important considerations,semantic,keep,Represents warning
+slides/week2/lecture4.tex,183,🍜,frame title Web Scraping with Beautiful Soup,semantic,keep,Represents soup/library name
+slides/week2/lecture4.tex,210,🔍,frame title Advanced Beautiful Soup Techniques,decorative,remove,Decorates heading
+slides/week2/lecture4.tex,237,🔤,frame title Handling Text Encodings,decorative,remove,Already established usage
+slides/week2/lecture4.tex,243,😊,list item Emoji requires Unicode support,semantic,keep,Self-referential
+slides/week2/lecture4.tex,265,🔧,frame title Common Preprocessing Steps,decorative,remove,Already established usage
+slides/week2/lecture4.tex,301,💻,frame title Preprocessing Example,decorative,remove,Decorates heading
+slides/week2/lecture4.tex,331,🌱,frame title Reducing Words to Base Forms,decorative,remove,Already established usage
+slides/week2/lecture4.tex,336,✂️,column header Stemming,semantic,keep,Represents cutting
+slides/week2/lecture4.tex,346,🧠,column header Lemmatization,semantic,keep,Represents intelligence
+slides/week2/lecture4.tex,365,⚖️,frame title Stemming vs. Lemmatization Examples,decorative,remove,Already established usage
+slides/week2/lecture4.tex,393,🔪,frame title Stemming with NLTK,semantic,keep,Represents cutting
+slides/week2/lecture4.tex,421,🚀,frame title Lemmatization with spaCy,decorative,remove,Decorates heading
+slides/week2/lecture4.tex,450,🥊,frame title spaCy vs. NLTK for Lemmatization,semantic,keep,Represents comparison/competition
+slides/week2/lecture4.tex,456,⚡,table cell Speed Fast,semantic,keep,Represents speed
+slides/week2/lecture4.tex,456,🐢,table cell Speed Slower,semantic,keep,Represents slowness
+slides/week2/lecture4.tex,457,🎯,table cell Accuracy High,semantic,keep,Represents precision
+slides/week2/lecture4.tex,457,👍,table cell Accuracy Good,semantic,keep,Represents approval
+slides/week2/lecture4.tex,473,🛑,frame title Stop Words Removal,semantic,keep,Represents stopping
+slides/week2/lecture4.tex,484,✅,list item Topic modeling text classification,semantic,keep,Represents check
+slides/week2/lecture4.tex,485,✅,list item Search engines information retrieval,semantic,keep,Represents check
+slides/week2/lecture4.tex,486,❌,list item Sentiment analysis,semantic,keep,Represents negation
+slides/week2/lecture4.tex,487,❌,list item Machine translation,semantic,keep,Represents negation
+slides/week2/lecture4.tex,488,❌,list item Text generation,semantic,keep,Represents negation
+slides/week2/lecture4.tex,497,💼,frame title Stop Words in Practice,decorative,remove,Decorates heading
+slides/week2/lecture4.tex,523,📊,frame title Case Study: Preprocessing for Sentiment Analysis,decorative,remove,Decorates heading
+slides/week2/lecture4.tex,535,✅,list item Keep: Punctuation emoji capitalization,semantic,keep,Represents affirmation
+slides/week2/lecture4.tex,536,❌,list item Remove: URLs HTML tags,semantic,keep,Represents negation
+slides/week2/lecture4.tex,537,🤔,list item Maybe: Extra repeated punctuation,semantic,keep,Represents consideration
+slides/week2/lecture4.tex,543,😍,text Example emoji in result,semantic,keep,Self-referential
+slides/week2/lecture4.tex,549,🤔,frame title Discussion: Preprocessing Trade-offs,decorative,remove,Already established usage
+slides/week2/lecture4.tex,576,💡,frame title Practical Tips for Data Cleaning,semantic,keep,Represents ideas
+slides/week2/lecture4.tex,580,👀,text Inspect your data first!,semantic,keep,Represents looking/viewing
+slides/week2/lecture4.tex,585,💾,text Keep raw data separate,semantic,keep,Represents data/storage
+slides/week2/lecture4.tex,590,📝,text Document your pipeline,semantic,keep,Represents documentation
+slides/week2/lecture4.tex,595,🧪,text Experiment!,semantic,keep,Represents testing
+slides/week2/lecture4.tex,600,✅,text Validate incrementally,semantic,keep,Represents check
+slides/week2/lecture4.tex,605,🤖,text Consider automation,semantic,keep,Represents AI
+slides/week2/lecture4.tex,612,🔧,frame title Complete Preprocessing Pipeline Example,decorative,remove,Already established usage
+slides/week2/lecture4.tex,641,✅,frame title Preprocessing Checklist,decorative,remove,Already established usage
+slides/week2/lecture4.tex,657,🎯,text Remember: There's no one-size-fits-all solution!,decorative,remove,Already established usage
+slides/week2/lecture4.tex,661,🛠️,frame title Tools and Libraries,decorative,remove,Already established usage
+slides/week2/lecture4.tex,691,📚,frame title Primary References,decorative,remove,Decorates heading
+slides/week2/lecture4.tex,720,🧪,frame title Hands-On Exercise,decorative,remove,Already established usage
+slides/week2/lecture4.tex,741,🎉,text Share interesting findings with classmates!,decorative,remove,Generic celebration
+slides/week2/lecture4.tex,745,🎯,frame title Key Takeaways,decorative,remove,Already established usage
+slides/week2/lecture4.tex,775,🔤,text Next lecture: Tokenization deep dive!,decorative,remove,Already established usage
+slides/week2/lecture4.tex,779,🤔,standout frame Questions?,decorative,remove,Decorates heading
+slides/week2/lecture5.tex,51,🎯,frame title Learning Objectives,decorative,remove,Decorates heading
+slides/week2/lecture5.tex,63,🔤,text Central question,decorative,remove,Already established usage
+slides/week2/lecture5.tex,67,🔍,frame title What is Tokenization?,semantic,keep,Represents examination
+slides/week2/lecture5.tex,83,🎯,text Subwords sweet spot!,semantic,keep,Represents target
+slides/week2/lecture5.tex,93,📊,frame title The Tokenization Spectrum,decorative,remove,Decorates heading
+slides/week2/lecture5.tex,118,✨,TikZ node Sweet Spot!,semantic,keep,Represents highlight
+slides/week2/lecture5.tex,127,🤔,frame title Why Not Just Split on Spaces?,semantic,keep,Represents questioning
+slides/week2/lecture5.tex,142,💥,text Problem 1: Vocabulary explosion,semantic,keep,Represents explosion/problem
+slides/week2/lecture5.tex,148,❓,text Problem 2: Unknown words,semantic,keep,Represents question
+slides/week2/lecture5.tex,155,🌏,text Problem 3: No spaces in some languages!,semantic,keep,Represents global/world
+slides/week2/lecture5.tex,157,📉,frame title Word-level Limitations Illustrated,decorative,remove,Decorates heading
+slides/week2/lecture5.tex,174,📈,text Word-level,semantic,keep,Represents growth in chart
+slides/week2/lecture5.tex,175,📊,text Subword-level,semantic,keep,Represents data
+slides/week2/lecture5.tex,187,🚨,frame title The OOV Problem in Action,semantic,keep,Represents alert/warning
+slides/week2/lecture5.tex,214,🎯,frame title The Solution: Subword Tokenization,decorative,remove,Already established usage
+slides/week2/lecture5.tex,228,✅,list item Fixed manageable vocabulary,semantic,keep,Represents check
+slides/week2/lecture5.tex,229,✅,list item Handle unknown words,semantic,keep,Represents check
+slides/week2/lecture5.tex,230,✅,list item Capture morphology,semantic,keep,Represents check
+slides/week2/lecture5.tex,231,✅,list item Language-agnostic,semantic,keep,Represents check
+slides/week2/lecture5.tex,235,📊,text How? Learn common character sequences from data!,decorative,remove,Already established usage
+slides/week2/lecture5.tex,238,📊,frame title Visual: How unhappiness Gets Tokenized,decorative,remove,Decorates heading
+slides/week2/lecture5.tex,282,🔧,frame title Byte-Pair Encoding (BPE),decorative,remove,Already established usage
+slides/week2/lecture5.tex,303,📖,text Reference,semantic,keep,Represents reading
+slides/week2/lecture5.tex,306,👣,frame title BPE Example: Step by Step,semantic,keep,Represents steps/progression
+slides/week2/lecture5.tex,339,🎨,frame title BPE Visualization,decorative,remove,Decorates heading
+slides/week2/lecture5.tex,388,🤗,frame title BPE in Practice with HuggingFace,semantic,keep,HuggingFace brand
+slides/week2/lecture5.tex,416,🧩,frame title WordPiece Tokenization,semantic,keep,Represents puzzle/pieces
+slides/week2/lecture5.tex,442,📖,text Reference,semantic,keep,Represents reading
+slides/week2/lecture5.tex,445,🔍,frame title WordPiece Example with BERT,decorative,remove,Already established usage
+slides/week2/lecture5.tex,472,🌍,frame title SentencePiece: Language-Agnostic Tokenization,semantic,keep,Represents global
+slides/week2/lecture5.tex,498,📖,text Reference,semantic,keep,Represents reading
+slides/week2/lecture5.tex,501,🚀,frame title SentencePiece in Action,decorative,remove,Decorates heading
+slides/week2/lecture5.tex,523,🌏,text Key advantage: No language-specific preprocessing required!,decorative,remove,Already established usage
+slides/week2/lecture5.tex,527,📋,frame title Tokenization Methods Comparison,decorative,remove,Decorates heading
+slides/week2/lecture5.tex,551,📖,text HuggingFace Resources,semantic,keep,Represents reading
+slides/week2/lecture5.tex,558,🔬,frame title Comparing Tokenizers Side-by-Side,semantic,keep,Represents science/analysis
+slides/week2/lecture5.tex,585,🎟️,frame title Special Tokens,semantic,keep,Represents tickets/tokens
+slides/week2/lecture5.tex,613,🔧,frame title Working with Special Tokens,decorative,remove,Already established usage
+slides/week2/lecture5.tex,639,🎚️,frame title Vocabulary Size Trade-offs,semantic,keep,Represents slider/adjustment
+slides/week2/lecture5.tex,643,➕,list item Faster training,semantic,keep,Represents positive
+slides/week2/lecture5.tex,644,➕,list item Less memory,semantic,keep,Represents positive
+slides/week2/lecture5.tex,645,➖,list item Longer sequences,semantic,keep,Represents negative
+slides/week2/lecture5.tex,646,➖,list item May lose semantic information,semantic,keep,Represents negative
+slides/week2/lecture5.tex,651,➕,list item Shorter sequences,semantic,keep,Represents positive
+slides/week2/lecture5.tex,652,➕,list item Better semantic preservation,semantic,keep,Represents positive
+slides/week2/lecture5.tex,653,➖,list item Slower training,semantic,keep,Represents negative
+slides/week2/lecture5.tex,654,➖,list item More memory required,semantic,keep,Represents negative
+slides/week2/lecture5.tex,665,⚠️,frame title Tokenization Pitfalls and Gotchas,semantic,keep,Represents warning
+slides/week2/lecture5.tex,700,🐛,frame title Debugging Tokenization,semantic,keep,Represents bug/debugging
+slides/week2/lecture5.tex,727,👶,frame title Connection to Human Language Learning,decorative,remove,Already established usage
+slides/week2/lecture5.tex,751,📖,text Reference,semantic,keep,Represents reading
+slides/week2/lecture5.tex,754,📊,frame title Statistical Learning in Action,decorative,remove,Already established usage
+slides/week2/lecture5.tex,797,🎯,text Both use distributional statistics to discover structure!,decorative,remove,Already established usage
+slides/week2/lecture5.tex,801,🧪,frame title Hands-On Exercise,decorative,remove,Already established usage
+slides/week2/lecture5.tex,812,😊🎉,list item Emoji test,semantic,keep,Self-referential test example
+slides/week2/lecture5.tex,829,💭,frame title Discussion Questions,semantic,keep,Represents thinking
+slides/week2/lecture5.tex,859,📚,frame title Primary References,decorative,remove,Decorates heading
+slides/week2/lecture5.tex,886,🎯,frame title Key Takeaways,decorative,remove,Already established usage
+slides/week2/lecture5.tex,920,🔮,frame title Looking Ahead,decorative,remove,Decorates heading
+slides/week2/lecture5.tex,941,🤔,standout frame Questions?,decorative,remove,Decorates heading
+slides/week2/lecture6.tex,52,🎯,frame title Learning Objectives,decorative,remove,Decorates heading
+slides/week2/lecture6.tex,66,🤔,text Central questions,semantic,keep,Represents questioning
+slides/week2/lecture6.tex,67,😊😢,text What does it mean for a model to understand emotion?,semantic,keep,Represents sentiment
+slides/week2/lecture6.tex,72,🎯,frame title Part-of-Speech (POS) Tagging,decorative,remove,Already established usage
+slides/week2/lecture6.tex,116,📋,frame title POS Tagsets: Universal vs. Fine-Grained,decorative,remove,Decorates heading
+slides/week2/lecture6.tex,157,🔄,frame title Context Matters: Ambiguous Words,semantic,keep,Represents change/cycle
+slides/week2/lecture6.tex,183,🚀,frame title POS Tagging with spaCy,decorative,remove,Decorates heading
+slides/week2/lecture6.tex,213,🧠,frame title How Do POS Taggers Work?,decorative,remove,Topic implies brain
+slides/week2/lecture6.tex,239,🤖,frame title Neural Networks and Grammar,decorative,remove,Already established usage
+slides/week2/lecture6.tex,250,✅,text acceptable sentence,semantic,keep,Represents correctness
+slides/week2/lecture6.tex,251,❌,text unacceptable sentence,semantic,keep,Represents incorrectness
+slides/week2/lecture6.tex,272,📖,text Reference,semantic,keep,Represents reading
+slides/week2/lecture6.tex,275,📊,frame title BLiMP: Testing Linguistic Knowledge,decorative,remove,Decorates heading
+slides/week2/lecture6.tex,305,📖,text Reference,semantic,keep,Represents reading
+slides/week2/lecture6.tex,308,🤗,frame title Token Classification with HuggingFace,semantic,keep,HuggingFace brand
+slides/week2/lecture6.tex,333,📖,text HuggingFace Chapter 7.2,semantic,keep,Represents reading
+slides/week2/lecture6.tex,336,🤔,frame title Discussion: Do Models Understand Grammar?,semantic,keep,Represents questioning
+slides/week2/lecture6.tex,366,😊😢,frame title Sentiment Analysis: From Structure to Emotion,decorative,remove,Already established usage
+slides/week2/lecture6.tex,376,📱,list item Social media monitoring,semantic,keep,Represents mobile/social
+slides/week2/lecture6.tex,377,🛍️,list item Customer feedback analysis,semantic,keep,Represents shopping/commerce
+slides/week2/lecture6.tex,378,📈,list item Market research and stock prediction,semantic,keep,Represents growth
+slides/week2/lecture6.tex,379,🎬,list item Movie/product review analysis,semantic,keep,Represents entertainment
+slides/week2/lecture6.tex,380,🗳️,list item Political opinion tracking,semantic,keep,Represents voting/politics
+slides/week2/lecture6.tex,393,🚧,frame title Sentiment Analysis Challenges,semantic,keep,Represents construction/work in progress
+slides/week2/lecture6.tex,396,🙄,text sarcasm example Oh great another meeting,semantic,keep,Represents sarcasm
+slides/week2/lecture6.tex,429,📖,frame title Sentiment Lexicons: The Old-School Approach,decorative,remove,Decorates heading
+slides/week2/lecture6.tex,461,🔤,frame title Lexicon-Based Sentiment Analysis,decorative,remove,Already established usage
+slides/week2/lecture6.tex,487,🤖,frame title Modern Approach: Pre-trained Models,decorative,remove,Already established usage
+slides/week2/lecture6.tex,515,🤗,frame title Sentiment Analysis with HuggingFace,semantic,keep,HuggingFace brand
+slides/week2/lecture6.tex,543,📖,text HuggingFace Chapter 1.2,semantic,keep,Represents reading
+slides/week2/lecture6.tex,546,🎯,frame title Domain-Specific Sentiment Models,decorative,remove,Already established usage
+slides/week2/lecture6.tex,578,📊,frame title Comparing General vs. Domain-Specific,decorative,remove,Decorates heading
+slides/week2/lecture6.tex,607,🎓,frame title Fine-Tuning for Sentiment Analysis,decorative,remove,Decorates heading
+slides/week2/lecture6.tex,640,📖,text HuggingFace Chapter 3.2,semantic,keep,Represents reading
+slides/week2/lecture6.tex,643,🔧,frame title Fine-Tuning Example (Simplified),decorative,remove,Already established usage
+slides/week2/lecture6.tex,676,📏,frame title Evaluation Metrics for Sentiment Analysis,semantic,keep,Represents measurement
+slides/week2/lecture6.tex,705,🎭,frame title Confusion Matrix Example,semantic,keep,Represents theater/dual aspects
+slides/week2/lecture6.tex,744,🔍,frame title Aspect-Based Sentiment Analysis,decorative,remove,Already established usage
+slides/week2/lecture6.tex,756,✅,text Food: Positive,semantic,keep,Represents check
+slides/week2/lecture6.tex,757,❌,text Service: Negative,semantic,keep,Represents negation
+slides/week2/lecture6.tex,758,😐,text Atmosphere: Neutral,semantic,keep,Represents neutral
+slides/week2/lecture6.tex,773,🛍️,frame title Real-World Application: Product Review Analysis,decorative,remove,Already established usage
+slides/week2/lecture6.tex,807,🧪,frame title Hands-On Exercise,decorative,remove,Already established usage
+slides/week2/lecture6.tex,835,💭,frame title Discussion: Understanding Emotion,semantic,keep,Represents thinking
+slides/week2/lecture6.tex,866,🧩,frame title Week 2 Integration: Putting It All Together,semantic,keep,Represents puzzle/integration
+slides/week2/lecture6.tex,891,📧,frame title Assignment 2: SPAM Email Classifier,semantic,keep,Represents email
+slides/week2/lecture6.tex,916,🎯,frame title Key Takeaways,decorative,remove,Already established usage
+slides/week2/lecture6.tex,950,📚,frame title Primary References,decorative,remove,Decorates heading
+slides/week2/lecture6.tex,973,🔮,frame title Looking Ahead: Weeks 3-4,decorative,remove,Decorates heading
+slides/week2/lecture6.tex,999,🔗,frame title Additional Resources,decorative,remove,Decorates heading
+slides/week2/lecture6.tex,1024,🎉,standout frame Thank you!,decorative,remove,Generic celebration
+slides/week2/lecture6.tex,1037,💻,text Happy coding!,decorative,remove,Generic excitement

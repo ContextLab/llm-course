@@ -249,7 +249,7 @@ class TimelineApp {
             'PARRY (1972)': 'Input → State Machine → Emotional Model → Response',
             'ALICE (1995)': 'Input → AIML Parser → Category Match → Response',
             'BlenderBot (2020)': 'Input → Encoder Transformer → Context → Decoder Transformer → Response',
-            'DistilGPT2 (2019)': 'Input → Tokenizer → Transformer Layers → Softmax → Response'
+            'LaMini-GPT (2023)': 'Input → Tokenizer → Transformer Layers (Instruction Tuned) → Response'
         };
 
         let html = '<div style="padding: 15px; text-align: left;">';
@@ -266,7 +266,7 @@ class TimelineApp {
 }
 
 // Make sendMessage global for onclick handlers
-window.sendMessage = function(botName) {
+window.sendMessage = function (botName) {
     window.timelineApp.sendMessage(botName);
 };
 

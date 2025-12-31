@@ -8,6 +8,9 @@
 \RequirePackage{tikz}
 \RequirePackage{fontspec}
 \RequirePackage{etoolbox}
+\RequirePackage{listings}
+\RequirePackage{tcolorbox}
+\tcbuselibrary{listings,skins,breakable}
 
 % ============================================================================
 % Color Definitions (from Dartmouth Style Guide)
@@ -21,6 +24,20 @@
 \definecolor{RichForestGreen}{RGB}{13,30,28}       % #0D1E1C
 \definecolor{SnowWhite}{RGB}{255,255,255}          % #ffffff
 \definecolor{MidnightBlack}{RGB}{0,0,0}            % #000000
+
+% NEW: Light green-tinted background (nearly white with subtle Dartmouth tint)
+\definecolor{GreenTintedWhite}{RGB}{248,252,250}   % Very light green tint
+\definecolor{DarkDartmouthText}{RGB}{20,25,22}     % Nearly black (very subtle green)
+\definecolor{CodeBackground}{RGB}{240,245,243}    % Slightly darker for code blocks
+\definecolor{CodeBorder}{RGB}{20,45,35}           % Nearly black border for code
+
+% Syntax highlighting colors (Dartmouth palette)
+\definecolor{SyntaxKeyword}{RGB}{0,105,62}        % DartmouthGreen for keywords
+\definecolor{SyntaxString}{RGB}{157,22,46}        % BonfireRed for strings
+\definecolor{SyntaxComment}{RGB}{112,112,112}     % Gray3 for comments
+\definecolor{SyntaxNumber}{RGB}{38,122,186}       % RiverBlue for numbers
+\definecolor{SyntaxFunction}{RGB}{0,60,115}       % RiverNavy for functions
+\definecolor{SyntaxBuiltin}{RGB}{138,105,150}     % Violet for builtins
 
 % Tertiary Colors (Accent Colors)
 \definecolor{RiverBlue}{RGB}{38,122,186}           % #267aba
@@ -69,12 +86,13 @@
 % Color Theme Settings
 % ============================================================================
 
-% Background colors
-\setbeamercolor{background canvas}{bg=white}
-\setbeamercolor{normal text}{fg=MidnightBlack}
+% Background colors - light green-tinted white background
+\setbeamercolor{background canvas}{bg=GreenTintedWhite}
+% Text colors - nearly black with green undertone for readability
+\setbeamercolor{normal text}{fg=DarkDartmouthText}
 
-% Structure colors (main theme color)
-\setbeamercolor{structure}{fg=DartmouthGreen}
+% Structure colors - use dark text by default, green for specific elements
+\setbeamercolor{structure}{fg=DarkDartmouthText}
 
 % Title page colors
 \setbeamercolor{title}{fg=DartmouthGreen}
@@ -99,10 +117,24 @@
 \setbeamercolor{block title example}{fg=SnowWhite, bg=RiverBlue}
 \setbeamercolor{block body example}{fg=MidnightBlack, bg=Gray1}
 
-% Item colors
-\setbeamercolor{item}{fg=DartmouthGreen}
-\setbeamercolor{subitem}{fg=DartmouthGreen}
-\setbeamercolor{subsubitem}{fg=DartmouthGreen}
+% Item colors - also set local structure which beamer uses internally
+\setbeamercolor{local structure}{fg=DarkDartmouthText}
+\setbeamercolor{item}{fg=DarkDartmouthText}
+\setbeamercolor{subitem}{fg=DarkDartmouthText}
+\setbeamercolor{subsubitem}{fg=DarkDartmouthText}
+\setbeamercolor{itemize item}{fg=DarkDartmouthText}
+\setbeamercolor{itemize subitem}{fg=DarkDartmouthText}
+\setbeamercolor{itemize subsubitem}{fg=DarkDartmouthText}
+\setbeamercolor{itemize/enumerate body}{fg=DarkDartmouthText}
+\setbeamercolor{itemize/enumerate subbody}{fg=DarkDartmouthText}
+\setbeamercolor{itemize/enumerate subsubbody}{fg=DarkDartmouthText}
+\setbeamercolor{enumerate item}{fg=DarkDartmouthText}
+\setbeamercolor{enumerate subitem}{fg=DarkDartmouthText}
+
+% Set colors at document begin to override any theme defaults
+\AtBeginDocument{%
+    \setbeamercolor{local structure}{fg=DarkDartmouthText}%
+}
 
 % Table of contents colors
 \setbeamercolor{section in toc}{fg=DartmouthGreen}
@@ -119,33 +151,43 @@
 \setbeamercolor{page number in head/foot}{fg=GraniteGray}
 
 % ============================================================================
-% Font Theme Settings
+% Font Theme Settings - Increased sizes for visibility at a distance
 % ============================================================================
 
-\setbeamerfont{title}{size=\LARGE, series=\bfseries}
-\setbeamerfont{subtitle}{size=\large}
-\setbeamerfont{author}{size=\normalsize}
-\setbeamerfont{institute}{size=\small}
-\setbeamerfont{date}{size=\small}
-\setbeamerfont{frametitle}{size=\Large, series=\bfseries}
-\setbeamerfont{framesubtitle}{size=\normalsize}
-\setbeamerfont{block title}{size=\normalsize, series=\bfseries}
-\setbeamerfont{block title alerted}{size=\normalsize, series=\bfseries}
-\setbeamerfont{block title example}{size=\normalsize, series=\bfseries}
+\setbeamerfont{title}{size=\Huge, series=\bfseries}
+\setbeamerfont{subtitle}{size=\Large}
+\setbeamerfont{author}{size=\large}
+\setbeamerfont{institute}{size=\normalsize}
+\setbeamerfont{date}{size=\normalsize}
+\setbeamerfont{frametitle}{size=\LARGE, series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\large}
+\setbeamerfont{block title}{size=\large, series=\bfseries}
+\setbeamerfont{block title alerted}{size=\large, series=\bfseries}
+\setbeamerfont{block title example}{size=\large, series=\bfseries}
+
+% Increase base text size for readability
+\setbeamerfont{normal text}{size=\large}
+
+% Item text should also be larger
+\setbeamerfont{itemize/enumerate body}{size=\large}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+\setbeamerfont{itemize/enumerate subsubbody}{size=\normalsize}
 
 % ============================================================================
 % Inner Theme Settings
 % ============================================================================
 
-% Itemize items: use circles filled with Dartmouth Green
-\setbeamertemplate{itemize item}{\small\raise0.5pt\hbox{\textbullet}}
-\setbeamertemplate{itemize subitem}{\tiny\raise1pt\hbox{\textbullet}}
-\setbeamertemplate{itemize subsubitem}{\tiny\raise1pt\hbox{\textbullet}}
+% Itemize items: green bullet, then switch to dark text color
+% The \aftergroup ensures color persists after the template group closes
+\setbeamertemplate{itemize item}{\textcolor{DartmouthGreen}{\small\textbullet}\aftergroup\itemtextcolor}
+\setbeamertemplate{itemize subitem}{\textcolor{DartmouthGreen}{\tiny\textbullet}\aftergroup\itemtextcolor}
+\setbeamertemplate{itemize subsubitem}{\textcolor{DartmouthGreen}{\tiny\textbullet}\aftergroup\itemtextcolor}
+\newcommand{\itemtextcolor}{\color{DarkDartmouthText}}
 
-% Enumerate items: use Dartmouth Green numbers
-\setbeamertemplate{enumerate item}{\insertenumlabel.}
-\setbeamertemplate{enumerate subitem}{\insertenumlabel.\insertsubenumlabel}
-\setbeamertemplate{enumerate subsubitem}{\insertenumlabel.\insertsubenumlabel.\insertsubsubenumlabel}
+% Enumerate items: green numbers, dark text (same pattern as itemize)
+\setbeamertemplate{enumerate item}{\textcolor{DartmouthGreen}{\insertenumlabel.}\aftergroup\itemtextcolor}
+\setbeamertemplate{enumerate subitem}{\textcolor{DartmouthGreen}{\insertenumlabel.\insertsubenumlabel}\aftergroup\itemtextcolor}
+\setbeamertemplate{enumerate subsubitem}{\textcolor{DartmouthGreen}{\insertenumlabel.\insertsubenumlabel.\insertsubsubenumlabel}\aftergroup\itemtextcolor}
 
 % Blocks with rounded corners
 \setbeamertemplate{blocks}[rounded][shadow=false]
@@ -154,27 +196,28 @@
 % Outer Theme Settings
 % ============================================================================
 
-% Title page template
+% Title page template - CENTERED horizontally and vertically
 \setbeamertemplate{title page}{
     \begin{minipage}[b][\paperheight]{\textwidth}
         \vfill
+        \centering
         \ifx\inserttitle\@empty\else
             \usebeamercolor[fg]{title}\usebeamerfont{title}\inserttitle\par
         \fi
         \ifx\insertsubtitle\@empty\else
-            \vskip0.25em
+            \vskip0.5em
             \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\insertsubtitle\par
         \fi
-        \vskip1em
+        \vskip1.5em
         \ifx\insertauthor\@empty\else
             \usebeamercolor[fg]{author}\usebeamerfont{author}\insertauthor\par
         \fi
         \ifx\insertinstitute\@empty\else
-            \vskip0.25em
+            \vskip0.5em
             \usebeamercolor[fg]{institute}\usebeamerfont{institute}\insertinstitute\par
         \fi
         \ifx\insertdate\@empty\else
-            \vskip0.25em
+            \vskip0.5em
             \usebeamercolor[fg]{date}\usebeamerfont{date}\insertdate\par
         \fi
         \vfill
@@ -182,13 +225,13 @@
     \end{minipage}
 }
 
-% Frame title template with Dartmouth Green bar
+% Frame title template with Dartmouth Green bar - CENTERED
 \setbeamertemplate{frametitle}{
     \nointerlineskip
-    \begin{beamercolorbox}[wd=\paperwidth,sep=8pt,leftskip=8pt,rightskip=8pt]{frametitle}
+    \begin{beamercolorbox}[wd=\paperwidth,sep=12pt,center]{frametitle}
         \usebeamerfont{frametitle}\insertframetitle
         \ifx\insertframesubtitle\@empty\else
-            \par\vskip-2pt
+            \par\vskip2pt
             \usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle
         \fi
     \end{beamercolorbox}
@@ -245,15 +288,16 @@
 \makeatother
 
 % ============================================================================
-% Standout Frame Template (similar to Metropolis theme)
+% Standout Frame Template (Section dividers)
 % ============================================================================
 
-% Define standout frame option
+% Define standout frame option - uses light background with prominent green text
+% for section dividers that maintain consistency with main slides
 \makeatletter
 \define@key{beamerframe}{standout}[true]{%
-    \setbeamercolor{background canvas}{bg=DartmouthGreen}%
-    \setbeamercolor{normal text}{fg=SnowWhite}%
-    \setbeamercolor{frametitle}{fg=SnowWhite, bg=DartmouthGreen}%
+    \setbeamercolor{background canvas}{bg=GreenTintedWhite}%
+    \setbeamercolor{normal text}{fg=DartmouthGreen}%
+    \setbeamercolor{frametitle}{fg=DartmouthGreen, bg=GreenTintedWhite}%
     \usebeamercolor[fg]{normal text}%
 }
 \makeatother
@@ -268,5 +312,119 @@
     urlcolor=RiverBlue,
     citecolor=GraniteGray
 }
+
+% ============================================================================
+% Code Block Styling - Dartmouth themed with rounded corners and line numbers
+% ============================================================================
+
+% Configure listings package with Dartmouth syntax highlighting
+\lstset{
+    basicstyle=\ttfamily\normalsize,
+    keywordstyle=\color{SyntaxKeyword}\bfseries,
+    stringstyle=\color{SyntaxString},
+    commentstyle=\color{SyntaxComment}\itshape,
+    numberstyle=\tiny\color{GraniteGray},
+    numbers=left,
+    numbersep=8pt,
+    stepnumber=1,
+    breaklines=true,
+    breakatwhitespace=false,
+    showstringspaces=false,
+    tabsize=4,
+    frame=none,
+    xleftmargin=2em,
+    xrightmargin=1em,
+    aboveskip=0.5em,
+    belowskip=0.5em,
+}
+
+% Define a styled code box environment using tcolorbox
+\newtcblisting{dartmouthcode}[1][python]{
+    enhanced,
+    listing only,
+    listing options={
+        language=#1,
+        basicstyle=\ttfamily\normalsize,
+        keywordstyle=\color{SyntaxKeyword}\bfseries,
+        stringstyle=\color{SyntaxString},
+        commentstyle=\color{SyntaxComment}\itshape,
+        numberstyle=\tiny\color{GraniteGray},
+        numbers=left,
+        numbersep=8pt,
+        showstringspaces=false,
+        breaklines=true,
+        tabsize=4,
+    },
+    colback=CodeBackground,
+    colframe=CodeBorder,
+    boxrule=1pt,
+    arc=6pt,
+    left=2pt,
+    right=2pt,
+    top=4pt,
+    bottom=4pt,
+    fonttitle=\bfseries\color{DarkDartmouthText},
+}
+
+% Alternative code box without language parameter
+\newtcblisting{codebox}{
+    enhanced,
+    listing only,
+    listing options={
+        basicstyle=\ttfamily\normalsize,
+        numberstyle=\tiny\color{GraniteGray},
+        numbers=left,
+        numbersep=8pt,
+        showstringspaces=false,
+        breaklines=true,
+    },
+    colback=CodeBackground,
+    colframe=CodeBorder,
+    boxrule=1pt,
+    arc=6pt,
+    left=2pt,
+    right=2pt,
+    top=4pt,
+    bottom=4pt,
+}
+
+% ============================================================================
+% Animation Settings
+% ============================================================================
+
+% NOTE: Animations should be used sparingly for emphasis, not globally.
+% To enable step-by-step reveals on a specific frame, use:
+%   \begin{frame}[<+->]{Title}
+% Or for itemize lists:
+%   \begin{itemize}[<+->]
+% Do NOT set a global default - it makes presentations tedious.
+
+% ============================================================================
+% Content Centering and Spacing
+% ============================================================================
+
+% Increase left/right margins for better content framing
+\setbeamersize{
+    text margin left=1.2cm,
+    text margin right=1.2cm
+}
+
+% Add default spacing between list items for readability
+\setlength{\leftmargini}{1.2em}
+\setlength{\leftmarginii}{1.2em}
+\setlength{\leftmarginiii}{1.2em}
+
+% ============================================================================
+% Emphasis Commands - Use Dartmouth Green for emphasis
+% ============================================================================
+
+% Define \emph to use Dartmouth Green
+\renewcommand{\emph}[1]{\textcolor{DartmouthGreen}{\textit{#1}}}
+
+% Define \strong for bold Dartmouth Green emphasis (if not already defined)
+\providecommand{\strong}[1]{\textcolor{DartmouthGreen}{\textbf{#1}}}
+
+% Define \highlight for inline highlighting
+\newcommand{\highlight}[1]{\colorbox{SpringGreen}{\textcolor{DarkDartmouthText}{#1}}}
 
 \mode<all>

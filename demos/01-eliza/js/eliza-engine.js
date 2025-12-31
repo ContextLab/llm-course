@@ -66,7 +66,7 @@ export class ElizaEngine {
   /**
    * Get response for user input
    */
-  getResponse(userInput) {
+  getResponse(userInput, saveOverride = false) {
     // Add to conversation history
     this.conversationHistory.push({
       type: 'user',
@@ -173,8 +173,33 @@ export class ElizaEngine {
         template,
         captures: match.matchResult.captures
       };
+
+      // Save to memory if flagged and not overridden
+      if (match.shouldSave && !saveOverride) {
+        this.memoryStack.push(userInput);
+        // Ensure memory stack doesn't grow indefinitely (keep last 20)
+        if (this.memoryStack.length > 20) {
+          this.memoryStack.shift();
+        }
+      }
     } else {
-      // Use fallback
+      // No match found
+
+      // Try to use memory if available
+      if (this.memoryStack.length > 0) {
+        const memory = this.memoryStack.pop();
+        // Recursively call getResponse with the memory, forcing saveOverride=true
+        const memoryResponse = this.getResponse(memory, true);
+
+        // Return the response generated from memory
+        // We use the same match info but note it came from memory
+        if (memoryResponse.matchInfo) {
+          memoryResponse.matchInfo.fromMemory = true;
+        }
+        return memoryResponse;
+      }
+
+      // Use fallback if no memory available
       response = this.fallbacks[Math.floor(Math.random() * this.fallbacks.length)];
       // Convert to uppercase to match original ELIZA behavior
       response = response.toUpperCase();

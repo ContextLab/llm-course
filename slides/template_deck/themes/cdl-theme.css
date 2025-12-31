@@ -1,0 +1,3724 @@
+/* @theme cdl-theme */
+
+/* Note: Removed uncover import to have full control over layout */
+/* @import 'uncover'; */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Fira+Code:wght@300;400;500;600;700&display=swap');
+
+/* ============================================
+   DARTMOUTH COLOR PALETTE - CSS CUSTOM PROPERTIES
+   Official Dartmouth brand colors for consistent theming
+   ============================================ */
+:root {
+    /* Primary Brand Color */
+    --dartmouth-green: #00693e;
+
+    /* Secondary Colors */
+    --forest-green: #12312b;
+    --rich-forest-green: #0D1E1C;
+
+    /* Tertiary Colors */
+    --river-blue: #267aba;
+    --river-navy: #003c73;
+    --spring-green: #c4dd88;
+    --rich-spring-green: #a5d75f;
+    --summer-yellow: #f5dc69;
+    --bonfire-orange: #ffa00f;
+    --bonfire-red: #9d162e;
+    --tuck-orange: #d94415;
+    --violet: #8a6996;
+    --autumn-brown: #643c20;
+    --granite-gray: #424141;
+    --gray-1: #f7f7f7;
+    --gray-2: #e2e2e2;
+    --gray-3: #707070;
+
+    /* Derived text colors (dark variants for readability) */
+    --text-primary: #0a2518;
+    --text-secondary: #0a3d23;
+
+    /* ============================================
+       CHART DEFAULT COLORS
+       Dartmouth tertiary palette for data visualization
+       Ordered for maximum visual distinction
+       ============================================ */
+    /* Primary series (most common use) */
+    --chart-color-1: #00693e;
+    /* Dartmouth Green - primary brand */
+    --chart-color-2: #267aba;
+    /* River Blue */
+    --chart-color-3: #ffa00f;
+    /* Bonfire Orange */
+    --chart-color-4: #9d162e;
+    /* Bonfire Red */
+    --chart-color-5: #8a6996;
+    /* Violet */
+    --chart-color-6: #a5d75f;
+    /* Rich Spring Green */
+
+    /* Extended series (for charts with more categories) */
+    --chart-color-7: #003c73;
+    /* River Navy */
+    --chart-color-8: #d94415;
+    /* Tuck Orange */
+    --chart-color-9: #643c20;
+    /* Autumn Brown */
+    --chart-color-10: #c4dd88;
+    /* Spring Green */
+    --chart-color-11: #f5dc69;
+    /* Summer Yellow */
+    --chart-color-12: #424141;
+    /* Granite Gray */
+
+    /* Semantic chart colors */
+    --chart-positive: #00693e;
+    /* Dartmouth Green */
+    --chart-negative: #9d162e;
+    /* Bonfire Red */
+    --chart-neutral: #424141;
+    /* Granite Gray */
+    --chart-highlight: #ffa00f;
+    /* Bonfire Orange */
+    --chart-secondary: #267aba;
+    /* River Blue */
+
+    /* Background variants (50% opacity for fills) */
+    --chart-bg-1: rgba(0, 105, 62, 0.5);
+    --chart-bg-2: rgba(38, 122, 186, 0.5);
+    --chart-bg-3: rgba(255, 160, 15, 0.5);
+    --chart-bg-4: rgba(157, 22, 46, 0.5);
+    --chart-bg-5: rgba(138, 105, 150, 0.5);
+    --chart-bg-6: rgba(165, 215, 95, 0.5);
+
+    /* Grid and axis styling */
+    --chart-grid-light: rgba(0, 105, 62, 0.1);
+    --chart-grid-medium: rgba(0, 105, 62, 0.15);
+    --chart-grid-dark: rgba(0, 105, 62, 0.2);
+    --chart-axis-color: #0a2518;
+
+    /* Font stacks for charts */
+    --chart-font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Local font face definitions for Avenir - including italic variants */
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Note: LightOblique variant not available - browser will synthesize italic */
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Book.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Note: BookOblique variant not available - browser will synthesize italic */
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Roman.otf') format('opentype');
+    font-weight: 450;
+    font-style: normal;
+}
+
+/* Note: Oblique variant not available - browser will synthesize italic */
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+/* Note: MediumOblique variant not available - browser will synthesize italic */
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Heavy.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Note: HeavyOblique variant not available - browser will synthesize italic */
+
+@font-face {
+    font-family: 'Avenir LT Std';
+    src: url('../../fonts/AvenirLTStd-Black.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+/* Note: BlackOblique variant not available - browser will synthesize italic */
+
+/* FiraCode local font face */
+@font-face {
+    font-family: 'Fira Code Local';
+    src: url('../../fonts/FiraCode-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Fira Code Local';
+    src: url('../../fonts/FiraCode-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Fira Code Local';
+    src: url('../../fonts/FiraCode-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Inline code styling - with visible background (very light Dartmouth green, almost white) */
+code {
+    display: inline-block;
+    font-family: 'Fira Code', 'Fira Code Local', monospace;
+    font-size: 0.9em;
+    letter-spacing: 0;
+    margin: 0em 0.15em;
+    padding: 0.15em 0.5em;
+    vertical-align: baseline;
+    color: #0d5f2e;
+    background-color: rgba(0, 105, 62, 0.08);
+    border-radius: 4px;
+}
+
+/* Code blocks with rounded corners - light Dartmouth green tint background */
+section pre,
+section :is(pre, marp-pre) {
+    margin: 0.5em auto 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 12px;
+    background-color: rgba(0, 105, 62, 0.08);
+    padding: 0.8em 1.2em;
+    border: 3px solid rgba(0, 105, 62, 0.15);
+    text-align: left;
+    width: fit-content;
+    min-width: 50%;
+    max-width: 95%;
+    max-height: 65vh;
+    /* Default code font size - slightly smaller for better fit */
+    font-size: 18pt !important;
+}
+
+pre code {
+    background-color: transparent;
+    color: #0a3d23;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    font-size: 1em;
+    line-height: 1.1;
+    text-align: left;
+    counter-reset: line;
+}
+
+/* Line numbers for code blocks - highlight.js line numbers plugin */
+pre code .hljs-ln {
+    border-collapse: collapse;
+}
+
+pre code .hljs-ln td {
+    padding: 0;
+}
+
+pre code .hljs-ln-numbers {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-align: right;
+    color: rgba(0, 105, 62, 0.4);
+    border-right: 1px solid rgba(0, 105, 62, 0.2);
+    vertical-align: top;
+    padding-right: 0.8em;
+    padding-left: 0.5em;
+    width: 2.5em;
+    min-width: 2.5em;
+}
+
+pre code .hljs-ln-code {
+    padding-left: 1em;
+}
+
+/* Alternative CSS-based line numbers (works without highlight.js plugin) */
+pre code[data-line-numbers]::before {
+    counter-reset: listing;
+}
+
+pre code[data-line-numbers] .line::before,
+pre code.line-numbers .line::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 2em;
+    padding-right: 0.8em;
+    margin-right: 0.8em;
+    text-align: right;
+    color: rgba(0, 105, 62, 0.4);
+    border-right: 1px solid rgba(0, 105, 62, 0.2);
+}
+
+/* Syntax highlighting colors - Dartmouth green theme */
+pre code .hljs-keyword,
+pre code .token.keyword {
+    color: #00693e;
+    font-weight: 600;
+}
+
+pre code .hljs-string,
+pre code .token.string {
+    color: #2d6a4f;
+}
+
+pre code .hljs-comment,
+pre code .token.comment {
+    color: #6b7c85;
+    font-style: italic;
+}
+
+pre code .hljs-function,
+pre code .token.function {
+    color: #0d5f2e;
+}
+
+pre code .hljs-number,
+pre code .token.number {
+    color: #1b4332;
+}
+
+pre code .hljs-built_in,
+pre code .token.builtin {
+    color: #00693e;
+}
+
+/* JavaScript-generated line numbers - using table layout for proper wrapping */
+/* Line numbers stay fixed on source lines; wrapped continuation lines don't get numbers */
+pre code.has-line-numbers .line {
+    display: table-row !important;
+    width: 100% !important;
+}
+
+pre code.has-line-numbers .line-num {
+    display: table-cell !important;
+    min-width: 2em;
+    width: 2.5em;
+    padding-right: 0.8em;
+    text-align: right;
+    vertical-align: top;
+    color: rgba(0, 105, 62, 0.4);
+    border-right: 1px solid rgba(0, 105, 62, 0.2);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+}
+
+pre code.has-line-numbers .line-code {
+    display: table-cell !important;
+    padding-left: 0.8em;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    vertical-align: top;
+}
+
+/* Headings - base styling only, font-size set per slide type */
+h1 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    /* font-size set in title slide and content slide sections */
+}
+
+h2 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 1.3em;
+    font-weight: 700;
+}
+
+h3 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+h4 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 1em;
+    font-weight: 500;
+}
+
+h5 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+h6 {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+p {
+    margin: 1em 3.5em 0;
+}
+
+/* Blockquotes - clean Avenir styling without background, border, or decorative quotes */
+blockquote {
+    margin: 1em auto 0;
+    padding: 0.5em 2em;
+    position: relative;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-size: 1.1em;
+    font-style: italic;
+    font-weight: 400;
+    color: #0a3d23;
+    border-left: none;
+    background-color: transparent;
+    border-radius: 0;
+    max-width: 80%;
+}
+
+/* Decorative quotation marks - light Dartmouth green tint (almost white) */
+blockquote::before {
+    content: '"' !important;
+    display: block !important;
+    position: absolute;
+    left: -0.3em;
+    top: -0.2em;
+    font-size: 3em;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-weight: 600;
+    color: rgba(0, 105, 62, 0.15);
+    line-height: 1;
+}
+
+blockquote::after {
+    content: '"' !important;
+    display: block !important;
+    position: absolute;
+    right: -0.1em;
+    bottom: -0.5em;
+    font-size: 3em;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-weight: 600;
+    color: rgba(0, 105, 62, 0.15);
+    line-height: 1;
+}
+
+blockquote p {
+    margin: 0;
+}
+
+mark {
+    background: transparent;
+}
+
+/* Tables - centered horizontally with visible borders */
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin: 0.5em auto 0;
+    font-size: 0.7em;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    border: 3px solid #0a2518;
+    width: 95%;
+    max-width: 95%;
+    table-layout: fixed;
+}
+
+table th,
+table td {
+    padding: 0.4em 0.6em;
+    text-align: center;
+    vertical-align: middle;
+    border: 2px solid #0a2518;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+/* Wrapped cells get left-aligned via JavaScript adding this class */
+table td.wrapped-text {
+    text-align: left !important;
+    vertical-align: top;
+}
+
+table th {
+    background-color: rgba(0, 105, 62, 0.1);
+    font-weight: 600;
+}
+
+/* Two-column layout as invisible table */
+section .invisible-table,
+section table.two-col {
+    border: none !important;
+    background: transparent !important;
+}
+
+section .invisible-table td,
+section .invisible-table th,
+section table.two-col td,
+section table.two-col th {
+    border: none !important;
+    background: transparent !important;
+    vertical-align: top;
+    padding: 0 2em;
+}
+
+/* Hyperlinks - dark Dartmouth green (almost black), underlined for clickability */
+a {
+    color: #0a2518;
+    text-decoration: underline;
+}
+
+figure {
+    height: 100px;
+    max-width: 130px;
+    padding-bottom: 10px;
+}
+
+figcaption {
+    position: relative;
+    font-size: 0.26em;
+    left: -5px;
+    top: -60px;
+    overflow: visible;
+    overflow-wrap: break-word;
+    width: 90px;
+    font-weight: bold;
+}
+
+/* Main section styling - dark Dartmouth green text (almost black with green undertone) */
+section {
+    background-color: #d8d8d8;
+    color: #0a2518;
+    font-size: 35px;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-weight: 400;
+    height: 720px;
+    line-height: 1.35;
+    letter-spacing: normal;
+    padding: 70px;
+    width: 1280px;
+    word-wrap: break-word;
+    /* Content slide layout - title at top */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    place-content: flex-start center !important;
+}
+
+/* Bullet points - centered horizontally */
+section ul,
+section ol {
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
+section ul li,
+section ol li {
+    margin: 0.3em 0;
+}
+
+/* Emphasis using proper italics - requires oblique font variants */
+em,
+i {
+    font-style: italic;
+    font-weight: inherit;
+}
+
+strong,
+b {
+    font-style: inherit;
+    font-weight: 700;
+}
+
+/* Combined emphasis - bold italic */
+em strong,
+strong em,
+i b,
+b i {
+    font-style: italic;
+    font-weight: 700;
+}
+
+.note {
+    position: relative;
+    top: -35px;
+    font-size: 0.57em;
+}
+
+.people_gallery {
+    display: grid;
+    grid-template-columns: repeat(11, 2.5em);
+    grid-template-rows: repeat(4, 100px);
+    position: relative;
+    grid-gap: 5px;
+    left: 0.75em;
+    top: -40px;
+}
+
+.funding_gallery {
+    display: grid;
+    grid-template-columns: repeat(8, 2.5em);
+    grid-template-rows: repeat(1, 100px);
+    position: relative;
+    grid-gap: 5px;
+    left: 2.5em;
+    top: -30px;
+}
+
+.funding_caption {
+    position: relative;
+    left: -8px !important;
+}
+
+.gallery_img {
+    max-height: 75px;
+    max-width: 75px;
+}
+
+.reference {
+    font-size: 0.34em;
+    text-align: right;
+    position: fixed;
+    bottom: 0.5em;
+    right: 0.25em;
+    line-height: 1.1;
+}
+
+/* Multi-column layout - side by side with compact gap, spread across slide */
+section>div[style*="display: flex"],
+section>div[style*="display:flex"],
+section>div[style*="gap"],
+.columns,
+.two-column,
+.multi-column {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 1em;  /* Default gap - compact to allow text to fill more space */
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-wrap: nowrap !important;
+    margin: 0 !important;
+}
+
+section>div[style*="display: flex"]>div,
+section>div[style*="display:flex"]>div,
+section>div[style*="gap"]>div,
+.columns>div,
+.two-column>div,
+.multi-column>div {
+    flex: 1 1 0 !important;
+    max-width: none !important;
+    min-width: 0 !important;
+}
+
+/* Multi-column layouts: font size controlled by autoscale.js via CSS variable
+   Default to 1em (full size) - JS will set --content-scale if scaling needed */
+section>div[style*="display: flex"],
+section>div[style*="display:flex"],
+section>div[style*="gap"],
+.columns,
+.two-column,
+.multi-column {
+    --content-scale: 1;
+}
+
+/* Apply scaling to flex container children */
+section>div[style*="display: flex"] *,
+section>div[style*="display:flex"] *,
+section>div[style*="gap"] *,
+.columns *,
+.two-column *,
+.multi-column * {
+    font-size: calc(1em * var(--content-scale, 1)) !important;
+}
+
+/* Reset font size for nested elements to prevent compounding */
+section>div[style*="display: flex"] * *,
+section>div[style*="display:flex"] * *,
+section>div[style*="gap"] * *,
+.columns * *,
+.two-column * *,
+.multi-column * * {
+    font-size: 1em !important;
+}
+
+/* EXCEPTION: Preserve explicit emoji size classes inside flex containers */
+/* These need higher specificity than the flex container rules above */
+section>div[style*="display: flex"] .emoji-xs,
+section>div[style*="display:flex"] .emoji-xs,
+section>div[style*="gap"] .emoji-xs,
+.columns .emoji-xs,
+.two-column .emoji-xs,
+.multi-column .emoji-xs,
+.emoji-figure .emoji-xs {
+    font-size: 24px !important;
+}
+
+section>div[style*="display: flex"] .emoji-sm,
+section>div[style*="display:flex"] .emoji-sm,
+section>div[style*="gap"] .emoji-sm,
+.columns .emoji-sm,
+.two-column .emoji-sm,
+.multi-column .emoji-sm,
+.emoji-figure .emoji-sm {
+    font-size: 32px !important;
+}
+
+section>div[style*="display: flex"] .emoji-md,
+section>div[style*="display:flex"] .emoji-md,
+section>div[style*="gap"] .emoji-md,
+.columns .emoji-md,
+.two-column .emoji-md,
+.multi-column .emoji-md,
+.emoji-figure .emoji-md {
+    font-size: 48px !important;
+}
+
+section>div[style*="display: flex"] .emoji-lg,
+section>div[style*="display:flex"] .emoji-lg,
+section>div[style*="gap"] .emoji-lg,
+.columns .emoji-lg,
+.two-column .emoji-lg,
+.multi-column .emoji-lg,
+.emoji-figure .emoji-lg {
+    font-size: 64px !important;
+}
+
+section>div[style*="display: flex"] .emoji-xl,
+section>div[style*="display:flex"] .emoji-xl,
+section>div[style*="gap"] .emoji-xl,
+.columns .emoji-xl,
+.two-column .emoji-xl,
+.multi-column .emoji-xl,
+.emoji-figure .emoji-xl {
+    font-size: 128px !important;
+}
+
+section>div[style*="display: flex"] .emoji-xxl,
+section>div[style*="display:flex"] .emoji-xxl,
+section>div[style*="gap"] .emoji-xxl,
+.columns .emoji-xxl,
+.two-column .emoji-xxl,
+.multi-column .emoji-xxl,
+.emoji-figure .emoji-xxl {
+    font-size: 192px !important;
+}
+
+/* Multi-column slides: vertically center content below title */
+section:not(.lead):not(#\31):has(div[style*="display: flex"]),
+section:not(.lead):not(#\31):has(div[style*="display:flex"]),
+section:not(.lead):not(#\31):has(div[style*="gap"]),
+section:not(.lead):not(#\31):has(.columns),
+section:not(.lead):not(#\31):has(.two-column),
+section:not(.lead):not(#\31):has(.multi-column) {
+    justify-content: flex-start !important;
+}
+
+/* Multi-column content: position closer to title, not vertically centered */
+section:not(.lead):not(#\31):has(div[style*="display: flex"])>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(div[style*="display:flex"])>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(div[style*="gap"])>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.columns)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.two-column)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.multi-column)>*:not(h1):first-of-type {
+    margin-top: 0.5em !important;
+}
+
+section:not(.lead):not(#\31):has(div[style*="display: flex"])>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(div[style*="display:flex"])>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(div[style*="gap"])>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.columns)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.two-column)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.multi-column)>*:not(h1):last-of-type {
+    margin-bottom: auto !important;
+}
+
+/* KaTeX math styling to use Avenir for text parts */
+.katex .mathnormal,
+.katex .text,
+.katex .textrm {
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif !important;
+}
+
+/* Keep math symbols in their default fonts */
+.katex .mathit,
+.katex .mathbf,
+.katex .mathbb,
+.katex .mathcal,
+.katex .mathfrak,
+.katex .mathsf,
+.katex .mathtt {
+    /* Keep default KaTeX fonts for mathematical symbols */
+}
+
+/* KaTeX math - 90% of content font size */
+.katex {
+    font-size: 0.9em !important;
+}
+
+/* ============================================
+   TITLE SLIDE STYLING (slide id="1" or lead class)
+   Note: :first-of-type doesn't work in Marp because each
+   section is in its own foreignObject container.
+   ============================================ */
+
+/* Title slide - use lead class or id="1" */
+section.lead,
+section#\31 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 70px;
+    position: relative;
+}
+
+/* Title slide background geometry SVG - positioned at bottom like content slides */
+section.lead::before,
+section[id="1"]::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-image: url('themes/background_geometry.svg') !important;
+    background-repeat: no-repeat !important;
+    background-position: bottom center !important;
+    background-size: 100% auto !important;
+    opacity: 0.75 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Title slide conversation image - aligned to bottom, stretch width */
+section.lead::after,
+section[id="1"]::after {
+    content: '' !important;
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    height: 70% !important;
+    background-image: url('themes/conversation_green_32pct.png') !important;
+    background-repeat: no-repeat !important;
+    background-position: bottom center !important;
+    background-size: 100% auto !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+}
+
+/* Title slide - main title (h1) - use attribute selector to avoid CSS escape issues */
+section[id="1"] h1,
+section[id="1"] marp-h1 {
+    font-size: 71px !important;
+    font-weight: 500 !important;
+    margin: 10px 0 0 0 !important;
+    margin-block: 0 !important;
+    letter-spacing: normal !important;
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* Title slide - course subtitle (h3) */
+section[id="1"] h3,
+section[id="1"] marp-h3 {
+    font-size: 0.925em !important;
+    font-weight: 500 !important;
+    letter-spacing: normal !important;
+    margin: 0 0 20px 0 !important;
+    margin-block: 0 20px !important;
+    color: #0a2518 !important;
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* Title slide - author/institution/date (paragraph text) */
+section[id="1"] p {
+    font-size: 0.925em !important;
+    font-weight: 400 !important;
+    margin: 0.2em 0 !important;
+    margin-block: 0.2em !important;
+    letter-spacing: normal !important;
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* ============================================
+   CONTENT SLIDE LAYOUT
+   Title at top, content vertically centered in remaining space
+   Using :not(#\31) to exclude the title slide (id="1")
+   Uses flexbox for vertical stacking within Marp's layout
+   Extra bottom padding shifts content up by ~50px
+   ============================================ */
+
+/* Content slides - flexbox layout */
+section:not(.lead):not(#\31) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 20px 40px 100px 40px !important;
+    position: relative !important;
+}
+
+/* Content elements - 110% of original */
+/* Note: Exclude callout boxes from div scaling - they have their own sizing */
+section:not(.lead):not(#\31) ul,
+section:not(.lead):not(#\31) ol,
+section:not(.lead):not(#\31) p,
+section:not(.lead):not(#\31) blockquote,
+section:not(.lead):not(#\31) table,
+section:not(.lead):not(#\31) pre,
+section:not(.lead):not(#\31) div:not(.callout):not(.note-box):not(.example-box):not(.warning-box):not(.tip-box):not(.important-box):not(.definition-box) {
+    font-size: 1.19em;
+}
+
+/* Nested lists - prevent font-size compounding and reduce indentation */
+/* First level of nesting: significantly smaller than parent */
+section:not(.lead):not(#\31) ul ul,
+section:not(.lead):not(#\31) ul ol,
+section:not(.lead):not(#\31) ol ul,
+section:not(.lead):not(#\31) ol ol {
+    font-size: 0.72em;
+    margin-top: 0.1em;
+    margin-bottom: 0.05em;
+    padding-left: 1.2em;
+    margin-left: 0;
+}
+
+/* Nested list items - tighter spacing */
+section:not(.lead):not(#\31) ul ul li,
+section:not(.lead):not(#\31) ul ol li,
+section:not(.lead):not(#\31) ol ul li,
+section:not(.lead):not(#\31) ol ol li {
+    margin: 0.1em 0;
+}
+
+/* Second level of nesting: continue size reduction */
+section:not(.lead):not(#\31) ul ul ul,
+section:not(.lead):not(#\31) ul ul ol,
+section:not(.lead):not(#\31) ul ol ul,
+section:not(.lead):not(#\31) ul ol ol,
+section:not(.lead):not(#\31) ol ul ul,
+section:not(.lead):not(#\31) ol ul ol,
+section:not(.lead):not(#\31) ol ol ul,
+section:not(.lead):not(#\31) ol ol ol {
+    font-size: 0.8em;
+    padding-left: 1em;
+}
+
+/* Background image with 75% opacity using pseudo-element */
+section:not(.lead):not(#\31)::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-image: url('themes/background_geometry.svg') !important;
+    background-repeat: no-repeat !important;
+    background-position: bottom center !important;
+    background-size: 100% auto !important;
+    opacity: 0.75 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Title at top - ensure minimum spacing from slide edge */
+section:not(.lead):not(#\31) h1 {
+    flex-shrink: 0 !important;
+    text-align: center !important;
+    margin: 0 0 0.3em 0 !important;
+    padding-top: 15px !important;
+    width: 100% !important;
+    position: relative !important;
+    z-index: 1 !important;
+    min-height: 1.5em !important;
+    font-size: 1.72em;
+    font-weight: 500;
+}
+
+/* Content elements - stack vertically */
+section:not(.lead):not(#\31)>*:not(h1) {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Content group vertical centering - shifted up slightly */
+section:not(.lead):not(#\31)>*:not(h1):first-of-type {
+    margin-top: auto !important;
+}
+
+section:not(.lead):not(#\31)>*:not(h1):last-of-type {
+    margin-bottom: auto !important;
+}
+
+/* Reduce gap between title and table on table slides */
+section:not(.lead):not(#\31):has(> table)>h1 {
+    margin-bottom: 0 !important;
+    padding-top: 8px !important;
+    min-height: 1.2em !important;
+}
+
+section:not(.lead):not(#\31)>table:first-of-type {
+    margin-top: 0.15em !important;
+}
+
+/* Lists should be left-aligned, not centered */
+section:not(.lead):not(#\31)>ul,
+section:not(.lead):not(#\31)>ol {
+    text-align: left !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Lists on slides with equations need consistent width for alignment */
+section:not(.lead):not(#\31):has(.katex-display)>ul,
+section:not(.lead):not(#\31):has(.katex-display)>ol {
+    width: 80% !important;
+}
+
+/* Lists on slides with callout boxes need smaller font to fit */
+section:not(.lead):not(#\31):has(.note-box)>ul,
+section:not(.lead):not(#\31):has(.note-box)>ol,
+section:not(.lead):not(#\31):has(.tip-box)>ul,
+section:not(.lead):not(#\31):has(.tip-box)>ol,
+section:not(.lead):not(#\31):has(.warning-box)>ul,
+section:not(.lead):not(#\31):has(.warning-box)>ol,
+section:not(.lead):not(#\31):has(.example-box)>ul,
+section:not(.lead):not(#\31):has(.example-box)>ol,
+section:not(.lead):not(#\31):has(.callout)>ul,
+section:not(.lead):not(#\31):has(.callout)>ol {
+    font-size: 1.0em !important;
+}
+
+/* Paragraphs and equations centered */
+section:not(.lead):not(#\31)>p {
+    text-align: center !important;
+    margin: 0.3em auto !important;
+}
+
+/* Code slides: stack pre and continued indicator vertically */
+section:not(.lead):not(#\31):has(.code-continued-indicator),
+section:not(.lead):not(#\31):has(.code-continued-indicator-last) {
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: 100px !important;
+}
+
+section:not(.lead):not(#\31):has(.code-continued-indicator)>h1 {
+    flex-shrink: 0 !important;
+}
+
+section:not(.lead):not(#\31):has(.code-continued-indicator)>pre,
+section:not(.lead):not(#\31):has(.code-continued-indicator-last)>pre {
+    max-height: 70vh !important;
+    font-size: 14pt !important;
+    flex: 0 0 auto !important;
+    margin: auto !important;
+    padding: 0.3em 1em !important;
+    height: fit-content !important;
+    width: 90% !important;
+    min-width: 90% !important;
+}
+
+section:not(.lead):not(#\31)>pre {
+    align-self: center !important;
+    justify-self: center !important;
+    margin: 0 auto !important;
+}
+
+section:not(.lead):not(#\31)>.code-continued-indicator {
+    position: absolute !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Last slide in sequence: full positioning with slight left shift */
+section:not(.lead):not(#\31)>.code-continued-indicator-last {
+    position: absolute !important;
+    bottom: 10px !important;
+    right: 20px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* ============================================
+   EQUATION SLIDES - KaTeX display math centering
+   ============================================ */
+section .katex-display {
+    display: block !important;
+    text-align: center !important;
+    margin: 0.3em auto !important;
+    width: 100% !important;
+}
+
+/* ============================================
+   QUOTE SLIDES - Blockquote styling
+   Ensure quotes display as blocks, not flex items
+   ============================================ */
+section blockquote {
+    display: block !important;
+    text-align: center !important;
+    width: 80% !important;
+    margin: 0 auto !important;
+}
+
+/* ============================================
+   PARAGRAPH ELEMENTS - Block display
+   Ensure paragraphs on content slides are displayed as blocks
+   ============================================ */
+section:not(.lead):not(#\31) p {
+    display: block !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin: 0.2em auto !important;
+}
+
+/* Ensure tight line spacing for code lines with proper wrapping support */
+/* Using table layout so wrapped continuation lines don't get new line numbers */
+pre code.has-line-numbers .line {
+    display: table-row !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+}
+
+pre code.has-line-numbers .line-num {
+    display: table-cell !important;
+    vertical-align: top !important;
+    white-space: nowrap !important;
+    padding-top: 0.1em !important;
+}
+
+pre code.has-line-numbers .line-code {
+    display: table-cell !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    vertical-align: top !important;
+}
+
+/* Ensure code element uses table layout for proper line number alignment with wrapping */
+pre code.has-line-numbers {
+    display: table !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
+}
+
+/* Code overflow indicator when content exceeds minimum font size */
+pre.code-overflow {
+    position: relative;
+}
+
+pre.code-overflow::after {
+    content: '⋯ continued on next slide';
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-size: 12px;
+    color: rgba(0, 105, 62, 0.6);
+    font-style: italic;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* Support for wider line numbers (for continuation) */
+pre code.has-line-numbers .line-num {
+    min-width: 2em;
+    width: auto;
+}
+
+/* Auto-split code continuation indicator */
+.code-continued-indicator,
+.code-continued-indicator-last {
+    display: block !important;
+    text-align: right !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 16pt !important;
+    color: #0a2518 !important;
+    font-style: normal !important;
+}
+
+/* Auto-split table continuation indicator */
+.table-continued-indicator,
+.table-continued-indicator-last {
+    display: block !important;
+    text-align: right !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 16pt !important;
+    color: #0a2518 !important;
+    font-style: normal !important;
+}
+
+/* Table slides: stack table and continued indicator vertically */
+section:not(.lead):not(#\31):has(.table-continued-indicator),
+section:not(.lead):not(#\31):has(.table-continued-indicator-last) {
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: 100px !important;
+}
+
+section:not(.lead):not(#\31)>.table-continued-indicator {
+    position: absolute !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Last slide in table sequence: full positioning with slight left shift */
+section:not(.lead):not(#\31)>.table-continued-indicator-last {
+    position: absolute !important;
+    bottom: 10px !important;
+    right: 20px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Continuation tables - explicit styling for split tables
+   Note: Duplicates base table styling intentionally to ensure split tables
+   maintain consistent appearance regardless of CSS cascade order */
+table.table-continuation {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin: 0.5em auto 0;
+    font-size: 0.7em;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    border: 3px solid #0a2518;
+    width: 95%;
+    max-width: 95%;
+    table-layout: fixed;
+}
+
+/* Split tables - prevent vertical centering and auto-scaling */
+/* These tables are part of a multi-slide sequence and should maintain consistent sizing */
+
+/* The slide containing a split table should NOT vertically center its content */
+section:not(.lead):not(#\31):has(table.split-table) {
+    justify-content: flex-start !important;
+    align-content: flex-start !important;
+}
+
+/* Override the auto margins that cause vertical centering */
+section:not(.lead):not(#\31):has(table.split-table)>*:not(h1):first-of-type {
+    margin-top: 0.5em !important;
+}
+
+section:not(.lead):not(#\31):has(table.split-table)>*:not(h1):last-of-type {
+    margin-bottom: 0 !important;
+}
+
+table.split-table {
+    margin-top: 0.5em !important;
+    margin-bottom: 0 !important;
+    align-self: flex-start !important;
+    /* Fixed font size for split tables - must fit 8 rows consistently */
+    font-size: 0.55em !important;
+}
+
+/* Override flexbox centering for slides containing split tables */
+section:not(.lead):not(#\31):has(table.split-table)>table.split-table {
+    align-self: flex-start !important;
+    margin-top: 0.5em !important;
+    margin-bottom: 0 !important;
+}
+
+/* Prevent the first-of-type auto margin from centering split tables */
+section:not(.lead):not(#\31)>table.split-table:first-of-type {
+    margin-top: 0.5em !important;
+}
+
+section:not(.lead):not(#\31)>table.split-table:last-of-type {
+    margin-bottom: 0 !important;
+}
+
+/* ============================================
+   DENSE CONTENT SLIDES - Prevent title cut-off
+   For slides with tables (auto-scaled) or callout boxes,
+   disable vertical centering to keep titles visible.
+   This matches the split-table behavior but applies to
+   non-split tables and callout boxes.
+   ============================================ */
+
+/* Regular table slides (non-split) - prevent vertical centering */
+/* The :not(.split-table) ensures we don't double-apply to split tables */
+section:not(.lead):not(#\31):has(table:not(.split-table)) {
+    justify-content: flex-start !important;
+    align-content: flex-start !important;
+}
+
+section:not(.lead):not(#\31):has(table:not(.split-table))>*:not(h1):first-of-type {
+    margin-top: 0.5em !important;
+}
+
+section:not(.lead):not(#\31):has(table:not(.split-table))>*:not(h1):last-of-type {
+    margin-bottom: 0 !important;
+}
+
+/* Callout box slides - prevent vertical centering */
+section:not(.lead):not(#\31):has(.note-box),
+section:not(.lead):not(#\31):has(.example-box),
+section:not(.lead):not(#\31):has(.warning-box) {
+    justify-content: flex-start !important;
+    align-content: flex-start !important;
+}
+
+section:not(.lead):not(#\31):has(.note-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.example-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(.warning-box)>*:not(h1):first-of-type {
+    margin-top: 0.5em !important;
+}
+
+section:not(.lead):not(#\31):has(.note-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.example-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(.warning-box)>*:not(h1):last-of-type {
+    margin-bottom: 0 !important;
+}
+
+/* ============================================
+   Pygments Syntax Highlighting (Dartmouth theme)
+   ============================================ */
+
+/* Keywords (def, return, class, if, etc.) */
+.hl-k,
+.hl-kn,
+.hl-kp,
+.hl-kr,
+.hl-kt {
+    color: #00693e;
+    font-weight: 600;
+}
+
+/* Keyword constants (True, False, None) */
+.hl-kc {
+    color: #00693e;
+    font-weight: 600;
+}
+
+/* Function and method names */
+.hl-nf,
+.hl-fm,
+.hl-nv {
+    color: #1a5276;
+}
+
+/* Class names */
+.hl-nc {
+    color: #8b4513;
+    font-weight: 600;
+}
+
+/* Strings */
+.hl-s,
+.hl-s1,
+.hl-s2,
+.hl-sb,
+.hl-sc,
+.hl-dl,
+.hl-sa,
+.hl-sr {
+    color: #a0522d;
+}
+
+/* Docstrings and heredocs */
+.hl-sd,
+.hl-sh {
+    color: #708090;
+    font-style: italic;
+}
+
+/* Numbers */
+.hl-m,
+.hl-mf,
+.hl-mh,
+.hl-mi,
+.hl-mo,
+.hl-mb,
+.hl-mx,
+.hl-il {
+    color: #b8860b;
+}
+
+/* Comments */
+.hl-c,
+.hl-c1,
+.hl-cm,
+.hl-cp,
+.hl-cpf,
+.hl-cs,
+.hl-ch {
+    color: #708090;
+    font-style: italic;
+}
+
+/* Operators */
+.hl-o,
+.hl-ow {
+    color: #555;
+}
+
+/* Punctuation */
+.hl-p {
+    color: #333;
+}
+
+/* Built-in names (print, len, etc.) */
+.hl-nb {
+    color: #1a5276;
+}
+
+/* Built-in pseudo (self, cls) */
+.hl-bp {
+    color: #00693e;
+    font-style: italic;
+}
+
+/* Names/variables */
+.hl-n,
+.hl-na,
+.hl-ni,
+.hl-nl,
+.hl-nn,
+.hl-no,
+.hl-nt {
+    color: inherit;
+}
+
+/* Decorators */
+.hl-nd {
+    color: #9932cc;
+}
+
+/* Escape sequences */
+.hl-se {
+    color: #b8860b;
+    font-weight: 600;
+}
+
+/* Whitespace - make invisible */
+.hl-w {
+    color: transparent;
+}
+
+/* Error tokens */
+.hl-err {
+    color: #dc143c;
+    background-color: #fdd;
+}
+
+/* ============================================
+   CALLOUT BOXES - Note, Example, Warning
+   Beamer-style callout boxes for academic presentations
+   ============================================ */
+
+/* Base callout box styling */
+/* Note: Callout boxes are excluded from the 1.19em div scaling rule */
+.callout,
+.note-box,
+.example-box,
+.warning-box,
+.tip-box,
+.important-box,
+.definition-box {
+    display: block !important;
+    border-radius: 6px;
+    padding: 0.5em 0.8em 0.6em 0.8em;
+    margin: 0.3em auto !important;
+    width: 85% !important;
+    max-width: 85% !important;
+    text-align: left !important;
+    /* Use relative em sizing - without 1.19em scaling, 0.65em = ~22.75px */
+    font-size: 0.65em;
+    line-height: 1.3;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Ensure content fits within box - allow box to grow */
+    overflow: visible;
+    height: auto !important;
+    min-height: fit-content !important;
+    /* Prevent box from being cut off by slide boundaries */
+    max-height: none !important;
+}
+
+/* Callout box labels - common styling */
+.callout::before,
+.note-box::before,
+.example-box::before,
+.warning-box::before,
+.tip-box::before,
+.important-box::before,
+.definition-box::before {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.2em;
+    font-size: 0.9em;
+    letter-spacing: 0.02em;
+}
+
+/* Note box - informational, River Blue accent */
+.note-box {
+    background-color: rgba(38, 122, 186, 0.12);
+    border-left: 5px solid var(--river-blue, #267aba);
+}
+
+.note-box::before {
+    content: 'Note';
+    color: var(--river-navy, #003c73);
+}
+
+/* Example box - example content, Dartmouth Green accent */
+.example-box {
+    background-color: rgba(0, 105, 62, 0.10);
+    border-left: 5px solid var(--dartmouth-green, #00693e);
+}
+
+.example-box::before {
+    content: 'Example';
+    color: var(--dartmouth-green, #00693e);
+}
+
+/* Warning box - important warnings, Bonfire Orange accent */
+.warning-box {
+    background-color: rgba(255, 160, 15, 0.15);
+    border-left: 5px solid var(--bonfire-orange, #ffa00f);
+}
+
+.warning-box::before {
+    content: 'Warning';
+    color: var(--tuck-orange, #d94415);
+}
+
+/* Custom title support for callout boxes via data-title attribute */
+.note-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.warning-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.example-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.tip-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.important-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.definition-box[data-title]::before {
+    content: attr(data-title);
+}
+
+.callout[data-title]::before {
+    content: attr(data-title);
+}
+
+/* Additional callout box types using Dartmouth tertiary colors */
+/* Note: Base styling inherited from shared rules above */
+
+/* Tip box - helpful hints, Rich Spring Green accent */
+.tip-box {
+    background-color: rgba(165, 215, 95, 0.15);
+    border-left: 5px solid var(--rich-spring-green, #a5d75f);
+}
+
+.tip-box::before {
+    content: 'Tip';
+    color: #5a8a2a;
+}
+
+/* Important box - critical information, Bonfire Red accent */
+.important-box {
+    background-color: rgba(157, 22, 46, 0.12);
+    border-left: 5px solid var(--bonfire-red, #9d162e);
+}
+
+.important-box::before {
+    content: 'Important';
+    color: var(--bonfire-red, #9d162e);
+}
+
+/* Definition box - terminology, Violet accent */
+.definition-box {
+    background-color: rgba(138, 105, 150, 0.12);
+    border-left: 5px solid var(--violet, #8a6996);
+}
+
+.definition-box::before {
+    content: 'Definition';
+    color: #6a4d7a;
+}
+
+/* Callout content paragraphs - remove extra margins and ensure left alignment */
+/* Must be more specific than section:not(.lead):not(#\31) p rule to override center alignment */
+section:not(.lead):not(#\31) .callout p,
+section:not(.lead):not(#\31) .note-box p,
+section:not(.lead):not(#\31) .example-box p,
+section:not(.lead):not(#\31) .warning-box p,
+section:not(.lead):not(#\31) .tip-box p,
+section:not(.lead):not(#\31) .important-box p,
+section:not(.lead):not(#\31) .definition-box p,
+.callout p,
+.note-box p,
+.example-box p,
+.warning-box p,
+.tip-box p,
+.important-box p,
+.definition-box p {
+    margin: 0.3em 0 !important;
+    text-align: left !important;
+    width: 100% !important;
+}
+
+/* Callout lists - proper alignment and indentation */
+/* Must be more specific to override global section ul/ol rules */
+section:not(.lead):not(#\31) .callout ul,
+section:not(.lead):not(#\31) .callout ol,
+section:not(.lead):not(#\31) .note-box ul,
+section:not(.lead):not(#\31) .note-box ol,
+section:not(.lead):not(#\31) .example-box ul,
+section:not(.lead):not(#\31) .example-box ol,
+section:not(.lead):not(#\31) .warning-box ul,
+section:not(.lead):not(#\31) .warning-box ol,
+section:not(.lead):not(#\31) .tip-box ul,
+section:not(.lead):not(#\31) .tip-box ol,
+section:not(.lead):not(#\31) .important-box ul,
+section:not(.lead):not(#\31) .important-box ol,
+section:not(.lead):not(#\31) .definition-box ul,
+section:not(.lead):not(#\31) .definition-box ol,
+.callout ul,
+.callout ol,
+.note-box ul,
+.note-box ol,
+.example-box ul,
+.example-box ol,
+.warning-box ul,
+.warning-box ol,
+.tip-box ul,
+.tip-box ol,
+.important-box ul,
+.important-box ol,
+.definition-box ul,
+.definition-box ol {
+    margin: 0.3em 0 0.3em 0 !important;
+    padding-left: 1.5em !important;
+    text-align: left !important;
+    display: block !important;
+}
+
+/* Callout list items - proper indentation */
+section:not(.lead):not(#\31) .callout li,
+section:not(.lead):not(#\31) .note-box li,
+section:not(.lead):not(#\31) .example-box li,
+section:not(.lead):not(#\31) .warning-box li,
+section:not(.lead):not(#\31) .tip-box li,
+section:not(.lead):not(#\31) .important-box li,
+section:not(.lead):not(#\31) .definition-box li,
+.callout li,
+.note-box li,
+.example-box li,
+.warning-box li,
+.tip-box li,
+.important-box li,
+.definition-box li {
+    margin: 0.2em 0 !important;
+    text-align: left !important;
+}
+
+/* Code inside callouts */
+.callout code,
+.note-box code,
+.example-box code,
+.warning-box code,
+.tip-box code,
+.important-box code,
+.definition-box code {
+    font-size: 0.9em;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Inline code in callouts - adjust backgrounds for visibility */
+/* Using Dartmouth tertiary colors */
+.note-box code {
+    background-color: rgba(38, 122, 186, 0.15);
+    /* River Blue */
+}
+
+.example-box code {
+    background-color: rgba(0, 105, 62, 0.12);
+    /* Dartmouth Green */
+}
+
+.warning-box code {
+    background-color: rgba(255, 160, 15, 0.18);
+    /* Bonfire Orange */
+}
+
+.tip-box code {
+    background-color: rgba(165, 215, 95, 0.18);
+    /* Rich Spring Green */
+}
+
+.important-box code {
+    background-color: rgba(157, 22, 46, 0.15);
+    /* Bonfire Red */
+}
+
+.definition-box code {
+    background-color: rgba(138, 105, 150, 0.15);
+    /* Violet */
+}
+
+/* Slides with callout boxes: disable vertical centering to prevent bottom cutoff */
+/* Note: Must override the general content slide padding which uses !important */
+section:not(.lead):not(#\31):has(> .callout),
+section:not(.lead):not(#\31):has(> .note-box),
+section:not(.lead):not(#\31):has(> .example-box),
+section:not(.lead):not(#\31):has(> .warning-box),
+section:not(.lead):not(#\31):has(> .tip-box),
+section:not(.lead):not(#\31):has(> .important-box),
+section:not(.lead):not(#\31):has(> .definition-box) {
+    justify-content: flex-start !important;
+    /* Reduce bottom padding to give more room for content - use full padding declaration */
+    padding: 20px 40px 30px 40px !important;
+}
+
+/* Override auto-margin vertical centering for callout slides */
+section:not(.lead):not(#\31):has(> .callout)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .note-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .example-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .warning-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .tip-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .important-box)>*:not(h1):first-of-type,
+section:not(.lead):not(#\31):has(> .definition-box)>*:not(h1):first-of-type {
+    margin-top: 0.3em !important;
+}
+
+section:not(.lead):not(#\31):has(> .callout)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .note-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .example-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .warning-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .tip-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .important-box)>*:not(h1):last-of-type,
+section:not(.lead):not(#\31):has(> .definition-box)>*:not(h1):last-of-type {
+    margin-bottom: 0 !important;
+}
+
+/* Override grid/flex rules for callout boxes on content slides */
+section:not(.lead):not(#\31)>.callout,
+section:not(.lead):not(#\31)>.note-box,
+section:not(.lead):not(#\31)>.example-box,
+section:not(.lead):not(#\31)>.warning-box,
+section:not(.lead):not(#\31)>.tip-box,
+section:not(.lead):not(#\31)>.important-box,
+section:not(.lead):not(#\31)>.definition-box {
+    align-self: center !important;
+    justify-self: center !important;
+    /* Ensure proper sizing and no overflow */
+    height: auto !important;
+    min-height: fit-content !important;
+    max-height: none !important;
+    overflow: visible !important;
+    /* Proper margins */
+    margin-top: 0.3em !important;
+    margin-bottom: 0.3em !important;
+}
+
+/* ============================================
+   INLINE EXAMPLE BOXES
+   Compact example boxes for side-by-side layouts
+   with definitions - used for consciousness slide style
+   ============================================ */
+
+/* Inline example box - compact, stackable example cards */
+.inline-example {
+    background-color: rgba(0, 105, 62, 0.10);
+    border-left: 4px solid var(--dartmouth-green, #00693e);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+/* Suppress any ::before content from parent callout rules */
+.inline-example::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* Title inside inline example */
+.inline-example .example-title {
+    color: var(--dartmouth-green, #00693e);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+/* Text inside inline example */
+.inline-example .example-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
+   INLINE NOTE BOX
+   Compact note box variant for stacked layouts
+   ============================================ */
+
+.inline-note {
+    background-color: rgba(38, 122, 186, 0.12);
+    border-left: 4px solid var(--river-blue, #267aba);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+.inline-note::before {
+    display: none !important;
+    content: none !important;
+}
+
+.inline-note .note-title {
+    color: var(--river-blue, #267aba);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+.inline-note .note-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
+   INLINE WARNING BOX
+   Compact warning box variant for stacked layouts
+   ============================================ */
+
+.inline-warning {
+    background-color: rgba(255, 160, 15, 0.15);
+    border-left: 4px solid var(--bonfire-orange, #ffa00f);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+.inline-warning::before {
+    display: none !important;
+    content: none !important;
+}
+
+.inline-warning .warning-title {
+    color: var(--bonfire-orange, #ffa00f);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+.inline-warning .warning-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
+   INLINE TIP BOX
+   Compact tip box variant for stacked layouts
+   ============================================ */
+
+.inline-tip {
+    background-color: rgba(165, 215, 95, 0.15);
+    border-left: 4px solid var(--rich-spring-green, #a5d75f);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+.inline-tip::before {
+    display: none !important;
+    content: none !important;
+}
+
+.inline-tip .tip-title {
+    color: var(--rich-spring-green, #a5d75f);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+.inline-tip .tip-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
+   INLINE DEFINITION BOX
+   Compact definition box variant for stacked layouts
+   ============================================ */
+
+.inline-definition {
+    background-color: rgba(138, 105, 150, 0.12);
+    border-left: 4px solid var(--violet, #8a6996);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+.inline-definition::before {
+    display: none !important;
+    content: none !important;
+}
+
+.inline-definition .definition-title {
+    color: var(--violet, #8a6996);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+.inline-definition .definition-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
+   INLINE IMPORTANT BOX
+   Compact important box variant for stacked layouts
+   ============================================ */
+
+.inline-important {
+    background-color: rgba(157, 22, 46, 0.12);
+    border-left: 4px solid var(--bonfire-red, #9d162e);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+.inline-important::before {
+    display: none !important;
+    content: none !important;
+}
+
+.inline-important .important-title {
+    color: var(--bonfire-red, #9d162e);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+.inline-important .important-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
+   DEFINITIONS-EXAMPLES LAYOUT
+   Two-column layout with bullet definitions on left,
+   stacked example boxes on right
+   ============================================ */
+
+.definitions-examples-layout {
+    display: flex !important;
+    gap: 1em;
+    margin-top: 0.2em;
+    width: 100% !important;
+    align-items: flex-start !important;
+}
+
+/* Left column - definitions with bullet list */
+.definitions-examples-layout .definitions-col {
+    flex: 1;
+    text-align: left !important;
+}
+
+.definitions-examples-layout .definitions-col ul {
+    text-align: left !important;
+    margin: 0 !important;
+    padding-left: 1.3em !important;
+    list-style-type: disc !important;
+    list-style-position: outside !important;
+    display: block !important;
+    font-size: 1em !important;
+}
+
+.definitions-examples-layout .definitions-col ul li {
+    text-align: left !important;
+    margin-bottom: 0.5em !important;
+    display: list-item !important;
+    list-style-type: disc !important;
+}
+
+/* Right column - stacked example boxes */
+.definitions-examples-layout .examples-col {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Slides with this layout need adjusted scaling */
+section:not(.lead):not(#\31):has(.definitions-examples-layout) {
+    font-size: 24px !important;
+    padding: 18px 40px 28px 40px !important;
+}
+
+section:not(.lead):not(#\31):has(.definitions-examples-layout) > *:not(h1) {
+    font-size: 24px !important;
+}
+
+section:not(.lead):not(#\31):has(.definitions-examples-layout) > h1 {
+    font-size: 1.8em !important;
+}
+
+/* When definitions-examples-layout is present, adjust list display */
+section:not(.lead):not(#\31):has(.definitions-examples-layout) ul,
+section:not(.lead):not(#\31):has(.definitions-examples-layout) ol {
+    display: block !important;
+}
+
+/* Note-box at bottom of definitions-examples slides */
+section:not(.lead):not(#\31):has(.definitions-examples-layout) > .note-box {
+    font-size: 0.95em !important;
+    padding: 0.25em 0.5em !important;
+    margin-top: 0.25em !important;
+    width: 85% !important;
+}
+
+/* ============================================
+   FLEX CONTAINER CALLOUT BOX OVERRIDES
+   When callout boxes are inside a flex container,
+   allow them to expand to fill available space
+   ============================================ */
+
+/* Callout boxes inside flex containers should fill available space */
+[style*="display: flex"] > .callout,
+[style*="display: flex"] > .note-box,
+[style*="display: flex"] > .example-box,
+[style*="display: flex"] > .warning-box,
+[style*="display: flex"] > .tip-box,
+[style*="display: flex"] > .important-box,
+[style*="display: flex"] > .definition-box,
+[style*="display:flex"] > .callout,
+[style*="display:flex"] > .note-box,
+[style*="display:flex"] > .example-box,
+[style*="display:flex"] > .warning-box,
+[style*="display:flex"] > .tip-box,
+[style*="display:flex"] > .important-box,
+[style*="display:flex"] > .definition-box {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;  /* Allow boxes to shrink and wrap text */
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    flex: 1 1 0 !important;  /* Equal flex basis for even distribution */
+    /* Increase horizontal padding for better text breathing room */
+    padding-left: 1.2em !important;
+    padding-right: 1.2em !important;
+    overflow-wrap: break-word !important;  /* Ensure long words wrap */
+    word-wrap: break-word !important;  /* Legacy support */
+}
+
+/* ============================================
+   EMOJI FIGURES - Slime-Mold Inspired Styling
+   For creating emoji-based diagrams and figures
+   ============================================ */
+
+/* Base emoji styling - makes emojis behave as inline-blocks */
+.emoji {
+    display: inline-block;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* Emoji size classes */
+.emoji-xs {
+    font-size: 24px;
+}
+
+/* Extra small */
+.emoji-sm {
+    font-size: 48px;
+}
+
+/* Small */
+.emoji-md {
+    font-size: 72px;
+}
+
+/* Medium */
+.emoji-lg {
+    font-size: 96px;
+}
+
+/* Large */
+.emoji-xl {
+    font-size: 128px;
+}
+
+/* Extra large */
+.emoji-xxl {
+    font-size: 192px;
+}
+
+/* Hero size */
+
+/* Emoji with background - colored "pedestal" effect */
+.emoji-bg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em;
+    border-radius: 8px;
+}
+
+/* Dartmouth Tertiary Color Backgrounds */
+/* Primary brand color */
+.emoji-bg-green {
+    background-color: rgba(0, 105, 62, 0.5);
+}
+
+/* Dartmouth Green */
+
+/* Blues */
+.emoji-bg-blue {
+    background-color: rgba(38, 122, 186, 0.5);
+}
+
+/* River Blue */
+.emoji-bg-river-blue {
+    background-color: rgba(38, 122, 186, 0.5);
+}
+
+/* River Blue */
+.emoji-bg-navy {
+    background-color: rgba(0, 60, 115, 0.5);
+}
+
+/* River Navy */
+.emoji-bg-river-navy {
+    background-color: rgba(0, 60, 115, 0.5);
+}
+
+/* River Navy */
+
+/* Greens */
+.emoji-bg-spring {
+    background-color: rgba(196, 221, 136, 0.5);
+}
+
+/* Spring Green */
+.emoji-bg-spring-green {
+    background-color: rgba(196, 221, 136, 0.5);
+}
+
+/* Spring Green */
+.emoji-bg-rich-spring {
+    background-color: rgba(165, 215, 95, 0.5);
+}
+
+/* Rich Spring Green */
+.emoji-bg-forest {
+    background-color: rgba(18, 49, 43, 0.5);
+}
+
+/* Forest Green */
+
+/* Warm colors */
+.emoji-bg-yellow {
+    background-color: rgba(245, 220, 105, 0.5);
+}
+
+/* Summer Yellow */
+.emoji-bg-summer {
+    background-color: rgba(245, 220, 105, 0.5);
+}
+
+/* Summer Yellow */
+.emoji-bg-orange {
+    background-color: rgba(255, 160, 15, 0.5);
+}
+
+/* Bonfire Orange */
+.emoji-bg-bonfire {
+    background-color: rgba(255, 160, 15, 0.5);
+}
+
+/* Bonfire Orange */
+.emoji-bg-red {
+    background-color: rgba(157, 22, 46, 0.5);
+}
+
+/* Bonfire Red */
+.emoji-bg-bonfire-red {
+    background-color: rgba(157, 22, 46, 0.5);
+}
+
+/* Bonfire Red */
+.emoji-bg-tuck {
+    background-color: rgba(217, 68, 21, 0.5);
+}
+
+/* Tuck Orange */
+.emoji-bg-tuck-orange {
+    background-color: rgba(217, 68, 21, 0.5);
+}
+
+/* Tuck Orange */
+
+/* Other colors */
+.emoji-bg-violet {
+    background-color: rgba(138, 105, 150, 0.5);
+}
+
+/* Violet */
+.emoji-bg-purple {
+    background-color: rgba(138, 105, 150, 0.5);
+}
+
+/* Violet (alias) */
+.emoji-bg-brown {
+    background-color: rgba(100, 60, 32, 0.5);
+}
+
+/* Autumn Brown */
+.emoji-bg-autumn {
+    background-color: rgba(100, 60, 32, 0.5);
+}
+
+/* Autumn Brown */
+
+/* Grays */
+.emoji-bg-gray {
+    background-color: rgba(66, 65, 65, 0.5);
+}
+
+/* Granite Gray */
+.emoji-bg-granite {
+    background-color: rgba(66, 65, 65, 0.5);
+}
+
+/* Granite Gray */
+.emoji-bg-gray-light {
+    background-color: rgba(226, 226, 226, 0.5);
+}
+
+/* Gray 2 */
+.emoji-bg-gray-dark {
+    background-color: rgba(112, 112, 112, 0.5);
+}
+
+/* Gray 3 */
+
+/* Legacy alias for backwards compatibility
+   Note: "teal" maps to Rich Spring Green, not a true blue-green teal.
+   Dartmouth's palette doesn't include a teal; use 'blue' (River Blue) for blue-green tones. */
+.emoji-bg-teal {
+    background-color: rgba(165, 215, 95, 0.5);
+}
+
+/* Rich Spring Green (legacy "teal" alias) */
+
+/* CSS Arrow for flow diagrams - uses arrow.svg image */
+.flow-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 30px;
+    align-self: center;
+    background: url('images/arrow-clean.svg') no-repeat center;
+    background-size: contain;
+}
+
+/* No ::after needed - using background image */
+.flow-arrow::after {
+    content: none;
+}
+
+/* Arrow with stem - same as flow-arrow now, using SVG */
+.flow-arrow-stem {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 36px;
+    align-self: center;
+    background: url('images/arrow-clean.svg') no-repeat center;
+    background-size: contain;
+}
+
+.flow-arrow-stem::before,
+.flow-arrow-stem::after {
+    content: none;
+}
+
+/* Smaller arrow variant */
+.flow-arrow-sm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 20px;
+    align-self: center;
+    background: url('images/arrow-clean.svg') no-repeat center;
+    background-size: contain;
+}
+
+.flow-arrow-sm::after {
+    content: none;
+}
+
+/* Large arrow variant */
+.flow-arrow-lg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
+    height: 40px;
+    align-self: center;
+    background: url('images/arrow-clean.svg') no-repeat center;
+    background-size: contain;
+}
+
+.flow-arrow-lg::after {
+    content: none;
+}
+
+/* ==========================================================================
+   SVG-BASED SCALABLE ARROWS
+   Uses arrow-stem.svg + arrow-head.svg for arrows that stretch the stem
+   while keeping arrowhead size fixed.
+
+   Usage in markdown:
+     <span class="svg-arrow" style="--arrow-width: 100px;"></span>
+     <span class="svg-arrow svg-arrow-80"></span>
+     <span class="svg-arrow svg-arrow-120"></span>
+   ========================================================================== */
+
+/* Base scalable SVG arrow - uses CSS custom property for width */
+.svg-arrow {
+    --arrow-width: 100px;
+    /* Total arrow width - customizable */
+    --arrow-head-width: 24px;
+    /* Fixed arrowhead width */
+    --arrow-height: 34px;
+    /* Arrow height (matches arrowhead SVG) */
+    --arrow-stem-height: 10px;
+    /* Stem thickness */
+
+    display: inline-flex;
+    align-items: center;
+    width: var(--arrow-width);
+    height: var(--arrow-height);
+    position: relative;
+    align-self: center;
+    flex-shrink: 0;
+}
+
+/* Arrow image using the provided arrow.svg design */
+.svg-arrow::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: url('images/arrow-clean.svg') no-repeat center;
+    background-size: contain;
+}
+
+/* No ::after needed - single image arrow */
+.svg-arrow::after {
+    content: none;
+}
+
+/* Preset width variants */
+.svg-arrow-40 {
+    --arrow-width: 55px;
+    --arrow-height: 24px;
+    --arrow-head-width: 16px;
+    --arrow-stem-height: 6px;
+}
+
+.svg-arrow-60 {
+    --arrow-width: 75px;
+    --arrow-height: 28px;
+    --arrow-head-width: 19px;
+    --arrow-stem-height: 7px;
+}
+
+.svg-arrow-80 {
+    --arrow-width: 100px;
+    --arrow-height: 34px;
+}
+
+.svg-arrow-100 {
+    --arrow-width: 120px;
+    --arrow-height: 38px;
+}
+
+.svg-arrow-120 {
+    --arrow-width: 140px;
+    --arrow-height: 42px;
+}
+
+.svg-arrow-150 {
+    --arrow-width: 170px;
+    --arrow-height: 46px;
+}
+
+.svg-arrow-200 {
+    --arrow-width: 220px;
+    --arrow-height: 52px;
+}
+
+/* Small variant - proportionally smaller */
+.svg-arrow-sm {
+    --arrow-width: 65px;
+    --arrow-head-width: 17px;
+    --arrow-height: 26px;
+    --arrow-stem-height: 7px;
+}
+
+/* Medium variant (default sizing) */
+.svg-arrow-md {
+    --arrow-width: 100px;
+    --arrow-head-width: 24px;
+    --arrow-height: 34px;
+    --arrow-stem-height: 10px;
+}
+
+/* Large variant - proportionally larger */
+.svg-arrow-lg {
+    --arrow-width: 130px;
+    --arrow-head-width: 30px;
+    --arrow-height: 42px;
+    --arrow-stem-height: 12px;
+}
+
+/* Extra large variant */
+.svg-arrow-xl {
+    --arrow-width: 180px;
+    --arrow-head-width: 38px;
+    --arrow-height: 52px;
+    --arrow-stem-height: 15px;
+}
+
+/* Vertical arrows - rotated versions */
+.svg-arrow-down {
+    transform: rotate(90deg);
+}
+
+.svg-arrow-up {
+    transform: rotate(-90deg);
+}
+
+.svg-arrow-left {
+    transform: rotate(180deg);
+}
+
+/* Color variants using CSS filters */
+.svg-arrow-gray::before,
+.svg-arrow-gray::after {
+    filter: grayscale(100%) brightness(0.7);
+}
+
+.svg-arrow-light::before,
+.svg-arrow-light::after {
+    filter: brightness(1.3) saturate(0.8);
+}
+
+/* Grayscale effect for "inactive" emojis */
+.emoji-gray,
+.emoji-inactive {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+    opacity: 0.7;
+}
+
+.emoji-faded {
+    -webkit-filter: grayscale(50%);
+    filter: grayscale(50%);
+    opacity: 0.8;
+}
+
+/* Emoji figure container - for grouping emojis into diagrams */
+.emoji-figure {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    /* Align to top - arrows use margin-top for centering */
+    gap: 1em;
+    margin: 1em auto;
+}
+
+/* Arrows in emoji-figure - calculate margin-top to center on emoji-bg
+   emoji-xl (128px) + emoji-bg padding (0.3em * 2 = ~77px) = ~205px total
+   Arrow should be at center: (205px / 2) - (arrow-height / 2)
+   For flow-arrow-lg (40px): 102.5 - 20 = ~82px */
+.emoji-figure>.flow-arrow,
+.emoji-figure>.flow-arrow-sm,
+.emoji-figure>.flow-arrow-lg,
+.emoji-figure>.svg-arrow {
+    align-self: flex-start;
+}
+
+.emoji-figure>.flow-arrow {
+    margin-top: 87px;
+    /* (205 - 30) / 2 for 30px arrow */
+}
+
+.emoji-figure>.flow-arrow-sm {
+    margin-top: 92px;
+    /* (205 - 20) / 2 for 20px arrow */
+}
+
+.emoji-figure>.flow-arrow-lg {
+    margin-top: 82px;
+    /* (205 - 40) / 2 for 40px arrow */
+}
+
+.emoji-figure>.svg-arrow {
+    margin-top: 85px;
+    /* (205 - 34) / 2 for ~34px default arrow */
+}
+
+/* Row layout for emoji figures */
+.emoji-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    /* Align to top - arrows use margin-top for centering */
+    gap: 2em;
+}
+
+/* Arrows in emoji-row - calculate margin-top to center on emoji-bg
+   emoji-xl (128px) + emoji-bg padding (0.3em * 2 = ~77px) = ~205px total
+   Arrow should be at center: (205px / 2) - (arrow-height / 2)
+   For flow-arrow-lg (40px): 102.5 - 20 = ~82px */
+.emoji-row>.flow-arrow,
+.emoji-row>.flow-arrow-sm,
+.emoji-row>.flow-arrow-lg,
+.emoji-row>.svg-arrow {
+    align-self: flex-start;
+}
+
+.emoji-row>.flow-arrow {
+    margin-top: 87px;
+    /* (205 - 30) / 2 for 30px arrow */
+}
+
+.emoji-row>.flow-arrow-sm {
+    margin-top: 92px;
+    /* (205 - 20) / 2 for 20px arrow */
+}
+
+.emoji-row>.flow-arrow-lg {
+    margin-top: 82px;
+    /* (205 - 40) / 2 for 40px arrow */
+}
+
+.emoji-row>.svg-arrow {
+    margin-top: 85px;
+    /* (205 - 34) / 2 for ~34px default arrow */
+}
+
+/* Column layout for emoji figures */
+.emoji-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2em;
+    /* Reduced from 0.5em for tighter label spacing */
+}
+
+.emoji-col .label {
+    font-size: 0.6em;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Grid layout for emoji figures */
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 1em;
+    justify-items: center;
+    align-items: center;
+}
+
+/* Emoji with label underneath */
+.emoji-labeled {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15em;
+    /* Reduced from 0.3em for tighter label spacing */
+}
+
+.emoji-labeled .label {
+    font-size: 0.6em;
+    text-align: center;
+    max-width: 200px;
+    white-space: nowrap;
+}
+
+/* Hierarchy/tree structure */
+.emoji-hierarchy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+}
+
+/* Parent node in hierarchy - add vertical stem going down */
+.emoji-hierarchy>.emoji-col {
+    position: relative;
+}
+
+/* Vertical line from parent to horizontal connector - starts below label, ends at horizontal line */
+.emoji-hierarchy>.emoji-col::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    /* Start at the bottom of the emoji-col (below the label) */
+    left: 50%;
+    width: 4px;
+    height: calc(2em - 21px);
+    /* Gap (2em) minus 25px above children + 4px overlap with horizontal line */
+    background-color: #0a2518;
+    transform: translateX(-50%);
+}
+
+.emoji-hierarchy-row {
+    display: flex;
+    justify-content: center;
+    gap: 3em;
+    position: relative;
+}
+
+/* Horizontal line connector for hierarchy - spans full width of children */
+.emoji-hierarchy-row.with-connector::before {
+    content: '';
+    position: absolute;
+    top: -25px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: #0a2518;
+}
+
+/* Remove the center vertical connector - parent handles this now */
+.emoji-hierarchy-row.with-connector::after {
+    content: none;
+}
+
+/* Each child in the hierarchy row gets a vertical drop line */
+.emoji-hierarchy-row.with-connector>.emoji-col {
+    position: relative;
+}
+
+.emoji-hierarchy-row.with-connector>.emoji-col::before {
+    content: '';
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    width: 4px;
+    height: 25px;
+    background-color: #0a2518;
+    transform: translateX(-50%);
+}
+
+/* ============================================
+   DIAGRAM AND CHART STYLING
+   ============================================ */
+
+/* Kroki/Mermaid diagram containers */
+.diagram-container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0.5em auto 0.1em auto !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    padding: 0 40px !important;
+}
+
+.diagram-container img {
+    max-width: 100% !important;
+    max-height: 60vh !important;
+    object-fit: contain !important;
+}
+
+/* Inline SVGs within diagram containers - constrain to Marp slide dimensions */
+/* Uses fixed max-width to prevent upscaling in HTML (PDF renders at 1280px base) */
+/* This ensures figure appearance matches between HTML and PDF versions */
+.diagram-container>svg {
+    max-width: 1200px !important;  /* Marp slide width (1280px) minus padding */
+    max-height: 60vh !important;
+    height: auto !important;
+    width: auto !important;
+    flex-shrink: 1 !important;
+}
+
+/* Chart.js canvas containers */
+.chart-container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 85% !important;
+    height: 65vh !important;
+    max-height: 65vh !important;
+    margin: 0.3em auto !important;
+}
+
+.chart-container canvas {
+    max-width: 100% !important;
+    max-height: 100% !important;
+}
+
+/* Caption styling for diagrams and charts */
+.diagram-caption {
+    text-align: center !important;
+    font-size: 0.7em !important;
+    font-style: normal !important;
+    color: rgba(10, 37, 24, 0.8) !important;
+    /* Small positive margin to separate caption from diagram above */
+    margin-top: 0.5em !important;
+    /* Adequate space below caption to separate from following content */
+    margin-bottom: 0.5em !important;
+    /* Ensure tight line-height doesn't add extra space */
+    line-height: 1.2 !important;
+}
+
+.chart-caption {
+    text-align: center !important;
+    font-size: 0.7em !important;
+    font-style: normal !important;
+    color: rgba(10, 37, 24, 0.8) !important;
+    margin-top: 0.3em !important;
+}
+
+/* ============================================
+   COURSE INFORMATION SLIDE STYLING
+   Special styling for course info slides with emoji columns
+   ============================================ */
+
+/* Tighter spacing between emoji label and text underneath */
+.emoji-col.tight-labels {
+    gap: 0.1em;
+}
+
+/* Course info note box - increased top margin for spacing from emoji row */
+.note-box.course-info-notes {
+    margin-top: 1.2em !important;
+}
+
+/* ============================================
+   INSTRUCTOR SLIDE STYLING
+   Compact layouts for dense content slides
+   ============================================ */
+
+/* Small logo sizing for inline display */
+.logo-xs {
+    height: 20px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.logo-sm {
+    height: 28px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.logo-md {
+    height: 40px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.logo-lg {
+    height: 56px;
+    width: auto;
+    vertical-align: middle;
+}
+
+/* Logo row - horizontal inline logos with spacing */
+.logo-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8em;
+    margin: 0.3em 0;
+}
+
+.logo-row img {
+    height: 40px !important;
+    width: auto !important;
+    max-width: 100px !important;
+    object-fit: contain !important;
+}
+
+.logo-row.logo-row-sm img {
+    height: 32px !important;
+    max-width: 85px !important;
+}
+
+.logo-row.logo-row-md img {
+    height: 48px !important;
+    max-width: 110px !important;
+}
+
+.logo-row.logo-row-lg img {
+    height: 56px !important;
+    max-width: 130px !important;
+}
+
+/* Override instructor-grid scaling for logo rows */
+.instructor-grid .logo-row img {
+    height: 40px !important;
+    max-width: 100px !important;
+}
+
+.instructor-grid .logo-row.logo-row-sm img {
+    height: 32px !important;
+    max-width: 85px !important;
+}
+
+.instructor-grid .logo-row.logo-row-md img {
+    height: 48px !important;
+    max-width: 110px !important;
+}
+
+.instructor-grid .logo-row.logo-row-lg img {
+    height: 56px !important;
+    max-width: 130px !important;
+}
+
+/* Compact section - tighter spacing */
+.compact-section {
+    margin: 0.15em 0 !important;
+    line-height: 1.2 !important;
+}
+
+.compact-section p {
+    margin: 0.1em 0 !important;
+}
+
+/* Instructor grid - 2 column layout for instructor info */
+.instructor-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5em 1.2em !important;
+    width: 96% !important;
+    margin: 0.2em auto !important;
+    font-size: 0.5em !important;
+    line-height: 1.2 !important;
+}
+
+/* Ensure images in instructor grid are not scaled by font-size */
+.instructor-grid img {
+    font-size: initial !important;
+}
+
+.instructor-grid>div {
+    padding: 0.3em 0;
+}
+
+/* Instructor section headers */
+.instructor-grid h4 {
+    font-size: 1em !important;
+    font-weight: 600 !important;
+    margin: 0 0 0.2em 0 !important;
+    color: var(--dartmouth-green, #00693e);
+    border-bottom: 2px solid var(--dartmouth-green, #00693e);
+    padding-bottom: 0.15em;
+}
+
+/* Info box with custom title support */
+.info-box {
+    display: block !important;
+    border-radius: 5px;
+    padding: 0.3em 0.5em;
+    margin: 0.15em 0 !important;
+    text-align: left !important;
+    font-size: 0.95em;
+    line-height: 1.2;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    background-color: rgba(38, 122, 186, 0.10);
+    border-left: 3px solid var(--river-blue, #267aba);
+}
+
+.info-box[data-title]::before {
+    content: attr(data-title);
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.1em;
+    font-size: 0.8em;
+    color: var(--river-navy, #003c73);
+}
+
+/* Emoji inline - small emojis for inline use */
+.emoji-inline {
+    font-size: 1.1em;
+    vertical-align: middle;
+    margin-right: 0.2em;
+}
+
+/* Compact bullet list */
+.compact-list {
+    margin: 0.1em 0 !important;
+    padding-left: 1.2em !important;
+    line-height: 1.2 !important;
+}
+
+.compact-list li {
+    margin: 0.05em 0 !important;
+}
+
+/* Section with icon header */
+.icon-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4em;
+}
+
+.icon-section .section-icon {
+    font-size: 1.4em;
+    flex-shrink: 0;
+}
+
+.icon-section .section-content {
+    flex: 1;
+}
+
+/* Training timeline - compact horizontal */
+.training-timeline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.3em;
+    flex-wrap: wrap;
+}
+
+.training-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    min-width: 60px;
+}
+
+.training-item img {
+    height: 32px;
+    width: auto;
+    max-width: 55px;
+    margin-bottom: 0.15em;
+    object-fit: contain;
+}
+
+.training-item .training-degree {
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.training-item .training-field {
+    font-size: 0.75em;
+    color: #555;
+}
+
+/* Quote block for core question */
+.core-question {
+    font-style: italic;
+    text-align: center;
+    padding: 0.4em 0.8em;
+    margin: 0.3em auto !important;
+    background-color: rgba(0, 105, 62, 0.08);
+    border-radius: 6px;
+    border-left: 4px solid var(--dartmouth-green, #00693e);
+    font-size: 0.95em;
+    width: 90%;
+}
+
+/* Approaches/methods tags */
+.approach-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    justify-content: center;
+    margin: 0.2em 0;
+}
+
+.approach-tag {
+    display: inline-block;
+    padding: 0.15em 0.5em;
+    background-color: rgba(0, 105, 62, 0.12);
+    border-radius: 12px;
+    font-size: 0.85em;
+    color: var(--dartmouth-green, #00693e);
+    font-weight: 500;
+}
+
+/* Disable vertical centering for instructor slides */
+section:not(.lead):not(#\31):has(.instructor-grid) {
+    justify-content: flex-start !important;
+    padding: 15px 35px 25px 35px !important;
+}
+
+section:not(.lead):not(#\31):has(.instructor-grid)>h1 {
+    margin-bottom: 0.15em !important;
+    padding-top: 8px !important;
+    min-height: 1.2em !important;
+}
+
+section:not(.lead):not(#\31):has(.instructor-grid)>*:not(h1):first-of-type {
+    margin-top: 0.2em !important;
+}
+
+section:not(.lead):not(#\31):has(.instructor-grid)>*:not(h1):last-of-type {
+    margin-bottom: 0 !important;
+}
+
+/* ============================================
+   REFRESHED INSTRUCTOR SLIDE LAYOUT (2025)
+   Dense single-slide layout for "About the instructor"
+   ============================================ */
+
+/* Wrapper for the entire fused slide content */
+.instructor-container {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    height: 100%;
+    gap: 0.1em;
+    /* Minimal gap between header and content - Round 4 Tightening */
+    font-size: 0.8em;
+    /* Reduced base font size */
+}
+
+/* Helper to force left alignment in the container */
+.instructor-container * {
+    text-align: left !important;
+}
+
+/* Top header section */
+.instructor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    /* Align bottom to match text baselines */
+    border-bottom: 2px solid rgba(0, 105, 62, 0.2);
+    padding-bottom: 0.1em;
+    /* Minimal padding */
+    margin-bottom: 0.1em;
+}
+
+.instructor-header-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.instructor-header-left h3 {
+    margin: 0;
+    color: var(--dartmouth-green);
+    /* Matches slide title color */
+    font-size: 1.4em;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+/* Info bar with inline logo support */
+.instructor-header-left p {
+    margin: 0;
+    font-size: 1.05em;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    /* Vertically align text with logo */
+    gap: 0.3em;
+}
+
+.instructor-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Right-align the container */
+    gap: 0;
+}
+
+.header-link-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+/* Generic Header Icon Class */
+.header-icon {
+    height: 1em;
+    /* Matches text height roughly */
+    width: auto;
+    object-fit: contain;
+}
+
+.header-link {
+    font-size: 0.95em;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1px dotted transparent;
+    transition: border-color 0.2s;
+}
+
+.header-link:hover {
+    border-bottom-color: var(--dartmouth-green);
+}
+
+/* Main Content Grid */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2em;
+    flex-grow: 0;
+    /* Disable grow to allow margin centering */
+    height: auto;
+    /* content-defined height */
+    margin: auto 0;
+    /* Center vertically */
+    align-items: stretch;
+    /* Force columns to be equal height */
+    transform: translateY(20px);
+    /* Shift down for optical centering per user request */
+}
+
+/* ... existing code ... */
+
+/* Logo grid fix - UPDATED to match tighter spacing */
+section:not(.lead):not(#\31) .instructor-container .logo-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0.3em !important;
+    /* Enforce tighter gap override */
+}
+
+/* Column Wrapper */
+.col-flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Align tops and bottoms */
+    height: 100%;
+    /* Fill the grid cell */
+    gap: 0.8em;
+    width: 100%;
+}
+
+/* Styled Generic Box */
+.info-box-styled {
+    background-color: rgba(0, 105, 62, 0.03);
+    border: 1px solid rgba(0, 105, 62, 0.15);
+    border-radius: 6px;
+    padding: 0.4em;
+    /* Reduced padding */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    display: block !important;
+    text-align: left !important;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Target Left Column cards to stretch */
+.col-flex:first-child .info-box-styled {
+    flex: 1;
+    /* Stretch to fill column */
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    /* Center content vertically if stretched? */
+}
+
+/* Target Right Column cards to NOT stretch (be compact) but push apart */
+.col-flex:last-child .info-box-styled {
+    flex: 0 0 auto;
+    /* Do not stretch */
+}
+
+/* ... headers ... */
+
+/* Tighter Training Grid */
+.training-grid {
+    display: grid;
+    grid-template-columns: 45px 1fr;
+    gap: 0.5em;
+    row-gap: 0.1em;
+    /* Drastically reduced */
+    align-items: center;
+}
+
+/* ... */
+
+/* Tighter Logo Grids */
+.logo-grid,
+.funding-logo-grid {
+    gap: 0.3em;
+    /* Reduced */
+}
+
+.combined-card-spacer {
+    height: 0.2em;
+    /* Reduced */
+}
+
+.info-box-styled h4 {
+    margin: 0 0 0.2em 0;
+    color: var(--dartmouth-green);
+    font-size: 1.05em;
+    border-bottom: 1px solid rgba(0, 105, 62, 0.1);
+    padding-bottom: 0.1em;
+    font-weight: 600;
+    text-align: left !important;
+    /* Ensure headers are left-aligned */
+    display: block !important;
+}
+
+/* Standard Paragraph Content */
+.info-box-styled p {
+    margin: 0;
+    padding: 0;
+    line-height: 1.25;
+    /* Tighter line height */
+    color: var(--text-primary);
+    text-align: left !important;
+    /* STRICT LEFT ALIGNMENT */
+    display: block !important;
+    /* Ensure it behaves like a block for text alignment */
+    font-size: 0.95em;
+    width: 100%;
+    /* force fill breadth */
+}
+
+/* Research Areas & Approach List */
+.research-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.research-list li {
+    margin-bottom: 0.5em;
+    /* Improved whitespace */
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    line-height: 1.4;
+}
+
+.research-list li .emoji-inline {
+    font-size: 1.1em;
+    width: 1.2em;
+    /* Fixed width for alignment */
+    text-align: center;
+}
+
+/* Training Grid Layout */
+.training-grid {
+    display: grid;
+    grid-template-columns: 45px 1fr;
+    /* Narrower logo col */
+    gap: 0.5em;
+    row-gap: 0.1em;
+    /* Decreased further */
+    align-items: center;
+}
+
+.training-logo-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 1.6em;
+    /* Reduced height */
+}
+
+.training-logo {
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
+.training-text {
+    font-size: 0.9em;
+    color: var(--text-primary);
+    line-height: 1.1;
+    /* Tighter line height for text */
+    text-align: left !important;
+}
+
+/* Collaboration Logos */
+.logo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6em;
+    /* Tighter gap */
+    align-items: center;
+    justify-items: center;
+    padding-top: 0.1em;
+}
+
+.logo-grid img {
+    max-height: 40px;
+    /* Increased from 24px */
+    width: auto;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+
+.logo-grid img:hover {
+    opacity: 1;
+}
+
+/* Funding Logo Grid */
+.funding-logo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* Changed to 4 columns for Brainfit */
+    gap: 0.8em;
+    /* Tighter gap */
+    align-items: center;
+    justify-items: center;
+    padding-top: 0.1em;
+}
+
+.funding-logo-grid img {
+    max-height: 42px;
+    /* Increased from 26px */
+    width: auto;
+    max-width: 100%;
+}
+
+/* Strict Padding Override & Title Compactness */
+section:not(.lead):not(#\31):has(.instructor-container) {
+    justify-content: flex-start !important;
+    padding: 10px 40px 5px 40px !important;
+    overflow: hidden;
+}
+
+section:not(.lead):not(#\31):has(.instructor-container)>h1,
+section h1,
+.marp-h1 {
+    margin-bottom: 0 !important;
+    font-size: 1.5em !important;
+    min-height: auto !important;
+    padding-top: 0 !important;
+    color: #001c12 !important;
+    /* Ensure Title uses standard green */
+}
+
+/* Ensure Name Matches Title Exactly */
+.instructor-header-left h3 {
+    margin: 0;
+    color: var(--dartmouth-green) !important;
+    /* MATCH Title Color Exact Variable */
+    font-size: 1.4em;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+/* Spacing for combined Funding & Collaborators card */
+.combined-card-spacer {
+    height: 0.6em;
+    /* Reduced spacing */
+}
+
+/* EXACT BOTTOM ALIGNMENT LOGIC */
+.col-flex>.info-box-styled:last-child {
+    margin-bottom: 0;
+    /* Ensure the last card sits at the bottom of the flex container */
+    flex-grow: 1;
+    /* Allow last card to expand slightly if needed to flush bottom */
+    display: flex !important;
+    /* Flex to allow content alignment if grown */
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* ============================================
+   INSTRUCTOR SLIDE OVERRIDES
+   High-specificity rules to battle Marp defaults
+   ============================================ */
+
+/* Force font sizing relative to the container for ALL children */
+section:not(.lead):not(#\31) .instructor-container {
+    font-size: 22px !important;
+}
+
+section:not(.lead):not(#\31) .instructor-container p,
+section:not(.lead):not(#\31) .instructor-container ul,
+section:not(.lead):not(#\31) .instructor-container ol,
+section:not(.lead):not(#\31) .instructor-container li,
+section:not(.lead):not(#\31) .instructor-container div {
+    font-size: 1em !important;
+    line-height: 1.3 !important;
+    margin-top: 0.2em !important;
+    margin-bottom: 0.2em !important;
+}
+
+/* Header specific sizing */
+section:not(.lead):not(#\31) .instructor-container .instructor-header h3 {
+    font-size: 1.6em !important;
+    margin-bottom: 0.1em !important;
+}
+
+section:not(.lead):not(#\31) .instructor-container .instructor-header p {
+    font-size: 1.1em !important;
+    color: #555 !important;
+}
+
+/* Box titles */
+section:not(.lead):not(#\31) .instructor-container h4 {
+    font-size: 1.1em !important;
+    margin-bottom: 0.3em !important;
+}
+
+/* Research list specific fix */
+section:not(.lead):not(#\31) .instructor-container .research-list li {
+    font-size: 0.95em !important;
+    margin: 0.2em 0 !important;
+}
+
+/* Logo grid fix */
+section:not(.lead):not(#\31) .instructor-container .logo-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 1em !important;
+}
+
+/* ============================================
+   COMPILE-TIME CONTENT SCALING CLASSES
+   Use these classes on slides that need scaling to ensure
+   consistent rendering between HTML and PDF outputs.
+
+   These classes set --content-scale at compile-time (CSS)
+   instead of runtime (JavaScript), ensuring PDF/HTML parity.
+   ============================================ */
+
+/* Scale 90% - slight reduction for content that almost fits */
+section.scale-90 {
+    --content-scale: 0.9;
+}
+
+section.scale-90 > h1 {
+    font-size: calc(1.72em * 0.9) !important;
+    margin-top: 0 !important;
+    margin-bottom: calc(15px * 0.9) !important;
+}
+
+section.scale-90 > *:not(h1) {
+    font-size: calc(35px * 0.9) !important;
+}
+
+section.scale-90 > div[style*="flex"] {
+    gap: calc(2em * 0.9) !important;
+}
+
+section.scale-90 .note-box,
+section.scale-90 .warning-box,
+section.scale-90 .tip-box,
+section.scale-90 .example-box,
+section.scale-90 .definition-box,
+section.scale-90 .important-box {
+    font-size: calc(35px * 0.65 * 0.9) !important;
+    padding: calc(10px * 0.9) calc(16px * 0.9) calc(12px * 0.9) !important;
+}
+
+section.scale-90 pre {
+    font-size: calc(22pt * 0.9) !important;
+}
+
+/* Scale 80% - moderate reduction for dense content */
+section.scale-80 {
+    --content-scale: 0.8;
+}
+
+section.scale-80 > h1 {
+    font-size: calc(1.72em * 0.8) !important;
+    margin-top: 0 !important;
+    margin-bottom: calc(15px * 0.8) !important;
+}
+
+section.scale-80 > *:not(h1) {
+    font-size: calc(35px * 0.8) !important;
+}
+
+section.scale-80 > div[style*="flex"] {
+    gap: calc(2em * 0.8) !important;
+}
+
+section.scale-80 .note-box,
+section.scale-80 .warning-box,
+section.scale-80 .tip-box,
+section.scale-80 .example-box,
+section.scale-80 .definition-box,
+section.scale-80 .important-box {
+    font-size: calc(35px * 0.65 * 0.8) !important;
+    padding: calc(10px * 0.8) calc(16px * 0.8) calc(12px * 0.8) !important;
+}
+
+section.scale-80 pre {
+    font-size: calc(22pt * 0.8) !important;
+}
+
+/* Scale 78% - matches autoscale.js typical scaling for two-column dense content */
+section.scale-78 {
+    --content-scale: 0.78;
+}
+
+section.scale-78 > h1 {
+    font-size: calc(1.72em * 0.78) !important;
+    margin-top: 0 !important;
+    margin-bottom: calc(15px * 0.78) !important;
+}
+
+section.scale-78 > *:not(h1) {
+    font-size: calc(35px * 0.78) !important;
+}
+
+section.scale-78 > div[style*="flex"] {
+    gap: calc(2em * 0.78) !important;
+}
+
+section.scale-78 .note-box,
+section.scale-78 .warning-box,
+section.scale-78 .tip-box,
+section.scale-78 .example-box,
+section.scale-78 .definition-box,
+section.scale-78 .important-box {
+    font-size: calc(35px * 0.65 * 0.78) !important;
+    padding: calc(10px * 0.78) calc(16px * 0.78) calc(12px * 0.78) !important;
+}
+
+section.scale-78 pre {
+    font-size: calc(22pt * 0.78) !important;
+}
+
+/* Scale 70% - significant reduction for very dense content */
+section.scale-70 {
+    --content-scale: 0.7;
+}
+
+section.scale-70 > h1 {
+    font-size: calc(1.72em * 0.7) !important;
+    margin-top: 0 !important;
+    margin-bottom: calc(15px * 0.7) !important;
+}
+
+section.scale-70 > *:not(h1) {
+    font-size: calc(35px * 0.7) !important;
+}
+
+section.scale-70 > div[style*="flex"] {
+    gap: calc(2em * 0.7) !important;
+}
+
+section.scale-70 .note-box,
+section.scale-70 .warning-box,
+section.scale-70 .tip-box,
+section.scale-70 .example-box,
+section.scale-70 .definition-box,
+section.scale-70 .important-box {
+    font-size: calc(35px * 0.65 * 0.7) !important;
+    padding: calc(10px * 0.7) calc(16px * 0.7) calc(12px * 0.7) !important;
+}
+
+section.scale-70 pre {
+    font-size: calc(22pt * 0.7) !important;
+}
+
+/* ============================================
+   RUNTIME UNIFORM SCALING VIA CSS VARIABLE
+   Used by autoscale.js for aspect-ratio-based layout
+   All elements scale by exactly the same factor
+   ============================================ */
+
+/* Apply scale to all non-title content uniformly */
+section[style*="--slide-scale"] > *:not(h1) {
+    font-size: calc(35px * var(--slide-scale)) !important;
+    margin-top: calc(0.5em * var(--slide-scale)) !important;
+    margin-bottom: calc(0.5em * var(--slide-scale)) !important;
+}
+
+/* Flex container gaps scale with content
+   Use a smaller base gap (1em) for more compact layouts */
+section[style*="--slide-scale"] > div[style*="flex"] {
+    gap: calc(1em * var(--slide-scale)) !important;
+}
+
+/* Callout boxes scale uniformly - preserve 0.65x ratio to body text */
+section[style*="--slide-scale"] .note-box,
+section[style*="--slide-scale"] .warning-box,
+section[style*="--slide-scale"] .tip-box,
+section[style*="--slide-scale"] .example-box,
+section[style*="--slide-scale"] .definition-box,
+section[style*="--slide-scale"] .important-box {
+    font-size: calc(35px * 0.65 * var(--slide-scale)) !important;
+    padding: calc(10px * var(--slide-scale))
+             calc(16px * var(--slide-scale))
+             calc(12px * var(--slide-scale)) !important;
+}
+
+/* Code blocks scale uniformly */
+section[style*="--slide-scale"] pre {
+    font-size: calc(22pt * var(--slide-scale)) !important;
+}
+
+/* Tables scale uniformly - preserve 0.7x ratio to body text */
+section[style*="--slide-scale"] table {
+    font-size: calc(35px * 0.7 * var(--slide-scale)) !important;
+}
+
+/* RIGID ELEMENTS: Images MUST preserve aspect ratio
+   Use transform to scale both dimensions uniformly */
+section[style*="--slide-scale"] img {
+    transform: scale(var(--slide-scale));
+    transform-origin: top left;
+    /* Don't use max-width - it could change aspect ratio */
+}
+
+/* RIGID ELEMENTS: Diagram/chart containers also preserve aspect ratio */
+section[style*="--slide-scale"] .diagram-container,
+section[style*="--slide-scale"] .chart-container {
+    transform: scale(var(--slide-scale));
+    transform-origin: top left;
+}
+
+/* ============================================
+   MIXED FLEX CONTAINER SCALING OVERRIDES
+   When a flex container has both rigid (image) and flexible (callout) children,
+   the flexible children should NOT be scaled down just because the image is large.
+   The .flex-child-no-scale class is added by autoscale.js to exempt these elements.
+   ============================================ */
+
+/* Callout boxes with flex-child-no-scale should use natural sizing */
+section[style*="--slide-scale"] .flex-child-no-scale.note-box,
+section[style*="--slide-scale"] .flex-child-no-scale.warning-box,
+section[style*="--slide-scale"] .flex-child-no-scale.tip-box,
+section[style*="--slide-scale"] .flex-child-no-scale.example-box,
+section[style*="--slide-scale"] .flex-child-no-scale.definition-box,
+section[style*="--slide-scale"] .flex-child-no-scale.important-box {
+    /* Use natural callout box font size (0.65x of base 35px = ~22.75px) */
+    font-size: calc(35px * 0.65) !important;
+    /* Use natural padding */
+    padding: 10px 16px 12px !important;
+}
+
+/* Generic flex children with no-scale class */
+section[style*="--slide-scale"] .flex-child-no-scale {
+    /* Override any inherited scaling */
+    font-size: 35px !important;
+}
+
+/* Lists inside no-scale callouts should also be natural size */
+section[style*="--slide-scale"] .flex-child-no-scale ul,
+section[style*="--slide-scale"] .flex-child-no-scale ol,
+section[style*="--slide-scale"] .flex-child-no-scale p {
+    font-size: 1em !important;
+}
+
+/* Code inside no-scale callouts */
+section[style*="--slide-scale"] .flex-child-no-scale code {
+    font-size: 0.9em !important;
+}
+
+/* ============================================
+   CONTENT WIDTH CONSTRAINTS
+   Reduce max line length for readability
+   ============================================ */
+
+/* Constrain paragraph and list width for better readability */
+section > p,
+section > ul,
+section > ol {
+    max-width: 85%;
+}
+
+/* Constrain callout boxes width for consistency */
+section > .note-box,
+section > .warning-box,
+section > .tip-box,
+section > .example-box,
+section > .definition-box,
+section > .important-box {
+    max-width: 90%;
+}
+
+/* ============================================
+   DIAGRAM CAPTION WIDTH CONSTRAINT
+   Caption should not exceed diagram width by more than 2%
+   ============================================ */
+
+/* Container for diagram + caption to maintain width relationship */
+.diagram-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: auto;
+}
+
+.diagram-container .diagram-caption {
+    max-width: 102%;  /* Allow at most 2% overhang */
+}
+
+/* For standalone captions after flow diagrams (auto-generated by process_markdown.py) */
+.diagram-caption {
+    max-width: 90%;  /* Constrain standalone captions */
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -237,7 +237,7 @@ An interactive journey through 60 years of conversational AI development, from E
 - Initial model loading time in browser
 
 **What Makes This Demo Special:**
-This demo runs **real neural models** (BlenderBot 90M, DistilGPT2 82M) directly in your browser using Transformers.js. You'll experience genuine neural behavior - not simulations - allowing you to see the clear evolution from rule-based to learned conversation.
+This demo runs **real neural models** (BlenderBot 90M, LaMini-GPT 124M) directly in your browser using Transformers.js. You'll experience genuine neural behavior - not simulations - allowing you to see the clear evolution from rule-based to learned conversation.
 
 ## Historical Timeline
 
@@ -263,7 +263,7 @@ This demo runs **real neural models** (BlenderBot 90M, DistilGPT2 82M) directly 
 - **PARRY**: State machine with emotional variables
 - **A.L.I.C.E.**: ~40,000 AIML patterns
 - **BlenderBot Small**: 90 million parameters (real neural model)
-- **DistilGPT2**: 82 million parameters (real neural model)
+- **LaMini-GPT**: 124 million parameters (real neural model)
 - **GPT-3**: 175 billion parameters (comparison reference)
 
 ### Architectural Progression
@@ -315,7 +315,7 @@ This demo runs **real neural models** (BlenderBot 90M, DistilGPT2 82M) directly 
 │   ├── parry.js           # PARRY implementation
 │   ├── alice.js           # A.L.I.C.E. implementation
 │   ├── seq2seq-bot.js     # Real BlenderBot neural model
-│   ├── gpt-bot.js         # DistilGPT2 interface
+│   ├── gpt-bot.js         # LaMini-GPT interface
 │   └── timeline-app.js    # Main application
 └── README.md              # This file
 ```
@@ -340,8 +340,8 @@ AIML-inspired pattern matching with improved context handling over ELIZA.
 - Loads and runs entirely in your browser (may take 30-60 seconds initially)
 - Fallback to DialoGPT-small if BlenderBot fails to load
 
-### GPT / DistilGPT2
-Uses Transformers.js with DistilGPT-2 (82M parameters) for actual neural text generation in the browser. Demonstrates modern transformer capabilities.
+### GPT / LaMini-GPT
+Uses Transformers.js with LaMini-GPT-124M (124M parameters) for actual neural text generation in the browser. Demonstrates modern transformer capabilities (instruction tuned).
 
 ## Extensions
 
