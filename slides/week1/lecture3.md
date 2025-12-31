@@ -90,7 +90,7 @@ def apply_pre_subs(text, subs):
     return text
 ```
 
-<div class="note-box">
+<div class="note-box" data-title="Why pre-substitutions?">
 
 Users type in many ways. Normalize first, then match patterns.
 
@@ -357,6 +357,7 @@ A complete ELIZA implementation that:
 ---
 
 # Assignment structure
+<!-- _class: scale-70 -->
 
 | Part | Weight | Description |
 |------|--------|-------------|
@@ -366,7 +367,7 @@ A complete ELIZA implementation that:
 | Reflection | 10% | 500-1000 word essay |
 | Presentation | 5% | Clean, organized notebook |
 
-<div class="tip-box">
+<div class="tip-box" data-title="Submission">
 
 Submit as a Google Colaboratory notebook. Make sure it runs without errors!
 
@@ -414,7 +415,7 @@ Excellent visualization and testing tool.
 
 </div>
 
-<div class="tip-box">
+<div class="tip-box" data-title="Verify your work">
 
 Test with the same inputs as online ELIZA to verify your output.
 
@@ -423,6 +424,7 @@ Test with the same inputs as online ELIZA to verify your output.
 ---
 
 # Suggested timeline
+<!-- _class: scale-70 -->
 
 | Days | Focus |
 |------|-------|
@@ -431,7 +433,7 @@ Test with the same inputs as online ELIZA to verify your output.
 | 5-6 | Modern chatbot comparison, write reflection |
 | 7 | Polish notebook, final testing |
 
-<div class="note-box">
+<div class="note-box" data-title="Pro tip">
 
 Start early! Pattern matching can be tricky to debug.
 
@@ -447,7 +449,7 @@ Start early! Pattern matching can be tricky to debug.
 4. **Vibe coding:** Use AI tools to accelerate development
 5. **Test incrementally:** Build and test piece by piece
 
-<div class="note-box">
+<div class="note-box" data-title="Remember">
 
 The magic isn't in the algorithm. It's in how humans interpret the output!
 
@@ -472,7 +474,7 @@ The magic isn't in the algorithm. It's in how humans interpret the output!
   </div>
 </div>
 
-<div class="tip-box">
+<div class="tip-box" data-title="Get help">
 
 Start Assignment 1 early. Come to office hours if you get stuck!
 
