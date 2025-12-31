@@ -383,6 +383,36 @@ Alternatively, upload `lecture.tex` to [Overleaf](https://www.overleaf.com/) for
 
 ---
 
+## CDL Theme for Marp Slides
+
+Week 1 slides use the [Marp](https://marp.app/) presentation framework with a custom CDL (Contextual Dynamics Lab) theme. The theme provides consistent styling based on the Dartmouth color palette.
+
+### Theme Features
+
+- **Callout boxes**: Note, example, warning, tip, important, and definition boxes
+- **Inline callouts**: Compact variants for stacked layouts
+- **Definitions-examples layout**: Two-column layout for concept definitions with examples
+- **Emoji figures**: Styled emoji with background colors and labels
+- **Flow diagrams**: Auto-generated from simple markdown syntax
+- **Charts**: Automated Chart.js styling with theme colors
+- **Autoscaling**: Intelligent content scaling to fit slides
+
+### Compiling Marp Slides
+
+```bash
+cd slides/week1
+./compile.sh lecture1.md           # Compile to HTML
+./compile.sh lecture1.md -f pdf    # Compile to PDF
+```
+
+### Documentation
+
+For detailed usage instructions, see:
+- **[STYLE_GUIDE.md](template_deck/STYLE_GUIDE.md)**: Complete theme documentation with examples
+- **[template_deck/](template_deck/)**: Template files and theme assets
+
+---
+
 ## X-Hour Schedule (Makeup Classes)
 
 **Location:** TBD

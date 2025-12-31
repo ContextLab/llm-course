@@ -14,14 +14,17 @@ A comprehensive style guide for creating presentations using the Contextual Dyna
 8. [Equations](#equations)
 9. [Two-Column Layouts](#two-column-layouts)
 10. [Callout Boxes](#callout-boxes)
-11. [Emoji Figures](#emoji-figures)
-12. [Quotes](#quotes)
-13. [Diagrams](#diagrams)
-14. [Flow Diagrams](#flow-diagrams-auto-generated)
-15. [Charts (Automated Styling)](#charts-automated-styling)
-16. [Best Practices](#best-practices)
-17. [Dartmouth Color Reference](#dartmouth-color-reference)
-18. [Diagram and Figure Color Guidelines](#diagram-and-figure-color-guidelines)
+11. [Inline Callout Boxes](#inline-callout-boxes)
+12. [Definitions-Examples Layout](#definitions-examples-layout)
+13. [Emoji Figures](#emoji-figures)
+14. [Quotes](#quotes)
+15. [Diagrams](#diagrams)
+16. [Flow Diagrams](#flow-diagrams-auto-generated)
+17. [Charts (Automated Styling)](#charts-automated-styling)
+18. [Autoscaling System](#autoscaling-system)
+19. [Best Practices](#best-practices)
+20. [Dartmouth Color Reference](#dartmouth-color-reference)
+21. [Diagram and Figure Color Guidelines](#diagram-and-figure-color-guidelines)
 
 ---
 
@@ -400,6 +403,151 @@ Multiple callout boxes can appear on the same slide.
 
 ---
 
+## Inline Callout Boxes
+
+Inline callout boxes are compact variants designed for stacked layouts and tight spaces. They have a smaller footprint than standard callout boxes and are ideal for use within two-column layouts or when multiple callouts need to appear in a vertical stack.
+
+### Available Inline Classes
+
+| Class | Color | Border Color |
+|-------|-------|--------------|
+| `.inline-example` | Light green background | Dartmouth Green (`#00693e`) |
+| `.inline-note` | Light blue background | River Blue (`#267aba`) |
+| `.inline-warning` | Light orange background | Bonfire Orange (`#ffa00f`) |
+| `.inline-tip` | Light green background | Rich Spring Green (`#a5d75f`) |
+| `.inline-definition` | Light violet background | Violet (`#8a6996`) |
+| `.inline-important` | Light red background | Bonfire Red (`#9d162e`) |
+
+### Basic Usage
+
+```html
+<div class="inline-example">
+  <span class="example-title">Example title</span>
+  <span class="example-text">Example content goes here.</span>
+</div>
+```
+
+### Multiple Stacked Inline Boxes
+
+```html
+<div class="inline-definition">
+  <span class="definition-title">Term 1</span>
+  <span class="definition-text">Definition of the first term.</span>
+</div>
+
+<div class="inline-definition">
+  <span class="definition-title">Term 2</span>
+  <span class="definition-text">Definition of the second term.</span>
+</div>
+
+<div class="inline-example">
+  <span class="example-title">Usage</span>
+  <span class="example-text">Here's how to use these terms together.</span>
+</div>
+```
+
+### Key Differences from Standard Callout Boxes
+
+| Feature | Standard Callout | Inline Callout |
+|---------|------------------|----------------|
+| Padding | 10px 16px 12px | 0.3em 0.5em |
+| Title style | `::before` pseudo-element | Explicit `<span>` element |
+| Font size | 0.65em | 0.85em |
+| Margin | 12px bottom | 0.3em bottom |
+| Use case | Standalone emphasis | Stacked/columnar layouts |
+
+---
+
+## Definitions-Examples Layout
+
+The definitions-examples layout provides a two-column structure optimized for presenting concept definitions alongside practical examples. The left column contains bullet-point definitions, while the right column displays stacked inline example boxes.
+
+### Basic Structure
+
+```html
+<div class="definitions-examples-layout">
+  <div class="definitions-col">
+    <ul>
+      <li><strong>Term 1:</strong> Definition of the first concept</li>
+      <li><strong>Term 2:</strong> Definition of the second concept</li>
+      <li><strong>Term 3:</strong> Definition of the third concept</li>
+    </ul>
+  </div>
+  <div class="examples-col">
+    <div class="inline-example">
+      <span class="example-title">Example 1</span>
+      <span class="example-text">Practical example of Term 1</span>
+    </div>
+    <div class="inline-example">
+      <span class="example-title">Example 2</span>
+      <span class="example-text">Practical example of Term 2</span>
+    </div>
+  </div>
+</div>
+```
+
+### Layout Properties
+
+| Property | Left Column (`.definitions-col`) | Right Column (`.examples-col`) |
+|----------|----------------------------------|--------------------------------|
+| Flex ratio | 1 | 1.2 |
+| Content type | Bullet list | Stacked inline boxes |
+| Alignment | Left-aligned | Left-aligned |
+
+### Automatic Scaling
+
+Slides using `.definitions-examples-layout` automatically receive optimized scaling:
+- Font size adjusted to 24px for better fit
+- Reduced padding for more content space
+- Title remains at 1.8em
+
+### Complete Example
+
+```html
+---
+
+# Key Concepts
+
+<div class="definitions-examples-layout">
+  <div class="definitions-col">
+    <ul>
+      <li><strong>Tokenization:</strong> Breaking text into smaller units</li>
+      <li><strong>Embedding:</strong> Converting tokens to vectors</li>
+      <li><strong>Attention:</strong> Weighing token relationships</li>
+    </ul>
+  </div>
+  <div class="examples-col">
+    <div class="inline-example">
+      <span class="example-title">BPE tokenization</span>
+      <span class="example-text">"Hello" → ["Hel", "lo"]</span>
+    </div>
+    <div class="inline-example">
+      <span class="example-title">Word2Vec</span>
+      <span class="example-text">"king" → [0.2, -0.5, 0.8, ...]</span>
+    </div>
+    <div class="inline-example">
+      <span class="example-title">Self-attention</span>
+      <span class="example-text">Query-Key-Value mechanism</span>
+    </div>
+  </div>
+</div>
+
+<div class="note-box">
+
+These concepts form the foundation of modern NLP systems.
+
+</div>
+```
+
+### Tips for This Layout
+
+- Keep definitions concise (one line each if possible)
+- Match the number of examples to the number of definitions when logical
+- Use the optional note-box at the bottom for summary or context
+- This layout works best with 3-5 items per column
+
+---
+
 ## Emoji Figures
 
 ### Size Classes
@@ -704,6 +852,114 @@ See `notes/diagrams_and_charts_research.md` for detailed implementation guidance
 
 ---
 
+## Autoscaling System
+
+The CDL theme includes an intelligent autoscaling system (`autoscale.js`) that automatically adjusts content to fit within slide boundaries. This ensures consistent appearance across different content densities while preserving visual hierarchy.
+
+### How It Works
+
+The autoscaling system uses a CSS custom property (`--slide-scale`) to uniformly scale all slide content:
+
+1. **Measure** - Calculate the natural size of all slide content
+2. **Compare** - Determine if content exceeds available space
+3. **Scale** - Apply uniform scaling factor to fit content within bounds
+
+### Rigid vs Flexible Elements
+
+The system distinguishes between two types of elements:
+
+| Type | Elements | Behavior |
+|------|----------|----------|
+| **Rigid** | Images, diagrams, charts, SVGs | Must preserve aspect ratio; scale uniformly in both dimensions |
+| **Flexible** | Text, callouts, tables, lists | Can reflow when width changes; height adjusts naturally |
+
+### Scaling Cascade
+
+When content doesn't fit, the system applies a cascade of adjustments:
+
+1. **Reduce gaps** - Shrink spacing between elements (from 30px to 20px minimum)
+2. **Reduce scale** - Shrink all content uniformly (minimum 50% scale)
+
+Font ratios between element types are always preserved:
+
+| Element Type | Font Ratio | Base Size |
+|--------------|------------|-----------|
+| Title (H1) | 1.72 | ~60px |
+| Body text | 1.0 | 35px |
+| Tables | 0.7 | ~24px |
+| Callouts | 0.65 | ~23px |
+| Code blocks | 0.63 | ~22px |
+
+### Text-Only Slide Scaling
+
+For slides containing only text (no images or diagrams), the system can scale **up** to fill available space:
+- Maximum scale-up: 15% larger (scale factor 1.15)
+- Minimum threshold: Only scales up if increase exceeds 3%
+
+### Mixed Flex Container Handling
+
+When a flex container (two-column layout) contains both images and text:
+- **Images** receive the full scale factor (preserving aspect ratio)
+- **Text/callouts** remain at natural size (no scaling applied)
+
+This prevents text from becoming too small when an image requires shrinking.
+
+### Compile-Time Scaling Classes
+
+For manual control, use these CSS classes to override autoscaling:
+
+| Class | Scale Factor | Use Case |
+|-------|--------------|----------|
+| `.scale-90` | 90% | Slightly dense content |
+| `.scale-80` | 80% | Moderately dense content |
+| `.scale-78` | 78% | Fine-tuned fit |
+| `.scale-70` | 70% | Dense content |
+| `.scale-60` | 60% | Very dense content |
+| `.scale-50` | 50% | Maximum density |
+
+```markdown
+<!-- _class: scale-80 -->
+
+# Dense Content Slide
+
+Content here will be rendered at 80% scale...
+```
+
+### Excluded Slides
+
+The following slides are not processed by autoscaling:
+- Title slides (first slide, `.lead` class)
+- Slides with `id="1"`
+- Slides with `.manual-layout` class
+- Slides with compile-time scaling classes (`.scale-*`)
+
+### CSS Variable Usage
+
+The `--slide-scale` CSS variable can be used in custom styles:
+
+```css
+/* Example: Scale a custom element with the slide */
+.my-custom-element {
+  font-size: calc(20px * var(--slide-scale, 1));
+  padding: calc(10px * var(--slide-scale, 1));
+}
+```
+
+### Chart Animation Replay
+
+When navigating between slides, Chart.js animations are automatically replayed for any charts on the newly visible slide. This creates a polished presentation experience.
+
+### Troubleshooting
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Content appears too small | Autoscaling reduced scale significantly | Split content across multiple slides or use `.scale-*` class |
+| Inconsistent scaling on refresh | Resources not fully loaded | Wait for page load; system re-scales on navigation |
+| Images not scaling with text | Mixed flex container handling | Expected behavior; text stays readable |
+| Diagram not scaling | Diagram containers are excluded | By design; diagrams maintain fixed size |
+
+---
+
 ## Best Practices
 
 ### Content Guidelines
@@ -772,6 +1028,15 @@ author: Your Name
 | `.tip-box` | Tip callout (Rich Spring Green) |
 | `.important-box` | Important callout (Bonfire Red) |
 | `.definition-box` | Definition callout (Violet) |
+| `.inline-note` | Compact note for stacked layouts |
+| `.inline-example` | Compact example for stacked layouts |
+| `.inline-warning` | Compact warning for stacked layouts |
+| `.inline-tip` | Compact tip for stacked layouts |
+| `.inline-important` | Compact important for stacked layouts |
+| `.inline-definition` | Compact definition for stacked layouts |
+| `.definitions-examples-layout` | Two-column definitions/examples layout |
+| `.definitions-col` | Left column for definitions |
+| `.examples-col` | Right column for examples |
 | `.emoji` | Base emoji class |
 | `.emoji-{size}` | Size: xs, sm, md, lg, xl, xxl |
 | `.emoji-bg-{color}` | Background: green, blue, orange, teal, violet, red, navy, etc. |
@@ -782,6 +1047,8 @@ author: Your Name
 | `.emoji-col` | Vertical emoji layout |
 | `.diagram-container` | Diagram wrapper |
 | `.chart-container` | Chart.js wrapper |
+| `.scale-{n}` | Manual scaling (90, 80, 78, 70, 60, 50) |
+| `.manual-layout` | Disable autoscaling for slide |
 
 ### Flow Diagram Syntax
 
@@ -1097,4 +1364,4 @@ Before finalizing a presentation, verify:
 ---
 
 *Last updated: December 2025*
-*CDL Theme v1.2 - Added flow diagrams, expanded callout boxes, Dartmouth color palette*
+*CDL Theme v1.3 - Added inline callout boxes, definitions-examples layout, autoscaling system documentation*
