@@ -660,6 +660,336 @@ def process_arrow_syntax(line: str) -> str:
     return re.sub(arrow_pattern, replace_arrow, line)
 
 
+# =============================================================================
+# SLIDE CONTENT ANALYSIS FOR COMPILE-TIME SCALING
+# =============================================================================
+
+# Content type patterns
+CALLOUT_BOX_PATTERN = re.compile(r'<div\s+class="([^"]*(?:note|warning|tip|example|definition|important|callout)[^"]*)"')
+FLEX_CONTAINER_PATTERN = re.compile(r'<div[^>]*style="[^"]*display:\s*flex[^"]*"')
+TWO_COLUMN_PATTERN = re.compile(r'<div[^>]*style="[^"]*display:\s*flex[^"]*".*?</div>\s*</div>', re.DOTALL)
+CODE_BLOCK_PATTERN = re.compile(r'```(?:\w+)?\n(.*?)```', re.DOTALL)
+TABLE_PATTERN = re.compile(r'^\|.*\|$', re.MULTILINE)
+SCALE_CLASS_PATTERN = re.compile(r'<!--\s*_class:\s*([^>]*scale-\d+[^>]*)\s*-->')
+EMOJI_FIGURE_PATTERN = re.compile(r'<div\s+class="emoji-figure"')
+FLOW_DIAGRAM_PATTERN = re.compile(r'```flow\n.*?```', re.DOTALL)
+
+# Content height weights (approximate units where 1 unit ≈ 30px)
+CONTENT_WEIGHTS = {
+    'h1': 3.0,
+    'h2': 2.5,
+    'h3': 2.0,
+    'paragraph_per_50_chars': 0.8,
+    'list_item': 1.2,
+    'callout_box_base': 4.0,  # base height for callout box
+    'callout_content_per_50_chars': 0.6,
+    'code_block_line': 0.8,
+    'table_header': 1.8,
+    'table_row': 1.5,
+    'flex_container_overhead': 1.5,
+    'emoji_figure': 5.0,
+    'flow_diagram': 4.0,
+    'table_in_callout_penalty': 2.0,  # Extra space needed for table inside callout
+}
+
+# Slide height budget before scaling is needed (in content units)
+# A typical slide can fit ~20 units: H1 (3) + callout (4) + 3 list items (3.6) + text (4) + buffer
+SLIDE_HEIGHT_BUDGET = 20.0
+
+
+def analyze_slide_content(slide_content: str) -> dict:
+    """
+    Analyze slide content and return metrics for scaling decisions.
+
+    Args:
+        slide_content: Raw markdown content of a single slide
+
+    Returns:
+        dict with content metrics
+    """
+    metrics = {
+        'has_scale_class': False,
+        'existing_scale_class': None,
+        'callout_count': 0,
+        'callout_types': [],
+        'has_two_column': False,
+        'has_code_block': False,
+        'code_block_lines': 0,
+        'has_table': False,
+        'table_rows': 0,
+        'table_in_callout': False,
+        'has_emoji_figure': False,
+        'emoji_columns': 0,
+        'has_flow_diagram': False,
+        'list_items': 0,
+        'text_length': 0,
+        'estimated_height': 0.0,
+        'overflow_warnings': [],
+    }
+
+    # Check for existing scale class
+    scale_match = SCALE_CLASS_PATTERN.search(slide_content)
+    if scale_match:
+        metrics['has_scale_class'] = True
+        metrics['existing_scale_class'] = scale_match.group(1)
+
+    # Count callout boxes
+    callout_matches = CALLOUT_BOX_PATTERN.findall(slide_content)
+    metrics['callout_count'] = len(callout_matches)
+    metrics['callout_types'] = callout_matches
+
+    # Check for two-column layout
+    if FLEX_CONTAINER_PATTERN.search(slide_content):
+        metrics['has_two_column'] = True
+
+    # Check for code blocks
+    code_matches = CODE_BLOCK_PATTERN.findall(slide_content)
+    if code_matches:
+        metrics['has_code_block'] = True
+        metrics['code_block_lines'] = sum(len(code.split('\n')) for code in code_matches)
+
+    # Check for tables
+    table_lines = TABLE_PATTERN.findall(slide_content)
+    if table_lines:
+        metrics['has_table'] = True
+        # Subtract 1 for header separator row
+        metrics['table_rows'] = max(0, len(table_lines) - 2)
+
+    # Check for table inside callout box (high overflow risk)
+    # Look for pattern: callout div containing table
+    if metrics['has_table'] and metrics['callout_count'] > 0:
+        # Simple heuristic: if table appears after callout opening
+        callout_start = slide_content.find('class="')
+        if callout_start > -1:
+            for box_type in ['note-box', 'warning-box', 'tip-box', 'example-box', 'definition-box']:
+                box_pos = slide_content.find(box_type)
+                if box_pos > -1:
+                    # Find the closing </div> for this box
+                    box_section = slide_content[box_pos:box_pos+2000]
+                    if '|' in box_section and '---' in box_section:
+                        metrics['table_in_callout'] = True
+                        metrics['overflow_warnings'].append(
+                            f"TABLE INSIDE CALLOUT BOX detected - high overflow risk"
+                        )
+                        break
+
+    # Check for emoji figures
+    if EMOJI_FIGURE_PATTERN.search(slide_content):
+        metrics['has_emoji_figure'] = True
+        # Count emoji columns
+        emoji_col_count = slide_content.count('emoji-col')
+        metrics['emoji_columns'] = emoji_col_count
+
+    # Check for flow diagrams
+    if FLOW_DIAGRAM_PATTERN.search(slide_content):
+        metrics['has_flow_diagram'] = True
+
+    # Count list items
+    list_items = re.findall(r'^[\s]*[-*+]\s', slide_content, re.MULTILINE)
+    numbered_items = re.findall(r'^[\s]*\d+\.\s', slide_content, re.MULTILINE)
+    metrics['list_items'] = len(list_items) + len(numbered_items)
+
+    # Calculate text length (excluding HTML tags and code blocks)
+    text_only = re.sub(r'<[^>]+>', '', slide_content)
+    text_only = re.sub(r'```.*?```', '', text_only, flags=re.DOTALL)
+    metrics['text_length'] = len(text_only)
+
+    # Estimate content height
+    height = 0.0
+
+    # Title
+    if re.search(r'^#\s+', slide_content, re.MULTILINE):
+        height += CONTENT_WEIGHTS['h1']
+
+    # Callout boxes
+    height += metrics['callout_count'] * CONTENT_WEIGHTS['callout_box_base']
+
+    # Code blocks
+    height += metrics['code_block_lines'] * CONTENT_WEIGHTS['code_block_line']
+
+    # Tables
+    if metrics['has_table']:
+        height += CONTENT_WEIGHTS['table_header']
+        height += metrics['table_rows'] * CONTENT_WEIGHTS['table_row']
+
+    # Table in callout penalty
+    if metrics['table_in_callout']:
+        height += CONTENT_WEIGHTS['table_in_callout_penalty']
+
+    # List items
+    height += metrics['list_items'] * CONTENT_WEIGHTS['list_item']
+
+    # Text content
+    height += (metrics['text_length'] / 50) * CONTENT_WEIGHTS['paragraph_per_50_chars']
+
+    # Two-column overhead
+    if metrics['has_two_column']:
+        height += CONTENT_WEIGHTS['flex_container_overhead']
+
+    # Emoji figures
+    if metrics['has_emoji_figure']:
+        height += CONTENT_WEIGHTS['emoji_figure']
+
+    # Flow diagrams
+    if metrics['has_flow_diagram']:
+        height += CONTENT_WEIGHTS['flow_diagram']
+
+    metrics['estimated_height'] = height
+
+    # Generate overflow warnings
+    if height > SLIDE_HEIGHT_BUDGET * 1.5:
+        metrics['overflow_warnings'].append(
+            f"Estimated height ({height:.1f}) exceeds budget ({SLIDE_HEIGHT_BUDGET}) by >50%"
+        )
+    elif height > SLIDE_HEIGHT_BUDGET:
+        metrics['overflow_warnings'].append(
+            f"Estimated height ({height:.1f}) exceeds budget ({SLIDE_HEIGHT_BUDGET})"
+        )
+
+    if metrics['callout_count'] >= 3:
+        metrics['overflow_warnings'].append(
+            f"Multiple callout boxes ({metrics['callout_count']}) may cause overflow"
+        )
+
+    if metrics['has_two_column'] and metrics['callout_count'] >= 2:
+        metrics['overflow_warnings'].append(
+            "Two-column layout with multiple callouts - consider scale-78"
+        )
+
+    if metrics['emoji_columns'] >= 4:
+        metrics['overflow_warnings'].append(
+            f"Emoji figure with {metrics['emoji_columns']} columns may overflow horizontally"
+        )
+
+    return metrics
+
+
+def determine_scale_class(metrics: dict):
+    """
+    Based on content metrics, determine the appropriate scale class.
+
+    Args:
+        metrics: dict from analyze_slide_content()
+
+    Returns:
+        Scale class string (e.g., 'scale-78') or None if no scaling needed
+    """
+    # If already has a scale class, don't override
+    if metrics['has_scale_class']:
+        return None
+
+    height = metrics['estimated_height']
+
+    # Table in callout is a special case - always needs scaling
+    if metrics['table_in_callout']:
+        return 'scale-78'
+
+    # Two-column with multiple callouts
+    if metrics['has_two_column'] and metrics['callout_count'] >= 2:
+        if height > SLIDE_HEIGHT_BUDGET * 0.9:
+            return 'scale-78'
+
+    # Multiple callouts (3+)
+    if metrics['callout_count'] >= 3:
+        return 'scale-80'
+
+    # Height-based scaling
+    if height > SLIDE_HEIGHT_BUDGET * 1.4:
+        return 'scale-70'
+    elif height > SLIDE_HEIGHT_BUDGET * 1.2:
+        return 'scale-78'
+    elif height > SLIDE_HEIGHT_BUDGET * 1.1:
+        return 'scale-80'
+    elif height > SLIDE_HEIGHT_BUDGET:
+        return 'scale-90'
+
+    return None
+
+
+def inject_scale_class(slide_content: str, scale_class: str) -> str:
+    """
+    Inject a scale class directive at the beginning of a slide.
+
+    Args:
+        slide_content: Raw slide content (after ---)
+        scale_class: Scale class to inject (e.g., 'scale-78')
+
+    Returns:
+        Modified slide content with scale class directive
+    """
+    # Check if there's already a _class directive
+    if SCALE_CLASS_PATTERN.search(slide_content):
+        return slide_content
+
+    # Check for existing _class directive without scale
+    existing_class = re.search(r'<!--\s*_class:\s*([^>]*)\s*-->', slide_content)
+    if existing_class:
+        # Add scale class to existing directive
+        old_directive = existing_class.group(0)
+        old_classes = existing_class.group(1)
+        new_directive = f'<!-- _class: {old_classes} {scale_class} -->'
+        return slide_content.replace(old_directive, new_directive)
+
+    # Insert new directive at the start of the slide (after any leading whitespace)
+    lines = slide_content.split('\n')
+    insert_idx = 0
+    for i, line in enumerate(lines):
+        if line.strip():
+            insert_idx = i
+            break
+
+    lines.insert(insert_idx, f'<!-- _class: {scale_class} -->')
+    return '\n'.join(lines)
+
+
+def analyze_and_warn_slides(content, filename="unknown"):
+    """
+    Analyze all slides in content and generate warnings.
+    Optionally inject scale classes for slides that need them.
+
+    Args:
+        content: Full markdown content
+        filename: Name of file being processed (for warnings)
+
+    Returns:
+        tuple of (modified_content, list_of_warnings)
+    """
+    warnings = []
+
+    # Split into slides (by ---)
+    parts = re.split(r'\n---\n', content)
+
+    if len(parts) < 2:
+        return content, warnings
+
+    # First part is frontmatter + title slide
+    modified_parts = [parts[0]]
+
+    for i, slide in enumerate(parts[1:], start=2):
+        metrics = analyze_slide_content(slide)
+
+        # Generate warnings
+        for warning in metrics['overflow_warnings']:
+            warnings.append(f"Slide {i}: {warning}")
+
+        # Determine if scaling is needed
+        scale_class = determine_scale_class(metrics)
+
+        if scale_class:
+            # Log the auto-scaling decision
+            warnings.append(
+                f"Slide {i}: Auto-injecting {scale_class} (estimated height: {metrics['estimated_height']:.1f})"
+            )
+            slide = inject_scale_class(slide, scale_class)
+
+        modified_parts.append(slide)
+
+    # Rejoin with slide separators
+    modified_content = '\n---\n'.join(modified_parts)
+
+    return modified_content, warnings
+
+
 def process_markdown(input_file: str, output_file: str, max_lines: int = 20, max_table_rows: int = 8, no_split: bool = False) -> dict:
     """
     Process a markdown file for Marp presentation.
@@ -677,6 +1007,16 @@ def process_markdown(input_file: str, output_file: str, max_lines: int = 20, max
     # Read input file
     with open(input_file, "r", encoding="utf-8") as f:
         content = f.read()
+
+    # Analyze slides for overflow warnings and auto-inject scale classes
+    content, overflow_warnings = analyze_and_warn_slides(content, input_file)
+
+    # Print overflow warnings to stderr
+    if overflow_warnings:
+        print(f"\n=== Slide Analysis Warnings for {input_file} ===", file=sys.stderr)
+        for warning in overflow_warnings:
+            print(f"  {warning}", file=sys.stderr)
+        print("", file=sys.stderr)
 
     # Process flow diagram blocks first (before line-by-line processing)
     content, flow_diagrams_processed = process_flow_blocks(content)
@@ -720,6 +1060,8 @@ def process_markdown(input_file: str, output_file: str, max_lines: int = 20, max
         "slides_added": 0,
         "arrows_processed": 0,
         "flow_diagrams_processed": flow_diagrams_processed,
+        "overflow_warnings": len([w for w in overflow_warnings if "overflow" in w.lower() or "exceeds" in w.lower()]),
+        "scale_classes_injected": len([w for w in overflow_warnings if "Auto-injecting" in w]),
     }
 
     # Count arrows in input for statistics
@@ -960,6 +1302,10 @@ def main():
             print(f"Arrows processed: {stats['arrows_processed']}")
         if stats['flow_diagrams_processed'] > 0:
             print(f"Flow diagrams generated: {stats['flow_diagrams_processed']}")
+        if stats.get('scale_classes_injected', 0) > 0:
+            print(f"Scale classes auto-injected: {stats['scale_classes_injected']}")
+        if stats.get('overflow_warnings', 0) > 0:
+            print(f"Overflow warnings: {stats['overflow_warnings']}")
 
     except FileNotFoundError as e:
         print(f"Error: {e}", file=sys.stderr)
