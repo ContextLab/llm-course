@@ -85,9 +85,15 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 </div>
 </div>
 
-<div class="note-box" data-title="The key question">
+<div class="note-box" data-title="The challenge">
 
-How do we bridge this gap? How can symbol manipulation create the *appearance* of understanding?
+How do we bridge this gap? Can we use symbol manipulation create the *appearance* of understanding?
+
+</div>
+
+<div class="warning-box" data-title="Remember">
+
+The illusion of understanding comes from the programmer's skill at designing clever pattern matching rules, not from any actual understanding on the part of the machine.
 
 </div>
 
