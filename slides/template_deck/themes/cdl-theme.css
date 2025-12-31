@@ -807,6 +807,37 @@ section:not(.lead):not(#\31) div:not(.callout):not(.note-box):not(.example-box):
     font-size: 1.19em;
 }
 
+/* Nested lists - prevent font-size compounding and make progressively smaller */
+/* First level of nesting: make 78% of parent to clearly show hierarchy */
+section:not(.lead):not(#\31) ul ul,
+section:not(.lead):not(#\31) ul ol,
+section:not(.lead):not(#\31) ol ul,
+section:not(.lead):not(#\31) ol ol {
+    font-size: 0.78em;
+    margin-top: 0.15em;
+    margin-bottom: 0.1em;
+}
+
+/* Nested list items - tighter spacing */
+section:not(.lead):not(#\31) ul ul li,
+section:not(.lead):not(#\31) ul ol li,
+section:not(.lead):not(#\31) ol ul li,
+section:not(.lead):not(#\31) ol ol li {
+    margin: 0.15em 0;
+}
+
+/* Second level of nesting: continue size reduction */
+section:not(.lead):not(#\31) ul ul ul,
+section:not(.lead):not(#\31) ul ul ol,
+section:not(.lead):not(#\31) ul ol ul,
+section:not(.lead):not(#\31) ul ol ol,
+section:not(.lead):not(#\31) ol ul ul,
+section:not(.lead):not(#\31) ol ul ol,
+section:not(.lead):not(#\31) ol ol ul,
+section:not(.lead):not(#\31) ol ol ol {
+    font-size: 0.85em;
+}
+
 /* Background image with 75% opacity using pseudo-element */
 section:not(.lead):not(#\31)::before {
     content: '' !important;
