@@ -42,13 +42,13 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 
 # Side note: follow along with [Google Colab](https://colab.research.google.com/)!
 
-<div style="display: flex; gap: 2em;">
+<div style="display: flex;">
 <div>
 
 ![width:700px](../../figures/colab_screenshot.png)
 
 </div>
-<div class="tip-box" style="width: 100px !important; margin-top: 50px !important;">
+<div class="tip-box" style="width: 25px !important; margin-top: 50px !important;">
 
 - Go to [colab.research.google.com](https://colab.research.google.com/)
 - Click "New notebook"
