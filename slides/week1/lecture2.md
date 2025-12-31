@@ -48,7 +48,7 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 ![height:700px](../../figures/colab_screenshot.png)
 
 </div>
-<div class="tip-box">
+<div class="tip-box" style="margin-top: 100px !important;">
 
 - Go to [colab.research.google.com](https://colab.research.google.com/)
 - Click "New notebook"
@@ -232,12 +232,7 @@ Have a [conversation with ELIZA](https://contextlab.github.io/llm-course/demos/0
 - What reveals its limitations?
 - Can you "trick" ELIZA? How?
 - What kinds of inputs break the illusion?
-
-<div class="warning-box" data-title="Think about it!">
-
-How do you think ELIZA *works*?
-
-</div>
+- **How do you think ELIZA *works*?**
 
 ---
 
@@ -324,7 +319,7 @@ Have *you* experienced the ELIZA effect with modern AI systems (ChatGPT, Claude,
 
 <div class="note-box" data-title="Lecture 3 (Thursday X-hour)">
 
-**How ELIZA actually works**
+**How ELIZA *actually* works**
 - Complete architecture walkthrough
 - Pattern matching and response selection
 - The role of scripts and keywords
@@ -336,7 +331,7 @@ Have *you* experienced the ELIZA effect with modern AI systems (ChatGPT, Claude,
 
 - Finish reading Weizenbaum (1966)
 - Play with the ELIZA demo
-- Think about: What would YOU add to ELIZA?
+- Think about: what would *you* add to ELIZA?
 - Read the [Assignment 1 instructions](../../assignments/Assignment%201:%20ELIZA/README.md)
 
 </div>
