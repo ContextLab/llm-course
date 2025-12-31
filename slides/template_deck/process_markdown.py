@@ -184,9 +184,17 @@ def parse_flow_line(line: str) -> list:
 
 
 def calculate_text_width(text: str, font_size: int = 22) -> int:
-    """Estimate text width in pixels based on character count."""
-    # Rough approximation: average character width is about 0.6 of font size for sans-serif
-    avg_char_width = font_size * 0.55
+    """Estimate text width in pixels based on character count.
+
+    Uses a conservative estimate to prevent text clipping. Wide characters
+    like 'W', 'M', and uppercase letters need extra space.
+    """
+    # Use 0.72 multiplier to account for:
+    # - Wide uppercase letters (W, M, etc.)
+    # - Hyphens and special characters
+    # - Variable-width font rendering
+    # - Font weight 600 (bold) which is wider than normal weight
+    avg_char_width = font_size * 0.72
     return int(len(text) * avg_char_width)
 
 
@@ -252,7 +260,7 @@ def generate_flow_svg(flow_lines: list, caption: str = None) -> str:
 
     # SVG dimensions - use tight bounding box with border
     # Border prevents stroke cutoff and text clipping at edges
-    svg_border = 15
+    svg_border = 25  # Increased from 15 to prevent edge clipping
     row_height = node_height + 20  # Reduced row spacing for multi-row diagrams
 
     # Calculate tight content bounds
