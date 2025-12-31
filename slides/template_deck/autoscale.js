@@ -366,10 +366,28 @@ document.addEventListener("DOMContentLoaded", function () {
     // Otherwise, final layout has already been applied in the loop
   }
 
+  /**
+   * Check if a slide has compile-time scaling applied via CSS classes.
+   * These slides should be skipped by autoscale.js to ensure PDF/HTML parity.
+   */
+  function hasCompileTimeScaling(slide) {
+    return slide.classList.contains('scale-90') ||
+           slide.classList.contains('scale-80') ||
+           slide.classList.contains('scale-78') ||
+           slide.classList.contains('scale-70') ||
+           slide.classList.contains('scale-60') ||
+           slide.classList.contains('scale-50');
+  }
+
   function scaleSlides() {
     const slides = document.querySelectorAll("section:not(.lead):not([id='1']):not(.manual-layout)");
 
     slides.forEach(function (slide) {
+      // Skip slides with compile-time scaling classes (CSS handles these)
+      if (hasCompileTimeScaling(slide)) {
+        return;
+      }
+
       const slideHeight = slide.clientHeight;
 
       // Find h1 title
@@ -472,7 +490,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Skip excluded slides
     if (slide.classList.contains('lead') ||
         slide.id === '1' ||
-        slide.classList.contains('manual-layout')) {
+        slide.classList.contains('manual-layout') ||
+        hasCompileTimeScaling(slide)) {
       return;
     }
 

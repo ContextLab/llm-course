@@ -3143,3 +3143,128 @@ section:not(.lead):not(#\31) .instructor-container .logo-grid {
     grid-template-columns: repeat(4, 1fr) !important;
     gap: 1em !important;
 }
+
+/* ============================================
+   COMPILE-TIME CONTENT SCALING CLASSES
+   Use these classes on slides that need scaling to ensure
+   consistent rendering between HTML and PDF outputs.
+
+   These classes set --content-scale at compile-time (CSS)
+   instead of runtime (JavaScript), ensuring PDF/HTML parity.
+   ============================================ */
+
+/* Scale 90% - slight reduction for content that almost fits */
+section.scale-90 {
+    --content-scale: 0.9;
+}
+
+section.scale-90 > h1 {
+    font-size: calc(1.72em * 0.9) !important;
+    margin-top: 0 !important;
+    margin-bottom: calc(15px * 0.9) !important;
+}
+
+section.scale-90 > *:not(h1) {
+    font-size: calc(35px * 0.9) !important;
+}
+
+section.scale-90 > div[style*="flex"] {
+    gap: calc(2em * 0.9) !important;
+}
+
+section.scale-90 .note-box,
+section.scale-90 .warning-box,
+section.scale-90 .tip-box,
+section.scale-90 .example-box,
+section.scale-90 .definition-box,
+section.scale-90 .important-box {
+    font-size: calc(35px * 0.65 * 0.9) !important;
+    padding: calc(10px * 0.9) calc(16px * 0.9) calc(12px * 0.9) !important;
+}
+
+/* Scale 80% - moderate reduction for dense content */
+section.scale-80 {
+    --content-scale: 0.8;
+}
+
+section.scale-80 > h1 {
+    font-size: calc(1.72em * 0.8) !important;
+    margin-top: 0 !important;
+    margin-bottom: calc(15px * 0.8) !important;
+}
+
+section.scale-80 > *:not(h1) {
+    font-size: calc(35px * 0.8) !important;
+}
+
+section.scale-80 > div[style*="flex"] {
+    gap: calc(2em * 0.8) !important;
+}
+
+section.scale-80 .note-box,
+section.scale-80 .warning-box,
+section.scale-80 .tip-box,
+section.scale-80 .example-box,
+section.scale-80 .definition-box,
+section.scale-80 .important-box {
+    font-size: calc(35px * 0.65 * 0.8) !important;
+    padding: calc(10px * 0.8) calc(16px * 0.8) calc(12px * 0.8) !important;
+}
+
+/* Scale 78% - matches autoscale.js typical scaling for two-column dense content */
+section.scale-78 {
+    --content-scale: 0.78;
+}
+
+section.scale-78 > h1 {
+    font-size: calc(1.72em * 0.78) !important;
+    margin-top: 0 !important;
+    margin-bottom: calc(15px * 0.78) !important;
+}
+
+section.scale-78 > *:not(h1) {
+    font-size: calc(35px * 0.78) !important;
+}
+
+section.scale-78 > div[style*="flex"] {
+    gap: calc(2em * 0.78) !important;
+}
+
+section.scale-78 .note-box,
+section.scale-78 .warning-box,
+section.scale-78 .tip-box,
+section.scale-78 .example-box,
+section.scale-78 .definition-box,
+section.scale-78 .important-box {
+    font-size: calc(35px * 0.65 * 0.78) !important;
+    padding: calc(10px * 0.78) calc(16px * 0.78) calc(12px * 0.78) !important;
+}
+
+/* Scale 70% - significant reduction for very dense content */
+section.scale-70 {
+    --content-scale: 0.7;
+}
+
+section.scale-70 > h1 {
+    font-size: calc(1.72em * 0.7) !important;
+    margin-top: 0 !important;
+    margin-bottom: calc(15px * 0.7) !important;
+}
+
+section.scale-70 > *:not(h1) {
+    font-size: calc(35px * 0.7) !important;
+}
+
+section.scale-70 > div[style*="flex"] {
+    gap: calc(2em * 0.7) !important;
+}
+
+section.scale-70 .note-box,
+section.scale-70 .warning-box,
+section.scale-70 .tip-box,
+section.scale-70 .example-box,
+section.scale-70 .definition-box,
+section.scale-70 .important-box {
+    font-size: calc(35px * 0.65 * 0.7) !important;
+    padding: calc(10px * 0.7) calc(16px * 0.7) calc(12px * 0.7) !important;
+}

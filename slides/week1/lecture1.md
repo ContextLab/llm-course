@@ -253,6 +253,7 @@ If ChatGPT says "I feel happy," does it actually *feel* anything?
 </div>
 
 ---
+<!-- _class: scale-78 -->
 
 # The hard problem
 
