@@ -3329,18 +3329,21 @@ section[style*="--slide-scale"] table {
     font-size: calc(35px * 0.7 * var(--slide-scale)) !important;
 }
 
-/* Images scale uniformly with content */
+/* RIGID ELEMENTS: Images MUST preserve aspect ratio
+   Use transform to scale both dimensions uniformly */
 section[style*="--slide-scale"] img {
-    max-width: calc(100% * var(--slide-scale));
-    height: auto;
+    transform: scale(var(--slide-scale));
+    transform-origin: top left;
+    /* Don't use max-width - it could change aspect ratio */
 }
 
-/* Diagram containers scale uniformly with content */
+/* RIGID ELEMENTS: Diagram/chart containers also preserve aspect ratio */
 section[style*="--slide-scale"] .diagram-container,
 section[style*="--slide-scale"] .chart-container {
     transform: scale(var(--slide-scale));
     transform-origin: top left;
 }
+
 
 /* ============================================
    CONTENT WIDTH CONSTRAINTS

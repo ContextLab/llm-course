@@ -42,13 +42,13 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 
 # Side note: follow along with [Google Colab](https://colab.research.google.com/)!
 
-<div style="display: flex;">
+<div style="display: flex; gap: 0.5em;">
 <div>
 
-![width:700px](../../figures/colab_screenshot.png)
+![height:500px](../../figures/colab_screenshot.png)
 
 </div>
-<div class="tip-box" style="width: 100px !important; margin-top: 50px !important;">
+<div class="tip-box" style="height: 420px !important; margin-top: 40px !important;">
 
 - Go to [colab.research.google.com](https://colab.research.google.com/)
 - Click "New notebook"
@@ -91,22 +91,26 @@ How do we bridge this gap? Can we use symbol manipulation create the *appearance
 
 </div>
 
-<div class="warning-box" data-title="Remember">
+<div class="warning-box" data-title="Keep in mind">
 
-The illusion of understanding comes from the programmer's skill at designing clever pattern matching rules, not from any actual understanding on the part of the machine.
+The illusion of understanding comes from the programmer's skill at designing clever pattern matching rules, not from any *actual* understanding on the part of the machine.
 
 </div>
 
 ---
 
-# String manipulation basics
+# Text processing and string manipulation
 
-Text processing is the foundation of computational linguistics:
+<div style="display: flex; gap: 1.5em;">
+<div>
 
 - **Finding:** Locate patterns within text
 - **Replacing:** Substitute one pattern for another
 - **Extracting:** Pull out specific parts of text
 - **Transforming:** Convert text to different formats
+
+</div>
+<div>
 
 ```python
 text = "Hello, how are you today?"
@@ -121,9 +125,12 @@ text.replace("you", "we")  # "Hello, how are we today?"
 text.split(", ")[1]        # "how are you today?"
 ```
 
+</div>
+</div>
+
 ---
 
-# Why string manipulation matters
+# Text processing is the foundation of computational linguistics
 
 ```flow
 [User input:green] --> [Pattern matching:blue] --> [Response generation:orange] --> [Output:teal]
@@ -132,7 +139,7 @@ text.split(", ")[1]        # "how are you today?"
 
 <div class="note-box">
 
-Every conversational AI system, from ELIZA to ChatGPT, fundamentally processes text through some form of pattern matching, though with vastly different sophistication.
+Every conversational AI system, from ELIZA to ChatGPT, fundamentally processes text through some form of pattern matching, though with vastly different levels of sophistication.
 
 </div>
 
@@ -217,8 +224,7 @@ new_text = re.sub(r"I am", "You are", text)
 
 <div class="note-box" data-title="Required reading">
 
-[Weizenbaum, J. (1966). ELIZA&mdash;A computer program for the study of natural language communication between man and machine. *Communications of the ACM*, 9(1), 36-45.](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf)
-
+[Weizenbaum, J. (1966)](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf). ELIZA&mdash;A computer program for the study of natural language communication between man and machine. *Communications of the ACM*, 9(1), 36&ndash;45.
 </div>
 
 **Pay attention to:**
@@ -229,25 +235,18 @@ new_text = re.sub(r"I am", "You are", text)
 
 ---
 
-# Live demo
+# Chat with ELIZA
 
-<div class="tip-box" data-title="Try it yourself!">
+<div class="example-box" data-title="Try it!">
 
-[ELIZA Demo](https://contextlab.github.io/llm-course/demos/01-eliza/)
+Have a [conversation with ELIZA](https://contextlab.github.io/llm-course/demos/01-eliza/). Try putting yourself into the "frame of mind" of someone from the 1960s who had never experienced a chatbot before, and likely who had only had limited (if any) exposure to computers. Take on the role of a "patient" seeking help from ELIZA in its role as a therapist. Then use your own (modern) knowledge and experiences to see where ELIZA breaks down.
 
 </div>
 
-**Discussion prompts:**
 - What does ELIZA do surprisingly well?
 - What reveals its limitations?
 - Can you "trick" ELIZA? How?
 - What kinds of inputs break the illusion?
-
-<div class="warning-box">
-
-Try to have a "real" conversation. At what point does the illusion break down?
-
-</div>
 
 ---
 
@@ -275,7 +274,7 @@ Weizenbaum was surprised (and disturbed) by how quickly users became emotionally
     <span class="label">Language cues</span>
   </div>
   <div class="emoji-col">
-    <span class="emoji emoji-xl emoji-bg emoji-bg-green">🧠</span>
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">👁️</span>
     <span class="label">Pattern recognition</span>
   </div>
   <div class="emoji-col">
@@ -298,22 +297,16 @@ Humans are social creatures. We evolved to detect minds and intentions, and we o
 
 # Discussion
 
-<div class="note-box" data-title="Reflect on your experience">
+<div class="note-box" data-title="Reflect on your own experiences">
 
 Have you experienced the ELIZA effect with modern AI systems (ChatGPT, Claude, Siri, Alexa)?
 
 </div>
 
-**Consider:**
 - When have you felt like an AI "understood" you?
 - What broke the illusion?
 - What is the difference between *seeming* intelligent and *being* intelligent?
-
-<div class="warning-box" data-title="The hard question">
-
-How would we know if an AI truly understood us?
-
-</div>
+- How would we *know* if an AI truly understood us?
 
 ---
 

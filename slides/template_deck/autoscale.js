@@ -131,29 +131,184 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ==========================================================================
-  // NEW ASPECT-RATIO-BASED LAYOUT ALGORITHM
-  // Treats ALL slide content as a single unified block and scales uniformly
+  // CORRECTED ASPECT-RATIO-BASED LAYOUT ALGORITHM
+  //
+  // Key concepts:
+  // - RIGID elements (images, diagrams): Must preserve aspect ratio
+  // - FLEXIBLE elements (text, callouts): Can reflow when width changes
+  //
+  // Algorithm:
+  // 1. Classify elements as rigid or flexible
+  // 2. Expand flexible element widths to fill available horizontal space
+  // 3. Measure content after width expansion (text has reflowed)
+  // 4. Calculate uniform scale constrained by rigid element aspect ratios
   // ==========================================================================
 
   /**
-   * Measure the bounding box of ALL content on the slide
-   * Includes text, diagrams, images - everything scales together uniformly
+   * Check if an element is "rigid" (must preserve aspect ratio)
+   * Images, diagrams, charts, and SVGs cannot be stretched
+   *
+   * IMPORTANT: Flex containers are NOT rigid even if they contain images.
+   * Their children should be classified separately.
    */
-  function measureContentBoundingBox(slide) {
+  function isRigidElement(el) {
+    // Flex containers are NOT rigid - they contain mixed content
+    if (isFlexContainer(el)) return false;
+
+    // Direct images are rigid
+    if (el.tagName === 'IMG') return true;
+
+    // Diagram and chart containers are rigid
+    if (el.classList.contains('diagram-container')) return true;
+    if (el.classList.contains('chart-container')) return true;
+
+    // Paragraphs containing only an image are rigid (image wrappers)
+    if (el.tagName === 'P') {
+      const img = el.querySelector('img');
+      // Check if the paragraph is essentially just an image wrapper
+      if (img && el.childNodes.length === 1) return true;
+    }
+
+    // Divs that are NOT flex containers and contain only an image are rigid
+    if (el.tagName === 'DIV' && !isFlexContainer(el)) {
+      const children = el.children;
+      if (children.length === 1 && children[0].tagName === 'IMG') return true;
+      // Check for direct SVG (diagram)
+      if (children.length === 1 && children[0].tagName === 'SVG') return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Check if an element inside a flex container is rigid
+   * Used for classifying flex children
+   */
+  function isRigidFlexChild(el) {
+    // Direct images
+    if (el.tagName === 'IMG') return true;
+
+    // Divs containing only an image
+    if (el.tagName === 'DIV' || el.tagName === 'P') {
+      const img = el.querySelector(':scope > img');
+      const p = el.querySelector(':scope > p > img');
+      if (img || p) {
+        // Check if it's primarily an image container
+        const textContent = el.textContent.trim();
+        if (textContent === '' || textContent === el.querySelector('img')?.alt) {
+          return true;
+        }
+      }
+    }
+
+    // Diagram containers
+    if (el.classList.contains('diagram-container')) return true;
+    if (el.classList.contains('chart-container')) return true;
+
+    return false;
+  }
+
+  /**
+   * Classify slide elements into rigid (aspect-ratio preserved) and
+   * flexible (can reflow) categories
+   *
+   * For flex containers, we look at their children separately since
+   * a flex container can have both rigid (image) and flexible (text) children.
+   */
+  function classifySlideElements(slide, h1) {
+    const rigid = [];    // Images, diagrams - preserve aspect ratio
+    const flexible = []; // Text, callouts - can reflow
+
+    slide.querySelectorAll(':scope > *').forEach(function(el) {
+      // Skip title - handled separately
+      if (el === h1) return;
+      // Skip invisible elements
+      if (el.offsetHeight === 0) return;
+      // Skip absolute/fixed positioned elements
+      const style = getComputedStyle(el);
+      if (style.position === 'absolute' || style.position === 'fixed') return;
+
+      // For flex containers, classify their children
+      if (isFlexContainer(el)) {
+        // The flex container itself is flexible
+        flexible.push({ element: el });
+
+        // Also track any rigid children (images) for aspect ratio constraints
+        Array.from(el.children).forEach(function(child) {
+          if (child.offsetHeight === 0) return;
+
+          if (isRigidFlexChild(child)) {
+            // Find the actual image to get its dimensions
+            const img = child.tagName === 'IMG' ? child : child.querySelector('img');
+            if (img) {
+              rigid.push({
+                element: img,
+                naturalWidth: img.offsetWidth,
+                naturalHeight: img.offsetHeight,
+                aspectRatio: img.offsetWidth / img.offsetHeight
+              });
+            }
+          }
+        });
+      } else if (isRigidElement(el)) {
+        rigid.push({
+          element: el,
+          naturalWidth: el.offsetWidth,
+          naturalHeight: el.offsetHeight,
+          aspectRatio: el.offsetWidth / el.offsetHeight
+        });
+      } else {
+        flexible.push({
+          element: el
+        });
+      }
+    });
+
+    return { rigid: rigid, flexible: flexible };
+  }
+
+  /**
+   * Expand flexible element widths to fill available horizontal space
+   * This causes text to reflow, reducing height
+   */
+  function expandFlexibleWidths(flexibleElements, availableWidth) {
+    flexibleElements.forEach(function(item) {
+      var el = item.element;
+
+      // For flex containers (two-column layouts), let them use full width
+      if (isFlexContainer(el)) {
+        el.style.width = '100%';
+      }
+
+      // For callout boxes, allow full width
+      if (isCalloutBox(el)) {
+        el.style.width = '100%';
+      }
+
+      // For other block elements (paragraphs, lists, etc.),
+      // they naturally take available width in block layout
+    });
+  }
+
+  /**
+   * Measure the bounding box of all non-title content
+   * Called AFTER width expansion so text has reflowed
+   */
+  function measureContentBounds(slide, h1) {
     const children = slide.querySelectorAll(':scope > *');
     let minX = Infinity, minY = Infinity;
     let maxX = -Infinity, maxY = -Infinity;
     let hasContent = false;
 
     children.forEach(function(child) {
-      // Skip absolute/fixed positioned elements only
+      // Skip title - not included in content bounds
+      if (child === h1) return;
+      // Skip absolute/fixed positioned elements
       const style = getComputedStyle(child);
       if (style.position === 'absolute' || style.position === 'fixed') return;
       if (child.offsetHeight === 0) return;
 
       hasContent = true;
-
-      // Include ALL content: text, diagrams, images - they all scale together
       const rect = child.getBoundingClientRect();
 
       // Include margins in bounding box
@@ -181,6 +336,43 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /**
+   * Calculate uniform scale factor constrained by rigid elements
+   * Rigid elements (images, diagrams) must preserve their aspect ratio
+   */
+  function calculateConstrainedScale(rigidElements, contentBounds, availableWidth, availableHeight) {
+    // Start with scale = 1.0 (no scaling)
+    var scale = 1.0;
+
+    // First, check if content bounds exceed available space
+    if (contentBounds.width > availableWidth) {
+      scale = Math.min(scale, availableWidth / contentBounds.width);
+    }
+    if (contentBounds.height > availableHeight) {
+      scale = Math.min(scale, availableHeight / contentBounds.height);
+    }
+
+    // Rigid elements add additional constraints
+    // They must scale uniformly (same factor for width AND height)
+    rigidElements.forEach(function(item) {
+      // At the current scale, what would the element's dimensions be?
+      var scaledWidth = item.naturalWidth * scale;
+      var scaledHeight = item.naturalHeight * scale;
+
+      // If either dimension exceeds available space, reduce scale
+      // Both dimensions must scale together to preserve aspect ratio
+      if (scaledWidth > availableWidth) {
+        scale = Math.min(scale, availableWidth / item.naturalWidth);
+      }
+      if (scaledHeight > availableHeight) {
+        scale = Math.min(scale, availableHeight / item.naturalHeight);
+      }
+    });
+
+    // Apply minimum scale threshold
+    return Math.max(scale, LAYOUT.minScale);
+  }
+
+  /**
    * Apply uniform scale via CSS custom property
    * ALL elements reference --slide-scale via calc() in CSS
    */
@@ -196,63 +388,63 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /**
-   * NEW: Aspect-ratio-based layout algorithm
+   * CORRECTED: Aspect-ratio-based layout algorithm
    *
    * Algorithm:
-   * 1. Reset to default sizes (no scaling applied)
-   * 2. Measure bounding box of ALL content
-   * 3. Calculate uniform scale to fit within available space
-   * 4. Apply single --slide-scale CSS variable to entire slide
-   *
-   * This ensures ALL elements (text, images, diagrams, callouts) scale
-   * by exactly the same factor, preserving visual relationships.
+   * 1. Classify elements as rigid (images/diagrams) or flexible (text/callouts)
+   * 2. Expand flexible element widths to fill available space (text reflows)
+   * 3. Measure content bounds after reflow
+   * 4. Calculate uniform scale constrained by rigid element aspect ratios
+   * 5. Apply single --slide-scale CSS variable to entire slide
    */
   function layoutSlideWithAspectRatio(slide) {
     const h1 = slide.querySelector('h1');
 
-    // Step 0: Skip if has compile-time scaling
+    // Skip if has compile-time scaling
     if (hasCompileTimeScaling(slide)) return;
 
-    // Step 1: Reset and measure at default sizes
+    // STEP 0: Reset all scaling first
     resetSlideScaling(slide, h1);
-    // Also clear any previous --slide-scale
     slide.style.removeProperty('--slide-scale');
     void slide.offsetHeight; // Force reflow
 
-    // Step 2: Get all measurements
+    // Get slide dimensions
     const slideRect = slide.getBoundingClientRect();
     const slideStyle = getComputedStyle(slide);
     const padding = parseFloat(slideStyle.padding) || 40;
     const h1Height = h1 ? h1.getBoundingClientRect().height : 0;
     const h1MarginBottom = h1 ? parseFloat(getComputedStyle(h1).marginBottom) || 0 : 0;
 
-    // Measure ALL content including diagrams/images
-    const contentBounds = measureContentBoundingBox(slide);
+    const availableWidth = slideRect.width - (padding * 2);
+    const availableHeight = slideRect.height - h1Height - h1MarginBottom - LAYOUT.bottomMargin - padding;
+
+    // STEP 1: Classify elements
+    const elements = classifySlideElements(slide, h1);
+
+    // STEP 2: Expand flexible element widths to fill available space
+    // This causes text to reflow, reducing height
+    expandFlexibleWidths(elements.flexible, availableWidth);
+    void slide.offsetHeight; // Force reflow after width changes
+
+    // STEP 3: Measure content bounds after expansion
+    const contentBounds = measureContentBounds(slide, h1);
 
     if (contentBounds.width === 0 || contentBounds.height === 0) {
       return; // No content to scale
     }
 
-    // Calculate available space
-    const availableWidth = slideRect.width - (padding * 2);
-    const availableHeight = slideRect.height - h1Height - h1MarginBottom - LAYOUT.bottomMargin - padding;
+    // STEP 4: Calculate uniform scale constrained by rigid elements
+    const scale = calculateConstrainedScale(
+      elements.rigid,
+      contentBounds,
+      availableWidth,
+      availableHeight
+    );
 
-    // Content dimensions (excluding title from height calculation)
-    const contentHeight = contentBounds.height - (h1 ? h1Height + h1MarginBottom : 0);
-    const contentWidth = contentBounds.width;
-
-    // Step 3: Check if scaling needed
-    if (contentWidth <= availableWidth && contentHeight <= availableHeight) {
-      return; // Fits at default - no scaling needed
+    // STEP 5: Apply scale if needed
+    if (scale < 1.0) {
+      applyUniformScaleViaCSS(slide, scale, h1);
     }
-
-    // Step 4: Calculate uniform scale
-    const scaleX = availableWidth / contentWidth;
-    const scaleY = availableHeight / contentHeight;
-    const uniformScale = Math.max(Math.min(scaleX, scaleY), LAYOUT.minScale);
-
-    // Step 5: Apply uniform scale via CSS custom property
-    applyUniformScaleViaCSS(slide, uniformScale, h1);
   }
 
   /**
