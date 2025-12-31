@@ -310,7 +310,7 @@ We cannot directly observe consciousness &mdash; even in other humans!
 - Another critical aspect of the human conscious experience is the ability to **decide** (how to act, what to think, etc.)
 - Modern LLMs are trained to **respond** to other inputs (i.e., produce statistically likely sequence completions), but they cannot themselves initiate new or unexpected actions
 
-<div class="note-box" data-title="Think about it!">
+<div class="tip-box" data-title="Think about it!">
 
 LLMs are like a bellows that can only blow air if someone else is pumping it. When not in use, they are static. They can not sense the passage of time. They cease to exist between invocations.
 
@@ -334,28 +334,17 @@ Most cognitive scientists and AI researchers agree: **Current LLMs are not consc
 
 # Language and thought
 
-<div class="note-box">
+<div class="note-box" data-title="Discussion">
 
-**Discussion:** Do you need language to think? Does language *shape* how you think?
-
-</div>
-
-<div style="display: flex; gap: 2em;">
-<div>
-
-**Language = Thought:**
-All thinking happens in language
+Do you need language to think? Does language *shape* how you think?
 
 </div>
-<div>
 
-**Language $\neq$ Thought:**
-Language is just a tool for communication
+- Possibility 1: Language is necessary for thought
+- Possibility 2: Language is just a tool for communication
 
-</div>
-</div>
+<span class="emoji emoji-xl">⚖️</span>
 
-The truth is likely somewhere in between...
 
 ---
 
@@ -370,23 +359,17 @@ Current evidence points toward the middle: language and thought interact in comp
 
 ---
 
-# Evidence: The language network
+# Evidence: the language network
 
-<div class="note-box">
+<div class="note-box" data-title="Further reading">
 
-**Fedorenko et al. (2024) - Nature:** *The language network as a natural kind*
+[**Fedorenko et al. (2024, *Nature*):**](https://www.nature.com/articles/s41586-024-07522-w) The language network as a natural kind
 
 </div>
 
-**Key findings:**
 - The brain has a **specialized language network**
-- Distinct from: reasoning, math, social cognition, music
-
-<div class="tip-box">
-
-**Implication:** Language and thought are *separable* in the brain!
-
-</div>
+- Distinct (as measured using neuroimaging and lesion studies) from: reasoning, math, social cognition, music
+- **Implication:** Language and thought are *separable* in the brain!
 
 ---
 
@@ -411,96 +394,81 @@ Current evidence points toward the middle: language and thought interact in comp
   </div>
 </div>
 
-<div class="note-box">
+<div class="tip-box" data-title="Key insight">
 
-**Key insight:** Language is a specialized system, not the basis of all thought!
+Language is a specialized system, *not* the basis of all thought! This has fascinating implications for LLMs: we've built machines that can *interact* using language, but this doesn't necessarily mean they understand it in any recognizable way.
 
 </div>
 
 ---
 
-# Evidence: Language shapes perception
+# However, language can *shape* thought
 
-<div class="note-box">
+<div class="note-box" data-title="Further reading">
 
-**Lupyan et al. (2020) - TICS:** *Effects of language on visual perception*
+[**Lupyan et al. (2020, *TiCS*):**](https://doi.org/10.1016/j.tics.2020.08.005) *Effects of language on visual perception*
 
 </div>
 
-**Key findings:** Having words for things affects how we *see* them
+Having words for things affects how we *see* them:
 - Speed up visual search
 - Alter color perception
 - Influence object categorization
 
 ---
 
-# The Russian blue example
+# Example: Russian blue
 
-<div style="display: flex; gap: 2em;">
-<div>
-
-**English speakers:**
-- One word: "blue"
-- Slower to distinguish shades
-
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy"></span>
+    <span class="label">English: "blue"</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-blue"></span>
+    <span class="label">English: "blue"</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl"> </span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl"> </span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy"></span>
+    <span class="label">Russian: "siniy"</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-blue"></span>
+    <span class="label">Russian: "goluboy"</span>
+  </div>
 </div>
-<div>
 
-**Russian speakers:**
-- "siniy" (dark) vs "goluboy" (light)
-- Faster to distinguish shades
+<div class="note-box" data-title="Key finding">
 
-</div>
-</div>
-
-<div class="tip-box">
-
-Language categories affect *perception*, not just description!
-
-</div>
-
----
-
-# So what about LLMs?
-
-**Current evidence suggests:**
-- LLMs are *very good* at language patterns
-- LLMs may have some internal "representations"
-- LLMs lack grounding in sensory-motor experience
-- No evidence of phenomenal consciousness
-
-<div class="tip-box">
-
-Can an LLM have sophisticated language *without* sophisticated thought?
+English speakers are slower to distinguish shades of blue than Russian speakers: 
+language categories affect *perception*, not just description!
 
 </div>
 
 ---
 
-# The grounding problem
+# So...what about LLMs?
 
-<div class="note-box">
+<div class="note-box" data-title="The grounding problem">
 
-**Symbol grounding:** How do symbols (words) get their meaning?
-
-</div>
-
-<div style="display: flex; gap: 2em;">
-<div>
-
-**Humans:** Grounded in experience
-- See, touch, taste objects
-- Act in the world
+How do symbols (words) get their meaning?
 
 </div>
-<div>
 
-**LLMs:** Statistical patterns
-- Only see text
-- No sensory experience
-
-</div>
-</div>
+- For **humans**, the meanings of symbols are learned through *experience*:
+  - See, touch, taste objects
+  - Act in the world
+  - We learn to associate symbols with our experiences
+- For **LLMs**, the meanings of symbols are learned through *statistics*:
+  - Learn patterns in text
+  - Generate text based on those patterns
+  - No direct connection with the external world
 
 ---
 
