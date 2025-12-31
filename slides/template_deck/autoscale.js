@@ -1,12 +1,41 @@
 // Auto-scale slide CONTENT to fit within bounds
+// Uses cascade: preferred gaps → shrink gaps → shrink fonts (proportionally)
+// Preserves relative font size ratios between element types
 // Handles tables specially by adjusting font-size
 // Detects wrapped text cells and applies left-alignment
 // Triggers Chart.js animations on slide transitions
 document.addEventListener("DOMContentLoaded", function () {
+  // ==========================================================================
+  // LAYOUT CONFIGURATION
+  // Font ratios are relative to body text (1.0) and MUST be preserved
+  // ==========================================================================
+  const LAYOUT = {
+    // Font ratios relative to body text (MUST be preserved during scaling)
+    fontRatios: {
+      title: 1.72,      // H1 titles
+      body: 1.0,        // paragraphs, lists, divs
+      code: 0.63,       // pre/code blocks (22pt / 35px base)
+      table: 0.7,       // table cells
+      callout: 0.65,    // callout boxes
+    },
+    // Gap configuration (space between elements)
+    gaps: {
+      preferred: 30,    // px - start here
+      minimum: 20,      // px - never go below this
+      step: 2,          // px - shrink by this amount each iteration
+    },
+    // Scaling bounds
+    minScale: 0.5,      // Never scale below 50%
+    baseFontSize: 35,   // px - base font size from CSS
+    // Padding
+    bottomMargin: 30,   // px - reserved space at bottom of slide
+  };
+
+  // Legacy constants for backward compatibility
   const MIN_PADDING_TOP = 30;
   const MIN_PADDING_BOTTOM = 20;
-  const TITLE_HEIGHT = 90; // Reserved space for title
-  const MIN_TITLE_FONT_SIZE = 1.4; // Minimum title size in em
+  const TITLE_HEIGHT = 90;
+  const MIN_TITLE_FONT_SIZE = 1.4;
 
   function detectWrappedColumns(table) {
     // Detect columns where ANY cell has wrapped text
@@ -62,12 +91,286 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  /**
+   * Check if an element is a flex container (two-column layout)
+   */
+  function isFlexContainer(element) {
+    const style = window.getComputedStyle(element);
+    return style.display === 'flex' || element.style.display === 'flex' ||
+           (element.hasAttribute('style') && element.getAttribute('style').includes('flex'));
+  }
+
+  /**
+   * Check if an element is a callout box
+   */
+  function isCalloutBox(element) {
+    return element.classList.contains('note-box') || element.classList.contains('warning-box') ||
+           element.classList.contains('tip-box') || element.classList.contains('example-box') ||
+           element.classList.contains('definition-box') || element.classList.contains('important-box') ||
+           element.classList.contains('callout');
+  }
+
+  /**
+   * Determine the element type for font ratio lookup
+   */
+  function getElementType(el) {
+    if (el.tagName === 'H1') return 'title';
+    if (el.tagName === 'PRE') return 'code';
+    if (el.tagName === 'TABLE') return 'table';
+    if (isCalloutBox(el)) return 'callout';
+    return 'body';
+  }
+
+  /**
+   * Reset any existing scaling on a slide so we can measure at default sizes
+   * This is CRITICAL for accurate measurement before applying new scaling
+   */
+  function resetSlideScaling(slide, h1) {
+    // Reset title
+    if (h1) {
+      h1.style.fontSize = '';
+      h1.style.marginTop = '';
+      h1.style.marginBottom = '';
+    }
+
+    // Reset all direct children
+    const children = slide.querySelectorAll(':scope > *');
+    children.forEach(function(child) {
+      // Reset font-size
+      child.style.fontSize = '';
+      // Reset margins
+      child.style.marginTop = '';
+      child.style.marginBottom = '';
+      // Reset padding
+      child.style.paddingTop = '';
+      child.style.paddingBottom = '';
+      child.style.paddingLeft = '';
+      child.style.paddingRight = '';
+
+      // For flex containers, reset --content-scale and gap
+      if (isFlexContainer(child)) {
+        child.style.removeProperty('--content-scale');
+        child.style.gap = '';
+      }
+    });
+  }
+
+  /**
+   * Collect all scalable elements from a slide with their metrics
+   * Returns array of {element, type, metrics} objects
+   */
+  function collectSlideElements(slide) {
+    const elements = [];
+    const children = slide.querySelectorAll(':scope > *');
+
+    children.forEach(function (child) {
+      if (child.offsetHeight === 0) return;
+      const style = window.getComputedStyle(child);
+      if (style.position === 'absolute' || style.position === 'fixed') return;
+
+      const type = getElementType(child);
+      const rect = child.getBoundingClientRect();
+
+      elements.push({
+        element: child,
+        type: type,
+        metrics: {
+          height: rect.height,
+          marginTop: parseFloat(style.marginTop) || 0,
+          marginBottom: parseFloat(style.marginBottom) || 0,
+          gap: parseFloat(style.gap) || 0,
+          fontSize: parseFloat(style.fontSize),
+          paddingTop: parseFloat(style.paddingTop) || 0,
+          paddingBottom: parseFloat(style.paddingBottom) || 0,
+          paddingLeft: parseFloat(style.paddingLeft) || 0,
+          paddingRight: parseFloat(style.paddingRight) || 0,
+        }
+      });
+    });
+
+    return elements;
+  }
+
+  /**
+   * Measure ACTUAL content bounding box height on the slide
+   * Uses getBoundingClientRect to get true rendered positions
+   * This accounts for margin collapsing and actual layout
+   */
+  function measureActualContentHeight(slide) {
+    const children = Array.from(slide.querySelectorAll(':scope > *')).filter(function(el) {
+      if (el.offsetHeight === 0) return false;
+      const style = window.getComputedStyle(el);
+      return style.position !== 'absolute' && style.position !== 'fixed';
+    });
+
+    if (children.length === 0) return 0;
+
+    const slideRect = slide.getBoundingClientRect();
+    const slideStyle = window.getComputedStyle(slide);
+    const paddingTop = parseFloat(slideStyle.paddingTop) || 0;
+
+    // Find the actual top and bottom of all content
+    let minTop = Infinity;
+    let maxBottom = -Infinity;
+
+    children.forEach(function(child) {
+      const rect = child.getBoundingClientRect();
+      const relativeTop = rect.top - slideRect.top;
+      const relativeBottom = rect.bottom - slideRect.top;
+
+      if (relativeTop < minTop) minTop = relativeTop;
+      if (relativeBottom > maxBottom) maxBottom = relativeBottom;
+    });
+
+    // Content height is from first element top to last element bottom
+    // Subtract paddingTop because content starts after padding
+    return maxBottom - paddingTop;
+  }
+
+  /**
+   * Apply the final layout with proportional font sizes
+   * All element types maintain their relative font ratios
+   */
+  function applyProportionalLayout(elements, scale, gap, h1) {
+    // Apply to title with minimum size enforcement
+    if (h1) {
+      const titleRatio = LAYOUT.fontRatios.title;
+      const scaledTitleSize = titleRatio * scale;
+      const finalTitleSize = Math.max(scaledTitleSize, MIN_TITLE_FONT_SIZE / LAYOUT.baseFontSize * LAYOUT.fontRatios.title);
+      h1.style.fontSize = finalTitleSize + 'em';
+
+      // Scale title margins
+      const h1Style = window.getComputedStyle(h1);
+      const h1MarginTop = parseFloat(h1Style.marginTop) || 0;
+      const h1MarginBottom = parseFloat(h1Style.marginBottom) || 0;
+      h1.style.marginTop = (h1MarginTop * scale) + 'px';
+      h1.style.marginBottom = (h1MarginBottom * scale) + 'px';
+    }
+
+    // Apply to all other elements
+    elements.forEach(function (item) {
+      if (item.type === 'title') return; // Already handled
+
+      const el = item.element;
+      const metrics = item.metrics;
+      const ratio = LAYOUT.fontRatios[item.type] || LAYOUT.fontRatios.body;
+
+      // Calculate font size preserving the ratio
+      const newFontSize = LAYOUT.baseFontSize * ratio * scale;
+
+      // For flex containers, use CSS custom property for cascading
+      if (isFlexContainer(el)) {
+        el.style.setProperty('--content-scale', scale);
+        // Apply gap (use the calculated gap, scaled)
+        el.style.gap = (gap * scale) + 'px';
+      } else {
+        // Set font-size directly
+        el.style.fontSize = newFontSize + 'px';
+      }
+
+      // Scale margins proportionally (affects gaps between elements)
+      el.style.marginTop = (metrics.marginTop * scale) + 'px';
+      el.style.marginBottom = (metrics.marginBottom * scale) + 'px';
+
+      // For callout boxes, also scale padding
+      if (isCalloutBox(el)) {
+        el.style.padding = (metrics.paddingTop * scale) + 'px ' +
+                          (metrics.paddingRight * scale) + 'px ' +
+                          (metrics.paddingBottom * scale) + 'px ' +
+                          (metrics.paddingLeft * scale) + 'px';
+      }
+    });
+  }
+
+  /**
+   * Layout slide content using cascade: gaps first, then scale
+   *
+   * Algorithm:
+   * 1. Reset to default sizes and measure ACTUAL rendered height
+   * 2. If content doesn't fit, shrink gaps down to minimum
+   * 3. If still doesn't fit, shrink scale (all fonts proportionally)
+   * 4. Apply scaling and re-measure actual height
+   * 5. Repeat until content fits or minimum scale reached
+   *
+   * Font ratios between element types are ALWAYS preserved
+   */
+  function layoutSlideContent(slide, h1, slideHeight) {
+    // Get slide padding
+    const slideStyle = window.getComputedStyle(slide);
+    const paddingBottom = parseFloat(slideStyle.paddingBottom) || 100;
+
+    // Calculate available height (from top of slide to bottom padding)
+    const availableHeight = slideHeight - paddingBottom - LAYOUT.bottomMargin;
+
+    // CRITICAL: Reset any existing scaling BEFORE measuring
+    resetSlideScaling(slide, h1);
+
+    // Force layout recalculation after reset
+    void slide.offsetHeight;
+
+    // Collect all elements for later scaling
+    const elements = collectSlideElements(slide);
+    if (elements.length === 0) return;
+
+    // Filter out title for content elements
+    const contentElements = elements.filter(function (item) {
+      return item.type !== 'title';
+    });
+
+    // If only title, nothing to scale
+    if (contentElements.length === 0) return;
+
+    // Measure ACTUAL rendered content height at default scale
+    let actualHeight = measureActualContentHeight(slide);
+
+    // Check if content already fits at default sizes
+    if (actualHeight <= availableHeight) return;
+
+    // Initialize layout parameters
+    let currentGap = LAYOUT.gaps.preferred;
+    let scale = 1.0;
+
+    // LAYOUT CASCADE: Try gaps first, then scale
+    let iterations = 0;
+    const maxIterations = 50; // Safety limit
+
+    while (actualHeight > availableHeight && iterations < maxIterations) {
+      iterations++;
+
+      // Step 1: Try shrinking gaps first (affects flex containers)
+      if (currentGap > LAYOUT.gaps.minimum) {
+        currentGap = Math.max(currentGap - LAYOUT.gaps.step, LAYOUT.gaps.minimum);
+        // Apply gap change and re-measure
+        applyProportionalLayout(elements, scale, currentGap, h1);
+        void slide.offsetHeight;
+        actualHeight = measureActualContentHeight(slide);
+        continue;
+      }
+
+      // Step 2: Gaps at minimum, shrink scale
+      scale -= 0.02;
+      if (scale < LAYOUT.minScale) {
+        scale = LAYOUT.minScale;
+        // Apply final minimum scale
+        applyProportionalLayout(elements, scale, currentGap, h1);
+        break;
+      }
+
+      // Apply new scale and re-measure ACTUAL rendered height
+      applyProportionalLayout(elements, scale, currentGap, h1);
+      void slide.offsetHeight;
+      actualHeight = measureActualContentHeight(slide);
+    }
+
+    // If we exited without applying (content fit at default), no scaling needed
+    // Otherwise, final layout has already been applied in the loop
+  }
+
   function scaleSlides() {
     const slides = document.querySelectorAll("section:not(.lead):not([id='1']):not(.manual-layout)");
 
     slides.forEach(function (slide) {
       const slideHeight = slide.clientHeight;
-      const slideWidth = slide.clientWidth;
 
       // Find h1 title
       const h1 = slide.querySelector('h1');
@@ -134,53 +437,9 @@ document.addEventListener("DOMContentLoaded", function () {
           detectWrappedColumns(table);
         });
       } else {
-        // For non-table content, use general scaling logic
-        let contentTop = Infinity;
-        let contentBottom = 0;
-
-        const children = slide.querySelectorAll(':scope > *');
-        children.forEach(function (child) {
-          if (child.offsetHeight === 0) return;
-          const style = window.getComputedStyle(child);
-          if (style.position === 'absolute' || style.position === 'fixed') return;
-
-          const rect = child.getBoundingClientRect();
-          const slideRect = slide.getBoundingClientRect();
-          const relTop = rect.top - slideRect.top;
-          const relBottom = rect.bottom - slideRect.top;
-
-          contentTop = Math.min(contentTop, relTop);
-          contentBottom = Math.max(contentBottom, relBottom);
-        });
-
-        if (contentTop === Infinity) return;
-
-        const contentHeight = contentBottom - contentTop;
-        const availableHeight = slideHeight - MIN_PADDING_TOP - MIN_PADDING_BOTTOM;
-
-        const needsTopSpace = contentTop < MIN_PADDING_TOP;
-        const needsBottomSpace = contentBottom > (slideHeight - MIN_PADDING_BOTTOM);
-
-        if (needsTopSpace || needsBottomSpace) {
-          const scale = Math.min(availableHeight / contentHeight, 1);
-
-          if (scale < 0.95) {
-            children.forEach(function (child) {
-              if (child.offsetHeight === 0) return;
-              const style = window.getComputedStyle(child);
-              if (style.position === 'absolute' || style.position === 'fixed') return;
-
-              if (child.tagName === 'H1') {
-                const scaledSize = 1.8 * scale;
-                const finalSize = Math.max(scaledSize, MIN_TITLE_FONT_SIZE);
-                child.style.fontSize = finalSize + 'em';
-              } else {
-                child.style.transform = 'scale(' + scale + ')';
-                child.style.transformOrigin = 'center top';
-              }
-            });
-          }
-        }
+        // For non-table content, use the holistic layout algorithm
+        // This preserves relative font ratios while scaling everything proportionally
+        layoutSlideContent(slide, h1, slideHeight);
       }
     });
   }

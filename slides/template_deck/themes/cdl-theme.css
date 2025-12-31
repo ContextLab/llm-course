@@ -587,7 +587,7 @@ b i {
     line-height: 1.1;
 }
 
-/* Multi-column layout - side by side with compact gap, centered */
+/* Multi-column layout - side by side with compact gap, spread across slide */
 section>div[style*="display: flex"],
 section>div[style*="display:flex"],
 section>div[style*="gap"],
@@ -596,13 +596,13 @@ section>div[style*="gap"],
 .multi-column {
     display: flex !important;
     flex-direction: row !important;
-    justify-content: center !important;
+    justify-content: space-between !important;
     align-items: flex-start !important;
-    gap: 1.5em !important;
-    width: auto !important;
+    gap: 1.5em;  /* Default gap - can be overridden by inline styles */
+    width: 100% !important;
     max-width: 100% !important;
     flex-wrap: nowrap !important;
-    margin: 0 auto !important;
+    margin: 0 !important;
 }
 
 section>div[style*="display: flex"]>div,
@@ -611,19 +611,30 @@ section>div[style*="gap"]>div,
 .columns>div,
 .two-column>div,
 .multi-column>div {
-    flex: 1 1 auto !important;
-    max-width: 48% !important;
+    flex: 1 1 0 !important;
+    max-width: none !important;
     min-width: 0 !important;
 }
 
-/* Reduce font size in multi-column layouts */
+/* Multi-column layouts: font size controlled by autoscale.js via CSS variable
+   Default to 1em (full size) - JS will set --content-scale if scaling needed */
+section>div[style*="display: flex"],
+section>div[style*="display:flex"],
+section>div[style*="gap"],
+.columns,
+.two-column,
+.multi-column {
+    --content-scale: 1;
+}
+
+/* Apply scaling to flex container children */
 section>div[style*="display: flex"] *,
 section>div[style*="display:flex"] *,
 section>div[style*="gap"] *,
 .columns *,
 .two-column *,
 .multi-column * {
-    font-size: 0.85em !important;
+    font-size: calc(1em * var(--content-scale, 1)) !important;
 }
 
 /* Reset font size for nested elements to prevent compounding */
@@ -646,14 +657,14 @@ section:not(.lead):not(#\31):has(.multi-column) {
     justify-content: flex-start !important;
 }
 
-/* Multi-column content: use auto margins for vertical centering */
+/* Multi-column content: position closer to title, not vertically centered */
 section:not(.lead):not(#\31):has(div[style*="display: flex"])>*:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(div[style*="display:flex"])>*:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(div[style*="gap"])>*:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(.columns)>*:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(.two-column)>*:not(h1):first-of-type,
 section:not(.lead):not(#\31):has(.multi-column)>*:not(h1):first-of-type {
-    margin-top: auto !important;
+    margin-top: 0.5em !important;
 }
 
 section:not(.lead):not(#\31):has(div[style*="display: flex"])>*:not(h1):last-of-type,
