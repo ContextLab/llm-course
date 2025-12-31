@@ -457,6 +457,95 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ==========================================================================
+  // ON-DEMAND SLIDE SCALING (fixes timing bug where non-visible slides
+  // get incorrect dimensions from getBoundingClientRect)
+  // ==========================================================================
+
+  /**
+   * Scale a single slide by ID - called when navigating to ensure
+   * the currently visible slide is correctly scaled
+   */
+  function scaleSlideById(slideId) {
+    var slide = document.querySelector('section[id="' + slideId + '"]');
+    if (!slide) return;
+
+    // Skip excluded slides
+    if (slide.classList.contains('lead') ||
+        slide.id === '1' ||
+        slide.classList.contains('manual-layout')) {
+      return;
+    }
+
+    var slideHeight = slide.clientHeight;
+    var h1 = slide.querySelector('h1');
+    var tables = slide.querySelectorAll('table');
+
+    if (tables.length > 0) {
+      // Handle tables - use existing table scaling logic
+      tables.forEach(function(table) {
+        // Skip split tables (already sized by compile-time processing)
+        if (table.classList.contains('split-table')) return;
+        // Apply table scaling (simplified - main scaling already ran)
+        scaleTableIfNeeded(table, slideHeight, h1);
+      });
+    } else {
+      // For non-table content, use the holistic layout algorithm
+      layoutSlideContent(slide, h1, slideHeight);
+    }
+  }
+
+  /**
+   * Helper function for table scaling on navigation
+   */
+  function scaleTableIfNeeded(table, slideHeight, h1) {
+    // Get available height
+    var h1Height = h1 ? h1.offsetHeight : 0;
+    var h1Style = h1 ? window.getComputedStyle(h1) : null;
+    var h1Margin = h1Style ? (parseFloat(h1Style.marginTop) || 0) + (parseFloat(h1Style.marginBottom) || 0) : 0;
+    var availableHeight = slideHeight - h1Height - h1Margin - 100; // 100px buffer
+
+    var tableHeight = table.offsetHeight;
+    if (tableHeight > availableHeight && tableHeight > 0) {
+      var scale = availableHeight / tableHeight;
+      scale = Math.max(scale, 0.5); // Minimum 50% scale
+      table.style.fontSize = (scale * 100) + '%';
+    }
+  }
+
+  // Track the last scaled slide to avoid redundant scaling
+  var lastScaledSlideId = null;
+
+  /**
+   * Handle slide navigation - rescale the current slide
+   * This fixes the timing bug where getBoundingClientRect returns
+   * incorrect values for non-visible slides
+   */
+  function onSlideNavigation() {
+    var hash = window.location.hash;
+    var slideId = (hash && hash.length > 1) ? hash.substring(1) : '1';
+
+    // Avoid rescaling the same slide repeatedly
+    if (slideId === lastScaledSlideId) return;
+    lastScaledSlideId = slideId;
+
+    // Use double RAF to ensure layout is complete
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        scaleSlideById(slideId);
+      });
+    });
+  }
+
+  // Listen for navigation events to rescale slides
+  window.addEventListener('hashchange', onSlideNavigation);
+
+  // Also scale the initial slide after a short delay
+  // (gives time for fonts and CSS to fully load)
+  setTimeout(function() {
+    onSlideNavigation();
+  }, 100);
+
+  // ==========================================================================
   // CHART.JS ANIMATION REPLAY ON SLIDE TRANSITIONS
   // ==========================================================================
 
