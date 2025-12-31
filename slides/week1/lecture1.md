@@ -15,7 +15,7 @@ Winter 2026
 
 ---
 
-# About the instructor
+# Who am I?
 <!-- _class: manual-layout -->
 
 <div class="instructor-container">
@@ -24,17 +24,17 @@ Winter 2026
 <div class="instructor-header-left">
 <h3 style="color: #001c12 !important; margin: 0;">Jeremy R. Manning, Ph.D.</h3>
 <p>
-Associate Professor | Psychological &amp; Brain Sciences | <img src="../../figures/dartmouth_logo.png" style="height: 1.2em; vertical-align: middle; margin: 0 0.1em;"> | Moore 349
+Associate Professor | Psychological &amp; Brain Sciences | <img src="../../figures/dartmouth_logo.png" style="height: 1.2em; vertical-align: middle; margin: 0 0.1em;"> | <a href="context-lab.youcanbook.me">Moore 349</a>
 </p>
 </div>
 <div class="instructor-header-right">
 <div class="header-link-row">
 <img src="../../figures/cdl_logo.png" class="header-icon">
-<a href="https://www.context-lab.com" class="header-link">context-lab.com</a>
+<a href="https://www.context-lab.com" class="header-link"><u>context-lab.com</u></a>
 </div>
 <div class="header-link-row">
 <img src="../../figures/github_logo.png" class="header-icon">
-<a href="https://github.com/ContextLab" class="header-link">ContextLab</a>
+<a href="https://github.com/ContextLab" class="header-link"><u>ContextLab</u></a>
 </div>
 </div>
 </div>
@@ -123,11 +123,6 @@ We will explore how machines can understand and generate human language:
 
 # Course structure
 
-```flow
-[ELIZA:green] --> [SPAM:teal] --> [Wikipedia:blue] --> [Chatbot:orange] --> [GPT:violet]
-```
-<!-- caption: We'll build from pattern matching to transformer-based models through our 5 main projects -->
-
 <style scoped>
 .small-boxes ul { font-size: 0.65em !important; }
 .small-boxes li { font-size: inherit !important; }
@@ -169,7 +164,7 @@ These are not just "fluff" questions: they are at the heart of cognitive science
 
 ---
 
-# Discussion: Is ChatGPT conscious?
+# Discussion: is ChatGPT conscious?
 
 - What does "conscious" even mean?
 - How would we test for consciousness?
@@ -472,118 +467,85 @@ How do symbols (words) get their meaning?
 
 ---
 
-# Our approach
+# Our approach (in this course)
 
-<div class="note-box">
+<div class="note-box" data-title="Philosophy of this course">
 
-**Philosophy of this course:** We will build language models *from scratch* to understand what they can and cannot do.
+We will build language models *from scratch* to understand **what they can and cannot do**. By learning about the inner workings of LLMs, we can better understand their capabilities and limitations *and our **own** capabilities and limitations*.
 
 </div>
-
-**Critical perspective:**
-- Question assumptions about "understanding"
-- Appreciate both capabilities and limitations
-- Think about implications for cognitive science
-
----
-
-# From simple to complex
 
 ```flow
 [ELIZA:green] --> [Classifiers:teal] --> [Embeddings:blue] --> [Attention:orange] --> [GPT:violet]
 ```
-<!-- caption: At what point does pattern matching become understanding? -->
-
-<div class="note-box">
-
-**Discussion:** At what point (if any) does pattern matching become understanding?
-
-</div>
+<!-- caption: You'll progress from building simple string manipulation models to modern LLMs. We will make heavy use of GenAI (vibe coding) to enable us to build and iterate quickly. -->
 
 ---
 
-# HuggingFace: Your learning companion
+# Up next...
 
-**We will use HuggingFace for:**
-- **Course materials:** Free NLP course at [huggingface.co/course](https://huggingface.co/course)
-- **Pre-trained models:** Download and use state-of-the-art models
-- **Datasets:** Access curated datasets for training
+<div class="note-box" data-title="Lecture 2 (Wednesday)">
 
-<div class="warning-box">
-
-**Assignment:** Create a free HuggingFace account and complete Chapter 1 of the NLP course!
-
-</div>
-
----
-
-# Next lectures this week
-
-<div style="display: flex; gap: 2em;">
-<div class="note-box" style="flex: 1;">
-
-**Lecture 2: Pattern matching and ELIZA**
-- String manipulation
-- Regular expressions
+**Pattern matching and ELIZA**
 - Introduction to ELIZA
-
-</div>
-<div class="note-box" style="flex: 1;">
-
-**Lecture 3 (X-hour): ELIZA implementation**
-- Complete architecture
 - The ELIZA effect
-- Assignment 1 details
+- String manipulation and regular expressions
 
 </div>
+<div class="note-box" data-title="Lecture 3 (Thursday/X-hour)">
+
+**ELIZA implementation**
+- Complete architecture
+- Assignment 1 details
+- Coding together (time permitting)
+
 </div>
 
 ---
 
 # Readings for this week
 
-<div class="note-box">
-
-**Required readings:**
 1. [Weizenbaum (1966): ELIZA](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf)
 2. [Fedorenko et al. (2024): The language network](https://www.nature.com/articles/s41586-024-07522-w)
 3. [Lupyan et al. (2020): Effects of language on visual perception](https://doi.org/10.1016/j.tics.2020.08.005)
 
+<div class="tip-box">
+
+Start with Weizenbaum&mdash; it will help you understand the fundamentals!
+
 </div>
 
-**Tip:** Start with Weizenbaum--it will help you understand the fundamentals!
+---
+
+# Key ideas from today
+
+1. **Consciousness is complex:** multiple types, hard to define
+2. **Language $\neq$ Thought:** but they interact in interesting ways
+3. **LLMs are not conscious:** they are sophisticated pattern matchers
+4. **Grounding matters:** meaning comes from experience
+5. **Building to understand:** we'll build (and play around with) real models to understand what they can and can't do
 
 ---
 
-# Key takeaways
-
-1. **Consciousness is complex:** Multiple types, hard to define
-2. **Language $\neq$ Thought:** But they interact in interesting ways
-3. **LLMs are not conscious:** They are sophisticated pattern matchers
-4. **Grounding matters:** Meaning comes from experience
-5. **We will build to understand:** Hands-on reveals true capabilities
-
----
-
-# Questions?
+# Questions? Want to chat more?
 
 <div class="emoji-figure">
   <div class="emoji-col">
-    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F4E7;</span>
-    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a></span>
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">📧</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a> me</span>
   </div>
   <div class="emoji-col">
-    <span class="emoji emoji-xl emoji-bg emoji-bg-teal">&#x1F4AC;</span>
-    <span class="label"><a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">💬</span>
+    <span class="label">Join our <a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
   </div>
   <div class="emoji-col">
-    <span class="emoji emoji-xl emoji-bg emoji-bg-blue">&#x1F3E2;</span>
-    <span class="label">Moore 349</span>
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">💁</span>
+    <span class="label">Come to <a href="context-lab.youcanbook.me">office hours</a></span>
   </div>
 </div>
 
-<div class="note-box">
+<div class="tip-box">
 
-**Office hours:** By appointment | **Lab website:** [context-lab.com](https://www.context-lab.com)
+This course will move *very* quickly. **Please** reach out if you have questions, comments, concerns, or just want to chat!
 
 </div>
