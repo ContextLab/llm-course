@@ -206,9 +206,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /**
-   * Measure ACTUAL content bounding box height on the slide
-   * Uses getBoundingClientRect to get true rendered positions
-   * This accounts for margin collapsing and actual layout
+   * Measure total height of SCALABLE content on the slide
+   * Sums individual element heights + margins, excluding diagram containers
+   *
+   * This is different from measuring bounding box span - when a diagram sits
+   * between elements, we only want the height of elements we can scale, not
+   * the space the diagram occupies (which inflates bounding box measurements)
    */
   function measureActualContentHeight(slide) {
     const children = Array.from(slide.querySelectorAll(':scope > *')).filter(function(el) {
@@ -222,26 +225,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (children.length === 0) return 0;
 
-    const slideRect = slide.getBoundingClientRect();
-    const slideStyle = window.getComputedStyle(slide);
-    const paddingTop = parseFloat(slideStyle.paddingTop) || 0;
-
-    // Find the actual top and bottom of all content
-    let minTop = Infinity;
-    let maxBottom = -Infinity;
+    // Sum up individual element heights + their margins
+    // This measures how much space SCALABLE content needs, regardless of
+    // where diagrams are positioned in the layout
+    let totalHeight = 0;
+    let prevMarginBottom = 0;
 
     children.forEach(function(child) {
       const rect = child.getBoundingClientRect();
-      const relativeTop = rect.top - slideRect.top;
-      const relativeBottom = rect.bottom - slideRect.top;
+      const style = window.getComputedStyle(child);
+      const marginTop = parseFloat(style.marginTop) || 0;
+      const marginBottom = parseFloat(style.marginBottom) || 0;
 
-      if (relativeTop < minTop) minTop = relativeTop;
-      if (relativeBottom > maxBottom) maxBottom = relativeBottom;
+      // Account for margin collapsing (take max of adjacent margins)
+      const effectiveMarginTop = Math.max(marginTop, prevMarginBottom);
+      totalHeight += effectiveMarginTop + rect.height;
+      prevMarginBottom = marginBottom;
     });
 
-    // Content height is from first element top to last element bottom
-    // Subtract paddingTop because content starts after padding
-    return maxBottom - paddingTop;
+    // Add final element's bottom margin
+    totalHeight += prevMarginBottom;
+
+    return totalHeight;
   }
 
   /**
@@ -300,12 +305,23 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /**
-   * Check if a slide contains any diagram containers
-   * Slides with diagrams should NOT have body text scaled - diagrams are fixed size
-   * and the remaining content should stay at default size
+   * Measure total height consumed by diagram containers on a slide
+   * Diagrams have fixed size and should NOT be scaled - we subtract their
+   * height from available space when calculating if other content needs scaling
    */
-  function slideHasDiagramContainer(slide) {
-    return slide.querySelector('.diagram-container, .chart-container') !== null;
+  function measureDiagramContainerHeight(slide) {
+    const diagrams = slide.querySelectorAll('.diagram-container, .chart-container');
+    let totalHeight = 0;
+
+    diagrams.forEach(function(diagram) {
+      const rect = diagram.getBoundingClientRect();
+      const style = window.getComputedStyle(diagram);
+      const marginTop = parseFloat(style.marginTop) || 0;
+      const marginBottom = parseFloat(style.marginBottom) || 0;
+      totalHeight += rect.height + marginTop + marginBottom;
+    });
+
+    return totalHeight;
   }
 
   /**
@@ -313,28 +329,18 @@ document.addEventListener("DOMContentLoaded", function () {
    *
    * Algorithm:
    * 1. Reset to default sizes and measure ACTUAL rendered height
-   * 2. If content doesn't fit, shrink gaps down to minimum
-   * 3. If still doesn't fit, shrink scale (all fonts proportionally)
-   * 4. Apply scaling and re-measure actual height
-   * 5. Repeat until content fits or minimum scale reached
+   * 2. Subtract diagram container heights (they have fixed size, don't scale)
+   * 3. If scalable content doesn't fit, shrink gaps down to minimum
+   * 4. If still doesn't fit, shrink scale (all fonts proportionally)
+   * 5. Apply scaling and re-measure actual height
+   * 6. Repeat until content fits or minimum scale reached
    *
    * Font ratios between element types are ALWAYS preserved
-   *
-   * IMPORTANT: Slides with diagram containers are SKIPPED - diagrams have fixed
-   * size and the remaining content should stay at default size for PDF parity.
    */
   function layoutSlideContent(slide, h1, slideHeight) {
-    // CRITICAL: Skip slides with diagram containers entirely
-    // Diagrams have fixed size, and scaling body text breaks PDF parity
-    if (slideHasDiagramContainer(slide)) {
-      return;
-    }
     // Get slide padding
     const slideStyle = window.getComputedStyle(slide);
     const paddingBottom = parseFloat(slideStyle.paddingBottom) || 100;
-
-    // Calculate available height (from top of slide to bottom padding)
-    const availableHeight = slideHeight - paddingBottom - LAYOUT.bottomMargin;
 
     // CRITICAL: Reset any existing scaling BEFORE measuring
     resetSlideScaling(slide, h1);
@@ -342,7 +348,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Force layout recalculation after reset
     void slide.offsetHeight;
 
-    // Collect all elements for later scaling
+    // Calculate available height for SCALABLE content
+    // Diagram containers have fixed size and are NOT scaled, so subtract their height
+    const diagramHeight = measureDiagramContainerHeight(slide);
+    const availableHeight = slideHeight - paddingBottom - LAYOUT.bottomMargin - diagramHeight;
+
+    // Collect all elements for later scaling (excludes diagram containers)
     const elements = collectSlideElements(slide);
     if (elements.length === 0) return;
 
@@ -354,7 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // If only title, nothing to scale
     if (contentElements.length === 0) return;
 
-    // Measure ACTUAL rendered content height at default scale
+    // Measure ACTUAL rendered height of SCALABLE content (excludes diagrams)
     let actualHeight = measureActualContentHeight(slide);
 
     // Check if content already fits at default sizes
