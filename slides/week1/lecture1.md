@@ -192,7 +192,8 @@ What are the implications for
 
 <style scoped>
 section { font-size: 24px !important; padding: 18px 40px 28px 40px !important; }
-section > * { font-size: 24px !important; }
+section > *:not(h1) { font-size: 24px !important; }
+section > h1 { font-size: 1.8em !important; }
 section ul, section ol { display: block !important; }
 .consciousness-layout { display: flex; gap: 0.8em; margin-top: 0.15em; width: 100%; align-items: flex-start; }
 .definitions-col { flex: 1; text-align: left !important; }
@@ -207,7 +208,7 @@ section ul, section ol { display: block !important; }
 }
 .definitions-col ul li {
   text-align: left !important;
-  margin-bottom: 0.4em !important;
+  margin-bottom: 0.5em !important;
   display: list-item !important;
   list-style-type: disc !important;
 }
@@ -223,15 +224,15 @@ section ul, section ol { display: block !important; }
 .c-example::before { display: none !important; content: none !important; }
 .c-example .c-title { color: #00693e; font-weight: 600; font-size: 0.82em; display: block; margin-bottom: 0.05em; }
 .c-example .c-text { font-size: 0.82em; display: block; }
-section > .note-box { font-size: 0.68em !important; padding: 0.18em 0.4em !important; margin-top: 0.18em !important; width: 85% !important; }
+section > .note-box { font-size: 0.95em !important; padding: 0.25em 0.5em !important; margin-top: 0.25em !important; width: 85% !important; }
 </style>
 
 <div class="consciousness-layout">
 <div class="definitions-col">
 <ul>
-<li><strong>Phenomenal:</strong> Subjective experience</li>
-<li><strong>Access:</strong> Information available for reasoning</li>
-<li><strong>Self-awareness:</strong> Knowledge of one's own mental states</li>
+<li><strong>Phenomenal:</strong> Subjective experience--the "what it is like" quality of sensations and emotions</li>
+<li><strong>Access:</strong> Information available for reasoning, reporting, and guiding voluntary behavior</li>
+<li><strong>Self-awareness:</strong> Knowledge of one's own mental states, including recognizing oneself as a distinct entity</li>
 </ul>
 </div>
 <div class="examples-col">
