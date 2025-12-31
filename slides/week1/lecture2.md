@@ -327,6 +327,7 @@ Have you experienced the ELIZA effect with modern AI systems (ChatGPT, Claude, S
 - Finish reading Weizenbaum (1966)
 - Play with the ELIZA demo
 - Think about: What would YOU add to ELIZA?
+- Read the [Assignment 1 instructions](../../assignments/Assignment%201:%20ELIZA/README.md)
 
 </div>
 
@@ -334,11 +335,11 @@ Have you experienced the ELIZA effect with modern AI systems (ChatGPT, Claude, S
 
 # Key takeaways
 
-1. **String manipulation is foundational:** All text-based AI builds on finding, replacing, and extracting patterns
-2. **Regular expressions are powerful:** Flexible pattern matching enables sophisticated text processing
-3. **ELIZA demonstrated the power of simplicity:** A few clever rules can create convincing illusions
-4. **The ELIZA effect is real:** We naturally anthropomorphize systems that use language
-5. **Seeming $\neq$ Being:** Appearing intelligent does not require actual understanding
+1. **String manipulation is foundational:** all text-based AI builds on finding, replacing, and extracting patterns
+2. **Regular expressions are powerful:** flexible pattern matching enables sophisticated text processing
+3. **ELIZA demonstrated the power of simplicity:** a few clever rules can create convincing illusions
+4. **The ELIZA effect is real:** we naturally anthropomorphize systems that use language
+5. **Seeming $\neq$ Being:** appearing intelligent does not require actual understanding
 
 ---
 
@@ -361,6 +362,6 @@ Have you experienced the ELIZA effect with modern AI systems (ChatGPT, Claude, S
 
 <div class="tip-box">
 
-This course will move *very* quickly. **Please** reach out if you have questions, comments, concerns, or just want to chat!
+Feeling lost? Want to make sure we cover something you're excited about? **Please** reach out if you have questions, comments, concerns, or just want to chat!
 
 </div>

@@ -472,7 +472,7 @@ We will build language models *from scratch* to understand **what they can and c
 </div>
 
 ```flow
-[ELIZA:green] --> [Classifiers:teal] --> [Embeddings:blue] --> [Attention:orange] --> [GPT:violet]
+[String manipulation:green] --> [Classifiers:teal] --> [Embeddings:blue] --> [Retrieval systems:orange] --> [LLMs:violet]
 ```
 <!-- caption: You'll progress from building simple string manipulation models to modern LLMs. We will make heavy use of GenAI (vibe coding) to enable us to build and iterate quickly. -->
 
@@ -507,7 +507,7 @@ We will build language models *from scratch* to understand **what they can and c
 
 <div class="tip-box">
 
-Start with Weizenbaum&mdash; it will help you understand the fundamentals!
+Start with Weizenbaum&mdash; it will help you understand the fundamentals and give you important historical context!
 
 </div>
 
