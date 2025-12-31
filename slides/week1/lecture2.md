@@ -14,7 +14,7 @@ Dartmouth College
 Winter 2026
 
 ---
-
+<!-- transition: flip 0.5s --->
 # Recap from Lecture 1
 
 <div class="note-box" data-title="Key ideas">
@@ -37,9 +37,32 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 
 </div>
 
+---
+<!-- transition: flip 0.5s -->
+
+# Side note: follow along with [Google Colab](https://colab.research.google.com/)!
+
+<div style="display: flex; gap: 2em;">
+<div>
+
+![width:700px](../../figures/colab_screenshot.png)
+
+</div>
+<div class="tip-box" style="width: 100px !important; margin-top: 50px !important;">
+
+- Go to [colab.research.google.com](https://colab.research.google.com/)
+- Click "New notebook"
+- Click to start new `text` or `code` cells
+- Copy and paste code from slides
+- Press `Shift + Enter` to run cells
+
+</div>
+</div>
+
 
 
 ---
+<!-- transition: fade 0.25s -->
 
 # Creating the illusion of experience and understanding
 

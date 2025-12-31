@@ -1,5 +1,15 @@
 # Compile-Time Autoscaling Redesign Plan
 
+## Additional Requirements (User Feedback)
+
+1. **Column wrapping detection** should be handled at compile-time, not dynamically
+2. **Rename autoscale.js** to something more appropriate (e.g., `chart-animations.js`) since it will only handle chart animations after refactor
+3. **Print warning messages** when content might overflow (at compile-time)
+4. **Test slides:**
+   - Lecture 1: slides 4, 7, 8, 13, 15, 18
+   - Lecture 2: slides 3, 4 (code + content), 6 (table inside box!), 7 (code only), 10 (multiple boxes), 15
+   - Compare L1 slide 22 vs L2 slide 15 (should use similar styling)
+
 ## Executive Summary
 
 The current slide scaling system uses runtime JavaScript (`autoscale.js`) which cannot affect PDF output. This causes HTML/PDF mismatch. This plan describes how to move all scaling logic to compile-time via `process_markdown.py` and predefined CSS classes in `cdl-theme.css`.
