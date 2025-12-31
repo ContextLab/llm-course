@@ -214,7 +214,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const children = Array.from(slide.querySelectorAll(':scope > *')).filter(function(el) {
       if (el.offsetHeight === 0) return false;
       const style = window.getComputedStyle(el);
-      return style.position !== 'absolute' && style.position !== 'fixed';
+      if (style.position === 'absolute' || style.position === 'fixed') return false;
+      // Skip diagram containers - they have fixed size and shouldn't affect scaling calculations
+      if (isDiagramContainer(el)) return false;
+      return true;
     });
 
     if (children.length === 0) return 0;
