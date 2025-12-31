@@ -647,6 +647,68 @@ section>div[style*="gap"] * *,
     font-size: 1em !important;
 }
 
+/* EXCEPTION: Preserve explicit emoji size classes inside flex containers */
+/* These need higher specificity than the flex container rules above */
+section>div[style*="display: flex"] .emoji-xs,
+section>div[style*="display:flex"] .emoji-xs,
+section>div[style*="gap"] .emoji-xs,
+.columns .emoji-xs,
+.two-column .emoji-xs,
+.multi-column .emoji-xs,
+.emoji-figure .emoji-xs {
+    font-size: 24px !important;
+}
+
+section>div[style*="display: flex"] .emoji-sm,
+section>div[style*="display:flex"] .emoji-sm,
+section>div[style*="gap"] .emoji-sm,
+.columns .emoji-sm,
+.two-column .emoji-sm,
+.multi-column .emoji-sm,
+.emoji-figure .emoji-sm {
+    font-size: 32px !important;
+}
+
+section>div[style*="display: flex"] .emoji-md,
+section>div[style*="display:flex"] .emoji-md,
+section>div[style*="gap"] .emoji-md,
+.columns .emoji-md,
+.two-column .emoji-md,
+.multi-column .emoji-md,
+.emoji-figure .emoji-md {
+    font-size: 48px !important;
+}
+
+section>div[style*="display: flex"] .emoji-lg,
+section>div[style*="display:flex"] .emoji-lg,
+section>div[style*="gap"] .emoji-lg,
+.columns .emoji-lg,
+.two-column .emoji-lg,
+.multi-column .emoji-lg,
+.emoji-figure .emoji-lg {
+    font-size: 64px !important;
+}
+
+section>div[style*="display: flex"] .emoji-xl,
+section>div[style*="display:flex"] .emoji-xl,
+section>div[style*="gap"] .emoji-xl,
+.columns .emoji-xl,
+.two-column .emoji-xl,
+.multi-column .emoji-xl,
+.emoji-figure .emoji-xl {
+    font-size: 128px !important;
+}
+
+section>div[style*="display: flex"] .emoji-xxl,
+section>div[style*="display:flex"] .emoji-xxl,
+section>div[style*="gap"] .emoji-xxl,
+.columns .emoji-xxl,
+.two-column .emoji-xxl,
+.multi-column .emoji-xxl,
+.emoji-figure .emoji-xxl {
+    font-size: 192px !important;
+}
+
 /* Multi-column slides: vertically center content below title */
 section:not(.lead):not(#\31):has(div[style*="display: flex"]),
 section:not(.lead):not(#\31):has(div[style*="display:flex"]),

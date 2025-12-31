@@ -189,12 +189,14 @@ def calculate_text_width(text: str, font_size: int = 22) -> int:
     Uses a conservative estimate to prevent text clipping. Wide characters
     like 'W', 'M', and uppercase letters need extra space.
     """
-    # Use 0.72 multiplier to account for:
-    # - Wide uppercase letters (W, M, etc.)
+    # Use 0.85 multiplier to account for:
+    # - Wide uppercase letters (W, M, S, etc.)
     # - Hyphens and special characters
     # - Variable-width font rendering
-    # - Font weight 600 (bold) which is wider than normal weight
-    avg_char_width = font_size * 0.72
+    # - Font weight 600 (bold) which is significantly wider than normal weight
+    # - Avenir font's wide character proportions
+    # Previous values (0.55, 0.65, 0.72) were all too small
+    avg_char_width = font_size * 0.85
     return int(len(text) * avg_char_width)
 
 
@@ -236,7 +238,7 @@ def generate_flow_svg(flow_lines: list, caption: str = None) -> str:
     # Node dimensions
     min_node_width = 120
     node_height = 70
-    node_padding = 35  # Extra padding for text (increased to prevent clipping)
+    node_padding = 40  # Extra padding for text (increased from 35 to prevent clipping)
     node_spacing = 70  # Space between nodes (including arrow)
     arrow_width = 50   # Width of arrow
 
