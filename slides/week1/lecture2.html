@@ -1928,6 +1928,66 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // ==========================================================================
+  // INTERSECTION OBSERVER FOR SLIDE VISIBILITY
+  //
+  // Marp's bespoke viewer may hide non-active slides, causing
+  // getBoundingClientRect() to return 0. This observer triggers rescaling
+  // when a slide actually becomes visible in the viewport.
+  // ==========================================================================
+
+  /**
+   * Set up IntersectionObserver to scale slides when they become visible
+   * This ensures scaling happens even if the initial scaleSlides() failed
+   * due to the slide not being rendered yet.
+   */
+  function setupScalingIntersectionObserver() {
+    if (!('IntersectionObserver' in window)) return;
+
+    // Track which slides have been successfully scaled
+    var scaledSlides = new Set();
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.1) {
+          var section = entry.target;
+          var slideId = section.getAttribute('id');
+
+          // Skip if already scaled successfully (has visible content)
+          if (slideId && !scaledSlides.has(slideId)) {
+            // Check if slide has content with non-zero dimensions
+            var children = section.querySelectorAll(':scope > *');
+            var hasVisibleContent = false;
+            children.forEach(function(child) {
+              if (child.offsetHeight > 0) hasVisibleContent = true;
+            });
+
+            if (hasVisibleContent) {
+              // Use double RAF for layout completion
+              requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                  scaleSlideById(slideId);
+                  scaledSlides.add(slideId);
+                });
+              });
+            }
+          }
+        }
+      });
+    }, {
+      threshold: [0.1, 0.5, 1.0] // Multiple thresholds for robust detection
+    });
+
+    // Observe all slide sections
+    var slides = document.querySelectorAll('section[id]');
+    slides.forEach(function(slide) {
+      observer.observe(slide);
+    });
+  }
+
+  // Initialize the scaling intersection observer
+  setupScalingIntersectionObserver();
+
+  // ==========================================================================
   // CHART.JS ANIMATION REPLAY ON SLIDE TRANSITIONS
   // ==========================================================================
 
