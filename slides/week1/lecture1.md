@@ -377,19 +377,19 @@ Current evidence points toward the middle: language and thought interact in comp
 
 <div class="emoji-figure">
   <div class="emoji-col">
-    <span class="emoji emoji-xl emoji-bg emoji-bg-blue">&#x1F4AC;</span>
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">💬</span>
     <span class="label">Language</span>
   </div>
   <div class="emoji-col">
-    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F9E0;</span>
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">🤔</span>
     <span class="label">Reasoning</span>
   </div>
   <div class="emoji-col">
-    <span class="emoji emoji-xl emoji-bg emoji-bg-orange">&#x1F465;</span>
+    <span class="emoji emoji-xl emoji-bg emoji-bg-orange">🤝</span>
     <span class="label">Social</span>
   </div>
   <div class="emoji-col">
-    <span class="emoji emoji-xl emoji-bg emoji-bg-violet">&#x1F4CA;</span>
+    <span class="emoji emoji-xl emoji-bg emoji-bg-violet">📊</span>
     <span class="label">Math</span>
   </div>
 </div>
