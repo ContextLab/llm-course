@@ -1794,6 +1794,166 @@ section:not(.lead):not(#\31)>.definition-box {
 }
 
 /* ============================================
+   INLINE NOTE BOX
+   Compact note box variant for stacked layouts
+   ============================================ */
+
+.inline-note {
+    background-color: rgba(38, 122, 186, 0.12);
+    border-left: 4px solid var(--river-blue, #267aba);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+.inline-note::before {
+    display: none !important;
+    content: none !important;
+}
+
+.inline-note .note-title {
+    color: var(--river-blue, #267aba);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+.inline-note .note-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
+   INLINE WARNING BOX
+   Compact warning box variant for stacked layouts
+   ============================================ */
+
+.inline-warning {
+    background-color: rgba(255, 160, 15, 0.15);
+    border-left: 4px solid var(--bonfire-orange, #ffa00f);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+.inline-warning::before {
+    display: none !important;
+    content: none !important;
+}
+
+.inline-warning .warning-title {
+    color: var(--bonfire-orange, #ffa00f);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+.inline-warning .warning-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
+   INLINE TIP BOX
+   Compact tip box variant for stacked layouts
+   ============================================ */
+
+.inline-tip {
+    background-color: rgba(165, 215, 95, 0.15);
+    border-left: 4px solid var(--rich-spring-green, #a5d75f);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+.inline-tip::before {
+    display: none !important;
+    content: none !important;
+}
+
+.inline-tip .tip-title {
+    color: var(--rich-spring-green, #a5d75f);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+.inline-tip .tip-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
+   INLINE DEFINITION BOX
+   Compact definition box variant for stacked layouts
+   ============================================ */
+
+.inline-definition {
+    background-color: rgba(138, 105, 150, 0.12);
+    border-left: 4px solid var(--violet, #8a6996);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+.inline-definition::before {
+    display: none !important;
+    content: none !important;
+}
+
+.inline-definition .definition-title {
+    color: var(--violet, #8a6996);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+.inline-definition .definition-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
+   INLINE IMPORTANT BOX
+   Compact important box variant for stacked layouts
+   ============================================ */
+
+.inline-important {
+    background-color: rgba(157, 22, 46, 0.12);
+    border-left: 4px solid var(--bonfire-red, #9d162e);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+.inline-important::before {
+    display: none !important;
+    content: none !important;
+}
+
+.inline-important .important-title {
+    color: var(--bonfire-red, #9d162e);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+.inline-important .important-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
    DEFINITIONS-EXAMPLES LAYOUT
    Two-column layout with bullet definitions on left,
    stacked example boxes on right
