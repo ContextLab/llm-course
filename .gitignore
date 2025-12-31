@@ -191,4 +191,5 @@ luatex.*/
 # Slide thumbnails
 slides/template_deck/theme_showcase.*.png
 slides/template_deck/slide*.png
-.playwright-mcp/slides/week1/slide8-current.png
+.playwright-mcp/slides/*/*.png
+notes/*.png

@@ -274,10 +274,11 @@ def generate_flow_svg(flow_lines: list, caption: str = None) -> str:
     svg_height = content_height + svg_border * 2
 
     # Start building SVG
-    # Note: We omit explicit width/height attributes to allow CSS to control sizing
-    # The viewBox provides the aspect ratio, and CSS max-width/max-height constrain it
+    # Note: We omit explicit width/height attributes and inline styles to allow CSS to control sizing
+    # The viewBox provides the aspect ratio, and CSS in cdl-theme.css constrains max-width to 1200px
+    # This ensures HTML and PDF render at the same size (PDF renders at 1280px Marp base)
     svg_parts = []
-    svg_parts.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {svg_width} {svg_height}" style="max-width: 100%; height: auto;">')
+    svg_parts.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {svg_width} {svg_height}">')
 
     # Add arrow symbol definition
     svg_parts.append('''  <defs>

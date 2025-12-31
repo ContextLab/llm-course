@@ -122,6 +122,15 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /**
+   * Check if an element is a diagram container (flow diagrams, charts, etc.)
+   * These should NEVER be scaled by autoscale.js - their appearance must match PDF exactly
+   */
+  function isDiagramContainer(element) {
+    return element.classList.contains('diagram-container') ||
+           element.classList.contains('chart-container');
+  }
+
+  /**
    * Reset any existing scaling on a slide so we can measure at default sizes
    * This is CRITICAL for accurate measurement before applying new scaling
    */
@@ -133,9 +142,12 @@ document.addEventListener("DOMContentLoaded", function () {
       h1.style.marginBottom = '';
     }
 
-    // Reset all direct children
+    // Reset all direct children (except diagram containers)
     const children = slide.querySelectorAll(':scope > *');
     children.forEach(function(child) {
+      // Skip diagram containers - their appearance must NEVER be modified
+      if (isDiagramContainer(child)) return;
+
       // Reset font-size
       child.style.fontSize = '';
       // Reset margins
@@ -167,6 +179,8 @@ document.addEventListener("DOMContentLoaded", function () {
       if (child.offsetHeight === 0) return;
       const style = window.getComputedStyle(child);
       if (style.position === 'absolute' || style.position === 'fixed') return;
+      // Skip diagram containers - their appearance must not be modified
+      if (isDiagramContainer(child)) return;
 
       const type = getElementType(child);
       const rect = child.getBoundingClientRect();

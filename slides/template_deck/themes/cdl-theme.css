@@ -2400,10 +2400,11 @@ section:not(.lead):not(#\31)>.definition-box {
     object-fit: contain !important;
 }
 
-/* Inline SVGs within diagram containers - ensure they scale properly */
-/* Uses !important to override any inline width/height attributes */
+/* Inline SVGs within diagram containers - constrain to Marp slide dimensions */
+/* Uses fixed max-width to prevent upscaling in HTML (PDF renders at 1280px base) */
+/* This ensures figure appearance matches between HTML and PDF versions */
 .diagram-container>svg {
-    max-width: 100% !important;
+    max-width: 1200px !important;  /* Marp slide width (1280px) minus padding */
     max-height: 60vh !important;
     height: auto !important;
     width: auto !important;
