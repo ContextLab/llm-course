@@ -98,6 +98,7 @@ ELIZA *reflects*; PARRY *models*. ELIZA avoids commitment; PARRY has a coherent 
 </div>
 
 ---
+<!-- _class: scale-78 -->
 
 # PARRY vs ELIZA
 
@@ -267,6 +268,7 @@ The trajectory: fewer hand-crafted rules, more learned patterns. But the fundame
    - The ELIZA effect applies to all of these systems
 
 ---
+<!-- _class: scale-78 -->
 
 # Weizenbaum's legacy
 
@@ -284,6 +286,7 @@ After creating ELIZA, Weizenbaum became a critic of AI:
 > "What I had not realized is that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people."
 
 ---
+<!-- _class: scale-78 -->
 
 # Weizenbaum's warnings
 
@@ -333,6 +336,7 @@ We're leaving hand-crafted rules behind. Next week:
 <!-- caption: The paradigm shift that enables modern NLP -->
 
 ---
+<!-- _class: scale-78 -->
 
 # Key takeaways
 
