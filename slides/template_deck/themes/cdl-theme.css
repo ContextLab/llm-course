@@ -194,7 +194,8 @@ code {
 section pre,
 section :is(pre, marp-pre) {
     margin: 0.5em auto 0;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     border-radius: 12px;
     background-color: rgba(0, 105, 62, 0.08);
     padding: 0.8em 1.2em;
@@ -204,8 +205,8 @@ section :is(pre, marp-pre) {
     min-width: 50%;
     max-width: 95%;
     max-height: 65vh;
-    /* Default code font size - readable for short code */
-    font-size: 22pt !important;
+    /* Default code font size - slightly smaller for better fit */
+    font-size: 18pt !important;
 }
 
 pre code {
@@ -299,24 +300,36 @@ pre code .token.builtin {
     color: #00693e;
 }
 
-/* JavaScript-generated line numbers */
+/* JavaScript-generated line numbers - using table layout for proper wrapping */
+/* Line numbers stay fixed on source lines; wrapped continuation lines don't get numbers */
 pre code.has-line-numbers .line {
-    display: flex !important;
+    display: table-row !important;
     width: 100% !important;
 }
 
 pre code.has-line-numbers .line-num {
-    display: inline-block;
-    width: 2em;
+    display: table-cell !important;
+    min-width: 2em;
+    width: 2.5em;
     padding-right: 0.8em;
-    margin-right: 0.8em;
     text-align: right;
+    vertical-align: top;
     color: rgba(0, 105, 62, 0.4);
     border-right: 1px solid rgba(0, 105, 62, 0.2);
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    white-space: nowrap;
+}
+
+pre code.has-line-numbers .line-code {
+    display: table-cell !important;
+    padding-left: 0.8em;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    vertical-align: top;
 }
 
 /* Headings - base styling only, font-size set per slide type */
@@ -598,7 +611,7 @@ section>div[style*="gap"],
     flex-direction: row !important;
     justify-content: space-between !important;
     align-items: flex-start !important;
-    gap: 1.5em;  /* Default gap - can be overridden by inline styles */
+    gap: 1em;  /* Default gap - compact to allow text to fill more space */
     width: 100% !important;
     max-width: 100% !important;
     flex-wrap: nowrap !important;
@@ -1085,24 +1098,36 @@ section:not(.lead):not(#\31) p {
     margin: 0.2em auto !important;
 }
 
-/* Ensure tight line spacing for code lines */
+/* Ensure tight line spacing for code lines with proper wrapping support */
+/* Using table layout so wrapped continuation lines don't get new line numbers */
 pre code.has-line-numbers .line {
-    display: flex !important;
+    display: table-row !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-    line-height: 1.1 !important;
+    line-height: 1.3 !important;
+}
+
+pre code.has-line-numbers .line-num {
+    display: table-cell !important;
+    vertical-align: top !important;
+    white-space: nowrap !important;
+    padding-top: 0.1em !important;
 }
 
 pre code.has-line-numbers .line-code {
-    display: inline !important;
+    display: table-cell !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    vertical-align: top !important;
 }
 
-/* Ensure code element uses flex column for tight line stacking */
+/* Ensure code element uses table layout for proper line number alignment with wrapping */
 pre code.has-line-numbers {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0 !important;
+    display: table !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
 }
 
 /* Code overflow indicator when content exceeds minimum font size */
@@ -3301,9 +3326,10 @@ section[style*="--slide-scale"] > *:not(h1) {
     margin-bottom: calc(0.5em * var(--slide-scale)) !important;
 }
 
-/* Flex container gaps scale with content */
+/* Flex container gaps scale with content
+   Use a smaller base gap (1em) for more compact layouts */
 section[style*="--slide-scale"] > div[style*="flex"] {
-    gap: calc(1.5em * var(--slide-scale)) !important;
+    gap: calc(1em * var(--slide-scale)) !important;
 }
 
 /* Callout boxes scale uniformly - preserve 0.65x ratio to body text */

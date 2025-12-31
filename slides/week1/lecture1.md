@@ -220,7 +220,7 @@ section > .note-box { font-size: 0.95em !important; padding: 0.25em 0.5em !impor
 <div class="consciousness-layout">
 <div class="definitions-col">
 <ul>
-<li><strong>Phenomenal:</strong> Subjective experience--the "what it is like" quality of sensations and emotions</li>
+<li><strong>Phenomenal:</strong> Subjective experience&mdash;the "what it is like" quality of sensations and emotions</li>
 <li><strong>Access:</strong> Information available for reasoning, reporting, and guiding voluntary behavior</li>
 <li><strong>Self-awareness:</strong> Knowledge of one's own mental states, including recognizing oneself as a distinct entity</li>
 </ul>

@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     // Scaling bounds
     minScale: 0.5,      // Never scale below 50%
+    maxScale: 1.15,     // Max scale-up for text-only slides (15% larger)
     baseFontSize: 35,   // px - base font size from CSS
     // Padding
     bottomMargin: 30,   // px - reserved space at bottom of slide
@@ -466,12 +467,31 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // STEP 4: Calculate uniform scale constrained by rigid elements
-    const scale = calculateConstrainedScale(
+    var scale = calculateConstrainedScale(
       elements.rigid,
       contentBounds,
       availableWidth,
       availableHeight
     );
+
+    // STEP 4b: For TEXT-ONLY slides (no rigid elements like images/diagrams),
+    // allow scaling UP to fill available space - but cap at a reasonable maximum
+    if (elements.rigid.length === 0 && scale >= 1.0) {
+      // Calculate how much we could scale up while still fitting vertically
+      // Height is typically the limiting factor for slides
+      var maxScaleByHeight = availableHeight / contentBounds.height;
+      var maxScaleByWidth = availableWidth / contentBounds.width;
+      var maxPossibleScale = Math.min(maxScaleByHeight, maxScaleByWidth);
+
+      // Cap the scale-up to LAYOUT.maxScale (e.g., 1.15 = 15% larger)
+      // This prevents text from getting uncomfortably large
+      scale = Math.min(maxPossibleScale, LAYOUT.maxScale);
+
+      // Don't scale up if the increase is marginal (less than 3%)
+      if (scale < 1.03) {
+        scale = 1.0;
+      }
+    }
 
     // STEP 5: Check for mixed flex containers and handle them specially
     // For flex containers with both images and callouts side-by-side,
@@ -489,8 +509,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    // STEP 6: Apply scale if needed
-    if (scale < 1.0) {
+    // STEP 6: Apply scale if needed (both scale-down AND scale-up)
+    if (scale !== 1.0) {
       // If we have mixed flex containers, use special handling
       if (mixedFlexContainers.length > 0) {
         applyMixedFlexScaling(slide, scale, h1, mixedFlexContainers);
