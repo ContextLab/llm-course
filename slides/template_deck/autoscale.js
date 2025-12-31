@@ -123,11 +123,136 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /**
    * Check if an element is a diagram container (flow diagrams, charts, etc.)
-   * These should NEVER be scaled by autoscale.js - their appearance must match PDF exactly
+   * Note: diagrams ARE included in uniform scaling now (they scale with all content)
    */
   function isDiagramContainer(element) {
     return element.classList.contains('diagram-container') ||
            element.classList.contains('chart-container');
+  }
+
+  // ==========================================================================
+  // NEW ASPECT-RATIO-BASED LAYOUT ALGORITHM
+  // Treats ALL slide content as a single unified block and scales uniformly
+  // ==========================================================================
+
+  /**
+   * Measure the bounding box of ALL content on the slide
+   * Includes text, diagrams, images - everything scales together uniformly
+   */
+  function measureContentBoundingBox(slide) {
+    const children = slide.querySelectorAll(':scope > *');
+    let minX = Infinity, minY = Infinity;
+    let maxX = -Infinity, maxY = -Infinity;
+    let hasContent = false;
+
+    children.forEach(function(child) {
+      // Skip absolute/fixed positioned elements only
+      const style = getComputedStyle(child);
+      if (style.position === 'absolute' || style.position === 'fixed') return;
+      if (child.offsetHeight === 0) return;
+
+      hasContent = true;
+
+      // Include ALL content: text, diagrams, images - they all scale together
+      const rect = child.getBoundingClientRect();
+
+      // Include margins in bounding box
+      const marginTop = parseFloat(style.marginTop) || 0;
+      const marginBottom = parseFloat(style.marginBottom) || 0;
+      const marginLeft = parseFloat(style.marginLeft) || 0;
+      const marginRight = parseFloat(style.marginRight) || 0;
+
+      minX = Math.min(minX, rect.left - marginLeft);
+      minY = Math.min(minY, rect.top - marginTop);
+      maxX = Math.max(maxX, rect.right + marginRight);
+      maxY = Math.max(maxY, rect.bottom + marginBottom);
+    });
+
+    if (!hasContent) {
+      return { width: 0, height: 0, left: 0, top: 0 };
+    }
+
+    return {
+      width: maxX - minX,
+      height: maxY - minY,
+      left: minX,
+      top: minY
+    };
+  }
+
+  /**
+   * Apply uniform scale via CSS custom property
+   * ALL elements reference --slide-scale via calc() in CSS
+   */
+  function applyUniformScaleViaCSS(slide, scale, h1) {
+    // Set CSS custom property that CSS rules will use
+    slide.style.setProperty('--slide-scale', scale);
+
+    // Scale title proportionally using calc
+    if (h1) {
+      h1.style.fontSize = 'calc(1.72em * ' + scale + ')';
+      h1.style.marginBottom = 'calc(15px * ' + scale + ')';
+    }
+  }
+
+  /**
+   * NEW: Aspect-ratio-based layout algorithm
+   *
+   * Algorithm:
+   * 1. Reset to default sizes (no scaling applied)
+   * 2. Measure bounding box of ALL content
+   * 3. Calculate uniform scale to fit within available space
+   * 4. Apply single --slide-scale CSS variable to entire slide
+   *
+   * This ensures ALL elements (text, images, diagrams, callouts) scale
+   * by exactly the same factor, preserving visual relationships.
+   */
+  function layoutSlideWithAspectRatio(slide) {
+    const h1 = slide.querySelector('h1');
+
+    // Step 0: Skip if has compile-time scaling
+    if (hasCompileTimeScaling(slide)) return;
+
+    // Step 1: Reset and measure at default sizes
+    resetSlideScaling(slide, h1);
+    // Also clear any previous --slide-scale
+    slide.style.removeProperty('--slide-scale');
+    void slide.offsetHeight; // Force reflow
+
+    // Step 2: Get all measurements
+    const slideRect = slide.getBoundingClientRect();
+    const slideStyle = getComputedStyle(slide);
+    const padding = parseFloat(slideStyle.padding) || 40;
+    const h1Height = h1 ? h1.getBoundingClientRect().height : 0;
+    const h1MarginBottom = h1 ? parseFloat(getComputedStyle(h1).marginBottom) || 0 : 0;
+
+    // Measure ALL content including diagrams/images
+    const contentBounds = measureContentBoundingBox(slide);
+
+    if (contentBounds.width === 0 || contentBounds.height === 0) {
+      return; // No content to scale
+    }
+
+    // Calculate available space
+    const availableWidth = slideRect.width - (padding * 2);
+    const availableHeight = slideRect.height - h1Height - h1MarginBottom - LAYOUT.bottomMargin - padding;
+
+    // Content dimensions (excluding title from height calculation)
+    const contentHeight = contentBounds.height - (h1 ? h1Height + h1MarginBottom : 0);
+    const contentWidth = contentBounds.width;
+
+    // Step 3: Check if scaling needed
+    if (contentWidth <= availableWidth && contentHeight <= availableHeight) {
+      return; // Fits at default - no scaling needed
+    }
+
+    // Step 4: Calculate uniform scale
+    const scaleX = availableWidth / contentWidth;
+    const scaleY = availableHeight / contentHeight;
+    const uniformScale = Math.max(Math.min(scaleX, scaleY), LAYOUT.minScale);
+
+    // Step 5: Apply uniform scale via CSS custom property
+    applyUniformScaleViaCSS(slide, uniformScale, h1);
   }
 
   /**
@@ -433,77 +558,17 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      const slideHeight = slide.clientHeight;
+      // NEW: Use aspect-ratio-based uniform scaling for ALL slides
+      // This ensures all content (text, images, diagrams, tables, callouts)
+      // scales by exactly the same factor
+      layoutSlideWithAspectRatio(slide);
 
-      // Find h1 title
-      const h1 = slide.querySelector('h1');
-
-      // Reset h1 if previously scaled
-      if (h1) {
-        h1.style.fontSize = '';
-      }
-
-      // Find tables on this slide
+      // Detect and mark wrapped table columns for left-alignment
+      // (This is independent of scaling and should still happen)
       const tables = slide.querySelectorAll('table');
-
-      if (tables.length > 0) {
-        tables.forEach(function (table) {
-          // Skip autoscaling for split tables - they should maintain consistent sizing
-          // across all slides in the split sequence
-          if (table.classList.contains('split-table')) {
-            // Only detect wrapped columns for left-alignment, don't resize
-            detectWrappedColumns(table);
-            return;
-          }
-
-          // Reset any previous scaling
-          table.style.fontSize = '';
-          table.style.transform = '';
-
-          // Ensure title has minimum top spacing
-          if (h1) {
-            h1.style.marginTop = MIN_PADDING_TOP + 'px';
-          }
-
-          // Available height for table (space after title)
-          const availableHeight = slideHeight - TITLE_HEIGHT - MIN_PADDING_TOP - MIN_PADDING_BOTTOM;
-
-          // Measure table height
-          let tableHeight = table.getBoundingClientRect().height;
-
-          // If table is too tall, reduce font size iteratively
-          let fontSize = 0.7; // Start at 0.7em (matches CSS)
-          const minFontSize = 0.35;
-
-          while (tableHeight > availableHeight && fontSize > minFontSize) {
-            fontSize -= 0.02;
-            table.style.fontSize = fontSize + 'em';
-            tableHeight = table.getBoundingClientRect().height;
-          }
-
-          // If still too tall after font reduction, apply transform scale
-          if (tableHeight > availableHeight) {
-            const scale = availableHeight / tableHeight;
-            table.style.transform = 'scale(' + scale + ')';
-            table.style.transformOrigin = 'center top';
-          }
-
-          // Scale title proportionally but with minimum size
-          if (h1 && fontSize < 0.7) {
-            const titleScale = fontSize / 0.7;
-            const scaledTitleSize = 1.8 * titleScale;
-            const finalTitleSize = Math.max(scaledTitleSize, MIN_TITLE_FONT_SIZE);
-            h1.style.fontSize = finalTitleSize + 'em';
-          }
-
-          // Detect and mark wrapped cells for left-alignment
-          detectWrappedColumns(table);
-        });
-      } else {
-        // For non-table content, use the holistic layout algorithm
-        // This preserves relative font ratios while scaling everything proportionally
-        layoutSlideContent(slide, h1, slideHeight);
-      }
+      tables.forEach(function (table) {
+        detectWrappedColumns(table);
+      });
     });
   }
 
@@ -540,40 +605,14 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    var slideHeight = slide.clientHeight;
-    var h1 = slide.querySelector('h1');
+    // Use the new uniform scaling algorithm
+    layoutSlideWithAspectRatio(slide);
+
+    // Detect and mark wrapped table columns for left-alignment
     var tables = slide.querySelectorAll('table');
-
-    if (tables.length > 0) {
-      // Handle tables - use existing table scaling logic
-      tables.forEach(function(table) {
-        // Skip split tables (already sized by compile-time processing)
-        if (table.classList.contains('split-table')) return;
-        // Apply table scaling (simplified - main scaling already ran)
-        scaleTableIfNeeded(table, slideHeight, h1);
-      });
-    } else {
-      // For non-table content, use the holistic layout algorithm
-      layoutSlideContent(slide, h1, slideHeight);
-    }
-  }
-
-  /**
-   * Helper function for table scaling on navigation
-   */
-  function scaleTableIfNeeded(table, slideHeight, h1) {
-    // Get available height
-    var h1Height = h1 ? h1.offsetHeight : 0;
-    var h1Style = h1 ? window.getComputedStyle(h1) : null;
-    var h1Margin = h1Style ? (parseFloat(h1Style.marginTop) || 0) + (parseFloat(h1Style.marginBottom) || 0) : 0;
-    var availableHeight = slideHeight - h1Height - h1Margin - 100; // 100px buffer
-
-    var tableHeight = table.offsetHeight;
-    if (tableHeight > availableHeight && tableHeight > 0) {
-      var scale = availableHeight / tableHeight;
-      scale = Math.max(scale, 0.5); // Minimum 50% scale
-      table.style.fontSize = (scale * 100) + '%';
-    }
+    tables.forEach(function(table) {
+      detectWrappedColumns(table);
+    });
   }
 
   // Track the last scaled slide to avoid redundant scaling

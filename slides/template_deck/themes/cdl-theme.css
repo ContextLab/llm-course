@@ -3289,6 +3289,60 @@ section.scale-70 pre {
 }
 
 /* ============================================
+   RUNTIME UNIFORM SCALING VIA CSS VARIABLE
+   Used by autoscale.js for aspect-ratio-based layout
+   All elements scale by exactly the same factor
+   ============================================ */
+
+/* Apply scale to all non-title content uniformly */
+section[style*="--slide-scale"] > *:not(h1) {
+    font-size: calc(35px * var(--slide-scale)) !important;
+    margin-top: calc(0.5em * var(--slide-scale)) !important;
+    margin-bottom: calc(0.5em * var(--slide-scale)) !important;
+}
+
+/* Flex container gaps scale with content */
+section[style*="--slide-scale"] > div[style*="flex"] {
+    gap: calc(1.5em * var(--slide-scale)) !important;
+}
+
+/* Callout boxes scale uniformly - preserve 0.65x ratio to body text */
+section[style*="--slide-scale"] .note-box,
+section[style*="--slide-scale"] .warning-box,
+section[style*="--slide-scale"] .tip-box,
+section[style*="--slide-scale"] .example-box,
+section[style*="--slide-scale"] .definition-box,
+section[style*="--slide-scale"] .important-box {
+    font-size: calc(35px * 0.65 * var(--slide-scale)) !important;
+    padding: calc(10px * var(--slide-scale))
+             calc(16px * var(--slide-scale))
+             calc(12px * var(--slide-scale)) !important;
+}
+
+/* Code blocks scale uniformly */
+section[style*="--slide-scale"] pre {
+    font-size: calc(22pt * var(--slide-scale)) !important;
+}
+
+/* Tables scale uniformly - preserve 0.7x ratio to body text */
+section[style*="--slide-scale"] table {
+    font-size: calc(35px * 0.7 * var(--slide-scale)) !important;
+}
+
+/* Images scale uniformly with content */
+section[style*="--slide-scale"] img {
+    max-width: calc(100% * var(--slide-scale));
+    height: auto;
+}
+
+/* Diagram containers scale uniformly with content */
+section[style*="--slide-scale"] .diagram-container,
+section[style*="--slide-scale"] .chart-container {
+    transform: scale(var(--slide-scale));
+    transform-origin: top left;
+}
+
+/* ============================================
    CONTENT WIDTH CONSTRAINTS
    Reduce max line length for readability
    ============================================ */
