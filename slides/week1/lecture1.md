@@ -264,25 +264,25 @@ If ChatGPT says "I feel happy," does it actually *feel* anything?
 <div style="display: flex; gap: 2em;">
 <div>
 
-**With humans, we assume consciousness because:**
-- We share similar biology
-- We have our own conscious experience
-- They behave consistently with having experiences
+**Humans**
+- Share similar biology
+- Have our own conscious experiences
+- Behave consistently with having experiences (e.g., of being human, living in the world, etc.)
 
 </div>
 <div>
 
-**But with AI:**
+**AI**
 - Completely different "biology" (silicon vs. neurons)
 - No shared evolutionary history
-- Can produce human-like behavior
+- Can produce human-like behavior without themselves being human
 
 </div>
 </div>
 
-<div class="note-box">
+<div class="note-box" data-title="Why is it difficult to know if AI is conscious?">
 
-**Why is this so difficult?** We cannot directly observe consciousness--even in other humans!
+We cannot directly observe consciousness &mdash; even in other humans!
 
 </div>
 
