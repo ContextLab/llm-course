@@ -123,12 +123,7 @@ We will explore how machines can understand and generate human language:
 
 # Course structure
 
-<style scoped>
-.small-boxes ul { font-size: 0.65em !important; }
-.small-boxes li { font-size: inherit !important; }
-</style>
-
-<div class="small-boxes" style="display: flex; gap: 1.5em; margin-top: 0.5em; width: 100%;">
+<div style="display: flex; gap: 1.5em; margin-top: 0.5em; width: 100%;">
 <div class="note-box" data-title="Grading" style="flex: 1;">
 
 - Bi-weekly short projects (5): 75%
