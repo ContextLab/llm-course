@@ -290,22 +290,29 @@ We cannot directly observe consciousness &mdash; even in other humans!
 
 # The Chinese room argument
 
-<div class="note-box">
+<div class="note-box" data-title="John Searle (1980)">
 
-**John Searle (1980):** Thought experiment about understanding vs. simulation
+- [Thought experiment](https://doi.org/10.1017/S0140525X00005756) about understanding vs. simulation.
+- **The setup:** Person in room with Chinese symbols and rule book
+- Does following rules = understanding? Searle argues: **No!**
 
 </div>
-
-**The setup:** Person in room with Chinese symbols and rule book
 
 ```flow
 [Chinese question:blue] --> [Rule book:orange] --> [Chinese answer:green]
 ```
 <!-- caption: Person follows rules but does not understand Chinese -->
 
-<div class="tip-box">
+---
 
-Does following rules = understanding? Searle argues: **No!**
+# Volition
+
+- Another critical aspect of the human conscious experience is the ability to **decide** (how to act, what to think, etc.)
+- Modern LLMs are trained to **respond** to other inputs (i.e., produce statistically likely sequence completions), but they cannot themselves initiate new or unexpected actions
+
+<div class="note-box" data-title="Think about it!">
+
+LLMs are like a bellows that can only blow air if someone else is pumping it. When not in use, they are static. They can not sense the passage of time. They cease to exist between invocations.
 
 </div>
 
@@ -313,13 +320,12 @@ Does following rules = understanding? Searle argues: **No!**
 
 # Current scientific consensus
 
-<div class="warning-box">
+<div class="warning-box" data-title="Survey says...">
 
-**Important:** Most cognitive scientists and AI researchers agree: **Current LLMs are not conscious.**
+Most cognitive scientists and AI researchers agree: **Current LLMs are not conscious.**
 
 </div>
 
-**Why not?**
 - No sensory-motor grounding in the world
 - No persistent self-model or goals
 - Pattern matching $\neq$ understanding
