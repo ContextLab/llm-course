@@ -45,10 +45,10 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 <div style="display: flex; gap: 0.5em;">
 <div>
 
-![height:700px](../../figures/colab_screenshot.png)
+![height:600px](../../figures/colab_screenshot.png)
 
 </div>
-<div class="tip-box" style="margin-top: 100px !important;">
+<div class="inline-note">
 
 - Go to [colab.research.google.com](https://colab.research.google.com/)
 - Click "New notebook"
@@ -115,14 +115,14 @@ The illusion of understanding comes from the programmer's skill at designing cle
 ```python
 text = "Hello, how are you today?"
 
-# Finding
-"how" in text              # True
+# Finding (True)
+"how" in text
 
-# Replacing
-text.replace("you", "we")  # "Hello, how are we today?"
+# Replacing ("Hello, how are we today?")
+text.replace("you", "we")
 
-# Extracting
-text.split(", ")[1]        # "how are you today?"
+# Extracting ("how are you today?")
+text.split(", ")[1]
 ```
 
 </div>
