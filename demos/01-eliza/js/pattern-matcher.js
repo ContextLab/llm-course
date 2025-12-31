@@ -28,6 +28,7 @@ export class PatternMatcher {
 
   /**
    * Apply post-substitutions to text (for reflection)
+   * Uses placeholder markers to prevent bidirectional substitution conflicts
    */
   applyPostSubstitutions(text, substitutions) {
     let result = ' ' + text + ' ';
@@ -36,13 +37,25 @@ export class PatternMatcher {
     // Create sorted list by length (longer first to avoid partial matches)
     const sortedSubs = Object.entries(substitutions).sort((a, b) => b[0].length - a[0].length);
 
+    // Use placeholders to avoid bidirectional conflicts (e.g., "you" -> "me" and "me" -> "you")
+    const placeholders = new Map();
+    let placeholderIndex = 0;
+
     for (const [from, to] of sortedSubs) {
       const regex = new RegExp('\\b' + from + '\\b', 'gi');
       if (regex.test(result)) {
         const oldResult = result;
-        result = result.replace(regex, to);
+        // Use a unique placeholder that won't match any substitution pattern
+        const placeholder = `__POSTSUB_${placeholderIndex++}__`;
+        placeholders.set(placeholder, to);
+        result = result.replace(regex, placeholder);
         steps.push({ from, to, before: oldResult.trim(), after: result.trim() });
       }
+    }
+
+    // Now replace all placeholders with their final values
+    for (const [placeholder, value] of placeholders) {
+      result = result.split(placeholder).join(value);
     }
 
     return { result: result.trim(), steps };
