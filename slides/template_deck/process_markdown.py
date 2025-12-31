@@ -676,24 +676,26 @@ FLOW_DIAGRAM_PATTERN = re.compile(r'```flow\n.*?```', re.DOTALL)
 
 # Content height weights (approximate units where 1 unit ≈ 30px)
 CONTENT_WEIGHTS = {
-    'h1': 3.0,
-    'h2': 2.5,
-    'h3': 2.0,
-    'paragraph_per_50_chars': 0.8,
-    'list_item': 1.2,
-    'callout_box_base': 4.0,  # base height for callout box
-    'callout_content_per_50_chars': 0.6,
-    'code_block_line': 0.8,
-    'table_header': 1.8,
-    'table_row': 1.5,
-    'flex_container_overhead': 1.5,
-    'emoji_figure': 5.0,
-    'flow_diagram': 4.0,
-    'table_in_callout_penalty': 2.0,  # Extra space needed for table inside callout
+    # Recalibrated based on visual inspection of actual slides
+    # A slide with H1 + 2 callout boxes + 4 list items should estimate ~10 units (uses ~50% of slide)
+    'h1': 2.0,
+    'h2': 1.8,
+    'h3': 1.5,
+    'paragraph_per_50_chars': 0.4,  # Reduced - text wraps efficiently
+    'list_item': 0.7,  # Reduced - list items are compact
+    'callout_box_base': 2.5,  # Reduced - callout overhead is smaller than estimated
+    'callout_content_per_50_chars': 0.3,
+    'code_block_line': 0.6,  # Code lines are relatively compact
+    'table_header': 1.2,
+    'table_row': 1.0,
+    'flex_container_overhead': 1.0,
+    'emoji_figure': 4.0,
+    'flow_diagram': 3.0,
+    'table_in_callout_penalty': 1.5,  # Extra space needed for table inside callout
 }
 
 # Slide height budget before scaling is needed (in content units)
-# A typical slide can fit ~20 units: H1 (3) + callout (4) + 3 list items (3.6) + text (4) + buffer
+# Based on calibration: slide using 50% of height = ~10 units, so full height = ~20 units
 SLIDE_HEIGHT_BUDGET = 20.0
 
 
@@ -801,8 +803,29 @@ def analyze_slide_content(slide_content: str) -> dict:
     if re.search(r'^#\s+', slide_content, re.MULTILINE):
         height += CONTENT_WEIGHTS['h1']
 
-    # Callout boxes
-    height += metrics['callout_count'] * CONTENT_WEIGHTS['callout_box_base']
+    # Callout boxes - handle side-by-side layouts differently
+    callout_height = metrics['callout_count'] * CONTENT_WEIGHTS['callout_box_base']
+
+    # List items
+    list_height = metrics['list_items'] * CONTENT_WEIGHTS['list_item']
+
+    # Two-column discount: when callouts/lists are side-by-side, they share vertical space
+    # Instead of summing heights, use approximately max(col1, col2) which is ~half of sum
+    # for evenly distributed content. Use 0.55 multiplier (not 0.5) to be slightly conservative.
+    if metrics['has_two_column'] and metrics['callout_count'] >= 2:
+        # Side-by-side callouts: count as max height, not sum
+        # For 2 boxes, use ~half; for 3+, use ~40% (diminishing returns)
+        if metrics['callout_count'] == 2:
+            callout_height *= 0.55
+            list_height *= 0.55  # List items are also split between columns
+        else:
+            callout_height *= 0.45
+            list_height *= 0.45
+        # Add small overhead for the flex container itself
+        height += CONTENT_WEIGHTS['flex_container_overhead']
+
+    height += callout_height
+    height += list_height
 
     # Code blocks
     height += metrics['code_block_lines'] * CONTENT_WEIGHTS['code_block_line']
@@ -816,15 +839,8 @@ def analyze_slide_content(slide_content: str) -> dict:
     if metrics['table_in_callout']:
         height += CONTENT_WEIGHTS['table_in_callout_penalty']
 
-    # List items
-    height += metrics['list_items'] * CONTENT_WEIGHTS['list_item']
-
     # Text content
     height += (metrics['text_length'] / 50) * CONTENT_WEIGHTS['paragraph_per_50_chars']
-
-    # Two-column overhead
-    if metrics['has_two_column']:
-        height += CONTENT_WEIGHTS['flex_container_overhead']
 
     # Emoji figures
     if metrics['has_emoji_figure']:
@@ -851,10 +867,8 @@ def analyze_slide_content(slide_content: str) -> dict:
             f"Multiple callout boxes ({metrics['callout_count']}) may cause overflow"
         )
 
-    if metrics['has_two_column'] and metrics['callout_count'] >= 2:
-        metrics['overflow_warnings'].append(
-            "Two-column layout with multiple callouts - consider scale-78"
-        )
+    # Note: Two-column layouts with multiple callouts now correctly account for
+    # side-by-side height sharing in the estimation, so no special warning needed
 
     if metrics['emoji_columns'] >= 4:
         metrics['overflow_warnings'].append(
