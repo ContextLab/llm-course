@@ -45,10 +45,10 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 <div style="display: flex; gap: 0.5em;">
 <div>
 
-![height:500px](../../figures/colab_screenshot.png)
+![height:700px](../../figures/colab_screenshot.png)
 
 </div>
-<div class="tip-box" style="height: 420px !important; margin-top: 40px !important;">
+<div class="tip-box">
 
 - Go to [colab.research.google.com](https://colab.research.google.com/)
 - Click "New notebook"

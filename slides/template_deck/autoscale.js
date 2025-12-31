@@ -764,17 +764,75 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Run after layout is complete
-  requestAnimationFrame(function () {
-    requestAnimationFrame(scaleSlides);
-  });
+  // ==========================================================================
+  // INITIALIZATION TIMING FIX
+  //
+  // Problem: On first load, scaleSlides() runs before all resources are ready,
+  // causing getBoundingClientRect() to return 0 for non-visible slides.
+  // On refresh, resources are cached so dimensions are immediately available.
+  //
+  // Solution:
+  // 1. Wait for ALL resources (fonts, images) before initial scaling
+  // 2. Use on-demand scaling when slides become visible
+  // 3. Re-scale after fonts load (fonts affect text layout)
+  // ==========================================================================
 
-  // Run after fonts load
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(function () {
-      requestAnimationFrame(scaleSlides);
+  /**
+   * Wait for all images on the page to load
+   * Returns a Promise that resolves when all images are loaded
+   */
+  function waitForImages() {
+    var images = document.querySelectorAll('img');
+    var promises = [];
+
+    images.forEach(function(img) {
+      if (!img.complete) {
+        promises.push(new Promise(function(resolve) {
+          img.onload = resolve;
+          img.onerror = resolve; // Don't block on failed images
+        }));
+      }
+    });
+
+    return Promise.all(promises);
+  }
+
+  /**
+   * Initialize scaling after all resources are ready
+   * This is the main entry point for scaling
+   */
+  function initializeScaling() {
+    // Wait for fonts AND images before initial scaling
+    var fontsReady = document.fonts && document.fonts.ready
+      ? document.fonts.ready
+      : Promise.resolve();
+
+    Promise.all([fontsReady, waitForImages()]).then(function() {
+      // Use triple RAF to ensure Marp's bespoke viewer has fully initialized
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            scaleSlides();
+            // Also trigger navigation handler for the current slide
+            onSlideNavigation(true); // force=true to bypass cache
+          });
+        });
+      });
     });
   }
+
+  // Run initialization
+  initializeScaling();
+
+  // Also run on window load (backup for any missed resources)
+  window.addEventListener('load', function() {
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        scaleSlides();
+        onSlideNavigation(true);
+      });
+    });
+  });
 
   // ==========================================================================
   // ON-DEMAND SLIDE SCALING (fixes timing bug where non-visible slides
@@ -814,16 +872,18 @@ document.addEventListener("DOMContentLoaded", function () {
    * Handle slide navigation - rescale the current slide
    * This fixes the timing bug where getBoundingClientRect returns
    * incorrect values for non-visible slides
+   *
+   * @param {boolean} force - If true, rescale even if same slide
    */
-  function onSlideNavigation() {
+  function onSlideNavigation(force) {
     var hash = window.location.hash;
     var slideId = (hash && hash.length > 1) ? hash.substring(1) : '1';
 
-    // Avoid rescaling the same slide repeatedly
-    if (slideId === lastScaledSlideId) return;
+    // Avoid rescaling the same slide repeatedly (unless forced)
+    if (!force && slideId === lastScaledSlideId) return;
     lastScaledSlideId = slideId;
 
-    // Use double RAF to ensure layout is complete
+    // Use double RAF to ensure layout is complete after Marp transition
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
         scaleSlideById(slideId);
@@ -832,13 +892,69 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Listen for navigation events to rescale slides
-  window.addEventListener('hashchange', onSlideNavigation);
+  window.addEventListener('hashchange', function() {
+    onSlideNavigation(false);
+  });
 
-  // Also scale the initial slide after a short delay
-  // (gives time for fonts and CSS to fully load)
-  setTimeout(function() {
-    onSlideNavigation();
-  }, 100);
+  // ==========================================================================
+  // INTERSECTION OBSERVER FOR SLIDE VISIBILITY
+  //
+  // Marp's bespoke viewer may hide non-active slides, causing
+  // getBoundingClientRect() to return 0. This observer triggers rescaling
+  // when a slide actually becomes visible in the viewport.
+  // ==========================================================================
+
+  /**
+   * Set up IntersectionObserver to scale slides when they become visible
+   * This ensures scaling happens even if the initial scaleSlides() failed
+   * due to the slide not being rendered yet.
+   */
+  function setupScalingIntersectionObserver() {
+    if (!('IntersectionObserver' in window)) return;
+
+    // Track which slides have been successfully scaled
+    var scaledSlides = new Set();
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.1) {
+          var section = entry.target;
+          var slideId = section.getAttribute('id');
+
+          // Skip if already scaled successfully (has visible content)
+          if (slideId && !scaledSlides.has(slideId)) {
+            // Check if slide has content with non-zero dimensions
+            var children = section.querySelectorAll(':scope > *');
+            var hasVisibleContent = false;
+            children.forEach(function(child) {
+              if (child.offsetHeight > 0) hasVisibleContent = true;
+            });
+
+            if (hasVisibleContent) {
+              // Use double RAF for layout completion
+              requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                  scaleSlideById(slideId);
+                  scaledSlides.add(slideId);
+                });
+              });
+            }
+          }
+        }
+      });
+    }, {
+      threshold: [0.1, 0.5, 1.0] // Multiple thresholds for robust detection
+    });
+
+    // Observe all slide sections
+    var slides = document.querySelectorAll('section[id]');
+    slides.forEach(function(slide) {
+      observer.observe(slide);
+    });
+  }
+
+  // Initialize the scaling intersection observer
+  setupScalingIntersectionObserver();
 
   // ==========================================================================
   // CHART.JS ANIMATION REPLAY ON SLIDE TRANSITIONS
