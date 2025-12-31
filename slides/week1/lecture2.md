@@ -66,7 +66,7 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 
 # Creating the illusion of experience and understanding
 
-<div style="display: flex; gap: 1.5em;">
+<div style="display: flex; gap: 1em;">
 <div>
 
 **Humans**
@@ -190,11 +190,11 @@ new_text = re.sub(r"I am", "You are", text)
 
 ---
 
-# Meet ELIZA
+# Meet ELIZA: a computerized Rogerian therapist
 
 <div class="note-box" data-title="Historical context">
 
-**ELIZA** was created by Joseph Weizenbaum at MIT in 1966. It was one of the first programs to attempt natural language processing.
+**ELIZA** was created by Joseph Weizenbaum at MIT in 1966. It was the first-ever interactive chatbot, and one of the first programs to attempt natural language processing. ELIZA plays the role of a Rogerian therapist, using simple pattern matching to simulate a conversation with a human patient.
 
 </div>
 
@@ -220,21 +220,6 @@ new_text = re.sub(r"I am", "You are", text)
 
 ---
 
-# Reading: Weizenbaum (1966)
-
-<div class="note-box" data-title="Required reading">
-
-[Weizenbaum, J. (1966)](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf). ELIZA&mdash;A computer program for the study of natural language communication between man and machine. *Communications of the ACM*, 9(1), 36&ndash;45.
-</div>
-
-**Pay attention to:**
-- How does ELIZA select responses?
-- What are "scripts" in ELIZA's architecture?
-- Why did Weizenbaum choose the DOCTOR script?
-- What did Weizenbaum observe about user reactions?
-
----
-
 # Chat with ELIZA
 
 <div class="example-box" data-title="Try it!">
@@ -247,6 +232,12 @@ Have a [conversation with ELIZA](https://contextlab.github.io/llm-course/demos/0
 - What reveals its limitations?
 - Can you "trick" ELIZA? How?
 - What kinds of inputs break the illusion?
+
+<div class="warning-box" data-title="Think about it!">
+
+How do you think ELIZA *works*?
+
+</div>
 
 ---
 
@@ -299,14 +290,33 @@ Humans are social creatures. We evolved to detect minds and intentions, and we o
 
 <div class="note-box" data-title="Reflect on your own experiences">
 
-Have you experienced the ELIZA effect with modern AI systems (ChatGPT, Claude, Siri, Alexa)?
+Have *you* experienced the ELIZA effect with modern AI systems (ChatGPT, Claude, Siri, Alexa)?
 
 </div>
 
 - When have you felt like an AI "understood" you?
+- Where do you think that illusion came from?
 - What broke the illusion?
 - What is the difference between *seeming* intelligent and *being* intelligent?
 - How would we *know* if an AI truly understood us?
+
+---
+
+# Reading: Weizenbaum (1966)
+
+<div class="note-box" data-title="Required reading">
+
+[Weizenbaum, J. (1966)](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf). ELIZA&mdash;A computer program for the study of natural language communication between man and machine. *Communications of the ACM*, 9(1), 36&ndash;45.
+</div>
+
+<div class="tip-box" data-title="Pay special attention...">
+
+- How does ELIZA select responses?
+- What are "scripts" in ELIZA's architecture?
+- Why did Weizenbaum choose the DOCTOR script?
+- What did Weizenbaum observe about user reactions?
+
+</div>
 
 ---
 

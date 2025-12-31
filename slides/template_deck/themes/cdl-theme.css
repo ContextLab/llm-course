@@ -3344,6 +3344,43 @@ section[style*="--slide-scale"] .chart-container {
     transform-origin: top left;
 }
 
+/* ============================================
+   MIXED FLEX CONTAINER SCALING OVERRIDES
+   When a flex container has both rigid (image) and flexible (callout) children,
+   the flexible children should NOT be scaled down just because the image is large.
+   The .flex-child-no-scale class is added by autoscale.js to exempt these elements.
+   ============================================ */
+
+/* Callout boxes with flex-child-no-scale should use natural sizing */
+section[style*="--slide-scale"] .flex-child-no-scale.note-box,
+section[style*="--slide-scale"] .flex-child-no-scale.warning-box,
+section[style*="--slide-scale"] .flex-child-no-scale.tip-box,
+section[style*="--slide-scale"] .flex-child-no-scale.example-box,
+section[style*="--slide-scale"] .flex-child-no-scale.definition-box,
+section[style*="--slide-scale"] .flex-child-no-scale.important-box {
+    /* Use natural callout box font size (0.65x of base 35px = ~22.75px) */
+    font-size: calc(35px * 0.65) !important;
+    /* Use natural padding */
+    padding: 10px 16px 12px !important;
+}
+
+/* Generic flex children with no-scale class */
+section[style*="--slide-scale"] .flex-child-no-scale {
+    /* Override any inherited scaling */
+    font-size: 35px !important;
+}
+
+/* Lists inside no-scale callouts should also be natural size */
+section[style*="--slide-scale"] .flex-child-no-scale ul,
+section[style*="--slide-scale"] .flex-child-no-scale ol,
+section[style*="--slide-scale"] .flex-child-no-scale p {
+    font-size: 1em !important;
+}
+
+/* Code inside no-scale callouts */
+section[style*="--slide-scale"] .flex-child-no-scale code {
+    font-size: 0.9em !important;
+}
 
 /* ============================================
    CONTENT WIDTH CONSTRAINTS

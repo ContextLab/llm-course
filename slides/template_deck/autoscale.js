@@ -388,6 +388,37 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /**
+   * Check if a flex container has mixed content (both rigid and flexible children)
+   * Returns info about the mixed content for special handling
+   */
+  function analyzeMixedFlexContainer(flexContainer) {
+    const children = Array.from(flexContainer.children).filter(function(c) {
+      return c.offsetHeight > 0;
+    });
+
+    let hasRigid = false;
+    let hasFlexible = false;
+    const rigidChildren = [];
+    const flexibleChildren = [];
+
+    children.forEach(function(child) {
+      if (isRigidFlexChild(child)) {
+        hasRigid = true;
+        rigidChildren.push(child);
+      } else {
+        hasFlexible = true;
+        flexibleChildren.push(child);
+      }
+    });
+
+    return {
+      isMixed: hasRigid && hasFlexible,
+      rigidChildren: rigidChildren,
+      flexibleChildren: flexibleChildren
+    };
+  }
+
+  /**
    * CORRECTED: Aspect-ratio-based layout algorithm
    *
    * Algorithm:
@@ -395,7 +426,8 @@ document.addEventListener("DOMContentLoaded", function () {
    * 2. Expand flexible element widths to fill available space (text reflows)
    * 3. Measure content bounds after reflow
    * 4. Calculate uniform scale constrained by rigid element aspect ratios
-   * 5. Apply single --slide-scale CSS variable to entire slide
+   * 5. For mixed flex containers: apply scale only to rigid children, not flexible ones
+   * 6. Apply --slide-scale CSS variable to slide (excluding mixed flex flexible children)
    */
   function layoutSlideWithAspectRatio(slide) {
     const h1 = slide.querySelector('h1');
@@ -441,9 +473,76 @@ document.addEventListener("DOMContentLoaded", function () {
       availableHeight
     );
 
-    // STEP 5: Apply scale if needed
+    // STEP 5: Check for mixed flex containers and handle them specially
+    // For flex containers with both images and callouts side-by-side,
+    // we should only scale the image, not the text content
+    const mixedFlexContainers = [];
+    elements.flexible.forEach(function(item) {
+      if (isFlexContainer(item.element)) {
+        const analysis = analyzeMixedFlexContainer(item.element);
+        if (analysis.isMixed) {
+          mixedFlexContainers.push({
+            container: item.element,
+            analysis: analysis
+          });
+        }
+      }
+    });
+
+    // STEP 6: Apply scale if needed
     if (scale < 1.0) {
-      applyUniformScaleViaCSS(slide, scale, h1);
+      // If we have mixed flex containers, use special handling
+      if (mixedFlexContainers.length > 0) {
+        applyMixedFlexScaling(slide, scale, h1, mixedFlexContainers);
+      } else {
+        applyUniformScaleViaCSS(slide, scale, h1);
+      }
+    }
+  }
+
+  /**
+   * Apply scaling for slides with mixed flex containers
+   * - Rigid elements (images) get full scale applied
+   * - Flexible elements (callouts) inside mixed flex containers get NO scale
+   *   (they use their natural size since they don't need to shrink)
+   */
+  function applyMixedFlexScaling(slide, scale, h1, mixedFlexContainers) {
+    // Mark flexible children in mixed containers to be excluded from scaling
+    // AND directly apply styles (since CSS rules may not be reliably parsed)
+    mixedFlexContainers.forEach(function(info) {
+      info.analysis.flexibleChildren.forEach(function(child) {
+        // Add a class for identification
+        child.classList.add('flex-child-no-scale');
+
+        // Directly apply natural (unscaled) styles
+        // This ensures the styling works regardless of CSS parsing issues
+        if (isCalloutBox(child)) {
+          // Callout boxes: use natural font size (0.65 * base 35px = 22.75px)
+          child.style.fontSize = 'calc(35px * 0.65)';
+          child.style.padding = '10px 16px 12px';
+        } else {
+          // Other flexible elements: use base font size
+          child.style.fontSize = '35px';
+        }
+      });
+
+      // Apply transform scale directly to rigid children (images)
+      info.analysis.rigidChildren.forEach(function(child) {
+        const img = child.tagName === 'IMG' ? child : child.querySelector('img');
+        if (img) {
+          img.style.transform = 'scale(' + scale + ')';
+          img.style.transformOrigin = 'top left';
+        }
+      });
+    });
+
+    // Set slide scale for other elements (title, non-mixed content)
+    slide.style.setProperty('--slide-scale', scale);
+
+    // Scale title
+    if (h1) {
+      h1.style.fontSize = 'calc(1.72em * ' + scale + ')';
+      h1.style.marginBottom = 'calc(15px * ' + scale + ')';
     }
   }
 
@@ -480,6 +579,21 @@ document.addEventListener("DOMContentLoaded", function () {
       if (isFlexContainer(child)) {
         child.style.removeProperty('--content-scale');
         child.style.gap = '';
+
+        // Reset flex children scaling classes and transforms
+        Array.from(child.children).forEach(function(flexChild) {
+          flexChild.classList.remove('flex-child-no-scale');
+          // Reset image transforms
+          const img = flexChild.querySelector('img');
+          if (img) {
+            img.style.transform = '';
+            img.style.transformOrigin = '';
+          }
+          if (flexChild.tagName === 'IMG') {
+            flexChild.style.transform = '';
+            flexChild.style.transformOrigin = '';
+          }
+        });
       }
     });
   }
