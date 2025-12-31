@@ -152,6 +152,7 @@ A sequence of characters that defines a search pattern. Regular expressions prov
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
 # Regular expressions in Python
 

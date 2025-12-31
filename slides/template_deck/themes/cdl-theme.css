@@ -3183,6 +3183,10 @@ section.scale-90 .important-box {
     padding: calc(10px * 0.9) calc(16px * 0.9) calc(12px * 0.9) !important;
 }
 
+section.scale-90 pre {
+    font-size: calc(22pt * 0.9) !important;
+}
+
 /* Scale 80% - moderate reduction for dense content */
 section.scale-80 {
     --content-scale: 0.8;
@@ -3210,6 +3214,10 @@ section.scale-80 .definition-box,
 section.scale-80 .important-box {
     font-size: calc(35px * 0.65 * 0.8) !important;
     padding: calc(10px * 0.8) calc(16px * 0.8) calc(12px * 0.8) !important;
+}
+
+section.scale-80 pre {
+    font-size: calc(22pt * 0.8) !important;
 }
 
 /* Scale 78% - matches autoscale.js typical scaling for two-column dense content */
@@ -3241,6 +3249,10 @@ section.scale-78 .important-box {
     padding: calc(10px * 0.78) calc(16px * 0.78) calc(12px * 0.78) !important;
 }
 
+section.scale-78 pre {
+    font-size: calc(22pt * 0.78) !important;
+}
+
 /* Scale 70% - significant reduction for very dense content */
 section.scale-70 {
     --content-scale: 0.7;
@@ -3269,6 +3281,11 @@ section.scale-70 .important-box {
     font-size: calc(35px * 0.65 * 0.7) !important;
     padding: calc(10px * 0.7) calc(16px * 0.7) calc(12px * 0.7) !important;
 }
+
+section.scale-70 pre {
+    font-size: calc(22pt * 0.7) !important;
+}
+
 /* ============================================
    CONTENT WIDTH CONSTRAINTS
    Reduce max line length for readability
