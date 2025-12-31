@@ -300,6 +300,15 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /**
+   * Check if a slide contains any diagram containers
+   * Slides with diagrams should NOT have body text scaled - diagrams are fixed size
+   * and the remaining content should stay at default size
+   */
+  function slideHasDiagramContainer(slide) {
+    return slide.querySelector('.diagram-container, .chart-container') !== null;
+  }
+
+  /**
    * Layout slide content using cascade: gaps first, then scale
    *
    * Algorithm:
@@ -310,8 +319,16 @@ document.addEventListener("DOMContentLoaded", function () {
    * 5. Repeat until content fits or minimum scale reached
    *
    * Font ratios between element types are ALWAYS preserved
+   *
+   * IMPORTANT: Slides with diagram containers are SKIPPED - diagrams have fixed
+   * size and the remaining content should stay at default size for PDF parity.
    */
   function layoutSlideContent(slide, h1, slideHeight) {
+    // CRITICAL: Skip slides with diagram containers entirely
+    // Diagrams have fixed size, and scaling body text breaks PDF parity
+    if (slideHasDiagramContainer(slide)) {
+      return;
+    }
     // Get slide padding
     const slideStyle = window.getComputedStyle(slide);
     const paddingBottom = parseFloat(slideStyle.paddingBottom) || 100;
