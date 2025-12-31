@@ -172,7 +172,7 @@ These are not just "fluff" questions: they are at the heart of cognitive science
 
 <div class="note-box" data-title="For further consideration">
 
-What are the implications for
+What are the implications for:
 
 - Ourselves
 - Other animals

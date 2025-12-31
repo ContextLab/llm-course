@@ -25,17 +25,25 @@ Winter 2026
 
 </div>
 
-<div class="tip-box" data-title="Central insight">
+<div class="warning-box" data-title="However...">
+
+Does the "experience" need to be first-hand? Can we "share" experience with another person? Or with a machine? What might that look like?
+
+</div>
+
+<div class="tip-box" data-title="Today's focus">
 
 Pattern matching can create powerful *illusions* of understanding, even without any "real" comprehension.
 
 </div>
 
+
+
 ---
 
-# The fundamental challenge
+# Creating the illusion of experience and understanding
 
-<div style="display: flex; gap: 2em;">
+<div style="display: flex; gap: 1.5em;">
 <div>
 
 **Humans**

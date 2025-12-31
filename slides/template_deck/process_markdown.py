@@ -228,8 +228,8 @@ def generate_flow_svg(flow_lines: list, caption: str = None) -> str:
     # Node dimensions
     min_node_width = 120
     node_height = 70
-    node_padding = 20  # Extra padding for text
-    node_spacing = 60  # Space between nodes (including arrow)
+    node_padding = 35  # Extra padding for text (increased to prevent clipping)
+    node_spacing = 70  # Space between nodes (including arrow)
     arrow_width = 50   # Width of arrow
 
     # Calculate node widths based on text
@@ -250,9 +250,9 @@ def generate_flow_svg(flow_lines: list, caption: str = None) -> str:
         row_widths.append(row_width)
         max_row_width = max(max_row_width, row_width)
 
-    # SVG dimensions - use tight bounding box with small border
-    # Border of 5px prevents stroke cutoff (3px stroke = 1.5px outside) plus small margin
-    svg_border = 5
+    # SVG dimensions - use tight bounding box with border
+    # Border prevents stroke cutoff and text clipping at edges
+    svg_border = 15
     row_height = node_height + 20  # Reduced row spacing for multi-row diagrams
 
     # Calculate tight content bounds
