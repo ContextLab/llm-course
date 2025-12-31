@@ -1757,6 +1757,115 @@ section:not(.lead):not(#\31)>.definition-box {
 }
 
 /* ============================================
+   INLINE EXAMPLE BOXES
+   Compact example boxes for side-by-side layouts
+   with definitions - used for consciousness slide style
+   ============================================ */
+
+/* Inline example box - compact, stackable example cards */
+.inline-example {
+    background-color: rgba(0, 105, 62, 0.10);
+    border-left: 4px solid var(--dartmouth-green, #00693e);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    margin-bottom: 0.3em;
+    text-align: left !important;
+}
+
+/* Suppress any ::before content from parent callout rules */
+.inline-example::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* Title inside inline example */
+.inline-example .example-title {
+    color: var(--dartmouth-green, #00693e);
+    font-weight: 600;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 0.1em;
+}
+
+/* Text inside inline example */
+.inline-example .example-text {
+    font-size: 0.85em;
+    display: block;
+}
+
+/* ============================================
+   DEFINITIONS-EXAMPLES LAYOUT
+   Two-column layout with bullet definitions on left,
+   stacked example boxes on right
+   ============================================ */
+
+.definitions-examples-layout {
+    display: flex !important;
+    gap: 1em;
+    margin-top: 0.2em;
+    width: 100% !important;
+    align-items: flex-start !important;
+}
+
+/* Left column - definitions with bullet list */
+.definitions-examples-layout .definitions-col {
+    flex: 1;
+    text-align: left !important;
+}
+
+.definitions-examples-layout .definitions-col ul {
+    text-align: left !important;
+    margin: 0 !important;
+    padding-left: 1.3em !important;
+    list-style-type: disc !important;
+    list-style-position: outside !important;
+    display: block !important;
+    font-size: 1em !important;
+}
+
+.definitions-examples-layout .definitions-col ul li {
+    text-align: left !important;
+    margin-bottom: 0.5em !important;
+    display: list-item !important;
+    list-style-type: disc !important;
+}
+
+/* Right column - stacked example boxes */
+.definitions-examples-layout .examples-col {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Slides with this layout need adjusted scaling */
+section:not(.lead):not(#\31):has(.definitions-examples-layout) {
+    font-size: 24px !important;
+    padding: 18px 40px 28px 40px !important;
+}
+
+section:not(.lead):not(#\31):has(.definitions-examples-layout) > *:not(h1) {
+    font-size: 24px !important;
+}
+
+section:not(.lead):not(#\31):has(.definitions-examples-layout) > h1 {
+    font-size: 1.8em !important;
+}
+
+/* When definitions-examples-layout is present, adjust list display */
+section:not(.lead):not(#\31):has(.definitions-examples-layout) ul,
+section:not(.lead):not(#\31):has(.definitions-examples-layout) ol {
+    display: block !important;
+}
+
+/* Note-box at bottom of definitions-examples slides */
+section:not(.lead):not(#\31):has(.definitions-examples-layout) > .note-box {
+    font-size: 0.95em !important;
+    padding: 0.25em 0.5em !important;
+    margin-top: 0.25em !important;
+    width: 85% !important;
+}
+
+/* ============================================
    FLEX CONTAINER CALLOUT BOX OVERRIDES
    When callout boxes are inside a flex container,
    allow them to expand to fill available space

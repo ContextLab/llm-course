@@ -180,44 +180,7 @@ What are the implications for:
 
 # What is consciousness?
 
-<style scoped>
-section { font-size: 24px !important; padding: 18px 40px 28px 40px !important; }
-section > *:not(h1) { font-size: 24px !important; }
-section > h1 { font-size: 1.8em !important; }
-section ul, section ol { display: block !important; }
-.consciousness-layout { display: flex; gap: 0.8em; margin-top: 0.15em; width: 100%; align-items: flex-start; }
-.definitions-col { flex: 1; text-align: left !important; }
-.definitions-col ul {
-  text-align: left !important;
-  margin: 0 !important;
-  padding-left: 1.3em !important;
-  list-style-type: disc !important;
-  list-style-position: outside !important;
-  display: block !important;
-  font-size: 1em !important;
-}
-.definitions-col ul li {
-  text-align: left !important;
-  margin-bottom: 0.5em !important;
-  display: list-item !important;
-  list-style-type: disc !important;
-}
-.examples-col { flex: 1.2; }
-.c-example {
-  background-color: rgba(0, 105, 62, 0.10);
-  border-left: 4px solid #00693e;
-  border-radius: 4px;
-  padding: 0.25em 0.4em;
-  margin-bottom: 0.25em;
-  text-align: left !important;
-}
-.c-example::before { display: none !important; content: none !important; }
-.c-example .c-title { color: #00693e; font-weight: 600; font-size: 0.82em; display: block; margin-bottom: 0.05em; }
-.c-example .c-text { font-size: 0.82em; display: block; }
-section > .note-box { font-size: 0.95em !important; padding: 0.25em 0.5em !important; margin-top: 0.25em !important; width: 85% !important; }
-</style>
-
-<div class="consciousness-layout">
+<div class="definitions-examples-layout">
 <div class="definitions-col">
 <ul>
 <li><strong>Phenomenal:</strong> Subjective experience&mdash;the "what it is like" quality of sensations and emotions</li>
@@ -226,17 +189,17 @@ section > .note-box { font-size: 0.95em !important; padding: 0.25em 0.5em !impor
 </ul>
 </div>
 <div class="examples-col">
-<div class="c-example">
-<span class="c-title">Example of phenomenal consciousness</span>
-<span class="c-text">The redness of red, pain, taste of coffee</span>
+<div class="inline-example">
+<span class="example-title">Example of phenomenal consciousness</span>
+<span class="example-text">The redness of red, pain, taste of coffee</span>
 </div>
-<div class="c-example">
-<span class="c-title">Example of access consciousness</span>
-<span class="c-text">Being able to report on and use information to guide behavior</span>
+<div class="inline-example">
+<span class="example-title">Example of access consciousness</span>
+<span class="example-text">Being able to report on and use information to guide behavior</span>
 </div>
-<div class="c-example">
-<span class="c-title">Example of self-awareness</span>
-<span class="c-text">Knowing that you are thinking, or recognizing your own emotions</span>
+<div class="inline-example">
+<span class="example-title">Example of self-awareness</span>
+<span class="example-text">Knowing that you are thinking, or recognizing your own emotions</span>
 </div>
 </div>
 </div>
