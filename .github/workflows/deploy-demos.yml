@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - 'demos/**'
+      - 'slides/**'
       - '.github/workflows/deploy-demos.yml'
 
   # Allow manual trigger from Actions tab
@@ -60,9 +61,11 @@ jobs:
 
       - name: Create build artifact
         run: |
-          echo "Preparing demos for deployment..."
+          echo "Preparing demos and slides for deployment..."
           mkdir -p _site/demos
+          mkdir -p _site/slides
           cp -r demos/* _site/demos/
+          cp -r slides/* _site/slides/
 
           # Create a .nojekyll file to bypass Jekyll processing
           touch _site/.nojekyll
