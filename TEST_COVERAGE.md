@@ -17,22 +17,22 @@ This document provides a comprehensive overview of the automated test suite for 
 | Demo | Tests | Pass Rate | Description |
 |------|-------|-----------|-------------|
 | Demo 01 | 144 | 100% | ELIZA Pattern Matching |
-| Demo 02 | 141 | 100% | BPE Tokenization |
-| Demo 03 | 95 | 100% | Embeddings & Clustering |
-| Demo 04 | 70 | 100% | Attention Mechanisms |
-| Demo 05 | 89 | 100% | Transformer Architecture |
-| Demo 06 | 114 | 100% | GPT Sampling Strategies |
-| Demo 07 | 94 | 97% | RAG (3 tests hit memory limits) |
-| Demo 08 | 93 | 100% | Topic Modeling (LDA) |
-| Demo 09 | 97 | 100% | Sentiment Analysis |
-| Demo 10 | 125 | 100% | POS Tagging |
-| Demo 11 | 119 | 100% | Word Analogies |
-| Demo 12 | 139 | 100% | Semantic Search (BM25) |
-| Demo 13 | 88 | 100% | BERT Masked Language Modeling |
-| Demo 14 | 84 | 100% | Embeddings Comparison |
-| Demo 15a | 12 | 100% | ELIZA (Evolution) |
-| Demo 15b | 14 | 100% | PARRY |
-| Demo 15c | Integration | 100% | ALICE (95,026 patterns) |
+| Demo 02a | 12 | 100% | Chatbot Evolution: ELIZA |
+| Demo 02b | 14 | 100% | Chatbot Evolution: PARRY |
+| Demo 02c | Integration | 100% | Chatbot Evolution: ALICE (95,026 patterns) |
+| Demo 03 | 141 | 100% | BPE Tokenization |
+| Demo 04 | 95 | 100% | Embeddings & Clustering |
+| Demo 05 | 70 | 100% | Attention Mechanisms |
+| Demo 06 | 89 | 100% | Transformer Architecture |
+| Demo 07 | 114 | 100% | GPT Sampling Strategies |
+| Demo 08 | 94 | 97% | RAG (3 tests hit memory limits) |
+| Demo 09 | 93 | 100% | Topic Modeling (LDA) |
+| Demo 10 | 97 | 100% | Sentiment Analysis |
+| Demo 11 | 125 | 100% | POS Tagging |
+| Demo 12 | 119 | 100% | Word Analogies |
+| Demo 13 | 139 | 100% | Semantic Search (BM25) |
+| Demo 14 | 88 | 100% | BERT Masked Language Modeling |
+| Demo 15 | 84 | 100% | Embeddings Comparison |
 | **TOTAL** | **1,518** | **99.8%** | **All Demos Covered** |
 
 ---
@@ -47,29 +47,29 @@ npm test
 ### Run Individual Demo Tests
 ```bash
 npm run test:demo01     # ELIZA Pattern Matching
-npm run test:demo02     # BPE Tokenization
-npm run test:demo03     # Embeddings & Clustering
-npm run test:demo04     # Attention Mechanisms
-npm run test:demo05     # Transformer Architecture
-npm run test:demo06     # GPT Sampling Strategies
-npm run test:demo07     # RAG
-npm run test:demo08     # Topic Modeling (LDA)
-npm run test:demo09     # Sentiment Analysis
-npm run test:demo10     # POS Tagging
-npm run test:demo11     # Word Analogies
-npm run test:demo12     # BM25 Semantic Search
-npm run test:demo13     # BERT MLM
-npm run test:demo14     # Embeddings Comparison
-npm run test:demo15     # Chatbot Evolution (All 3)
-npm run test:demo15:eliza   # ELIZA only
-npm run test:demo15:parry   # PARRY only
-npm run test:demo15:alice   # ALICE only
+npm run test:demo02     # Chatbot Evolution (All 3)
+npm run test:demo02:eliza   # ELIZA only
+npm run test:demo02:parry   # PARRY only
+npm run test:demo02:alice   # ALICE only
+npm run test:demo03     # BPE Tokenization
+npm run test:demo04     # Embeddings & Clustering
+npm run test:demo05     # Attention Mechanisms
+npm run test:demo06     # Transformer Architecture
+npm run test:demo07     # GPT Sampling Strategies
+npm run test:demo08     # RAG
+npm run test:demo09     # Topic Modeling (LDA)
+npm run test:demo10     # Sentiment Analysis
+npm run test:demo11     # POS Tagging
+npm run test:demo12     # Word Analogies
+npm run test:demo13     # BM25 Semantic Search
+npm run test:demo14     # BERT MLM
+npm run test:demo15     # Embeddings Comparison
 ```
 
 ### Run Specific Categories
 ```bash
 npm run test:chatbots      # All chatbot tests
-npm run test:eliza         # ELIZA tests (Demo 01 + 15)
+npm run test:eliza         # ELIZA tests (Demo 01 + 02)
 npm run test:tokenization  # Tokenization tests
 npm run test:clustering    # Clustering tests
 npm run test:attention     # Attention tests
@@ -119,9 +119,36 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 02: BPE Tokenization
+### Demo 02: Chatbot Evolution
 
-**File**: `demos/02-tokenization/test-tokenization.mjs`
+**Test Files**:
+- `demos/02-chatbot-evolution/test-eliza-fixes.mjs` (12 tests)
+- `demos/02-chatbot-evolution/test-parry-final.mjs` (14 tests)
+- `demos/02-chatbot-evolution/test-alice-full-node.mjs` (integration)
+
+**Total**: 26+ tests
+**Pass Rate**: 100%
+
+#### ELIZA Fixes (12 tests)
+- Classic conversation pattern matching
+- Sorry keyword priority
+- Response formatting
+
+#### PARRY (14 tests)
+- Historical accuracy (1972 implementation)
+- Paranoid response patterns
+- Topic deflection
+
+#### A.L.I.C.E. (Integration)
+- 95,026 AIML patterns loaded
+- Pattern matching with priorities
+- SRAI, context tracking, wildcards
+
+---
+
+### Demo 03: BPE Tokenization
+
+**File**: `demos/03-tokenization/test-tokenization.mjs`
 **Tests**: 141 comprehensive tests
 **Pass Rate**: 100%
 
@@ -143,9 +170,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 03: Embeddings & Clustering
+### Demo 04: Embeddings & Clustering
 
-**File**: `demos/03-embeddings/test-clustering.mjs`
+**File**: `demos/04-embeddings/test-clustering.mjs`
 **Tests**: 95 comprehensive tests
 **Pass Rate**: 100%
 
@@ -173,9 +200,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 04: Attention Mechanisms
+### Demo 05: Attention Mechanisms
 
-**File**: `demos/04-attention/test-attention.mjs`
+**File**: `demos/05-attention/test-attention.mjs`
 **Tests**: 70 comprehensive tests
 **Pass Rate**: 100%
 
@@ -193,9 +220,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 05: Transformer Architecture
+### Demo 06: Transformer Architecture
 
-**File**: `demos/05-transformer/test-transformer.mjs`
+**File**: `demos/06-transformer/test-transformer.mjs`
 **Tests**: 89 comprehensive tests
 **Pass Rate**: 100%
 
@@ -210,9 +237,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 06: GPT Playground Sampling
+### Demo 07: GPT Playground Sampling
 
-**File**: `demos/06-gpt-playground/test-sampling.mjs`
+**File**: `demos/07-gpt-playground/test-sampling.mjs`
 **Tests**: 114 comprehensive tests
 **Pass Rate**: 100%
 
@@ -234,9 +261,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 07: RAG (Retrieval Augmented Generation)
+### Demo 08: RAG (Retrieval Augmented Generation)
 
-**File**: `demos/07-rag/test-rag.mjs`
+**File**: `demos/08-rag/test-rag.mjs`
 **Tests**: 94 comprehensive tests
 **Pass Rate**: 97% (91/94, 3 tests hit Node.js memory limits)
 
@@ -268,9 +295,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 08: Topic Modeling (LDA)
+### Demo 09: Topic Modeling (LDA)
 
-**File**: `demos/08-topic-modeling/test-lda.mjs`
+**File**: `demos/09-topic-modeling/test-lda.mjs`
 **Tests**: 93 comprehensive tests
 **Pass Rate**: 100%
 
@@ -291,9 +318,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 09: Sentiment Analysis
+### Demo 10: Sentiment Analysis
 
-**File**: `demos/09-sentiment/test-sentiment.mjs`
+**File**: `demos/10-sentiment/test-sentiment.mjs`
 **Tests**: 97 comprehensive tests
 **Pass Rate**: 100%
 
@@ -315,9 +342,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 10: POS Tagging
+### Demo 11: POS Tagging
 
-**File**: `demos/10-pos-tagging/test-pos.mjs`
+**File**: `demos/11-pos-tagging/test-pos.mjs`
 **Tests**: 125 comprehensive tests
 **Pass Rate**: 100%
 
@@ -347,9 +374,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 11: Word Analogies
+### Demo 12: Word Analogies
 
-**File**: `demos/11-analogies/test-analogies.mjs`
+**File**: `demos/12-analogies/test-analogies.mjs`
 **Tests**: 119 comprehensive tests
 **Pass Rate**: 100%
 
@@ -379,9 +406,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 12: BM25 Semantic Search
+### Demo 13: BM25 Semantic Search
 
-**File**: `demos/12-semantic-search/test-bm25.mjs`
+**File**: `demos/13-semantic-search/test-bm25.mjs`
 **Tests**: 139 comprehensive tests
 **Pass Rate**: 100%
 
@@ -421,9 +448,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 13: BERT Masked Language Modeling
+### Demo 14: BERT Masked Language Modeling
 
-**File**: `demos/13-bert-mlm/test-bert.mjs`
+**File**: `demos/14-bert-mlm/test-bert.mjs`
 **Tests**: 88 comprehensive tests
 **Pass Rate**: 100%
 
@@ -443,9 +470,9 @@ npm run test:comparison    # Embeddings comparison tests
 
 ---
 
-### Demo 14: Embeddings Comparison
+### Demo 15: Embeddings Comparison
 
-**File**: `demos/14-embeddings-comparison/test-comparison.mjs`
+**File**: `demos/15-embeddings-comparison/test-comparison.mjs`
 **Tests**: 84 comprehensive tests
 **Pass Rate**: 100%
 
@@ -458,33 +485,6 @@ npm run test:comparison    # Embeddings comparison tests
 6. Helper Functions Tests (8 tests)
 7. K-Means Clustering Tests (6 tests)
 8. Edge Cases and Special Vectors Tests (8 tests)
-
----
-
-### Demo 15: Chatbot Evolution
-
-**Test Files**:
-- `demos/15-chatbot-evolution/test-eliza-fixes.mjs` (12 tests)
-- `demos/15-chatbot-evolution/test-parry-final.mjs` (14 tests)
-- `demos/15-chatbot-evolution/test-alice-full-node.mjs` (integration)
-
-**Total**: 26+ tests
-**Pass Rate**: 100%
-
-#### ELIZA Fixes (12 tests)
-- Classic conversation pattern matching
-- Sorry keyword priority
-- Response formatting
-
-#### PARRY (14 tests)
-- Historical accuracy (1972 implementation)
-- Paranoid response patterns
-- Topic deflection
-
-#### A.L.I.C.E. (Integration)
-- 95,026 AIML patterns loaded
-- Pattern matching with priorities
-- SRAI, context tracking, wildcards
 
 ---
 

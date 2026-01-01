@@ -181,11 +181,12 @@ jobs:
           echo "Available demos:"
           echo "- Main Gallery: ${{ steps.deployment.outputs.page_url }}"
           echo "- ELIZA: ${{ steps.deployment.outputs.page_url }}01-eliza/"
-          echo "- Tokenization: ${{ steps.deployment.outputs.page_url }}02-tokenization/"
-          echo "- Embeddings: ${{ steps.deployment.outputs.page_url }}03-embeddings/"
-          echo "- Attention: ${{ steps.deployment.outputs.page_url }}04-attention/"
-          echo "- Transformer: ${{ steps.deployment.outputs.page_url }}05-transformer/"
-          echo "- GPT Playground: ${{ steps.deployment.outputs.page_url }}06-gpt-playground/"
+          echo "- Chatbot Evolution: ${{ steps.deployment.outputs.page_url }}02-chatbot-evolution/"
+          echo "- Tokenization: ${{ steps.deployment.outputs.page_url }}03-tokenization/"
+          echo "- Embeddings: ${{ steps.deployment.outputs.page_url }}04-embeddings/"
+          echo "- Attention: ${{ steps.deployment.outputs.page_url }}05-attention/"
+          echo "- Transformer: ${{ steps.deployment.outputs.page_url }}06-transformer/"
+          echo "- GPT Playground: ${{ steps.deployment.outputs.page_url }}07-gpt-playground/"
 
   # Optional: Verify deployment
   verify:

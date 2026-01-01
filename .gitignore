@@ -165,13 +165,13 @@ cython_debug/
 */*/.DS_Store
 
 # GloVe embeddings - exclude large source files, keep processed JSON
-demos/11-analogies/data/glove.6B.zip
-demos/11-analogies/data/glove.6B.*.txt
+demos/12-analogies/data/glove.6B.zip
+demos/12-analogies/data/glove.6B.*.txt
 # Keep the processed JSON file (it's committed)
-!demos/11-analogies/data/glove-50d.json.playwright-mcp/
+!demos/12-analogies/data/glove-50d.json.playwright-mcp/
 node_modules/
 package-lock.json
-demos/15-chatbot-evolution/alice-aiml-original/
+demos/02-chatbot-evolution/alice-aiml-original/
 
 # LaTeX auxiliary files
 *.aux
