@@ -4,9 +4,9 @@
 
 Large-scale course preparation session managing multiple parallel tasks via agents.
 
-## Session Status: ✅ COMPLETE
+## Session Status: 🔄 CONTINUED
 
-All tasks have been completed and pushed to remote.
+Additional improvements made to Demo 15 (Chatbot Evolution).
 
 ---
 
@@ -51,6 +51,18 @@ The GitHub Pages workflow was only deploying `/demos/` - not `/slides/`.
 | Slides: Add examples weeks 7/9/10 | `3facd8d` | #31 ✅ Closed |
 | Compile all slides weeks 1-6 | `71706c8` | N/A |
 | Fix slides deployment | `6c935f4` | #29 |
+| Demo 15: UX improvements | `95185b6` | N/A |
+
+## Demo 15 Chatbot Evolution Improvements (Latest)
+
+Commit `95185b6` - UI/UX improvements:
+- Removed emoji from title
+- Fixed subtitle color to white
+- Updated timeline to show actual model names (1966 ELIZA, 1972 PARRY, etc.)
+- Fixed architecture sidebar text color (was unreadable dark gray on black)
+- Added typing animation for neural model responses
+- User messages now appear immediately before model processing
+- Compare All Bots now maintains conversation history with instant feedback
 
 ## GitHub Issues Summary
 
@@ -76,6 +88,7 @@ The GitHub Pages workflow was only deploying `/demos/` - not `/slides/`.
 | `b818890` | Add clause-based punctuation handling |
 | `3facd8d` | Add examples to weeks 7/9/10 |
 | `a9d5380` | Add PARRY/ALICE breakdown tabs |
+| `95185b6` | Demo 15: UX improvements (typing animation, timeline labels, compare history) |
 
 ## ELIZA Status
 
