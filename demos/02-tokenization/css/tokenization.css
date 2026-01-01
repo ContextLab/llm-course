@@ -1,35 +1,18 @@
-/* Global Styles */
+/* Global Styles - Uses CSS variables from ../shared/css/demo-styles.css for theming */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Demo-specific variables that don't conflict with theming */
 :root {
-    --primary-color: #4f46e5;
-    --primary-hover: #4338ca;
-    --secondary-color: #6b7280;
-    --success-color: #10b981;
-    --warning-color: #f59e0b;
-    --danger-color: #ef4444;
-    --bg-color: #f9fafb;
-    --card-bg: #ffffff;
-    --border-color: #e5e7eb;
-    --text-primary: #111827;
-    --text-secondary: #6b7280;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --token-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --token-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --token-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 12px;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-primary);
-    line-height: 1.6;
 }
 
 .container {
@@ -43,10 +26,10 @@ header {
     text-align: center;
     margin-bottom: 40px;
     padding: 40px 20px;
-    background: linear-gradient(135deg, var(--primary-color), #7c3aed);
+    background: var(--gradient-primary);
     color: white;
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--token-shadow-lg);
 }
 
 header h1 {
@@ -108,10 +91,10 @@ header h1 {
 
 /* Input Section */
 .input-section {
-    background: var(--card-bg);
+    background: var(--surface-color);
     padding: 30px;
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--token-shadow-md);
     margin-bottom: 30px;
 }
 
@@ -132,6 +115,8 @@ header h1 {
     font-family: inherit;
     transition: border-color 0.3s;
     resize: vertical;
+    background: var(--surface-color);
+    color: var(--text-primary);
 }
 
 .input-section textarea:focus,
@@ -168,17 +153,17 @@ header h1 {
 .primary-btn:hover:not(:disabled) {
     background: var(--primary-hover);
     transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--token-shadow-md);
 }
 
 .secondary-btn {
-    background: var(--bg-color);
+    background: var(--surface-color);
     color: var(--text-primary);
     border: 2px solid var(--border-color);
 }
 
 .secondary-btn:hover:not(:disabled) {
-    background: var(--border-color);
+    background: var(--surface-hover);
 }
 
 button:disabled {
@@ -193,7 +178,7 @@ button:disabled {
 
 .mode-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--token-shadow-md);
 }
 
 .mode-btn.active {
@@ -204,12 +189,12 @@ button:disabled {
 
 .mode-btn:not(.active) {
     border-color: var(--border-color) !important;
-    background: white !important;
+    background: var(--surface-color) !important;
     color: var(--text-primary) !important;
 }
 
 .mode-btn:not(.active):hover:not(:disabled) {
-    background: var(--bg-color) !important;
+    background: var(--surface-hover) !important;
     border-color: var(--primary-color) !important;
 }
 
@@ -247,16 +232,16 @@ button:disabled {
 }
 
 .tokenizer-card {
-    background: var(--card-bg);
+    background: var(--surface-color);
     border-radius: var(--radius-lg);
     padding: 20px;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--token-shadow-md);
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .tokenizer-card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--token-shadow-lg);
 }
 
 .tokenizer-header {
@@ -299,7 +284,7 @@ button:disabled {
 .token-output {
     min-height: 100px;
     padding: 15px;
-    background: var(--bg-color);
+    background: var(--bg-secondary);
     border-radius: var(--radius-md);
     line-height: 2;
     word-wrap: break-word;
@@ -331,7 +316,7 @@ button:disabled {
 
 .token:hover {
     transform: scale(1.05);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--token-shadow-md);
 }
 
 .token-0 { background: #fef3c7; border: 1px solid #fbbf24; }
@@ -354,33 +339,35 @@ button:disabled {
 
 .token-ids summary {
     padding: 8px;
-    background: var(--bg-color);
+    background: var(--bg-secondary);
     border-radius: var(--radius-sm);
     font-weight: 500;
     user-select: none;
+    color: var(--text-primary);
 }
 
 .token-ids summary:hover {
-    background: var(--border-color);
+    background: var(--surface-hover);
 }
 
 .ids-content {
     margin-top: 10px;
     padding: 10px;
-    background: var(--bg-color);
+    background: var(--bg-secondary);
     border-radius: var(--radius-sm);
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 0.9rem;
     max-height: 150px;
     overflow-y: auto;
+    color: var(--text-primary);
 }
 
 /* Stats Section */
 .stats-section {
-    background: var(--card-bg);
+    background: var(--surface-color);
     padding: 30px;
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--token-shadow-md);
 }
 
 .stats-section h3 {
@@ -413,10 +400,10 @@ button:disabled {
 
 .bpe-explanation,
 .bpe-visualization {
-    background: var(--card-bg);
+    background: var(--surface-color);
     padding: 25px;
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--token-shadow-md);
 }
 
 .bpe-explanation h3,

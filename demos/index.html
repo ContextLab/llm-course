@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Interactive Demos - Language Models from Scratch</title>
+    <title>Models of Language and Conversation - Interactive Demos</title>
     <meta name="description" content="Interactive demonstrations exploring language models, transformers, and NLP concepts">
 
     <style>
@@ -141,51 +141,132 @@
             animation: fadeInUp 0.8s ease 0.2s both;
         }
 
-        .hero-stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            margin-top: 3rem;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.8s ease 0.4s both;
+        /* Search and Filter Section */
+        .search-filter-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 2rem;
         }
 
-        .stat {
-            text-align: center;
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto 2rem;
         }
 
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: var(--gradient-3);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem 1rem 3rem;
+            font-size: 1rem;
+            background: var(--surface-color);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
         }
 
-        .stat-label {
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-input::placeholder {
             color: var(--text-secondary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+
+        .tag-browser {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .tag-browser-title {
             font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .tag-filter {
+            background: var(--surface-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .tag-filter:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .tag-filter.active {
+            background: var(--gradient-1);
+            color: white;
+            border-color: transparent;
+        }
+
+        .filter-status {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            min-height: 40px;
+        }
+
+        .filter-status-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .clear-filters-btn {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .clear-filters-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .clear-filters-btn.visible {
+            display: inline-block;
         }
 
         /* Demo Grid */
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 4rem 2rem;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 3rem;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            padding: 2rem 2rem 4rem;
         }
 
         .demo-grid {
@@ -228,6 +309,10 @@
             border-color: var(--primary-color);
         }
 
+        .demo-card.hidden {
+            display: none;
+        }
+
         .demo-number {
             display: inline-block;
             background: var(--gradient-1);
@@ -267,27 +352,6 @@
             font-size: 0.85rem;
         }
 
-        .demo-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success-color);
-            animation: pulse 2s infinite;
-        }
-
-        .status-dot.coming-soon {
-            background: var(--text-secondary);
-            animation: none;
-        }
-
         .demo-link {
             display: inline-block;
             margin-top: 1rem;
@@ -305,10 +369,47 @@
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
         }
 
-        .demo-link.disabled {
-            background: var(--surface-hover);
+        .lecture-links {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+
+        .lecture-links-title {
             color: var(--text-secondary);
-            pointer-events: none;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .lecture-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-right: 0.75rem;
+            transition: color 0.3s ease;
+        }
+
+        .lecture-links a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+            display: none;
+            grid-column: 1 / -1;
+        }
+
+        .no-results.visible {
+            display: block;
+        }
+
+        .no-results h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
         }
 
         /* Footer */
@@ -342,7 +443,6 @@
             color: var(--primary-color);
         }
 
-        /* Animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -355,89 +455,57 @@
         }
 
         @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            .nav-links {
-                gap: 1rem;
-            }
-
-            .demo-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-stats {
-                gap: 1.5rem;
-            }
-        }
-
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--surface-hover);
-            border-top-color: var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            .nav-links { gap: 1rem; }
+            .demo-grid { grid-template-columns: 1fr; }
+            .tag-list { gap: 0.4rem; }
+            .tag-filter { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav id="navbar">
         <div class="nav-container">
-            <div class="logo">LLM Interactive Demos</div>
+            <div class="logo">Interactive Demonstrations</div>
             <div class="nav-links">
-                <a href="#demos">Demos</a>
+                <a href="https://github.com/ContextLab/llm-course/blob/main/demos/README.md" target="_blank">Demos</a>
                 <a href="https://github.com/ContextLab/llm-course" target="_blank">GitHub</a>
-                <a href="../README.md">Course</a>
+                <a href="https://github.com/ContextLab/llm-course/blob/main/slides/README.md" target="_blank">Course</a>
+                <a href="https://pbs.dartmouth.edu/undergraduate/courses-and-syllabi/topics-courses" target="_blank">Course Info</a>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                    <span id="themeIcon">🌙</span>
+                    <span id="themeIcon">&#127769;</span>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section class="hero">
-        <h1>Interactive Language Model Demonstrations</h1>
+        <h1>Models of Language and Conversation</h1>
         <p>Explore the building blocks of modern language models through hands-on, interactive visualizations. From basic tokenization to advanced transformer architectures.</p>
+    </section>
 
-        <div class="hero-stats">
-            <div class="stat">
-                <div class="stat-number">15</div>
-                <div class="stat-label">Interactive Demos</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">10</div>
-                <div class="stat-label">Weeks</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">100%</div>
-                <div class="stat-label">Hands-On</div>
-            </div>
+    <section class="search-filter-section">
+        <div class="search-container">
+            <span class="search-icon">&#128269;</span>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search demos by title, description, or tags...">
+        </div>
+        <div class="tag-browser">
+            <div class="tag-browser-title">Filter by Topic</div>
+            <div class="tag-list" id="tagList"></div>
+        </div>
+        <div class="filter-status">
+            <span class="filter-status-text" id="filterStatusText"></span>
+            <button class="clear-filters-btn" id="clearFiltersBtn">Clear Filters</button>
         </div>
     </section>
 
-    <!-- Demo Grid -->
     <section class="container" id="demos">
-        <h2 class="section-title">All Demonstrations</h2>
-
-        <div class="demo-grid">
-            <!-- Demo 1: ELIZA -->
-            <div class="demo-card">
+        <div class="demo-grid" id="demoGrid">
+            <div class="demo-card" data-tags="Pattern Matching,Rule-Based,Historical">
                 <span class="demo-number">Demo 01</span>
                 <h3 class="demo-title">ELIZA Chatbot</h3>
                 <p class="demo-description">Experience the historic ELIZA chatbot from 1966. Explore pattern matching, rule-based responses, and the foundations of conversational AI.</p>
@@ -446,15 +514,15 @@
                     <span class="tag">Rule-Based</span>
                     <span class="tag">Historical</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
+                <div class="lecture-links">
+                    <div class="lecture-links-title">Related Lectures</div>
+                    <a href="../slides/week1/lecture2.html">Lecture 2</a>
+                    <a href="../slides/week1/lecture3.html">Lecture 3</a>
                 </div>
-                <a href="01-eliza/" class="demo-link">Launch Demo →</a>
+                <a href="01-eliza/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 2: Tokenization -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="BPE,WordPiece,Visualization">
                 <span class="demo-number">Demo 02</span>
                 <h3 class="demo-title">Text Tokenization</h3>
                 <p class="demo-description">Visualize how text is broken down into tokens. Compare different tokenization strategies and understand their impact on language models.</p>
@@ -463,15 +531,14 @@
                     <span class="tag">WordPiece</span>
                     <span class="tag">Visualization</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
+                <div class="lecture-links">
+                    <div class="lecture-links-title">Related Lectures</div>
+                    <a href="../slides/week2/lecture6.html">Lecture 6</a>
                 </div>
-                <a href="02-tokenization/" class="demo-link">Launch Demo →</a>
+                <a href="02-tokenization/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 3: Embeddings -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="Word2Vec,3D Viz,Semantic Space">
                 <span class="demo-number">Demo 03</span>
                 <h3 class="demo-title">Word Embeddings Explorer</h3>
                 <p class="demo-description">Interactive 3D visualization of word embeddings. Explore semantic relationships and discover how words cluster in vector space.</p>
@@ -480,15 +547,15 @@
                     <span class="tag">3D Viz</span>
                     <span class="tag">Semantic Space</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
+                <div class="lecture-links">
+                    <div class="lecture-links-title">Related Lectures</div>
+                    <a href="../slides/week3/lecture11.html">Lecture 11</a>
+                    <a href="../slides/week3/lecture12.html">Lecture 12</a>
                 </div>
-                <a href="03-embeddings/" class="demo-link">Launch Demo →</a>
+                <a href="03-embeddings/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 4: Attention -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="Self-Attention,Query-Key-Value,Interactive">
                 <span class="demo-number">Demo 04</span>
                 <h3 class="demo-title">Attention Mechanism</h3>
                 <p class="demo-description">Visualize how attention mechanisms work. See how models learn to focus on relevant parts of the input sequence.</p>
@@ -497,15 +564,14 @@
                     <span class="tag">Query-Key-Value</span>
                     <span class="tag">Interactive</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
+                <div class="lecture-links">
+                    <div class="lecture-links-title">Related Lectures</div>
+                    <a href="../slides/week5/lecture16.html">Lecture 16</a>
                 </div>
-                <a href="04-attention/" class="demo-link">Launch Demo →</a>
+                <a href="04-attention/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 5: Transformer -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="Architecture,Multi-Head,Step-by-Step">
                 <span class="demo-number">Demo 05</span>
                 <h3 class="demo-title">Transformer Architecture</h3>
                 <p class="demo-description">Step through the transformer architecture layer by layer. Understand encoder-decoder interactions and multi-head attention.</p>
@@ -514,15 +580,14 @@
                     <span class="tag">Multi-Head</span>
                     <span class="tag">Step-by-Step</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
+                <div class="lecture-links">
+                    <div class="lecture-links-title">Related Lectures</div>
+                    <a href="../slides/week5/lecture17.html">Lecture 17</a>
                 </div>
-                <a href="05-transformer/" class="demo-link">Launch Demo →</a>
+                <a href="05-transformer/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 6: GPT Playground -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="GPT,Generation,Playground">
                 <span class="demo-number">Demo 06</span>
                 <h3 class="demo-title">GPT Playground</h3>
                 <p class="demo-description">Experiment with a mini GPT model. Adjust parameters, see predictions, and understand autoregressive text generation.</p>
@@ -531,15 +596,10 @@
                     <span class="tag">Generation</span>
                     <span class="tag">Playground</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
-                </div>
-                <a href="06-gpt-playground/" class="demo-link">Launch Demo →</a>
+                <a href="06-gpt-playground/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 7: RAG System -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="RAG,Retrieval,Context">
                 <span class="demo-number">Demo 07</span>
                 <h3 class="demo-title">RAG System Demo</h3>
                 <p class="demo-description">Build a retrieval-augmented generation system. Query a corpus of 2000 Wikipedia articles and see how context enhances responses.</p>
@@ -548,15 +608,10 @@
                     <span class="tag">Retrieval</span>
                     <span class="tag">Context</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
-                </div>
-                <a href="07-rag/" class="demo-link">Launch Demo →</a>
+                <a href="07-rag/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 8: Topic Modeling -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="LDA,Unsupervised,Visualization">
                 <span class="demo-number">Demo 08</span>
                 <h3 class="demo-title">Topic Modeling Studio</h3>
                 <p class="demo-description">Discover hidden topics in documents using Latent Dirichlet Allocation (LDA). Explore 3000 Wikipedia articles and visualize topic distributions.</p>
@@ -565,15 +620,10 @@
                     <span class="tag">Unsupervised</span>
                     <span class="tag">Visualization</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
-                </div>
-                <a href="08-topic-modeling/" class="demo-link">Launch Demo →</a>
+                <a href="08-topic-modeling/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 9: Sentiment Analysis -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="Sentiment,Classification,IMDB">
                 <span class="demo-number">Demo 09</span>
                 <h3 class="demo-title">Sentiment Analysis Dashboard</h3>
                 <p class="demo-description">Analyze sentiment in movie reviews using multiple models. Explore the IMDB dataset and visualize prediction confidence and feature contributions.</p>
@@ -582,15 +632,10 @@
                     <span class="tag">Classification</span>
                     <span class="tag">IMDB</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
-                </div>
-                <a href="09-sentiment/" class="demo-link">Launch Demo →</a>
+                <a href="09-sentiment/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 10: POS Tagging -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="POS Tagging,Parsing,Syntax">
                 <span class="demo-number">Demo 10</span>
                 <h3 class="demo-title">POS Tagging & Parsing</h3>
                 <p class="demo-description">Analyze sentence structure with Part-of-Speech tagging and dependency parsing. Visualize parse trees and grammatical relationships.</p>
@@ -599,15 +644,10 @@
                     <span class="tag">Parsing</span>
                     <span class="tag">Syntax</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
-                </div>
-                <a href="10-pos-tagging/" class="demo-link">Launch Demo →</a>
+                <a href="10-pos-tagging/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 11: Word Analogies -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="Analogies,Word2Vec,Vector Math">
                 <span class="demo-number">Demo 11</span>
                 <h3 class="demo-title">Word Analogies Explorer</h3>
                 <p class="demo-description">Solve word analogies using vector arithmetic. Explore relationships like "king - man + woman = queen" in embedding space.</p>
@@ -616,15 +656,10 @@
                     <span class="tag">Word2Vec</span>
                     <span class="tag">Vector Math</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
-                </div>
-                <a href="11-analogies/" class="demo-link">Launch Demo →</a>
+                <a href="11-analogies/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 12: Semantic Search Engine -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="Search,Embeddings,BM25">
                 <span class="demo-number">Demo 12</span>
                 <h3 class="demo-title">Semantic Search Engine</h3>
                 <p class="demo-description">Compare semantic, keyword (BM25), and hybrid search methods on the same corpus. See how embeddings improve search relevance.</p>
@@ -633,15 +668,10 @@
                     <span class="tag">Embeddings</span>
                     <span class="tag">BM25</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
-                </div>
-                <a href="12-semantic-search/" class="demo-link">Launch Demo →</a>
+                <a href="12-semantic-search/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 13: BERT MLM -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="BERT,MLM,Bidirectional">
                 <span class="demo-number">Demo 13</span>
                 <h3 class="demo-title">BERT Masked Language Modeling</h3>
                 <p class="demo-description">Experiment with BERT's masked language modeling. See how BERT predicts masked words using bidirectional context.</p>
@@ -650,15 +680,10 @@
                     <span class="tag">MLM</span>
                     <span class="tag">Bidirectional</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
-                </div>
-                <a href="13-bert-mlm/" class="demo-link">Launch Demo →</a>
+                <a href="13-bert-mlm/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 14: Embeddings Comparison Lab -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="Embeddings,Benchmarking,Comparison">
                 <span class="demo-number">Demo 14</span>
                 <h3 class="demo-title">Embeddings Comparison Lab</h3>
                 <p class="demo-description">Benchmark multiple embedding models on similarity, analogy, and categorization tasks. Compare speed vs quality trade-offs.</p>
@@ -667,15 +692,10 @@
                     <span class="tag">Benchmarking</span>
                     <span class="tag">Comparison</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
-                </div>
-                <a href="14-embeddings-comparison/" class="demo-link">Launch Demo →</a>
+                <a href="14-embeddings-comparison/" class="demo-link">Launch Demo &#8594;</a>
             </div>
 
-            <!-- Demo 15: Chatbot Evolution Timeline -->
-            <div class="demo-card">
+            <div class="demo-card" data-tags="History,Chatbots,Interactive">
                 <span class="demo-number">Demo 15</span>
                 <h3 class="demo-title">Chatbot Evolution Timeline</h3>
                 <p class="demo-description">Journey through 60 years of chatbot history from ELIZA (1966) to GPT. Chat with implementations from each era.</p>
@@ -684,23 +704,23 @@
                     <span class="tag">Chatbots</span>
                     <span class="tag">Interactive</span>
                 </div>
-                <div class="demo-status">
-                    <span class="status-dot"></span>
-                    <span>Available</span>
-                </div>
-                <a href="15-chatbot-evolution/" class="demo-link">Launch Demo →</a>
+                <a href="15-chatbot-evolution/" class="demo-link">Launch Demo &#8594;</a>
+            </div>
+
+            <div class="no-results" id="noResults">
+                <h3>No demos found</h3>
+                <p>Try adjusting your search terms or clearing the filters.</p>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="footer-links">
                 <a href="https://github.com/ContextLab/llm-course" target="_blank">GitHub Repository</a>
-                <a href="../README.md">Course Materials</a>
-                <a href="README.md">Documentation</a>
-                <a href="https://www.dartmouth.edu/~psyc50/" target="_blank">Course Info</a>
+                <a href="https://github.com/ContextLab/llm-course/blob/main/slides/README.md" target="_blank">Course Materials</a>
+                <a href="https://github.com/ContextLab/llm-course/blob/main/demos/README.md" target="_blank">Documentation</a>
+                <a href="https://pbs.dartmouth.edu/undergraduate/courses-and-syllabi/topics-courses" target="_blank">Course Info</a>
             </div>
             <p style="color: var(--text-secondary);">
                 &copy; 2026 Jeremy R. Manning | PSYC 51.17: Language Models from Scratch
@@ -714,7 +734,6 @@
         const themeIcon = document.getElementById('themeIcon');
         const html = document.documentElement;
 
-        // Check for saved theme preference or default to 'dark'
         const currentTheme = localStorage.getItem('theme') || 'dark';
         html.setAttribute('data-theme', currentTheme);
         updateThemeIcon(currentTheme);
@@ -722,57 +741,135 @@
         themeToggle.addEventListener('click', () => {
             const currentTheme = html.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             updateThemeIcon(newTheme);
         });
 
         function updateThemeIcon(theme) {
-            themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+            themeIcon.innerHTML = theme === 'dark' ? '&#127769;' : '&#9728;&#65039;';
         }
 
         // Navbar scroll effect
         const navbar = document.getElementById('navbar');
-        let lastScroll = 0;
-
         window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-
-            if (currentScroll > 50) {
+            if (window.pageYOffset > 50) {
                 navbar.classList.add('scrolled');
             } else {
                 navbar.classList.remove('scrolled');
             }
-
-            lastScroll = currentScroll;
         });
 
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+        // Search and Filter
+        const searchInput = document.getElementById('searchInput');
+        const tagList = document.getElementById('tagList');
+        const demoCards = document.querySelectorAll('.demo-card');
+        const noResults = document.getElementById('noResults');
+        const filterStatusText = document.getElementById('filterStatusText');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+
+        let activeTag = null;
+        let searchTerm = '';
+
+        function collectAllTags() {
+            const tags = new Set();
+            demoCards.forEach(card => {
+                const cardTags = card.dataset.tags;
+                if (cardTags) {
+                    cardTags.split(',').forEach(tag => tags.add(tag.trim()));
                 }
             });
+            return Array.from(tags).sort();
+        }
+
+        function populateTagBrowser() {
+            const tags = collectAllTags();
+            tagList.innerHTML = '';
+            tags.forEach(tag => {
+                const tagButton = document.createElement('button');
+                tagButton.className = 'tag-filter';
+                tagButton.textContent = tag;
+                tagButton.addEventListener('click', () => toggleTag(tag, tagButton));
+                tagList.appendChild(tagButton);
+            });
+        }
+
+        function toggleTag(tag, button) {
+            if (activeTag === tag) {
+                activeTag = null;
+                button.classList.remove('active');
+            } else {
+                document.querySelectorAll('.tag-filter').forEach(btn => btn.classList.remove('active'));
+                activeTag = tag;
+                button.classList.add('active');
+            }
+            filterDemos();
+        }
+
+        function filterDemos() {
+            const searchLower = searchTerm.toLowerCase().trim();
+            let visibleCount = 0;
+
+            demoCards.forEach(card => {
+                const title = card.querySelector('.demo-title').textContent.toLowerCase();
+                const description = card.querySelector('.demo-description').textContent.toLowerCase();
+                const cardTags = card.dataset.tags ? card.dataset.tags.toLowerCase() : '';
+
+                const matchesSearch = !searchLower ||
+                    title.includes(searchLower) ||
+                    description.includes(searchLower) ||
+                    cardTags.includes(searchLower);
+
+                const matchesTag = !activeTag ||
+                    (card.dataset.tags && card.dataset.tags.split(',').map(t => t.trim()).includes(activeTag));
+
+                if (matchesSearch && matchesTag) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            updateFilterStatus(visibleCount);
+            noResults.classList.toggle('visible', visibleCount === 0);
+        }
+
+        function updateFilterStatus(visibleCount) {
+            const hasFilters = searchTerm.trim() !== '' || activeTag !== null;
+            if (hasFilters) {
+                filterStatusText.textContent = 'Showing ' + visibleCount + ' of ' + demoCards.length + ' demos';
+                clearFiltersBtn.classList.add('visible');
+            } else {
+                filterStatusText.textContent = '';
+                clearFiltersBtn.classList.remove('visible');
+            }
+        }
+
+        function clearFilters() {
+            searchInput.value = '';
+            searchTerm = '';
+            activeTag = null;
+            document.querySelectorAll('.tag-filter').forEach(btn => btn.classList.remove('active'));
+            filterDemos();
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            filterDemos();
         });
 
-        // Add animation on scroll for demo cards
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
+        clearFiltersBtn.addEventListener('click', clearFilters);
 
+        populateTagBrowser();
+
+        // Animation
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -100px 0px' };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, index) => {
                 if (entry.isIntersecting) {
                     setTimeout(() => {
-                        entry.target.style.animation = `fadeInUp 0.6s ease forwards`;
+                        entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
                     }, index * 50);
                     observer.unobserve(entry.target);
                 }

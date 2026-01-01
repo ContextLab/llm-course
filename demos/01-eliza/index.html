@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ELIZA Interactive Demo - Pattern Matching Chatbot</title>
+  <link rel="stylesheet" href="../shared/css/demo-styles.css">
   <link rel="stylesheet" href="css/eliza.css">
 </head>
 <body>
+  <nav class="demo-nav">
+    <a href="../" class="back-link">← Back to Demos</a>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">☀️</button>
+  </nav>
   <div class="header">
     <div class="container">
       <h1>ELIZA Interactive Demo</h1>
@@ -530,6 +535,29 @@
 
     // Initialize the app
     init();
+  </script>
+
+  <script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+    if (themeToggle) {
+      themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    }
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+      });
+    }
   </script>
 </body>
 </html>

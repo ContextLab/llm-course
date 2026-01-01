@@ -1,34 +1,13 @@
 /**
  * ELIZA Interactive Demo - Styles
+ * Uses CSS variables from ../shared/css/demo-styles.css for theming
  */
 
+/* Demo-specific variables that don't conflict with theming */
 :root {
-  --primary-color: #4a90e2;
-  --primary-dark: #357abd;
-  --secondary-color: #50c878;
-  --danger-color: #e74c3c;
-  --warning-color: #f39c12;
-  --bg-color: #f5f7fa;
-  --card-bg: #ffffff;
-  --text-color: #2c3e50;
-  --text-light: #7f8c8d;
-  --border-color: #e1e8ed;
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
-  --transition: all 0.3s ease;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: var(--bg-color);
-  color: var(--text-color);
-  line-height: 1.6;
+  --eliza-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --eliza-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --eliza-transition: all 0.3s ease;
 }
 
 .container {
@@ -39,11 +18,11 @@ body {
 
 /* Header */
 .header {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  background: var(--gradient-primary);
   color: white;
   padding: 30px 0;
   margin-bottom: 30px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--eliza-shadow);
 }
 
 .header h1 {
@@ -64,27 +43,27 @@ body {
   gap: 10px;
   margin-bottom: 20px;
   border-bottom: 2px solid var(--border-color);
-  background: var(--card-bg);
+  background: var(--surface-color);
   padding: 10px 20px 0;
   border-radius: 8px 8px 0 0;
-  box-shadow: var(--shadow);
+  box-shadow: var(--eliza-shadow);
 }
 
 .tab-button {
   padding: 12px 24px;
   background: transparent;
   border: none;
-  color: var(--text-light);
+  color: var(--text-secondary);
   font-size: 1rem;
   cursor: pointer;
   border-bottom: 3px solid transparent;
-  transition: var(--transition);
+  transition: var(--eliza-transition);
   font-weight: 500;
 }
 
 .tab-button:hover {
   color: var(--primary-color);
-  background: rgba(74, 144, 226, 0.05);
+  background: var(--surface-hover);
 }
 
 .tab-button.active {
@@ -94,10 +73,10 @@ body {
 
 .tab-content {
   display: none;
-  background: var(--card-bg);
+  background: var(--surface-color);
   padding: 30px;
   border-radius: 0 0 8px 8px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--eliza-shadow);
   min-height: 600px;
 }
 
@@ -128,7 +107,7 @@ body {
   flex: 1;
   overflow-y: auto;
   padding: 20px;
-  background: var(--bg-color);
+  background: var(--bg-secondary);
   border-radius: 8px;
   margin-bottom: 20px;
 }
@@ -168,14 +147,15 @@ body {
 }
 
 .message.bot .message-content {
-  background: white;
+  background: var(--surface-color);
   border: 1px solid var(--border-color);
   border-bottom-left-radius: 4px;
+  color: var(--text-primary);
 }
 
 .message-meta {
   font-size: 0.85rem;
-  color: var(--text-light);
+  color: var(--text-secondary);
   padding: 0 10px;
 }
 
@@ -183,7 +163,7 @@ body {
   display: inline-block;
   margin-left: 10px;
   padding: 2px 8px;
-  background: var(--secondary-color);
+  background: var(--success-color);
   color: white;
   border-radius: 12px;
   font-size: 0.75rem;
@@ -201,13 +181,15 @@ body {
   border: 2px solid var(--border-color);
   border-radius: 24px;
   font-size: 1rem;
-  transition: var(--transition);
+  transition: var(--eliza-transition);
   outline: none;
+  background: var(--surface-color);
+  color: var(--text-primary);
 }
 
 .chat-input:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .btn {
@@ -216,7 +198,7 @@ body {
   border-radius: 24px;
   font-size: 1rem;
   cursor: pointer;
-  transition: var(--transition);
+  transition: var(--eliza-transition);
   font-weight: 500;
 }
 
@@ -226,36 +208,36 @@ body {
 }
 
 .btn-primary:hover {
-  background: var(--primary-dark);
+  background: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  box-shadow: var(--eliza-shadow);
 }
 
 .btn-secondary {
-  background: var(--text-light);
+  background: var(--text-secondary);
   color: white;
 }
 
 .btn-secondary:hover {
-  background: #6c7a89;
+  opacity: 0.9;
 }
 
 .btn-success {
-  background: var(--secondary-color);
+  background: var(--success-color);
   color: white;
 }
 
 .btn-success:hover {
-  background: #45b369;
+  opacity: 0.9;
 }
 
 .btn-danger {
-  background: var(--danger-color);
+  background: var(--error-color);
   color: white;
 }
 
 .btn-danger:hover {
-  background: #c0392b;
+  opacity: 0.9;
 }
 
 .chat-controls {
@@ -283,7 +265,9 @@ body {
   border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 1rem;
-  transition: var(--transition);
+  transition: var(--eliza-transition);
+  background: var(--surface-color);
+  color: var(--text-primary);
 }
 
 .breakdown-input:focus {
@@ -297,7 +281,8 @@ body {
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  background: white;
+  background: var(--surface-color);
+  color: var(--text-primary);
   min-width: 200px;
 }
 
@@ -308,11 +293,11 @@ body {
 }
 
 .breakdown-step {
-  background: white;
+  background: var(--surface-color);
   border: 2px solid var(--border-color);
   border-radius: 8px;
   padding: 20px;
-  transition: var(--transition);
+  transition: var(--eliza-transition);
   animation: expandStep 0.4s ease-out;
 }
 
@@ -331,7 +316,7 @@ body {
 
 .breakdown-step:hover {
   border-color: var(--primary-color);
-  box-shadow: var(--shadow);
+  box-shadow: var(--eliza-shadow);
 }
 
 .step-header {
@@ -362,13 +347,13 @@ body {
 }
 
 .step-description {
-  color: var(--text-light);
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin-bottom: 15px;
 }
 
 .step-content {
-  background: var(--bg-color);
+  background: var(--bg-secondary);
   padding: 15px;
   border-radius: 6px;
   margin-bottom: 10px;
@@ -383,17 +368,18 @@ body {
 }
 
 .io-box {
-  background: white;
+  background: var(--surface-color);
   padding: 12px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
   font-family: 'Monaco', 'Consolas', monospace;
   font-size: 0.9rem;
+  color: var(--text-primary);
 }
 
 .io-label {
   font-weight: 600;
-  color: var(--text-light);
+  color: var(--text-secondary);
   font-size: 0.85rem;
   margin-bottom: 5px;
 }
@@ -405,24 +391,25 @@ body {
 }
 
 .step-details {
-  color: var(--text-light);
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-style: italic;
 }
 
 .pattern-test {
-  background: white;
+  background: var(--surface-color);
   padding: 10px;
   border-radius: 4px;
   border-left: 4px solid var(--border-color);
   margin: 5px 0;
   font-family: 'Monaco', 'Consolas', monospace;
   font-size: 0.85rem;
+  color: var(--text-primary);
 }
 
 .pattern-test.matched {
-  border-left-color: var(--secondary-color);
-  background: rgba(80, 200, 120, 0.05);
+  border-left-color: var(--success-color);
+  background: var(--surface-hover);
 }
 
 .pattern-test.not-matched {
@@ -430,12 +417,13 @@ body {
 }
 
 .post-sub-step {
-  background: white;
+  background: var(--surface-color);
   padding: 10px;
   border-radius: 4px;
   margin: 5px 0;
   font-family: 'Monaco', 'Consolas', monospace;
   font-size: 0.85rem;
+  color: var(--text-primary);
 }
 
 .highlight {
@@ -474,7 +462,7 @@ body {
   flex-wrap: wrap;
   margin-left: auto;
   font-size: 0.9rem;
-  color: var(--text-light);
+  color: var(--text-secondary);
 }
 
 .stat-item {
@@ -510,12 +498,14 @@ body {
   line-height: 1.5;
   resize: none;
   outline: none;
-  transition: var(--transition);
+  transition: var(--eliza-transition);
+  background: var(--surface-color);
+  color: var(--text-primary);
 }
 
 .editor-textarea:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .editor-validation {
@@ -531,15 +521,15 @@ body {
 }
 
 .editor-validation.success {
-  background: rgba(80, 200, 120, 0.1);
-  border: 2px solid var(--secondary-color);
-  color: var(--secondary-color);
+  background: var(--surface-hover);
+  border: 2px solid var(--success-color);
+  color: var(--success-color);
 }
 
 .editor-validation.error {
-  background: rgba(231, 76, 60, 0.1);
-  border: 2px solid var(--danger-color);
-  color: var(--danger-color);
+  background: var(--surface-hover);
+  border: 2px solid var(--error-color);
+  color: var(--error-color);
 }
 
 .validation-icon {
@@ -548,7 +538,7 @@ body {
 }
 
 .help-panel {
-  background: var(--bg-color);
+  background: var(--bg-secondary);
   padding: 20px;
   border-radius: 8px;
   max-width: 300px;
@@ -566,13 +556,13 @@ body {
 }
 
 .help-section p {
-  color: var(--text-light);
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin-bottom: 8px;
 }
 
 .help-section code {
-  background: white;
+  background: var(--surface-color);
   padding: 2px 6px;
   border-radius: 3px;
   font-family: 'Monaco', 'Consolas', monospace;
@@ -599,7 +589,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-color);
+  background: var(--bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -608,7 +598,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-light);
+  background: var(--text-secondary);
 }
 
 /* Responsive design */
@@ -672,8 +662,8 @@ body {
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 200px;
-  background-color: var(--text-color);
-  color: white;
+  background-color: var(--text-primary);
+  color: var(--bg-color);
   text-align: center;
   border-radius: 6px;
   padding: 8px;
@@ -696,7 +686,7 @@ body {
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: var(--text-light);
+  color: var(--text-secondary);
 }
 
 .empty-state-icon {

@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BERT Masked Language Modeling - Interactive Demo</title>
+    <link rel="stylesheet" href="../shared/css/demo-styles.css">
     <link rel="stylesheet" href="css/bert-mlm.css">
     <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1"></script>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 </head>
 <body>
+    <nav class="demo-nav">
+        <a href="../" class="back-link">← Back to Demos</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">☀️</button>
+    </nav>
     <div class="container">
         <header>
             <h1>BERT Masked Language Modeling</h1>
@@ -548,6 +553,29 @@
         }
 
         window.app = app;
+    </script>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        if (themeToggle) {
+            themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            });
+        }
     </script>
 </body>
 </html>
