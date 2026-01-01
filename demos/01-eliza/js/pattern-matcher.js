@@ -42,6 +42,42 @@ export class PatternMatcher {
   }
 
   /**
+   * Split input into clauses at punctuation separators
+   * Returns array of clause strings
+   */
+  splitIntoClauses(input) {
+    const clauses = [];
+    let currentClause = [];
+    const words = input.toLowerCase().split(/\s+/).filter(w => w.length > 0);
+    
+    for (const word of words) {
+      // Check if word is a punctuation separator (like 'but')
+      if (this.punctuation.includes(word.toLowerCase())) {
+        if (currentClause.length > 0) {
+          clauses.push(currentClause.map(w => this.stripPunctuation(w)).filter(w => w).join(' '));
+          currentClause = [];
+        }
+        continue;
+      }
+      
+      currentClause.push(word);
+      
+      // If word ends with punctuation, end this clause
+      if (/[,:;!.?]$/.test(word)) {
+        clauses.push(currentClause.map(w => this.stripPunctuation(w)).filter(w => w).join(' '));
+        currentClause = [];
+      }
+    }
+    
+    // Don't forget the last clause
+    if (currentClause.length > 0) {
+      clauses.push(currentClause.map(w => this.stripPunctuation(w)).filter(w => w).join(' '));
+    }
+    
+    return clauses;
+  }
+
+  /**
    * Apply pre-substitutions to input text
    */
   applyPreSubstitutions(text, substitutions) {
@@ -228,77 +264,57 @@ export class PatternMatcher {
    * Find best matching rule for input
    */
   findMatchingRule(input, rules, synonyms) {
-    // Split and clean words, removing punctuation
-    const words = input.toLowerCase()
-      .replace(/[.,!?;:]/g, ' ')
-      .split(/\s+/)
-      .filter(w => w.length > 0);
-
     // Build a map of keyword -> rule for quick lookup
     const rulesByKeyword = new Map();
     for (const rule of rules) {
       rulesByKeyword.set(rule.keyword.toLowerCase(), rule);
     }
 
-    // Find keywords by iterating through INPUT words (like Python implementation)
-    // This ensures keywords are found in the order they appear in the input
-    const matchedRules = [];
-    const seenKeywords = new Set();
+    // Split input into clauses at punctuation (matching Python behavior)
+    const clauses = this.splitIntoClauses(input);
 
-    for (const word of words) {
-      const rule = rulesByKeyword.get(word);
-      if (rule && !seenKeywords.has(word)) {
-        matchedRules.push(rule);
-        seenKeywords.add(word);
-      }
-    }
+    // Process each clause in order - find keywords and match patterns per clause
+    for (const clause of clauses) {
+      if (!clause.trim()) continue;
 
-    // Sort by rank (higher rank = higher priority)
-    // Use stable sort so equal ranks preserve input word order
-    matchedRules.sort((a, b) => (b.rank || 0) - (a.rank || 0));
+      // Get words from this clause for keyword detection
+      const clauseWords = clause.toLowerCase().split(/\s+/).filter(w => w.length > 0);
 
-    // Try to match patterns for each rule (in rank order)
-    // For each rule, try specific patterns first, then catch-all
-    for (const rule of matchedRules) {
-      // First try specific patterns
-      for (const patternObj of rule.patterns) {
-        let patternStr = patternObj.pattern;
-        let shouldSave = false;
+      // Find keywords in this clause
+      const matchedRules = [];
+      const seenKeywords = new Set();
 
-        // Check for memory save flag ($)
-        if (patternStr.startsWith('$')) {
-          shouldSave = true;
-          patternStr = patternStr.substring(1).trim();
-        }
-
-        if (patternStr === '*') continue;
-
-        const matchResult = this.matchPattern(input, patternStr, synonyms);
-
-        if (matchResult.matched) {
-          return {
-            rule,
-            pattern: patternObj,
-            matchResult,
-            allTestedRules: matchedRules,
-            shouldSave
-          };
+      for (const word of clauseWords) {
+        const rule = rulesByKeyword.get(word);
+        if (rule && !seenKeywords.has(word)) {
+          matchedRules.push(rule);
+          seenKeywords.add(word);
         }
       }
 
-      // Then try catch-all for this rule
-      for (const patternObj of rule.patterns) {
-        let patternStr = patternObj.pattern;
-        let shouldSave = false;
+      if (matchedRules.length === 0) continue;
 
-        // Check for memory save flag ($)
-        if (patternStr.startsWith('$')) {
-          shouldSave = true;
-          patternStr = patternStr.substring(1).trim();
-        }
+      // Sort by rank (higher rank = higher priority)
+      matchedRules.sort((a, b) => (b.rank || 0) - (a.rank || 0));
 
-        if (patternStr === '*') {
-          const matchResult = this.matchPattern(input, patternStr, synonyms);
+      // Try to match patterns for each rule (in rank order)
+      // Use THIS CLAUSE for pattern matching (not the full input)
+      for (const rule of matchedRules) {
+        // First try specific patterns
+        for (const patternObj of rule.patterns) {
+          let patternStr = patternObj.pattern;
+          let shouldSave = false;
+
+          // Check for memory save flag ($)
+          if (patternStr.startsWith("$")) {
+            shouldSave = true;
+            patternStr = patternStr.substring(1).trim();
+          }
+
+          if (patternStr === "*") continue;
+
+          const matchResult = this.matchPattern(clause, patternStr, synonyms);
+
           if (matchResult.matched) {
             return {
               rule,
@@ -309,12 +325,38 @@ export class PatternMatcher {
             };
           }
         }
+
+        // Then try catch-all for this rule
+        for (const patternObj of rule.patterns) {
+          let patternStr = patternObj.pattern;
+          let shouldSave = false;
+
+          // Check for memory save flag ($)
+          if (patternStr.startsWith("$")) {
+            shouldSave = true;
+            patternStr = patternStr.substring(1).trim();
+          }
+
+          if (patternStr === "*") {
+            const matchResult = this.matchPattern(clause, patternStr, synonyms);
+            if (matchResult.matched) {
+              return {
+                rule,
+                pattern: patternObj,
+                matchResult,
+                allTestedRules: matchedRules,
+                shouldSave
+              };
+            }
+          }
+        }
       }
     }
 
-    // No keyword matched
+    // No keyword matched in any clause
     return null;
   }
+
 
   /**
    * Assemble response from template and captures
