@@ -1,25 +1,14 @@
-:root {
-    --primary-color: #6366f1;
-    --secondary-color: #ec4899;
-    --accent-color: #10b981;
-    --warning-color: #f59e0b;
-    --bg-color: #f8fafc;
-    --card-bg: #ffffff;
-    --text-color: #1e293b;
-    --text-secondary: #64748b;
-    --border-color: #e2e8f0;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
-    --radius: 12px;
-}
+/**
+ * Embeddings Comparison Lab - Styles
+ * Uses CSS variables from ../shared/css/demo-styles.css for theming
+ */
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    margin: 0;
-    padding: 0;
-    line-height: 1.6;
+/* Demo-specific variables that don't conflict with theming */
+:root {
+    --comparison-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --comparison-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --comparison-transition: all 0.3s ease;
+    --radius: 12px;
 }
 
 .container {
@@ -28,27 +17,32 @@ body {
     padding: 20px;
 }
 
-header {
-    text-align: center;
+/* Hero Header - matches ELIZA demo styling */
+.hero-header {
+    padding: 3rem 0 2rem;
     margin-bottom: 30px;
-    padding: 40px 20px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    border-radius: var(--radius);
+    text-align: center;
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
 }
 
-header h1 {
-    margin: 0 0 10px 0;
-    font-size: 2.5em;
-    font-weight: 700;
+.hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-.subtitle {
-    margin: 0;
-    font-size: 1.15em;
-    opacity: 0.95;
+.hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
 }
 
+/* Main Layout */
 .main-layout {
     display: grid;
     grid-template-columns: 1fr 400px;
@@ -59,11 +53,12 @@ header h1 {
 /* Model Selection */
 .model-selection-section {
     grid-column: 1 / -1;
-    background: var(--card-bg);
+    background: var(--surface-color);
     padding: 30px;
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: var(--comparison-shadow);
     margin-bottom: 20px;
+    border: 1px solid var(--border-color);
 }
 
 .model-selection-section h2 {
@@ -83,13 +78,14 @@ header h1 {
     border: 2px solid var(--border-color);
     border-radius: var(--radius);
     padding: 20px;
-    background: var(--bg-color);
-    transition: all 0.3s;
+    background: var(--bg-secondary);
+    transition: var(--comparison-transition);
 }
 
 .model-card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
+    box-shadow: var(--comparison-shadow-lg);
+    border-color: var(--primary-color);
 }
 
 .model-card input[type="checkbox"] {
@@ -99,6 +95,7 @@ header h1 {
     width: 20px;
     height: 20px;
     cursor: pointer;
+    accent-color: var(--primary-color);
 }
 
 .model-card input[type="checkbox"]:checked + label {
@@ -114,7 +111,7 @@ header h1 {
 .model-card h3 {
     margin: 0 0 10px 0;
     font-size: 1.2em;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .model-specs {
@@ -127,7 +124,7 @@ header h1 {
 .spec {
     display: inline-block;
     padding: 4px 10px;
-    background: white;
+    background: var(--surface-color);
     border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 0.75em;
@@ -145,17 +142,18 @@ header h1 {
     display: inline-block;
     margin-left: 15px;
     font-size: 0.95em;
-    color: var(--accent-color);
+    color: var(--success-color);
     font-weight: 500;
 }
 
 /* Tasks Section */
 .tasks-section {
     grid-column: 1;
-    background: var(--card-bg);
+    background: var(--surface-color);
     padding: 30px;
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: var(--comparison-shadow);
+    border: 1px solid var(--border-color);
 }
 
 .tasks-section h2 {
@@ -180,11 +178,12 @@ header h1 {
     font-size: 0.95em;
     font-weight: 600;
     color: var(--text-secondary);
-    transition: all 0.3s;
+    transition: var(--comparison-transition);
 }
 
 .task-tab:hover {
     color: var(--primary-color);
+    background: var(--surface-hover);
 }
 
 .task-tab.active {
@@ -198,11 +197,23 @@ header h1 {
 
 .task-panel.active {
     display: block;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .task-panel h3 {
     margin: 0 0 10px 0;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .task-panel > p {
@@ -211,10 +222,11 @@ header h1 {
 }
 
 .test-inputs {
-    background: var(--bg-color);
+    background: var(--bg-secondary);
     padding: 20px;
     border-radius: var(--radius);
     margin-bottom: 25px;
+    border: 1px solid var(--border-color);
 }
 
 .input-group {
@@ -229,7 +241,7 @@ header h1 {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .input-group input[type="text"],
@@ -242,12 +254,15 @@ header h1 {
     font-size: 0.95em;
     font-family: inherit;
     transition: border-color 0.3s;
+    background: var(--surface-color);
+    color: var(--text-primary);
 }
 
 .input-group input:focus,
 .input-group textarea:focus {
     outline: none;
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .analogy-inputs {
@@ -261,6 +276,21 @@ header h1 {
 .analogy-inputs input {
     flex: 1;
     min-width: 100px;
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--surface-color);
+    color: var(--text-primary);
+}
+
+.analogy-inputs input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.analogy-inputs input:disabled {
+    opacity: 0.5;
+    background: var(--bg-secondary);
 }
 
 .analogy-label {
@@ -268,6 +298,7 @@ header h1 {
     color: var(--text-secondary);
 }
 
+/* Buttons */
 .btn {
     padding: 12px 25px;
     font-size: 0.95em;
@@ -275,7 +306,7 @@ header h1 {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: var(--comparison-transition);
 }
 
 .btn-primary {
@@ -284,9 +315,9 @@ header h1 {
 }
 
 .btn-primary:hover {
-    background: #4f46e5;
+    background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
+    box-shadow: var(--comparison-shadow-lg);
 }
 
 .btn-secondary {
@@ -295,16 +326,18 @@ header h1 {
 }
 
 .btn-secondary:hover {
-    background: #db2777;
+    opacity: 0.9;
     transform: translateY(-2px);
 }
 
+/* Results Area */
 .results-area {
     min-height: 200px;
-    background: var(--bg-color);
+    background: var(--bg-secondary);
     border-radius: var(--radius);
     padding: 20px;
     margin-bottom: 20px;
+    border: 1px solid var(--border-color);
 }
 
 .results-area:empty::before {
@@ -317,12 +350,13 @@ header h1 {
 }
 
 .result-card {
-    background: white;
+    background: var(--surface-color);
     border-left: 4px solid var(--primary-color);
     padding: 15px;
     margin-bottom: 12px;
     border-radius: 8px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--comparison-shadow);
+    border: 1px solid var(--border-color);
 }
 
 .result-model {
@@ -337,7 +371,7 @@ header h1 {
 .result-score {
     display: inline-block;
     padding: 4px 12px;
-    background: var(--accent-color);
+    background: var(--success-color);
     color: white;
     border-radius: 12px;
     font-size: 0.85em;
@@ -348,6 +382,7 @@ header h1 {
     color: var(--text-secondary);
 }
 
+/* Preset Tests */
 .preset-tests {
     margin-top: 20px;
 }
@@ -361,12 +396,13 @@ header h1 {
 .preset-btn {
     padding: 8px 15px;
     margin: 0 8px 8px 0;
-    background: white;
+    background: var(--surface-color);
     border: 2px solid var(--border-color);
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.85em;
-    transition: all 0.3s;
+    transition: var(--comparison-transition);
+    color: var(--text-primary);
 }
 
 .preset-btn:hover {
@@ -384,10 +420,11 @@ header h1 {
 }
 
 .panel {
-    background: var(--card-bg);
+    background: var(--surface-color);
     padding: 20px;
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: var(--comparison-shadow);
+    border: 1px solid var(--border-color);
 }
 
 .panel h3 {
@@ -403,14 +440,16 @@ header h1 {
     justify-content: space-between;
     padding: 12px;
     margin-bottom: 8px;
-    background: var(--bg-color);
+    background: var(--bg-secondary);
     border-radius: 8px;
-    transition: all 0.3s;
+    transition: var(--comparison-transition);
+    border: 1px solid var(--border-color);
 }
 
 .leaderboard-item:hover {
     transform: translateX(5px);
-    box-shadow: var(--shadow);
+    box-shadow: var(--comparison-shadow);
+    border-color: var(--primary-color);
 }
 
 .leaderboard-rank {
@@ -445,11 +484,12 @@ header h1 {
     flex: 1;
     font-weight: 600;
     font-size: 0.9em;
+    color: var(--text-primary);
 }
 
 .leaderboard-score {
     font-weight: 700;
-    color: var(--accent-color);
+    color: var(--success-color);
 }
 
 /* Charts */
@@ -510,12 +550,16 @@ header h1 {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.97);
+    background: rgba(15, 23, 42, 0.97);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+}
+
+[data-theme="light"] .loading {
+    background: rgba(255, 255, 255, 0.97);
 }
 
 .loading.hidden {
@@ -538,7 +582,7 @@ header h1 {
 .loading p {
     margin-top: 20px;
     font-size: 1.1em;
-    color: var(--text-color);
+    color: var(--text-primary);
     font-weight: 500;
 }
 
@@ -553,7 +597,7 @@ header h1 {
 
 #loading-bar {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    background: var(--gradient-primary);
     width: 0%;
     transition: width 0.3s;
 }
@@ -570,16 +614,36 @@ header h1 {
     padding: 10px;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
 .comparison-table th {
-    background: var(--bg-color);
+    background: var(--bg-secondary);
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .comparison-table tr:hover {
-    background: var(--bg-color);
+    background: var(--surface-hover);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
 }
 
 /* Responsive Design */
@@ -598,11 +662,11 @@ header h1 {
 }
 
 @media (max-width: 768px) {
-    header h1 {
-        font-size: 1.8em;
+    .hero-title {
+        font-size: 1.8rem;
     }
 
-    .subtitle {
+    .hero-subtitle {
         font-size: 0.95em;
     }
 

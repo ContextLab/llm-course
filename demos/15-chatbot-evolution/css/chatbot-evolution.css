@@ -1,22 +1,17 @@
+/*
+ * Chatbot Evolution Timeline - Styles
+ * Uses CSS variables from ../shared/css/demo-styles.css for theming
+ */
+
+/* Demo-specific variables that extend theming */
 :root {
-    --primary-color: #8b5cf6;
-    --secondary-color: #ec4899;
-    --accent-color: #10b981;
-    --bg-color: #fafafa;
-    --card-bg: #ffffff;
-    --text-color: #1f2937;
-    --border-color: #e5e7eb;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --ce-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --ce-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --ce-transition: all 0.3s ease;
     --radius: 10px;
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg-color);
-    color: var(--text-color);
-    margin: 0;
-    padding: 0;
-}
+/* Body styles are handled by shared demo-styles.css */
 
 .container {
     max-width: 1600px;
@@ -24,11 +19,36 @@ body {
     padding: 20px;
 }
 
+/* Hero Header - matches main index.html styling */
+.hero-header {
+    padding: 3rem 0 2rem;
+    margin-bottom: 30px;
+    text-align: center;
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
+}
+
+.hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Legacy header support */
 header {
     text-align: center;
     padding: 40px 20px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
     border-radius: var(--radius);
     margin-bottom: 30px;
 }
@@ -36,13 +56,16 @@ header {
 header h1 {
     margin: 0 0 10px 0;
     font-size: 2.5em;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
     margin: 0;
-    opacity: 0.95;
     font-size: 1.1em;
-    color: white;
+    color: var(--text-secondary);
 }
 
 /* Timeline Navigator */
@@ -52,10 +75,11 @@ header h1 {
 
 .timeline-bar {
     display: flex;
-    background: white;
+    background: var(--surface-color);
     border-radius: var(--radius);
     padding: 10px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--ce-shadow);
+    border: 1px solid var(--border-color);
 }
 
 .era {
@@ -64,12 +88,13 @@ header h1 {
     padding: 20px 10px;
     cursor: pointer;
     border-radius: 8px;
-    transition: all 0.3s;
+    transition: var(--ce-transition);
     border: 2px solid transparent;
+    color: var(--text-primary);
 }
 
 .era:hover {
-    background: #f3f4f6;
+    background: var(--surface-hover);
 }
 
 .era.active {
@@ -92,9 +117,10 @@ header h1 {
 
 /* Chatbot Showcase */
 .chatbot-showcase {
-    background: white;
+    background: var(--surface-color);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: var(--ce-shadow);
+    border: 1px solid var(--border-color);
 }
 
 .chatbot-era {
@@ -122,7 +148,7 @@ header h1 {
 
 .era-badge {
     padding: 8px 16px;
-    background: var(--accent-color);
+    background: var(--success-color);
     color: white;
     border-radius: 20px;
     font-size: 0.85em;

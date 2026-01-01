@@ -11,14 +11,18 @@
 </head>
 <body>
     <nav class="demo-nav">
-        <a href="../" class="back-link">← Back to Demos</a>
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">☀️</button>
+        <a href="../" class="back-link">← Home</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+            <span id="theme-icon">&#127769;</span>
+        </button>
     </nav>
+    <div class="hero-header">
+        <div class="container">
+            <h1 class="hero-title">Semantic Search Engine</h1>
+            <p class="hero-subtitle">Compare semantic, keyword, and hybrid search methods on the same document corpus</p>
+        </div>
+    </div>
     <div class="container">
-        <header>
-            <h1>🔍 Semantic Search Engine</h1>
-            <p class="subtitle">Compare semantic, keyword, and hybrid search methods on the same document corpus</p>
-        </header>
 
         <div class="main-layout">
             <!-- Search Interface -->
@@ -246,15 +250,21 @@
     <script type="module" src="js/search-app.js"></script>
 
     <script>
-        // Theme toggle functionality
+        // Theme toggle functionality (synced with main index via localStorage)
         const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
         const html = document.documentElement;
 
-        // Load saved theme
+        // Load saved theme from localStorage
         const savedTheme = localStorage.getItem('theme') || 'dark';
         html.setAttribute('data-theme', savedTheme);
-        if (themeToggle) {
-            themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        updateThemeIcon(savedTheme);
+
+        function updateThemeIcon(theme) {
+            // Using the same icons as main index.html (moon/sun HTML entities)
+            if (themeIcon) {
+                themeIcon.textContent = theme === 'dark' ? '\u{1F319}' : '\u2600\uFE0F';
+            }
         }
 
         if (themeToggle) {
@@ -263,7 +273,7 @@
                 const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
                 html.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
-                themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                updateThemeIcon(newTheme);
             });
         }
     </script>
