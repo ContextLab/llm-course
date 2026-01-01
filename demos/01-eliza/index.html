@@ -95,20 +95,27 @@
     <!-- Tab 3: Live Rule Editor -->
     <div class="tab-content" id="editor-tab">
       <div class="editor-container">
+        <!-- Editor Mode Toggle -->
+        <div class="editor-mode-toggle">
+          <button class="mode-btn active" data-mode="gui" id="gui-mode-btn">Visual Editor</button>
+          <button class="mode-btn" data-mode="json" id="json-mode-btn">JSON Editor</button>
+        </div>
+
+        <!-- Toolbar -->
         <div class="editor-toolbar">
           <button class="btn btn-success" id="apply-rules-btn">Apply Changes</button>
-          <button class="btn btn-secondary" id="format-json-btn">Format JSON</button>
           <button class="btn btn-secondary" id="reset-rules-btn">Reset</button>
           <select id="template-selector">
             <option value="">-- Load Template --</option>
+            <option value="default">Default (Original Weizenbaum)</option>
             <option value="minimal">Minimal (Simple Demo)</option>
             <option value="therapeutic">Therapeutic (Psychology Focus)</option>
           </select>
           <div class="file-input-wrapper">
-            <button class="btn btn-secondary">Import Rules</button>
+            <button class="btn btn-secondary">Import</button>
             <input type="file" id="import-file" accept=".json">
           </div>
-          <button class="btn btn-secondary" id="export-rules-btn">Export Rules</button>
+          <button class="btn btn-secondary" id="export-rules-btn">Export</button>
           <div class="editor-stats" id="editor-stats">
             <div class="stat-item">
               <span>Rules:</span>
@@ -124,46 +131,156 @@
             </div>
           </div>
         </div>
-        <div class="editor-main">
-          <div class="editor-pane">
-            <textarea
-              class="editor-textarea"
-              id="rules-editor"
-              spellcheck="false"
-              placeholder="Loading rules..."
-            ></textarea>
-            <div class="editor-validation" id="editor-validation">
-              <span class="validation-icon"></span>
-              <span class="validation-message"></span>
+
+        <!-- Validation Message -->
+        <div class="editor-validation" id="editor-validation">
+          <span class="validation-icon"></span>
+          <span class="validation-message"></span>
+        </div>
+
+        <!-- GUI Editor Mode -->
+        <div class="editor-gui-mode" id="editor-gui-mode">
+          <div class="gui-editor-wrapper">
+            <!-- Processing Steps Navigation -->
+            <div class="processing-steps-nav">
+              <div class="step-nav-item active" data-section="pre-sub">
+                <span class="step-icon">1</span>
+                <span class="step-label">Pre-Substitutions</span>
+              </div>
+              <div class="step-nav-item" data-section="synonyms">
+                <span class="step-icon">2</span>
+                <span class="step-label">Synonyms</span>
+              </div>
+              <div class="step-nav-item" data-section="keywords">
+                <span class="step-icon">3</span>
+                <span class="step-label">Keywords</span>
+              </div>
+              <div class="step-nav-item" data-section="post-sub">
+                <span class="step-icon">4</span>
+                <span class="step-label">Post-Substitutions</span>
+              </div>
+              <div class="step-nav-item" data-section="messages">
+                <span class="step-icon">5</span>
+                <span class="step-label">Messages</span>
+              </div>
+            </div>
+
+            <!-- Section Content -->
+            <div class="section-content">
+              <!-- Pre-Substitutions Section -->
+              <div class="editor-section active" id="section-pre-sub">
+                <div class="section-header">
+                  <h3>Pre-Substitutions (Input Normalization)</h3>
+                  <p class="section-description">Applied to user input before pattern matching. Normalizes text (e.g., "dont" to "don't").</p>
+                  <button class="btn btn-secondary btn-sm" id="add-pre-sub-btn">+ Add</button>
+                </div>
+                <div class="substitution-list" id="pre-sub-list">
+                  <!-- Populated by JavaScript -->
+                </div>
+              </div>
+
+              <!-- Synonyms Section -->
+              <div class="editor-section" id="section-synonyms">
+                <div class="section-header">
+                  <h3>Synonym Groups</h3>
+                  <p class="section-description">Words treated as equivalent. Use @groupname in patterns to match any word in the group.</p>
+                  <button class="btn btn-secondary btn-sm" id="add-synonym-btn">+ Add Group</button>
+                </div>
+                <div class="synonym-list" id="synonym-list">
+                  <!-- Populated by JavaScript -->
+                </div>
+              </div>
+
+              <!-- Keywords & Patterns Section -->
+              <div class="editor-section" id="section-keywords">
+                <div class="section-header">
+                  <h3>Keywords &amp; Pattern Rules</h3>
+                  <p class="section-description">Keywords trigger pattern matching. Higher rank = checked first. Each keyword can have multiple patterns with responses.</p>
+                  <button class="btn btn-secondary btn-sm" id="add-keyword-btn">+ Add Keyword</button>
+                </div>
+                <div class="keyword-list" id="keyword-list">
+                  <!-- Populated by JavaScript -->
+                </div>
+              </div>
+
+              <!-- Post-Substitutions Section -->
+              <div class="editor-section" id="section-post-sub">
+                <div class="section-header">
+                  <h3>Post-Substitutions (Perspective Reflection)</h3>
+                  <p class="section-description">Transform captured text to reflect perspective (e.g., "my" to "your", "I" to "you").</p>
+                  <button class="btn btn-secondary btn-sm" id="add-post-sub-btn">+ Add</button>
+                </div>
+                <div class="substitution-list" id="post-sub-list">
+                  <!-- Populated by JavaScript -->
+                </div>
+              </div>
+
+              <!-- Messages Section -->
+              <div class="editor-section" id="section-messages">
+                <div class="section-header">
+                  <h3>Greetings, Farewells &amp; Fallbacks</h3>
+                  <p class="section-description">Configure opening greetings, farewell messages, quit words, and fallback responses.</p>
+                </div>
+                <div class="messages-editor">
+                  <div class="message-group">
+                    <label>Initial Greetings</label>
+                    <div class="message-list" id="greetings-list"></div>
+                    <button class="btn btn-secondary btn-sm" id="add-greeting-btn">+ Add</button>
+                  </div>
+                  <div class="message-group">
+                    <label>Final Greetings (Farewells)</label>
+                    <div class="message-list" id="farewells-list"></div>
+                    <button class="btn btn-secondary btn-sm" id="add-farewell-btn">+ Add</button>
+                  </div>
+                  <div class="message-group">
+                    <label>Quit Words</label>
+                    <div class="quit-words-editor" id="quit-words-editor"></div>
+                  </div>
+                  <div class="message-group">
+                    <label>Fallback Responses</label>
+                    <div class="message-list" id="fallbacks-list"></div>
+                    <button class="btn btn-secondary btn-sm" id="add-fallback-btn">+ Add</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="help-panel">
-            <div class="help-section">
-              <h3>Quick Guide</h3>
-              <p>Edit the ELIZA rules JSON to customize behavior. Changes apply to Tab 1 in real-time.</p>
+        </div>
+
+        <!-- JSON Editor Mode (Hidden by default) -->
+        <div class="editor-json-mode" id="editor-json-mode" style="display: none;">
+          <div class="editor-main">
+            <div class="editor-pane">
+              <button class="btn btn-secondary btn-sm" id="format-json-btn" style="margin-bottom: 10px;">Format JSON</button>
+              <textarea
+                class="editor-textarea"
+                id="rules-editor"
+                spellcheck="false"
+                placeholder="Loading rules..."
+              ></textarea>
             </div>
-            <div class="help-section">
-              <h3>Rule Structure</h3>
-              <p><strong>keyword:</strong> Word to trigger this rule</p>
-              <p><strong>rank:</strong> Priority (higher = checked first)</p>
-              <p><strong>pattern:</strong> Match template (use * for wildcards)</p>
-              <p><strong>responses:</strong> Array of possible replies</p>
-            </div>
-            <div class="help-section">
-              <h3>Wildcards</h3>
-              <p><code>*</code> - Matches any text</p>
-              <p><code>(1), (2), ...</code> - Reference captured groups in responses</p>
-            </div>
-            <div class="help-section">
-              <h3>Synonyms</h3>
-              <p><code>@belief</code> - Matches any word in the belief synonym group (believe, think, feel, wish)</p>
-              <p><code>@family</code> - Matches family members (mother, father, etc.)</p>
-            </div>
-            <div class="help-section">
-              <h3>Example Pattern</h3>
-              <p><code>"* i feel *"</code></p>
-              <p>Matches: "I feel sad", "Sometimes I feel happy"</p>
-              <p>Response: <code>"Why do you feel (2)?"</code></p>
+            <div class="help-panel">
+              <div class="help-section">
+                <h3>Quick Guide</h3>
+                <p>Edit the ELIZA rules JSON to customize behavior. Changes apply to Tab 1 in real-time.</p>
+              </div>
+              <div class="help-section">
+                <h3>Rule Structure</h3>
+                <p><strong>keyword:</strong> Word to trigger this rule</p>
+                <p><strong>rank:</strong> Priority (higher = checked first)</p>
+                <p><strong>pattern:</strong> Match template (use * for wildcards)</p>
+                <p><strong>responses:</strong> Array of possible replies</p>
+              </div>
+              <div class="help-section">
+                <h3>Wildcards</h3>
+                <p><code>*</code> - Matches any text</p>
+                <p><code>(1), (2), ...</code> - Reference captured groups in responses</p>
+              </div>
+              <div class="help-section">
+                <h3>Synonyms</h3>
+                <p><code>@belief</code> - Matches any word in the belief synonym group</p>
+                <p><code>@family</code> - Matches family members</p>
+              </div>
             </div>
           </div>
         </div>
@@ -172,7 +289,7 @@
   </div>
 
   <!-- Load JavaScript modules -->
-  <script src="js/rule-editor.js?v=1766709790"></script>
+  <script src="js/rule-editor.js?v=2026010101"></script>
 
   <!-- Main Application Script -->
   <script type="module">
@@ -182,6 +299,7 @@
     // Initialize ELIZA
     let eliza;
     let ruleEditor;
+    let currentBreakdown = null; // Store current breakdown for template selection
 
     // Tab switching
     document.querySelectorAll('.tab-button').forEach(button => {
@@ -318,6 +436,9 @@
     }
 
     function displayBreakdown(breakdown) {
+      // Store breakdown for template selection changes
+      currentBreakdown = breakdown;
+
       const stepsDiv = document.getElementById('breakdown-steps');
       stepsDiv.innerHTML = '';
 
@@ -333,15 +454,33 @@
           <div class="step-description">${step.description}</div>
         `;
 
-        // Add input/output visualization
-        if (step.input !== undefined && step.output !== undefined) {
+        // Special handling for Template Selection step - show dropdown
+        if (step.name === 'Template Selection' && step.allTemplates && step.allTemplates.length > 0) {
+          stepHTML += `
+            <div class="step-io">
+              <div style="flex: 1;">
+                <div class="io-label">${step.allTemplates.length} Available Template(s)</div>
+                <select class="template-dropdown" id="breakdown-template-selector" style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; background: var(--surface-color); color: var(--text-primary); cursor: pointer;">
+                  ${step.allTemplates.map((t, i) => `<option value="${i}" ${i === step.selectedTemplateIndex ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
+                </select>
+              </div>
+              <div class="arrow">&rarr;</div>
+              <div style="flex: 1;">
+                <div class="io-label">Selected Template</div>
+                <div class="io-box" id="selected-template-display">"${escapeHtml(step.allTemplates[step.selectedTemplateIndex])}"</div>
+              </div>
+            </div>
+          `;
+          stepHTML += `<div class="step-details">Select a different template to see how it changes the response</div>`;
+        } else if (step.input !== undefined && step.output !== undefined) {
+          // Add input/output visualization for other steps
           stepHTML += `
             <div class="step-io">
               <div>
                 <div class="io-label">Input</div>
                 <div class="io-box">${escapeHtml(step.input)}</div>
               </div>
-              <div class="arrow">→</div>
+              <div class="arrow">&rarr;</div>
               <div>
                 <div class="io-label">Output</div>
                 <div class="io-box">${escapeHtml(step.output)}</div>
@@ -350,33 +489,56 @@
           `;
         }
 
-        // Add details
-        if (step.details) {
+        // Add details (but not for template selection since we add custom details)
+        if (step.details && step.name !== 'Template Selection') {
           stepHTML += `<div class="step-details">${step.details}</div>`;
         }
 
         // Add pattern tests if available
         if (step.patternTests && step.patternTests.length > 0) {
           stepHTML += '<div class="step-content">';
-          step.patternTests.forEach((test, i) => {
+
+          // Find the index of the matched pattern (if any)
+          const matchedIndex = step.patternTests.findIndex(t => t.matched);
+
+          // Display logic: show up to 5 patterns, but always include the matched one
+          const maxToShow = 5;
+          let displayedCount = 0;
+          let stoppedEarly = false;
+
+          for (let i = 0; i < step.patternTests.length; i++) {
+            const test = step.patternTests[i];
+
+            // Stop after maxToShow patterns if we've already shown the match
+            if (displayedCount >= maxToShow && matchedIndex !== -1 && i > matchedIndex) {
+              stoppedEarly = true;
+              break;
+            }
+
             const testClass = test.matched ? 'matched' : 'not-matched';
-            const testHTML = `
+            const capturesHtml = test.captures && test.captures.length > 0
+              ? `<br>Captures: ${test.captures.map((c, j) => {
+                  const captureText = Array.isArray(c) ? c.join(' ') : c;
+                  return `(${j+1}): "${captureText}"`;
+                }).join(', ')}`
+              : '';
+
+            stepHTML += `
               <div class="pattern-test ${testClass}">
-                <strong>${test.keyword}</strong>: "${test.pattern}"
-                ${test.matched ? '✓ <span class="highlight">MATCHED</span>' : '✗'}
-                ${test.captures && test.captures.length > 0 ?
-                  `<br>Captures: ${test.captures.map((c, j) => `(${j+1}): "${c}"`).join(', ')}`
-                  : ''}
+                <strong>${escapeHtml(test.keyword)}</strong>: "${escapeHtml(test.pattern)}"
+                ${test.matched ? ' <span class="highlight">MATCHED</span>' : ''}
+                ${capturesHtml}
               </div>
             `;
-            stepHTML += testHTML;
+            displayedCount++;
+          }
 
-            // Only show first few if there are many
-            if (i >= 4 && !test.matched) {
-              stepHTML += `<div class="step-details">... and ${step.patternTests.length - 5} more patterns tested</div>`;
-              return false;
-            }
-          });
+          // Show remaining count only if we actually stopped early
+          const remaining = step.patternTests.length - displayedCount;
+          if (stoppedEarly && remaining > 0) {
+            stepHTML += `<div class="step-details">... and ${remaining} more pattern(s) tested</div>`;
+          }
+
           stepHTML += '</div>';
         }
 
@@ -386,8 +548,8 @@
           step.postSubSteps.forEach(subStep => {
             stepHTML += `
               <div class="post-sub-step">
-                Capture (${subStep.capture}): "${subStep.original}" → "${subStep.reflected}"
-                ${subStep.substitutions.map(s => `<br>&nbsp;&nbsp;• "${s.from}" → "${s.to}"`).join('')}
+                Capture (${subStep.capture}): "${subStep.original}" &rarr; "${subStep.reflected}"
+                ${subStep.substitutions.map(s => `<br>&nbsp;&nbsp;&bull; "${s.from}" &rarr; "${s.to}"`).join('')}
               </div>
             `;
           });
@@ -398,24 +560,99 @@
         stepsDiv.appendChild(stepDiv);
       });
 
-      // Add final result
+      // Add final result with chat bubble styling
       if (breakdown.finalResponse) {
         const finalDiv = document.createElement('div');
         finalDiv.className = 'breakdown-step';
+        finalDiv.id = 'final-response-step';
         finalDiv.style.borderColor = 'var(--secondary-color)';
         finalDiv.innerHTML = `
           <div class="step-header">
-            <div class="step-number" style="background: var(--secondary-color);">✓</div>
+            <div class="step-number" style="background: var(--secondary-color);">&#10003;</div>
             <div class="step-title" style="color: var(--secondary-color);">Final Response</div>
           </div>
           <div class="step-content">
-            <div class="io-box" style="font-size: 1.1rem; font-weight: 600;">
-              ${escapeHtml(breakdown.finalResponse)}
+            <div class="message bot" style="margin: 0; animation: none;">
+              <div class="message-content" id="final-response-content">
+                ${escapeHtml(breakdown.finalResponse)}
+              </div>
+              <div class="message-meta">
+                <span>ELIZA's response</span>
+              </div>
             </div>
           </div>
         `;
         stepsDiv.appendChild(finalDiv);
       }
+
+      // Add event listener for template dropdown
+      const templateSelector = document.getElementById('breakdown-template-selector');
+      if (templateSelector) {
+        templateSelector.addEventListener('change', handleTemplateChange);
+      }
+    }
+
+    // Handle template selection change in breakdown
+    function handleTemplateChange(e) {
+      const selectedIndex = parseInt(e.target.value);
+
+      // Find the Template Selection step and get data
+      const templateStep = currentBreakdown.steps.find(s => s.name === 'Template Selection');
+      if (!templateStep || !templateStep.allTemplates) return;
+
+      const selectedTemplate = templateStep.allTemplates[selectedIndex];
+
+      // Update the selected template display
+      const templateDisplay = document.getElementById('selected-template-display');
+      if (templateDisplay) {
+        templateDisplay.textContent = `"${selectedTemplate}"`;
+      }
+
+      // Find decomposition step to get captures
+      const patternStep = currentBreakdown.steps.find(s => s.name === 'Pattern Matching');
+      const captures = [];
+      if (patternStep && patternStep.patternTests) {
+        const matchedTest = patternStep.patternTests.find(t => t.matched);
+        if (matchedTest && matchedTest.captures) {
+          captures.push(...matchedTest.captures);
+        }
+      }
+
+      // Re-assemble the response with the new template
+      const patternMatcher = eliza.patternMatcher;
+      const postSubs = eliza.postSubstitutions;
+
+      let newResponse = selectedTemplate;
+      for (let i = 0; i < captures.length; i++) {
+        const placeholder = `(${i + 1})`;
+        if (newResponse.includes(placeholder)) {
+          const captureText = Array.isArray(captures[i]) ? captures[i].join(' ') : captures[i];
+          const { result } = patternMatcher.applyPostSubstitutions(captureText, postSubs);
+          newResponse = newResponse.replace(placeholder, result);
+        }
+      }
+
+      // Format response (uppercase to match ELIZA style)
+      newResponse = newResponse.toUpperCase();
+
+      // Update the final response display
+      const finalResponseContent = document.getElementById('final-response-content');
+      if (finalResponseContent) {
+        finalResponseContent.textContent = newResponse;
+      }
+
+      // Also update the Post-substitutions & Assembly step if it exists
+      const stepsDiv = document.getElementById('breakdown-steps');
+      const stepElements = stepsDiv.querySelectorAll('.breakdown-step');
+      stepElements.forEach(stepEl => {
+        const titleEl = stepEl.querySelector('.step-title');
+        if (titleEl && titleEl.textContent === 'Post-substitutions & Assembly') {
+          const outputBox = stepEl.querySelectorAll('.io-box')[1];
+          if (outputBox) {
+            outputBox.textContent = newResponse;
+          }
+        }
+      });
     }
 
     function escapeHtml(text) {
@@ -540,15 +777,21 @@
   </script>
 
   <script>
-    // Theme toggle functionality
+    // Theme toggle functionality (synced with main index via localStorage)
     const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
     const html = document.documentElement;
 
-    // Load saved theme
+    // Load saved theme from localStorage
     const savedTheme = localStorage.getItem('theme') || 'dark';
     html.setAttribute('data-theme', savedTheme);
-    if (themeToggle) {
-      themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    updateThemeIcon(savedTheme);
+
+    function updateThemeIcon(theme) {
+      // Using the same icons as main index.html (moon/sun HTML entities)
+      if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '\u{1F319}' : '\u2600\uFE0F';
+      }
     }
 
     if (themeToggle) {
@@ -557,7 +800,7 @@
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         html.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
-        themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        updateThemeIcon(newTheme);
       });
     }
   </script>

@@ -538,17 +538,21 @@ export class PatternMatcher {
     }
 
     // Step 5: Response template selection
-    const selectedTemplate = matchedPattern
-      ? matchedPattern.responses[Math.floor(Math.random() * matchedPattern.responses.length)]
-      : null;
+    const allTemplates = matchedPattern ? matchedPattern.responses : [];
+    const selectedTemplateIndex = matchedPattern
+      ? Math.floor(Math.random() * matchedPattern.responses.length)
+      : 0;
+    const selectedTemplate = allTemplates[selectedTemplateIndex] || null;
 
-    if (selectedTemplate) {
+    if (matchedPattern && allTemplates.length > 0) {
       breakdown.steps.push({
         name: 'Template Selection',
         description: 'Choosing a response template',
-        input: `${matchedPattern.responses.length} available template(s)`,
+        input: `${allTemplates.length} available template(s)`,
         output: `"${selectedTemplate}"`,
-        details: 'Selected randomly from available templates'
+        details: 'Selected randomly from available templates',
+        allTemplates: allTemplates,
+        selectedTemplateIndex: selectedTemplateIndex
       });
     }
 
