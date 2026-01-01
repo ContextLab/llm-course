@@ -566,6 +566,8 @@ export class PatternMatcher {
     let finalTemplate = selectedTemplate;
     let gotoTargetRule = null;
     let gotoTargetPattern = null;
+    let gotoPatternTests = [];
+    let gotoSelectedTemplateIndex = 0;
 
     while (finalTemplate && finalTemplate.startsWith('goto ')) {
       const targetKeyword = finalTemplate.substring(5).trim();
@@ -575,10 +577,29 @@ export class PatternMatcher {
       const targetRule = rules.find(r => r.keyword === targetKeyword);
       if (targetRule && targetRule.patterns && targetRule.patterns.length > 0) {
         gotoTargetRule = targetRule;
-        gotoTargetPattern = targetRule.patterns[0];
+
+        // Test all patterns against the input (like we do in Pattern Matching step)
+        gotoPatternTests = [];
+        let matchedTargetPattern = null;
+
+        for (const pattern of targetRule.patterns) {
+          const testResult = this.matchPattern(normalizedInput, pattern.pattern, synonyms);
+          gotoPatternTests.push({
+            pattern: pattern.pattern,
+            matched: testResult.matched,
+            captures: testResult.captures || [],
+            responses: pattern.responses
+          });
+          if (testResult.matched && !matchedTargetPattern) {
+            matchedTargetPattern = pattern;
+          }
+        }
+
+        // Use the first matched pattern, or fall back to patterns[0] if none match (like "*")
+        gotoTargetPattern = matchedTargetPattern || targetRule.patterns[0];
         const targetTemplates = gotoTargetPattern.responses;
-        const targetTemplateIndex = Math.floor(Math.random() * targetTemplates.length);
-        finalTemplate = targetTemplates[targetTemplateIndex];
+        gotoSelectedTemplateIndex = Math.floor(Math.random() * targetTemplates.length);
+        finalTemplate = targetTemplates[gotoSelectedTemplateIndex];
       } else {
         // Target not found, break out
         break;
@@ -609,6 +630,8 @@ export class PatternMatcher {
         targetPattern: gotoTargetPattern,
         targetPatternString: gotoTargetPattern ? gotoTargetPattern.pattern : null,
         targetTemplates: gotoTargetPattern ? gotoTargetPattern.responses : [],
+        targetPatternTests: gotoPatternTests,
+        selectedTemplateIndex: gotoSelectedTemplateIndex,
         originalCapturesPreserved: capturesInOriginal > 0,
         capturesAvailable: capturesInOriginal,
         capturesUsedInTemplate: capturesUsedInFinal.length

@@ -473,46 +473,115 @@
           `;
           stepHTML += `<div class="step-details">Select a different template to see how it changes the response</div>`;
         } else if (step.name === 'Goto Resolution' && step.targetTemplates && step.targetTemplates.length > 0) {
-          // Special handling for Goto Resolution - show the chain and target templates
+          // Special handling for Goto Resolution - recursive mini-breakdown
+          const gotoStepId = `goto-step-${index}`;
+          const gotoPatternId = `goto-patterns-${index}`;
+
+          // Header showing the goto statement
           stepHTML += `
             <div class="step-io">
               <div style="flex: 1;">
-                <div class="io-label">Goto Statement</div>
-                <div class="io-box" style="background: var(--warning-bg, #fff3cd); border-color: var(--warning-border, #ffc107);">${escapeHtml(step.input)}</div>
+                <div class="io-label">Redirect Statement</div>
+                <div class="io-box">goto ${escapeHtml(step.targetKeyword)}</div>
               </div>
-              <div class="arrow" style="color: var(--warning-color, #856404);">↪</div>
-              <div style="flex: 1;">
-                <div class="io-label">Target Keyword: "${escapeHtml(step.targetKeyword)}"</div>
-                <div class="io-box" style="font-size: 0.85rem;">
-                  <div><strong>Pattern:</strong> "${escapeHtml(step.targetPatternString || '*')}"</div>
-                  <div style="margin-top: 4px;"><strong>Responses:</strong> ${step.targetTemplates.length} available</div>
+            </div>
+          `;
+
+          // Mini-breakdown container for the goto target
+          stepHTML += `<div class="goto-breakdown" style="margin-top: 16px; padding: 16px; background: rgba(var(--primary-rgb, 99, 102, 241), 0.05); border-radius: 8px; border-left: 3px solid var(--primary-color);">`;
+          stepHTML += `<div style="font-weight: 600; margin-bottom: 12px; color: var(--primary-color);">→ Processing "${escapeHtml(step.targetKeyword)}" keyword:</div>`;
+
+          // Sub-step A: Pattern Matching for goto target
+          const patternTests = step.targetPatternTests || [];
+          const matchedPattern = patternTests.find(t => t.matched);
+          stepHTML += `
+            <div class="goto-substep" style="margin-bottom: 16px;">
+              <div style="font-weight: 500; margin-bottom: 8px; font-size: 0.9rem;">↪ Pattern Matching</div>
+              <div class="step-io">
+                <div style="flex: 1;">
+                  <div class="io-label">Input</div>
+                  <div class="io-box">${escapeHtml(currentBreakdown?.steps?.find(s => s.name === 'Pre-substitutions')?.output || '')}</div>
+                </div>
+                <div class="arrow">→</div>
+                <div style="flex: 1;">
+                  <div class="io-label">Matched Pattern</div>
+                  <div class="io-box">"${escapeHtml(step.targetPatternString || '*')}"</div>
                 </div>
               </div>
-            </div>
           `;
-          // Show the resolved template selection
+
+          // Expandable pattern tests (if more than 1 pattern)
+          if (patternTests.length > 1) {
+            stepHTML += `<div class="pattern-tests-header" onclick="togglePatternTests('${gotoPatternId}')" style="cursor: pointer; color: var(--primary-color); margin: 8px 0;">
+              <span class="pattern-toggle-icon" id="${gotoPatternId}-icon">▶</span>
+              Tested ${patternTests.length} pattern(s) - <em>click to show all</em>
+            </div>`;
+            stepHTML += `<div class="step-content" id="${gotoPatternId}" style="display: none;">`;
+            patternTests.forEach((test, i) => {
+              stepHTML += `
+                <div class="pattern-test ${test.matched ? 'matched' : ''}" style="opacity: ${test.matched ? '1' : '0.6'};">
+                  <strong>${i + 1}.</strong> "${escapeHtml(test.pattern)}" ${test.matched ? '<span class="highlight">MATCH</span>' : '<span style="color: var(--text-secondary);">no match</span>'}
+                </div>
+              `;
+            });
+            stepHTML += '</div>';
+          } else if (patternTests.length === 1) {
+            stepHTML += `<div class="step-details">Pattern "*" matches any input</div>`;
+          }
+          stepHTML += `</div>`; // Close Pattern Matching substep
+
+          // Sub-step B: Decomposition (if pattern has captures)
+          const targetCaptures = matchedPattern?.captures || [];
+          if (targetCaptures.length > 0) {
+            stepHTML += `
+              <div class="goto-substep" style="margin-bottom: 16px;">
+                <div style="font-weight: 500; margin-bottom: 8px; font-size: 0.9rem;">↪ Decomposition</div>
+                <div class="step-io">
+                  <div style="flex: 1;">
+                    <div class="io-label">Input</div>
+                    <div class="io-box">${escapeHtml(currentBreakdown?.steps?.find(s => s.name === 'Pre-substitutions')?.output || '')}</div>
+                  </div>
+                  <div class="arrow">→</div>
+                  <div style="flex: 1;">
+                    <div class="io-label">Captures</div>
+                    <div class="io-box">${targetCaptures.map((c, i) => `(${i + 1}): "${Array.isArray(c) ? c.join(' ') : c}"`).join(', ')}</div>
+                  </div>
+                </div>
+                <div class="step-details">Extracted ${targetCaptures.length} component(s)</div>
+              </div>
+            `;
+          }
+
+          // Sub-step C: Template Selection
+          const selectedIdx = step.selectedTemplateIndex !== undefined ? step.selectedTemplateIndex : 0;
           stepHTML += `
-            <div class="step-io" style="margin-top: 12px;">
-              <div style="flex: 1;">
-                <div class="io-label">Select Response from "${escapeHtml(step.targetKeyword)}"</div>
-                <select class="template-dropdown" id="goto-template-selector" style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; background: var(--surface-color); color: var(--text-primary); cursor: pointer;">
-                  ${step.targetTemplates.map((t, i) => `<option value="${i}" ${escapeHtml(t) === escapeHtml(step.output.replace(/^"|"$/g, '')) ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
-                </select>
+            <div class="goto-substep">
+              <div style="font-weight: 500; margin-bottom: 8px; font-size: 0.9rem;">↪ Template Selection</div>
+              <div class="step-io">
+                <div style="flex: 1;">
+                  <div class="io-label">${step.targetTemplates.length} Available Response(s)</div>
+                  <select class="template-dropdown" id="goto-template-selector" style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; background: var(--surface-color); color: var(--text-primary); cursor: pointer;">
+                    ${step.targetTemplates.map((t, i) => `<option value="${i}" ${i === selectedIdx ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="arrow">→</div>
+                <div style="flex: 1;">
+                  <div class="io-label">Selected Response</div>
+                  <div class="io-box" id="goto-selected-template">"${escapeHtml(step.output.replace(/^"|"$/g, ''))}"</div>
+                </div>
               </div>
-              <div class="arrow">&rarr;</div>
-              <div style="flex: 1;">
-                <div class="io-label">Resolved Template</div>
-                <div class="io-box">${escapeHtml(step.output)}</div>
-              </div>
+              <div class="step-details">Select a different response to see how it changes the final output</div>
             </div>
           `;
-          // Add note about captures being preserved
+
+          stepHTML += `</div>`; // Close goto-breakdown container
+
+          // Note about captures preservation
           if (step.originalCapturesPreserved) {
-            stepHTML += `<div class="step-details" style="margin-top: 8px; font-style: italic;">
-              Note: Original captures (${step.capturesAvailable}) are preserved and can be used in the resolved template.
+            stepHTML += `<div class="step-details" style="font-style: italic; margin-top: 12px;">
+              Note: Original captures (${step.capturesAvailable}) from the main pattern match are preserved and can be used in the selected response.
             </div>`;
           }
-          stepHTML += `<div class="step-details">${step.details}</div>`;
         } else if (step.input !== undefined && step.output !== undefined) {
           // Add input/output visualization for other steps
           stepHTML += `
@@ -679,6 +748,11 @@
         let currentTemplate = selectedTemplate;
         let targetRule = null;
         let targetPattern = null;
+        let targetPatternTests = [];
+
+        // Get the normalized input for pattern testing
+        const preSubStep = currentBreakdown.steps.find(s => s.name === 'Pre-substitutions');
+        const normalizedInput = preSubStep ? preSubStep.output : '';
 
         while (currentTemplate && currentTemplate.startsWith('goto ')) {
           const targetKeyword = currentTemplate.substring(5).trim();
@@ -686,7 +760,26 @@
 
           targetRule = rules.find(r => r.keyword === targetKeyword);
           if (targetRule && targetRule.patterns && targetRule.patterns.length > 0) {
-            targetPattern = targetRule.patterns[0];
+            // Test all patterns against the input
+            targetPatternTests = [];
+            let matchedPattern = null;
+            const synonyms = eliza.synonyms || {};
+
+            for (const pattern of targetRule.patterns) {
+              const testResult = patternMatcher.matchPattern(normalizedInput, pattern.pattern, synonyms);
+              targetPatternTests.push({
+                pattern: pattern.pattern,
+                matched: testResult.matched,
+                captures: testResult.captures || [],
+                responses: pattern.responses
+              });
+              if (testResult.matched && !matchedPattern) {
+                matchedPattern = pattern;
+              }
+            }
+
+            // Use matched pattern or fall back to first (usually "*")
+            targetPattern = matchedPattern || targetRule.patterns[0];
             const targetTemplates = targetPattern.responses;
             // Select first template by default (user can change via goto dropdown)
             currentTemplate = targetTemplates[0];
@@ -704,6 +797,8 @@
           targetRule,
           targetPattern,
           targetTemplates: targetPattern ? targetPattern.responses : [],
+          targetPatternTests,
+          selectedTemplateIndex: 0,
           resolvedTemplate: finalTemplate
         };
       }
@@ -771,45 +866,119 @@
           }
         }
 
-        // Update goto step content
-        gotoStep.innerHTML = `
+        // Update goto step content - recursive mini-breakdown structure
+        const gotoPatternId = 'goto-patterns-dynamic';
+        const preSubStep = currentBreakdown.steps.find(s => s.name === 'Pre-substitutions');
+        const normalizedInput = preSubStep ? preSubStep.output : '';
+        const patternTests = gotoData.targetPatternTests || [];
+        const matchedPattern = patternTests.find(t => t.matched);
+        const targetCaptures = matchedPattern?.captures || [];
+        const selectedIdx = gotoData.selectedTemplateIndex !== undefined ? gotoData.selectedTemplateIndex : 0;
+
+        let gotoHTML = `
           <div class="step-header">
-            <div class="step-number" style="background: var(--warning-color, #ffc107);">↪</div>
+            <div class="step-number">↪</div>
             <div class="step-title">Goto Resolution</div>
           </div>
-          <div class="step-description">Following reference to another keyword's responses</div>
+          <div class="step-description">Following redirect to another keyword's responses</div>
           <div class="step-io">
             <div style="flex: 1;">
-              <div class="io-label">Goto Statement</div>
-              <div class="io-box" style="background: var(--warning-bg, #fff3cd); border-color: var(--warning-border, #ffc107);">"${escapeHtml(selectedTemplate)}"</div>
+              <div class="io-label">Redirect Statement</div>
+              <div class="io-box">goto ${escapeHtml(gotoData.targetKeyword)}</div>
             </div>
-            <div class="arrow" style="color: var(--warning-color, #856404);">↪</div>
-            <div style="flex: 1;">
-              <div class="io-label">Target Keyword: "${escapeHtml(gotoData.targetKeyword)}"</div>
-              <div class="io-box" style="font-size: 0.85rem;">
-                <div><strong>Pattern:</strong> "${escapeHtml(gotoData.targetPattern ? gotoData.targetPattern.pattern : '*')}"</div>
-                <div style="margin-top: 4px;"><strong>Responses:</strong> ${gotoData.targetTemplates.length} available</div>
+          </div>
+
+          <!-- Mini-breakdown container -->
+          <div class="goto-breakdown" style="margin-top: 16px; padding: 16px; background: rgba(var(--primary-rgb, 99, 102, 241), 0.05); border-radius: 8px; border-left: 3px solid var(--primary-color);">
+            <div style="font-weight: 600; margin-bottom: 12px; color: var(--primary-color);">→ Processing "${escapeHtml(gotoData.targetKeyword)}" keyword:</div>
+
+            <!-- Sub-step A: Pattern Matching -->
+            <div class="goto-substep" style="margin-bottom: 16px;">
+              <div style="font-weight: 500; margin-bottom: 8px; font-size: 0.9rem;">↪ Pattern Matching</div>
+              <div class="step-io">
+                <div style="flex: 1;">
+                  <div class="io-label">Input</div>
+                  <div class="io-box">${escapeHtml(normalizedInput)}</div>
+                </div>
+                <div class="arrow">→</div>
+                <div style="flex: 1;">
+                  <div class="io-label">Matched Pattern</div>
+                  <div class="io-box">"${escapeHtml(gotoData.targetPattern ? gotoData.targetPattern.pattern : '*')}"</div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div class="step-io" style="margin-top: 12px;">
-            <div style="flex: 1;">
-              <div class="io-label">Select Response from "${escapeHtml(gotoData.targetKeyword)}"</div>
-              <select class="template-dropdown" id="goto-template-selector" style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; background: var(--surface-color); color: var(--text-primary); cursor: pointer;">
-                ${gotoData.targetTemplates.map((t, i) => `<option value="${i}" ${i === 0 ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
-              </select>
-            </div>
-            <div class="arrow">&rarr;</div>
-            <div style="flex: 1;">
-              <div class="io-label">Resolved Template</div>
-              <div class="io-box" id="goto-resolved-template">"${escapeHtml(finalTemplate)}"</div>
-            </div>
-          </div>
-          ${captures.length > 0 ? `<div class="step-details" style="margin-top: 8px; font-style: italic;">
-            Note: Original captures (${captures.length}) are preserved and can be used in the resolved template.
-          </div>` : ''}
-          <div class="step-details">Redirected to keyword "${escapeHtml(gotoData.targetKeyword)}"</div>
         `;
+
+        // Expandable pattern tests (if more than 1 pattern)
+        if (patternTests.length > 1) {
+          gotoHTML += `<div class="pattern-tests-header" onclick="togglePatternTests('${gotoPatternId}')" style="cursor: pointer; color: var(--primary-color); margin: 8px 0;">
+            <span class="pattern-toggle-icon" id="${gotoPatternId}-icon">▶</span>
+            Tested ${patternTests.length} pattern(s) - <em>click to show all</em>
+          </div>`;
+          gotoHTML += `<div class="step-content" id="${gotoPatternId}" style="display: none;">`;
+          patternTests.forEach((test, i) => {
+            gotoHTML += `
+              <div class="pattern-test ${test.matched ? 'matched' : ''}" style="opacity: ${test.matched ? '1' : '0.6'};">
+                <strong>${i + 1}.</strong> "${escapeHtml(test.pattern)}" ${test.matched ? '<span class="highlight">MATCH</span>' : '<span style="color: var(--text-secondary);">no match</span>'}
+              </div>
+            `;
+          });
+          gotoHTML += '</div>';
+        } else if (patternTests.length === 1) {
+          gotoHTML += `<div class="step-details">Pattern "*" matches any input</div>`;
+        }
+        gotoHTML += `</div>`; // Close Pattern Matching substep
+
+        // Sub-step B: Decomposition (if pattern has captures)
+        if (targetCaptures.length > 0) {
+          gotoHTML += `
+            <div class="goto-substep" style="margin-bottom: 16px;">
+              <div style="font-weight: 500; margin-bottom: 8px; font-size: 0.9rem;">↪ Decomposition</div>
+              <div class="step-io">
+                <div style="flex: 1;">
+                  <div class="io-label">Input</div>
+                  <div class="io-box">${escapeHtml(normalizedInput)}</div>
+                </div>
+                <div class="arrow">→</div>
+                <div style="flex: 1;">
+                  <div class="io-label">Captures</div>
+                  <div class="io-box">${targetCaptures.map((c, i) => `(${i + 1}): "${Array.isArray(c) ? c.join(' ') : c}"`).join(', ')}</div>
+                </div>
+              </div>
+              <div class="step-details">Extracted ${targetCaptures.length} component(s)</div>
+            </div>
+          `;
+        }
+
+        // Sub-step C: Template Selection
+        gotoHTML += `
+            <div class="goto-substep">
+              <div style="font-weight: 500; margin-bottom: 8px; font-size: 0.9rem;">↪ Template Selection</div>
+              <div class="step-io">
+                <div style="flex: 1;">
+                  <div class="io-label">${gotoData.targetTemplates.length} Available Response(s)</div>
+                  <select class="template-dropdown" id="goto-template-selector" style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; background: var(--surface-color); color: var(--text-primary); cursor: pointer;">
+                    ${gotoData.targetTemplates.map((t, i) => `<option value="${i}" ${i === selectedIdx ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="arrow">→</div>
+                <div style="flex: 1;">
+                  <div class="io-label">Selected Response</div>
+                  <div class="io-box" id="goto-selected-template">"${escapeHtml(finalTemplate)}"</div>
+                </div>
+              </div>
+              <div class="step-details">Select a different response to see how it changes the final output</div>
+            </div>
+          </div>
+        `;
+
+        // Note about captures preservation
+        if (captures.length > 0) {
+          gotoHTML += `<div class="step-details" style="font-style: italic; margin-top: 12px;">
+            Note: Original captures (${captures.length}) from the main pattern match are preserved and can be used in the selected response.
+          </div>`;
+        }
+
+        gotoStep.innerHTML = gotoHTML;
 
         // Add event listener for the goto template selector
         const gotoSelector = document.getElementById('goto-template-selector');
@@ -896,9 +1065,32 @@
           newResponse = newResponse.toUpperCase();
 
           // Update displays
-          const resolvedTemplateBox = document.getElementById('goto-resolved-template');
-          if (resolvedTemplateBox) {
-            resolvedTemplateBox.textContent = `"${selectedGotoTemplate}"`;
+          // 1. Update the "Selected Response" box
+          const selectedTemplateBox = document.getElementById('goto-selected-template');
+          if (selectedTemplateBox) {
+            selectedTemplateBox.textContent = `"${selectedGotoTemplate}"`;
+          }
+
+          // 2. Update the expandable responses list to highlight the selected one
+          // Try both static and dynamic IDs
+          const gotoListContent = document.getElementById('goto-templates-dynamic') ||
+            document.querySelector('[id^="goto-templates-"]:not([id$="-icon"])');
+          if (gotoListContent) {
+            const responseItems = gotoListContent.querySelectorAll('.pattern-test');
+            responseItems.forEach((item, i) => {
+              if (i === selectedIndex) {
+                item.classList.add('matched');
+                // Add SELECTED span if not present, or update
+                if (!item.querySelector('.highlight')) {
+                  item.innerHTML = item.innerHTML + ' <span class="highlight">SELECTED</span>';
+                }
+              } else {
+                item.classList.remove('matched');
+                // Remove SELECTED span if present
+                const highlight = item.querySelector('.highlight');
+                if (highlight) highlight.remove();
+              }
+            });
           }
 
           // Update post-sub step
