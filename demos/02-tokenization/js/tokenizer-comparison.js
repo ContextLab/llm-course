@@ -148,21 +148,32 @@ async function tokenizeText(text) {
 
 // Process individual tokenizer
 async function processTokenizer(name, text, tokenizer) {
+    // encode() returns the token IDs as an array
     const encoded = await tokenizer.encode(text);
-    const tokens = await tokenizer.tokenize(text);
+
+    // Get token strings by decoding each ID individually
+    // This works around the fact that tokenize() may not be available
+    const tokens = [];
+    for (let i = 0; i < encoded.length; i++) {
+        const tokenStr = tokenizer.decode([encoded[i]], { skip_special_tokens: false });
+        tokens.push(tokenStr);
+    }
 
     const outputDiv = document.getElementById(`${name}-output`);
     const idsDiv = document.getElementById(`${name}-ids`);
     const tokenCountSpan = document.getElementById(`${name}-token-count`);
     const ratioSpan = document.getElementById(`${name}-ratio`);
 
-    // Clear previous output
-    outputDiv.innerHTML = '';
+    // Clear previous output using safe DOM method
+    while (outputDiv.firstChild) {
+        outputDiv.removeChild(outputDiv.firstChild);
+    }
 
     // Display tokens with colors
     tokens.forEach((token, idx) => {
         const span = document.createElement('span');
         span.className = `token token-${idx % 8}`;
+        // Clean up special characters for display
         span.textContent = token.replace(/▁/g, '·').replace(/Ġ/g, '·');
         span.title = `Token ID: ${encoded[idx]}`;
         outputDiv.appendChild(span);
@@ -183,7 +194,10 @@ async function processTokenizer(name, text, tokenizer) {
 // Clear all outputs
 function clearOutputs() {
     ['gpt2', 'bert', 't5'].forEach(name => {
-        document.getElementById(`${name}-output`).innerHTML = '';
+        const outputEl = document.getElementById(`${name}-output`);
+        while (outputEl.firstChild) {
+            outputEl.removeChild(outputEl.firstChild);
+        }
         document.getElementById(`${name}-ids`).textContent = '';
         document.getElementById(`${name}-token-count`).textContent = 'Tokens: -';
         document.getElementById(`${name}-ratio`).textContent = 'Ratio: -';

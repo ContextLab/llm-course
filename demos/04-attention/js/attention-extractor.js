@@ -3,7 +3,7 @@
  * Uses Transformers.js to load models and retrieve attention patterns
  */
 
-import { pipeline, AutoTokenizer, AutoModel } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+import { pipeline, AutoTokenizer, AutoModel } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
 
 export class AttentionExtractor {
     constructor() {

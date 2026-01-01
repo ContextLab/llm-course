@@ -3,6 +3,9 @@
  * Handles masked language modeling and attention extraction
  */
 
+// Import Transformers.js at module level
+import { pipeline, AutoTokenizer, AutoModelForMaskedLM, Tensor } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
+
 export class BERTModel {
     constructor(modelId = 'bert-base-uncased') {
         this.modelId = modelId;
@@ -18,8 +21,6 @@ export class BERTModel {
         console.log(`Loading model: ${this.modelId}`);
 
         try {
-            // Import Transformers.js
-            const { pipeline, AutoTokenizer, AutoModelForMaskedLM } = window.Transformers;
 
             // Load tokenizer
             this.tokenizer = await AutoTokenizer.from_pretrained(this.modelId);
@@ -88,8 +89,7 @@ export class BERTModel {
             maskedInputIds[idx] = this.maskTokenId;
         });
 
-        // Create input tensor
-        const { Tensor } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1');
+        // Create input tensor (Tensor is now imported at module level)
         const inputs = {
             input_ids: new Tensor('int64', BigInt64Array.from(maskedInputIds.map(id => BigInt(id))), [1, maskedInputIds.length]),
             attention_mask: new Tensor('int64', BigInt64Array.from(maskedInputIds.map(() => BigInt(1))), [1, maskedInputIds.length])
@@ -231,8 +231,6 @@ export class BERTModel {
      * Fill mask using the fill-mask pipeline (alternative method)
      */
     async fillMaskPipeline(text) {
-        const { pipeline } = window.Transformers;
-
         const unmasker = await pipeline('fill-mask', this.modelId);
         const results = await unmasker(text);
 
