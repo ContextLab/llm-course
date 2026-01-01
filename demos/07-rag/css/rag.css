@@ -1,32 +1,13 @@
-/* RAG System Demo Styles */
+/**
+ * RAG System Demo - Styles
+ * Uses CSS variables from ../shared/css/demo-styles.css for theming
+ */
 
+/* Demo-specific variables that don't conflict with theming */
 :root {
-    --primary-color: #2563eb;
-    --secondary-color: #7c3aed;
-    --success-color: #10b981;
-    --warning-color: #f59e0b;
-    --danger-color: #ef4444;
-    --bg-color: #f9fafb;
-    --card-bg: #ffffff;
-    --text-primary: #1f2937;
-    --text-secondary: #6b7280;
-    --border-color: #e5e7eb;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: var(--bg-color);
-    color: var(--text-primary);
-    line-height: 1.6;
+    --rag-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --rag-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --rag-transition: all 0.3s ease;
 }
 
 .container {
@@ -35,33 +16,40 @@ body {
     padding: 20px;
 }
 
-/* Header */
-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    padding: 30px 0;
+/* Hero Header - matches ELIZA demo styling */
+.hero-header {
+    padding: 3rem 0 2rem;
     margin-bottom: 30px;
-    box-shadow: var(--shadow-md);
+    text-align: center;
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
 }
 
-header h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
+.hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-header p {
-    font-size: 1.1em;
-    opacity: 0.9;
+.hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
 }
 
 /* Cards */
 .card {
-    background: var(--card-bg);
+    background: var(--surface-color);
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 24px;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--rag-shadow);
     border: 1px solid var(--border-color);
+    transition: var(--rag-transition);
 }
 
 .card h2 {
@@ -175,8 +163,10 @@ select {
     border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 1em;
-    transition: border-color 0.3s ease;
+    transition: var(--rag-transition);
     font-family: inherit;
+    background: var(--surface-color);
+    color: var(--text-primary);
 }
 
 input[type="text"]:focus,
@@ -185,6 +175,7 @@ textarea:focus,
 select:focus {
     outline: none;
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 textarea {
@@ -199,12 +190,13 @@ textarea {
     padding: 30px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--rag-transition);
+    background: var(--bg-secondary);
 }
 
 .file-upload:hover {
     border-color: var(--primary-color);
-    background: #f0f7ff;
+    background: var(--surface-hover);
 }
 
 .file-upload input[type="file"] {
@@ -244,23 +236,27 @@ textarea {
 }
 
 .status-info {
-    background: #dbeafe;
-    color: #1e40af;
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--info-color);
+    border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .status-success {
-    background: #d1fae5;
-    color: #065f46;
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success-color);
+    border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .status-warning {
-    background: #fef3c7;
-    color: #92400e;
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning-color);
+    border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .status-error {
-    background: #fee2e2;
-    color: #991b1b;
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--error-color);
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 /* Retrieved Chunks */
@@ -271,17 +267,17 @@ textarea {
 }
 
 .chunk-item {
-    background: var(--bg-color);
+    background: var(--bg-secondary);
     border-left: 4px solid var(--primary-color);
     padding: 16px;
     margin-bottom: 12px;
     border-radius: 8px;
-    transition: all 0.3s ease;
+    transition: var(--rag-transition);
 }
 
 .chunk-item:hover {
     transform: translateX(5px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--rag-shadow);
 }
 
 .chunk-header {
@@ -313,16 +309,17 @@ textarea {
 .chunk-metadata {
     margin-top: 10px;
     font-size: 0.85em;
-    color: var(--text-secondary);
+    color: var(--text-muted);
 }
 
 /* Answer Display */
 .answer-box {
-    background: linear-gradient(135deg, #f0f7ff, #f0f0ff);
+    background: var(--bg-secondary);
     border-left: 4px solid var(--success-color);
     padding: 20px;
     border-radius: 8px;
     margin: 20px 0;
+    border: 1px solid var(--border-color);
 }
 
 .answer-box h4 {
@@ -345,7 +342,7 @@ textarea {
 }
 
 .comparison-item {
-    background: var(--card-bg);
+    background: var(--surface-color);
     border: 2px solid var(--border-color);
     border-radius: 8px;
     padding: 20px;
@@ -368,11 +365,11 @@ textarea {
 }
 
 .stat-card {
-    background: var(--bg-color);
+    background: var(--bg-secondary);
     padding: 20px;
     border-radius: 8px;
     text-align: center;
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
 }
 
 .stat-value {

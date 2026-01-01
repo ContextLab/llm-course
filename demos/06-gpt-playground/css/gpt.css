@@ -1,31 +1,16 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/**
+ * GPT Text Generation Playground - Styles
+ * Uses CSS variables from ../shared/css/demo-styles.css for theming
+ */
 
+/* Demo-specific variables that don't conflict with theming */
 :root {
-    --primary-color: #4f46e5;
-    --primary-hover: #4338ca;
-    --secondary-color: #64748b;
-    --background: #0f172a;
-    --surface: #1e293b;
-    --surface-light: #334155;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --border: #475569;
-    --success: #10b981;
-    --warning: #f59e0b;
-    --danger: #ef4444;
+    --gpt-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --gpt-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --gpt-transition: all 0.3s ease;
     --token-selected: #818cf8;
     --token-alternative: #94a3b8;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: var(--background);
-    color: var(--text-primary);
-    line-height: 1.6;
+    --primary-hover: #4338ca;
 }
 
 .container {
@@ -34,25 +19,29 @@ body {
     padding: 20px;
 }
 
-header {
-    text-align: center;
+/* Hero Header - matches ELIZA demo styling */
+.hero-header {
+    padding: 3rem 0 2rem;
     margin-bottom: 30px;
-    padding: 30px 0;
-    border-bottom: 2px solid var(--border);
+    text-align: center;
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
 }
 
-h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-.subtitle {
+.hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
     color: var(--text-secondary);
-    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .model-status {
@@ -64,7 +53,7 @@ h1 {
     align-items: center;
     justify-content: center;
     padding: 15px;
-    background: var(--surface);
+    background: var(--surface-color);
     border-radius: 8px;
     gap: 10px;
 }
@@ -72,7 +61,7 @@ h1 {
 .spinner {
     width: 20px;
     height: 20px;
-    border: 3px solid var(--border);
+    border: 3px solid var(--border-color);
     border-top-color: var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -96,18 +85,20 @@ h1 {
 
 /* Controls Panel */
 .controls-panel {
-    background: var(--surface);
+    background: var(--surface-color);
     border-radius: 12px;
     padding: 20px;
     height: fit-content;
     max-height: calc(100vh - 200px);
     overflow-y: auto;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--gpt-shadow);
 }
 
 .control-section {
     margin-bottom: 25px;
     padding-bottom: 25px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .control-section:last-child {
@@ -144,8 +135,8 @@ h1 {
 select, textarea {
     width: 100%;
     padding: 10px;
-    background: var(--surface-light);
-    border: 1px solid var(--border);
+    background: var(--surface-hover);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     color: var(--text-primary);
     font-size: 0.95rem;
@@ -165,7 +156,7 @@ select:focus, textarea:focus {
 input[type="range"] {
     width: 100%;
     height: 6px;
-    background: var(--surface-light);
+    background: var(--surface-hover);
     border-radius: 3px;
     outline: none;
     -webkit-appearance: none;
@@ -231,12 +222,12 @@ button {
 }
 
 .btn-secondary {
-    background: var(--surface-light);
+    background: var(--surface-hover);
     color: var(--text-primary);
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background: var(--border);
+    background: var(--border-color);
 }
 
 button:disabled {
@@ -246,9 +237,11 @@ button:disabled {
 
 /* Output Panel */
 .output-panel {
-    background: var(--surface);
+    background: var(--surface-color);
     border-radius: 12px;
     padding: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--gpt-shadow);
 }
 
 .output-section {
@@ -262,8 +255,8 @@ button:disabled {
 }
 
 .generated-text {
-    background: var(--surface-light);
-    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 20px;
     min-height: 150px;
@@ -296,11 +289,11 @@ button:disabled {
 }
 
 .token.high-surprise {
-    border-bottom: 2px solid var(--warning);
+    border-bottom: 2px solid var(--warning-color);
 }
 
 .token.very-high-surprise {
-    border-bottom: 2px solid var(--danger);
+    border-bottom: 2px solid var(--error-color);
 }
 
 .token-tooltip {
@@ -308,8 +301,8 @@ button:disabled {
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--surface-light);
-    border: 1px solid var(--border);
+    background: var(--surface-hover);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 8px 12px;
     white-space: nowrap;
@@ -332,10 +325,10 @@ button:disabled {
 }
 
 .stat-item {
-    background: var(--surface-light);
+    background: var(--surface-hover);
     padding: 15px;
     border-radius: 8px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-color);
 }
 
 .stat-label {

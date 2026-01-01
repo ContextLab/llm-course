@@ -1,70 +1,54 @@
 /**
  * Sentiment Analysis Dashboard Styles
- * Modern, beautiful design with smooth animations
+ * Uses CSS variables from ../shared/css/demo-styles.css for theming
  */
 
+/* Demo-specific variables that don't conflict with theming */
 :root {
-    --primary-color: #3b82f6;
-    --secondary-color: #8b5cf6;
+    --sentiment-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --sentiment-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --sentiment-transition: all 0.3s ease;
     --positive-color: #22c55e;
     --negative-color: #ef4444;
     --neutral-color: #94a3b8;
-    --background: #f8fafc;
-    --card-background: #ffffff;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --border-color: #e2e8f0;
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding: 2rem;
-    color: var(--text-primary);
 }
 
 .dashboard {
     max-width: 1400px;
     margin: 0 auto;
+    padding: 20px;
 }
 
-/* Header */
-header {
+/* Hero Header - matches main index.html styling */
+.hero-header {
+    padding: 3rem 0 2rem;
+    margin-bottom: 30px;
     text-align: center;
-    margin-bottom: 3rem;
-    color: white;
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
 }
 
-header h1 {
-    font-size: 3rem;
+.hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 800;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-.subtitle {
-    font-size: 1.2rem;
-    opacity: 0.9;
-    font-weight: 300;
+.hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
 }
 
 /* Container */
 .container {
-    background: var(--background);
-    border-radius: 24px;
-    padding: 2rem;
-    box-shadow: var(--shadow-xl);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 /* Cards */
@@ -114,7 +98,7 @@ header h1 {
     flex: 1;
     padding: 0.75rem 1.5rem;
     border: 2px solid var(--border-color);
-    background: white;
+    background: var(--surface-color);
     border-radius: 10px;
     font-weight: 600;
     cursor: pointer;
@@ -214,7 +198,7 @@ textarea:focus {
 
 .preview-item {
     padding: 0.75rem;
-    background: white;
+    background: var(--surface-color);
     border-radius: 8px;
     margin-bottom: 0.5rem;
     border-left: 3px solid var(--primary-color);
@@ -494,7 +478,7 @@ textarea:focus {
     gap: 2rem;
     margin-top: 1rem;
     padding: 1rem;
-    background: white;
+    background: var(--surface-color);
     border-radius: 8px;
     font-size: 0.875rem;
 }
@@ -523,7 +507,7 @@ textarea:focus {
 .contribution-stats {
     margin-top: 1.5rem;
     padding: 1.5rem;
-    background: white;
+    background: var(--surface-color);
     border-radius: 12px;
 }
 
@@ -570,7 +554,7 @@ textarea:focus {
 .top-contributors {
     margin-top: 1.5rem;
     padding: 1.5rem;
-    background: white;
+    background: var(--surface-color);
     border-radius: 12px;
 }
 
@@ -843,7 +827,7 @@ textarea:focus {
 .score-breakdown {
     margin-top: 1.5rem;
     padding: 1rem;
-    background: white;
+    background: var(--surface-color);
     border-radius: 8px;
     font-size: 0.875rem;
 }
@@ -1019,7 +1003,7 @@ textarea:focus {
 
 .dataset-option:hover {
     border-color: var(--primary-color);
-    background: white;
+    background: var(--surface-color);
 }
 
 .dataset-option input[type="radio"] {
