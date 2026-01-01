@@ -8,7 +8,7 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Lecture 12: Attention Mechanisms
+# Lecture 15: Attention Mechanisms
 ## Week 5, Lecture 1 - From Seq2Seq to Attention
 
 **PSYC 51.07: Models of Language and Communication**

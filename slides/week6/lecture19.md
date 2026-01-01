@@ -8,7 +8,7 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Lecture 16: BERT Variants
+# Lecture 19: BERT Variants
 ## Week 6, Lecture 2 - Improvements and Optimizations
 
 **PSYC 51.07: Models of Language and Communication**

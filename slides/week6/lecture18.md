@@ -8,7 +8,7 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Lecture 15: BERT Deep Dive
+# Lecture 18: BERT Deep Dive
 ## Week 6, Lecture 1 - Bidirectional Encoder Representations
 
 **PSYC 51.07: Models of Language and Communication**

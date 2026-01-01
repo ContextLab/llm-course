@@ -8,7 +8,7 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Lecture 17: Applications of Encoder Models
+# Lecture 20: Applications of Encoder Models
 ## Week 6, Lecture 3 - From Theory to Practice
 
 **PSYC 51.07: Models of Language and Communication**

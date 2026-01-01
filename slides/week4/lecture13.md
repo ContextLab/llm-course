@@ -9,7 +9,7 @@ footer: 'Winter 2026'
 <!-- _class: lead -->
 
 # Dimensionality Reduction for NLP
-## Lecture 10: PCA, t-SNE, and UMAP
+## Lecture 13: PCA, t-SNE, and UMAP
 
 **PSYC 51.07: Models of Language and Communication - Week 4**
 

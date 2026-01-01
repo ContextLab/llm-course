@@ -8,7 +8,7 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Lecture 14: Training Transformers
+# Lecture 17: Training Transformers
 ## Week 5, Lecture 3 - From Architecture to Implementation
 
 **PSYC 51.07: Models of Language and Communication**

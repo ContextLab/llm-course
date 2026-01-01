@@ -8,7 +8,7 @@ footer: 'Week 7'
 
 <!-- _class: lead -->
 
-# Lecture 19: Scaling Up to GPT-3 and Beyond
+# Lecture 22: Scaling Up to GPT-3 and Beyond
 ## The Era of Few-Shot Learning 🚀
 
 **Models of Language and Conversation**

@@ -8,7 +8,7 @@ footer: 'Week 7'
 
 <!-- _class: lead -->
 
-# Lecture 20: Implementing GPT from Scratch
+# Lecture 23: Implementing GPT from Scratch
 ## Building a Language Model in PyTorch 💻
 
 **Models of Language and Conversation**

@@ -9,7 +9,7 @@ footer: 'Winter 2026'
 <!-- _class: lead -->
 
 # Contextual Embeddings: ELMo, USE, BERT
-## Lecture 9: Beyond Static Word Representations
+## Lecture 12: Beyond Static Word Representations
 
 **PSYC 51.07: Models of Language and Communication - Week 4**
 

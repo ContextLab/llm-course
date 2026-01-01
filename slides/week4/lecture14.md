@@ -9,7 +9,7 @@ footer: 'Winter 2026'
 <!-- _class: lead -->
 
 # Cognitive Models of Semantic Representation
-## Lecture 11: How Humans Represent Meaning
+## Lecture 14: How Humans Represent Meaning
 
 **PSYC 51.07: Models of Language and Communication - Week 4**
 

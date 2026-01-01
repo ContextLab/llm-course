@@ -8,7 +8,7 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Lecture 13: Transformer Architecture
+# Lecture 16: Transformer Architecture
 ## Week 5, Lecture 2 - Attention Is All You Need
 
 **PSYC 51.07: Models of Language and Communication**

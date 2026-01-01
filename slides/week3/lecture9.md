@@ -9,7 +9,7 @@ footer: 'Winter 2026'
 <!-- _class: lead -->
 
 # Classic Embeddings: LSA \& LDA
-## Lecture 7: The Foundations of Distributional Semantics
+## Lecture 9: The Foundations of Distributional Semantics
 
 **PSYC 51.07: Models of Language and Communication - Week 3**
 

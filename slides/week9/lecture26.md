@@ -8,7 +8,7 @@ footer: 'Week 9'
 
 <!-- _class: lead -->
 
-# Lecture 23: Ethics, Bias, and Safety
+# Lecture 26: Ethics, Bias, and Safety
 ## Responsible Development of Large Language Models ⚖️
 
 **PSYC 51.07: Models of Language and Communication**

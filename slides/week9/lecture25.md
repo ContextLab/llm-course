@@ -8,7 +8,7 @@ footer: 'Week 9'
 
 <!-- _class: lead -->
 
-# Lecture 22: Mixture of Experts \& Efficiency
+# Lecture 25: Mixture of Experts \& Efficiency
 ## Scaling Efficiently with Sparse Models 🚀
 
 **PSYC 51.07: Models of Language and Communication**

@@ -8,7 +8,7 @@ footer: 'Week 7'
 
 <!-- _class: lead -->
 
-# Lecture 18: GPT Architecture
+# Lecture 21: GPT Architecture
 ## Generative Pre-Training for Language 🤖
 
 **Models of Language and Conversation**

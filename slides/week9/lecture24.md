@@ -8,7 +8,7 @@ footer: 'Week 9'
 
 <!-- _class: lead -->
 
-# Lecture 21: Retrieval Augmented Generation
+# Lecture 24: Retrieval Augmented Generation
 ## Grounding LLMs in External Knowledge 🔍
 
 **PSYC 51.07: Models of Language and Communication**

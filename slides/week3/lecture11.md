@@ -9,7 +9,7 @@ footer: 'Winter 2026'
 <!-- _class: lead -->
 
 # Word Embeddings: Word2Vec, GloVe, FastText
-## Lecture 8: The Neural Revolution in NLP
+## Lecture 11: The Neural Revolution in NLP
 
 **PSYC 51.07: Models of Language and Communication - Week 3**
 
