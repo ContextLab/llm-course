@@ -482,13 +482,36 @@
               </div>
               <div class="arrow" style="color: var(--warning-color, #856404);">↪</div>
               <div style="flex: 1;">
-                <div class="io-label">Target: "${escapeHtml(step.targetKeyword)}" (${step.targetTemplates.length} template(s))</div>
+                <div class="io-label">Target Keyword: "${escapeHtml(step.targetKeyword)}"</div>
+                <div class="io-box" style="font-size: 0.85rem;">
+                  <div><strong>Pattern:</strong> "${escapeHtml(step.targetPatternString || '*')}"</div>
+                  <div style="margin-top: 4px;"><strong>Responses:</strong> ${step.targetTemplates.length} available</div>
+                </div>
+              </div>
+            </div>
+          `;
+          // Show the resolved template selection
+          stepHTML += `
+            <div class="step-io" style="margin-top: 12px;">
+              <div style="flex: 1;">
+                <div class="io-label">Select Response from "${escapeHtml(step.targetKeyword)}"</div>
                 <select class="template-dropdown" id="goto-template-selector" style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; background: var(--surface-color); color: var(--text-primary); cursor: pointer;">
                   ${step.targetTemplates.map((t, i) => `<option value="${i}" ${escapeHtml(t) === escapeHtml(step.output.replace(/^"|"$/g, '')) ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
                 </select>
               </div>
+              <div class="arrow">&rarr;</div>
+              <div style="flex: 1;">
+                <div class="io-label">Resolved Template</div>
+                <div class="io-box">${escapeHtml(step.output)}</div>
+              </div>
             </div>
           `;
+          // Add note about captures being preserved
+          if (step.originalCapturesPreserved) {
+            stepHTML += `<div class="step-details" style="margin-top: 8px; font-style: italic;">
+              Note: Original captures (${step.capturesAvailable}) are preserved and can be used in the resolved template.
+            </div>`;
+          }
           stepHTML += `<div class="step-details">${step.details}</div>`;
         } else if (step.input !== undefined && step.output !== undefined) {
           // Add input/output visualization for other steps
@@ -642,11 +665,51 @@
         }
       }
 
-      // Re-assemble the response with the new template
       const patternMatcher = eliza.patternMatcher;
       const postSubs = eliza.postSubstitutions;
+      const rules = eliza.rules;
 
-      let newResponse = selectedTemplate;
+      // Check if selected template is a goto statement
+      let finalTemplate = selectedTemplate;
+      let gotoResolutionData = null;
+
+      if (selectedTemplate.startsWith('goto ')) {
+        // Resolve the goto
+        const gotoChain = [];
+        let currentTemplate = selectedTemplate;
+        let targetRule = null;
+        let targetPattern = null;
+
+        while (currentTemplate && currentTemplate.startsWith('goto ')) {
+          const targetKeyword = currentTemplate.substring(5).trim();
+          gotoChain.push(targetKeyword);
+
+          targetRule = rules.find(r => r.keyword === targetKeyword);
+          if (targetRule && targetRule.patterns && targetRule.patterns.length > 0) {
+            targetPattern = targetRule.patterns[0];
+            const targetTemplates = targetPattern.responses;
+            // Select first template by default (user can change via goto dropdown)
+            currentTemplate = targetTemplates[0];
+          } else {
+            break;
+          }
+
+          if (gotoChain.length >= 10) break;
+        }
+
+        finalTemplate = currentTemplate;
+        gotoResolutionData = {
+          gotoChain,
+          targetKeyword: gotoChain[gotoChain.length - 1],
+          targetRule,
+          targetPattern,
+          targetTemplates: targetPattern ? targetPattern.responses : [],
+          resolvedTemplate: finalTemplate
+        };
+      }
+
+      // Re-assemble the response with the final template
+      let newResponse = finalTemplate;
       for (let i = 0; i < captures.length; i++) {
         const placeholder = `(${i + 1})`;
         if (newResponse.includes(placeholder)) {
@@ -659,22 +722,216 @@
       // Format response (uppercase to match ELIZA style)
       newResponse = newResponse.toUpperCase();
 
-      // Update the final response display
-      const finalResponseContent = document.getElementById('final-response-content');
-      if (finalResponseContent) {
-        finalResponseContent.textContent = newResponse;
+      // Update the breakdown steps dynamically
+      updateBreakdownWithGoto(selectedTemplate, gotoResolutionData, finalTemplate, newResponse, captures);
+    }
+
+    // Update breakdown steps when a goto is selected or deselected
+    function updateBreakdownWithGoto(selectedTemplate, gotoData, finalTemplate, finalResponse, captures) {
+      const stepsDiv = document.getElementById('breakdown-steps');
+      const finalResponseStep = document.getElementById('final-response-step');
+
+      // Find existing goto resolution step (by id or by title)
+      let gotoStep = document.getElementById('goto-resolution-step');
+      if (!gotoStep) {
+        // Also check by title for steps created during initial render
+        const stepElements = stepsDiv.querySelectorAll('.breakdown-step');
+        stepElements.forEach(stepEl => {
+          const titleEl = stepEl.querySelector('.step-title');
+          if (titleEl && titleEl.textContent === 'Goto Resolution') {
+            gotoStep = stepEl;
+          }
+        });
       }
 
-      // Also update the Post-substitutions & Assembly step if it exists
-      const stepsDiv = document.getElementById('breakdown-steps');
+      // Find the Post-substitutions step
+      let postSubStep = null;
       const stepElements = stepsDiv.querySelectorAll('.breakdown-step');
       stepElements.forEach(stepEl => {
         const titleEl = stepEl.querySelector('.step-title');
         if (titleEl && titleEl.textContent === 'Post-substitutions & Assembly') {
-          const outputBox = stepEl.querySelectorAll('.io-box')[1];
-          if (outputBox) {
-            outputBox.textContent = newResponse;
+          postSubStep = stepEl;
+        }
+      });
+
+      if (gotoData) {
+        // Need to show/update goto resolution step
+        if (!gotoStep) {
+          // Create the goto resolution step
+          gotoStep = document.createElement('div');
+          gotoStep.className = 'breakdown-step';
+          gotoStep.id = 'goto-resolution-step';
+          gotoStep.style.borderColor = 'var(--warning-color, #ffc107)';
+
+          // Insert before post-substitutions step
+          if (postSubStep) {
+            stepsDiv.insertBefore(gotoStep, postSubStep);
+            // Update step numbers
+            updateStepNumbers();
           }
+        }
+
+        // Update goto step content
+        gotoStep.innerHTML = `
+          <div class="step-header">
+            <div class="step-number" style="background: var(--warning-color, #ffc107);">↪</div>
+            <div class="step-title">Goto Resolution</div>
+          </div>
+          <div class="step-description">Following reference to another keyword's responses</div>
+          <div class="step-io">
+            <div style="flex: 1;">
+              <div class="io-label">Goto Statement</div>
+              <div class="io-box" style="background: var(--warning-bg, #fff3cd); border-color: var(--warning-border, #ffc107);">"${escapeHtml(selectedTemplate)}"</div>
+            </div>
+            <div class="arrow" style="color: var(--warning-color, #856404);">↪</div>
+            <div style="flex: 1;">
+              <div class="io-label">Target Keyword: "${escapeHtml(gotoData.targetKeyword)}"</div>
+              <div class="io-box" style="font-size: 0.85rem;">
+                <div><strong>Pattern:</strong> "${escapeHtml(gotoData.targetPattern ? gotoData.targetPattern.pattern : '*')}"</div>
+                <div style="margin-top: 4px;"><strong>Responses:</strong> ${gotoData.targetTemplates.length} available</div>
+              </div>
+            </div>
+          </div>
+          <div class="step-io" style="margin-top: 12px;">
+            <div style="flex: 1;">
+              <div class="io-label">Select Response from "${escapeHtml(gotoData.targetKeyword)}"</div>
+              <select class="template-dropdown" id="goto-template-selector" style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; background: var(--surface-color); color: var(--text-primary); cursor: pointer;">
+                ${gotoData.targetTemplates.map((t, i) => `<option value="${i}" ${i === 0 ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
+              </select>
+            </div>
+            <div class="arrow">&rarr;</div>
+            <div style="flex: 1;">
+              <div class="io-label">Resolved Template</div>
+              <div class="io-box" id="goto-resolved-template">"${escapeHtml(finalTemplate)}"</div>
+            </div>
+          </div>
+          ${captures.length > 0 ? `<div class="step-details" style="margin-top: 8px; font-style: italic;">
+            Note: Original captures (${captures.length}) are preserved and can be used in the resolved template.
+          </div>` : ''}
+          <div class="step-details">Redirected to keyword "${escapeHtml(gotoData.targetKeyword)}"</div>
+        `;
+
+        // Add event listener for the goto template selector
+        const gotoSelector = document.getElementById('goto-template-selector');
+        if (gotoSelector) {
+          gotoSelector.addEventListener('change', handleGotoTemplateChange);
+        }
+      } else {
+        // Remove goto resolution step if it exists
+        if (gotoStep) {
+          gotoStep.remove();
+          updateStepNumbers();
+        }
+      }
+
+      // Update Post-substitutions step
+      if (postSubStep) {
+        const inputBox = postSubStep.querySelector('.io-box');
+        const outputBox = postSubStep.querySelectorAll('.io-box')[1];
+        if (inputBox) inputBox.textContent = finalTemplate;
+        if (outputBox) outputBox.textContent = finalResponse;
+      }
+
+      // Update final response
+      const finalResponseContent = document.getElementById('final-response-content');
+      if (finalResponseContent) {
+        finalResponseContent.textContent = finalResponse;
+      }
+    }
+
+    // Handle goto template dropdown change
+    function handleGotoTemplateChange(e) {
+      const selectedIndex = parseInt(e.target.value);
+
+      // We need to get the target templates from the current goto data
+      // Re-resolve by looking at the current template selection
+      const templateSelector = document.getElementById('breakdown-template-selector');
+      if (!templateSelector) return;
+
+      const templateStep = currentBreakdown.steps.find(s => s.name === 'Template Selection');
+      if (!templateStep) return;
+
+      const mainTemplate = templateStep.allTemplates[parseInt(templateSelector.value)];
+      if (!mainTemplate.startsWith('goto ')) return;
+
+      // Resolve the goto chain
+      const rules = eliza.rules;
+      let targetKeyword = mainTemplate.substring(5).trim();
+      let targetRule = rules.find(r => r.keyword === targetKeyword);
+
+      // Handle chain
+      while (targetRule && targetRule.patterns && targetRule.patterns.length > 0) {
+        const targetPattern = targetRule.patterns[0];
+        const templates = targetPattern.responses;
+        const selectedGotoTemplate = templates[selectedIndex];
+
+        if (selectedGotoTemplate && selectedGotoTemplate.startsWith('goto ')) {
+          targetKeyword = selectedGotoTemplate.substring(5).trim();
+          targetRule = rules.find(r => r.keyword === targetKeyword);
+        } else {
+          // Found the final template
+          const patternMatcher = eliza.patternMatcher;
+          const postSubs = eliza.postSubstitutions;
+
+          // Get captures
+          const patternStep = currentBreakdown.steps.find(s => s.name === 'Pattern Matching');
+          const captures = [];
+          if (patternStep && patternStep.patternTests) {
+            const matchedTest = patternStep.patternTests.find(t => t.matched);
+            if (matchedTest && matchedTest.captures) {
+              captures.push(...matchedTest.captures);
+            }
+          }
+
+          // Assemble response
+          let newResponse = selectedGotoTemplate;
+          for (let i = 0; i < captures.length; i++) {
+            const placeholder = `(${i + 1})`;
+            if (newResponse.includes(placeholder)) {
+              const captureText = Array.isArray(captures[i]) ? captures[i].join(' ') : captures[i];
+              const { result } = patternMatcher.applyPostSubstitutions(captureText, postSubs);
+              newResponse = newResponse.replace(placeholder, result);
+            }
+          }
+          newResponse = newResponse.toUpperCase();
+
+          // Update displays
+          const resolvedTemplateBox = document.getElementById('goto-resolved-template');
+          if (resolvedTemplateBox) {
+            resolvedTemplateBox.textContent = `"${selectedGotoTemplate}"`;
+          }
+
+          // Update post-sub step
+          const stepsDiv = document.getElementById('breakdown-steps');
+          stepsDiv.querySelectorAll('.breakdown-step').forEach(stepEl => {
+            const titleEl = stepEl.querySelector('.step-title');
+            if (titleEl && titleEl.textContent === 'Post-substitutions & Assembly') {
+              const inputBox = stepEl.querySelector('.io-box');
+              const outputBox = stepEl.querySelectorAll('.io-box')[1];
+              if (inputBox) inputBox.textContent = selectedGotoTemplate;
+              if (outputBox) outputBox.textContent = newResponse;
+            }
+          });
+
+          // Update final response
+          const finalResponseContent = document.getElementById('final-response-content');
+          if (finalResponseContent) {
+            finalResponseContent.textContent = newResponse;
+          }
+
+          break;
+        }
+      }
+    }
+
+    // Update step numbers after adding/removing steps
+    function updateStepNumbers() {
+      const stepsDiv = document.getElementById('breakdown-steps');
+      const stepElements = stepsDiv.querySelectorAll('.breakdown-step:not(#final-response-step)');
+      stepElements.forEach((stepEl, index) => {
+        const stepNumber = stepEl.querySelector('.step-number');
+        if (stepNumber && !stepNumber.textContent.includes('✓') && !stepNumber.textContent.includes('↪')) {
+          stepNumber.textContent = `${index + 1}`;
         }
       });
     }

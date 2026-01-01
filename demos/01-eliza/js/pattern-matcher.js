@@ -590,9 +590,14 @@ export class PatternMatcher {
 
     // Add goto resolution step if we followed any gotos
     if (gotoChain.length > 0) {
+      // Check if the selected template uses captures that won't be available from the target
+      const capturesInOriginal = matchResult ? matchResult.captures.length : 0;
+      const templateUsesCapturesRegex = /\(\d+\)/g;
+      const capturesUsedInFinal = finalTemplate ? (finalTemplate.match(templateUsesCapturesRegex) || []) : [];
+
       breakdown.steps.push({
         name: 'Goto Resolution',
-        description: 'Following reference to another keyword',
+        description: 'Following reference to another keyword\'s responses',
         input: `"${selectedTemplate}"`,
         output: gotoTargetRule ? `"${finalTemplate}"` : 'Target not found',
         details: gotoChain.length === 1
@@ -602,7 +607,11 @@ export class PatternMatcher {
         targetKeyword: gotoChain[gotoChain.length - 1],
         targetRule: gotoTargetRule,
         targetPattern: gotoTargetPattern,
-        targetTemplates: gotoTargetPattern ? gotoTargetPattern.responses : []
+        targetPatternString: gotoTargetPattern ? gotoTargetPattern.pattern : null,
+        targetTemplates: gotoTargetPattern ? gotoTargetPattern.responses : [],
+        originalCapturesPreserved: capturesInOriginal > 0,
+        capturesAvailable: capturesInOriginal,
+        capturesUsedInTemplate: capturesUsedInFinal.length
       });
 
       // Update selected template to the resolved one
