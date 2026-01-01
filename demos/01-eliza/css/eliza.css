@@ -400,6 +400,30 @@
   font-style: italic;
 }
 
+/* Pattern tests header - clickable to expand */
+.pattern-tests-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--surface-color);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  transition: var(--eliza-transition);
+}
+
+.pattern-tests-header:hover {
+  background: var(--surface-hover);
+  border-color: var(--primary-color);
+}
+
+.pattern-toggle-icon {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  transition: transform 0.2s ease;
+}
+
 .pattern-test {
   background: var(--surface-color);
   padding: 10px;

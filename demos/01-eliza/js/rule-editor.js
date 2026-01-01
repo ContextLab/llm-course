@@ -164,9 +164,14 @@ class RuleEditor {
    * Populate GUI with current rules data
    */
   populateGUI() {
-    const validation = this.validate();
-    if (!validation.valid) return;
-    const data = validation.data;
+    // Always parse from the JSON textarea, not from getContent() which may recurse
+    let data;
+    try {
+      data = JSON.parse(this.editor.value);
+    } catch (e) {
+      console.error('Failed to parse rules JSON for GUI:', e);
+      return;
+    }
     this.renderSubstitutions('pre-sub', data.preSubstitutions || {});
     this.renderSubstitutions('post-sub', data.postSubstitutions || {});
     this.renderSynonyms(data.synonyms || {});

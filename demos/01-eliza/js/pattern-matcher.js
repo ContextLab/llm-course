@@ -443,7 +443,12 @@ export class PatternMatcher {
       description: 'Finding relevant keywords in input',
       input: processedInput,
       output: keywordsFound.map(k => `"${k.keyword}" (rank: ${k.rank})`).join(', ') || 'No keywords found',
-      details: `Found ${keywordsFound.length} keyword(s), testing in priority order`
+      details: `Found ${keywordsFound.length} keyword(s), testing in priority order`,
+      keywordsFound: keywordsFound.map(k => ({
+        keyword: k.keyword,
+        rank: k.rank,
+        patternCount: k.rule.patterns.length
+      }))
     });
 
     // Step 3: Pattern matching (specific patterns first, then catch-all)

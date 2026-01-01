@@ -490,31 +490,44 @@
         }
 
         // Add details (but not for template selection since we add custom details)
+        // For Keyword Detection, make it expandable
         if (step.details && step.name !== 'Template Selection') {
-          stepHTML += `<div class="step-details">${step.details}</div>`;
+          if (step.name === 'Keyword Detection' && step.keywordsFound && step.keywordsFound.length > 0) {
+            const keywordStepId = `keywords-${index}`;
+            stepHTML += `<div class="pattern-tests-header" onclick="togglePatternTests('${keywordStepId}')" style="cursor: pointer; color: var(--primary-color); margin-bottom: 8px;">
+              <span class="pattern-toggle-icon" id="${keywordStepId}-icon">▶</span>
+              Found ${step.keywordsFound.length} keyword(s) - <em>click to show details</em>
+            </div>`;
+            stepHTML += `<div class="step-content" id="${keywordStepId}" style="display: none;">`;
+            step.keywordsFound.forEach(kw => {
+              stepHTML += `
+                <div class="pattern-test" style="opacity: 1;">
+                  <strong>${escapeHtml(kw.keyword)}</strong> (rank: ${kw.rank}) - ${kw.patternCount} pattern(s)
+                </div>
+              `;
+            });
+            stepHTML += '</div>';
+          } else {
+            stepHTML += `<div class="step-details">${step.details}</div>`;
+          }
         }
 
         // Add pattern tests if available
         if (step.patternTests && step.patternTests.length > 0) {
-          stepHTML += '<div class="step-content">';
+          const stepId = `pattern-tests-${index}`;
+          const totalPatterns = step.patternTests.length;
 
-          // Find the index of the matched pattern (if any)
-          const matchedIndex = step.patternTests.findIndex(t => t.matched);
+          // Add clickable header showing total patterns tested
+          stepHTML += `<div class="pattern-tests-header" onclick="togglePatternTests('${stepId}')" style="cursor: pointer; color: var(--primary-color); margin-bottom: 8px;">
+            <span class="pattern-toggle-icon" id="${stepId}-icon">▶</span>
+            Tested ${totalPatterns} pattern(s) - <em>click to ${totalPatterns > 5 ? 'show all' : 'toggle'}</em>
+          </div>`;
 
-          // Display logic: show up to 5 patterns, but always include the matched one
-          const maxToShow = 5;
-          let displayedCount = 0;
-          let stoppedEarly = false;
+          stepHTML += `<div class="step-content" id="${stepId}" style="display: none;">`;
 
+          // Show ALL patterns when expanded
           for (let i = 0; i < step.patternTests.length; i++) {
             const test = step.patternTests[i];
-
-            // Stop after maxToShow patterns if we've already shown the match
-            if (displayedCount >= maxToShow && matchedIndex !== -1 && i > matchedIndex) {
-              stoppedEarly = true;
-              break;
-            }
-
             const testClass = test.matched ? 'matched' : 'not-matched';
             const capturesHtml = test.captures && test.captures.length > 0
               ? `<br>Captures: ${test.captures.map((c, j) => {
@@ -530,13 +543,6 @@
                 ${capturesHtml}
               </div>
             `;
-            displayedCount++;
-          }
-
-          // Show remaining count only if we actually stopped early
-          const remaining = step.patternTests.length - displayedCount;
-          if (stoppedEarly && remaining > 0) {
-            stepHTML += `<div class="step-details">... and ${remaining} more pattern(s) tested</div>`;
           }
 
           stepHTML += '</div>';
@@ -660,6 +666,19 @@
       div.textContent = text;
       return div.innerHTML;
     }
+
+    // Toggle pattern tests visibility (exposed globally for onclick handler)
+    window.togglePatternTests = function(stepId) {
+      const content = document.getElementById(stepId);
+      const icon = document.getElementById(stepId + '-icon');
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.textContent = '▼';
+      } else {
+        content.style.display = 'none';
+        icon.textContent = '▶';
+      }
+    };
 
     // Editor Functions
     function updateEditorStats() {
