@@ -38,8 +38,6 @@ Winter 2026
 
 **Why do we need context-aware models?**
 
-\pause
-
 <div class="callout tip">
 <div class="callout-title">Example: The word "bank"</div>
 
@@ -54,8 +52,8 @@ Winter 2026
 
 **Static Embeddings (Word2Vec):**
 - One vector per word
-
 - Context-independent
+- "bank" = [0.2, -0.5, 0.8, ...] always
 
 </div>
 <div class="column">
@@ -82,9 +80,15 @@ Winter 2026
 - Question Answering: Question + Context → Answer
 - Dialogue Systems: User input → System response
 
-```
-\word -> Input: -> Model -> Output: -> \word
-```
+<div class="callout tip">
+<div class="callout-title">Concrete Example: Machine Translation</div>
+
+**Input:** "The cat sat on the mat" (6 tokens)
+**Output:** "Le chat s'est assis sur le tapis" (7 tokens)
+
+Different input/output lengths require flexible architecture!
+
+</div>
 
 *Reference: Sutskever et al. (2014) - "Sequence to Sequence Learning with Neural Networks"*
 
@@ -95,10 +99,6 @@ Winter 2026
 
 **Two-part architecture: Encode then Decode**
 
-```
-RNN -> RNN -> RNN -> The -> cat -> sat -> Context Vector -> RNN
-```
-
 <div class="columns">
 <div class="column">
 
@@ -107,13 +107,24 @@ RNN -> RNN -> RNN -> The -> cat -> sat -> Context Vector -> RNN
 - Compresses to fixed-size vector
 - Captures semantic meaning
 
-</div>
-<div class="column">
-
 **Decoder:**
 - Starts from context vector
 - Generates output sequence
 - One token at a time
+
+</div>
+<div class="column">
+
+**Worked Example:**
+```
+Input:  "The" → "cat" → "sat"
+          ↓       ↓       ↓
+        h₁  →   h₂  →   h₃ = context
+                          ↓
+Output: "Le" ← "chat" ← [START]
+```
+
+The final hidden state h₃ summarizes the entire input!
 
 </div>
 </div>
@@ -136,9 +147,16 @@ RNN -> RNN -> RNN -> The -> cat -> sat -> Context Vector -> RNN
 
 </div>
 
-```
-Input: -> (8.5,2)
-```
+<div class="callout tip">
+<div class="callout-title">Concrete Example: Long Sentence Translation</div>
+
+**Input (20 words):** "The quick brown fox jumps over the lazy dog while the cat watches from the warm sunny windowsill nearby"
+
+**Problem:** All 20 words must fit into one 256-dim vector!
+- Early words ("The quick brown") get overwritten
+- By the time we translate, we've "forgotten" the beginning
+
+</div>
 
 **Solution: Attention! ⚡**
 
@@ -168,23 +186,46 @@ $h_1$ -> $h_2$ -> $h_3$ -> $h_4$ -> Encoder: -> $s_t$ -> Decoder: -> Input: "The
 **Computing attention weights:**
 
 1. **Score**: How relevant is each encoder state to current decoder state?
-    
-    e_{t,i} = (s_t, h_i) = s_t^T W_a h_i
-    
+    - e_{t,i} = score(s_t, h_i) = s_t^T W_a h_i
+
 2. **Normalize**: Convert scores to probabilities (softmax)
-    
-    \alpha_{t,i} = )}{\sum_{j=1}^{T} \exp(e_{t,j})}
-    
+    - alpha_{t,i} = exp(e_{t,i}) / sum_j exp(e_{t,j})
+
 3. **Context**: Weighted sum of encoder states
-    
-    c_t = \sum_{i=1}^{T} \alpha_{t,i} h_i
-    
+    - c_t = sum_i alpha_{t,i} * h_i
+
 4. **Decode**: Use context vector along with decoder state
-    
-    s_{t+1} = f(s_t, c_t, y_t)
-    
+    - s_{t+1} = f(s_t, c_t, y_t)
 
 **Result:** Decoder dynamically focuses on different parts of input!
+
+---
+
+# Worked Example: Attention Computation 📊
+
+
+**Translating "I love cats" → "J'aime les chats"**
+
+**Step 1: Encoder produces hidden states**
+```
+h₁ = [0.2, 0.8]  ("I")
+h₂ = [0.9, 0.3]  ("love")
+h₃ = [0.4, 0.7]  ("cats")
+```
+
+**Step 2: When generating "chats", compute scores**
+- Decoder state s = [0.5, 0.6]
+- Score with h₁: s · h₁ = 0.5×0.2 + 0.6×0.8 = **0.58**
+- Score with h₂: s · h₂ = 0.5×0.9 + 0.6×0.3 = **0.63**
+- Score with h₃: s · h₃ = 0.5×0.4 + 0.6×0.7 = **0.62**
+
+**Step 3: Softmax to get attention weights**
+- alpha = softmax([0.58, 0.63, 0.62]) = **[0.31, 0.35, 0.34]**
+
+**Step 4: Context = weighted sum**
+- c = 0.31×h₁ + 0.35×h₂ + 0.34×h₃ = **[0.51, 0.58]**
+
+Model focuses most on "love" and "cats" when generating "chats"!
 
 ---
 
@@ -193,30 +234,42 @@ $h_1$ -> $h_2$ -> $h_3$ -> $h_4$ -> Encoder: -> $s_t$ -> Decoder: -> Input: "The
 
 **Different ways to compute the score**
 
-1. **Additive Attention (Bahdanau et al. 2015):**
-    
-    (s_t, h_i) = v^T \tanh(W_1 s_t + W_2 h_i)
-    
-    - Learns alignment jointly with translation
-- More parameters, more flexibility
+<div class="columns">
+<div class="column">
 
-    
+**1. Additive (Bahdanau):**
+```python
+# score = v^T * tanh(W1*s + W2*h)
+score = v @ tanh(W1 @ s + W2 @ h)
+```
+- More parameters, flexible
 
-2. **Multiplicative Attention (Luong et al. 2015):**
-    
-    (s_t, h_i) = s_t^T W h_i
-    
-    - Simpler, faster computation
-- Works well in practice
+**2. Multiplicative (Luong):**
+```python
+# score = s^T * W * h
+score = s @ W @ h
+```
+- Simpler, faster
 
-    
+</div>
+<div class="column">
 
-3. **Scaled Dot-Product (Vaswani et al. 2017):**
-    
-    (s_t, h_i) = {}
-    
-    - Used in Transformers (coming next lecture!)
-- Scaling prevents vanishing gradients
+**3. Dot-Product:**
+```python
+# score = s^T * h
+score = s @ h
+```
+- No parameters!
+
+**4. Scaled Dot-Product (Transformers):**
+```python
+# score = (s^T * h) / sqrt(d)
+score = (s @ h) / sqrt(dim)
+```
+- Prevents gradient issues
+
+</div>
+</div>
 
 *Reference: Luong et al. (2015) - "Effective Approaches to Attention-based Neural Machine Translation"*
 
@@ -227,18 +280,22 @@ $h_1$ -> $h_2$ -> $h_3$ -> $h_4$ -> Encoder: -> $s_t$ -> Decoder: -> Input: "The
 
 **Example: English → French translation with attention weights**
 
-| Output | {c}{Input Words} |
-| --- | --- |
-| (French) | The | agreement | on | European |
-| accord | 0.1 | 0.8 | 0.05 | 0.05 |
-| sur | 0.05 | 0.05 | 0.8 | 0.1 |
-| l'européen | 0.05 | 0.05 | 0.1 | 0.8 |
+**Input:** "The European Economic Area"
+**Output:** "La zone economique europeenne"
+
+```
+              The    European  Economic   Area
+La           [0.8]    0.1       0.05      0.05
+zone         0.05    [0.1]      0.1      [0.75]  ← "zone" = "Area"
+economique   0.05     0.1      [0.8]      0.05
+europeenne   0.05    [0.8]      0.1       0.05   ← reordering!
+```
 
 **Observations:**
 - Diagonal pattern for similar word order
 - Model learns alignment automatically!
+- "europeenne" attends to "European" (reordering handled!)
 - No need for explicit word alignment annotations
-- Can handle reordering (syntax differences between languages)
 
 *Attention provides interpretability: we can see what the model is "looking at"*
 
@@ -341,21 +398,47 @@ class BahdanauAttention(nn.Module):
         self.v = nn.Linear(hidden_dim, 1)
 
     def forward(self, decoder_hidden, encoder_outputs):
-        # decoder_hidden: [batch, hidden_dim]
-        # encoder_outputs: [batch, seq_len, hidden_dim]
-
-        # Compute scores
+        # Compute scores: how relevant is each encoder state?
         dec = self.W_dec(decoder_hidden).unsqueeze(1)  # [batch, 1, hidden]
-        enc = self.W_enc(encoder_outputs)  # [batch, seq_len, hidden]
-        scores = self.v(torch.tanh(dec + enc))  # [batch, seq_len, 1]
+        enc = self.W_enc(encoder_outputs)              # [batch, seq_len, hidden]
+        scores = self.v(torch.tanh(dec + enc))         # [batch, seq_len, 1]
 
-        # Compute attention weights
-        attn_weights = F.softmax(scores, dim=1)  # [batch, seq_len, 1]
+        # Normalize to get attention weights (sum to 1)
+        attn_weights = F.softmax(scores, dim=1)        # [batch, seq_len, 1]
 
-        # Compute context vector
+        # Weighted sum of encoder outputs
         context = torch.sum(attn_weights * encoder_outputs, dim=1)
 
         return context, attn_weights.squeeze(-1)
+```
+
+---
+
+# Using the Attention Module 💻
+
+
+**Complete example with sample data**
+
+```python
+# Initialize attention module
+attn = BahdanauAttention(hidden_dim=64)
+
+# Sample encoder outputs (3 words, 64-dim hidden state)
+encoder_outputs = torch.randn(1, 3, 64)  # [batch=1, seq_len=3, hidden=64]
+
+# Current decoder hidden state
+decoder_hidden = torch.randn(1, 64)      # [batch=1, hidden=64]
+
+# Compute attention
+context, weights = attn(decoder_hidden, encoder_outputs)
+
+print(f"Context shape: {context.shape}")    # [1, 64]
+print(f"Attention weights: {weights}")       # [1, 3] - sums to 1.0!
+
+# Example output:
+# Attention weights: tensor([[0.28, 0.45, 0.27]])
+#                           "The" "cat" "sat"
+# Model focuses most on "cat" when generating next output word!
 ```
 
 

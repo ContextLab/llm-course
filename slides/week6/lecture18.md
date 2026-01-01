@@ -135,26 +135,48 @@ Winter 2026
 
 # MLM Example: Step by Step 📝
 
-
 **Sentence:** "The quick brown fox jumps over the lazy dog"
 
-**Step 1: Random Masking (15% of tokens)**
+<div class="columns">
+<div class="column">
 
+**Step 1: Select Tokens (15%)**
+9 tokens total, mask ~1-2
+
+```python
+tokens = ["The", "quick", "brown", "fox",
+          "jumps", "over", "the", "lazy", "dog"]
+# Randomly select: "quick" (idx 1), "over" (idx 5)
 ```
-\word -> quick -> over -> Select 2 tokens for masking (1
+
+**Step 2: Apply 80/10/10 Strategy**
+```python
+"quick" → 80% → [MASK]
+"over"  → 10% → "under" (random)
 ```
 
-**Step 2: Apply Masking Strategy**
-- "quick" → 80% chance → [MASK]
-- "over" → 10% chance → "under" (random word)
+</div>
+<div class="column">
 
-**Input to BERT:** "The [MASK] brown fox jumps under the lazy dog"
+**Step 3: Create Training Example**
+```python
+input:  "The [MASK] brown fox jumps
+         under the lazy dog"
+labels: [-1, "quick", -1, -1, -1,
+         "over", -1, -1, -1]
+# -1 = no loss computed
+```
 
-**Prediction targets:** quick, over
+**Step 4: Model Predicts**
+```python
+P("quick" | context) → high (adjective slot)
+P("over" | context)  → high (preposition slot)
+```
 
-**Model learns:**
-- "quick" from context: "The ___ brown" (adjective before noun)
-- "over" from context: "jumps ___ the" (preposition in this context)
+</div>
+</div>
+
+**Key insight:** Model must understand syntax AND semantics to predict masked words!
 
 
 ---
@@ -223,20 +245,61 @@ Winter 2026
 
 # BERT Input Representation 🔤
 
-
 **Three types of embeddings are summed:**
 
-```
-**Input: -> [CLS] -> my -> dog -> is -> cute
-```
+```python
+# Example: Sentence pair for NSP
+sentence_a = "My dog is cute"
+sentence_b = "He likes playing"
 
-\end{center**
+# Tokenization
+tokens = ["[CLS]", "my", "dog", "is", "cute", "[SEP]", "he", "likes", "playing", "[SEP]"]
+
+# Three embedding types (each is a 768-dim vector):
+token_emb   = [E_CLS, E_my, E_dog, E_is, E_cute, E_SEP, E_he, E_likes, E_playing, E_SEP]
+segment_emb = [E_A,   E_A,  E_A,   E_A,  E_A,    E_A,   E_B,  E_B,     E_B,       E_B   ]
+position_emb= [E_0,   E_1,  E_2,   E_3,  E_4,    E_5,   E_6,  E_7,     E_8,       E_9   ]
+
+# Final input = token + segment + position (element-wise sum)
+input_embedding = token_emb + segment_emb + position_emb
+```
 
 **Three embedding types:**
-1. **Token Embeddings**: WordPiece vocabulary
-2. **Segment Embeddings**: Which sentence (A or B)?
-3. **Position Embeddings**: Learned position (0 to 511)
+1. **Token Embeddings**: WordPiece vocabulary (30K learned vectors)
+2. **Segment Embeddings**: Which sentence (A or B)? (2 learned vectors)
+3. **Position Embeddings**: Learned position 0-511 (512 learned vectors)
 
+---
+
+# WordPiece Tokenization: Worked Example 🔤
+
+**How BERT handles unknown words**
+
+```python
+from transformers import BertTokenizer
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+
+# Common words stay intact
+tokenizer.tokenize("The cat sat on the mat")
+# → ['the', 'cat', 'sat', 'on', 'the', 'mat']
+
+# Rare/unknown words get split into subwords
+tokenizer.tokenize("unbelievably")
+# → ['un', '##believable', '##ly']  # "##" means continuation
+
+tokenizer.tokenize("ChatGPT is transformative")
+# → ['chat', '##g', '##pt', 'is', 'transform', '##ative']
+```
+
+<div class="callout info">
+<div class="callout-title">Why WordPiece?</div>
+
+- **No OOV problem**: Any word can be represented as subwords
+- **Morphology**: Learns word parts (prefixes, suffixes, stems)
+- **Compact vocabulary**: 30K tokens cover most text
+- Trade-off: Rare words take more tokens (longer sequences)
+
+</div>
 
 ---
 
@@ -271,19 +334,48 @@ Pre-training learns general language understanding that transfers to many downst
 
 # Fine-tuning BERT 🎓
 
-
 **Two-stage process: Pre-train then Fine-tune**
 
-```
-\begin{tabular -> **Stage 1 -> \begin{tabular -> \textbf{Stage 2 -> \begin{tabular -> \begin{tabular
+<div class="columns">
+<div class="column">
+
+**Stage 1: Pre-training** (done once)
+```python
+# Expensive: weeks on TPUs
+# Data: 3.3B words (books + Wikipedia)
+# Task: MLM + NSP
+# Result: General language understanding
+
+model = pretrain_bert(
+    data=["BooksCorpus", "Wikipedia"],
+    steps=1_000_000,
+    hardware="16 TPUs"
+)
 ```
 
-\end{center**
+</div>
+<div class="column">
 
-**Benefits:**
-- Pre-training is expensive but done once
-- Fine-tuning is cheap and fast
-- Same pre-trained model for all downstream tasks
+**Stage 2: Fine-tuning** (per task)
+```python
+# Cheap: hours on single GPU
+# Data: 1K-100K labeled examples
+# Task: Your specific task
+# Result: Task-specific model
+
+model = load_pretrained("bert-base")
+model.add_classifier(num_labels=2)
+model.train(
+    task_data,
+    epochs=3,
+    lr=2e-5  # Small learning rate!
+)
+```
+
+</div>
+</div>
+
+**Benefits:** Pre-training captures language; fine-tuning adapts to your task
 
 
 ---
@@ -385,6 +477,37 @@ print(f"Similarity: {similarity:.3f}")  # Low! (~0.3-0.5)
 # Different contexts → Different embeddings!
 ```
 
+---
+
+# Visualizing BERT's Contextual Embeddings 📊
+
+**Same word, different meanings, different vectors**
+
+```python
+# Find nearest neighbors for "bank" in each context
+from sklearn.neighbors import NearestNeighbors
+
+# Financial "bank" context
+neighbors_financial = find_nearest_words(emb1, vocabulary)
+# → ["banks", "financial", "account", "deposit", "loan", "credit"]
+
+# River "bank" context
+neighbors_river = find_nearest_words(emb2, vocabulary)
+# → ["shore", "riverside", "banks", "stream", "water", "edge"]
+```
+
+<div class="callout tip">
+<div class="callout-title">Concrete Measurements</div>
+
+| Word Pair | Word2Vec Similarity | BERT Similarity |
+|-----------|---------------------|-----------------|
+| bank (fin) vs bank (river) | 1.00 (same vector!) | 0.42 |
+| bank (fin) vs money | 0.65 | 0.78 |
+| bank (river) vs shore | 0.52 | 0.81 |
+
+BERT captures meaning differences that static embeddings miss!
+
+</div>
 
 ---
 
@@ -446,20 +569,34 @@ BERT made pre-trained transformers the standard approach in NLP. Almost all subs
 
 # BERT Layer Analysis 📊
 
-
 **Different layers capture different linguistic properties**
 
-```
-\layer -> (0,0) -> (0,1.5) -> (0,3) -> (0,4.5) -> (8, 2.65)
+```python
+# Probing experiment: Train linear classifiers on each layer's representations
+from transformers import BertModel
+import numpy as np
+
+model = BertModel.from_pretrained('bert-base-uncased', output_hidden_states=True)
+
+# Get hidden states for all 12 layers
+outputs = model(**inputs)
+hidden_states = outputs.hidden_states  # (13 layers: embedding + 12 transformer)
+
+# Results from probing studies (Tenney et al., 2019):
+layer_specialization = {
+    "Layers 0-2":  ["POS tagging", "Word boundaries"],     # Surface
+    "Layers 3-6":  ["Parse trees", "Dependencies"],        # Syntax
+    "Layers 7-9":  ["Semantic roles", "Coreference"],      # Semantics
+    "Layers 10-12": ["Task-specific representations"]       # Task
+}
 ```
 
 **Observations:**
 - Lower layers: surface features (word forms, POS)
 - Middle layers: syntax (phrase structure, dependencies)
 - Higher layers: semantics and task-specific features
-- Hierarchical representation learning
 
-*Similar to how CNNs learn in computer vision: edges → shapes → objects*
+*Similar to CNNs: edges → shapes → objects*
 
 ---
 

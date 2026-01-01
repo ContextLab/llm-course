@@ -101,6 +101,38 @@ Always look at your data before building models.
 
 ---
 
+# Exploring the Data: Concrete Example 📊
+
+```python
+import pandas as pd
+from collections import Counter
+
+# Check class distribution
+print("Documents per category:")
+for i, name in enumerate(train_data.target_names):
+    count = (train_data.target == i).sum()
+    print(f"  {name}: {count}")
+
+# Output:
+#   sci.space: 593
+#   rec.sport.hockey: 600
+#   talk.politics.misc: 465
+#   comp.graphics: 584
+
+# Look at a sample document
+print("\n--- Sample document (sci.space) ---")
+idx = [i for i, t in enumerate(train_data.target) if t == 0][0]
+print(train_data.data[idx][:500])
+
+# Output might show:
+# "NASA announced today that the Mars rover has discovered
+#  evidence of water ice beneath the surface..."
+```
+
+**Notice:** Classes are roughly balanced (good!), but `talk.politics.misc` has fewer examples.
+
+---
+
 # Part 2: Feature Engineering
 
 **The fundamental question:**
@@ -148,6 +180,38 @@ X_train_bow = bow_vectorizer.fit_transform(train_data.data)
 - Context
 
 **Key insight:** Common words dominate but are often uninformative!
+
+---
+
+# BoW: Concrete Vector Example 📊
+
+**What does a BoW vector actually look like?**
+
+```python
+from sklearn.feature_extraction.text import CountVectorizer
+
+docs = [
+    "NASA launches rocket to Mars",
+    "Hockey game ends in overtime",
+    "NASA discovers water on Mars"
+]
+
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(docs)
+
+# Vocabulary mapping
+print("Vocabulary:", vectorizer.vocabulary_)
+# {'nasa': 5, 'launches': 4, 'rocket': 7, 'to': 8, 'mars': 6,
+#  'hockey': 2, 'game': 1, 'ends': 0, 'in': 3, 'overtime': 9,
+#  'discovers': 10, 'water': 11, 'on': 12}
+
+# Document vectors (sparse matrix)
+print("\nDocument 1:", X[0].toarray())
+# [0 0 0 0 1 1 1 1 1 0 0 0 0]  <- counts for each word
+#        └─ "launches"=1, "nasa"=1, "mars"=1, "rocket"=1, "to"=1
+```
+
+**Observation:** Most entries are 0 (sparse!). Documents share "mars" and "nasa".
 
 ---
 
@@ -348,6 +412,38 @@ $$F1 = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + 
 - Documents with mixed topics
 - Short documents with little signal
 - Unusual vocabulary
+
+---
+
+# Error Analysis: Concrete Example 🔍
+
+```python
+# Find misclassified examples
+y_pred = lr.predict(X_test_tfidf)
+errors = np.where(y_pred != test_data.target)[0]
+
+print(f"Found {len(errors)} misclassifications out of {len(y_pred)}")
+
+# Examine a specific error
+idx = errors[0]
+print(f"\nMisclassified document:")
+print(f"  True: {test_data.target_names[test_data.target[idx]]}")
+print(f"  Predicted: {test_data.target_names[y_pred[idx]]}")
+print(f"\nText preview:")
+print(test_data.data[idx][:300])
+```
+
+**Example output:**
+```
+True: sci.space       Predicted: comp.graphics
+
+Text preview:
+"I'm working on a 3D visualization of the solar system for
+my graphics project. Does anyone know how to render realistic
+planet textures? I've been using data from NASA..."
+```
+
+**Insight:** Document mentions both graphics AND space. Model reasonably confused!
 
 ---
 

@@ -47,36 +47,41 @@ Without position information:
 <div class="column">
 
 **Original Transformer (Sinusoidal):**
+```python
+# PE(pos, 2i) = sin(pos / 10000^(2i/d))
+# PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
 
-PE_{(pos, 2i)} &= \sin(pos / 10000^{2i/d}) \\
-PE_{(pos, 2i+1)} &= \cos(pos / 10000^{2i/d})
+# Position 0, dim 0: sin(0/10000^0) = 0
+# Position 1, dim 0: sin(1/10000^0) = 0.84
+# Position 2, dim 0: sin(2/10000^0) = 0.91
+```
 
 **Properties:**
-- Deterministic
-- Unique for each position
-- Smooth changes
+- Deterministic, unique per position
 - Generalizes to unseen lengths
 
 </div>
 <div class="column">
 
-**Modern Approach: RoPE**
+**Concrete Example:**
+```
+Token embeddings:
+"The" = [0.2, 0.5, 0.1, 0.8]
+"cat" = [0.9, 0.3, 0.7, 0.2]
 
-Rotary Position Embedding (Su et al. 2021)
-- Rotates Q and K in complex space
-- Relative position encoding
-- Better extrapolation
-- Used in: LLaMA, GPT-NeoX
+Positional encodings:
+pos_0 = [0.0, 1.0, 0.0, 1.0]
+pos_1 = [0.84, 0.54, 0.01, 1.0]
 
-**Learned Positional Embeddings:**
-- Treat positions as vocabulary
-- Learn embeddings during training
-- Used in: BERT, GPT
+Final input (add them):
+"The" = [0.2, 1.5, 0.1, 1.8]
+"cat" = [1.74, 0.84, 0.71, 1.2]
+```
 
 </div>
 </div>
 
-*References: Vaswani et al. (2017), Su et al. (2021) - "RoFormer: Enhanced Transformer with Rotary Position Embedding"*
+*References: Vaswani et al. (2017), Su et al. (2021)*
 
 ---
 
@@ -85,30 +90,44 @@ Rotary Position Embedding (Su et al. 2021)
 
 **Advantages of sine/cosine functions:**
 
-1. **Unique Patterns**
-    - Each position gets a unique vector
-- Different frequencies for different dimensions
-- Creates distinguishable position signatures
+<div class="columns">
+<div class="column">
 
-    
+**1. Unique Patterns**
+- Each position gets unique vector
+- Different frequencies per dimension
 
-2. **Relative Position Information**
-    - $PE_{pos+k}$ can be expressed as linear function of $PE_{pos}$
-- Model can learn to attend by relative position
-- Trigonometric identity: $\sin(a+b) = \sin a \cos b + \cos a \sin b$
+**2. Relative Position Info**
+- PE(pos+k) = linear function of PE(pos)
+- Model learns relative positions
 
-    
+**3. Extrapolation**
+- Works for sequences longer than training
+- No need to retrain
 
-3. **Extrapolation**
-    - Can handle sequences longer than training length
-- Sine/cosine continue smoothly
-- No need to retrain for different lengths
+**4. No Parameters**
+- Deterministic, saves memory
 
-    
+</div>
+<div class="column">
 
-4. **No Additional Parameters**
-    - Deterministic, no learning required
-- Saves memory compared to learned embeddings
+**Visualization:**
+```
+Dim 0 (high freq): ~~~~~ (fast oscillation)
+Dim 1 (mid freq):  ~~~   (medium)
+Dim 2 (low freq):  ~     (slow)
+
+Position 0: [0.0, 0.0, 0.0, ...]
+Position 1: [0.84, 0.01, 0.0001, ...]
+Position 2: [0.91, 0.02, 0.0002, ...]
+...
+Position 100: [0.51, 0.86, 0.01, ...]
+
+Each position has a unique "barcode"!
+```
+
+</div>
+</div>
 
 
 ---
@@ -136,20 +155,30 @@ Pos 0 -> Pos 5 -> Pos 9 -> Dim 0 -> Dim 4 -> Dim 7
 
 **After attention, apply position-wise feed-forward network**
 
-**Architecture:**
+**Architecture:** Two linear layers with ReLU/GELU activation
 
-(x) = \max(0, xW_1 + b_1)W_2 + b_2
+```python
+class FeedForward(nn.Module):
+    def __init__(self, d_model=768, d_ff=3072):  # 4x expansion
+        super().__init__()
+        self.linear1 = nn.Linear(d_model, d_ff)    # 768 → 3072
+        self.linear2 = nn.Linear(d_ff, d_model)    # 3072 → 768
+        self.relu = nn.ReLU()
 
-- Two linear transformations with ReLU activation
-- Applied to each position independently
-- Same network for all positions
-- Typical: Expand 4x then project back
+    def forward(self, x):
+        # x: [batch, seq_len, 768]
+        x = self.linear1(x)   # [batch, seq_len, 3072]
+        x = self.relu(x)      # Non-linearity!
+        x = self.linear2(x)   # [batch, seq_len, 768]
+        return x
 
+# Applied to each position independently
+# Same weights for all positions
 ```
-Input (768 dims) -> Linear + ReLU (3072 dims) -> Linear (768 dims) -> Output (768 dims) -> 4x expansion
-```
 
-**Purpose:** Add non-linearity and transform representations
+**Purpose:** Add non-linearity and increase model capacity
+- Attention is mostly linear (weighted sums)
+- FFN adds expressiveness through ReLU/GELU
 
 ---
 
@@ -187,7 +216,7 @@ Input (768 dims) -> Linear + ReLU (3072 dims) -> Linear (768 dims) -> Output (76
 
 ---
 
-# Layer Normalization \& Residual Connections 🔗
+# Layer Normalization & Residual Connections 🔗
 
 
 **Critical for training deep transformers!**
@@ -196,40 +225,39 @@ Input (768 dims) -> Linear + ReLU (3072 dims) -> Linear (768 dims) -> Output (76
 <div class="column">
 
 **Residual Connections:**
-
- = (x) + x
-
-- Allows gradients to flow directly
+```python
+# output = sublayer(x) + x
+x = x + self.attention(x)
+x = x + self.feedforward(x)
+```
+- Gradients flow directly through
 - Prevents vanishing gradients
-- Enables very deep networks
-- Identity mapping as fallback
-
-**Analogy:**
-Like highway roads for information flow!
+- Enables 96-layer models (GPT-3)!
 
 </div>
 <div class="column">
 
 **Layer Normalization:**
+```python
+# Normalize across features (not batch)
+def layer_norm(x, gamma, beta):
+    mean = x.mean(dim=-1)
+    std = x.std(dim=-1)
+    return gamma * (x - mean) / std + beta
 
-(x) = \gamma {\sigma} + \beta
-
-- Normalize across features
-- Stabilizes training
-- Faster convergence
-- Independent of batch size
-
-```
-$x$ -> Layer -> LayerNorm -> Add -> Residual
+# Example: x = [0.2, 0.8, 0.5]
+# mean=0.5, std=0.25
+# normalized = [-1.2, 1.2, 0.0]
 ```
 
 </div>
 </div>
 
-**Standard Pattern:**
-
-x &\leftarrow (x + (x)) \\
-x &\leftarrow (x + (x))
+**Standard Pattern (Post-Norm):**
+```python
+x = LayerNorm(x + Attention(x))
+x = LayerNorm(x + FeedForward(x))
+```
 
 
 ---
@@ -244,29 +272,27 @@ x &\leftarrow (x + (x))
 <div class="column">
 
 **Post-Norm (Original):**
-
-x &\leftarrow (x + (x)) \\
-x &\leftarrow (x + (x))
-
-- Used in original Transformer
-- Normalization after residual
-- Better performance when it works
-
+```python
+# Normalize AFTER residual
+x = LayerNorm(x + Attention(x))
+x = LayerNorm(x + FFN(x))
+```
+- Used in original Transformer, BERT
+- Can be unstable for deep models
 - Requires careful initialization
 
 </div>
 <div class="column">
 
 **Pre-Norm (Modern):**
-
-x &\leftarrow x + ((x)) \\
-x &\leftarrow x + ((x))
-
-- Increasingly popular
-- Normalization before sublayer
-
-- Easier to train very deep models
-- Used in: GPT-2, GPT-3, many modern LLMs
+```python
+# Normalize BEFORE sublayer
+x = x + Attention(LayerNorm(x))
+x = x + FFN(LayerNorm(x))
+```
+- Used in GPT-2, GPT-3, LLaMA
+- More stable gradients
+- Easier to train 96+ layer models
 
 </div>
 </div>
@@ -274,7 +300,7 @@ x &\leftarrow x + ((x))
 <div class="callout info">
 <div class="callout-title">Recommendation</div>
 
-For deep transformers (24+ layers), Pre-Norm is generally preferred due to better training stability.
+For deep transformers (24+ layers), Pre-Norm is preferred due to better training stability. Post-Norm can achieve slightly better final performance with careful tuning.
 
 </div>
 
@@ -286,14 +312,29 @@ For deep transformers (24+ layers), Pre-Norm is generally preferred due to bette
 
 **Putting it all together:**
 
-```
-Input + Pos Encoding -> Multi-Head Attention -> Add & Norm -> Feed Forward -> Add & Norm -> Output to next layer ->  Context mixing ->  Position-wise trans
+```python
+class TransformerBlock(nn.Module):
+    def __init__(self, d_model=768, n_heads=12, d_ff=3072):
+        super().__init__()
+        self.attention = MultiHeadAttention(d_model, n_heads)
+        self.ffn = FeedForward(d_model, d_ff)
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+
+    def forward(self, x):
+        # Self-attention with residual
+        x = x + self.attention(self.norm1(x))
+        # Feed-forward with residual
+        x = x + self.ffn(self.norm2(x))
+        return x
+
+# Stack N blocks!
+encoder = nn.Sequential(*[TransformerBlock() for _ in range(12)])
 ```
 
-**Stack this block $N$ times!**
-- BERT-base: 12 blocks
-- BERT-large: 24 blocks
-- GPT-3: 96 blocks!
+**Model sizes:**
+- BERT-base: 12 blocks, 110M params | BERT-large: 24 blocks, 340M params
+- GPT-3: 96 blocks, 175B params!
 
 
 ---
@@ -306,8 +347,8 @@ Input + Pos Encoding -> Multi-Head Attention -> Add & Norm -> Feed Forward -> Ad
 <div class="callout warning">
 <div class="callout-title">Standard Attention Complexity</div>
 
-- Time: $O(n^2)$ where $n$ is sequence length
-- Memory: $O(n^2)$ to store attention matrix
+- Time: O(n^2) where n = sequence length
+- Memory: O(n^2) to store attention matrix
 - Bottleneck: Reading/writing to GPU memory (HBM)
 
 </div>
@@ -318,27 +359,39 @@ Input + Pos Encoding -> Multi-Head Attention -> Add & Norm -> Feed Forward -> Ad
 **FlashAttention Innovation:**
 - Tile-based computation
 - Uses fast SRAM instead of slow HBM
-- Fused operations
+- Fused operations (fewer memory reads)
 - Recomputation in backward pass
 
-- Enables longer sequences
+```python
+# Standard: materialize full n×n matrix
+attn = softmax(Q @ K.T / sqrt(d))
+out = attn @ V  # O(n^2) memory
+
+# FlashAttention: compute in tiles
+for tile in tiles:
+    # Only load small tile to SRAM
+    # Never materialize full matrix!
+```
 
 </div>
 <div class="column">
 
-**Impact:**
-- GPT-3: 512 → 2048 context
-- BERT: Faster training
-- Long-document understanding
-- Used in: LLaMA, GPT-4
+**Concrete Speedup:**
 
-| FlashAttn | 3x | 0.5x |
+| Method | Speed | Memory |
 | --- | --- | --- |
+| Standard | 1x | 1x |
+| FlashAttention | 3x faster | 0.5x |
+
+**Real Impact:**
+- Sequence 1024→4096 on same GPU
+- Training 2-4x faster
+- Used in: LLaMA, GPT-4, Mistral
 
 </div>
 </div>
 
-*Reference: Dao et al. (2022) - "FlashAttention: Fast and Memory-Efficient Exact Attention"*
+*Reference: Dao et al. (2022) - "FlashAttention"*
 
 ---
 
@@ -425,7 +478,7 @@ Input + Pos Encoding -> Multi-Head Attention -> Add & Norm -> Feed Forward -> Ad
 ```python
 from transformers import AutoModel, AutoTokenizer
 
-# Load pre-trained model
+# Load pre-trained model (downloads ~440MB first time)
 model_name = "bert-base-uncased"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModel.from_pretrained(model_name)
@@ -433,18 +486,20 @@ model = AutoModel.from_pretrained(model_name)
 # Tokenize input
 text = "The animal didn't cross the street because it was too tired"
 inputs = tokenizer(text, return_tensors="pt")
+print(inputs['input_ids'])
+# tensor([[  101,  1996,  4111,  2134,  1005,  1056,  2892,  1996,
+#           2395,  2138,  2009,  2001,  2205,  5458,   102]])
+#         [CLS]  The  animal didn  '     t    cross  the ...
 
 # Get contextualized embeddings
 outputs = model(**inputs)
-hidden_states = outputs.last_hidden_state  # Shape: [batch, seq_len, 768]
+hidden_states = outputs.last_hidden_state  # [1, 15, 768]
 
-# Extract embedding for specific token
-token_embeddings = hidden_states[0]  # [seq_len, 768]
-print(f"Shape: {token_embeddings.shape}")
-# Each token now has a context-aware representation!
+# "it" is at position 10 - its embedding knows it refers to "animal"!
+it_embedding = hidden_states[0, 10, :]  # 768-dim context-aware vector
 ```
 
-*Reference: HuggingFace Course - Chapter 1.4 (How do Transformers work?)*
+*Reference: HuggingFace Course - Chapter 1.4*
 
 ---
 
@@ -482,31 +537,56 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 # Practical Tips for Training Transformers 💡
 
 
-1. **Learning Rate & Warmup**
-    - Use learning rate warmup (linear increase then decay)
-- Typical: warmup for 10% of training steps
-- Peak LR: 1e-4 to 5e-4 (from scratch), 1e-5 to 5e-5 (fine-tuning)
+<div class="columns">
+<div class="column">
 
-    
+**1. Learning Rate & Warmup**
+```python
+# Warmup: gradually increase LR
+# Then decay (linear or cosine)
+scheduler = get_linear_schedule_with_warmup(
+    optimizer,
+    num_warmup_steps=1000,  # ~10% of training
+    num_training_steps=10000
+)
+# Fine-tuning: lr=2e-5, From scratch: lr=1e-4
+```
 
-2. **Optimization**
-    - Use Adam or AdamW optimizer
-- AdamW: Adam + weight decay (better generalization)
-- Gradient clipping to prevent exploding gradients
+**2. Optimizer**
+```python
+optimizer = AdamW(
+    model.parameters(),
+    lr=2e-5,
+    weight_decay=0.01  # L2 regularization
+)
+```
 
-    
+</div>
+<div class="column">
 
-3. **Regularization**
-    - Dropout after attention and FFN (typical: 0.1)
-- Weight decay (typical: 0.01)
-- Label smoothing for classification
+**3. Regularization**
+```python
+# Dropout after attention and FFN
+self.dropout = nn.Dropout(0.1)
 
-    
+# Gradient clipping
+torch.nn.utils.clip_grad_norm_(
+    model.parameters(), max_norm=1.0
+)
+```
 
-4. **Mixed Precision Training**
-    - Use FP16 instead of FP32
-- 2x speedup, 2x memory reduction
-- Minimal accuracy loss
+**4. Mixed Precision (FP16)**
+```python
+from torch.cuda.amp import autocast
+
+with autocast():  # Use FP16
+    outputs = model(inputs)
+    loss = criterion(outputs, labels)
+# 2x faster, 2x less memory!
+```
+
+</div>
+</div>
 
 
 ---

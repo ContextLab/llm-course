@@ -189,6 +189,54 @@ new_text = re.sub(r"I am", "You are", text)
 ```
 
 ---
+<!-- _class: scale-70 -->
+
+# Worked example: Building a simple chatbot rule
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Goal:** Respond to "I am [feeling]" statements
+
+```python
+import re
+
+def simple_respond(user_input):
+    # Try to match "I am [something]"
+    match = re.search(
+        r"I am (.*)",
+        user_input,
+        re.IGNORECASE
+    )
+
+    if match:
+        feeling = match.group(1)
+        return f"Why are you {feeling}?"
+
+    return "Tell me more."
+```
+
+</div>
+<div style="flex: 1;">
+
+**Try it:**
+```python
+>>> simple_respond("I am tired")
+"Why are you tired?"
+
+>>> simple_respond("I am feeling anxious")
+"Why are you feeling anxious?"
+
+>>> simple_respond("Hello there")
+"Tell me more."
+```
+
+**Key insight:** The computer has no idea what "tired" or "anxious" mean. It's just copying text!
+
+</div>
+</div>
+
+---
 
 # Meet ELIZA: a computerized Rogerian therapist
 
@@ -233,6 +281,54 @@ Have a [conversation with ELIZA](https://contextlab.github.io/llm-course/demos/0
 - Can you "trick" ELIZA? How?
 - What kinds of inputs break the illusion?
 - **How do you think ELIZA *works*?**
+
+---
+<!-- _class: scale-70 -->
+
+# Example ELIZA conversation
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+```
+User:   I am feeling sad today
+ELIZA:  Why are you feeling sad today?
+
+User:   My mother doesn't understand me
+ELIZA:  Tell me more about your family.
+
+User:   She always criticizes everything I do
+ELIZA:  Your mother?
+
+User:   Yes, and my father too
+ELIZA:  What else comes to mind when you
+        think of your father?
+
+User:   I don't know
+ELIZA:  Why don't you know?
+```
+
+</div>
+<div style="flex: 1;">
+
+**Notice how ELIZA:**
+- Picks up on keywords ("mother", "father")
+- Reflects statements back as questions
+- Uses generic prompts when stuck
+- Never makes specific claims about the world
+
+**Where it breaks down:**
+```
+User:   What is 2 + 2?
+ELIZA:  Why do you ask?
+
+User:   I want to know if you're intelligent
+ELIZA:  Does it please you to believe I
+        am intelligent?
+```
+
+</div>
+</div>
 
 ---
 
@@ -294,6 +390,48 @@ Have *you* experienced the ELIZA effect with modern AI systems (ChatGPT, Claude,
 - What broke the illusion?
 - What is the difference between *seeming* intelligent and *being* intelligent?
 - How would we *know* if an AI truly understood us?
+
+---
+<!-- _class: scale-78 -->
+
+# Example: The ELIZA effect in modern AI
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Feels like understanding:**
+```
+User: I'm really stressed about my exam
+AI:   I can hear that you're feeling
+      overwhelmed. Exams can be really
+      stressful. What subject is it?
+
+User: Physics. I've been studying for weeks
+AI:   Studying for weeks shows real
+      dedication. What part of physics
+      is giving you trouble?
+```
+
+**Creates the illusion of empathy**
+
+</div>
+<div style="flex: 1;">
+
+**Reveals the limitation:**
+```
+User: I just realized I left my exam
+      notes in your office
+AI:   I understand that can be frustrating!
+      Would you like tips on how to
+      retrieve your notes?
+```
+
+The AI has no office. It cannot have your notes. But it responds as if this makes sense!
+
+**Pattern matching, not understanding.**
+
+</div>
+</div>
 
 ---
 

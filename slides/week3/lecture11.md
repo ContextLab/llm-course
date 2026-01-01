@@ -86,7 +86,7 @@ Winter 2026
 - Predict word from context (Skip-gram)
 - Dense, low-dimensional vectors
 - Captures semantic relationships
--  training with negative sampling
+- Fast training with negative sampling
 
 **Impact:**
 - Sparked deep learning in NLP
@@ -98,12 +98,12 @@ Winter 2026
 
 **Famous Results:**
 
-$ -  +  \approx $
+$$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{queen}}$$
 
 **Other Examples:**
-- $ -  +  \approx $
-- $ -  +  \approx $
-- $ -  +  \approx $
+- $\vec{\text{Paris}} - \vec{\text{France}} + \vec{\text{Italy}} \approx \vec{\text{Rome}}$
+- $\vec{\text{walking}} - \vec{\text{walk}} + \vec{\text{swim}} \approx \vec{\text{swimming}}$
+- $\vec{\text{bigger}} - \vec{\text{big}} + \vec{\text{small}} \approx \vec{\text{smaller}}$
 
 </div>
 </div>
@@ -131,10 +131,37 @@ $ -  +  \approx $
 
 **Key Idea:**
 - Train a model to predict target from context (or vice versa)
-- The learned  become our word vectors!
+- The learned **weights** become our word vectors!
 - Similar words will have similar weight patterns
 
 *We don't actually care about the prediction task—we want the embeddings!*
+
+---
+
+# Context Windows: Worked Example 📝
+
+**Sentence:** "The cat sat on the mat"
+
+**Window size = 2** (2 words on each side)
+
+```
+Position 0: "The"  → Context: [cat, sat]
+Position 1: "cat"  → Context: [The, sat, on]
+Position 2: "sat"  → Context: [The, cat, on, the]
+Position 3: "on"   → Context: [cat, sat, the, mat]
+Position 4: "the"  → Context: [sat, on, mat]
+Position 5: "mat"  → Context: [on, the]
+```
+
+**Skip-gram training pairs** (target → context):
+```
+(The, cat), (The, sat)
+(cat, The), (cat, sat), (cat, on)
+(sat, The), (sat, cat), (sat, on), (sat, the)
+...
+```
+
+**Result:** Words appearing in similar contexts get similar vectors!
 
 
 ---
@@ -148,7 +175,11 @@ $ -  +  \approx $
 <div class="column">
 
 ```
-the -> cat -> on -> the -> Hidden -> Average/Sum
+Context words:
+  "the" ──┐
+  "cat" ──┼──→ Average ──→ "sat"
+  "on"  ──┼──→ Hidden  ──→ (predict)
+  "the" ──┘
 ```
 
 </div>
@@ -161,11 +192,11 @@ the -> cat -> on -> the -> Hidden -> Average/Sum
 
 **Training:**
 - Context window size (e.g., 5 words)
-- Maximize $P(|)$
+- Maximize $P(w_t|w_{t-c},...,w_{t+c})$
 - Backpropagation updates embeddings
 
 **Characteristics:**
--  to train than Skip-gram
+- Faster to train than Skip-gram
 - Better for frequent words
 - Smooths over context
 - Good for syntactic tasks
@@ -173,7 +204,7 @@ the -> cat -> on -> the -> Hidden -> Average/Sum
 </div>
 </div>
 
-**Objective:** $\max {T}\sum_{t=1}^T \log P(w_t | w_{t-c},...,w_{t+c})$
+**Objective:** $\max \frac{1}{T}\sum_{t=1}^T \log P(w_t | w_{t-c},...,w_{t+c})$
 
 ---
 
@@ -186,10 +217,35 @@ the -> cat -> on -> the -> Hidden -> Average/Sum
 <div class="column">
 
 ```
-**sat -> Hidden -> the -> cat -> on -> the
+Center word:           Predict context:
+                   ┌──→ "the"
+                   ├──→ "cat"
+  "sat" ──→ Hidden ┼──→ "on"
+                   └──→ "the"
 ```
 
-{T}\sum_{t=1}^T \sum_{-c \leq j \leq c, j ≠ 0} \log P(w_{t+j} | w_t)$
+</div>
+<div class="column">
+
+**Architecture:**
+1. Input: One-hot vector of center word
+2. Hidden: Word embedding
+3. Output: Softmax predicting each context word
+
+**Training:**
+- For each center word, predict surrounding words
+- Maximize $P(w_{context}|w_{center})$
+
+**Characteristics:**
+- Slower but better quality
+- Better for rare words
+- Captures more semantic relationships
+- Most commonly used
+
+</div>
+</div>
+
+**Objective:** $\max \frac{1}{T}\sum_{t=1}^T \sum_{-c \leq j \leq c, j \neq 0} \log P(w_{t+j} | w_t)$
 
 ---
 
@@ -198,11 +254,9 @@ the -> cat -> on -> the -> Hidden -> Average/Sum
 
 **Problem:** Softmax over entire vocabulary is too expensive!
 
-P(w_O|w_I) = ^T v_{w_I})}{\sum_{w=1}^V \exp(v_w^T v_{w_I})}
+$$P(w_O|w_I) = \frac{\exp(v_{w_O}^T v_{w_I})}{\sum_{w=1}^V \exp(v_w^T v_{w_I})}$$
 
-For 100k vocabulary: Need to compute 100k exponentials per training example! 😱
-
-\pause
+For 100k vocabulary: Need to compute 100k exponentials per training example!
 
 **Solution: Negative Sampling**
 
@@ -210,13 +264,41 @@ Instead of predicting across all words, create a binary classification:
 - **Positive sample:** Actual context word (label = 1)
 - **Negative samples:** K random words (label = 0)
 
-\log \sigma(v_{w_O}^T v_{w_I}) + \sum_{i=1}^k _{w_i \sim P_n(w)} [\log \sigma(-v_{w_i}^T v_{w_I})]
+$$\log \sigma(v_{w_O}^T v_{w_I}) + \sum_{i=1}^k \mathbb{E}_{w_i \sim P_n(w)} [\log \sigma(-v_{w_i}^T v_{w_I})]$$
 
 **Typical K:** 5-20 for large datasets, 2-5 for small datasets
 
- Training becomes $O(k)$ instead of $O(V)$ per example!
+Training becomes $O(k)$ instead of $O(V)$ per example!
 
 *Reference: Mikolov et al. (2013b). "Distributed Representations of Words and Phrases"*
+
+---
+
+# Negative Sampling: Concrete Example 🎯
+
+**Training pair:** ("cat", "sat") - cat is center, sat is context
+
+```python
+# Positive sample: Does "sat" appear near "cat"? YES (label=1)
+positive_pair = ("cat", "sat", label=1)
+
+# Negative samples: Random words that DON'T appear near "cat"
+# Sample 5 random words from vocabulary
+negative_pairs = [
+    ("cat", "algorithm", label=0),
+    ("cat", "president", label=0),
+    ("cat", "quantum", label=0),
+    ("cat", "democracy", label=0),
+    ("cat", "software", label=0),
+]
+
+# Train binary classifier: Is this a real context pair?
+# Instead of 100k-way softmax → 6 binary predictions!
+```
+
+**Sampling distribution:** $P_n(w) \propto \text{freq}(w)^{0.75}$
+
+The 0.75 power gives rare words slightly higher probability of being sampled as negatives.
 
 ---
 
@@ -274,37 +356,57 @@ custom_model = Word2Vec(
 <div class="column">
 
 **Motivation:**
-- Word2Vec uses  context windows
-- LSA uses  co-occurrence statistics
+- Word2Vec uses **local** context windows
+- LSA uses **global** co-occurrence statistics
 - Can we get the best of both?
 
 **Key Insight:**
 
 Ratios of co-occurrence probabilities encode meaning better than raw probabilities!
 
-| gas | low | high |
-| --- | --- | --- |
-| water | med | med |
-| fashion | low | low |
-
 </div>
 <div class="column">
 
-**Ratio Encodes Relevance:**
+**Co-occurrence Example:**
 
-|)}{P(|)} &\gg 1 \\
-|)}{P(|)} &\ll 1 \\
-|)}{P(|)} &\approx 1
+| Probe word | P(word\|ice) | P(word\|steam) | Ratio |
+|------------|-------------|----------------|-------|
+| solid      | high        | low            | >> 1  |
+| gas        | low         | high           | << 1  |
+| water      | high        | high           | ~ 1   |
+| fashion    | low         | low            | ~ 1   |
 
 **Idea:**
 Learn word vectors such that their dot product relates to co-occurrence probability ratios
 
-$_i^T _j \approx \log P(i,j)$
+$$\vec{w}_i^T \vec{w}_j \approx \log P(i,j)$$
 
 </div>
 </div>
 
 *Reference: Pennington et al. (2014). "GloVe: Global Vectors for Word Representation"*
+
+---
+
+# GloVe: The Ratio Intuition 🔢
+
+**Why ratios matter more than raw probabilities:**
+
+```
+Given words: "ice" and "steam"
+Probe with: "solid", "gas", "water"
+
+P(solid | ice)  = 0.00019    P(solid | steam) = 0.000022
+P(gas | ice)    = 0.000066   P(gas | steam)   = 0.00078
+
+Ratio: P(solid|ice) / P(solid|steam) = 8.9   → "solid" relates to ice
+Ratio: P(gas|ice)   / P(gas|steam)   = 0.085 → "gas" relates to steam
+Ratio: P(water|ice) / P(water|steam) = 1.36  → "water" is neutral
+```
+
+**The insight:** These ratios distinguish relevant context words from irrelevant ones!
+
+GloVe learns vectors where: $\frac{\vec{w}_{\text{ice}}^T \vec{w}_{\text{solid}}}{\vec{w}_{\text{steam}}^T \vec{w}_{\text{solid}}} \approx 8.9$
 
 ---
 
@@ -315,20 +417,18 @@ $_i^T _j \approx \log P(i,j)$
 
 **Objective Function:**
 
-J = \sum_{i,j=1}^{V} f(X_{ij}) \left(_i^T }_j + b_i + _j - \log X_{ij}\right)^2
+$$J = \sum_{i,j=1}^{V} f(X_{ij}) \left(\vec{w}_i^T \tilde{\vec{w}}_j + b_i + \tilde{b}_j - \log X_{ij}\right)^2$$
 
 where:
 - $X_{ij}$ = number of times word $j$ appears in context of word $i$
-- $_i$ = word vector for word $i$
-- $}_j$ = separate context vector for word $j$
-- $b_i, _j$ = bias terms
+- $\vec{w}_i$ = word vector for word $i$
+- $\tilde{\vec{w}}_j$ = separate context vector for word $j$
+- $b_i, \tilde{b}_j$ = bias terms
 - $f(X_{ij})$ = weighting function
 
 **Weighting Function:**
 
-f(x) = 
-(x/x_{\max})^\alpha &  x < x_{\max} \\
-1 & 
+$$f(x) = \begin{cases} (x/x_{\max})^\alpha & \text{if } x < x_{\max} \\ 1 & \text{otherwise} \end{cases}$$
 
 **Purpose:** Prevent very common co-occurrences from dominating (typically $x_{\max}=100$, $\alpha=0.75$)
 
@@ -462,13 +562,13 @@ print(f"Similarity: {similarity:.3f}")
 <div class="callout tip">
 <div class="callout-title">Example: "where" (with n=3)</div>
 
-**Character trigrams:** <wh, whe, her, ere, re>
+**Character trigrams:** &lt;wh, whe, her, ere, re&gt;
 
-**Plus:** <where> (the whole word)
+**Plus:** &lt;where&gt; (the whole word)
 
 **Word vector:**
 
-} = {6}\left(} + } + } + } + } + }\right)
+$$\vec{w}_{\text{where}} = \frac{1}{6}\left(\vec{z}_{\text{<wh}} + \vec{z}_{\text{whe}} + \vec{z}_{\text{her}} + \vec{z}_{\text{ere}} + \vec{z}_{\text{re>}} + \vec{z}_{\text{<where>}}\right)$$
 
 </div>
 
@@ -491,7 +591,7 @@ Have trained on: "run", "running"
 
 Need vector for: "runnable"
 
-N-grams: <ru, run, unn, nna, nab, abl, ble, le>
+N-grams: &lt;ru, run, unn, nna, nab, abl, ble, le&gt;
 
 Many overlap with "run" and "running"!
 
@@ -499,6 +599,36 @@ $\rightarrow$ Can generate reasonable embedding
 
 </div>
 </div>
+
+---
+
+# FastText: Morphology in Action 🔠
+
+**How FastText handles related words:**
+
+```python
+# Word: "unhappiness" broken into character 3-grams:
+# <un, unh, nha, hap, app, ppi, pin, ine, nes, ess, ss>
+
+# Shares n-grams with:
+# "unhappy"   → <un, unh, nha, hap, app, ppy
+# "happiness" → hap, app, ppi, pin, ine, nes, ess, ss>
+# "happy"     → hap, app, ppy
+
+# Therefore: vec("unhappiness") is close to:
+#   - vec("unhappy")     (prefix overlap)
+#   - vec("happiness")   (suffix overlap)
+#   - vec("sadness")     (similar suffix pattern)
+```
+
+**This is why FastText excels at morphologically rich languages!**
+
+| Language | Morphology | FastText Advantage |
+|----------|------------|-------------------|
+| English  | Low        | Moderate          |
+| German   | High       | Significant       |
+| Turkish  | Very High  | Essential         |
+| Finnish  | Extreme    | Critical          |
 
 
 ---
@@ -676,8 +806,8 @@ All get the ! This conflates different meanings.
 <div class="callout tip">
 <div class="callout-title">Gender Bias Examples</div>
 
-- $} : } :: } : }$
-- $} : } :: } : }$
+- $\vec{\text{man}} : \vec{\text{computer programmer}} :: \vec{\text{woman}} : \vec{\text{homemaker}}$
+- $\vec{\text{man}} : \vec{\text{doctor}} :: \vec{\text{woman}} : \vec{\text{nurse}}$
 - "man" more associated with "career", "woman" with "family"
 
 </div>
@@ -696,6 +826,38 @@ All get the ! This conflates different meanings.
 *References: Bolukbasi et al. (2016). "Man is to Computer Programmer as Woman is to Homemaker?"*
 
 *Caliskan et al. (2017). "Semantics derived automatically from language corpora contain human-like biases"*
+
+---
+
+# Bias Detection: Code Example 🔍
+
+```python
+import gensim.downloader as api
+model = api.load('word2vec-google-news-300')
+
+# Measure gender bias: which words are closer to "man" vs "woman"?
+def gender_bias_score(word):
+    """Positive = closer to man, Negative = closer to woman"""
+    return model.similarity(word, 'man') - model.similarity(word, 'woman')
+
+occupations = ['doctor', 'nurse', 'engineer', 'teacher',
+               'programmer', 'secretary', 'scientist', 'receptionist']
+
+for job in occupations:
+    score = gender_bias_score(job)
+    direction = "→ man" if score > 0 else "→ woman"
+    print(f"{job:12}: {score:+.3f} {direction}")
+
+# Output:
+# doctor      : +0.089 → man
+# nurse       : -0.109 → woman
+# engineer    : +0.078 → man
+# teacher     : -0.046 → woman
+# programmer  : +0.091 → man
+# secretary   : -0.107 → woman
+```
+
+**These biases reflect stereotypes in the training data (news articles)!**
 
 ---
 
@@ -757,24 +919,51 @@ Best practice:
 
 1. **Start with pre-trained models**
     - Word2Vec: Google News (300d, 3B words)
-- GloVe: Common Crawl (300d, 840B tokens)
-- FastText: Available in 157 languages
+    - GloVe: Common Crawl (300d, 840B tokens)
+    - FastText: Available in 157 languages
 2. **Fine-tune if you have domain data**
     - Medical: PubMed, clinical notes
-- Legal: case law, contracts
-- Social media: tweets, posts
-- Can significantly improve performance
+    - Legal: case law, contracts
+    - Social media: tweets, posts
+    - Can significantly improve performance
 3. **Choose dimensions wisely**
     - More dims = more expressiveness, more data needed
-- 50-100d: small datasets, fast computation
-- 200-300d: large datasets, better quality
+    - 50-100d: small datasets, fast computation
+    - 200-300d: large datasets, better quality
 4. **Use cosine similarity**
-    - $(u,v) = {||u|| \cdot ||v||}$
-- Not Euclidean distance (direction matters more than magnitude)
+    - $\text{sim}(u,v) = \frac{u \cdot v}{||u|| \cdot ||v||}$
+    - Not Euclidean distance (direction matters more than magnitude)
 5. **Be aware of biases and limitations**
     - Test for bias in your use case
-- Static embeddings can't handle polysemy
-- Consider contextual embeddings for better performance
+    - Static embeddings can't handle polysemy
+    - Consider contextual embeddings for better performance
+
+---
+
+# Loading Pre-trained Embeddings: Quick Reference 💻
+
+```python
+import gensim.downloader as api
+
+# Word2Vec (Google News, 3B words, 300d)
+w2v = api.load('word2vec-google-news-300')
+
+# GloVe options
+glove_50d = api.load('glove-wiki-gigaword-50')      # Small, fast
+glove_100d = api.load('glove-wiki-gigaword-100')    # Balanced
+glove_300d = api.load('glove-wiki-gigaword-300')    # Best quality
+glove_twitter = api.load('glove-twitter-100')       # Social media
+
+# FastText (handles OOV!)
+fasttext = api.load('fasttext-wiki-news-subwords-300')
+
+# Basic usage (same for all)
+similar = model.most_similar('computer', topn=5)
+vector = model['cat']
+similarity = model.similarity('dog', 'cat')
+```
+
+**Pro tip:** Start with glove-wiki-gigaword-100 for a good balance of speed and quality!
 
 
 ---
@@ -836,7 +1025,7 @@ Best practice:
 
 **The famous example:**
 
-$} - } + } \approx }$
+$$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{queen}}$$
 
 **Think about:**
 - What does vector subtraction represent linguistically?

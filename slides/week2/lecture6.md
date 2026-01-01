@@ -161,24 +161,57 @@ print(tokens)
 
     **Key insight:** Most words are made of smaller meaningful pieces!
 
-    
+
 
     **Examples:**
     - "unhappiness" = "un" + "happiness"
 - "preprocessing" = "pre" + "process" + "ing"
 - "antiestablishmentarianism" = "anti" + "establish" + "ment" + "arian" + "ism"
 
-    
+
 
     **Benefits:**
-    - ✅ Fixed, manageable vocabulary (30k-50k tokens)
-- ✅ Handle unknown words by breaking into known parts
-- ✅ Capture morphology: prefixes, suffixes, stems
-- ✅ Language-agnostic: works for any language!
+    - Fixed, manageable vocabulary (30k-50k tokens)
+- Handle unknown words by breaking into known parts
+- Capture morphology: prefixes, suffixes, stems
+- Language-agnostic: works for any language!
 
-    
 
-    **How?** Learn common character sequences from data! 📊
+
+    **How?** Learn common character sequences from data!
+
+---
+
+# Solving the OOV Problem: Concrete Example 🎯
+
+**The problem with word-level tokenization:**
+
+```python
+# Word-level vocabulary (only words seen in training)
+vocab = {"the", "cat", "sat", "on", "mat", "dog", "ran"}
+
+# Trying to tokenize a new sentence:
+sentence = "The supercalifragilisticexpialidocious cat meowed"
+# Word-level result: ["<UNK>", "<UNK>", "cat", "<UNK>"]
+# We lost almost everything!
+```
+
+**The subword solution:**
+
+```python
+from transformers import AutoTokenizer
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+
+# Same difficult sentence:
+tokens = tokenizer.tokenize("supercalifragilisticexpialidocious")
+print(tokens)
+# ['super', 'cal', 'if', 'rag', 'il', 'istic', 'exp', 'ial', 'id', 'ocious']
+
+# Every word can be tokenized! No information loss.
+# Model can learn that 'super-' often means "very/above"
+```
+
+**Key insight:** Subwords preserve meaning even for novel words!
 
 ---
 
@@ -246,33 +279,60 @@ print(tokens)
 
     **Training data:** "low low low lower lower newest newest newest newest widest"
 
-    
+
 
     **Initial tokens (characters):**
-    
-        `l, o, w, e, r, n, s, t, i, d`
-    
 
-    
+        `l, o, w, e, r, n, s, t, i, d`
+
+
+
 
     **Iteration 1:** Most frequent pair = `e, s` (appears 4 times)
     - Merge → new token: `es`
 - Vocabulary: `l, o, w, e, r, n, s, t, i, d, es`
 
-    
+
 
     **Iteration 2:** Most frequent = `es, t`
     - Merge → new token: `est`
 - Vocabulary: `l, o, w, e, r, n, s, t, i, d, es, est`
 
-    
+
 
     **Iteration 3:** Most frequent = `l, o`
     - Merge → new token: `lo`
 
-    
+
 
     Continue until reaching target vocabulary size (e.g., 30,000)...
+
+---
+
+# BPE: Concrete Worked Example 📝
+
+**Let's trace through tokenizing "lowest" after training:**
+
+```
+Training corpus: "low" (x3), "lower" (x2), "newest" (x4), "widest" (x1)
+
+After training, vocabulary includes:
+- Characters: l, o, w, e, r, n, s, t, i, d
+- Merges learned: es → est → lo → low → er → ...
+
+Tokenizing "lowest":
+  Step 1: Split into characters → [l, o, w, e, s, t]
+  Step 2: Apply merge rules in order learned:
+          [l, o, w, e, s, t]
+          → [lo, w, e, s, t]     (merge l+o)
+          → [low, e, s, t]       (merge lo+w)
+          → [low, es, t]         (merge e+s)
+          → [low, est]           (merge es+t)
+
+  Final tokens: ["low", "est"]
+```
+
+**Result:** "lowest" → `["low", "est"]` (2 tokens instead of 6 characters!)
 
 ---
 
@@ -502,6 +562,24 @@ for name, model_name in models.items():
 # - Number of tokens varies!
 ```
 
+
+---
+
+# Tokenizer Comparison: Actual Output 📊
+
+**Input:** `"The unhappiest researchers couldn't preprocess data!"`
+
+| Tokenizer | Tokens | Count |
+|-----------|--------|-------|
+| **GPT-2 (BPE)** | `['The', 'Ġun', 'happ', 'iest', 'Ġresearchers', 'Ġcouldn', "'t", 'Ġpre', 'process', 'Ġdata', '!']` | 11 |
+| **BERT (WordPiece)** | `['the', 'un', '##hap', '##pie', '##st', 'researchers', 'couldn', "'", 't', 'pre', '##process', 'data', '!']` | 13 |
+| **T5 (SentencePiece)** | `['▁The', '▁un', 'happiest', '▁researchers', '▁couldn', "'", 't', '▁pre', 'process', '▁data', '!']` | 11 |
+
+**Key observations:**
+- `Ġ` (GPT-2) and `▁` (T5) mark word starts (spaces)
+- `##` (BERT) marks continuation subwords
+- "unhappiest" is split differently by each
+- BERT lowercases; GPT-2/T5 preserve case
 
 ---
 

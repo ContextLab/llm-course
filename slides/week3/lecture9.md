@@ -101,7 +101,22 @@ $\rightarrow$ *cat*, *dog*, *kitten* are semantically related
 
 **Goal:** Represent each word as a point in high-dimensional space
 
-<!-- Flowchart - manual conversion needed -->
+<div class="callout tip">
+<div class="callout-title">Concrete Example</div>
+
+Consider a tiny corpus with 3 documents:
+- Doc 1: "The cat sat on the mat"
+- Doc 2: "The dog ran in the park"
+- Doc 3: "The cat and dog played"
+
+**Word-context co-occurrence:**
+| Word | appears with "the" | appears with "sat" | appears with "ran" |
+|------|-------------------|--------------------|--------------------|
+| cat  | 2                 | 1                  | 0                  |
+| dog  | 2                 | 0                  | 1                  |
+| mat  | 1                 | 1                  | 0                  |
+
+</div>
 
 **Problem:** Real vocabularies have 10,000+ words, contexts are even more numerous!
 
@@ -136,14 +151,14 @@ $\rightarrow$ We need **dimensionality reduction** 📉
 
 **Term Frequency - Inverse Document Frequency**
 
-(t,d) = (t,d) \times (t)
+$$\text{TF-IDF}(t,d) = \text{TF}(t,d) \times \text{IDF}(t)$$
 
 <div class="columns">
 <div class="column">
 
 **Term Frequency (TF):**
 
-(t,d) = (t,d)}{\sum_{t'} (t',d)}
+$$\text{TF}(t,d) = \frac{\text{count}(t,d)}{\sum_{t'} \text{count}(t',d)}$$
 
 How often does term $t$ appear in document $d$?
 
@@ -154,7 +169,7 @@ How often does term $t$ appear in document $d$?
 
 **Inverse Document Frequency (IDF):**
 
-(t) = \log {|{d : t \in d}|}
+$$\text{IDF}(t) = \log \frac{N}{|\{d : t \in d\}|}$$
 
 How rare is term $t$ across all documents?
 
@@ -163,12 +178,33 @@ How rare is term $t$ across all documents?
 </div>
 </div>
 
-<div class="callout tip">
-<div class="callout-title">Intuition</div>
+---
 
-Important words appear frequently in a document but rarely across all documents
+# TF-IDF: Worked Example 🔢
 
-</div>
+**Corpus:** 3 documents, 1000 total documents in collection
+
+| Document | Text |
+|----------|------|
+| Doc 1 | "machine learning is great" |
+| Doc 2 | "deep learning models" |
+| Doc 3 | "machine translation works" |
+
+**Calculate TF-IDF for "learning" in Doc 1:**
+
+```
+Step 1: TF("learning", Doc1) = 1/4 = 0.25  (1 occurrence, 4 words)
+
+Step 2: IDF("learning") = log(1000/500) = log(2) = 0.301
+        (appears in 500 of 1000 docs)
+
+Step 3: TF-IDF = 0.25 × 0.301 = 0.075
+```
+
+**Compare: "the" (appears in 950 docs):**
+```
+IDF("the") = log(1000/950) = 0.022  ← Much lower! Common words penalized
+```
 
 
 ---
@@ -197,34 +233,13 @@ Important words appear frequently in a document but rarely across all documents
 </div>
 <div class="column">
 
-<!-- DIAGRAM: TikZ conversion needed -->
-<!-- Original TikZ code preserved for reference:
-
-    % Term-Document Matrix
-    
-    
-    
-    
-
-    % SVD
-    
-
-    % U
-    
-    
-
-    % Sigma
-    
-    
-
-    % V^T
-    
-    
-...
--->
-
+**SVD Decomposition:**
 ```
-[Diagram placeholder - manual conversion required]
+X        =   U    ×    Σ    ×    V^T
+(m×n)      (m×k)    (k×k)     (k×n)
+
+words×docs  words×  topic    topics×
+            topics  strength  docs
 ```
 
 **Matrix Interpretation:**
@@ -236,6 +251,41 @@ Important words appear frequently in a document but rarely across all documents
 </div>
 
 *Reference: Deerwester et al. (1990) - "Indexing by Latent Semantic Analysis"*
+
+---
+
+# LSA: Step-by-Step Worked Example 🔍
+
+**Mini corpus (4 words × 3 documents):**
+
+```
+           Doc1    Doc2    Doc3
+cat         2       0       1
+dog         0       3       1
+pet         1       2       0
+animal      1       1       1
+```
+
+**Step 1: Apply SVD** $X = U \Sigma V^T$
+
+**Step 2: Keep top 2 dimensions** (k=2)
+
+```python
+from sklearn.decomposition import TruncatedSVD
+import numpy as np
+
+X = np.array([[2,0,1], [0,3,1], [1,2,0], [1,1,1]])
+svd = TruncatedSVD(n_components=2)
+word_embeddings = svd.fit_transform(X)
+
+print("Word vectors (2D):")
+print(f"cat:    [{word_embeddings[0,0]:.2f}, {word_embeddings[0,1]:.2f}]")
+print(f"dog:    [{word_embeddings[1,0]:.2f}, {word_embeddings[1,1]:.2f}]")
+print(f"pet:    [{word_embeddings[2,0]:.2f}, {word_embeddings[2,1]:.2f}]")
+print(f"animal: [{word_embeddings[3,0]:.2f}, {word_embeddings[3,1]:.2f}]")
+```
+
+**Result:** "pet" and "animal" end up close together in 2D space!
 
 ---
 
@@ -383,26 +433,23 @@ Topic 1 -> Topic 2 -> Topic 3 -> sports, game -> tech, code -> animal, pet
 **Generative Process:**
 1. Choose number of topics $K$
 2. For each topic $k$:
-    - Draw word distribution $\phi_k \sim (\beta)$
+    - Draw word distribution $\phi_k \sim \text{Dir}(\beta)$
 3. For each document $d$:
-    - Draw topic distribution $\theta_d \sim (\alpha)$
-- For each word position $n$:
-        
-- Choose topic $z_{dn} \sim (\theta_d)$
-- Choose word $w_{dn} \sim (\phi_{z_{dn}})$
+    - Draw topic distribution $\theta_d \sim \text{Dir}(\alpha)$
+    - For each word position $n$:
+        - Choose topic $z_{dn} \sim \text{Mult}(\theta_d)$
+        - Choose word $w_{dn} \sim \text{Mult}(\phi_{z_{dn}})$
 
 </div>
 <div class="column">
 
 **Key Parameters:**
 - $\alpha$: Document-topic density
-    
-- Low $\alpha$ $\rightarrow$ few topics per doc
-- High $\alpha$ $\rightarrow$ many topics per doc
-
-    \item $\beta$: Topic-word density
+    - Low $\alpha$ $\rightarrow$ few topics per doc
+    - High $\alpha$ $\rightarrow$ many topics per doc
+- $\beta$: Topic-word density
     - Low $\beta$ $\rightarrow$ focused topics
-- High $\beta$ $\rightarrow$ general topics
+    - High $\beta$ $\rightarrow$ general topics
 
 **Inference:**
 - Given documents, infer topics
@@ -411,6 +458,35 @@ Topic 1 -> Topic 2 -> Topic 3 -> sports, game -> tech, code -> animal, pet
 
 </div>
 </div>
+
+---
+
+# LDA: Concrete Generative Example 🎲
+
+**Imagine generating a document about "tech pets":**
+
+```
+Step 1: Pick topic mixture for this document
+        θ_doc = [0.6 Tech, 0.3 Animals, 0.1 Sports]
+
+Step 2: For each word, sample a topic, then sample a word:
+
+Word 1: Sample topic → Tech (60% chance)
+        Sample word from Tech → "software"
+
+Word 2: Sample topic → Animals (30% chance)
+        Sample word from Animals → "cat"
+
+Word 3: Sample topic → Tech (60% chance)
+        Sample word from Tech → "computer"
+
+Word 4: Sample topic → Animals (30% chance)
+        Sample word from Animals → "pet"
+
+Result: "software cat computer pet"
+```
+
+**LDA reverses this:** Given documents, infer the topics!
 
 
 ---
@@ -584,18 +660,15 @@ fig = model.visualize_topics()
 
 **Intrinsic Metrics:**
 - **Perplexity:** Lower is better
-    
-- Measures likelihood
-- Can be misleading!
-
-    \item **Topic Coherence:** Higher is better
+    - Measures likelihood
+    - Can be misleading!
+- **Topic Coherence:** Higher is better
     - Measures semantic similarity
-- Better correlation with human judgment
-- CV, UCI, UMass variants
-
-    \item **Topic Diversity:**
+    - Better correlation with human judgment
+    - CV, UCI, UMass variants
+- **Topic Diversity:**
     - Unique words across topics
-- Avoids redundant topics
+    - Avoids redundant topics
 
 </div>
 <div class="column">
@@ -613,13 +686,45 @@ fig = model.visualize_topics()
 <div class="callout warning">
 <div class="callout-title">Important</div>
 
-Perplexity $≠$ usefulness!
+Perplexity $\neq$ usefulness!
 Always check topic coherence and interpretability.
 
 </div>
 
 </div>
 </div>
+
+---
+
+# Coherence Evaluation: Code Example 💻
+
+```python
+from gensim.models import LdaModel
+from gensim.models.coherencemodel import CoherenceModel
+from gensim.corpora import Dictionary
+
+# Prepare corpus
+texts = [doc.split() for doc in documents]
+dictionary = Dictionary(texts)
+corpus = [dictionary.doc2bow(text) for text in texts]
+
+# Train LDA with different topic numbers
+coherence_scores = []
+for num_topics in [5, 10, 15, 20, 25]:
+    lda = LdaModel(corpus, num_topics=num_topics,
+                   id2word=dictionary, passes=10)
+
+    # Calculate coherence (C_V is recommended)
+    coherence = CoherenceModel(model=lda, texts=texts,
+                               dictionary=dictionary,
+                               coherence='c_v')
+    coherence_scores.append((num_topics, coherence.get_coherence()))
+
+# Results: [(5, 0.42), (10, 0.51), (15, 0.48), (20, 0.45), (25, 0.41)]
+# Best: 10 topics with coherence 0.51
+```
+
+**Rule of thumb:** Higher coherence = more interpretable topics
 
 
 ---
@@ -629,25 +734,55 @@ Always check topic coherence and interpretability.
 
 1. **Information Retrieval**
     - Semantic search
-- Document similarity
-- Query expansion
+    - Document similarity
+    - Query expansion
 2. **Document Organization**
     - Clustering
-- Topic discovery
-- Trend analysis
+    - Topic discovery
+    - Trend analysis
 3. **Text Mining**
     - Opinion mining
-- Literature review
-- Knowledge discovery
+    - Literature review
+    - Knowledge discovery
 4. **Preprocessing**
     - Feature reduction for ML
-- Noise reduction
-- Transfer learning
+    - Noise reduction
+    - Transfer learning
 
 **Real-world examples:**
 - Academic paper recommendations (LSA)
 - News article categorization (LDA)
 - Social media trend detection (BERTopic)
+
+---
+
+# Application Example: Semantic Search with LSA 🔎
+
+```python
+from sklearn.decomposition import TruncatedSVD
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Documents already vectorized with TF-IDF
+# tfidf_matrix shape: (1000 docs, 5000 words)
+
+# Apply LSA to reduce dimensions
+lsa = TruncatedSVD(n_components=100)
+doc_embeddings = lsa.fit_transform(tfidf_matrix)
+
+# User query: "machine learning algorithms"
+query_tfidf = vectorizer.transform(["machine learning algorithms"])
+query_embedding = lsa.transform(query_tfidf)
+
+# Find most similar documents
+similarities = cosine_similarity(query_embedding, doc_embeddings)[0]
+top_5_docs = similarities.argsort()[-5:][::-1]
+
+print("Most relevant documents:")
+for idx in top_5_docs:
+    print(f"  Doc {idx}: similarity = {similarities[idx]:.3f}")
+```
+
+**Key insight:** LSA finds documents about "neural networks" and "deep learning" even though those exact words weren't in the query!
 
 
 ---

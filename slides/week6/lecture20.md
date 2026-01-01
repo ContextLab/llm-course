@@ -84,39 +84,35 @@ BERT powers:
 
 # Case Study: Google Search 🔍
 
-
 **BERT revolutionized search in 2019**
 
-**Problem:**
-- Search queries often depend on context and word order
-- Traditional keyword matching misses nuance
-- Example: "2019 brazil traveler to usa need a visa"
+```python
+# Why word order matters: BERT understands prepositions!
+query = "2019 brazil traveler to usa need a visa"
 
-<div class="columns">
-<div class="column">
+# Before BERT (bag-of-words matching):
+keywords = ["brazil", "traveler", "usa", "visa"]
+# Matches both: "US traveler to Brazil" AND "Brazil traveler to US"
 
-**Before BERT:**
-- Focused on "brazil" and "usa"
-- Missed importance of "to"
-- Returned results about US travelers to Brazil
+# With BERT (contextual understanding):
+bert_understanding = {
+    "subject": "brazil traveler",      # WHO is traveling
+    "destination": "usa",               # WHERE they're going
+    "direction": "brazil → usa",        # The preposition "to" is key!
+    "intent": "visa requirements"
+}
+# BERT correctly ranks: "Brazil citizen visa requirements for USA"
+```
 
-\includegraphics[width=0.9\textwidth]{example-image-a}
+<div class="callout tip">
+<div class="callout-title">More Examples of Context-Sensitive Queries</div>
 
- Wrong: US → Brazil
+| Query | Before BERT | With BERT |
+|-------|-------------|-----------|
+| "can you get medicine for someone pharmacy" | Generic pharmacy results | Picking up prescriptions for others |
+| "do estheticians stand a lot at work" | Esthetician job listings | Physical demands of the job |
+| "parking on a hill with no curb" | Parking tickets, curb info | How to park safely without a curb |
 
-</div>
-<div class="column">
-
-**With BERT:**
-- Understands "to" is critical
-- Grasps full context and direction
-- Returns correct results about Brazilian travelers to US
-
-\includegraphics[width=0.9\textwidth]{example-image-b}
-
- Correct: Brazil → US
-
-</div>
 </div>
 
 *Google reported BERT improved 1 in 10 searches in English*
@@ -320,19 +316,29 @@ print(f"Similarity (1-3): {sim_13:.3f}")  # Low (different topics)
 
 # Prediction in Brains vs. Language Models 🧠🤖
 
-
 **Parallels between neural and artificial systems**
 
-| p{5cm}} Human Brain | Transformer Models |
-| --- | --- |
-| (surprise at unexpected word) | High cross-entropy loss |
-| (low probability prediction) |
-| (sounds → words → sentences) | Layer-by-layer representations |
-| (tokens → phrases → meaning) |
-| (prior discourse, world knowledge) | Self-attention mechanism |
-| (attend to relevant context) |
-| (population coding) | Distributed embeddings |
-| (vector representations) |
+| Phenomenon | Human Brain | Transformer Models |
+|------------|-------------|-------------------|
+| **Surprise** | N400 amplitude (EEG) | Cross-entropy loss |
+| **Hierarchy** | sounds → words → sentences | tokens → phrases → meaning |
+| **Context** | Prior discourse, world knowledge | Self-attention over sequence |
+| **Representation** | Population coding (neurons) | Distributed embeddings (vectors) |
+
+```python
+# Concrete example: Surprise/N400 parallel
+sentence_a = "I take my coffee with cream and sugar"  # Expected
+sentence_b = "I take my coffee with cream and socks"  # Surprising
+
+# Brain: N400 amplitude higher for "socks"
+# Model: Higher loss for "socks"
+loss_a = model.compute_loss("sugar", context)  # Low loss
+loss_b = model.compute_loss("socks", context)  # High loss
+
+# Both systems encode "surprisal" = -log P(word | context)
+surprisal = -np.log(model.predict_prob("socks", context))
+# Correlates with N400 amplitude in EEG studies!
+```
 
 **Question:** Are these superficial analogies or deep connections?
 
@@ -342,30 +348,38 @@ print(f"Similarity (1-3): {sim_13:.3f}")  # Low (different topics)
 
 # Neural Encoding with Language Models 🔬
 
-
 **Can we predict brain activity from language models?**
 
-**Approach:**
-1. Show participants text while recording brain activity (fMRI/EEG)
-2. Extract representations from language model (e.g., BERT layer 6)
-3. Train regression model: Model embeddings → Brain activity
-4. Test: Can we predict brain responses to new text?
+```python
+# Neural encoding experiment workflow
+import numpy as np
+from transformers import BertModel
 
-**Findings:**
-- **Better models → Better brain prediction**
-- BERT outperforms Word2Vec at predicting brain activity
-- Different layers correlate with different brain regions
-- Middle layers best for semantic areas
-- Suggests shared representations?
+# 1. Participant reads sentences while in fMRI scanner
+sentences = ["The dog chased the cat", "She opened the door", ...]
+brain_activity = fmri_scanner.record(sentences)  # (n_sentences, n_voxels)
 
-<div class="callout warning">
-<div class="callout-title">But...</div>
+# 2. Extract BERT representations for same sentences
+bert = BertModel.from_pretrained("bert-base-uncased")
+bert_embeddings = []
+for sent in sentences:
+    outputs = bert(tokenizer(sent, return_tensors="pt"))
+    # Use layer 8 (found to correlate best with semantic areas)
+    bert_embeddings.append(outputs.hidden_states[8].mean(dim=1))
 
-Correlation ≠ Causation! Models might capture statistical regularities that brains use, without using the same mechanisms.
+# 3. Train encoding model: BERT → Brain
+from sklearn.linear_model import Ridge
+encoder = Ridge().fit(bert_embeddings[:80], brain_activity[:80])
 
-</div>
+# 4. Predict brain activity for new sentences
+predictions = encoder.predict(bert_embeddings[80:])
+correlation = np.corrcoef(predictions.flat, brain_activity[80:].flat)[0,1]
+# Correlation ~ 0.3-0.5 in language areas (significant!)
+```
 
-*Reference: Willems et al. (2016) - "Prediction during natural language comprehension"*
+**Key finding:** BERT layer 8 best predicts semantic areas; layers 2-4 predict phonological areas
+
+*Reference: Caucheteux & King (2022) - "Brains and algorithms partially converge"*
 
 ---
 
@@ -419,35 +433,40 @@ Correlation ≠ Causation! Models might capture statistical regularities that br
 
 # Adversarial Examples and Brittleness ⚠️
 
-
 **BERT can be fooled easily**
 
-<div class="callout tip">
-<div class="callout-title">Example: Sentiment Analysis</div>
+```python
+from transformers import pipeline
+classifier = pipeline("sentiment-analysis")
 
-**Original:** "This movie was great!"
+# Works correctly
+classifier("This movie was absolutely wonderful!")
+# → [{'label': 'POSITIVE', 'score': 0.9998}]
 
-**Prediction:** POSITIVE ✓
+# Adding irrelevant negative words flips prediction!
+classifier("This movie was absolutely wonderful! [SEP] bad bad bad bad")
+# → [{'label': 'NEGATIVE', 'score': 0.9234}]  # WRONG!
 
-**Modified:** "This movie was great! [SEP] terrible terrible terrible terrible"
+# Synonym substitution can break it
+classifier("The food was good")   # → POSITIVE (0.99)
+classifier("The food was fine")   # → POSITIVE (0.72)  # Less confident
+classifier("The food was ok")     # → NEGATIVE (0.51)  # WRONG!
 
-**Prediction:** NEGATIVE ✗
-
-Just adding repeated negative words after [SEP] flips the prediction!
-
-</div>
+# Typos cause problems
+classifier("This is amazign!")    # Might work
+classifier("Thsi si amzaign!")    # Likely wrong prediction
+```
 
 <div class="callout warning">
-<div class="callout-title">Other Brittleness Issues</div>
+<div class="callout-title">Implications for Deployment</div>
 
-- **Word substitutions**: Replace "good" with synonym "excellent" → wrong prediction
-- **Paraphrases**: Semantically equivalent but different words → different predictions
-- **Meaningless additions**: Add irrelevant text → changes prediction
-- **Typos and noise**: Small perturbations cause large errors
+- **Adversarial attacks**: Malicious users can manipulate predictions
+- **Robustness testing**: Always test with perturbed inputs
+- **Defense strategies**: Adversarial training, input validation, ensemble methods
 
 </div>
 
-**Implication:** Models learn spurious patterns, not robust understanding
+**Key insight:** Models learn statistical patterns, which can include spurious correlations
 
 ---
 
@@ -478,34 +497,38 @@ Just adding repeated negative words after [SEP] flips the prediction!
 
 # Bias in Language Models ⚖️
 
-
 **Models reflect and can amplify societal biases**
 
+```python
+from transformers import pipeline
+unmasker = pipeline("fill-mask", model="bert-base-uncased")
+
+# Gender bias in occupations
+unmasker("The doctor said [MASK] would be late.")
+# → [('he', 0.62), ('she', 0.18), ('it', 0.08), ...]
+
+unmasker("The nurse said [MASK] would be late.")
+# → [('she', 0.71), ('he', 0.15), ('it', 0.06), ...]
+
+# Racial bias (different sentiment for names)
+classifier = pipeline("sentiment-analysis")
+classifier("Emily is a brilliant scientist.")  # POSITIVE: 0.98
+classifier("Jamal is a brilliant scientist.")  # POSITIVE: 0.94  # Lower!
+
+# Where does bias come from?
+# Training data (books, Wikipedia) contains historical biases
+# Model learns and sometimes amplifies these patterns
+```
+
 <div class="callout warning">
-<div class="callout-title">Examples of Bias</div>
+<div class="callout-title">Mitigation Strategies</div>
 
-- **Gender bias:**
-    
-- "The doctor said [MASK] was running late" → he (90%)
-- "The nurse said [MASK] was running late" → she (80%)
-
-    \item **Occupational stereotypes:**
-    - Associates certain jobs with certain genders
-- "Programmer" → male pronouns
-- "Secretary" → female pronouns
-
-    \item **Racial bias:**
-    - Different sentiment for names associated with different races
-- Can perpetuate harmful stereotypes
+1. **Data-level:** Balanced training corpora, counterfactual augmentation
+2. **Model-level:** Debiasing loss functions, fine-tuning on balanced data
+3. **Output-level:** Post-hoc filtering, human review for sensitive applications
+4. **Evaluation:** Regular bias audits using standardized benchmarks (WinoBias, etc.)
 
 </div>
-
-**Mitigation Strategies:**
-- Debiasing techniques during training
-- Balanced and diverse training data
-- Post-processing and filtering
-- Human oversight and auditing
-- Ongoing research area!
 
 
 ---
@@ -538,38 +561,39 @@ Just adding repeated negative words after [SEP] flips the prediction!
 
 # Deployment Considerations 🚀
 
-
 **Moving from research to production**
 
-1. **Model Selection**
-    - Balance quality vs. speed
-- DistilBERT for low-latency applications
-- BERT-Base for balanced performance
-- BERT-Large when quality is critical
+```python
+# Example: Optimizing BERT for production deployment
+from transformers import BertModel, BertTokenizer
+import torch
+import onnxruntime
 
-    
+# Step 1: Load model
+model = BertModel.from_pretrained("bert-base-uncased")
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 
-2. **Optimization**
-    - Quantization: FP32 → INT8 (4x smaller, faster)
-- Model pruning: Remove unnecessary weights
-- Knowledge distillation: Compress to smaller model
-- ONNX Runtime for optimized inference
+# Step 2: Quantize for speed (INT8 instead of FP32)
+quantized_model = torch.quantization.quantize_dynamic(
+    model, {torch.nn.Linear}, dtype=torch.qint8
+)
+# Result: 4x smaller, 2x faster on CPU
 
-    
+# Step 3: Export to ONNX for production
+dummy_input = tokenizer("Hello world", return_tensors="pt")
+torch.onnx.export(model, dummy_input, "bert.onnx")
 
-3. **Infrastructure**
-    - GPU acceleration for batch processing
-- CPU optimization for single requests
-- Caching for repeated queries
-- Load balancing for high traffic
+# Step 4: Use ONNX Runtime for inference
+session = onnxruntime.InferenceSession("bert.onnx")
+# 1.5x faster than PyTorch, works on any platform
+```
 
-    
-
-4. **Monitoring**
-    - Track latency and throughput
-- Monitor prediction quality
-- Detect distribution drift
-- A/B testing for improvements
+| Optimization | Size | Latency | Quality |
+|--------------|------|---------|---------|
+| Original (FP32) | 420MB | 50ms | 100% |
+| Quantized (INT8) | 110MB | 25ms | 99.5% |
+| ONNX + Quantized | 110MB | 20ms | 99.5% |
+| DistilBERT + ONNX | 65MB | 12ms | 97% |
 
 
 ---

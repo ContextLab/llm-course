@@ -37,20 +37,43 @@ Winter 2026
 
 **Recall: Static embeddings assign ONE vector per word**
 
-<div class="callout tip">
-<div class="callout-title">Example: "bank"</div>
+<div class="columns">
+<div class="column">
 
-1. "I deposited money at the **bank**" \hfill (financial institution)
-2. "We sat by the river **bank**" \hfill (riverside)
-3. "The plane will **bank** left" \hfill (tilt/turn)
+**Example: "bank"**
 
-**Word2Vec/GloVe:** All three get  ✗
+1. "I deposited money at the **bank**"
+   (financial institution)
+2. "We sat by the river **bank**"
+   (riverside)
+3. "The plane will **bank** left"
+   (tilt/turn)
 
-**Contextual embeddings:** Each gets a  based on context ✓
+**Word2Vec/GloVe:** All three get the SAME vector!
+
+**Contextual embeddings:** Each gets a DIFFERENT vector based on context
 
 </div>
+<div class="column">
 
-<!-- Flowchart - manual conversion needed -->
+**Cosine Similarity Demo:**
+
+```python
+# Static embeddings (Word2Vec)
+sim(bank_sent1, bank_sent2) = 1.0  # Same!
+
+# Contextual embeddings (BERT)
+sim(bank_sent1, bank_sent2) = 0.45
+sim(bank_sent1, bank_sent3) = 0.32
+sim(bank_sent2, bank_sent3) = 0.28
+
+# "bank" (financial) is closer to
+# "bank" (river) than to "bank" (tilt)
+# because nouns are more similar!
+```
+
+</div>
+</div>
 
 
 ---
@@ -117,34 +140,27 @@ assert vec1 != vec2  # True!
 
 **Language Modeling Task:**
 
-Predict the next word given previous words
+Predict the next word given previous words: $P(w_t | w_1, w_2, ..., w_{t-1})$
 
-$P(w_t | w_1, w_2, ..., w_{t-1})$
+<div class="callout tip">
+<div class="callout-title">Worked Example</div>
 
-<div class="columns">
-<div class="column">
+Input: "The cat sat on the ___"
+
+| Model predicts probabilities: | |
+|-------------------------------|-------|
+| "mat" | 0.25 |
+| "floor" | 0.18 |
+| "couch" | 0.12 |
+| "dog" | 0.001 |
+
+To predict well, the model learns: "sat on the" suggests a surface!
+</div>
 
 **Why This Works:**
-- To predict next word, model must understand:
-    
-- Syntax (grammar)
-- Semantics (meaning)
-- Context (discourse)
-
-    \item Hidden states encode this understanding
-    \item Can extract and use as features!
-
-</div>
-<div class="column">
-
-```
-\word -> \word -> \alert{Extract these!
-```
-
-*Hidden states contain rich contextual information*
-
-</div>
-</div>
+- To predict "mat", model must encode that "sat on" precedes surfaces
+- Hidden states capture this contextual understanding
+- We extract these rich hidden states as embeddings!
 
 
 ---
@@ -158,8 +174,8 @@ $P(w_t | w_1, w_2, ..., w_{t-1})$
 <div class="column">
 
 **Key Ideas:**
-1. Train deep  language model
-2. Use  activations
+1. Train deep bidirectional language model
+2. Use all layer activations
 3. Weighted combination per task
 4. Pre-train on large corpus
 
@@ -172,15 +188,23 @@ $P(w_t | w_1, w_2, ..., w_{t-1})$
 </div>
 <div class="column">
 
+**Bidirectional Processing:**
+
 ```
-Char CNN -> LSTM$\rightarrow$ -> LSTM$\rightarrow$ -> LSTM$\leftarrow$ -> LSTM$\leftarrow$ -> ELMo -> Layer 1 -> Layer 2
+Forward:  The → cat → sat → ...
+Backward: ... ← sat ← cat ← The
 ```
 
-**ELMo representation:**
+Each word gets info from BOTH directions!
 
-_k^{task} = \gamma^{task} \sum_{j=0}^{L} s_j^{task} _{k,j}
+**Layer Weighting Example:**
 
-Learned task-specific weights!
+For sentiment task, ELMo might learn:
+- Layer 0 (characters): weight = 0.1
+- Layer 1 (syntax): weight = 0.3
+- Layer 2 (semantics): weight = 0.6
+
+Higher layers matter more for meaning!
 
 </div>
 </div>
@@ -195,22 +219,27 @@ Learned task-specific weights!
 **Training:**
 
 1. Pre-train on large corpus (1B Word Benchmark)
-2. Minimize combined forward & backward LM loss:
-    
-     = \sum_{k=1}^N \left(\log P(w_k | w_1...w_{k-1}) + \log P(w_k | w_{k+1}...w_N)\right)
-    
-3. Each position gets representation from all layers
+2. Each position gets representation from all layers
 
 **Usage (downstream tasks):**
 
 1. Freeze ELMo weights
-2. For each token, compute:
-    - Character-based representation
-- 2 forward LSTM hidden states
-- 2 backward LSTM hidden states
-- Total: 5 representations (char + 2×2 layers)
+2. For each token, extract representations from all layers
 3. Learn task-specific weighted combination
 4. Concatenate with task model
+
+<div class="callout tip">
+<div class="callout-title">Concrete Example: Sentiment Analysis</div>
+
+**Input:** "The movie was absolutely terrible"
+
+| Token | Char Emb | Layer 1 | Layer 2 | Weighted Sum |
+|-------|----------|---------|---------|--------------|
+| terrible | [0.1, ...] | [0.3, ...] | [-0.8, ...] | [-0.5, ...] |
+
+The final representation captures that "terrible" is strongly negative in this context!
+
+</div>
 
 **Impact:** Improved state-of-the-art on 6 NLP tasks!
 
@@ -412,13 +441,23 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 **Solution: Mask some words, predict them**
 
 <div class="callout tip">
-<div class="callout-title">Example</div>
+<div class="callout-title">Worked Example: MLM Training</div>
 
 **Original:** "The cat sat on the mat"
 
-**Masked:** "The [MASK] sat on the mat"
+**Step 1:** Randomly select 15% of tokens → "cat" selected
 
-**Task:** Predict [MASK] = "cat"
+**Step 2:** Apply masking strategy (80/10/10 rule):
+- 80% chance: "The **[MASK]** sat on the mat"
+- 10% chance: "The **dog** sat on the mat" (random word)
+- 10% chance: "The **cat** sat on the mat" (unchanged)
+
+**Step 3:** Model sees full context both ways to predict "cat":
+```
+← The [MASK] sat on the mat →
+     ↑
+   predict "cat"
+```
 
 </div>
 
@@ -471,11 +510,30 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 
 # BERT Architecture 🏗️
 
+**Three types of embeddings are summed for each token:**
 
+<div class="callout tip">
+<div class="callout-title">Worked Example: Input Representation</div>
 
-```
-Input: -> \word -> Token: -> Segment: -> Position: -> $+$
-```
+**Input:** "[CLS] I love NLP [SEP] It is fun [SEP]"
+
+| Token | Token ID | Segment | Position | Final Embedding |
+|-------|----------|---------|----------|-----------------|
+| [CLS] | E_CLS | A | 0 | E_CLS + E_A + E_0 |
+| I | E_I | A | 1 | E_I + E_A + E_1 |
+| love | E_love | A | 2 | E_love + E_A + E_2 |
+| NLP | E_NLP | A | 3 | E_NLP + E_A + E_3 |
+| [SEP] | E_SEP | A | 4 | E_SEP + E_A + E_4 |
+| It | E_It | B | 5 | E_It + E_B + E_5 |
+| is | E_is | B | 6 | E_is + E_B + E_6 |
+| fun | E_fun | B | 7 | E_fun + E_B + E_7 |
+| [SEP] | E_SEP | B | 8 | E_SEP + E_B + E_8 |
+
+- **Token Embedding:** What word is this?
+- **Segment Embedding:** Which sentence (A or B)?
+- **Position Embedding:** Where in the sequence?
+
+</div>
 
 
 ---
@@ -657,27 +715,59 @@ optimizer = Adam(
 
 # Real-World Applications 🚀
 
+<div class="columns">
+<div class="column">
 
-1. **Search & Information Retrieval:**
-    - Google Search uses BERT for query understanding
-- Semantic search engines
-- Document ranking
-2. **Question Answering:**
-    - Reading comprehension (SQuAD)
-- Customer support chatbots
-- FAQ systems
-3. **Text Classification:**
-    - Sentiment analysis
-- Intent detection
-- Content moderation
-4. **Named Entity Recognition:**
-    - Extract people, places, organizations
-- Medical entity extraction
-- Legal document processing
-5. **Semantic Similarity:**
-    - Duplicate detection
-- Paraphrase identification
-- Recommendation systems
+**1. Google Search:**
+```
+Query: "can you get medicine for
+        someone pharmacy"
+
+BERT understands: picking up a
+prescription FOR someone else
+
+Before BERT: matched "medicine"
+and "pharmacy" keywords only
+```
+
+**2. Question Answering:**
+```
+Context: "The Eiffel Tower was
+built in 1889 by Gustave Eiffel."
+
+Q: "When was the Eiffel Tower built?"
+A: "1889" ← BERT extracts this span
+```
+
+</div>
+<div class="column">
+
+**3. Sentiment Analysis:**
+```python
+# Fine-tuned BERT
+text = "Not bad at all!"
+prediction = model(text)
+# → Positive (understands negation!)
+```
+
+**4. Named Entity Recognition:**
+```
+Input: "Apple CEO Tim Cook announced..."
+
+Output:
+  Apple     → ORG
+  Tim Cook  → PERSON
+```
+
+**5. Semantic Search:**
+```
+Query: "affordable laptop for students"
+Matches: "budget-friendly notebook
+          for college" ← synonyms!
+```
+
+</div>
+</div>
 
 
 ---

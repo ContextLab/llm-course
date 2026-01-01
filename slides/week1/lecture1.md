@@ -258,6 +258,48 @@ We cannot directly observe consciousness &mdash; even in other humans!
 <!-- caption: Person follows rules but does not understand Chinese -->
 
 ---
+<!-- _class: scale-78 -->
+
+# Worked example: The Chinese Room
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**The scenario:**
+1. You are locked in a room
+2. Chinese characters slide under the door
+3. You look them up in a rule book
+4. You copy out the corresponding response
+5. You slide it back out
+
+**From outside:** Perfect Chinese conversation!
+**From inside:** Just symbol manipulation.
+
+</div>
+<div style="flex: 1;">
+
+**Concrete example:**
+```
+Input:  你好吗? (How are you?)
+Lookup: Rule #42 → 我很好
+Output: 我很好 (I am fine)
+```
+
+You matched symbols without knowing:
+- What "你好吗" means
+- That it's a greeting
+- What "你" (you) refers to
+
+</div>
+</div>
+
+<div class="warning-box" data-title="The key insight">
+
+Syntax (symbol manipulation) is not sufficient for semantics (meaning).
+
+</div>
+
+---
 
 # Volition
 
@@ -400,8 +442,45 @@ Having words for things affects how we *see* them:
 
 <div class="note-box" data-title="Key finding">
 
-English speakers are slower to distinguish shades of blue than Russian speakers: 
+English speakers are slower to distinguish shades of blue than Russian speakers:
 language categories affect *perception*, not just description!
+
+</div>
+
+---
+<!-- _class: scale-78 -->
+
+# Worked example: The color experiment
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**The task:**
+Look at three color squares. Which one is different?
+
+```
+Trial 1: [dark blue] [dark blue] [light blue]
+         Russian speakers: FAST (different words!)
+         English speakers: slower (both "blue")
+
+Trial 2: [blue] [blue] [green]
+         Both groups: equally fast (cross-category)
+```
+
+</div>
+<div style="flex: 1;">
+
+**What this tells us:**
+- Having distinct words for colors creates **perceptual boundaries**
+- The brain literally processes colors faster when they cross linguistic categories
+- Language doesn't just describe reality; it *shapes* how we see it
+
+</div>
+</div>
+
+<div class="tip-box" data-title="Implication for LLMs">
+
+If language shapes perception, what "perception" do LLMs have? They experience language *about* color, but never color itself.
 
 </div>
 
@@ -423,6 +502,78 @@ How do symbols (words) get their meaning?
   - Learn patterns in text
   - Generate text based on those patterns
   - No direct connection with the external world
+
+---
+<!-- _class: scale-70 -->
+
+# Worked example: Grounding vs. Statistics
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Human understanding of "coffee":**
+```
+Sensory memories:
+  - Bitter taste
+  - Rich aroma
+  - Warm ceramic mug
+  - Morning ritual feeling
+  - Caffeine effect on body
+```
+These experiences **ground** the word.
+
+</div>
+<div style="flex: 1;">
+
+**LLM "understanding" of "coffee":**
+```
+Statistical associations:
+  - Often appears with "morning"
+  - Frequently near "cup", "drink"
+  - Associated with "caffeine"
+  - Patterns: "I need my ___"
+  - Context: restaurants, breakfast
+```
+Pure pattern matching, no experience.
+
+</div>
+</div>
+
+<div class="warning-box" data-title="The question">
+
+Can statistical patterns **ever** capture what it *feels like* to drink coffee?
+
+</div>
+
+---
+
+# How LLMs actually work: A preview
+
+<div class="note-box" data-title="Next-token prediction">
+
+At their core, LLMs are trained to predict what comes next. Given a sequence of words, what is the most likely continuation?
+
+</div>
+
+```python
+# Conceptually, this is what an LLM does:
+input_text = "The cat sat on the"
+
+# LLM predicts probability for each possible next word:
+predictions = {
+    "mat": 0.35,      # Most likely
+    "floor": 0.20,
+    "couch": 0.15,
+    "roof": 0.05,
+    "elephant": 0.001  # Very unlikely
+}
+```
+
+<div class="tip-box" data-title="Key insight">
+
+LLMs don't "know" what cats are. They've just seen "cat sat on the mat" many times!
+
+</div>
 
 ---
 

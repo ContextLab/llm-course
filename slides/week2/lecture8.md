@@ -114,20 +114,55 @@ The -> cat -> sat -> on -> the -> mat -> DET -> NOUN
 
     **Many words have multiple possible POS tags:**
 
-    
 
-    
-        | "I read a book" | book | NOUN |
-| --- | --- | --- |
-| "She runs fast" | fast | ADV |
-| "I will fast today" | fast | VERB |
-| "Please close the door" | close | VERB |
 
-    
+| Sentence | Word | POS | Explanation |
+|----------|------|-----|-------------|
+| "I read a **book**" | book | NOUN | Object being read |
+| "Please **book** a table" | book | VERB | Action of reserving |
+| "She runs **fast**" | fast | ADV | Modifies "runs" |
+| "I will **fast** today" | fast | VERB | Action of not eating |
+| "Please **close** the door" | close | VERB | Action |
+| "Stay **close** to me" | close | ADV | Modifies position |
 
-    
+
 
     **Key insight:** Context determines POS! Models must look at surrounding words.
+
+---
+
+# Ambiguity in Action: Code Example 🔍
+
+**How spaCy resolves ambiguity based on context:**
+
+```python
+import spacy
+nlp = spacy.load("en_core_web_sm")
+
+sentences = [
+    "I need to book a flight",      # book = VERB
+    "I'm reading a great book",     # book = NOUN
+    "The record was broken",        # record = NOUN
+    "Please record the meeting",    # record = VERB
+]
+
+for sent in sentences:
+    doc = nlp(sent)
+    for token in doc:
+        if token.text.lower() in ["book", "record"]:
+            print(f'"{sent}"')
+            print(f'  "{token.text}" -> {token.pos_} ({spacy.explain(token.pos_)})')
+            print()
+
+# Output:
+# "I need to book a flight"
+#   "book" -> VERB (verb)
+#
+# "I'm reading a great book"
+#   "book" -> NOUN (noun)
+```
+
+**The model uses surrounding words ("to book" vs "a book") to disambiguate!**
 
 ---
 
@@ -350,33 +385,65 @@ for result in results:
 
 
     **1. Sarcasm and irony:**
-    - "Oh great, another meeting 🙄" (negative, despite "great")
+    - "Oh great, another meeting" (negative, despite "great")
 - "This is the best movie I've ever fallen asleep to" (negative!)
 
-    
+
 
     **2. Context-dependent sentiment:**
     - "This movie is sick!" (positive in slang, negative literally)
 - "The book was long" (neutral? negative?)
 
-    
+
 
     **3. Mixed sentiment:**
     - "Great food but terrible service" (both positive and negative)
 - Aspect-based sentiment: food=positive, service=negative
 
-    
+
 
     **4. Negation:**
     - "not good" vs. "good"
 - "I don't dislike it" (double negative = positive?)
 
-    
+
 
     **5. Domain specificity:**
     - "Explosive growth" (positive in business, negative in safety)
 - Different domains have different sentiment patterns
 
+
+---
+
+# Sentiment Challenges: Code Examples 🔬
+
+**Testing how models handle tricky cases:**
+
+```python
+from transformers import pipeline
+sentiment = pipeline("sentiment-analysis")
+
+tricky_cases = [
+    # Sarcasm
+    ("Oh great, another Monday meeting", "NEGATIVE expected"),
+    # Negation
+    ("This movie is not bad at all", "POSITIVE expected"),
+    # Double negative
+    ("I don't dislike this product", "POSITIVE expected"),
+    # Mixed
+    ("Great camera but terrible battery life", "MIXED - depends"),
+    # Domain-specific
+    ("The stock price crashed", "NEGATIVE in finance"),
+]
+
+for text, expected in tricky_cases:
+    result = sentiment(text)[0]
+    print(f"Text: {text}")
+    print(f"  Model says: {result['label']} ({result['score']:.3f})")
+    print(f"  Expected: {expected}\n")
+```
+
+**Many models still struggle with sarcasm and complex negation!**
 
 ---
 
@@ -450,20 +517,51 @@ for text in texts:
 - Handle sarcasm better (though still imperfect)
 - Transfer learning: pre-train on large corpus, fine-tune for sentiment
 
-    
+
 
     **Typical architecture:**
-    
-        
+
+
 ```
-Input Text -> Pre-trained Model (BERT,  -> Classification Head (Dens -> Sentiment Label
+Input Text -> Pre-trained Model (BERT) -> Classification Head -> Sentiment Label
 ```
 
-    
 
-    
+
 
     **Training:** Fine-tune on labeled sentiment data (IMDb, Amazon reviews, etc.)
+
+---
+
+# VADER vs Neural: Head-to-Head Comparison 🥊
+
+**Testing both approaches on the same examples:**
+
+```python
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from transformers import pipeline
+
+vader = SentimentIntensityAnalyzer()
+neural = pipeline("sentiment-analysis")
+
+test_cases = [
+    "I absolutely love this product!",
+    "This is not what I expected, but in a good way",
+    "The movie was so bad it was actually hilarious",
+]
+
+for text in test_cases:
+    v_score = vader.polarity_scores(text)['compound']
+    n_result = neural(text)[0]
+    print(f"Text: {text}")
+    print(f"  VADER:  {v_score:+.3f} ({'POS' if v_score > 0 else 'NEG'})")
+    print(f"  Neural: {n_result['label']} ({n_result['score']:.3f})\n")
+
+# VADER struggles with complex cases like "so bad it was hilarious"
+# Neural models better capture context and irony
+```
+
+**Key finding:** Neural models handle nuance better, but VADER is faster and interpretable.
 
 ---
 
@@ -694,30 +792,65 @@ trainer.train()
 
     **Problem:** Reviews often mention multiple aspects with different sentiments
 
-    
+
 
     **Example:**
-    
-        "The {food was delicious} but the {service was terrible}. The {atmosphere was okay}."
-    
 
-    
+        "The {food was delicious} but the {service was terrible}. The {atmosphere was okay}."
+
+
 
     **Aspect-based approach:**
-    - Food: {Positive} ✅
-- Service: {Negative} ❌
-- Atmosphere: {Neutral} 😐
+    - Food: Positive
+- Service: Negative
+- Atmosphere: Neutral
 
-    
+
 
     **Applications:**
     - Restaurant reviews: food, service, ambiance, price
 - Product reviews: quality, price, shipping, customer service
 - Hotel reviews: room, location, staff, cleanliness
 
-    
+
 
     **More nuanced than overall sentiment!** Provides actionable insights.
+
+---
+
+# Aspect-Based Sentiment: Worked Example 📊
+
+**Extracting aspect-level sentiment from a restaurant review:**
+
+```python
+review = """
+The pasta was absolutely incredible - best I've had in years!
+However, we waited 45 minutes for our food which was frustrating.
+The ambiance was nice but a bit loud for conversation.
+Prices were reasonable for the quality.
+"""
+
+# Manual aspect extraction (simplified approach)
+aspects = {
+    "food": ["pasta", "incredible", "best"],     # POSITIVE
+    "service": ["waited", "45 minutes", "frustrating"],  # NEGATIVE
+    "ambiance": ["nice", "loud"],                # MIXED
+    "price": ["reasonable", "quality"]           # POSITIVE
+}
+
+# Results summary:
+# +----------+------------+
+# | Aspect   | Sentiment  |
+# +----------+------------+
+# | Food     | POSITIVE   |
+# | Service  | NEGATIVE   |
+# | Ambiance | MIXED      |
+# | Price    | POSITIVE   |
+# +----------+------------+
+# Overall: 3/4 positive aspects -> Generally positive with service issues
+```
+
+**Actionable insight:** Restaurant should focus on improving wait times!
 
 ---
 

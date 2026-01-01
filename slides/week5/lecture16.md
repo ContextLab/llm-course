@@ -52,7 +52,6 @@ Winter 2026
 <div class="column">
 
 **After Transformers:**
-
 - Parallel processing
 - Scales to GPUs/TPUs
 - Long-range dependencies
@@ -61,10 +60,14 @@ Winter 2026
 </div>
 </div>
 
-<div class="callout info">
-<div class="callout-title">Key Innovation</div>
+<div class="callout tip">
+<div class="callout-title">Speed Comparison</div>
 
-Replace sequential RNNs with **self-attention** layers that process all positions in parallel!
+Processing "The cat sat on the mat" (6 tokens):
+- **RNN:** 6 sequential steps (must wait for each)
+- **Transformer:** 1 parallel step (all tokens at once!)
+
+Training speedup: **10-100x faster** on modern hardware
 
 </div>
 
@@ -77,24 +80,40 @@ Replace sequential RNNs with **self-attention** layers that process all position
 
 **Limitations of Recurrent Architectures:**
 
-1. **Sequential Bottleneck**
-    - Must process token $t$ before token $t+1$
+<div class="columns">
+<div class="column">
+
+**1. Sequential Bottleneck**
+- Must process token t before t+1
 - Cannot parallelize across sequence
-- Slow on modern GPUs/TPUs
 
-    
+**2. Long-Range Dependencies**
+- Info flows through many steps
+- Gradient vanishing problems
 
-2. **Long-Range Dependencies**
-    - Information must flow through many steps
-- Gradient vanishing/exploding problems
-- Hard to learn dependencies 100+ tokens apart
+**3. Memory Constraints**
+- Hidden state must remember all
 
-    
+</div>
+<div class="column">
 
-3. **Memory Constraints**
-    - Hidden state must remember everything
-- Limited by fixed-size representation
-- Even with attention, RNN is the bottleneck
+**Concrete Example:**
+```
+Sentence: "The cat that I saw
+yesterday at the park sat down"
+
+Token 1 ("The") to token 11 ("sat"):
+- RNN: Info passes through 10 steps
+- Gradients shrink: 0.9^10 = 0.35
+- By token 11, "The" is almost gone!
+
+Transformer: Direct connection!
+- "sat" attends directly to "cat"
+- No information degradation
+```
+
+</div>
+</div>
 
 **Transformer Solution:** Every token can attend to every other token directly!
 
@@ -130,14 +149,21 @@ Replace sequential RNNs with **self-attention** layers that process all position
 - **Value (V)**: What information do I have?
 
 **Computation:**
-
-Q = XW_Q, \quad K = XW_K, \quad V = XW_V
-
-(Q, K, V) = \left({}\right)V
-
 ```
-Input $X$ -> $Q$ -> $K$ -> $V$ -> Attention -> Output
+Q = X @ W_Q    # Transform input to queries
+K = X @ W_K    # Transform input to keys
+V = X @ W_V    # Transform input to values
+
+Attention(Q, K, V) = softmax(Q @ K.T / sqrt(d)) @ V
 ```
+
+<div class="callout tip">
+<div class="callout-title">Intuition</div>
+
+Each token asks: "Which other tokens are relevant to me?" (Q vs K)
+Then collects information from relevant tokens (weighted sum of V)
+
+</div>
 
 
 ---
@@ -195,28 +221,38 @@ Each token simultaneously acts as:
 # Scaled Dot-Product Attention 📐
 
 
-**Step-by-step computation:**
+**Step-by-step computation with concrete example:**
 
-(Q, K, V) = \left({}\right)V
+**Input:** 3 tokens, embedding dim = 4
 
-1. **Compute scores**: $S = QK^T$
-    - Matrix multiplication: $[n \times d_k] \times [d_k \times n] = [n \times n]$
-- Each element $S_{ij}$ = similarity between token $i$ and $j$
-2. **Scale**: $S' = S / $
-    - Prevents gradients from becoming too small
-- When $d_k$ is large, dot products grow large
-- Scaling keeps softmax gradients stable
-3. **Softmax**: $A = (S')$
-    - Convert to probability distribution (rows sum to 1)
-- Each row = attention distribution for one token
-4. **Weighted sum**: $ = AV$
-    - $[n \times n] \times [n \times d_v] = [n \times d_v]$
-- Each output is a weighted combination of all values
+```python
+# Input embeddings (3 tokens x 4 dims)
+X = [[0.1, 0.2, 0.3, 0.4],   # "The"
+     [0.5, 0.6, 0.7, 0.8],   # "cat"
+     [0.2, 0.3, 0.4, 0.5]]   # "sat"
+
+# Step 1: Compute Q, K, V (using learned weights W_q, W_k, W_v)
+Q = X @ W_q  # [3 x 4]
+K = X @ W_k  # [3 x 4]
+V = X @ W_v  # [3 x 4]
+
+# Step 2: Compute attention scores
+scores = Q @ K.T  # [3 x 3] - each token vs each token
+
+# Step 3: Scale by sqrt(d_k) to prevent large values
+scores = scores / sqrt(4)  # divide by 2
+
+# Step 4: Softmax to get attention weights
+weights = softmax(scores)  # rows sum to 1
+
+# Step 5: Weighted sum of values
+output = weights @ V  # [3 x 4] - new contextual embeddings
+```
 
 
 ---
 
-# Self-Attention Example 📝
+# Self-Attention Example: Pronoun Resolution 📝
 
 
 **Sentence: "The animal didn't cross the street because it was too tired"**
@@ -224,14 +260,17 @@ Each token simultaneously acts as:
 **Question: What does "it" refer to?**
 
 ```
-it -> **Strong attention  ->  weak attention to "
+Attention weights when processing "it":
+
+           The  animal  didn't  cross  the  street  because  it   was  too  tired
+"it" →    0.02  [0.45]   0.03   0.05  0.02  0.08    0.05   0.15  0.05 0.02  0.08
+                  ↑
+          High attention to "animal" - model learns coreference!
 ```
 
-\end{center**
-
 **Self-attention allows the model to:**
-- Resolve pronouns
-- Understand long-range dependencies
+- Resolve pronouns ("it" → "animal", not "street")
+- Understand long-range dependencies (8 tokens apart!)
 - Capture syntactic and semantic relationships
 - Do this in parallel for all positions!
 
@@ -275,21 +314,36 @@ it -> **Strong attention  ->  weak attention to "
 - Head 1: Syntactic relationships
 - Head 2: Semantic relationships
 - Head 3: Positional patterns
-- Etc.
 
 **Formula:**
+```python
+# Each head has its own W_Q, W_K, W_V
+head_1 = Attention(Q @ W1_Q, K @ W1_K, V @ W1_V)
+head_2 = Attention(Q @ W2_Q, K @ W2_K, V @ W2_V)
+# ... more heads ...
 
-(Q,K,V) &= (h_1, ..., h_H)W_O \\
-h_i &= (QW_i^Q, KW_i^K, VW_i^V)
+# Concatenate and project
+output = concat(head_1, head_2, ...) @ W_O
+```
 
 </div>
 <div class="column">
 
+**Concrete Example:**
 ```
-Input -> \name ->  ... -> Concatenate -> Linear ($W_O$) -> Output
-```
+Sentence: "The cat sat on the mat"
 
-**Typical:** 8-16 heads in practice
+Head 1 (syntax):
+  "sat" → "cat" (subject-verb)
+  "mat" → "the" (determiner)
+
+Head 2 (semantics):
+  "sat" → "mat" (action-location)
+  "cat" → "sat" (agent-action)
+
+Head 3 (position):
+  Each word → neighbors
+```
 
 </div>
 </div>
@@ -382,19 +436,26 @@ Multiple heads provide a richer, more diverse representation by attending to dif
 
 **Problem:** During training, we have the full target sequence. Without masking, the model could "peek" at future tokens!
 
-**Solution:** Mask out future positions by setting attention scores to $-\infty$ before softmax.
+**Solution:** Mask out future positions by setting attention scores to -infinity before softmax.
 
-**Attention scores before masking:**
+```python
+# Example: Generating "The cat sat"
+# When predicting "sat", model should only see "The cat"
 
-|  | $t_1$ | $t_2$ | $t_3$ | $t_4$ |
-| --- | --- | --- | --- | --- |
-| $t_2$ | 0.3 | 0.4 | -inf | -inf |
-| $t_3$ | 0.2 | 0.3 | 0.4 | -inf |
-| $t_4$ | 0.15 | 0.25 | 0.3 | 0.35 |
+scores = [[0.5, 0.3, 0.2],    # "The" can see: The
+          [0.4, 0.5, 0.1],    # "cat" can see: The, cat
+          [0.2, 0.4, 0.4]]    # "sat" can see: The, cat, sat
 
-**After softmax:** Future positions have weight 0
+# Apply causal mask (upper triangle = -infinity)
+mask = [[ 0,  -inf, -inf],
+        [ 0,   0,   -inf],
+        [ 0,   0,    0  ]]
 
-**Result:** Token at position $t$ can only attend to positions $\leq t$
+masked_scores = scores + mask
+# After softmax: future positions get weight 0!
+```
+
+**Result:** Token at position t can only attend to positions <= t
 - Maintains autoregressive property
 - Enables parallel training while preserving causality
 
@@ -440,26 +501,28 @@ class SelfAttention(nn.Module):
         self.W_v = nn.Linear(embed_dim, embed_dim)
 
     def forward(self, x, mask=None):
-        # x: [batch, seq_len, embed_dim]
-        Q = self.W_q(x)  # [batch, seq_len, embed_dim]
-        K = self.W_k(x)
-        V = self.W_v(x)
+        Q = self.W_q(x)  # Queries: what am I looking for?
+        K = self.W_k(x)  # Keys: what do I contain?
+        V = self.W_v(x)  # Values: what info do I provide?
 
-        # Compute attention scores
-        scores = torch.matmul(Q, K.transpose(-2, -1))  # [batch, seq_len, seq_len]
-        scores = scores / math.sqrt(self.embed_dim)
+        # Attention scores: how similar are Q and K?
+        scores = torch.matmul(Q, K.transpose(-2, -1))
+        scores = scores / math.sqrt(self.embed_dim)  # Scale!
 
-        # Apply mask if provided (for decoder)
-        if mask is not None:
+        if mask is not None:  # For causal/decoder attention
             scores = scores.masked_fill(mask == 0, -1e9)
 
-        # Softmax to get attention weights
-        attn_weights = F.softmax(scores, dim=-1)
-
-        # Apply attention to values
-        output = torch.matmul(attn_weights, V)  # [batch, seq_len, embed_dim]
+        attn_weights = F.softmax(scores, dim=-1)  # Normalize
+        output = torch.matmul(attn_weights, V)    # Weighted sum
 
         return output, attn_weights
+
+# Usage example:
+attn = SelfAttention(embed_dim=64)
+x = torch.randn(1, 5, 64)  # 5 tokens, 64-dim embeddings
+out, weights = attn(x)
+# out: [1, 5, 64] - contextualized embeddings
+# weights: [1, 5, 5] - attention matrix
 ```
 
 
@@ -470,37 +533,30 @@ class SelfAttention(nn.Module):
 
 **Understanding the cost of self-attention**
 
-| Self-Attention | $O(n^2 \cdot d)$ | $O(n^2)$ |
+| Component | Time Complexity | Memory |
 | --- | --- | --- |
-| Feed-Forward | $O(n \cdot d^2)$ | $O(d)$ |
+| Self-Attention | O(n^2 * d) | O(n^2) |
+| Feed-Forward | O(n * d^2) | O(d) |
 
-where $n$ = sequence length, $d$ = embedding dimension
+where n = sequence length, d = embedding dimension
 
-**Trade-offs:**
-<div class="columns">
-<div class="column">
+<div class="callout tip">
+<div class="callout-title">Concrete Example: Memory Usage</div>
 
-**Pros of Self-Attention:**
-- Parallelizable (all positions at once)
-- Direct connections between all tokens
-- No vanishing gradients
+**Sequence length n = 1000 tokens, d = 768 (BERT-base)**
 
-</div>
-<div class="column">
+Attention matrix size: n x n = 1000 x 1000 = **1 million entries**
+At fp32 (4 bytes): **4 MB** per layer, per head
 
-**Cons of Self-Attention:**
-- Quadratic in sequence length
-- Memory intensive for long sequences
-- Limits context window size
+BERT-base: 12 layers x 12 heads = 144 attention matrices
+Total: **576 MB** just for attention weights!
+
+**If n = 10,000:** 100x more = **57.6 GB** (won't fit on most GPUs!)
 
 </div>
-</div>
 
-**Typical limits:**
-- BERT: 512 tokens
-- GPT-2: 1024 tokens
-- GPT-3: 2048 tokens
-- Modern models: 4096-100k tokens (with optimizations)
+**Typical context limits:**
+- BERT: 512 | GPT-2: 1024 | GPT-3: 2048 | GPT-4: 128k (with optimizations)
 
 
 ---

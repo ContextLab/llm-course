@@ -122,36 +122,53 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 
 **Harnad (1990): Can symbols have intrinsic meaning?**
 
-<div class="callout tip">
-<div class="callout-title">The Chinese Room Argument (Searle, 1980)</div>
+<div class="columns">
+<div class="column">
 
-- Person in room, doesn't understand Chinese
-- Receives Chinese symbols, has rule book
-- Follows rules to produce Chinese responses
-- From outside: appears to understand Chinese
-- But has no understanding of meaning!
+**The Chinese Room (Searle, 1980):**
 
-**Analogy:** Language models manipulate symbols without grounding
+```
+Input:  你好吗？
+        ↓
+[Rule Book: If see 你好吗
+            output 我很好]
+        ↓
+Output: 我很好
+
+Correct response! But no
+understanding of Chinese.
+```
+
+**Analogy to LLMs:**
+
+```
+Input:  "Is a penguin a bird?"
+        ↓
+[Pattern: "X is a bird" often
+ follows penguins in text]
+        ↓
+Output: "Yes, a penguin is a bird"
+
+Correct! But does it "know" birds?
+```
 
 </div>
-
-<div class="columns">
 <div class="column">
 
 **Symbol Systems:**
 - Symbols refer to other symbols
 - Purely syntactic manipulation
 - No connection to world
-- "Ungrounded" semantics
-
-</div>
-<div class="column">
 
 **Grounded Systems:**
 - Symbols connected to perception
-- Linked to action
-- Embodied in physical world
-- "Intrinsic" semantics
+- A child learns "dog" by:
+  - SEEING dogs
+  - PETTING dogs
+  - HEARING barking
+  - Being LICKED by dogs
+
+The word "dog" is grounded in experience!
 
 </div>
 </div>
@@ -174,22 +191,40 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 3. **Enactivism:** Knowing through doing
 4. **Grounding:** Concepts tied to perception/action
 
-**Evidence:**
-- Reading "kick": activates motor cortex
-- Understanding "grasp": simulates action
-- Processing emotions: activates body maps
-- Conceptual metaphors based on physical experience
+**Neuroscience Evidence:**
+
+```
+Reading "kick the ball":
+→ Motor cortex activates
+→ Leg area specifically!
+
+Reading "pick up the cup":
+→ Hand area activates
+→ Even without moving!
+```
 
 </div>
 <div class="column">
 
-<!-- Flowchart - manual conversion needed -->
+**Conceptual Metaphors (Lakoff & Johnson):**
 
-**Implications for AI:**
-- Text-only models miss embodiment
-- Need multimodal grounding
-- Interaction with environment
-- Sensorimotor foundations
+```
+Physical → Abstract mapping:
+
+"WARM personality" ← holding warm drink
+                     primes positive judgments!
+
+"HIGH status" ← up = good, down = bad
+               (heads held high)
+
+"GRASPING an idea" ← physical grasping
+                     simulated mentally
+
+"Heavy heart" ← weight = emotional burden
+```
+
+**These metaphors are NOT in Word2Vec!**
+Models learn word patterns, not embodied experience.
 
 </div>
 </div>
@@ -254,49 +289,54 @@ Is distributional semantics sufficient for meaning, or just a useful approximati
 <div class="columns">
 <div class="column">
 
-**1. Taxonomic:**
-- dog $\sim$ cat (both animals)
-- red $\sim$ blue (both colors)
-- "Is-a" relationships
+**Taxonomic (IS-A):**
+```
+dog ↔ cat: Both are animals
+         Similarity: HIGH
+```
 
-**2. Thematic:**
-- dog $\sim$ leash (co-occur in events)
-- coffee $\sim$ cup (functional relation)
-- "Goes-with" relationships
+**Thematic (GOES-WITH):**
+```
+dog ↔ leash: Co-occur in events
+            Relatedness: HIGH
+            Similarity: LOW!
+```
 
-**3. Synonymy:**
-- big $\sim$ large (same meaning)
-- happy $\sim$ joyful
+**Test Yourself:**
+```
+Which is more SIMILAR to "coffee"?
+A) tea      ← Same category (beverages)
+B) cup      ← Co-occurs (thematic)
 
-**4. Functional:**
-- knife $\sim$ scissors (similar function)
-- chair $\sim$ stool
+Answer: A (tea) is more SIMILAR
+        B (cup) is more RELATED
+```
 
 </div>
 <div class="column">
 
-**What do models capture?**
+**What Word2Vec Says:**
 
-- Word2Vec: Mostly thematic + taxonomic
-- BERT: Better at taxonomic
-- Varies by context window size
-- Training data matters!
+```python
+# Word2Vec often gets this wrong!
+model.similarity('coffee', 'cup')   # 0.65
+model.similarity('coffee', 'tea')   # 0.62
 
-**Human judgments:**
-- SimLex-999: True similarity
-- WordSim-353: Relatedness (broader)
-- Models better at relatedness than similarity
+# Cup ranked higher due to co-occurrence!
+# But tea is categorically more similar
+```
 
-<div class="callout tip">
-<div class="callout-title">Example</div>
+**SimLex-999 vs WordSim-353:**
 
-**Similar:** car $\sim$ automobile (0.9)
+| Pair | SimLex | WordSim |
+|------|--------|---------|
+| car-auto | 0.96 | 0.92 |
+| car-road | 0.23 | 0.73 |
 
-**Related:** car $\sim$ road (0.7)
+SimLex measures true SIMILARITY.
+WordSim measures RELATEDNESS.
 
-Models often conflate these!
-
-</div>
+Models score better on WordSim!
 
 </div>
 </div>
@@ -596,53 +636,55 @@ Or do we need grounding in:
 <div class="columns">
 <div class="column">
 
-**Examples:**
+**Physical Intuition Failures:**
 
-<div class="callout tip">
-<div class="callout-title">Physical</div>
+```
+Q: "Can you fit an elephant
+    in a refrigerator?"
 
-- Water is wet
-- Objects fall down
-- You can't be in two places at once
-- Heavy things are hard to lift
+GPT-3: "Yes, if you open the
+       door wide enough..."
+```
 
-</div>
+**Winograd Schema (reasoning):**
 
-<div class="callout tip">
-<div class="callout-title">Social</div>
+```
+"The trophy doesn't fit in the
+ brown suitcase because it is
+ too [small/large]."
 
-- People have feelings
-- Insults are hurtful
-- Promises should be kept
-- Eye contact shows attention
+What does "it" refer to?
+- "small" → suitcase
+- "large" → trophy
 
-</div>
+Requires world knowledge!
+```
 
 </div>
 <div class="column">
 
+**Social Intuition Failures:**
+
+```
+Q: "John told Mary he loved her.
+    How did Mary feel?"
+
+Depends on context:
+- First date? → Surprised/happy
+- After argument? → Relieved
+- Unwanted? → Uncomfortable
+
+Models miss social nuance!
+```
+
 **Why Models Struggle:**
-- Not explicit in text
-- Assumed background knowledge
-- Requires world experience
+- Physical/social knowledge rarely stated
+- Assumed as background knowledge
+- Requires embodied experience
 - Needs causal reasoning
-- Embodied understanding
-
-**Benchmark Datasets:**
-- Winograd Schema Challenge
-- PIQA (Physical Interaction QA)
-- SocialIQA
-- CommonsenseQA
-
-**Progress:**
-- Large models do better
-- But still far from human
-- Often exploit shortcuts
-- Memorization vs. reasoning?
 
 </div>
 </div>
-
 
 ---
 
@@ -655,53 +697,54 @@ Or do we need grounding in:
 <div class="column">
 
 **The Problem:**
-- "hot" + "dog" $≠$ "hot dog"
-- "red" + "herring" $≠$ "red herring"
-- Idioms, metaphors, collocations
-- Non-compositional meaning
 
-**Classical Approaches:**
-- Vector addition: $ + $
-- Element-wise multiplication
-- Tensor products
-- Fails for non-compositional phrases!
+```python
+# Vector math doesn't work!
+vec("hot") + vec("dog") ≠ vec("hot dog")
 
-**Neural Approaches:**
-- RNNs, LSTMs
-- Transformers (BERT)
-- Learn composition functions
-- Better but not perfect
+# "hot dog" = food item
+# "hot" + "dog" = warm canine
+
+# Same issue:
+vec("red") + vec("herring") ≠ vec("red herring")
+# red herring = distraction, not a fish!
+```
+
+**Non-compositional Phrases:**
+- Kick the bucket (= die)
+- Spill the beans (= reveal secret)
+- Break a leg (= good luck)
 
 </div>
 <div class="column">
 
-**Compositionality Types:**
+**What Transformers Learn:**
 
-**1. Semantic Composition:**
-- "big red ball" = big $\cap$ red $\cap$ ball
-- Intersective
+```
+Input: "break a leg"
+       ↓
+Attention sees this phrase
+often in "good luck" contexts
+       ↓
+Output: idiomatic meaning
 
-**2. Non-intersective:**
-- "fake gun" $≠$ fake $\cap$ gun
-- Adjective changes interpretation
+But fails on novel combinations!
+```
 
-**3. Metaphorical:**
-- "Time is money"
-- Cross-domain mapping
+**The Negation Problem:**
 
-<div class="callout warning">
-<div class="callout-title">Current Status</div>
+```python
+# BERT struggles with negation
+sent1 = "The movie was good"
+sent2 = "The movie was not good"
 
-Transformers handle many cases through attention, but still struggle with:
-- Novel compositions
-- Systematic generalization
-- Logical operators (negation!)
+# Embeddings are very similar!
+# "not" should flip the meaning
+cosine_sim(sent1, sent2) ≈ 0.85
+```
 
 </div>
-
 </div>
-</div>
-
 
 ---
 
@@ -746,77 +789,9 @@ Transformers handle many cases through attention, but still struggle with:
 <div class="callout warning">
 <div class="callout-title">Perhaps the wrong question?</div>
 
-Instead of "Do they understand?", ask:
-- What do they represent?
-- How does it differ from humans?
-- What are the limits?
-- How can we improve?
+Instead of "Do they understand?", ask: What do they represent? How does it differ from humans? What are the limits?
 
 </div>
-
-
----
-
-# Future Directions 🔮
-
-
-**Bridging computational and cognitive semantics**
-
-1. **Multimodal Learning:**
-    - Vision + language (CLIP, Flamingo)
-- Audio, tactile, proprioception
-- Grounding in multiple modalities
-2. **Embodied AI:**
-    - Robots learning through interaction
-- Simulation environments
-- Sensorimotor grounding
-3. **Neurosymbolic AI:**
-    - Combining neural and symbolic
-- Logical reasoning + learning
-- Structured knowledge graphs
-4. **Cognitively-Inspired Architectures:**
-    - Memory systems
-- Attention mechanisms
-- Episodic learning
-- Meta-learning
-5. **Social Grounding:**
-    - Learning through dialogue
-- Cultural context
-- Pragmatic understanding
-
-
----
-
-# Practical Implications 💼
-
-
-**What this means for NLP practitioners**
-
-1. **Know the Limits:**
-    - Models excel at pattern matching
-- Struggle with true reasoning
-- Need task-specific evaluation
-- Don't assume understanding
-2. **Choose Appropriate Tasks:**
-    - Good: classification, retrieval, similarity
-- Moderate: summarization, translation
-- Challenging: reasoning, planning, common sense
-3. **Augment with Structure:**
-    - Knowledge graphs
-- Rules and constraints
-- Domain expertise
-- Human-in-the-loop
-4. **Evaluate Carefully:**
-    - Beyond accuracy metrics
-- Test edge cases
-- Adversarial robustness
-- Bias and fairness
-- Interpretability
-5. **Stay Informed:**
-    - Rapidly evolving field
-- New capabilities emerging
-- Ethical considerations
-- Interdisciplinary insights
 
 
 ---
@@ -831,15 +806,10 @@ Instead of "Do they understand?", ask:
 3. **Distributional Semantics:** Powerful but incomplete theory
 4. **Semantic Similarity:** Multiple types, models capture some
 5. **Empirical Evidence:** Models align with neural patterns but miss multimodality
-6. **Current Debates:**
-    - Stochastic parrots vs. emergent understanding
-- Form vs. meaning
-- Prediction vs. comprehension
-7. **Future:** Multimodal, embodied, neurosymbolic approaches
+6. **Common Sense:** Models struggle with physical and social reasoning
+7. **Compositionality:** Non-literal language remains challenging
 
-**The gap between computation and cognition remains,**
-
-**but we're making progress! 🌉**
+**The gap between computation and cognition remains, but we're making progress!**
 
 
 ---
@@ -858,37 +828,20 @@ Instead of "Do they understand?", ask:
 - Firth, J.R. (1957). "A Synopsis of Linguistic Theory"
 - Boleda, G. (2020). "Distributional Semantics and Linguistic Theory"
 - Hill et al. (2015). "SimLex-999"
-- Grand et al. (2022). "Semantic Projection Recovers Rich Human Knowledge"
 
 **Critical Perspectives:**
-- Bender & Koller (2020). "Climbing towards NLU: On Meaning, Form, and Understanding"
+- Bender & Koller (2020). "Climbing towards NLU"
 - Bender et al. (2021). "On the Dangers of Stochastic Parrots"
-
-**Neuroscience:**
-- Mitchell et al. (2008). "Predicting Human Brain Activity"
-- Huth et al. (2016). "Natural Speech Reveals Semantic Maps"
-
-**Multimodal:**
-- Radford et al. (2021). "Learning Transferable Visual Models" (CLIP)
 
 
 ---
 
-# Final Thoughts 🌟
+# Questions? 🙋
 
 
 
-**As we build ever-larger language models,**
+**Next Week:**
 
-**let's not forget to ask:**
+Advanced Topics in Language Models
 
-*What are they really learning?*
-
-*How does it compare to human understanding?*
-
-*What's missing?*
-
-*How can we do better?*
-
-**Questions? 🙋**
-
+*Scaling, emergent abilities, and the future of NLP*

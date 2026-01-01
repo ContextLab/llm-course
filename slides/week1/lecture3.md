@@ -191,6 +191,105 @@ Order and spacing matter. Be careful with word boundaries.
 </div>
 
 ---
+<!-- _class: scale-70 -->
+
+# Worked example: Complete ELIZA pipeline
+
+**Input:** `"I am worried about my mother"`
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Step 1: Pre-subs** (normalize input)
+```
+"I am worried about my mother"
+→ No changes needed
+```
+
+**Step 2: Pattern match**
+```
+Pattern: r"(.*) my (mother|father) (.*)"
+Rank: 100 (high priority - family!)
+MATCH!
+```
+
+**Step 3: Decompose** (extract groups)
+```
+Group 1: "I am worried about"
+Group 2: "mother"
+Group 3: "" (empty)
+```
+
+</div>
+<div style="flex: 1;">
+
+**Step 4: Reassemble**
+```
+Template: "Tell me more about your {2}."
+→ "Tell me more about your mother."
+```
+
+**Step 5: Post-subs** (fix pronouns)
+```
+"Tell me more about your mother."
+→ No changes needed (no "I", "my", etc.)
+```
+
+**Final output:**
+```
+"Tell me more about your mother."
+```
+
+</div>
+</div>
+
+---
+
+# Worked example: Pronoun substitution
+
+**Input:** `"I think you hate me"`
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Pattern matched:**
+```
+r"(.*) you (.*) me"
+Template: "What makes you think I {2} you?"
+```
+
+**Raw reassembly:**
+```
+"What makes you think I hate you?"
+```
+Wait - this is wrong! The user said "you hate me" but we're putting "I hate you" in our response.
+
+</div>
+<div style="flex: 1;">
+
+**Post-substitution fixes this:**
+```
+Original captured: "hate"
+In template: "I {2} you"
+→ "I hate you"
+
+Post-sub applied:
+  "I" → "you" (ELIZA speaking)
+  But we need to be careful!
+```
+
+The template is written from ELIZA's perspective, so pronouns are already correct here!
+
+</div>
+</div>
+
+<div class="warning-box" data-title="The tricky part">
+
+Post-substitutions apply to the **captured text**, not the template. When the user says "I am sad", we capture "sad" and put it in "Why are you {1}?" to get "Why are you sad?" - no substitution needed!
+
+</div>
+
+---
 
 # Putting it together
 
@@ -311,6 +410,37 @@ Don't expect perfect code on the first try. Refine your prompts based on what yo
 - Special characters (!@#$%)
 - No pattern matches
 - Multiple patterns could match
+
+---
+<!-- _class: scale-70 -->
+
+# Worked example: Testing edge cases
+
+```python
+# Test 1: Empty input
+>>> eliza_respond("")
+"I see."  # Fallback response
+
+# Test 2: Special characters
+>>> eliza_respond("I am @#$%^& confused!")
+"Why are you @#$%^& confused?"  # Copies them verbatim
+
+# Test 3: Multiple patterns match
+>>> eliza_respond("I am sad about my mother")
+# Pattern 1: "I am (.*)" → rank 50
+# Pattern 2: "(.*) my mother (.*)" → rank 100
+# Winner: Pattern 2 (higher rank)!
+"Tell me more about your mother."
+
+# Test 4: Greedy matching problem
+>>> pattern = r"I am (.*)"
+>>> text = "I am happy. I am sad."
+>>> re.search(pattern, text).group(1)
+"happy. I am sad."  # Matched too much!
+
+# Fix: Use non-greedy
+>>> pattern = r"I am (.*?)\."  # .*? stops at first .
+```
 
 ---
 

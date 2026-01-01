@@ -188,26 +188,44 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
 
 # ALBERT: A Lite BERT 🔬
 
-
 **Key idea: Parameter sharing for efficiency**
 
 **ALBERT's Innovations (Lan et al. 2019):**
 
-1. **Factorized Embedding Parameterization**
-    - BERT: Vocabulary embedding = Hidden size (30K × 768)
-- ALBERT: Vocab → Small (30K × 128) → Hidden (128 × 768)
-- Saves parameters, especially for large hidden sizes
+<div class="columns">
+<div class="column">
 
-    
+**1. Factorized Embedding**
+```python
+# BERT: Direct embedding
+# 30K vocab × 768 hidden = 23M params
+bert_embed = nn.Embedding(30000, 768)
 
-2. **Cross-Layer Parameter Sharing**
-    - Share all parameters across layers
-- Same attention and FFN weights for all layers
+# ALBERT: Two-step embedding
+# 30K × 128 + 128 × 768 = 3.8M + 0.1M
+albert_embed = nn.Embedding(30000, 128)
+albert_project = nn.Linear(128, 768)
+# Savings: 83% fewer embedding params!
+```
 
-3. **Sentence Order Prediction (SOP)**
-    - Replace NSP with SOP
-- Predict if two sentences are in correct order
-- More challenging task than NSP
+</div>
+<div class="column">
+
+**2. Cross-Layer Sharing**
+- All 12 layers share same weights
+- 89% parameter reduction
+
+**3. Sentence Order Prediction**
+```python
+# NSP (BERT): Is B after A? (too easy)
+# SOP (ALBERT): Are A,B in order?
+#   - Positive: [A, B] (correct order)
+#   - Negative: [B, A] (swapped order)
+# Harder task → better representations
+```
+
+</div>
+</div>
 
 *Reference: Lan et al. (2019) - "ALBERT: A Lite BERT for Self-supervised Learning"*
 
@@ -245,63 +263,86 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
 
 # Cross-Layer Parameter Sharing 🔗
 
-
 **How ALBERT achieves parameter efficiency**
 
 <div class="columns">
 <div class="column">
 
 **BERT (No Sharing):**
+```python
+class BERT:
+    def __init__(self):
+        # Each layer has unique parameters
+        self.layers = [
+            TransformerLayer() for _ in range(12)
+        ]
+        # 12 × 7M params = 85M params
 
+    def forward(self, x):
+        for layer in self.layers:
+            x = layer(x)  # Different weights
+        return x
 ```
-\label ->  Different weights -> Each layer has -> separate parameters
-```
-
-**Parameters:**
-- 12 × (Attention + FFN)
-- Total: $\sim$110M params
 
 </div>
 <div class="column">
 
-**ALBERT (Sharing):**
+**ALBERT (Full Sharing):**
+```python
+class ALBERT:
+    def __init__(self):
+        # Single shared layer!
+        self.shared_layer = TransformerLayer()
+        # 1 × 7M params = 7M params
 
+    def forward(self, x):
+        for _ in range(12):
+            x = self.shared_layer(x)  # Same weights!
+        return x
 ```
-Shared Parameters -> \label -> All layers use -> same parameters
-```
-
-**Parameters:**
-- 1 × (Attention + FFN)
-- Total: $\sim$12M params
 
 </div>
 </div>
 
-**Questions:**
-- Does this hurt performance? 
-- What's the intuition? Layers learn similar transformations
-- Trade-off: Memory vs. expressiveness
+**Intuition:** Each layer refines the representation. Like a "residual network unrolled" - iterative refinement with shared weights.
+
+**Trade-off:** 89% fewer parameters, same compute (still 12 forward passes)
 
 
 ---
 
 # DistilBERT: Knowledge Distillation ⚡
 
-
 **Key idea: Train small model to mimic large model**
 
-**Knowledge Distillation Process (Sanh et al. 2019):**
+```python
+# Knowledge Distillation Training Loop
+teacher = BertModel.from_pretrained("bert-base")  # 12 layers, frozen
+student = DistilBertModel(num_layers=6)            # 6 layers, trainable
 
-1. **Teacher Model:** Large, pre-trained BERT
-2. **Student Model:** Smaller model (6 layers instead of 12)
-3. **Training Objective:**
-    - Student learns to match teacher's output distributions
-- Not just hard labels, but soft probabilities
-- Also uses MLM loss on original task
+for batch in training_data:
+    # Teacher provides "soft targets" (probability distributions)
+    with torch.no_grad():
+        teacher_logits = teacher(batch)  # e.g., [0.7, 0.2, 0.1, ...]
 
+    # Student tries to match teacher's distribution
+    student_logits = student(batch)
+
+    # Distillation loss: KL divergence between distributions
+    # Temperature T=2 softens the distribution (more informative)
+    loss_distill = KL_divergence(
+        softmax(student_logits / T),
+        softmax(teacher_logits / T)
+    )
+
+    # Also include MLM loss for language modeling
+    loss_mlm = masked_lm_loss(student_logits, labels)
+
+    # Combined loss
+    loss = 0.5 * loss_distill + 0.5 * loss_mlm
 ```
-\begin{tabular -> \begin{tabular -> Input: "My [MASK] is cute -> \begin{tabular -> \begin{tabular
-```
+
+**Why soft targets work:** Teacher's "wrong" predictions contain information (e.g., "dog" → "cat" more likely than "car")
 
 *Reference: Sanh et al. (2019) - "DistilBERT, a distilled version of BERT"*
 
@@ -333,20 +374,37 @@ Shared Parameters -> \label -> All layers use -> same parameters
 
 # ELECTRA: Efficient Learning 🔌
 
-
 **Key idea: Learn from all tokens, not just 15%**
 
-**ELECTRA's Approach (Clark et al. 2020):**
+```python
+# ELECTRA Training: Generator + Discriminator setup
+sentence = "The chef cooked a delicious meal"
+masked   = "The chef [MASK] a delicious meal"
 
-- **Replace Token Detection** instead of Masked LM
-- Use a small generator to replace some tokens
-- Discriminator learns to detect which tokens were replaced
+# Small generator (like BERT) fills in masks
+generator_output = generator(masked)
+# Generator predicts: "ate" (plausible but wrong)
 
+corrupted = "The chef ate a delicious meal"
+
+# Discriminator classifies EACH token: original or replaced?
+discriminator_output = discriminator(corrupted)
+# Output per token: [orig, orig, REPLACED, orig, orig, orig]
+
+# Loss computed on ALL tokens (not just 15%!)
+labels = [0, 0, 1, 0, 0, 0]  # 1 = replaced
+loss = binary_cross_entropy(discriminator_output, labels)
 ```
-cooked -> Generator -> ate -> Discriminator (ELECTRA) -> original -> original -> **replaced -> original
-```
 
-\end{center**
+<div class="callout tip">
+<div class="callout-title">Efficiency Gain</div>
+
+**BERT:** Learns from 15% of tokens (masked ones only)
+**ELECTRA:** Learns from 100% of tokens (all get labeled)
+
+Result: Same quality with 4x less compute!
+
+</div>
 
 *Reference: Clark et al. (2020) - "ELECTRA: Pre-training Text Encoders as Discriminators"*
 
@@ -490,6 +548,41 @@ inputs = tokenizer("Hello, my dog is cute", return_tensors="pt")
 outputs = model(**inputs)
 ```
 
+---
+
+# Benchmarking BERT Variants: Worked Example 💻
+
+**Practical comparison on sentiment analysis**
+
+```python
+import time
+from transformers import pipeline
+
+# Load different models for sentiment analysis
+models = {
+    "bert-base": "textattack/bert-base-uncased-SST-2",
+    "distilbert": "distilbert-base-uncased-finetuned-sst-2-english",
+    "albert": "textattack/albert-base-v2-SST-2",
+}
+
+test_texts = ["This movie was fantastic!", "I hated every minute of it."] * 100
+
+for name, model_id in models.items():
+    pipe = pipeline("sentiment-analysis", model=model_id)
+
+    start = time.time()
+    results = pipe(test_texts)
+    elapsed = time.time() - start
+
+    print(f"{name}: {elapsed:.2f}s for 200 samples ({200/elapsed:.1f} samples/sec)")
+```
+
+**Typical Results:**
+| Model | Accuracy | Speed (samples/sec) | Memory |
+|-------|----------|---------------------|--------|
+| bert-base | 93.2% | 45 | 420MB |
+| distilbert | 91.3% | 85 | 250MB |
+| albert | 92.7% | 38 | 45MB |
 
 ---
 

@@ -73,17 +73,71 @@ footer: ''
 # The Data Cleaning Pipeline 🔄
 
 
-    
-        
+
+
 ```
 Raw Text 📄 -> Remove Tags 🏷️ -> Normalize 🔧 -> Tokenize ✂️ -> Lemmatize 🌱 -> Clean Text ✅
 ```
 
-    
 
-    
+
+
 
     **Note:** Pipeline varies by task! Not all steps are always needed.
+
+---
+
+# Worked Example: Cleaning Messy Text Step by Step 📝
+
+**Starting with raw text scraped from a webpage:**
+
+```python
+raw_text = """
+<p class="review">I LOVE this    product!!! 😍
+Check it out at https://example.com/buy
+Contact: support@example.com</p>
+"""
+```
+
+**Step 1: Remove HTML tags**
+```python
+import re
+text = re.sub(r'<.*?>', '', raw_text)
+# Result: "I LOVE this    product!!! 😍\nCheck it out at https://..."
+```
+
+**Step 2: Remove URLs and emails**
+```python
+text = re.sub(r'http\S+|www.\S+', '', text)
+text = re.sub(r'\S+@\S+', '', text)
+# Result: "I LOVE this    product!!! 😍\nCheck it out at   Contact: "
+```
+
+**Step 3: Normalize whitespace**
+```python
+text = ' '.join(text.split())
+# Result: "I LOVE this product!!! 😍 Check it out at Contact:"
+```
+
+---
+
+# Worked Example: Complete Pipeline 📝
+
+**Full transformation:**
+
+| Stage | Text |
+|-------|------|
+| **Raw** | `<p>I LOVE this    product!!! 😍 https://ex.com</p>` |
+| **Remove HTML** | `I LOVE this    product!!! 😍 https://ex.com` |
+| **Remove URLs** | `I LOVE this    product!!! 😍` |
+| **Normalize spaces** | `I LOVE this product!!! 😍` |
+| **Lowercase** | `i love this product!!! 😍` |
+| **Remove extra punctuation** | `i love this product! 😍` |
+
+**Key decision points:**
+- Keep emoji 😍? **Yes** for sentiment analysis (conveys emotion)
+- Keep punctuation !!!? **Maybe** (emphasis, but noisy)
+- Lowercase? **Depends** on task (lose "LOVE" emphasis)
 
 ---
 
@@ -206,22 +260,44 @@ print(article_text)
 - Special characters: é, ñ, 中文
 - Emoji: 😊 (requires Unicode support)
 
-    
+
 
     **Best practices:**
     - Always use UTF-8 when possible
 - Detect encoding: `chardet` library
 - Normalize Unicode: NFKC vs. NFD forms
 
-    
+---
 
-    **Example problem:**
-    
-        | Input: | caf\textbackslash xe9 (Latin-1) |
-| --- | --- |
-| Decoded: | café (UTF-8) |
+# Encoding Issues: Concrete Example 🔧
 
-    
+**Common scenario: Web scraping with mixed encodings**
+
+```python
+import chardet
+
+# Byte string with unknown encoding
+raw_bytes = b'Caf\xe9 au lait \x96 delicious!'
+
+# Detect encoding
+result = chardet.detect(raw_bytes)
+print(f"Detected: {result}")
+# {'encoding': 'Windows-1252', 'confidence': 0.73}
+
+# Decode with detected encoding
+text = raw_bytes.decode(result['encoding'])
+print(text)
+# "Café au lait – delicious!"
+
+# Alternative: Use 'ftfy' to fix broken Unicode
+import ftfy
+broken = "CafÃ© au lait â€" delicious!"
+fixed = ftfy.fix_text(broken)
+print(fixed)
+# "Café au lait – delicious!"
+```
+
+**Pro tip:** Save all files as UTF-8 to avoid these headaches!
 
 ---
 
@@ -331,19 +407,46 @@ print(clean)  # "check out amazing deals!!"
 
 # Stemming vs. Lemmatization Examples ⚖️
 
+**Concrete comparison with the same words:**
 
-    
-        
-        | ran | ran | run |
-| --- | --- | --- |
-| runs | run | run |
-| runner | runner | runner |
-| best | best | good |
-| geese | gees | goose |
-| organizing | organ | organize |
-|  |  | (context-dependent!) |
+| Word | Porter Stemmer | Lemmatizer | Notes |
+|------|---------------|------------|-------|
+| ran | ran | run | Lemma recognizes irregular verb |
+| runs | run | run | Both work well |
+| running | run | run | Both work well |
+| runner | runner | runner | Both keep as-is (different word) |
+| better | better | good | Lemma handles irregular adjective |
+| best | best | good | Lemma handles superlative |
+| geese | gees | goose | Stemmer produces non-word! |
+| studies | studi | study | Stemmer produces non-word! |
+| organizing | organ | organize | Stemmer too aggressive! |
 
-    
+**Key insight:** Lemmatization produces real words; stemming can produce fragments.
+
+---
+
+# When Stemming Goes Wrong 🤔
+
+**Real-world example of stemming problems:**
+
+```python
+from nltk.stem import PorterStemmer
+stemmer = PorterStemmer()
+
+# Over-stemming: Different words become the same
+words = ['universe', 'university', 'universal']
+stems = [stemmer.stem(w) for w in words]
+print(stems)  # ['univers', 'univers', 'univers']
+# All three map to the same stem - meaning is lost!
+
+# Under-stemming: Same root stays different
+words2 = ['absorb', 'absorption']
+stems2 = [stemmer.stem(w) for w in words2]
+print(stems2)  # ['absorb', 'absorpt']
+# Related words map to different stems!
+```
+
+**Takeaway:** Use lemmatization when you need interpretable, meaningful tokens.
 
 ---
 

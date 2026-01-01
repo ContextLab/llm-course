@@ -218,6 +218,53 @@ The emotional state creates **coherent behavior over time**. ELIZA has no memory
 </div>
 
 ---
+<!-- _class: scale-70 -->
+
+# Worked example: PARRY conversation over time
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Early in conversation (low emotions):**
+```
+anger=5, fear=8, mistrust=10
+
+Doctor: Tell me about yourself.
+PARRY:  I went to the races at Bay Meadows.
+        [Neutral topic, cooperative]
+
+Doctor: Did you win?
+PARRY:  I bet a little on the horses.
+        [Still calm, sharing]
+```
+
+</div>
+<div style="flex: 1;">
+
+**After triggering topics (high emotions):**
+```
+anger=15, fear=16, mistrust=14
+
+Doctor: What about the mafia?
+PARRY:  I know what you're up to!
+        [Defensive, suspicious]
+
+Doctor: I'm just trying to help.
+PARRY:  You're trying to get me to
+        say something I don't mean.
+        [Paranoid interpretation]
+```
+
+</div>
+</div>
+
+<div class="note-box" data-title="Key difference from ELIZA">
+
+PARRY's responses are shaped by accumulated emotional state, creating a coherent "personality" over time.
+
+</div>
+
+---
 
 # The Turing Test, revisited
 
@@ -377,6 +424,58 @@ Despite these features, ALICE cannot generalize beyond its patterns. 40,000 rule
 </div>
 
 ---
+<!-- _class: scale-70 -->
+
+# Worked example: AIML recursive processing
+
+**Input:** "Do you know what my name is"
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Step 1: Direct pattern search**
+```xml
+<pattern>DO YOU KNOW WHAT MY NAME IS</pattern>
+→ No exact match found
+```
+
+**Step 2: Try wildcard patterns**
+```xml
+<pattern>DO YOU KNOW *</pattern>
+<template>
+  <srai>WHAT IS <star/></srai>
+</template>
+→ MATCH! Redirect to "WHAT IS my name"
+```
+
+</div>
+<div style="flex: 1;">
+
+**Step 3: Recursive processing**
+```xml
+<pattern>WHAT IS MY NAME</pattern>
+<template>
+  <condition name="name">
+    <li value="unknown">
+      I don't know. What is your name?
+    </li>
+    <li>Your name is <get name="name"/>.</li>
+  </condition>
+</template>
+```
+
+**Result:** "I don't know. What is your name?"
+
+</div>
+</div>
+
+<div class="tip-box" data-title="The power of SRAI">
+
+SRAI lets you handle many input variations without writing separate rules for each. "Do you know my name", "What's my name", and "Can you tell me my name" can all redirect to the same base pattern.
+
+</div>
+
+---
 
 # Live demo
 
@@ -412,6 +511,64 @@ Let's interact with these historical systems:
 - Context that spans multiple turns
 - Reasoning about cause and effect
 - Understanding sarcasm, irony, metaphor
+
+---
+<!-- _class: scale-70 -->
+
+# Worked example: Where rules fail
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Problem 1: Novel combinations**
+```
+User: My robot vacuum ate my homework
+ALICE: I have no response for that.
+
+# No pattern for this specific situation
+# Even though it understands "vacuum"
+# and "homework" separately
+```
+
+**Problem 2: Multi-turn reasoning**
+```
+User: I bought a red car yesterday
+ALICE: Nice! I like cars.
+
+User: What color is it?
+ALICE: What is what color?
+
+# ALICE forgot the car was red!
+```
+
+</div>
+<div style="flex: 1;">
+
+**Problem 3: Implicit meaning**
+```
+User: Can you pass the salt?
+ALICE: Yes, I am capable of passing salt.
+
+# Literal interpretation misses
+# the REQUEST implied by the question
+```
+
+**Problem 4: Sarcasm**
+```
+User: Oh great, another Monday.
+ALICE: What makes Mondays so great for you?
+
+# Misses the negative sentiment entirely
+```
+
+</div>
+</div>
+
+<div class="warning-box" data-title="The fundamental issue">
+
+Rules capture **syntax** (patterns of words), not **semantics** (meaning). No amount of rules can bridge this gap.
+
+</div>
 
 ---
 
