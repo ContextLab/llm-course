@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Outline - Models of Language and Communication</title>
+    <meta name="description" content="Course syllabus and lecture schedule for PSYC 51.17: Language Models from Scratch">
+    <link rel="stylesheet" href="../demos/shared/css/demo-styles.css">
+
+    <style>
+        /* Navigation - matching demos page style */
+        .course-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            z-index: var(--z-fixed);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .course-nav.scrolled {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .course-nav .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .course-nav .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .course-nav .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .course-nav .nav-links a:hover,
+        .course-nav .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .course-nav .theme-toggle {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .course-nav .theme-toggle:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 70px;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .meta-item .icon {
+            font-size: 1.2rem;
+        }
+
+        /* Quick Links Bar */
+        .quick-links {
+            background: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 60px;
+            z-index: 100;
+        }
+
+        .quick-links-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .week-pill {
+            background: var(--bg-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-base);
+            text-decoration: none;
+        }
+
+        .week-pill:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .week-pill.active {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Week Section */
+        .week-section {
+            margin-bottom: 2rem;
+            scroll-margin-top: 140px;
+        }
+
+        .week-header {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .week-header:hover {
+            border-color: var(--primary-color);
+            background: var(--surface-hover);
+        }
+
+        .week-header.expanded {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom-color: transparent;
+        }
+
+        .week-header-content {
+            flex: 1;
+        }
+
+        .week-number {
+            display: inline-block;
+            background: var(--gradient-1);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .week-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .week-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .expand-icon {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+
+        .week-header.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .week-content {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-bottom-left-radius: var(--radius-lg);
+            border-bottom-right-radius: var(--radius-lg);
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.3s ease;
+        }
+
+        .week-content.expanded {
+            max-height: 5000px;
+            padding: 1.5rem 2rem;
+        }
+
+        /* Lecture Card */
+        .lecture-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .lecture-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .lecture-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .lecture-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .lecture-day {
+            background: var(--surface-hover);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .lecture-day.xhour {
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+        }
+
+        .lecture-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .lecture-topics {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .lecture-topics ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .lecture-topics li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Resource Links */
+        .resource-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .resource-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .resource-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .resource-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .resource-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.4rem 0.75rem;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .resource-link:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .resource-link.primary {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+        }
+
+        .resource-link.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+
+        .resource-link .icon {
+            font-size: 1rem;
+        }
+
+        /* Reading List */
+        .readings {
+            margin-top: 0.75rem;
+        }
+
+        .reading-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .reading-item .icon {
+            color: var(--primary-color);
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .reading-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .reading-item a:hover {
+            text-decoration: underline;
+        }
+
+        /* Assignment Badge */
+        .assignment-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: var(--radius-md);
+            color: #22c55e;
+            font-size: 0.9rem;
+            margin-top: 0.75rem;
+        }
+
+        .assignment-badge.due {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .assignment-badge a {
+            color: inherit;
+            text-decoration: underline;
+        }
+
+        /* No Class Notice */
+        .no-class-notice {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            text-align: center;
+            color: #fbbf24;
+            margin-bottom: 1rem;
+        }
+
+        .no-class-notice h4 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .no-class-notice p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .course-nav .nav-links {
+                gap: 1rem;
+            }
+
+            .course-meta {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .quick-links {
+                padding: 0.75rem 1rem;
+            }
+
+            .week-pill {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .week-header {
+                padding: 1rem 1.5rem;
+            }
+
+            .week-title {
+                font-size: 1.25rem;
+            }
+
+            .lecture-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="course-nav" id="navbar">
+        <div class="logo">Course Outline</div>
+        <div class="nav-links">
+            <a href="../demos/">Demos</a>
+            <a href="./" class="active">Outline</a>
+            <a href="https://github.com/ContextLab/llm-course" target="_blank">GitHub</a>
+            <a href="https://pbs.dartmouth.edu/undergraduate/courses-and-syllabi/topics-courses" target="_blank">Course Info</a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">&#127769;</span>
+            </button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Models of Language and Communication</h1>
+        <p>PSYC 51.17 - Explore the building blocks of modern language models, from classical NLP techniques to cutting-edge transformers and large language models.</p>
+        <div class="course-meta">
+            <div class="meta-item">
+                <span class="icon">&#128197;</span>
+                <span>MWF 10:10-11:15</span>
+            </div>
+            <div class="meta-item">
+                <span class="icon">&#128218;</span>
+                <span>X-Hour: Thu 12:15-1:05</span>
+            </div>
+            <div class="meta-item">
+                <span class="icon">&#127891;</span>
+                <span>Winter 2026</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="quick-links">
+        <div class="quick-links-container" id="quick-links-container">
+            <!-- Generated dynamically -->
+        </div>
+    </div>
+
+    <main class="container" id="weeks-container">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading course outline...</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="../demos/">Interactive Demos</a>
+                <a href="https://github.com/ContextLab/llm-course" target="_blank">GitHub Repository</a>
+                <a href="https://github.com/ContextLab/llm-course/tree/main/assignments" target="_blank">Assignments</a>
+                <a href="https://pbs.dartmouth.edu/undergraduate/courses-and-syllabi/topics-courses" target="_blank">Course Info</a>
+            </div>
+            <p style="color: var(--text-secondary);">
+                &copy; 2026 Jeremy R. Manning | PSYC 51.17: Language Models from Scratch
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // MARKDOWN PARSER FOR COURSE README.md
+        // Automatically parses the structured markdown
+        // into the courseData format for rendering
+        // ============================================
+
+        function parseMarkdown(markdown) {
+            const courseData = [];
+            const lines = markdown.split('\n');
+
+            let currentWeek = null;
+            let currentLecture = null;
+            let weekNumber = 0;
+
+            // Helper to convert GitHub Pages URLs to relative paths
+            function toRelativeUrl(url) {
+                if (url.includes('contextlab.github.io/llm-course/demos/')) {
+                    return url.replace('https://contextlab.github.io/llm-course/demos/', '../demos/');
+                }
+                if (url.includes('contextlab.github.io/llm-course/slides/')) {
+                    return url.replace('https://contextlab.github.io/llm-course/slides/', '');
+                }
+                return url;
+            }
+
+            // Helper to extract link text and URL from markdown link
+            // Handles URLs with parentheses by counting balanced parens
+            function parseLink(text) {
+                const linkStart = text.indexOf('[');
+                if (linkStart === -1) return null;
+
+                const linkEnd = text.indexOf('](', linkStart);
+                if (linkEnd === -1) return null;
+
+                const linkText = text.substring(linkStart + 1, linkEnd);
+                const urlStart = linkEnd + 2;
+
+                // Find matching closing paren, accounting for nested parens in URL
+                let parenDepth = 1;
+                let urlEnd = urlStart;
+                while (urlEnd < text.length && parenDepth > 0) {
+                    if (text[urlEnd] === '(') parenDepth++;
+                    else if (text[urlEnd] === ')') parenDepth--;
+                    if (parenDepth > 0) urlEnd++;
+                }
+
+                if (parenDepth !== 0) return null;
+
+                const url = text.substring(urlStart, urlEnd);
+                return { text: linkText, url: toRelativeUrl(url) };
+            }
+
+            // Helper to get icon based on content
+            function getReadingIcon(text) {
+                if (text.includes('HuggingFace')) return '\u{1F916}';
+                if (text.includes('Tutorial') || text.includes('Animated')) return '\u{1F393}';
+                if (text.includes('Reference') || text.includes('Foundation')) return '\u{1F517}';
+                if (text.includes('YouTube') || text.includes('video') || text.includes("Let's build")) return '\u{1F3AC}';
+                return '\u{1F4D6}';
+            }
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+
+                // Week headers: ## Week N: Title
+                const weekMatch = line.match(/^## Week (\d+): (.+)$/);
+                if (weekMatch) {
+                    weekNumber = parseInt(weekMatch[1]);
+                    const weekTitle = weekMatch[2];
+
+                    // Save previous week
+                    if (currentWeek) {
+                        if (currentLecture) {
+                            currentWeek.lectures.push(currentLecture);
+                            currentLecture = null;
+                        }
+                        courseData.push(currentWeek);
+                    }
+
+                    currentWeek = {
+                        id: 'week' + weekNumber,
+                        number: weekNumber,
+                        title: weekTitle,
+                        subtitle: '',
+                        expanded: weekNumber === 1,
+                        lectures: []
+                    };
+                    continue;
+                }
+
+                // Skip non-week content before first week
+                if (!currentWeek) continue;
+
+                // Lecture headers: **Day (Lecture N):** Title
+                const lectureMatch = line.match(/^\*\*([^*]+)\*\*:?\s*(.*)$/);
+                if (lectureMatch && (lectureMatch[1].includes('Monday') || lectureMatch[1].includes('Wednesday') ||
+                    lectureMatch[1].includes('Thursday') || lectureMatch[1].includes('Friday') ||
+                    lectureMatch[1].includes('Lecture') || lectureMatch[1].includes('March'))) {
+
+                    // Save previous lecture
+                    if (currentLecture) {
+                        currentWeek.lectures.push(currentLecture);
+                    }
+
+                    const dayPart = lectureMatch[1];
+                    const titlePart = lectureMatch[2];
+
+                    // Check for NO CLASS
+                    if (dayPart.includes('NO CLASS') || titlePart.includes('NO CLASS')) {
+                        currentWeek.noClassNotice = dayPart + (titlePart ? ': ' + titlePart : '');
+                        currentLecture = null;
+                        continue;
+                    }
+
+                    // Extract lecture number
+                    const lectureNumMatch = dayPart.match(/Lecture (\d+)/);
+                    const lectureNum = lectureNumMatch ? lectureNumMatch[1] : '';
+
+                    // Determine day name
+                    let dayName = dayPart;
+                    if (dayPart.includes('Monday') && !dayPart.includes('March')) dayName = 'Monday';
+                    else if (dayPart.includes('Wednesday')) dayName = 'Wednesday';
+                    else if (dayPart.includes('Thursday')) dayName = 'Thursday X-hour';
+                    else if (dayPart.includes('Friday')) dayName = 'Friday';
+
+                    const isXhour = dayPart.toLowerCase().includes('x-hour') || 
+                                   (dayPart.toLowerCase().includes('thursday') && !dayPart.includes('March'));
+
+                    currentLecture = {
+                        day: lectureNum ? dayName + ' - Lecture ' + lectureNum : dayName,
+                        title: titlePart || 'TBD',
+                        topics: [],
+                        xhour: isXhour
+                    };
+                    continue;
+                }
+
+                // NO CLASS notice (standalone warning)
+                if (line.includes('NO CLASS') && line.includes('⚠')) {
+                    currentWeek.noClassNotice = line.replace(/\*\*/g, '').trim();
+                    continue;
+                }
+
+                // Asynchronous materials note
+                if (line.startsWith('- Use asynchronous') || line.startsWith('- Continue working')) {
+                    if (!currentWeek.noClassDetails) currentWeek.noClassDetails = '';
+                    currentWeek.noClassDetails += line.substring(2).trim() + ' ';
+                    continue;
+                }
+
+                // Skip if no current lecture
+                if (!currentLecture) continue;
+
+                // Topic bullets (exclude special lines)
+                if (line.startsWith('- ') && !line.includes('Reading:') && !line.includes('\u{1F4CA}') &&
+                    !line.includes('\u{1F3AE}') && !line.includes('\u{1F4D3}') && !line.includes('HuggingFace:') &&
+                    !line.includes('Tutorial:') && !line.includes('Reference:') &&
+                    !line.includes('**Assignment') && !line.includes('\u{1F4DD}') && 
+                    !line.includes('📊') && !line.includes('🎮') && !line.includes('📓') && !line.includes('📝')) {
+                    const topic = line.substring(2).trim();
+                    // Skip if it looks like a link-only line or special marker
+                    if (topic && !topic.match(/^\[.+\]\(.+\)$/) && !topic.startsWith('Live demo')) {
+                        currentLecture.topics.push(topic);
+                    }
+                    continue;
+                }
+
+                // Readings (various formats)
+                if (line.includes('Reading:') || line.includes('HuggingFace:') ||
+                    line.includes('Tutorial:') || line.includes('Reference:')) {
+                    if (!currentLecture.readings) currentLecture.readings = [];
+                    const link = parseLink(line);
+                    if (link) {
+                        // Extract description after the link URL by finding where the link ends
+                        const linkPattern = '[' + link.text + '](' + link.url + ')';
+                        const linkEndPos = line.indexOf(linkPattern) + linkPattern.length;
+                        const afterLink = line.substring(linkEndPos);
+                        const descMatch = afterLink.match(/^\s*-\s*(.+)$/);
+                        const desc = descMatch ? descMatch[1] : '';
+                        currentLecture.readings.push({
+                            text: link.text,
+                            url: link.url,
+                            desc: desc,
+                            icon: getReadingIcon(line)
+                        });
+                    }
+                    continue;
+                }
+
+                // Slides (📊 marker)
+                if ((line.includes('📊') || line.includes('\u{1F4CA}')) && line.includes('Slides')) {
+                    if (!currentLecture.slides) currentLecture.slides = {};
+
+                    const pdfMatch = line.match(/\[Slides PDF\]\(([^)]+)\)/);
+                    if (pdfMatch) {
+                        currentLecture.slides.pdf = toRelativeUrl(pdfMatch[1]);
+                    }
+
+                    const htmlMatch = line.match(/\[Slides HTML\]\(([^)]+)\)/);
+                    if (htmlMatch) {
+                        currentLecture.slides.html = toRelativeUrl(htmlMatch[1]);
+                    }
+                    continue;
+                }
+
+                // Demos (🎮 marker)
+                if ((line.includes('🎮') || line.includes('\u{1F3AE}')) && line.includes('Try it:')) {
+                    if (!currentLecture.demos) currentLecture.demos = [];
+
+                    const demoRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+                    let match;
+                    let isFirst = true;
+                    while ((match = demoRegex.exec(line)) !== null) {
+                        currentLecture.demos.push({
+                            name: match[1],
+                            url: toRelativeUrl(match[2]),
+                            primary: isFirst
+                        });
+                        isFirst = false;
+                    }
+                    continue;
+                }
+
+                // Notebooks (📓 marker)
+                if ((line.includes('📓') || line.includes('\u{1F4D3}')) && line.includes('Notebook')) {
+                    const link = parseLink(line);
+                    if (link) {
+                        currentLecture.notebook = link.url;
+                    }
+                    continue;
+                }
+
+                // Assignment released
+                if (line.includes('**Assignment') && line.includes('Released')) {
+                    const link = parseLink(line);
+                    if (link) {
+                        const dueMatch = line.match(/\(Due:?\s*([^)]+)\)/);
+                        currentLecture.assignment = {
+                            text: 'Assignment Released: ' + link.text,
+                            url: link.url,
+                            due: dueMatch ? dueMatch[1] : ''
+                        };
+                    }
+                    continue;
+                }
+
+                // Final Project released
+                if (line.includes('**Final Project Released')) {
+                    const link = parseLink(line);
+                    if (link) {
+                        const dueMatch = line.match(/\(Due:?\s*([^)]+)\)/);
+                        currentLecture.assignment = {
+                            text: 'Final Project Released: ' + link.text,
+                            url: link.url,
+                            due: dueMatch ? dueMatch[1] : ''
+                        };
+                    }
+                    continue;
+                }
+
+                // Assignment due (📝 marker)
+                if ((line.includes('📝') || line.includes('\u{1F4DD}')) && line.includes('Due')) {
+                    const dueText = line.replace(/^- /, '').replace(/\*\*/g, '').replace('📝', '').replace('\u{1F4DD}', '').trim();
+                    currentLecture.assignmentDue = dueText;
+                    continue;
+                }
+
+                // End of week section (horizontal rule)
+                if (line.startsWith('---')) {
+                    if (currentLecture) {
+                        currentWeek.lectures.push(currentLecture);
+                        currentLecture = null;
+                    }
+                    continue;
+                }
+            }
+
+            // Save final week
+            if (currentWeek) {
+                if (currentLecture) {
+                    currentWeek.lectures.push(currentLecture);
+                }
+                courseData.push(currentWeek);
+            }
+
+            // Generate subtitles from lecture content
+            courseData.forEach(week => {
+                if (week.lectures.length > 0) {
+                    // Use first lecture title and first topic as subtitle
+                    const firstLecture = week.lectures[0];
+                    const topics = [];
+                    week.lectures.forEach(l => {
+                        if (l.topics) topics.push(...l.topics.slice(0, 1));
+                    });
+                    if (topics.length > 0) {
+                        week.subtitle = topics.slice(0, 2).join(', ');
+                        if (week.subtitle.length > 70) {
+                            week.subtitle = week.subtitle.substring(0, 67) + '...';
+                        }
+                    }
+                } else if (week.noClassNotice) {
+                    week.subtitle = 'Asynchronous week';
+                }
+            });
+
+            return courseData;
+        }
+
+        // ============================================
+        // RENDER FUNCTIONS
+        // ============================================
+
+        function renderLecture(lecture) {
+            let html = '<div class="lecture-card">';
+            html += '<div class="lecture-header">';
+            html += '<span class="lecture-day' + (lecture.xhour ? ' xhour' : '') + '">' + escapeHtml(lecture.day) + '</span>';
+            html += '</div>';
+            html += '<h3 class="lecture-title">' + escapeHtml(lecture.title) + '</h3>';
+            
+            if (lecture.topics && lecture.topics.length > 0) {
+                html += '<div class="lecture-topics"><ul>';
+                lecture.topics.forEach(topic => {
+                    html += '<li>' + escapeHtml(topic) + '</li>';
+                });
+                html += '</ul></div>';
+            }
+
+            // Resource section
+            if (lecture.slides || lecture.demos || lecture.readings || lecture.notebook) {
+                html += '<div class="resource-section">';
+
+                // Slides
+                if (lecture.slides) {
+                    html += '<div class="resource-group"><div class="resource-label">Slides</div><div class="resource-links">';
+                    if (lecture.slides.html) {
+                        html += '<a href="' + escapeHtml(lecture.slides.html) + '" class="resource-link primary"><span class="icon">\u{1F310}</span> HTML</a>';
+                    }
+                    if (lecture.slides.pdf) {
+                        html += '<a href="' + escapeHtml(lecture.slides.pdf) + '" class="resource-link"><span class="icon">\u{1F4C4}</span> PDF</a>';
+                    }
+                    html += '</div></div>';
+                }
+
+                // Notebook
+                if (lecture.notebook) {
+                    html += '<div class="resource-group"><div class="resource-label">Materials</div><div class="resource-links">';
+                    html += '<a href="' + escapeHtml(lecture.notebook) + '" class="resource-link"><span class="icon">\u{1F4D3}</span> X-hour Notebook</a>';
+                    html += '</div></div>';
+                }
+
+                // Demos
+                if (lecture.demos && lecture.demos.length > 0) {
+                    html += '<div class="resource-group"><div class="resource-label">Try It</div><div class="resource-links">';
+                    lecture.demos.forEach(demo => {
+                        html += '<a href="' + escapeHtml(demo.url) + '" class="resource-link' + (demo.primary ? ' primary' : '') + '"><span class="icon">\u{1F3AE}</span> ' + escapeHtml(demo.name) + '</a>';
+                    });
+                    html += '</div></div>';
+                }
+
+                // Readings
+                if (lecture.readings && lecture.readings.length > 0) {
+                    html += '<div class="resource-group readings"><div class="resource-label">Readings</div>';
+                    lecture.readings.forEach(reading => {
+                        const icon = reading.icon || '\u{1F4D6}';
+                        html += '<div class="reading-item"><span class="icon">' + icon + '</span><span>';
+                        html += '<a href="' + escapeHtml(reading.url) + '" target="_blank">' + escapeHtml(reading.text) + '</a>';
+                        if (reading.desc) html += ' - ' + escapeHtml(reading.desc);
+                        html += '</span></div>';
+                    });
+                    html += '</div>';
+                }
+
+                html += '</div>';
+            }
+
+            // Assignment released
+            if (lecture.assignment) {
+                const parts = lecture.assignment.text.split(':');
+                html += '<div class="assignment-badge"><span class="icon">\u{1F4DD}</span><span><strong>' + escapeHtml(parts[0]) + ':</strong> ';
+                html += '<a href="' + escapeHtml(lecture.assignment.url) + '" target="_blank">' + escapeHtml(parts.slice(1).join(':').trim()) + '</a>';
+                if (lecture.assignment.due) html += ' (Due: ' + escapeHtml(lecture.assignment.due) + ')';
+                html += '</span></div>';
+            }
+
+            // Assignment due
+            if (lecture.assignmentDue) {
+                html += '<div class="assignment-badge due"><span class="icon">\u{1F4C5}</span><span><strong>' + escapeHtml(lecture.assignmentDue) + '</strong></span></div>';
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function renderWeek(week) {
+            let html = '<section class="week-section" id="' + week.id + '">';
+            html += '<div class="week-header' + (week.expanded ? ' expanded' : '') + '" onclick="toggleWeek(this)">';
+            html += '<div class="week-header-content">';
+            html += '<span class="week-number">Week ' + week.number + '</span>';
+            html += '<h2 class="week-title">' + escapeHtml(week.title) + '</h2>';
+            html += '<p class="week-subtitle">' + escapeHtml(week.subtitle || '') + '</p>';
+            html += '</div>';
+            html += '<span class="expand-icon">\u25BC</span>';
+            html += '</div>';
+            
+            html += '<div class="week-content' + (week.expanded ? ' expanded' : '') + '">';
+            
+            // No class notice
+            if (week.noClassNotice) {
+                html += '<div class="no-class-notice">';
+                html += '<h4>\u{1F4C5} ' + escapeHtml(week.noClassNotice) + '</h4>';
+                if (week.noClassDetails) {
+                    html += '<p>' + escapeHtml(week.noClassDetails.trim()) + '</p>';
+                }
+                html += '</div>';
+            }
+
+            // Lectures
+            week.lectures.forEach(lecture => {
+                html += renderLecture(lecture);
+            });
+
+            html += '</div></section>';
+            return html;
+        }
+
+        function renderCourse(courseData) {
+            const container = document.getElementById('weeks-container');
+            let html = '';
+            courseData.forEach(week => {
+                html += renderWeek(week);
+            });
+            container.innerHTML = html;
+
+            // Generate quick links
+            const quickLinksContainer = document.getElementById('quick-links-container');
+            let quickHtml = '';
+            courseData.forEach(week => {
+                quickHtml += '<a href="#' + week.id + '" class="week-pill">Week ' + week.number + '</a>';
+            });
+            quickLinksContainer.innerHTML = quickHtml;
+
+            // Setup interactions
+            setupQuickLinks();
+            setupAnimations();
+            updateActiveWeek();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================
+        // INTERACTION HANDLERS
+        // ============================================
+
+        function toggleWeek(header) {
+            const content = header.nextElementSibling;
+            const isExpanded = header.classList.contains('expanded');
+
+            if (isExpanded) {
+                header.classList.remove('expanded');
+                content.classList.remove('expanded');
+            } else {
+                header.classList.add('expanded');
+                content.classList.add('expanded');
+            }
+        }
+
+        function setupQuickLinks() {
+            document.querySelectorAll('.week-pill').forEach(pill => {
+                pill.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = pill.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    if (targetSection) {
+                        const header = targetSection.querySelector('.week-header');
+                        const content = targetSection.querySelector('.week-content');
+
+                        // Expand the section if collapsed
+                        if (header && !header.classList.contains('expanded')) {
+                            header.classList.add('expanded');
+                            content.classList.add('expanded');
+                        }
+
+                        // Scroll to section
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        }
+
+        function updateActiveWeek() {
+            const weekPills = document.querySelectorAll('.week-pill');
+            const weekSections = document.querySelectorAll('.week-section');
+            const scrollPos = window.scrollY + 200;
+
+            weekSections.forEach((section, index) => {
+                const top = section.offsetTop;
+                const bottom = top + section.offsetHeight;
+
+                if (scrollPos >= top && scrollPos < bottom) {
+                    weekPills.forEach(pill => pill.classList.remove('active'));
+                    if (weekPills[index]) weekPills[index].classList.add('active');
+                }
+            });
+        }
+
+        function setupAnimations() {
+            const observerOptions = { threshold: 0.1 };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.week-section').forEach(section => {
+                section.style.opacity = '0';
+                observer.observe(section);
+            });
+        }
+
+        // ============================================
+        // THEME TOGGLE
+        // ============================================
+
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const htmlEl = document.documentElement;
+
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        htmlEl.setAttribute('data-theme', currentTheme);
+        themeIcon.innerHTML = currentTheme === 'dark' ? '&#127769;' : '&#9728;';
+
+        themeToggle.addEventListener('click', () => {
+            const current = htmlEl.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            htmlEl.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.innerHTML = newTheme === 'dark' ? '&#127769;' : '&#9728;';
+        });
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            updateActiveWeek();
+        });
+
+        // ============================================
+        // LOAD AND PARSE README.md
+        // ============================================
+
+        async function loadCourse() {
+            try {
+                const response = await fetch('README.md');
+                if (!response.ok) {
+                    throw new Error('Failed to load README.md');
+                }
+                const markdown = await response.text();
+                const courseData = parseMarkdown(markdown);
+                renderCourse(courseData);
+            } catch (error) {
+                console.error('Error loading course:', error);
+                document.getElementById('weeks-container').innerHTML = 
+                    '<div class="loading"><p>Error loading course outline. Please try refreshing the page.</p></div>';
+            }
+        }
+
+        // Initialize
+        loadCourse();
+    </script>
+</body>
+</html>
