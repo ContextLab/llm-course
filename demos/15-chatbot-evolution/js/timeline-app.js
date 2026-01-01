@@ -353,6 +353,17 @@ class TimelineApp {
                 stepDiv.appendChild(contentDiv);
             }
 
+            // Add SRAI display for ALICE
+            if (step.sraiTarget) {
+                const cd = document.createElement("div");
+                cd.className = "step-content";
+                const sd = document.createElement("div");
+                sd.style.cssText = "background:#e0f2fe;padding:12px;border-radius:8px;border-left:4px solid #0284c7;";
+                sd.innerHTML = '<div style="font-weight:600;color:#0369a1;margin-bottom:8px;">SRAI REDIRECT</div><code>\"' + (step.input || "") + '\" -> \"' + step.sraiTarget + '\"</code>';
+                cd.appendChild(sd);
+                stepDiv.appendChild(cd);
+            }
+
             // Add pattern tests
             if (step.patternTests && step.patternTests.length > 0) {
                 const contentDiv = document.createElement('div');

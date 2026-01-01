@@ -696,7 +696,28 @@ export class Alice {
     }
 
     /**
+     * Describe what normalization was applied to input
+     */
+    describeNormalization(original, normalized) {
+        const changes = [];
+        if (original !== original.toLowerCase()) {
+            changes.push("lowercase");
+        }
+        if (/[?!.,:;]+$/.test(original)) {
+            changes.push("removed punctuation");
+        }
+        if (/\\s{2,}/.test(original)) {
+            changes.push("normalized whitespace");
+        }
+        if (original !== original.trim()) {
+            changes.push("trimmed");
+        }
+        return changes.length > 0 ? changes.join(", ") : "minor cleanup";
+    }
+
+    /**
      * Get detailed breakdown of response processing for visualization
+     * Shows step-by-step how AIML processes input to generate responses
      */
     getDetailedBreakdown(input) {
         const steps = [];
@@ -704,20 +725,21 @@ export class Alice {
         // Capture initial context
         const initialContext = { ...this.context };
 
-        // Step 1: Input normalization
+        // Step 1: Input normalization (AIML preprocessing)
         const normalizedInput = this.normalize(input);
+        const normChanged = input.toLowerCase().trim().replace(/[?!.,:;]+$/, "").replace(/\s+/g, " ") !== input;
         steps.push({
             name: 'Input Normalization',
-            description: 'AIML normalizes input: lowercase, removes punctuation, collapses whitespace',
+            description: 'AIML preprocessing: converts to lowercase, strips trailing punctuation, normalizes whitespace. This standardizes input for pattern matching.',
             input: input,
             output: normalizedInput,
-            details: 'Standard AIML preprocessing applied'
+            details: normChanged ? 'Transformations applied: ' + this.describeNormalization(input, normalizedInput) : 'No transformations needed'
         });
 
         // Step 2: Context check
         steps.push({
             name: 'Context Check',
-            description: 'Checking conversation context for <that> and <topic> constraints',
+            description: 'AIML uses <that> (bot\'s last response) and <topic> tags to constrain pattern matching. Categories with matching constraints take priority.',
             contextInfo: {
                 topic: this.context.topic,
                 that: this.context.that || '(none)',
@@ -780,7 +802,7 @@ export class Alice {
 
         steps.push({
             name: 'Category Matching',
-            description: 'Testing input against AIML categories (sorted by priority)',
+            description: 'AIML searches categories by priority: _ wildcards (highest) > exact patterns > * wildcards (lowest). First matching category wins.',
             patternTests: patternTests.slice(0, 10),
             details: matchedPattern
                 ? `Matched category with pattern: ${matchedPattern.pattern.toString()} (priority: ${matchedPattern.priority || 0})`
@@ -792,7 +814,7 @@ export class Alice {
         if (wildcards.length > 0) {
             steps.push({
                 name: 'Wildcard Extraction',
-                description: 'Extracting captured text from pattern wildcards (*)',
+                description: 'AIML wildcards (* and _) capture matched text. These values are accessed via <star/>, <star index="2"/>, etc. in templates.',
                 wildcards: wildcards.map((w, i) => ({
                     index: i + 1,
                     captured: w || '(empty)'
@@ -820,7 +842,7 @@ export class Alice {
         if (usedSRAI) {
             steps.push({
                 name: 'SRAI (Symbolic Reduction)',
-                description: 'Pattern redirects to another pattern via SRAI',
+                description: 'AIML\'s <srai> tag enables recursive pattern matching. The input is transformed and re-matched against all categories.',
                 sraiTarget: sraiTarget,
                 details: `Recursively matching: "${sraiTarget}"`
             });
@@ -836,7 +858,7 @@ export class Alice {
 
         steps.push({
             name: 'Template Expansion',
-            description: 'Expanding template with captured wildcards and context variables',
+            description: 'AIML <template> tags contain the response. They can include: <star/> (wildcards), <get/><set/> (variables), <random> (randomization), <srai> (recursion), and more.',
             templateInfo: matchedPattern ? {
                 hasFunction: typeof matchedPattern.template === 'function',
                 usesContext: matchedPattern.template.toString().includes('this.context')
@@ -861,7 +883,7 @@ export class Alice {
 
         steps.push({
             name: 'Context Update',
-            description: 'Updating conversation context for future <that> matching',
+            description: 'AIML stores the response as <that> for future pattern matching. Some patterns only match when the previous response meets certain criteria.',
             contextInfo: {
                 before: {
                     topic: initialContext.topic,
