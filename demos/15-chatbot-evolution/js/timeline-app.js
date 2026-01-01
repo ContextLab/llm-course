@@ -494,7 +494,7 @@ class TimelineApp {
 
         if (!message) return;
 
-        // Add user message
+        // Add user message immediately
         this.addMessage(botName, message, 'user');
         input.value = '';
 
@@ -503,11 +503,11 @@ class TimelineApp {
             let response;
             // Neural models (seq2seq and gpt) use async
             if (botName === 'gpt' || botName === 'seq2seq') {
-                // Show typing indicator for neural models
-                this.addMessage(botName, 'Generating response...', 'bot-typing');
+                // Show animated typing indicator for neural models
+                this.addTypingIndicator(botName);
                 response = await this.bots[botName].getResponse(message);
                 // Remove typing indicator
-                this.removeLastMessage(botName);
+                this.removeTypingIndicator(botName);
             } else {
                 // Rule-based bots are synchronous
                 response = this.bots[botName].getResponse(message);
@@ -520,7 +520,7 @@ class TimelineApp {
 
         } catch (error) {
             console.error(`Error getting response from ${botName}:`, error);
-            this.removeLastMessage(botName); // Remove typing indicator if present
+            this.removeTypingIndicator(botName); // Remove typing indicator if present
             this.addMessage(botName, "Sorry, I encountered an error.", 'bot');
         }
     }
@@ -529,6 +529,26 @@ class TimelineApp {
         const messagesContainer = document.getElementById(`${botName}-messages`);
         if (messagesContainer && messagesContainer.lastElementChild) {
             messagesContainer.removeChild(messagesContainer.lastElementChild);
+        }
+    }
+
+    addTypingIndicator(botName) {
+        const messagesContainer = document.getElementById(`${botName}-messages`);
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message bot typing-indicator';
+        typingDiv.id = `${botName}-typing`;
+        // Create three animated dots using DOM methods
+        for (let i = 0; i < 3; i++) {
+            typingDiv.appendChild(document.createElement('span'));
+        }
+        messagesContainer.appendChild(typingDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    removeTypingIndicator(botName) {
+        const typingDiv = document.getElementById(`${botName}-typing`);
+        if (typingDiv) {
+            typingDiv.remove();
         }
     }
 
@@ -542,7 +562,8 @@ class TimelineApp {
     }
 
     async compareAllBots() {
-        const prompt = document.getElementById('compare-prompt').value.trim();
+        const promptInput = document.getElementById('compare-prompt');
+        const prompt = promptInput.value.trim();
 
         if (!prompt) {
             alert('Please enter a prompt to compare');
@@ -550,63 +571,109 @@ class TimelineApp {
         }
 
         const resultsDiv = document.getElementById('comparison-results');
-        resultsDiv.innerHTML = '<p style="color: #999; text-align: center;">Processing...</p>';
 
-        const responses = {};
-
-        // Get responses from all bots with individual error handling
-        try {
-            // Rule-based bots (synchronous) - handle individually
-            try {
-                responses.eliza = this.bots.eliza.getResponse(prompt);
-            } catch (error) {
-                console.error('Error from ELIZA:', error);
-                responses.eliza = 'Error: Unable to get response';
-            }
-
-            try {
-                responses.parry = this.bots.parry.getResponse(prompt);
-            } catch (error) {
-                console.error('Error from PARRY:', error);
-                responses.parry = 'Error: Unable to get response';
-            }
-
-            try {
-                responses.alice = this.bots.alice.getResponse(prompt);
-            } catch (error) {
-                console.error('Error from ALICE:', error);
-                responses.alice = 'Error: Unable to get response';
-            }
-
-            // Neural models (asynchronous) - handle individually
-            try {
-                responses.seq2seq = await this.bots.seq2seq.getResponse(prompt);
-            } catch (error) {
-                console.error('Error from Seq2Seq:', error);
-                responses.seq2seq = 'Error: Unable to get response';
-            }
-
-            try {
-                responses.gpt = await this.bots.gpt.getResponse(prompt);
-            } catch (error) {
-                console.error('Error from GPT:', error);
-                responses.gpt = 'Error: Unable to get response';
-            }
-        } catch (error) {
-            console.error('Unexpected error in comparison:', error);
+        // Initialize conversation history if not exists
+        if (!this.comparisonHistory) {
+            this.comparisonHistory = [];
         }
 
-        // Display results
-        resultsDiv.innerHTML = '';
-        for (const [bot, response] of Object.entries(responses)) {
+        // Add user message to history and display immediately
+        const userMsgDiv = document.createElement('div');
+        userMsgDiv.className = 'comparison-item';
+        userMsgDiv.style.background = 'var(--primary-color)';
+        userMsgDiv.style.color = 'white';
+        userMsgDiv.style.borderLeftColor = 'var(--secondary-color)';
+        const userStrong = document.createElement('strong');
+        userStrong.textContent = 'YOU:';
+        userMsgDiv.appendChild(userStrong);
+        userMsgDiv.appendChild(document.createElement('br'));
+        userMsgDiv.appendChild(document.createTextNode(prompt));
+        resultsDiv.appendChild(userMsgDiv);
+
+        // Clear input
+        promptInput.value = '';
+
+        // Create bot response containers with loading indicators
+        const botNames = ['eliza', 'parry', 'alice', 'seq2seq', 'gpt'];
+        const botLabels = {
+            eliza: 'ELIZA (1966)',
+            parry: 'PARRY (1972)',
+            alice: 'A.L.I.C.E. (1995)',
+            seq2seq: 'BlenderBot (2020)',
+            gpt: 'LaMini-GPT (2023)'
+        };
+        const botDivs = {};
+
+        // Create containers with typing indicators
+        for (const bot of botNames) {
             const item = document.createElement('div');
             item.className = 'comparison-item';
-            item.innerHTML = `
-                <strong>${bot.toUpperCase()}:</strong><br>
-                ${response}
-            `;
+            item.id = `compare-${bot}`;
+
+            const strong = document.createElement('strong');
+            strong.textContent = botLabels[bot] + ':';
+            item.appendChild(strong);
+            item.appendChild(document.createElement('br'));
+
+            // Add typing indicator
+            const typingSpan = document.createElement('span');
+            typingSpan.className = 'typing-indicator';
+            typingSpan.style.display = 'inline-flex';
+            for (let i = 0; i < 3; i++) {
+                typingSpan.appendChild(document.createElement('span'));
+            }
+            item.appendChild(typingSpan);
+
             resultsDiv.appendChild(item);
+            botDivs[bot] = item;
         }
+
+        // Scroll to show new content
+        resultsDiv.scrollTop = resultsDiv.scrollHeight;
+
+        // Get responses - rule-based first (sync), then neural (async)
+        const updateBotResponse = (bot, response) => {
+            const item = botDivs[bot];
+            // Remove typing indicator and add response
+            const typing = item.querySelector('.typing-indicator');
+            if (typing) typing.remove();
+            item.appendChild(document.createTextNode(response));
+        };
+
+        // Rule-based bots (synchronous)
+        try {
+            updateBotResponse('eliza', this.bots.eliza.getResponse(prompt));
+        } catch (error) {
+            console.error('Error from ELIZA:', error);
+            updateBotResponse('eliza', 'Error: Unable to get response');
+        }
+
+        try {
+            updateBotResponse('parry', this.bots.parry.getResponse(prompt));
+        } catch (error) {
+            console.error('Error from PARRY:', error);
+            updateBotResponse('parry', 'Error: Unable to get response');
+        }
+
+        try {
+            updateBotResponse('alice', this.bots.alice.getResponse(prompt));
+        } catch (error) {
+            console.error('Error from ALICE:', error);
+            updateBotResponse('alice', 'Error: Unable to get response');
+        }
+
+        // Neural models (asynchronous) - run in parallel
+        const neuralPromises = [
+            this.bots.seq2seq.getResponse(prompt).then(r => updateBotResponse('seq2seq', r))
+                .catch(e => { console.error('Error from Seq2Seq:', e); updateBotResponse('seq2seq', 'Error: Unable to get response'); }),
+            this.bots.gpt.getResponse(prompt).then(r => updateBotResponse('gpt', r))
+                .catch(e => { console.error('Error from GPT:', e); updateBotResponse('gpt', 'Error: Unable to get response'); })
+        ];
+
+        await Promise.all(neuralPromises);
+
+        // Save to history
+        this.comparisonHistory.push({ prompt, timestamp: Date.now() });
     }
 
     displayArchitecture() {
