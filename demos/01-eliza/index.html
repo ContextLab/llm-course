@@ -472,6 +472,24 @@
             </div>
           `;
           stepHTML += `<div class="step-details">Select a different template to see how it changes the response</div>`;
+        } else if (step.name === 'Goto Resolution' && step.targetTemplates && step.targetTemplates.length > 0) {
+          // Special handling for Goto Resolution - show the chain and target templates
+          stepHTML += `
+            <div class="step-io">
+              <div style="flex: 1;">
+                <div class="io-label">Goto Statement</div>
+                <div class="io-box" style="background: var(--warning-bg, #fff3cd); border-color: var(--warning-border, #ffc107);">${escapeHtml(step.input)}</div>
+              </div>
+              <div class="arrow" style="color: var(--warning-color, #856404);">↪</div>
+              <div style="flex: 1;">
+                <div class="io-label">Target: "${escapeHtml(step.targetKeyword)}" (${step.targetTemplates.length} template(s))</div>
+                <select class="template-dropdown" id="goto-template-selector" style="width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; background: var(--surface-color); color: var(--text-primary); cursor: pointer;">
+                  ${step.targetTemplates.map((t, i) => `<option value="${i}" ${escapeHtml(t) === escapeHtml(step.output.replace(/^"|"$/g, '')) ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+          `;
+          stepHTML += `<div class="step-details">${step.details}</div>`;
         } else if (step.input !== undefined && step.output !== undefined) {
           // Add input/output visualization for other steps
           stepHTML += `
@@ -489,9 +507,9 @@
           `;
         }
 
-        // Add details (but not for template selection since we add custom details)
+        // Add details (but not for template selection or goto resolution since we add custom details)
         // For Keyword Detection, make it expandable
-        if (step.details && step.name !== 'Template Selection') {
+        if (step.details && step.name !== 'Template Selection' && step.name !== 'Goto Resolution') {
           if (step.name === 'Keyword Detection' && step.keywordsFound && step.keywordsFound.length > 0) {
             const keywordStepId = `keywords-${index}`;
             stepHTML += `<div class="pattern-tests-header" onclick="togglePatternTests('${keywordStepId}')" style="cursor: pointer; color: var(--primary-color); margin-bottom: 8px;">

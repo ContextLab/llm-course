@@ -544,10 +544,10 @@ export class PatternMatcher {
 
     // Step 5: Response template selection
     const allTemplates = matchedPattern ? matchedPattern.responses : [];
-    const selectedTemplateIndex = matchedPattern
+    let selectedTemplateIndex = matchedPattern
       ? Math.floor(Math.random() * matchedPattern.responses.length)
       : 0;
-    const selectedTemplate = allTemplates[selectedTemplateIndex] || null;
+    let selectedTemplate = allTemplates[selectedTemplateIndex] || null;
 
     if (matchedPattern && allTemplates.length > 0) {
       breakdown.steps.push({
@@ -559,6 +559,54 @@ export class PatternMatcher {
         allTemplates: allTemplates,
         selectedTemplateIndex: selectedTemplateIndex
       });
+    }
+
+    // Step 5b: Handle "goto" statements - follow the reference to another keyword
+    let gotoChain = [];
+    let finalTemplate = selectedTemplate;
+    let gotoTargetRule = null;
+    let gotoTargetPattern = null;
+
+    while (finalTemplate && finalTemplate.startsWith('goto ')) {
+      const targetKeyword = finalTemplate.substring(5).trim();
+      gotoChain.push(targetKeyword);
+
+      // Find the target rule
+      const targetRule = rules.find(r => r.keyword === targetKeyword);
+      if (targetRule && targetRule.patterns && targetRule.patterns.length > 0) {
+        gotoTargetRule = targetRule;
+        gotoTargetPattern = targetRule.patterns[0];
+        const targetTemplates = gotoTargetPattern.responses;
+        const targetTemplateIndex = Math.floor(Math.random() * targetTemplates.length);
+        finalTemplate = targetTemplates[targetTemplateIndex];
+      } else {
+        // Target not found, break out
+        break;
+      }
+
+      // Prevent infinite loops (max 10 gotos)
+      if (gotoChain.length >= 10) break;
+    }
+
+    // Add goto resolution step if we followed any gotos
+    if (gotoChain.length > 0) {
+      breakdown.steps.push({
+        name: 'Goto Resolution',
+        description: 'Following reference to another keyword',
+        input: `"${selectedTemplate}"`,
+        output: gotoTargetRule ? `"${finalTemplate}"` : 'Target not found',
+        details: gotoChain.length === 1
+          ? `Redirected to keyword "${gotoChain[0]}"`
+          : `Followed chain: ${gotoChain.map(k => `"${k}"`).join(' → ')}`,
+        gotoChain: gotoChain,
+        targetKeyword: gotoChain[gotoChain.length - 1],
+        targetRule: gotoTargetRule,
+        targetPattern: gotoTargetPattern,
+        targetTemplates: gotoTargetPattern ? gotoTargetPattern.responses : []
+      });
+
+      // Update selected template to the resolved one
+      selectedTemplate = finalTemplate;
     }
 
     // Step 6: Assembly with post-substitutions
