@@ -1,64 +1,54 @@
-/* Attention Visualizer Styles */
+/**
+ * Attention Visualizer Styles
+ * Uses CSS variables from ../shared/css/demo-styles.css for theming
+ */
 
+/* Demo-specific variables that don't conflict with theming */
 :root {
-    --primary-color: #2196F3;
-    --secondary-color: #4CAF50;
-    --accent-color: #FF9800;
-    --text-color: #333;
-    --border-color: #ddd;
-    --background-light: #f5f5f5;
-    --background-white: #fff;
-    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding: 20px;
+    --attention-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --attention-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --attention-transition: all 0.3s ease;
 }
 
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    background: var(--background-white);
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    padding: 0;
+    background: var(--surface-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
     overflow: hidden;
 }
 
-/* Header */
-header {
-    background: linear-gradient(135deg, var(--primary-color), #1976D2);
-    color: white;
-    padding: 30px;
+/* Hero Header - matches ELIZA styling */
+.hero-header {
+    padding: 3rem 0 2rem;
+    margin-bottom: 30px;
     text-align: center;
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
 }
 
-header h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-    font-weight: 700;
+.hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-header p {
-    font-size: 1.1em;
-    opacity: 0.9;
+.hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 /* Controls Panel */
 .controls-panel {
     padding: 30px;
-    background: var(--background-light);
+    background: var(--bg-secondary);
     border-bottom: 2px solid var(--border-color);
 }
 
@@ -70,7 +60,7 @@ header p {
     display: block;
     font-weight: 600;
     margin-bottom: 8px;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .control-group select,
@@ -78,16 +68,19 @@ header p {
     width: 100%;
     padding: 12px;
     border: 2px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 14px;
     font-family: inherit;
     transition: border-color 0.3s ease;
+    background: var(--surface-color);
+    color: var(--text-primary);
 }
 
 .control-group select:focus,
 .control-group textarea:focus {
     outline: none;
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .control-group textarea {
@@ -95,23 +88,35 @@ header p {
     min-height: 80px;
 }
 
-/* Buttons */
+/* Buttons - matches ELIZA btn pattern */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--attention-transition);
+    font-weight: 600;
+}
+
+.btn-primary,
 .primary-btn {
-    background: linear-gradient(135deg, var(--secondary-color), #45a049);
+    background: var(--gradient-primary);
     color: white;
     border: none;
     padding: 14px 32px;
     font-size: 16px;
     font-weight: 600;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow);
+    transition: var(--attention-transition);
+    box-shadow: var(--shadow-md);
 }
 
+.btn-primary:hover,
 .primary-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-lg);
 }
 
 .primary-btn:disabled {
@@ -125,9 +130,9 @@ header p {
 
 /* Model Info */
 .model-info {
-    background: white;
+    background: var(--surface-color);
     padding: 15px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     margin-top: 20px;
     border-left: 4px solid var(--primary-color);
 }
@@ -136,11 +141,12 @@ header p {
     display: flex;
     justify-content: space-between;
     padding: 5px 0;
+    color: var(--text-primary);
 }
 
 .info-label {
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 /* Layer and Head Controls */
@@ -159,6 +165,7 @@ header p {
     margin-left: 15px;
     font-weight: normal;
     cursor: pointer;
+    color: var(--text-primary);
 }
 
 .checkbox-label input[type="checkbox"] {
@@ -172,6 +179,7 @@ header p {
 #visualization-container {
     padding: 30px;
     min-height: 500px;
+    background: var(--surface-color);
 }
 
 .loading-state {
@@ -180,11 +188,11 @@ header p {
     align-items: center;
     justify-content: center;
     min-height: 400px;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .spinner {
-    border: 4px solid var(--background-light);
+    border: 4px solid var(--bg-secondary);
     border-top: 4px solid var(--primary-color);
     border-radius: 50%;
     width: 50px;
@@ -215,31 +223,32 @@ header p {
 
 .viz-stats {
     font-size: 0.9em;
-    color: #666;
-    font-family: 'Courier New', monospace;
+    color: var(--text-secondary);
+    font-family: 'Monaco', 'Consolas', monospace;
 }
 
 /* Tokens Display */
 .tokens-display {
     margin-bottom: 25px;
     padding: 15px;
-    background: var(--background-light);
-    border-radius: 6px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
+    color: var(--text-primary);
 }
 
 .token-badge {
     display: inline-block;
     padding: 6px 12px;
-    background: white;
+    background: var(--surface-color);
     border: 2px solid var(--primary-color);
     border-radius: 20px;
     font-size: 0.9em;
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--text-primary);
     transition: all 0.2s ease;
 }
 
@@ -265,17 +274,17 @@ header p {
 /* Heatmap */
 #heatmap-canvas {
     border: 1px solid var(--border-color);
-    border-radius: 4px;
-    box-shadow: var(--shadow);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
     cursor: crosshair;
 }
 
 /* Arc Diagram */
 #arc-svg {
     border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background: white;
-    box-shadow: var(--shadow);
+    border-radius: var(--radius-sm);
+    background: var(--surface-color);
+    box-shadow: var(--shadow-md);
 }
 
 .attention-arc {
@@ -287,13 +296,13 @@ header p {
 #matrix-container {
     max-width: 100%;
     overflow: auto;
-    border-radius: 4px;
-    box-shadow: var(--shadow);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
 }
 
 .matrix-table {
     border-collapse: collapse;
-    background: white;
+    background: var(--surface-color);
     font-size: 0.85em;
     margin: 0 auto;
 }
@@ -303,10 +312,11 @@ header p {
     padding: 8px 12px;
     border: 1px solid var(--border-color);
     text-align: center;
+    color: var(--text-primary);
 }
 
 .matrix-table th {
-    background: var(--background-light);
+    background: var(--bg-secondary);
     font-weight: 600;
     position: sticky;
     top: 0;
@@ -314,14 +324,14 @@ header p {
 }
 
 .matrix-table tbody th {
-    background: var(--background-light);
+    background: var(--bg-secondary);
     position: sticky;
     left: 0;
     z-index: 5;
 }
 
 .matrix-table td {
-    font-family: 'Courier New', monospace;
+    font-family: 'Monaco', 'Consolas', monospace;
     transition: all 0.2s ease;
     cursor: pointer;
 }
@@ -339,7 +349,7 @@ header p {
 
 .pos-num {
     font-size: 0.8em;
-    color: #666;
+    color: var(--text-secondary);
     font-weight: normal;
 }
 
@@ -360,35 +370,35 @@ header p {
 }
 
 .head-minimap {
-    background: white;
+    background: var(--surface-color);
     border: 2px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 15px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: var(--attention-transition);
 }
 
 .head-minimap:hover {
     transform: translateY(-5px);
-    box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-lg);
     border-color: var(--primary-color);
 }
 
 .head-minimap h4 {
-    color: var(--text-color);
+    color: var(--text-primary);
     margin-bottom: 10px;
     font-size: 1em;
 }
 
 .head-minimap canvas {
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     margin-bottom: 10px;
 }
 
 .head-stats {
     font-size: 0.85em;
-    color: #666;
+    color: var(--text-secondary);
     text-align: left;
 }
 
@@ -398,12 +408,12 @@ header p {
     background: rgba(0, 0, 0, 0.9);
     color: white;
     padding: 10px 15px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 0.9em;
     pointer-events: none;
     z-index: 1000;
     display: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-lg);
     max-width: 300px;
 }
 
@@ -417,14 +427,14 @@ header p {
     align-items: center;
     gap: 15px;
     padding: 15px;
-    background: var(--background-light);
-    border-radius: 6px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
     margin-top: 20px;
 }
 
 .legend-label {
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-primary);
 }
 
 .color-scale {
@@ -442,7 +452,7 @@ header p {
         rgb(0, 102, 204)
     );
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     margin-bottom: 5px;
 }
 
@@ -450,12 +460,12 @@ header p {
     display: flex;
     justify-content: space-between;
     font-size: 0.85em;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 /* Info Panel */
 .info-panel {
-    background: var(--background-light);
+    background: var(--bg-secondary);
     padding: 30px;
     border-top: 2px solid var(--border-color);
 }
@@ -467,7 +477,7 @@ header p {
 }
 
 .info-panel h4 {
-    color: var(--text-color);
+    color: var(--text-primary);
     margin: 15px 0 10px;
     font-size: 1.1em;
 }
@@ -476,6 +486,7 @@ header p {
 .info-panel ul {
     margin-left: 20px;
     margin-bottom: 20px;
+    color: var(--text-secondary);
 }
 
 .info-panel li {
@@ -486,26 +497,19 @@ header p {
 .info-panel p {
     margin-bottom: 15px;
     line-height: 1.7;
+    color: var(--text-secondary);
 }
 
 .viz-types {
-    background: white;
+    background: var(--surface-color);
     padding: 20px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     margin-top: 20px;
     border-left: 4px solid var(--secondary-color);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    header h1 {
-        font-size: 1.8em;
-    }
-
     .controls-panel {
         padding: 20px;
     }
@@ -536,14 +540,14 @@ header p {
     .matrix-table td {
         padding: 4px 6px;
     }
+
+    .hero-title {
+        font-size: 1.8rem;
+    }
 }
 
 /* Print Styles */
 @media print {
-    body {
-        background: white;
-    }
-
     .controls-panel,
     .info-panel {
         display: none;
@@ -585,7 +589,7 @@ header p {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--background-light);
+    background: var(--bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -594,5 +598,5 @@ header p {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #1976D2;
+    background: var(--primary-dark);
 }
