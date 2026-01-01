@@ -44,20 +44,20 @@ https://contextlab.github.io/llm-course/demos/
 | Demo | Title | Topics | Status |
 |------|-------|--------|--------|
 | 01 | [ELIZA Chatbot](01-eliza/) | Pattern matching, Rule-based systems | ✅ Available |
-| 02 | [Text Tokenization](02-tokenization/) | BPE, WordPiece, Tokenization strategies | ✅ Available |
-| 03 | [Word Embeddings Explorer](03-embeddings/) | Word2Vec, 3D visualization, Semantic space | ✅ Available |
-| 04 | [Attention Mechanism](04-attention/) | Self-attention, Query-Key-Value, Attention weights | ✅ Available |
-| 05 | [Transformer Architecture](05-transformer/) | Encoder-decoder, Multi-head attention | ✅ Available |
-| 06 | [GPT Playground](06-gpt-playground/) | Autoregressive generation, GPT architecture | ✅ Available |
-| 07 | [RAG System Demo](07-rag/) | Retrieval-augmented generation, Wikipedia corpus | ✅ Available |
-| 08 | [Topic Modeling Studio](08-topic-modeling/) | LDA, Unsupervised learning, Wikipedia articles | ✅ Available |
-| 09 | [Sentiment Analysis Dashboard](09-sentiment/) | Sentiment classification, IMDB dataset, Feature visualization | ✅ Available |
-| 10 | [POS Tagging & Parsing](10-pos-tagging/) | Part-of-speech tagging, Dependency parsing, Syntax trees | ✅ Available |
-| 11 | [Word Analogies Explorer](11-analogies/) | Vector arithmetic, Word2Vec, Semantic relationships | ✅ Available |
-| 12 | [Semantic Search Engine](12-semantic-search/) | BM25, Embeddings, Hybrid search | ✅ Available |
-| 13 | [BERT Masked Language Modeling](13-bert-mlm/) | BERT, MLM, Bidirectional context | ✅ Available |
-| 14 | [Embeddings Comparison Lab](14-embeddings-comparison/) | Benchmarking, Model comparison, Quality vs speed | ✅ Available |
-| 15 | [Chatbot Evolution Timeline](15-chatbot-evolution/) | ELIZA, PARRY, ALICE, Seq2Seq, GPT | ✅ Available |
+| 02 | [Chatbot Evolution Timeline](02-chatbot-evolution/) | ELIZA, PARRY, ALICE, Seq2Seq, GPT | ✅ Available |
+| 03 | [Text Tokenization](03-tokenization/) | BPE, WordPiece, Tokenization strategies | ✅ Available |
+| 04 | [Word Embeddings Explorer](04-embeddings/) | Word2Vec, 3D visualization, Semantic space | ✅ Available |
+| 05 | [Attention Mechanism](05-attention/) | Self-attention, Query-Key-Value, Attention weights | ✅ Available |
+| 06 | [Transformer Architecture](06-transformer/) | Encoder-decoder, Multi-head attention | ✅ Available |
+| 07 | [GPT Playground](07-gpt-playground/) | Autoregressive generation, GPT architecture | ✅ Available |
+| 08 | [RAG System Demo](08-rag/) | Retrieval-augmented generation, Wikipedia corpus | ✅ Available |
+| 09 | [Topic Modeling Studio](09-topic-modeling/) | LDA, Unsupervised learning, Wikipedia articles | ✅ Available |
+| 10 | [Sentiment Analysis Dashboard](10-sentiment/) | Sentiment classification, IMDB dataset, Feature visualization | ✅ Available |
+| 11 | [POS Tagging & Parsing](11-pos-tagging/) | Part-of-speech tagging, Dependency parsing, Syntax trees | ✅ Available |
+| 12 | [Word Analogies Explorer](12-analogies/) | Vector arithmetic, Word2Vec, Semantic relationships | ✅ Available |
+| 13 | [Semantic Search Engine](13-semantic-search/) | BM25, Embeddings, Hybrid search | ✅ Available |
+| 14 | [BERT Masked Language Modeling](14-bert-mlm/) | BERT, MLM, Bidirectional context | ✅ Available |
+| 15 | [Embeddings Comparison Lab](15-embeddings-comparison/) | Benchmarking, Model comparison, Quality vs speed | ✅ Available |
 
 ## Architecture
 
@@ -73,8 +73,9 @@ demos/
 │   └── js/
 │       └── visualization-utils.js # Utility functions
 ├── 01-eliza/              # Individual demo directories
-├── 02-tokenization/
-├── 03-embeddings/
+├── 02-chatbot-evolution/
+├── 03-tokenization/
+├── 04-embeddings/
 └── ...
 ```
 
