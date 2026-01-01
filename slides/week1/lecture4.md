@@ -133,6 +133,92 @@ Both are still rule-based systems with no real understanding. The "beliefs" in P
 
 ---
 
+# How PARRY works: The algorithm
+
+PARRY uses a **state machine** with emotional variables:
+
+```python
+class Parry:
+    def __init__(self):
+        self.anger = 5       # 0-20 scale
+        self.fear = 8        # 0-20 scale
+        self.mistrust = 10   # 0-15 scale
+```
+
+<div class="note-box" data-title="Processing steps">
+
+1. **Match pattern** against input (like ELIZA)
+2. **Update emotional state** based on topic
+3. **Select response** influenced by anger/fear/mistrust levels
+4. **Apply threshold rules** for extreme reactions
+
+</div>
+
+---
+<!-- _class: scale-78 -->
+
+# PARRY example: Step by step
+
+**Input:** "Tell me about the mafia"
+
+<div style="display: flex; gap: 1em;">
+<div style="flex: 1;">
+
+**Step 1: Pattern Match**
+```
+/\b(mafia|mob)\b/i → MATCH
+```
+
+**Step 2: Emotional Update**
+```
+fear += 4   → 8 → 12
+anger += 3  → 5 → 8
+mistrust += 3 → 10 → 13
+```
+
+</div>
+<div style="flex: 1;">
+
+**Step 3: Response Selection**
+High fear + high mistrust triggers paranoid responses:
+
+```
+"You know, they have their
+ ways of getting to you."
+```
+
+**Step 4: State Carried Forward**
+Next input processed with elevated emotional levels.
+
+</div>
+</div>
+
+---
+
+# PARRY's emotional dynamics
+
+```
+Low emotions → Cooperative responses
+    "I used to gamble on horses."
+    "I've been feeling tense."
+
+Medium emotions → Guarded responses
+    "I don't want to talk about that."
+    "Why are you asking me this?"
+
+High emotions → Paranoid/hostile responses
+    "Are you one of THEM?"
+    "You're trying to trick me!"
+```
+
+<div class="warning-box" data-title="Key insight">
+
+The emotional state creates **coherent behavior over time**. ELIZA has no memory; PARRY's responses depend on conversation history.
+
+</div>
+
+---
+
 # The Turing Test, revisited
 
 <div class="note-box" data-title="A famous experiment">
@@ -196,6 +282,97 @@ More patterns $\neq$ more understanding. A.L.I.C.E. is still fundamentally patte
 <div class="tip-box" data-title="Sound familiar?">
 
 This is the same decomposition/reassembly pattern as ELIZA, just in XML format with more extensive coverage.
+
+</div>
+
+---
+<!-- _class: scale-78 -->
+
+# How ALICE works: The algorithm
+
+**AIML Processing Steps:**
+
+1. **Normalize input**: "Don't you think so?" → "DO NOT YOU THINK SO"
+2. **Find matching pattern**: Search through 40,000+ patterns
+3. **Extract wildcards**: `*` captures arbitrary text
+4. **Process template**: May include conditionals, `<srai>` redirects
+5. **Generate response**: Substitute captured text
+
+<div class="note-box" data-title="Key difference from ELIZA">
+
+AIML supports **recursive processing** via `<srai>` (Symbolic Reduction AI), allowing patterns to trigger other patterns.
+
+</div>
+
+---
+
+# ALICE example: Step by step
+
+**Input:** "My name is John and I like pizza"
+
+<div style="display: flex; gap: 1em;">
+<div style="flex: 1;">
+
+**Step 1: Normalization**
+```
+MY NAME IS JOHN AND I LIKE PIZZA
+```
+
+**Step 2: Pattern Search**
+```xml
+<pattern>MY NAME IS *</pattern>
+→ MATCHES with star = "JOHN AND I LIKE PIZZA"
+```
+
+</div>
+<div style="flex: 1;">
+
+**Step 3: Template Processing**
+```xml
+<template>
+  Nice to meet you, <star/>.
+  <think><set name="name">
+    <star/></set></think>
+</template>
+```
+
+**Step 4: Response**
+"Nice to meet you, JOHN AND I LIKE PIZZA."
+(stores name="JOHN AND I LIKE PIZZA")
+
+</div>
+</div>
+
+---
+
+# AIML advanced features
+
+```xml
+<!-- Symbolic Reduction (SRAI) -->
+<category>
+  <pattern>HI THERE</pattern>
+  <template><srai>HELLO</srai></template>
+</category>
+
+<!-- Topic-based context -->
+<topic name="MOVIES">
+  <category>
+    <pattern>WHAT DO YOU LIKE</pattern>
+    <template>I enjoy science fiction films.</template>
+  </category>
+</topic>
+
+<!-- That-based context (previous bot response) -->
+<category>
+  <pattern>YES</pattern>
+  <that>DO YOU LIKE MOVIES</that>
+  <template>What is your favorite movie?</template>
+</category>
+```
+
+<div class="warning-box" data-title="Still rule-based">
+
+Despite these features, ALICE cannot generalize beyond its patterns. 40,000 rules still miss infinite valid inputs.
 
 </div>
 
