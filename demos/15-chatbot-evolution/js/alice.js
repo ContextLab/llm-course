@@ -694,4 +694,209 @@ export class Alice {
     setTopic(topic) {
         this.context.topic = topic;
     }
+
+    /**
+     * Get detailed breakdown of response processing for visualization
+     */
+    getDetailedBreakdown(input) {
+        const steps = [];
+
+        // Capture initial context
+        const initialContext = { ...this.context };
+
+        // Step 1: Input normalization
+        const normalizedInput = this.normalize(input);
+        steps.push({
+            name: 'Input Normalization',
+            description: 'AIML normalizes input: lowercase, removes punctuation, collapses whitespace',
+            input: input,
+            output: normalizedInput,
+            details: 'Standard AIML preprocessing applied'
+        });
+
+        // Step 2: Context check
+        steps.push({
+            name: 'Context Check',
+            description: 'Checking conversation context for <that> and <topic> constraints',
+            contextInfo: {
+                topic: this.context.topic,
+                that: this.context.that || '(none)',
+                thatInput: this.context.thatInput || '(none)',
+                userName: this.context.userName || '(unknown)'
+            },
+            details: `Current topic: "${this.context.topic}", Last bot response: "${this.context.that || '(none)'}"`
+        });
+
+        // Step 3: Pattern matching with priority
+        const sortedPatterns = [...this.patterns].sort((a, b) => {
+            return (b.priority || 0) - (a.priority || 0);
+        });
+
+        const patternTests = [];
+        let matchedPattern = null;
+        let matchedRule = null;
+        let matchResult = null;
+
+        for (let i = 0; i < sortedPatterns.length; i++) {
+            const rule = sortedPatterns[i];
+            const { pattern, that, topic, priority } = rule;
+
+            // Check topic constraint
+            let topicMatch = true;
+            if (topic && this.context.topic !== topic && this.context.topic !== "general") {
+                topicMatch = false;
+            }
+
+            // Check that constraint
+            let thatMatch = true;
+            if (that && !that.test(this.context.thatInput)) {
+                thatMatch = false;
+            }
+
+            const match = normalizedInput.match(pattern);
+            const isMatch = match && topicMatch && thatMatch;
+
+            // Only record a sample of patterns to avoid overwhelming display
+            if (i < 15 || isMatch) {
+                patternTests.push({
+                    pattern: pattern.toString(),
+                    priority: priority || 0,
+                    matched: isMatch,
+                    topicMatch: topicMatch,
+                    thatMatch: thatMatch,
+                    patternMatch: !!match,
+                    captures: match ? match.slice(1) : [],
+                    hasThatConstraint: !!that,
+                    hasTopicConstraint: !!topic
+                });
+            }
+
+            if (isMatch && !matchedPattern) {
+                matchedPattern = rule;
+                matchedRule = rule;
+                matchResult = match;
+            }
+        }
+
+        steps.push({
+            name: 'Category Matching',
+            description: 'Testing input against AIML categories (sorted by priority)',
+            patternTests: patternTests.slice(0, 10),
+            details: matchedPattern
+                ? `Matched category with pattern: ${matchedPattern.pattern.toString()} (priority: ${matchedPattern.priority || 0})`
+                : 'No category matched, using default response'
+        });
+
+        // Step 4: Wildcard extraction
+        const wildcards = matchResult ? matchResult.slice(1) : [];
+        if (wildcards.length > 0) {
+            steps.push({
+                name: 'Wildcard Extraction',
+                description: 'Extracting captured text from pattern wildcards (*)',
+                wildcards: wildcards.map((w, i) => ({
+                    index: i + 1,
+                    captured: w || '(empty)'
+                })),
+                details: wildcards.map((w, i) => `Star ${i + 1}: "${w || '(empty)'}"`).join(', ')
+            });
+        }
+
+        // Step 5: SRAI check (recursion)
+        let usedSRAI = false;
+        let sraiTarget = null;
+        if (matchedPattern) {
+            // Check if template invokes srai
+            const templateStr = matchedPattern.template.toString();
+            if (templateStr.includes('this.srai')) {
+                usedSRAI = true;
+                // Try to extract the SRAI target from template
+                const sraiMatch = templateStr.match(/this\.srai\(['"](.*?)['"]/);
+                if (sraiMatch) {
+                    sraiTarget = sraiMatch[1];
+                }
+            }
+        }
+
+        if (usedSRAI) {
+            steps.push({
+                name: 'SRAI (Symbolic Reduction)',
+                description: 'Pattern redirects to another pattern via SRAI',
+                sraiTarget: sraiTarget,
+                details: `Recursively matching: "${sraiTarget}"`
+            });
+        }
+
+        // Step 6: Template expansion
+        let responseText = "I'm not sure I understand. Can you rephrase that?";
+        if (matchedPattern) {
+            responseText = typeof matchedPattern.template === 'function'
+                ? matchedPattern.template(matchResult)
+                : matchedPattern.template;
+        }
+
+        steps.push({
+            name: 'Template Expansion',
+            description: 'Expanding template with captured wildcards and context variables',
+            templateInfo: matchedPattern ? {
+                hasFunction: typeof matchedPattern.template === 'function',
+                usesContext: matchedPattern.template.toString().includes('this.context')
+            } : null,
+            output: responseText,
+            details: matchedPattern
+                ? `Template executed with ${wildcards.length} wildcard value(s)`
+                : 'Using default fallback response'
+        });
+
+        // Step 7: Context update
+        const finalContext = {
+            topic: this.context.topic,
+            that: responseText,
+            thatInput: normalizedInput,
+            userName: this.context.userName
+        };
+
+        // Actually update context for real operation
+        this.context.that = responseText;
+        this.context.thatInput = normalizedInput;
+
+        steps.push({
+            name: 'Context Update',
+            description: 'Updating conversation context for future <that> matching',
+            contextInfo: {
+                before: {
+                    topic: initialContext.topic,
+                    that: initialContext.that || '(none)'
+                },
+                after: {
+                    topic: finalContext.topic,
+                    that: finalContext.that
+                }
+            },
+            details: `Context updated: topic="${finalContext.topic}", that="${responseText.substring(0, 50)}..."`
+        });
+
+        return {
+            steps: steps,
+            finalResponse: responseText,
+            matchedPattern: matchedPattern ? matchedPattern.pattern.toString() : 'default',
+            context: finalContext,
+            wildcards: wildcards
+        };
+    }
+
+    /**
+     * Get detailed breakdown without modifying state (for preview)
+     */
+    getDetailedBreakdownPreview(input) {
+        // Save current context
+        const savedContext = { ...this.context };
+
+        // Get breakdown
+        const breakdown = this.getDetailedBreakdown(input);
+
+        // Restore context
+        this.context = savedContext;
+
+        return breakdown;
+    }
 }

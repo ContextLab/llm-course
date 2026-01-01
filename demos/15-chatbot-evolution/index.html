@@ -103,11 +103,75 @@
                         </div>
                     </div>
 
-                    <div class="chat-interface">
-                        <div class="chat-messages" id="parry-messages"></div>
-                        <div class="chat-input-area">
-                            <input type="text" class="chat-input" id="parry-input" placeholder="Talk to PARRY...">
-                            <button class="chat-send" onclick="sendMessage('parry')">Send</button>
+                    <!-- Tab Navigation for PARRY -->
+                    <div class="chatbot-tabs">
+                        <button class="chatbot-tab-button active" data-bot="parry" data-tab="chat">Chat</button>
+                        <button class="chatbot-tab-button" data-bot="parry" data-tab="breakdown">Emotional Breakdown</button>
+                    </div>
+
+                    <!-- Chat Tab -->
+                    <div class="chatbot-tab-content active" id="parry-chat-tab">
+                        <div class="chat-interface">
+                            <div class="chat-messages" id="parry-messages"></div>
+                            <div class="chat-input-area">
+                                <input type="text" class="chat-input" id="parry-input" placeholder="Talk to PARRY...">
+                                <button class="chat-send" onclick="sendMessage('parry')">Send</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown Tab -->
+                    <div class="chatbot-tab-content" id="parry-breakdown-tab">
+                        <div class="breakdown-interface">
+                            <div class="breakdown-input-section">
+                                <input type="text" class="breakdown-input" id="parry-breakdown-input"
+                                       placeholder="Enter text to see how PARRY processes it...">
+                                <select class="example-selector" id="parry-example-selector">
+                                    <option value="">-- Load Example --</option>
+                                    <option value="Do you gamble?">Do you gamble?</option>
+                                    <option value="Tell me about the mafia">Tell me about the mafia</option>
+                                    <option value="Are you being watched?">Are you being watched?</option>
+                                    <option value="Can I trust you?">Can I trust you?</option>
+                                    <option value="Why are you so angry?">Why are you so angry?</option>
+                                    <option value="Tell me about the bookie">Tell me about the bookie</option>
+                                    <option value="Do you like horses?">Do you like horses?</option>
+                                    <option value="Hello">Hello</option>
+                                </select>
+                                <button class="btn-analyze" onclick="analyzeParry()">Analyze</button>
+                            </div>
+                            <div class="emotional-state-display" id="parry-emotional-state">
+                                <h4>Current Emotional State</h4>
+                                <div class="emotion-bars">
+                                    <div class="emotion-bar">
+                                        <span class="emotion-label">Anger</span>
+                                        <div class="emotion-progress">
+                                            <div class="emotion-fill anger" id="parry-anger-bar" style="width: 25%"></div>
+                                        </div>
+                                        <span class="emotion-value" id="parry-anger-value">5/20</span>
+                                    </div>
+                                    <div class="emotion-bar">
+                                        <span class="emotion-label">Fear</span>
+                                        <div class="emotion-progress">
+                                            <div class="emotion-fill fear" id="parry-fear-bar" style="width: 40%"></div>
+                                        </div>
+                                        <span class="emotion-value" id="parry-fear-value">8/20</span>
+                                    </div>
+                                    <div class="emotion-bar">
+                                        <span class="emotion-label">Mistrust</span>
+                                        <div class="emotion-progress">
+                                            <div class="emotion-fill mistrust" id="parry-mistrust-bar" style="width: 67%"></div>
+                                        </div>
+                                        <span class="emotion-value" id="parry-mistrust-value">10/15</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="breakdown-steps" id="parry-breakdown-steps">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">🔍</div>
+                                    <div class="empty-state-text">Enter text to see PARRY's emotional processing</div>
+                                    <div class="empty-state-subtext">Watch how emotional states influence responses</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -139,11 +203,66 @@
                         </div>
                     </div>
 
-                    <div class="chat-interface">
-                        <div class="chat-messages" id="alice-messages"></div>
-                        <div class="chat-input-area">
-                            <input type="text" class="chat-input" id="alice-input" placeholder="Talk to A.L.I.C.E....">
-                            <button class="chat-send" onclick="sendMessage('alice')">Send</button>
+                    <!-- Tab Navigation for ALICE -->
+                    <div class="chatbot-tabs">
+                        <button class="chatbot-tab-button active" data-bot="alice" data-tab="chat">Chat</button>
+                        <button class="chatbot-tab-button" data-bot="alice" data-tab="breakdown">AIML Breakdown</button>
+                    </div>
+
+                    <!-- Chat Tab -->
+                    <div class="chatbot-tab-content active" id="alice-chat-tab">
+                        <div class="chat-interface">
+                            <div class="chat-messages" id="alice-messages"></div>
+                            <div class="chat-input-area">
+                                <input type="text" class="chat-input" id="alice-input" placeholder="Talk to A.L.I.C.E....">
+                                <button class="chat-send" onclick="sendMessage('alice')">Send</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown Tab -->
+                    <div class="chatbot-tab-content" id="alice-breakdown-tab">
+                        <div class="breakdown-interface">
+                            <div class="breakdown-input-section">
+                                <input type="text" class="breakdown-input" id="alice-breakdown-input"
+                                       placeholder="Enter text to see how A.L.I.C.E. processes it...">
+                                <select class="example-selector" id="alice-example-selector">
+                                    <option value="">-- Load Example --</option>
+                                    <option value="What is your name?">What is your name?</option>
+                                    <option value="My name is John">My name is John</option>
+                                    <option value="How are you today?">How are you today?</option>
+                                    <option value="Tell me a joke">Tell me a joke</option>
+                                    <option value="What is the meaning of life?">What is the meaning of life?</option>
+                                    <option value="I feel happy">I feel happy</option>
+                                    <option value="Can you help me?">Can you help me?</option>
+                                    <option value="What's your name">What's your name</option>
+                                </select>
+                                <button class="btn-analyze" onclick="analyzeAlice()">Analyze</button>
+                            </div>
+                            <div class="context-display" id="alice-context-display">
+                                <h4>AIML Context</h4>
+                                <div class="context-items">
+                                    <div class="context-item">
+                                        <span class="context-label">Topic:</span>
+                                        <span class="context-value" id="alice-topic-value">general</span>
+                                    </div>
+                                    <div class="context-item">
+                                        <span class="context-label">That (last response):</span>
+                                        <span class="context-value" id="alice-that-value">(none)</span>
+                                    </div>
+                                    <div class="context-item">
+                                        <span class="context-label">User Name:</span>
+                                        <span class="context-value" id="alice-username-value">(unknown)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="breakdown-steps" id="alice-breakdown-steps">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">🔍</div>
+                                    <div class="empty-state-text">Enter text to see AIML pattern matching</div>
+                                    <div class="empty-state-subtext">Watch how categories, wildcards, and context work together</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

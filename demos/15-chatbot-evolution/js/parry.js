@@ -595,4 +595,209 @@ export class Parry {
             mistrust: Math.round(this.mistrust)
         };
     }
+
+    /**
+     * Get detailed breakdown of response processing for visualization
+     */
+    getDetailedBreakdown(input) {
+        const steps = [];
+
+        // Capture initial emotional state
+        const initialState = {
+            anger: this.anger,
+            fear: this.fear,
+            mistrust: this.mistrust
+        };
+
+        // Step 1: Input normalization
+        steps.push({
+            name: 'Input Received',
+            description: 'Raw user input received for processing',
+            input: input,
+            output: input.trim(),
+            details: `Turn count: ${this.turnCount + 1}`
+        });
+
+        // Step 2: Emotional baseline check
+        const baselineChanges = [];
+        if ((this.turnCount + 1) % 5 === 0) {
+            baselineChanges.push('Mistrust +1 (every 5 turns)');
+        }
+        if (this.fear > 12 && this.anger > 12) {
+            baselineChanges.push('Mistrust +2 (high fear + anger interaction)');
+        }
+
+        steps.push({
+            name: 'Baseline Emotional Check',
+            description: 'Checking for automatic emotional state changes',
+            details: baselineChanges.length > 0
+                ? `Baseline adjustments: ${baselineChanges.join(', ')}`
+                : 'No baseline adjustments this turn'
+        });
+
+        // Step 3: Pattern matching attempts
+        const patternTests = [];
+        let matchedPattern = null;
+        let matchedIndex = -1;
+
+        for (let i = 0; i < this.patterns.length; i++) {
+            const { pattern } = this.patterns[i];
+            const isMatch = pattern.test(input);
+
+            patternTests.push({
+                index: i,
+                pattern: pattern.toString(),
+                matched: isMatch,
+                isDefault: pattern.toString() === '/.*/' || pattern.toString() === '/.*/i'
+            });
+
+            if (isMatch && matchedIndex === -1) {
+                matchedIndex = i;
+                matchedPattern = this.patterns[i];
+            }
+        }
+
+        steps.push({
+            name: 'Pattern Matching',
+            description: 'Testing input against pattern database (first match wins)',
+            patternTests: patternTests.slice(0, 10), // Show first 10 patterns tested
+            details: matchedIndex !== -1
+                ? `Matched pattern #${matchedIndex + 1}: ${matchedPattern.pattern.toString()}`
+                : 'No specific pattern matched, using default response'
+        });
+
+        // Step 4: Simulate emotional state changes from the matched pattern
+        // We need to temporarily execute to see what changes would happen
+        const tempAnger = this.anger;
+        const tempFear = this.fear;
+        const tempMistrust = this.mistrust;
+
+        // Actually get the response to see emotional changes
+        this.turnCount++;
+
+        // Gradual escalation of baseline paranoia
+        if (this.turnCount % 5 === 0) {
+            this.mistrust += 1;
+        }
+
+        // Emotional state interactions
+        if (this.fear > 12 && this.anger > 12) {
+            this.mistrust += 2;
+        }
+
+        // Clamp emotional states
+        this.anger = Math.max(0, Math.min(20, this.anger));
+        this.fear = Math.max(0, Math.min(20, this.fear));
+        this.mistrust = Math.max(0, Math.min(15, this.mistrust));
+
+        // Natural decay
+        const decayApplied = Math.random() < 0.15;
+        if (decayApplied) {
+            this.anger = Math.max(0, this.anger - 1);
+            this.fear = Math.max(0, this.fear - 1);
+        }
+
+        // Find and execute the matched pattern
+        let responseText = "I don't know what you're getting at.";
+        for (const { pattern, response } of this.patterns) {
+            if (pattern.test(input)) {
+                responseText = response();
+                break;
+            }
+        }
+
+        // Clamp emotions again after response
+        this.anger = Math.max(0, Math.min(20, this.anger));
+        this.fear = Math.max(0, Math.min(20, this.fear));
+        this.mistrust = Math.max(0, Math.min(15, this.mistrust));
+
+        const finalState = {
+            anger: this.anger,
+            fear: this.fear,
+            mistrust: this.mistrust
+        };
+
+        // Calculate changes
+        const emotionalChanges = {
+            anger: finalState.anger - initialState.anger,
+            fear: finalState.fear - initialState.fear,
+            mistrust: finalState.mistrust - initialState.mistrust
+        };
+
+        steps.push({
+            name: 'Emotional State Update',
+            description: 'Pattern triggers emotional state changes',
+            emotionalState: {
+                before: initialState,
+                after: finalState,
+                changes: emotionalChanges
+            },
+            details: this.formatEmotionalChanges(emotionalChanges)
+        });
+
+        // Step 5: Response selection
+        steps.push({
+            name: 'Response Selection',
+            description: 'Response chosen based on pattern match and emotional state',
+            details: `Selected from response pool based on current emotional state`,
+            responseInfo: {
+                highMistrust: this.mistrust > 12,
+                highAnger: this.anger > 15,
+                highFear: this.fear > 15
+            }
+        });
+
+        // Step 6: Final response
+        steps.push({
+            name: 'Final Response',
+            description: 'Assembled response delivered to user',
+            output: responseText
+        });
+
+        return {
+            steps: steps,
+            finalResponse: responseText,
+            emotionalState: finalState,
+            matchedPattern: matchedPattern ? matchedPattern.pattern.toString() : 'default'
+        };
+    }
+
+    /**
+     * Format emotional changes for display
+     */
+    formatEmotionalChanges(changes) {
+        const parts = [];
+        if (changes.anger !== 0) {
+            parts.push(`Anger: ${changes.anger > 0 ? '+' : ''}${changes.anger}`);
+        }
+        if (changes.fear !== 0) {
+            parts.push(`Fear: ${changes.fear > 0 ? '+' : ''}${changes.fear}`);
+        }
+        if (changes.mistrust !== 0) {
+            parts.push(`Mistrust: ${changes.mistrust > 0 ? '+' : ''}${changes.mistrust}`);
+        }
+        return parts.length > 0 ? parts.join(', ') : 'No emotional changes';
+    }
+
+    /**
+     * Get detailed breakdown without modifying state (for preview)
+     */
+    getDetailedBreakdownPreview(input) {
+        // Save current state
+        const savedAnger = this.anger;
+        const savedFear = this.fear;
+        const savedMistrust = this.mistrust;
+        const savedTurnCount = this.turnCount;
+
+        // Get breakdown
+        const breakdown = this.getDetailedBreakdown(input);
+
+        // Restore state
+        this.anger = savedAnger;
+        this.fear = savedFear;
+        this.mistrust = savedMistrust;
+        this.turnCount = savedTurnCount;
+
+        return breakdown;
+    }
 }
