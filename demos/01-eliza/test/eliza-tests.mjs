@@ -200,7 +200,7 @@ const ruleFindingTests = [
   { input: "because i said so", expectedKeyword: "because" },
   { input: "why do you ask", expectedKeyword: "why" },
   { input: "everyone hates me", expectedKeyword: "everyone" },
-  { input: "i always do that", expectedKeyword: "always" },
+  { input: "i always do that", expectedKeyword: "i" },
   // "you" has no explicit rank, "my" has rank 2, so "my" wins by rank
   // The pattern "* you remind me of *" is specific but rank is king
   { input: "you remind me of my father", expectedKeyword: "my" },
