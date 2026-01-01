@@ -19,8 +19,16 @@ Week 9
 
 # Today's Journey 🗺️
 
-<!-- TODO: Add manual table of contents or navigation -->
+<div class="callout info">
+<div class="callout-title">What we'll cover</div>
 
+1. **The Problem**: Why parametric memory isn't enough
+2. **RAG Basics**: Retrieve, Augment, Generate
+3. **Implementation**: Building RAG systems step-by-step
+4. **Advanced Techniques**: Self-RAG, Corrective RAG, HyDE
+5. **Production Challenges**: Making RAG work in the real world
+
+</div>
 
 ---
 
@@ -123,46 +131,100 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 
 # RAG Architecture 🏗️
 
-
-
-```
-User Query "What is RAG?" -> Embedding Model -> Vector Database (Embeddin -> Retrieved Documents -> Similarity Search -> Augmented Prompt -> LLM Generation -> Grounded Response
+```flow
+[User Query] --> [Embed Query] --> [Vector Search] --> [Retrieve Docs] --> [Augment Prompt] --> [LLM Generate] --> [Response]
 ```
 
-**Key Steps:**
-1. Embed user query into vector space
-2. Search vector database for similar documents
-3. Retrieve top-k most relevant documents
-4. Augment prompt with retrieved context
-5. Generate answer using LLM with context
+**Worked Example: "What causes the Northern Lights?"**
 
+| Step | Action | Result |
+|------|--------|--------|
+| 1. Embed | Convert query to vector | `[0.12, -0.45, 0.78, ...]` (384 dims) |
+| 2. Search | Find similar vectors in DB | Top-3 docs: scores 0.92, 0.87, 0.85 |
+| 3. Retrieve | Get actual text chunks | "Aurora borealis occurs when..." |
+| 4. Augment | Add context to prompt | System + Context + Query |
+| 5. Generate | LLM produces answer | Grounded response with citations |
+
+---
+
+# RAG: Step-by-Step Walkthrough 🔍
+
+**Query:** "What is the capital of Kazakhstan?"
+
+```python
+# Step 1: Embed the query
+query = "What is the capital of Kazakhstan?"
+query_embedding = embedding_model.encode(query)
+# Result: numpy array of shape (384,)
+
+# Step 2: Search vector database
+results = vector_db.search(query_embedding, top_k=3)
+# Returns: [
+#   {"text": "Astana is the capital of Kazakhstan...", "score": 0.94},
+#   {"text": "Kazakhstan's capital moved from Almaty...", "score": 0.89},
+#   {"text": "The city was renamed Nur-Sultan in 2019...", "score": 0.85}
+# ]
+
+# Step 3: Build augmented prompt
+context = "\n".join([r["text"] for r in results])
+prompt = f"""Answer based on the context below.
+Context: {context}
+Question: {query}
+Answer:"""
+
+# Step 4: Generate with LLM
+response = llm.generate(prompt)
+# "Astana (previously known as Nur-Sultan) is the capital of Kazakhstan."
+```
 
 ---
 
 # RAG Components Deep Dive 🔬
 
+<div class="columns">
+<div class="column">
 
-**1. Document Processing & Indexing**
-- **Chunking**: Break documents into manageable pieces
-    
-- Fixed size (e.g., 512 tokens)
-- Semantic (paragraph, section breaks)
-- Recursive (hierarchical splitting)
+**1. Document Processing**
+```python
+# Chunking example
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-    \item **Metadata**: Extract titles, dates, sources
-    \item **Embedding**: Convert chunks to dense vectors
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=500,      # Target size
+    chunk_overlap=50,    # Overlap between chunks
+    separators=["\n\n", "\n", ". ", " "]
+)
 
-**2. Vector Database**
-- Store embeddings for fast similarity search
-- Popular options: FAISS, ChromaDB, Pinecone, Weaviate, Qdrant
-- Indexing methods: IVF, HNSW, PQ
-- Approximate nearest neighbor (ANN) search
+chunks = splitter.split_text(long_document)
+# ["First chunk about topic A...",
+#  "Second chunk continues topic A...",
+#  "Third chunk about topic B..."]
+```
 
-**3. Retrieval**
-- Embed query with same model as documents
-- Compute similarity (cosine, dot product)
-- Return top-k most similar chunks (typically k=3-10)
+</div>
+<div class="column">
 
+**2. Embedding & Storage**
+```python
+from sentence_transformers import SentenceTransformer
+import chromadb
+
+# Create embeddings
+model = SentenceTransformer('all-MiniLM-L6-v2')
+embeddings = model.encode(chunks)
+
+# Store in vector database
+client = chromadb.Client()
+collection = client.create_collection("docs")
+collection.add(
+    embeddings=embeddings.tolist(),
+    documents=chunks,
+    ids=[f"chunk_{i}" for i in range(len(chunks))]
+)
+```
+
+</div>
+</div>
 
 ---
 
@@ -244,13 +306,16 @@ for doc in result['source_documents']:
 
 # Evolution of RAG Approaches 📈
 
-
-
-```
-**Naive RAG -> \textbf{Self-RAG -> \textbf{Corrective RAG
+```flow
+[Naive RAG:blue] --> [Self-RAG:green] --> [Corrective RAG:orange] --> [Agentic RAG:purple]
 ```
 
-\end{center**
+| Approach | Key Innovation | When to Retrieve |
+|----------|----------------|------------------|
+| **Naive RAG** | Always retrieve | Every query |
+| **Self-RAG** | Model decides | Only when needed |
+| **Corrective RAG** | Verify relevance | Always, but filter |
+| **Agentic RAG** | Multi-step reasoning | Tool-based decisions |
 
 <div class="callout warning">
 <div class="callout-title">Trend</div>
@@ -259,47 +324,48 @@ Moving from always-retrieve to **adaptive**, **self-correcting** retrieval syste
 
 </div>
 
-
 ---
 
 # Self-RAG: Adaptive Retrieval 🎯
 
-
 <div class="columns">
 <div class="column">
 
-**Key Innovation:**
+**Key Innovation:** Model decides when to retrieve
 
-Model learns to decide:
-1. **When** to retrieve
-2. **What** is relevant
-3. **How** to use it
-4. **Whether** output is good
-
-**Special Tokens:**
-- [Retrieve]: Need info?
-- [Relevant]: Is doc useful?
-- [Support]: Does doc support answer?
-- [Useful]: Is answer helpful?
+**Special Tokens Learned:**
+- `[Retrieve]` - Need external info?
+- `[Relevant]` - Is retrieved doc useful?
+- `[Support]` - Does doc support answer?
+- `[Useful]` - Is answer helpful?
 
 </div>
 <div class="column">
 
-**Example:**
+**Worked Example:**
 
-`Q: What's 2+2?`\\
-{[Retrieve: No]}\\
-`A: 4`
+```
+Q: What's 2+2?
+[Retrieve: No]  # No retrieval needed
+A: 4
 
-`Q: Who won the 2024 Olympics?`\\
-{[Retrieve: Yes]}\\
-{[Retrieved: Paris 2024 results]}\\
-{[Relevant: Yes]}\\
-`A: [Generated with docs]`\\
-{[Support: Fully supported]}\\
-{[Useful: Yes]}
+Q: Who won the 2024 Olympics?
+[Retrieve: Yes]  # Need current info
+[Retrieved: "Paris 2024 Olympic Games..."]
+[Relevant: Yes]  # Doc is on topic
+A: The 2024 Olympics were held in Paris...
+[Support: Fully]  # Answer matches doc
+[Useful: Yes]  # Response is helpful
+```
 
 </div>
+</div>
+
+<div class="callout info">
+<div class="callout-title">Key Insight</div>
+
+The model learns these tokens during training, enabling **adaptive** retrieval without manual rules!
+
 </div>
 
 *Reference: Asai et al. (2023) - "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection"*
@@ -308,24 +374,38 @@ Model learns to decide:
 
 # Corrective RAG (CRAG) 🔧
 
-
 **Problem:** Sometimes retrieved documents are irrelevant or misleading!
 
-**Solution: Evaluate and correct retrieval**
+```flow
+[Query] --> [Retrieve] --> [Evaluate Relevance] --> {Correct?} --> [Generate]
+                                                --> {Ambiguous?} --> [Filter & Refine] --> [Generate]
+                                                --> {Wrong?} --> [Web Search] --> [Generate]
+```
 
-1. **Retrieve** initial documents
-2. **Evaluate** relevance with a critic model
-3. **Decision:**
-    - If correct: Use as-is
-- If ambiguous: Filter and refine
-- If incorrect: Re-retrieve with expanded query or use web search
-4. **Generate** with best available context
+**Worked Example:**
 
-**Knowledge Refinement:**
-- Extract key sentences
-- Remove redundancy
-- Rerank by relevance
-- Decompose complex queries
+```python
+# Query: "Latest COVID vaccine recommendations"
+retrieved_docs = retriever.search(query)  # Returns old 2021 docs
+
+# Evaluator scores relevance
+scores = evaluator.score(query, retrieved_docs)
+# [0.3, 0.4, 0.35]  # All low - docs are outdated!
+
+if max(scores) < 0.5:  # Threshold not met
+    # Fallback to web search for current info
+    fresh_docs = web_search(query)
+    # Now returns CDC guidelines from 2024
+
+response = generate(query, fresh_docs)
+```
+
+<div class="callout warning">
+<div class="callout-title">Key Idea</div>
+
+Don't blindly trust retrieval! Verify relevance and have fallback strategies.
+
+</div>
 
 *Reference: Yan et al. (2024) - "Corrective Retrieval Augmented Generation"*
 
@@ -333,155 +413,202 @@ Model learns to decide:
 
 # Comparing RAG Approaches 📊
 
+| Approach | When Retrieve | Filtering | Latency | Best For |
+|----------|---------------|-----------|---------|----------|
+| **Naive RAG** | Always | None | Low | Simple Q&A |
+| **Self-RAG** | Model decides | Self-reflection | Medium | Adaptive needs |
+| **Corrective RAG** | Always + verify | Relevance scoring | High | High precision |
+| **HyDE** | Via hypothesis | Similarity | Medium | Complex queries |
+| **Agentic RAG** | Tool-based | Multi-step | Highest | Complex workflows |
 
+**Trade-offs Example:**
 
-| p{2.5cm} p{3cm}} Approach | When Retrieve | Filtering | Best For |
-| --- | --- | --- | --- |
-| \addlinespace Self-RAG | Model decides | Self-reflection | Adaptive needs |
-| \addlinespace Corrective RAG | Always | Relevance scoring | High precision |
-| \addlinespace HyDE | On hypothesis | Similarity | Complex reasoning |
-| \addlinespace Agentic RAG | Tool-based | Multi-step | Complex workflows |
+```
+Simple FAQ bot → Naive RAG (fast, cheap)
+Medical diagnosis assistant → Corrective RAG (accuracy critical)
+Research assistant → Agentic RAG (multi-step reasoning needed)
+```
 
-**Trade-offs:** Simplicity vs. Performance vs. Latency vs. Cost
+<div class="callout info">
+<div class="callout-title">Rule of Thumb</div>
 
-What's right for your application?
+Start with Naive RAG. Add complexity only when you measure specific failures.
 
+</div>
 
 ---
 
 # Chunking Strategies 📄
 
+**How you split documents dramatically affects retrieval quality!**
 
-**How to split documents matters!**
+<div class="columns">
+<div class="column">
 
-1. **Fixed-size chunking**
-    - Split every N tokens/characters
-- ✅ Simple, predictable size
-- ❌ May break semantic units
-2. **Recursive chunking**
-    - Try paragraphs, then sentences, then tokens
-- ✅ Respects document structure
-- ✅ More semantic coherence
-3. **Semantic chunking**
-    - Use embedding similarity to find boundaries
-- ✅ Best semantic coherence
-- ❌ More computation
-4. **Hierarchical chunking**
-    - Parent-child relationships (sections → paragraphs)
-- ✅ Retrieve at multiple granularities
-- ✅ Better context
+**Fixed-size (Simple)**
+```python
+# Split every 500 chars
+chunks = [text[i:i+500]
+          for i in range(0, len(text), 500)]
+# Problem: "The mitochondria is the power-"
+# "house of the cell." <- split mid-sentence!
+```
 
+**Recursive (Better)**
+```python
+splitter = RecursiveCharacterTextSplitter(
+    separators=["\n\n", "\n", ". ", " "],
+    chunk_size=500
+)
+# Tries paragraph breaks first, then sentences
+```
+
+</div>
+<div class="column">
+
+**Semantic (Best Quality)**
+```python
+# Find natural breakpoints using embeddings
+from langchain.text_splitter import SemanticChunker
+
+chunker = SemanticChunker(embeddings)
+# Groups sentences with similar meaning
+```
+
+**Example Comparison:**
+| Strategy | Chunk | Quality |
+|----------|-------|---------|
+| Fixed | "...power-" / "house..." | Poor |
+| Recursive | "...powerhouse." | Good |
+| Semantic | Full paragraph on topic | Best |
+
+</div>
+</div>
 
 ---
 
 # Embedding Models for Retrieval 🎯
 
+**Choosing the Right Embedding Model:**
 
-**Dense Retrieval Models:**
+| Model | Dims | Size | Speed | Quality |
+|-------|------|------|-------|---------|
+| all-MiniLM-L6-v2 | 384 | 90MB | Fast | Good |
+| BGE-large-en | 1024 | 1.3GB | Medium | Excellent |
+| OpenAI text-embedding-3-small | 1536 | API | Fast | Excellent |
 
-| BGE-large-en | 1024 | 1.3GB | High quality |
-| --- | --- | --- | --- |
-| E5-large-v2 | 1024 | 1.3GB | Versatile |
-| OpenAI text-embedding-3 | 1536 | API | Proprietary, excellent |
+**Code Example: Dense vs Hybrid Retrieval**
 
-**Sparse Retrieval (Traditional IR):**
-- **BM25**: TF-IDF-like, keyword matching
-- **TF-IDF**: Term frequency weighting
-- ✅ Interpretable, fast
-- ❌ Misses semantic similarity
+```python
+# Dense retrieval (semantic similarity)
+from sentence_transformers import SentenceTransformer
+model = SentenceTransformer('all-MiniLM-L6-v2')
+query_vec = model.encode("What causes headaches?")
+# Finds: "Migraines are often triggered by..." (semantically similar)
 
-**Hybrid Retrieval:**
-- Combine dense + sparse
-- Best of both worlds: semantic + keyword
-- Weighted combination or reranking
+# Sparse retrieval (keyword matching with BM25)
+from rank_bm25 import BM25Okapi
+bm25 = BM25Okapi(tokenized_corpus)
+scores = bm25.get_scores(query.split())
+# Finds: "Headaches can be caused by..." (exact keyword match)
 
+# Hybrid: Combine both for best results!
+final_score = 0.7 * dense_score + 0.3 * sparse_score
+```
 
 ---
 
 # Vector Databases 🗄️
 
-
 **Purpose:** Fast similarity search over millions of embeddings
-
-**Popular Options:**
 
 <div class="columns">
 <div class="column">
 
-**Open Source:**
-- **FAISS** (Meta)
-    
-- Extremely fast
-- Library, not database
+**Quick Start with ChromaDB:**
+```python
+import chromadb
 
-    \item **ChromaDB**
-    - Easy to use
-- Embedded or server
+# Create client and collection
+client = chromadb.Client()
+collection = client.create_collection("my_docs")
 
-    \item **Weaviate**
-    - Full-featured
-- GraphQL interface
+# Add documents (auto-embeds!)
+collection.add(
+    documents=["Paris is in France",
+               "Berlin is in Germany"],
+    ids=["doc1", "doc2"]
+)
+
+# Query
+results = collection.query(
+    query_texts=["European capitals"],
+    n_results=2
+)
+# Returns both docs, ranked by relevance
+```
 
 </div>
 <div class="column">
 
-**Managed Services:**
-- **Pinecone**
-    
-- Fully managed
-- Production-ready
+**Choosing a Vector DB:**
 
-    \item **Qdrant**
-    - Rust-based, fast
-- Cloud or self-hosted
+| Use Case | Best Choice |
+|----------|-------------|
+| Prototyping | ChromaDB |
+| Production | Pinecone, Qdrant |
+| Self-hosted | FAISS, Milvus |
+| Graph + Vector | Weaviate |
 
-    \item **Milvus**
-    - Enterprise-grade
-- Highly scalable
+**Key Features:**
+- Query latency (<50ms for 1M docs)
+- Metadata filtering
+- Persistence & backups
+- Scalability
 
 </div>
 </div>
-
-**Key Features to Consider:**
-- Indexing speed, query latency, scalability
-- Filtering (by metadata)
-- Update capability, persistence
-
 
 ---
 
 # Prompt Engineering for RAG 📝
 
+**Template for Grounded Generation:**
 
-**How to incorporate retrieved context into prompts:**
+```python
+RAG_PROMPT = """You are a helpful assistant. Answer the question based ONLY on
+the context provided below. If the answer is not in the context, say
+"I don't have that information."
 
-<div class="callout info">
-<div class="callout-title">Template Example</div>
+Context:
+{context}
 
-`You are a helpful assistant. Answer the question based on the context below.`
+Question: {question}
 
-`Context:`\\
-`[Document 1 text]`\\
-`[Document 2 text]`\\
-`[Document 3 text]`
+Instructions:
+- Use only information from the context above
+- Cite sources using [1], [2], etc.
+- Be concise and accurate
 
-`Question: [User's question]`
+Answer:"""
 
-`Instructions:`
-- `- Answer based on the context`
-- `- Cite sources`
-- `- If info not in context, say "I don't know"`
+# Example usage
+context = """[1] The Eiffel Tower was completed in 1889 for the World's Fair.
+[2] It stands 330 meters tall and was the world's tallest structure until 1930.
+[3] Gustave Eiffel's company designed and built the tower."""
 
-`Answer:`
+question = "When was the Eiffel Tower built?"
+
+response = llm.generate(RAG_PROMPT.format(context=context, question=question))
+# "The Eiffel Tower was completed in 1889 for the World's Fair [1]."
+```
+
+<div class="callout tip">
+<div class="callout-title">Key Elements</div>
+
+1. Explicit grounding instruction, 2. Source citation format, 3. Fallback for missing info
 
 </div>
-
-**Best Practices:**
-- Clear instructions to use provided context
-- Explicit grounding requirements
-- Request citations
-- Discourage hallucination
-
 
 ---
 
@@ -630,24 +757,35 @@ Future RAG systems will seamlessly integrate multiple modalities!
 
 # HyDE: Hypothetical Document Embeddings 💭
 
+**Clever trick: Generate a hypothetical answer first, then retrieve!**
 
-**Clever trick: Generate a hypothetical answer first!**
+```python
+# Standard RAG: Query -> Retrieve -> Generate
+query = "What causes the aurora borealis?"
+# Direct embedding may not match scientific docs well
+
+# HyDE: Query -> Generate Hypothesis -> Embed Hypothesis -> Retrieve -> Generate
+hypothesis = llm.generate(f"Write a short explanation: {query}")
+# "The aurora borealis occurs when charged particles from the sun
+#  interact with gases in Earth's atmosphere, causing them to glow."
+
+# Now embed the HYPOTHESIS (an answer-like text)
+hypo_embedding = embed(hypothesis)
+docs = vector_db.search(hypo_embedding)  # Better match to scientific docs!
+
+# Finally generate with real retrieved docs
+final_answer = llm.generate(query, context=docs)
+```
 
 <div class="callout info">
-<div class="callout-title">HyDE Algorithm</div>
+<div class="callout-title">Why It Works</div>
 
-1. User asks question
-2. LLM generates hypothetical answer (may be wrong!)
-3. Embed the *hypothetical answer*
-4. Retrieve documents similar to hypothetical answer
-5. Generate real answer using retrieved docs
+**Question:** "aurora borealis causes" (query-like)
+**Hypothesis:** "charged particles from sun interact with atmosphere" (document-like)
+
+Answers are more similar to documents than questions are!
 
 </div>
-
-**Why this works:**
-- Answers are more similar to answers than questions to answers
-- Bridges semantic gap between query and documents
-- Effective for complex queries
 
 *Reference: Gao et al. (2022) - "Precise Zero-Shot Dense Retrieval without Relevance Labels"*
 
