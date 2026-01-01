@@ -185,7 +185,7 @@ export class ElizaEngine {
     } else {
       // No match found
 
-      // Try to use memory if available
+      // Step 7: Try to use memory if available (matching Python solution)
       if (this.memoryStack.length > 0) {
         const memory = this.memoryStack.pop();
         // Recursively call getResponse with the memory, forcing saveOverride=true
@@ -199,17 +199,42 @@ export class ElizaEngine {
         return memoryResponse;
       }
 
-      // Use fallback if no memory available
-      response = this.fallbacks[Math.floor(Math.random() * this.fallbacks.length)];
-      // Convert to uppercase to match original ELIZA behavior
-      response = response.toUpperCase();
-      matchInfo = {
-        keyword: 'fallback',
-        pattern: 'none',
-        rank: 0,
-        template: response,
-        captures: []
-      };
+      // Step 8: Use xnone keyword as fallback (matching Python solution exactly)
+      // The Python solution does: words = self.respond('xnone')
+      const xnoneRule = this.rules.find(r => r.keyword === 'xnone');
+      if (xnoneRule && xnoneRule.patterns && xnoneRule.patterns.length > 0) {
+        const xnonePattern = xnoneRule.patterns[0];
+        const patternKey = 'xnone:*';
+
+        if (!this.responseIndices[patternKey]) {
+          this.responseIndices[patternKey] = 0;
+        }
+
+        const responseIndex = this.responseIndices[patternKey];
+        response = xnonePattern.responses[responseIndex];
+
+        // Cycle to next response
+        this.responseIndices[patternKey] =
+          (responseIndex + 1) % xnonePattern.responses.length;
+
+        matchInfo = {
+          keyword: 'xnone',
+          pattern: '*',
+          rank: 0,
+          template: response,
+          captures: []
+        };
+      } else {
+        // Ultimate fallback if xnone rule is missing
+        response = this.fallbacks[Math.floor(Math.random() * this.fallbacks.length)];
+        matchInfo = {
+          keyword: 'fallback',
+          pattern: 'none',
+          rank: 0,
+          template: response,
+          captures: []
+        };
+      }
     }
 
     // Add to conversation history

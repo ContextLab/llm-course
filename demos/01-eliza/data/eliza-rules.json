@@ -13,8 +13,14 @@
     "machine": "computer",
     "computers": "computer",
     "were": "was",
-    "you're": "you are",
-    "i'm": "i am",
+    "you're": [
+      "you",
+      "are"
+    ],
+    "i'm": [
+      "i",
+      "am"
+    ],
     "same": "alike"
   },
   "postSubstitutions": {
@@ -26,7 +32,10 @@
     "i": "you",
     "you": "me",
     "my": "your",
-    "i'm": "you are"
+    "i'm": [
+      "you",
+      "are"
+    ]
   },
   "synonyms": {
     "belief": [
@@ -89,6 +98,20 @@
     "That will be $200."
   ],
   "rules": [
+    {
+      "keyword": "xnone",
+      "patterns": [
+        {
+          "pattern": "*",
+          "responses": [
+            "I'm not sure I understand you fully.",
+            "Please go on.",
+            "What does that suggest to you ?",
+            "Do you feel strongly about discussing such things ?"
+          ]
+        }
+      ]
+    },
     {
       "keyword": "sorry",
       "patterns": [
@@ -586,13 +609,14 @@
           ]
         },
         {
-          "pattern": "$ * my *",
+          "pattern": "* my *",
           "responses": [
             "Your (2) .",
             "Let's discuss your (2) further .",
             "What does your (2) mean to you ?",
             "Tell me more about your (2) ."
-          ]
+          ],
+          "save": true
         },
         {
           "pattern": "* my *",
@@ -761,8 +785,7 @@
             "Really, always ?"
           ]
         }
-      ],
-      "rank": 1
+      ]
     },
     {
       "keyword": "alike",

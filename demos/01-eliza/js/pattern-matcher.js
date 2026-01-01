@@ -5,6 +5,40 @@
 export class PatternMatcher {
   constructor() {
     this.debugMode = false;
+    // Punctuation that splits input - matches Python solution exactly
+    // 'but' is treated as a clause separator (like the Python solution)
+    this.punctuation = [',', ':', ';', '!', '.', '?', 'but'];
+  }
+
+  /**
+   * Strip punctuation characters from a word
+   */
+  stripPunctuation(word) {
+    return word.replace(/[,:;!.?]/g, '');
+  }
+
+  /**
+   * Parse punctuation: truncate at first punctuation occurrence
+   * Following the Python solution's parse_punctuation method
+   */
+  parsePunctuation(words) {
+    const result = [];
+    for (const word of words) {
+      // Check if word is a punctuation separator (like 'but')
+      if (this.punctuation.includes(word.toLowerCase())) {
+        break;
+      }
+      // Check if word contains punctuation - strip it and potentially stop
+      const stripped = this.stripPunctuation(word);
+      if (stripped) {
+        result.push(stripped);
+      }
+      // If word ended with punctuation, stop processing
+      if (word !== stripped && /[,:;!.?]$/.test(word)) {
+        break;
+      }
+    }
+    return result;
   }
 
   /**
@@ -18,8 +52,10 @@ export class PatternMatcher {
       const regex = new RegExp('\\b' + from + '\\b', 'gi');
       if (regex.test(result)) {
         const oldResult = result;
-        result = result.replace(regex, to);
-        steps.push({ from, to, before: oldResult, after: result });
+        // Handle array replacements (e.g., "i'm" → ["i", "am"])
+        const replacement = Array.isArray(to) ? to.join(' ') : to;
+        result = result.replace(regex, replacement);
+        steps.push({ from, to: replacement, before: oldResult, after: result });
       }
     }
 
@@ -47,9 +83,11 @@ export class PatternMatcher {
         const oldResult = result;
         // Use a unique placeholder that won't match any substitution pattern
         const placeholder = `__POSTSUB_${placeholderIndex++}__`;
-        placeholders.set(placeholder, to);
+        // Handle array replacements (e.g., "i'm" → ["you", "are"])
+        const replacement = Array.isArray(to) ? to.join(' ') : to;
+        placeholders.set(placeholder, replacement);
         result = result.replace(regex, placeholder);
-        steps.push({ from, to, before: oldResult.trim(), after: result.trim() });
+        steps.push({ from, to: replacement, before: oldResult.trim(), after: result.trim() });
       }
     }
 
@@ -98,10 +136,13 @@ export class PatternMatcher {
    * Returns: { matched: true, captures: [[], [], ['unhappy'], []] }
    */
   matchPattern(input, pattern, synonyms) {
-    // Split input into words, stripping punctuation
-    const inputWords = input.toLowerCase()
-      .replace(/[.,!?;:]/g, ' ')
+    // Split input into words, preserving punctuation for now
+    const rawWords = input.toLowerCase()
       .split(/\s+/)
+      .filter(w => w.length > 0);
+
+    // Strip punctuation from each word for matching purposes
+    const inputWords = rawWords.map(w => this.stripPunctuation(w))
       .filter(w => w.length > 0);
 
     // Split pattern into parts
