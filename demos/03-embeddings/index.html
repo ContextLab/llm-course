@@ -11,14 +11,19 @@
 </head>
 <body>
     <nav class="demo-nav">
-        <a href="../" class="back-link">← Back to Demos</a>
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">☀️</button>
+        <a href="../" class="back-link">← Home</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+            <span id="theme-icon">&#127769;</span>
+        </button>
     </nav>
+    <div class="hero-header">
+        <div class="container">
+            <h1 class="hero-title">Text Embeddings Explorer</h1>
+            <p class="hero-subtitle">Interactive 3D visualization of text embeddings with multiple models, datasets, and dimension reduction techniques</p>
+        </div>
+    </div>
+
     <div class="container">
-        <header>
-            <h1>🔍 Text Embeddings Explorer</h1>
-            <p class="subtitle">Interactive 3D visualization of text embeddings with multiple models, datasets, and dimension reduction techniques</p>
-        </header>
 
         <div class="main-layout">
             <!-- Left Sidebar: Controls -->
@@ -37,7 +42,7 @@
                             </optgroup>
                         </select>
                         <div id="model-status" class="status-text"></div>
-                        <div class="info-note" style="margin-top: 8px; font-size: 0.85em; color: #666;">
+                        <div class="info-note">
                             Note: These are real pre-trained transformer models that generate true semantic embeddings.
                         </div>
                     </div>
@@ -57,7 +62,7 @@
                             </optgroup>
                         </select>
                         <button id="load-dataset-btn" class="btn btn-primary">Load Dataset</button>
-                        <div class="info-note" style="margin-top: 8px; font-size: 0.85em; color: #666;">
+                        <div class="info-note">
                             Note: Wikipedia dataset contains 2000 real articles from Wikipedia with actual content.
                         </div>
                     </div>
@@ -677,15 +682,21 @@
     </script>
 
     <script>
-        // Theme toggle functionality
+        // Theme toggle functionality (synced with main index via localStorage)
         const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
         const html = document.documentElement;
 
-        // Load saved theme
+        // Load saved theme from localStorage
         const savedTheme = localStorage.getItem('theme') || 'dark';
         html.setAttribute('data-theme', savedTheme);
-        if (themeToggle) {
-            themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        updateThemeIcon(savedTheme);
+
+        function updateThemeIcon(theme) {
+            // Using the same icons as main index.html (moon/sun HTML entities)
+            if (themeIcon) {
+                themeIcon.textContent = theme === 'dark' ? '\u{1F319}' : '\u2600\uFE0F';
+            }
         }
 
         if (themeToggle) {
@@ -694,7 +705,7 @@
                 const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
                 html.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
-                themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                updateThemeIcon(newTheme);
             });
         }
     </script>

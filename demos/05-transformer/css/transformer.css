@@ -1,48 +1,62 @@
-/* Global Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/**
+ * Transformer Architecture Explorer - Styles
+ * Uses CSS variables from ../shared/css/demo-styles.css for theming
+ */
 
+/* Demo-specific variables that don't conflict with theming */
 :root {
-    --primary-color: #2196F3;
-    --secondary-color: #4CAF50;
-    --accent-color: #FF9800;
-    --error-color: #F44336;
-    --purple-color: #9C27B0;
-    --bg-dark: #1a1a2e;
-    --bg-medium: #16213e;
-    --bg-light: #0f3460;
-    --text-light: #eee;
-    --text-dim: #aaa;
-    --border-color: #333;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+    --transformer-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --transformer-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --transformer-transition: all 0.3s ease;
+
+    /* Component-specific colors (used for legend) */
+    --color-embedding: #4CAF50;
+    --color-attention: #2196F3;
+    --color-feedforward: #FF9800;
+    --color-normalization: #9C27B0;
+    --color-output: #F44336;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-medium) 100%);
-    color: var(--text-light);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
+/* Container */
 .container {
     max-width: 1800px;
     margin: 0 auto;
     padding: 20px;
 }
 
-/* Header */
+/* Hero Header - matches main index.html and ELIZA demo styling */
+.hero-header {
+    padding: 3rem 0 2rem;
+    margin-bottom: 30px;
+    text-align: center;
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
+}
+
+.hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Legacy header support (fallback) */
 .header {
     text-align: center;
     padding: 30px 20px;
-    background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-medium) 100%);
+    background: linear-gradient(135deg, var(--surface-color) 0%, var(--bg-secondary) 100%);
     border-radius: 15px;
     margin-bottom: 30px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--transformer-shadow-lg);
     animation: slideDown 0.6s ease-out;
 }
 
@@ -60,7 +74,7 @@ body {
 .header h1 {
     font-size: 2.5em;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -68,7 +82,7 @@ body {
 
 .subtitle {
     font-size: 1.1em;
-    color: var(--text-dim);
+    color: var(--text-secondary);
 }
 
 /* Control Panel */
@@ -77,10 +91,11 @@ body {
     flex-wrap: wrap;
     gap: 15px;
     padding: 20px;
-    background: var(--bg-light);
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     margin-bottom: 20px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--transformer-shadow);
     animation: fadeIn 0.8s ease-out;
 }
 
@@ -103,28 +118,29 @@ body {
 
 .control-group label {
     font-size: 0.9em;
-    color: var(--text-dim);
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
 .control-group select,
 .control-group input {
     padding: 10px;
-    background: var(--bg-medium);
+    background: var(--bg-secondary);
     border: 2px solid var(--border-color);
     border-radius: 8px;
-    color: var(--text-light);
+    color: var(--text-primary);
     font-size: 1em;
-    transition: all 0.3s ease;
+    transition: var(--transformer-transition);
 }
 
 .control-group select:focus,
 .control-group input:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
+/* Buttons */
 .btn {
     padding: 12px 24px;
     border: none;
@@ -132,16 +148,16 @@ body {
     font-size: 1em;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transformer-transition);
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--transformer-shadow);
 }
 
 .btn:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--transformer-shadow-lg);
 }
 
 .btn:active {
@@ -149,14 +165,18 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), #1976D2);
+    background: var(--gradient-primary);
     color: white;
 }
 
 .btn-secondary {
-    background: var(--bg-medium);
-    color: var(--text-light);
+    background: var(--surface-hover);
+    color: var(--text-primary);
     border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    border-color: var(--primary-color);
 }
 
 /* Main Content */
@@ -170,10 +190,11 @@ body {
 /* 3D Canvas */
 .canvas-container {
     position: relative;
-    background: var(--bg-light);
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--transformer-shadow-lg);
     min-height: 600px;
 }
 
@@ -195,7 +216,7 @@ body {
     position: absolute;
     top: 20px;
     left: 20px;
-    background: rgba(26, 26, 46, 0.9);
+    background: var(--surface-color);
     padding: 15px 20px;
     border-radius: 10px;
     border: 2px solid var(--primary-color);
@@ -221,14 +242,16 @@ body {
 
 .info-panel p {
     font-size: 0.9em;
-    color: var(--text-dim);
+    color: var(--text-secondary);
+    margin-bottom: 0;
 }
 
 /* Side Panel */
 .side-panel {
-    background: var(--bg-light);
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--transformer-shadow-lg);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -249,7 +272,7 @@ body {
 
 .panel-header {
     padding: 20px;
-    background: var(--bg-medium);
+    background: var(--bg-secondary);
     border-bottom: 2px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -264,10 +287,10 @@ body {
 .close-btn {
     background: none;
     border: none;
-    color: var(--text-dim);
+    color: var(--text-secondary);
     font-size: 2em;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transformer-transition);
     width: 40px;
     height: 40px;
     display: flex;
@@ -277,8 +300,8 @@ body {
 }
 
 .close-btn:hover {
-    background: var(--bg-light);
-    color: var(--text-light);
+    background: var(--surface-hover);
+    color: var(--text-primary);
 }
 
 .panel-content {
@@ -302,7 +325,7 @@ body {
 .panel-content p {
     line-height: 1.6;
     margin-bottom: 15px;
-    color: var(--text-dim);
+    color: var(--text-secondary);
 }
 
 .panel-content ul {
@@ -314,7 +337,7 @@ body {
     padding: 8px 0;
     padding-left: 20px;
     position: relative;
-    color: var(--text-dim);
+    color: var(--text-secondary);
     line-height: 1.5;
 }
 
@@ -333,7 +356,7 @@ body {
 }
 
 .stat-item {
-    background: var(--bg-medium);
+    background: var(--bg-secondary);
     padding: 15px;
     border-radius: 8px;
     border-left: 4px solid var(--primary-color);
@@ -342,7 +365,7 @@ body {
 .stat-label {
     display: block;
     font-size: 0.85em;
-    color: var(--text-dim);
+    color: var(--text-secondary);
     margin-bottom: 5px;
 }
 
@@ -355,10 +378,11 @@ body {
 
 /* Tensor Flow Panel */
 .tensor-flow-panel {
-    background: var(--bg-light);
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
     padding: 20px;
     border-radius: 12px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--transformer-shadow);
     margin-bottom: 20px;
     animation: fadeIn 1s ease-out;
 }
@@ -377,10 +401,11 @@ body {
 
 /* Component Library */
 .component-library {
-    background: var(--bg-light);
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
     padding: 20px;
     border-radius: 12px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--transformer-shadow);
     margin-bottom: 20px;
     animation: fadeIn 1.2s ease-out;
 }
@@ -398,19 +423,19 @@ body {
 }
 
 .component-card {
-    background: var(--bg-medium);
+    background: var(--bg-secondary);
     padding: 20px;
     border-radius: 10px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transformer-transition);
     border: 2px solid transparent;
 }
 
 .component-card:hover {
     transform: translateY(-5px);
     border-color: var(--primary-color);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--transformer-shadow-lg);
 }
 
 .component-icon {
@@ -419,22 +444,24 @@ body {
 }
 
 .component-card h4 {
-    color: var(--text-light);
+    color: var(--text-primary);
     margin-bottom: 5px;
     font-size: 1em;
 }
 
 .component-card p {
-    color: var(--text-dim);
+    color: var(--text-secondary);
     font-size: 0.85em;
+    margin-bottom: 0;
 }
 
 /* Legend */
 .legend {
-    background: var(--bg-light);
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
     padding: 20px;
     border-radius: 12px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--transformer-shadow);
     animation: fadeIn 1.4s ease-out;
 }
 
@@ -449,13 +476,14 @@ body {
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+    color: var(--text-primary);
 }
 
 .legend-color {
     width: 30px;
     height: 20px;
     border-radius: 4px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--transformer-shadow);
 }
 
 /* Scrollbar Styling */
@@ -465,17 +493,17 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-medium);
+    background: var(--bg-secondary);
     border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
+    background: var(--border-color);
     border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #1976D2;
+    background: var(--text-secondary);
 }
 
 /* Responsive Design */
@@ -490,6 +518,10 @@ body {
 }
 
 @media (max-width: 768px) {
+    .hero-title {
+        font-size: 1.8rem;
+    }
+
     .header h1 {
         font-size: 1.8em;
     }
@@ -544,37 +576,39 @@ body {
 /* Tooltip */
 .tooltip {
     position: absolute;
-    background: rgba(26, 26, 46, 0.95);
-    color: var(--text-light);
+    background: var(--surface-color);
+    color: var(--text-primary);
     padding: 10px 15px;
     border-radius: 8px;
     font-size: 0.9em;
     pointer-events: none;
     z-index: 1000;
     border: 2px solid var(--primary-color);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--transformer-shadow-lg);
     backdrop-filter: blur(10px);
 }
 
 /* Component Detail Styles */
 .formula {
-    background: var(--bg-medium);
+    background: var(--bg-secondary);
     padding: 15px;
     border-radius: 8px;
     margin: 15px 0;
     font-family: 'Courier New', monospace;
     border-left: 4px solid var(--accent-color);
     overflow-x: auto;
+    color: var(--text-primary);
 }
 
 .code-block {
-    background: var(--bg-dark);
+    background: var(--bg-color);
     padding: 15px;
     border-radius: 8px;
     margin: 15px 0;
     font-family: 'Courier New', monospace;
     overflow-x: auto;
     border: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
 .tensor-shape {

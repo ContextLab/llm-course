@@ -1,15 +1,15 @@
-/* Global Styles - Uses CSS variables from ../shared/css/demo-styles.css for theming */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/**
+ * Interactive Tokenization Visualizer - Styles
+ * Uses CSS variables from ../shared/css/demo-styles.css for theming
+ */
 
 /* Demo-specific variables that don't conflict with theming */
 :root {
     --token-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --token-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     --token-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --token-transition: all 0.3s ease;
+    --primary-hover: #4f46e5;
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 12px;
@@ -21,53 +21,59 @@
     padding: 20px;
 }
 
-/* Header */
-header {
+/* Hero Header - matches ELIZA demo styling */
+.hero-header {
+    padding: 3rem 0 2rem;
+    margin-bottom: 30px;
     text-align: center;
-    margin-bottom: 40px;
-    padding: 40px 20px;
+    background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
+}
+
+.hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
     background: var(--gradient-primary);
-    color: white;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--token-shadow-lg);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    font-weight: 700;
+.hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
 }
 
-.subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
-
-/* Tabs */
+/* Tabs - matches ELIZA demo styling */
 .tabs {
     display: flex;
     gap: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     border-bottom: 2px solid var(--border-color);
+    background: var(--surface-color);
+    padding: 10px 20px 0;
+    border-radius: 8px 8px 0 0;
+    box-shadow: var(--token-shadow-md);
     flex-wrap: wrap;
 }
 
 .tab-button {
     padding: 12px 24px;
-    background: none;
+    background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
     color: var(--text-secondary);
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-    bottom: -2px;
+    transition: var(--token-transition);
 }
 
 .tab-button:hover {
     color: var(--primary-color);
+    background: var(--surface-hover);
 }
 
 .tab-button.active {
@@ -77,11 +83,16 @@ header h1 {
 
 .tab-content {
     display: none;
-    animation: fadeIn 0.3s;
+    background: var(--surface-color);
+    padding: 30px;
+    border-radius: 0 0 8px 8px;
+    box-shadow: var(--token-shadow-md);
+    min-height: 600px;
 }
 
 .tab-content.active {
     display: block;
+    animation: fadeIn 0.3s ease-in;
 }
 
 @keyframes fadeIn {
@@ -89,13 +100,12 @@ header h1 {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Input Section */
+/* Input Section - matches ELIZA demo styling */
 .input-section {
-    background: var(--surface-color);
-    padding: 30px;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--token-shadow-md);
-    margin-bottom: 30px;
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
 }
 
 .input-section label {
@@ -108,21 +118,22 @@ header h1 {
 .input-section textarea,
 .input-section input[type="text"] {
     width: 100%;
-    padding: 12px;
+    padding: 12px 18px;
     border: 2px solid var(--border-color);
-    border-radius: var(--radius-md);
+    border-radius: 8px;
     font-size: 1rem;
     font-family: inherit;
-    transition: border-color 0.3s;
+    transition: var(--token-transition);
     resize: vertical;
     background: var(--surface-color);
     color: var(--text-primary);
+    outline: none;
 }
 
 .input-section textarea:focus,
 .input-section input[type="text"]:focus {
-    outline: none;
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .controls {
@@ -133,16 +144,16 @@ header h1 {
     flex-wrap: wrap;
 }
 
-/* Buttons */
+/* Buttons - matches ELIZA demo styling */
 .primary-btn,
 .secondary-btn {
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: 24px;
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: var(--token-transition);
 }
 
 .primary-btn {
@@ -152,18 +163,17 @@ header h1 {
 
 .primary-btn:hover:not(:disabled) {
     background: var(--primary-hover);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: var(--token-shadow-md);
 }
 
 .secondary-btn {
-    background: var(--surface-color);
-    color: var(--text-primary);
-    border: 2px solid var(--border-color);
+    background: var(--text-secondary);
+    color: white;
 }
 
 .secondary-btn:hover:not(:disabled) {
-    background: var(--surface-hover);
+    opacity: 0.9;
 }
 
 button:disabled {
