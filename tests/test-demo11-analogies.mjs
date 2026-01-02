@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load the embeddings module
-const embeddingsCode = await readFile(join(__dirname, '../demos/11-analogies/js/embeddings.js'), 'utf-8');
+const embeddingsCode = await readFile(join(__dirname, '../demos/12-analogies/js/embeddings.js'), 'utf-8');
 const executableCode = embeddingsCode
     .replace(/export class (\w+)/g, 'globalThis.$1 = class $1')
     .replace(/export default .+;?/g, '');

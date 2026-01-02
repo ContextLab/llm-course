@@ -8,6 +8,8 @@ on:
     paths:
       - 'demos/**'
       - 'slides/**'
+      - 'figures/**'
+      - 'fonts/**'
       - '.github/workflows/deploy-demos.yml'
 
   # Allow manual trigger from Actions tab
@@ -61,25 +63,29 @@ jobs:
 
       - name: Create build artifact
         run: |
-          echo "Preparing demos and slides for deployment..."
+          echo "Preparing demos, slides, and assets for deployment..."
           mkdir -p _site/demos
           mkdir -p _site/slides
+          mkdir -p _site/figures
+          mkdir -p _site/fonts
           cp -r demos/* _site/demos/
           cp -r slides/* _site/slides/
+          cp -r figures/* _site/figures/
+          cp -r fonts/* _site/fonts/
 
           # Create a .nojekyll file to bypass Jekyll processing
           touch _site/.nojekyll
 
-          # Create root redirect to demos
+          # Create root redirect to course outline
           cat > _site/index.html << 'EOF'
           <!DOCTYPE html>
           <html>
           <head>
-              <meta http-equiv="refresh" content="0; url=demos/">
-              <script>window.location.href = 'demos/';</script>
+              <meta http-equiv="refresh" content="0; url=slides/">
+              <script>window.location.href = 'slides/';</script>
           </head>
           <body>
-              <p>Redirecting to <a href="demos/">demos</a>...</p>
+              <p>Redirecting to <a href="slides/">course outline</a>...</p>
           </body>
           </html>
           EOF
@@ -149,6 +155,10 @@ jobs:
         run: |
           echo "Build directory structure:"
           ls -la _site/
+          echo ""
+          echo "Figures and fonts:"
+          ls -la _site/figures/ | head -10
+          ls -la _site/fonts/ | head -10
           echo ""
           echo "Demos available:"
           find _site -type d -maxdepth 1 | sort

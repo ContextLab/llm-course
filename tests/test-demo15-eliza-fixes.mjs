@@ -16,9 +16,9 @@ global.fetch = async function(url) {
     // Handle relative paths - resolve them relative to the demos directory
     let filePath;
     if (url.startsWith('../../')) {
-        // Called from Demo 15 wrapper (e.g., '../../01-eliza/data/eliza-rules.json')
-        // Resolve relative to demos/15-chatbot-evolution/js/
-        filePath = join(__dirname, '../demos/15-chatbot-evolution/js', url);
+        // Called from Demo 02 wrapper (e.g., '../../01-eliza/data/eliza-rules.json')
+        // Resolve relative to demos/02-chatbot-evolution/js/
+        filePath = join(__dirname, '../demos/02-chatbot-evolution/js', url);
     } else if (url.startsWith('../')) {
         // One level up
         filePath = join(__dirname, '../demos', url);
@@ -36,8 +36,8 @@ global.fetch = async function(url) {
     };
 };
 
-// Import the Eliza wrapper from Demo 15 (which now imports from Demo 01)
-const elizaWrapperPath = pathToFileURL(join(__dirname, '../demos/15-chatbot-evolution/js/eliza.js')).href;
+// Import the Eliza wrapper from Demo 02 (which now imports from Demo 01)
+const elizaWrapperPath = pathToFileURL(join(__dirname, '../demos/02-chatbot-evolution/js/eliza.js')).href;
 const { Eliza } = await import(elizaWrapperPath);
 
 // Import ElizaEngine directly from Demo 01 for testing

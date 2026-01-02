@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Outline - Models of Language and Communication</title>
     <meta name="description" content="Course syllabus and lecture schedule for PSYC 51.17: Language Models from Scratch">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../demos/shared/css/demo-styles.css">
 
     <style>
@@ -558,8 +559,8 @@
     <nav class="course-nav" id="navbar">
         <div class="logo">Course Outline</div>
         <div class="nav-links">
-            <a href="../demos/">Demos</a>
             <a href="./" class="active">Outline</a>
+            <a href="../demos/">Demos</a>
             <a href="https://github.com/ContextLab/llm-course" target="_blank">GitHub</a>
             <a href="https://pbs.dartmouth.edu/undergraduate/courses-and-syllabi/topics-courses" target="_blank">Course Info</a>
             <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
@@ -573,15 +574,15 @@
         <p>PSYC 51.17 - Explore the building blocks of modern language models, from classical NLP techniques to cutting-edge transformers and large language models.</p>
         <div class="course-meta">
             <div class="meta-item">
-                <span class="icon">&#128197;</span>
+                <span class="icon"><i class="fa-regular fa-calendar"></i></span>
                 <span>MWF 10:10-11:15</span>
             </div>
             <div class="meta-item">
-                <span class="icon">&#128218;</span>
+                <span class="icon"><i class="fa-solid fa-book"></i></span>
                 <span>X-Hour: Thu 12:15-1:05</span>
             </div>
             <div class="meta-item">
-                <span class="icon">&#127891;</span>
+                <span class="icon"><i class="fa-solid fa-graduation-cap"></i></span>
                 <span>Winter 2026</span>
             </div>
         </div>
@@ -950,10 +951,10 @@
                 if (lecture.slides) {
                     html += '<div class="resource-group"><div class="resource-label">Slides</div><div class="resource-links">';
                     if (lecture.slides.html) {
-                        html += '<a href="' + escapeHtml(lecture.slides.html) + '" class="resource-link primary"><span class="icon">\u{1F310}</span> HTML</a>';
+                        html += '<a href="' + escapeHtml(lecture.slides.html) + '" class="resource-link primary"><span class="icon"><i class="fa-solid fa-globe"></i></span> HTML</a>';
                     }
                     if (lecture.slides.pdf) {
-                        html += '<a href="' + escapeHtml(lecture.slides.pdf) + '" class="resource-link"><span class="icon">\u{1F4C4}</span> PDF</a>';
+                        html += '<a href="' + escapeHtml(lecture.slides.pdf) + '" class="resource-link"><span class="icon"><i class="fa-solid fa-file-pdf"></i></span> PDF</a>';
                     }
                     html += '</div></div>';
                 }
@@ -961,7 +962,7 @@
                 // Notebook
                 if (lecture.notebook) {
                     html += '<div class="resource-group"><div class="resource-label">Materials</div><div class="resource-links">';
-                    html += '<a href="' + escapeHtml(lecture.notebook) + '" class="resource-link"><span class="icon">\u{1F4D3}</span> X-hour Notebook</a>';
+                    html += '<a href="' + escapeHtml(lecture.notebook) + '" class="resource-link"><span class="icon"><i class="fa-solid fa-book-open"></i></span> X-hour Notebook</a>';
                     html += '</div></div>';
                 }
 
@@ -969,7 +970,7 @@
                 if (lecture.demos && lecture.demos.length > 0) {
                     html += '<div class="resource-group"><div class="resource-label">Try It</div><div class="resource-links">';
                     lecture.demos.forEach(demo => {
-                        html += '<a href="' + escapeHtml(demo.url) + '" class="resource-link' + (demo.primary ? ' primary' : '') + '"><span class="icon">\u{1F3AE}</span> ' + escapeHtml(demo.name) + '</a>';
+                        html += '<a href="' + escapeHtml(demo.url) + '" class="resource-link' + (demo.primary ? ' primary' : '') + '"><span class="icon"><i class="fa-solid fa-gamepad"></i></span> ' + escapeHtml(demo.name) + '</a>';
                     });
                     html += '</div></div>';
                 }
@@ -978,8 +979,7 @@
                 if (lecture.readings && lecture.readings.length > 0) {
                     html += '<div class="resource-group readings"><div class="resource-label">Readings</div>';
                     lecture.readings.forEach(reading => {
-                        const icon = reading.icon || '\u{1F4D6}';
-                        html += '<div class="reading-item"><span class="icon">' + icon + '</span><span>';
+                        html += '<div class="reading-item"><span class="icon"><i class="fa-solid fa-book"></i></span><span>';
                         html += '<a href="' + escapeHtml(reading.url) + '" target="_blank">' + escapeHtml(reading.text) + '</a>';
                         if (reading.desc) html += ' - ' + escapeHtml(reading.desc);
                         html += '</span></div>';
@@ -993,7 +993,7 @@
             // Assignment released
             if (lecture.assignment) {
                 const parts = lecture.assignment.text.split(':');
-                html += '<div class="assignment-badge"><span class="icon">\u{1F4DD}</span><span><strong>' + escapeHtml(parts[0]) + ':</strong> ';
+                html += '<div class="assignment-badge"><span class="icon"><i class="fa-solid fa-clipboard-list"></i></span><span><strong>' + escapeHtml(parts[0]) + ':</strong> ';
                 html += '<a href="' + escapeHtml(lecture.assignment.url) + '" target="_blank">' + escapeHtml(parts.slice(1).join(':').trim()) + '</a>';
                 if (lecture.assignment.due) html += ' (Due: ' + escapeHtml(lecture.assignment.due) + ')';
                 html += '</span></div>';
@@ -1001,7 +1001,7 @@
 
             // Assignment due
             if (lecture.assignmentDue) {
-                html += '<div class="assignment-badge due"><span class="icon">\u{1F4C5}</span><span><strong>' + escapeHtml(lecture.assignmentDue) + '</strong></span></div>';
+                html += '<div class="assignment-badge due"><span class="icon"><i class="fa-regular fa-calendar-check"></i></span><span><strong>' + escapeHtml(lecture.assignmentDue) + '</strong></span></div>';
             }
 
             html += '</div>';
@@ -1016,7 +1016,7 @@
             html += '<h2 class="week-title">' + escapeHtml(week.title) + '</h2>';
             html += '<p class="week-subtitle">' + escapeHtml(week.subtitle || '') + '</p>';
             html += '</div>';
-            html += '<span class="expand-icon">\u25BC</span>';
+            html += '<span class="expand-icon"><i class="fa-solid fa-chevron-down"></i></span>';
             html += '</div>';
             
             html += '<div class="week-content' + (week.expanded ? ' expanded' : '') + '">';
@@ -1024,7 +1024,7 @@
             // No class notice
             if (week.noClassNotice) {
                 html += '<div class="no-class-notice">';
-                html += '<h4>\u{1F4C5} ' + escapeHtml(week.noClassNotice) + '</h4>';
+                html += '<h4><i class="fa-regular fa-calendar-xmark"></i> ' + escapeHtml(week.noClassNotice) + '</h4>';
                 if (week.noClassDetails) {
                     html += '<p>' + escapeHtml(week.noClassDetails.trim()) + '</p>';
                 }

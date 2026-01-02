@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load the LDA module
-const ldaCode = await readFile(join(__dirname, '../demos/08-topic-modeling/js/lda.js'), 'utf-8');
+const ldaCode = await readFile(join(__dirname, '../demos/09-topic-modeling/js/lda.js'), 'utf-8');
 const executableCode = ldaCode
     .replace(/export class (\w+)/g, 'globalThis.$1 = class $1')
     .replace(/export default .+;?/g, '');

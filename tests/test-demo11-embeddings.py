@@ -10,7 +10,7 @@ import os
 
 # Get the directory of this script to resolve relative paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(SCRIPT_DIR, '..', 'demos', '11-analogies', 'data')
+DATA_DIR = os.path.join(SCRIPT_DIR, '..', 'demos', '12-analogies', 'data')
 DEFAULT_JSON = os.path.join(DATA_DIR, 'glove-50d.json')
 
 def test_embeddings(json_file=None):
