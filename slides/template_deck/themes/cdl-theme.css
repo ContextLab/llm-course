@@ -96,7 +96,7 @@
     --chart-axis-color: #0a2518;
 
     /* Font stacks for charts */
-    --chart-font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', -apple-system, BlinkMacSystemFont, sans-serif;
+    --chart-font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* Local font face definitions for Avenir - including italic variants */
@@ -153,6 +153,14 @@
 }
 
 /* Note: BlackOblique variant not available - browser will synthesize italic */
+
+/* Noto Sans SC for CJK (Chinese) character support in PDFs */
+@font-face {
+    font-family: 'Noto Sans SC';
+    src: url('../../fonts/NotoSansSC-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+}
 
 /* FiraCode local font face */
 @font-face {
@@ -334,36 +342,36 @@ pre code.has-line-numbers .line-code {
 
 /* Headings - base styling only, font-size set per slide type */
 h1 {
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     /* font-size set in title slide and content slide sections */
 }
 
 h2 {
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     font-size: 1.3em;
     font-weight: 700;
 }
 
 h3 {
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     font-size: 1.1em;
     font-weight: 500;
 }
 
 h4 {
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     font-size: 1em;
     font-weight: 500;
 }
 
 h5 {
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     font-size: 0.9em;
     font-weight: 500;
 }
 
 h6 {
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     font-size: 0.8em;
     font-weight: 500;
 }
@@ -377,7 +385,7 @@ blockquote {
     margin: 1em auto 0;
     padding: 0.5em 2em;
     position: relative;
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     font-size: 1.1em;
     font-style: italic;
     font-weight: 400;
@@ -396,7 +404,7 @@ blockquote::before {
     left: -0.3em;
     top: -0.2em;
     font-size: 3em;
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     font-weight: 600;
     color: rgba(0, 105, 62, 0.15);
     line-height: 1;
@@ -409,7 +417,7 @@ blockquote::after {
     right: -0.1em;
     bottom: -0.5em;
     font-size: 3em;
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     font-weight: 600;
     color: rgba(0, 105, 62, 0.15);
     line-height: 1;
@@ -429,7 +437,7 @@ table {
     border-collapse: collapse;
     margin: 0.5em auto 0;
     font-size: 0.7em;
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     border: 3px solid #0a2518;
     width: 95%;
     max-width: 95%;
@@ -503,7 +511,7 @@ section {
     background-color: #d8d8d8;
     color: #0a2518;
     font-size: 35px;
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     font-weight: 400;
     height: 720px;
     line-height: 1.35;
@@ -1211,7 +1219,7 @@ table.table-continuation {
     border-collapse: collapse;
     margin: 0.5em auto 0;
     font-size: 0.7em;
-    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', sans-serif;
+    font-family: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Noto Sans SC', sans-serif;
     border: 3px solid #0a2518;
     width: 95%;
     max-width: 95%;
