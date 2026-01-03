@@ -8,6 +8,7 @@ import { Parry } from './parry.js';
 import { Alice } from './alice.js';
 import { Seq2SeqBot } from './seq2seq-bot.js';
 import { GPTBot } from './gpt-bot.js';
+import { ElizaBreakdownRenderer } from '../../01-eliza/js/eliza-breakdown-renderer.js';
 
 class TimelineApp {
     constructor() {
@@ -20,6 +21,10 @@ class TimelineApp {
         };
 
         this.currentEra = '2020s';
+        
+        this.elizaBreakdownRenderer = new ElizaBreakdownRenderer({
+            containerId: 'eliza-breakdown-steps'
+        });
     }
 
     async init() {
@@ -320,10 +325,12 @@ class TimelineApp {
             return;
         }
 
-        // Ensure ELIZA is initialized before getting breakdown
         await this.bots.eliza.ensureInitialized();
 
-        // Get breakdown using preview method to not affect chat state
+        if (!this.elizaBreakdownRenderer.engine) {
+            this.elizaBreakdownRenderer.setEngine(this.bots.eliza.engine);
+        }
+
         const breakdown = this.bots.eliza.getDetailedBreakdownPreview(inputText);
 
         if (!breakdown) {
@@ -331,8 +338,7 @@ class TimelineApp {
             return;
         }
 
-        // Display breakdown steps
-        this.displayBreakdown('eliza', breakdown);
+        this.elizaBreakdownRenderer.displayBreakdown(breakdown);
     }
 
     displayBreakdown(botName, breakdown) {
