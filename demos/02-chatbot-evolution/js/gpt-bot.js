@@ -1,12 +1,12 @@
 /**
  * GPT-style Bot (2020s)
- * Uses Transformers.js for generation with SmolLM-135M-Instruct
+ * Uses Transformers.js for generation with SmolLM3-3B
  *
  * Model selection rationale:
- * - SmolLM3-3B: Too large for browser (~6GB+ model size)
- * - SmolLM-360M: Workable but slow (~700MB)
- * - SmolLM-135M-Instruct: Optimal for browser (~270MB quantized), instruction-tuned
- * - LaMini-GPT-124M: Fallback option if SmolLM fails
+ * - SmolLM3-3B-ONNX: High-quality 3B model with q4f16 quantization (~1.5-2GB)
+ *   Requires WebGPU-capable browser for reasonable performance
+ * - SmolLM-135M-Instruct: Fallback for devices without WebGPU (~270MB)
+ * - LaMini-GPT-124M: Legacy fallback if both fail
  */
 
 export class GPTBot {
@@ -18,10 +18,11 @@ export class GPTBot {
         this.error = null;
         this.onProgress = null;
 
-        // Primary model: SmolLM-135M-Instruct (HuggingFace's optimized small LLM)
-        // Uses the official ONNX version with quantization for browser deployment
-        this.modelName = 'HuggingFaceTB/SmolLM-135M-Instruct';
-        this.fallbackModelName = 'Xenova/LaMini-GPT-124M';
+        // Primary model: SmolLM3-3B with q4f16 quantization + WebGPU
+        // Falls back to SmolLM-135M if WebGPU unavailable
+        this.modelName = 'HuggingFaceTB/SmolLM3-3B-ONNX';
+        this.fallbackModelName = 'HuggingFaceTB/SmolLM-135M-Instruct';
+        this.legacyFallbackName = 'Xenova/LaMini-GPT-124M';
         this.currentModel = this.modelName;
     }
 
@@ -59,20 +60,53 @@ export class GPTBot {
 
         try {
             this.reportProgress('Importing Transformers.js library');
-            const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1');
+            const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.1');
 
-            // Try SmolLM-135M-Instruct first
-            this.reportProgress('Loading SmolLM-135M-Instruct');
-            this.currentModel = this.modelName;
+            // Check WebGPU support for SmolLM3-3B
+            const hasWebGPU = typeof navigator !== 'undefined' && 'gpu' in navigator;
 
+            if (hasWebGPU) {
+                // Try SmolLM3-3B with WebGPU (highest quality)
+                this.reportProgress('Loading SmolLM3-3B (WebGPU accelerated)');
+                this.currentModel = this.modelName;
+
+                try {
+                    this.model = await pipeline('text-generation', this.modelName, {
+                        dtype: 'q4f16',
+                        device: 'webgpu',
+                        progress_callback: (progress) => {
+                            if (progress.status === 'downloading') {
+                                const pct = progress.progress || 0;
+                                this.reportProgress(`Downloading SmolLM3-3B model`, pct);
+                            } else if (progress.status === 'loading') {
+                                this.reportProgress('Loading model into GPU memory');
+                            } else if (progress.status === 'ready') {
+                                this.reportProgress('Model ready', 100);
+                            }
+                        }
+                    });
+
+                    this.isReady = true;
+                    this.isLoading = false;
+                    this.reportProgress('SmolLM3-3B loaded successfully!', 100);
+                    return true;
+                } catch (smol3Error) {
+                    console.warn('SmolLM3-3B failed:', smol3Error.message);
+                    this.reportProgress('SmolLM3-3B unavailable, trying SmolLM-135M');
+                }
+            } else {
+                this.reportProgress('WebGPU not available, using SmolLM-135M');
+            }
+
+            // Fallback to SmolLM-135M-Instruct (works without WebGPU)
+            this.currentModel = this.fallbackModelName;
             try {
-                this.model = await pipeline('text-generation', this.modelName, {
-                    // Use quantized version for faster loading and smaller size
+                this.model = await pipeline('text-generation', this.fallbackModelName, {
                     quantized: true,
                     progress_callback: (progress) => {
                         if (progress.status === 'downloading') {
                             const pct = progress.progress || 0;
-                            this.reportProgress(`Downloading SmolLM model files`, pct);
+                            this.reportProgress(`Downloading SmolLM-135M model`, pct);
                         } else if (progress.status === 'loading') {
                             this.reportProgress('Loading model into memory');
                         } else if (progress.status === 'ready') {
@@ -83,15 +117,15 @@ export class GPTBot {
 
                 this.isReady = true;
                 this.isLoading = false;
-                this.reportProgress('SmolLM-135M-Instruct loaded successfully!', 100);
+                this.reportProgress('SmolLM-135M loaded successfully!', 100);
                 return true;
             } catch (smolError) {
-                console.warn('SmolLM failed, trying LaMini fallback:', smolError.message);
+                console.warn('SmolLM-135M failed, trying LaMini fallback:', smolError.message);
                 this.reportProgress('SmolLM unavailable, trying LaMini-GPT fallback');
 
-                // Fallback to LaMini-GPT-124M
-                this.currentModel = this.fallbackModelName;
-                this.model = await pipeline('text-generation', this.fallbackModelName, {
+                // Legacy fallback to LaMini-GPT-124M
+                this.currentModel = this.legacyFallbackName;
+                this.model = await pipeline('text-generation', this.legacyFallbackName, {
                     progress_callback: (progress) => {
                         if (progress.status === 'downloading') {
                             const pct = progress.progress || 0;
@@ -135,8 +169,27 @@ export class GPTBot {
             let result;
 
             // Format prompt based on model type
-            if (this.currentModel.includes('SmolLM')) {
-                // SmolLM uses a chat template format
+            if (this.currentModel.includes('SmolLM3')) {
+                // SmolLM3 uses chat messages format
+                const messages = [
+                    { role: 'user', content: input.trim() }
+                ];
+
+                result = await this.model(messages, {
+                    max_new_tokens: 100,
+                    temperature: 0.7,
+                    do_sample: true,
+                    top_k: 40,
+                    top_p: 0.9,
+                    repetition_penalty: 1.1
+                });
+
+                // SmolLM3 with messages format returns the response directly
+                let response = result[0].generated_text.at(-1).content || '';
+                return this.cleanResponse(response);
+
+            } else if (this.currentModel.includes('SmolLM')) {
+                // SmolLM-135M uses a chat template format
                 prompt = `<|im_start|>user\n${input.trim()}<|im_end|>\n<|im_start|>assistant\n`;
 
                 result = await this.model(prompt, {
@@ -170,46 +223,54 @@ export class GPTBot {
                 response = response.replace(/<\|im_start\|>.*/s, '').trim();
             }
 
-            // If response is empty or too short, provide a fallback
-            if (response.length < 3) {
-                const fallbacks = [
-                    "I understand. Tell me more.",
-                    "That's interesting.",
-                    "I see what you mean.",
-                    "Could you elaborate on that?",
-                    "Interesting thought."
-                ];
-                response = fallbacks[Math.floor(Math.random() * fallbacks.length)];
-            }
-
-            // Truncate if too long
-            if (response.length > 200) {
-                const lastPunct = Math.max(
-                    response.lastIndexOf('.'),
-                    response.lastIndexOf('!'),
-                    response.lastIndexOf('?')
-                );
-                if (lastPunct > 50) {
-                    response = response.substring(0, lastPunct + 1);
-                } else {
-                    response = response.substring(0, 200) + '...';
-                }
-            }
-
-            return response;
+            return this.cleanResponse(response);
         } catch (error) {
             console.error('Error generating response:', error);
             return "I'm having trouble generating a response right now.";
         }
     }
 
+    cleanResponse(response) {
+        // Handle empty or too short responses
+        if (!response || response.length < 3) {
+            const fallbacks = [
+                "I understand. Tell me more.",
+                "That's interesting.",
+                "I see what you mean.",
+                "Could you elaborate on that?",
+                "Interesting thought."
+            ];
+            return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        }
+
+        // Truncate if too long
+        if (response.length > 200) {
+            const lastPunct = Math.max(
+                response.lastIndexOf('.'),
+                response.lastIndexOf('!'),
+                response.lastIndexOf('?')
+            );
+            if (lastPunct > 50) {
+                response = response.substring(0, lastPunct + 1);
+            } else {
+                response = response.substring(0, 200) + '...';
+            }
+        }
+
+        return response;
+    }
+
     getModelInfo() {
+        const isSmolLM3 = this.currentModel.includes('SmolLM3');
+        const isSmolLM = this.currentModel.includes('SmolLM');
+
         return {
             name: this.currentModel,
             type: 'Decoder-Only Transformer',
-            isSmolLM: this.currentModel.includes('SmolLM'),
-            parameters: this.currentModel.includes('SmolLM') ? '135M' : '124M',
-            year: this.currentModel.includes('SmolLM') ? '2024' : '2023',
+            isSmolLM3: isSmolLM3,
+            isSmolLM: isSmolLM,
+            parameters: isSmolLM3 ? '3B' : (isSmolLM ? '135M' : '124M'),
+            year: isSmolLM3 ? '2025' : (isSmolLM ? '2024' : '2023'),
             isReady: this.isReady,
             isLoading: this.isLoading
         };
@@ -219,7 +280,40 @@ export class GPTBot {
      * Get detailed architecture information for educational display
      */
     getArchitectureInfo() {
-        if (this.currentModel.includes('SmolLM')) {
+        if (this.currentModel.includes('SmolLM3')) {
+            return {
+                name: 'SmolLM3-3B',
+                type: 'Decoder-Only Transformer (LLaMA-style)',
+                parameters: '3 Billion',
+                layers: 28,
+                hiddenSize: 2560,
+                attentionHeads: 20,
+                contextLength: 8192,
+                vocabulary: '~128000 tokens',
+                trainingData: '11.2T tokens (web, code, math, reasoning)',
+                year: 2025,
+                organization: 'Hugging Face',
+                keyFeatures: [
+                    'Decoder-only architecture with GQA',
+                    'No RoPE (NoPE) positional encoding',
+                    'Long context support (up to 128k)',
+                    'Dual-mode reasoning capability',
+                    'Multilingual (6 languages)',
+                    'WebGPU accelerated in browser'
+                ],
+                whyThisModel: `SmolLM3-3B provides high-quality responses with WebGPU acceleration:
+                    - Uses q4f16 quantization (~1.5-2GB download)
+                    - Requires WebGPU-capable browser for best performance
+                    - Falls back to SmolLM-135M if WebGPU unavailable`,
+                architecture: {
+                    type: 'decoder-only',
+                    attention: 'Grouped-Query Attention (GQA) 3:1 ratio',
+                    normalization: 'RMSNorm',
+                    activation: 'SiLU',
+                    positionEncoding: 'NoPE (No Positional Embedding)'
+                }
+            };
+        } else if (this.currentModel.includes('SmolLM')) {
             return {
                 name: 'SmolLM-135M-Instruct',
                 type: 'Decoder-Only Transformer (LLaMA-style)',
@@ -240,11 +334,10 @@ export class GPTBot {
                     'RoPE positional embeddings',
                     'Grouped-query attention'
                 ],
-                whyThisModel: `SmolLM-135M was chosen over larger models because:
-                    - SmolLM3-3B (3 billion params) would require ~6GB download, too large for browser
-                    - SmolLM-360M works but is slower and larger (~700MB)
-                    - SmolLM-135M provides good quality at ~270MB (quantized), suitable for browser deployment
-                    - It's instruction-tuned, making it better for conversational use than base models`,
+                whyThisModel: `SmolLM-135M is the fallback when WebGPU is unavailable:
+                    - Compact size (~270MB quantized)
+                    - Works on all browsers without GPU
+                    - Instruction-tuned for conversational use`,
                 architecture: {
                     type: 'decoder-only',
                     attention: 'Grouped-Query Attention (GQA)',

@@ -597,6 +597,47 @@ export class Parry {
     }
 
     /**
+     * Get a human-readable name for a pattern based on its regex
+     */
+    getPatternName(pattern) {
+        const patternStr = pattern.toString();
+
+        // Map patterns to descriptive names
+        if (patternStr.includes('do you gamble|are you a gambler')) return 'Gambling inquiry';
+        if (patternStr.includes('avoid.*track|still.*track')) return 'Racetrack avoidance';
+        if (patternStr.includes('tell.*about.*gambling')) return 'Gambling details';
+        if (patternStr.includes('know.*about.*bookie|anything.*bookie')) return 'Bookie inquiry';
+        if (patternStr.includes('happened.*bookie|fight.*bookie')) return 'Bookie incident';
+        if (patternStr.includes('tell.*about.*mafia')) return 'Mafia details';
+        if (patternStr.includes('mafia|mob|gangster')) return 'Mafia/mob keywords';
+        if (patternStr.includes('bookie|bookmaker|betting')) return 'Betting keywords';
+        if (patternStr.includes('police|cop|officer')) return 'Police/law enforcement';
+        if (patternStr.includes('trust|believe|faith')) return 'Trust keywords';
+        if (patternStr.includes('safe|danger|threat')) return 'Safety/danger';
+        if (patternStr.includes('racetrack|races|horses')) return 'Horses/racing';
+        if (patternStr.includes('watch|follow|spy')) return 'Surveillance keywords';
+        if (patternStr.includes('who.*they|they.*after')) return 'Conspiracy inquiry';
+        if (patternStr.includes('help|therapy|doctor')) return 'Treatment keywords';
+        if (patternStr.includes('medication|pills')) return 'Medication keywords';
+        if (patternStr.includes('people.*feel|around.*people')) return 'People feelings';
+        if (patternStr.includes('being.*watched|being.*followed')) return 'Being watched';
+        if (patternStr.includes('why.*say|why do you')) return 'Why questions';
+        if (patternStr.includes('^(why|how|what|when|where|who)')) return 'General questions';
+        if (patternStr.includes('friend|family|wife')) return 'Family/friends';
+        if (patternStr.includes('money|debt|owe')) return 'Money/debt';
+        if (patternStr.includes('feel|feeling|emotion')) return 'Feelings/emotions';
+        if (patternStr.includes('kill|murder|hurt')) return 'Violence keywords';
+        if (patternStr.includes('phone|call|wire')) return 'Phone/communication';
+        if (patternStr.includes('hello|hi|hey')) return 'Greetings';
+        if (patternStr.includes('sorry|apologize')) return 'Apologies';
+        if (patternStr.includes('bye|goodbye|leave')) return 'Goodbyes';
+        if (patternStr.includes('name|who are you')) return 'Name inquiry';
+        if (patternStr === '/.*/') return 'Default (catch-all)';
+
+        return 'Pattern ' + patternStr.substring(0, 30) + '...';
+    }
+
+    /**
      * Get detailed breakdown of response processing for visualization
      */
     getDetailedBreakdown(input) {
@@ -635,7 +676,7 @@ export class Parry {
                 : 'No baseline adjustments this turn'
         });
 
-        // Step 3: Pattern matching attempts
+        // Step 3: Pattern matching attempts - show ALL patterns tested until match
         const patternTests = [];
         let matchedPattern = null;
         let matchedIndex = -1;
@@ -643,35 +684,34 @@ export class Parry {
         for (let i = 0; i < this.patterns.length; i++) {
             const { pattern } = this.patterns[i];
             const isMatch = pattern.test(input);
+            const isDefault = pattern.toString() === '/.*/' || pattern.toString() === '/.*/i';
 
             patternTests.push({
                 index: i,
-                pattern: pattern.toString(),
+                pattern: this.getPatternName(pattern),
+                patternRegex: pattern.toString(),
                 matched: isMatch,
-                isDefault: pattern.toString() === '/.*/' || pattern.toString() === '/.*/i'
+                isDefault: isDefault
             });
 
             if (isMatch && matchedIndex === -1) {
                 matchedIndex = i;
                 matchedPattern = this.patterns[i];
+                // Stop after first match (first-match-wins)
+                break;
             }
         }
 
         steps.push({
             name: 'Pattern Matching',
-            description: 'Testing input against pattern database (first match wins)',
-            patternTests: patternTests.slice(0, 10), // Show first 10 patterns tested
+            description: 'Testing input against pattern database (first match wins). PARRY uses regex patterns organized by topic.',
+            patternTests: patternTests,
             details: matchedIndex !== -1
-                ? `First match found at pattern #${matchedIndex + 1}`
+                ? `Match: "${this.getPatternName(matchedPattern.pattern)}" (pattern #${matchedIndex + 1})`
                 : 'No specific pattern matched, using default response'
         });
 
         // Step 4: Simulate emotional state changes from the matched pattern
-        // We need to temporarily execute to see what changes would happen
-        const tempAnger = this.anger;
-        const tempFear = this.fear;
-        const tempMistrust = this.mistrust;
-
         // Actually get the response to see emotional changes
         this.turnCount++;
 
@@ -726,7 +766,7 @@ export class Parry {
 
         steps.push({
             name: 'Emotional State Update',
-            description: 'Pattern triggers emotional state changes',
+            description: 'Pattern triggers emotional state changes based on topic sensitivity',
             emotionalState: {
                 before: initialState,
                 after: finalState,
@@ -735,34 +775,56 @@ export class Parry {
             details: this.formatEmotionalChanges(emotionalChanges)
         });
 
-        // Step 5: Response selection
+        // Step 5: Response selection with pool info
+        // Determine which response pool was used
+        let responsePool = 'pattern-specific';
+        let poolDescription = `Random selection from ${matchedPattern ? 'matched pattern' : 'default'} response pool`;
+
+        if (!matchedPattern || matchedPattern.pattern.toString() === '/.*/') {
+            // Default pattern uses emotional state
+            if (this.mistrust > 12) {
+                responsePool = 'high-mistrust';
+                poolDescription = 'High mistrust pool (mistrust > 12)';
+            } else if (this.anger > 15) {
+                responsePool = 'high-anger';
+                poolDescription = 'High anger pool (anger > 15)';
+            } else if (this.fear > 15) {
+                responsePool = 'high-fear';
+                poolDescription = 'High fear pool (fear > 15)';
+            } else {
+                responsePool = 'moderate-paranoia';
+                poolDescription = 'Moderate paranoia pool (default)';
+            }
+        }
+
         steps.push({
             name: 'Response Selection',
-            description: 'Response chosen based on pattern match and emotional state',
-            details: `Selected from response pool based on current emotional state`,
+            description: 'Response randomly selected from pool. Default patterns select pool based on emotional state thresholds.',
+            details: poolDescription,
             responseInfo: {
-                highMistrust: this.mistrust > 12,
-                highAnger: this.anger > 15,
-                highFear: this.fear > 15,
-                selectedResponse: responseText,
-                emotionalPool: this.mistrust > 12 ? 'high mistrust' :
-                               this.anger > 15 ? 'high anger' :
-                               this.fear > 15 ? 'high fear' : 'moderate paranoia'
+                pool: responsePool,
+                poolDescription: poolDescription,
+                emotionalThresholds: {
+                    highMistrust: 'mistrust > 12',
+                    highAnger: 'anger > 15',
+                    highFear: 'fear > 15'
+                },
+                currentState: {
+                    anger: finalState.anger,
+                    fear: finalState.fear,
+                    mistrust: finalState.mistrust
+                },
+                selectedResponse: responseText
             }
         });
 
-        // Step 6: Final response
-        steps.push({
-            name: 'Final Response',
-            description: 'Assembled response delivered to user',
-            output: responseText
-        });
+        // No Step 6 - the final response is shown separately by displayBreakdown
 
         return {
             steps: steps,
             finalResponse: responseText,
             emotionalState: finalState,
-            matchedPattern: matchedPattern ? matchedPattern.pattern.toString() : 'default'
+            matchedPattern: matchedPattern ? this.getPatternName(matchedPattern.pattern) : 'default'
         };
     }
 

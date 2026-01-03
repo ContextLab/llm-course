@@ -150,7 +150,7 @@
                     <!-- Tab Navigation for PARRY -->
                     <div class="chatbot-tabs">
                         <button class="chatbot-tab-button active" data-bot="parry" data-tab="chat">Chat</button>
-                        <button class="chatbot-tab-button" data-bot="parry" data-tab="breakdown">Emotional Breakdown</button>
+                        <button class="chatbot-tab-button" data-bot="parry" data-tab="breakdown">Rule Breakdown</button>
                     </div>
 
                     <!-- Chat Tab -->
@@ -478,15 +478,15 @@
                         <div class="chat-interface">
                             <div class="model-loading-status" id="gpt-loading-status">
                                 <div class="loading-spinner"></div>
-                                <div class="loading-text">Loading SmolLM-135M-Instruct...</div>
-                                <div class="loading-progress" id="gpt-progress">Initializing...</div>
+                                <div class="loading-text">Loading SmolLM3-3B (WebGPU)...</div>
+                                <div class="loading-progress" id="gpt-progress">Checking WebGPU support...</div>
                             </div>
                             <div class="chat-messages" id="gpt-messages"></div>
                             <div class="chat-input-area">
                                 <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to GPT-style model..." disabled>
                                 <button class="chat-send" id="gpt-send-btn" onclick="sendMessage('gpt')" disabled>Loading...</button>
                             </div>
-                            <p class="demo-note">Using SmolLM-135M-Instruct - a compact instruction-tuned model optimized for browser deployment.</p>
+                            <p class="demo-note">Using SmolLM3-3B with WebGPU acceleration. Falls back to SmolLM-135M if WebGPU unavailable.</p>
                         </div>
                     </div>
 
@@ -551,19 +551,19 @@
                             </div>
 
                             <div class="model-specs">
-                                <h4>SmolLM-135M-Instruct Specifications</h4>
+                                <h4>SmolLM3-3B Specifications</h4>
                                 <table class="specs-table">
-                                    <tr><td>Parameters</td><td>135 Million</td></tr>
+                                    <tr><td>Parameters</td><td>3 Billion</td></tr>
                                     <tr><td>Architecture</td><td>Decoder-Only Transformer (LLaMA-style)</td></tr>
-                                    <tr><td>Layers</td><td>9</td></tr>
-                                    <tr><td>Hidden Size</td><td>576</td></tr>
-                                    <tr><td>Attention Heads</td><td>9</td></tr>
-                                    <tr><td>Context Length</td><td>2048 tokens</td></tr>
-                                    <tr><td>Training</td><td>Pre-trained on SmolLM-Corpus, instruction-tuned</td></tr>
-                                    <tr><td>Year</td><td>2024 (Hugging Face)</td></tr>
+                                    <tr><td>Layers</td><td>28</td></tr>
+                                    <tr><td>Hidden Size</td><td>2560</td></tr>
+                                    <tr><td>Attention Heads</td><td>20 (GQA 3:1)</td></tr>
+                                    <tr><td>Context Length</td><td>8192 tokens (up to 128k)</td></tr>
+                                    <tr><td>Training</td><td>11.2T tokens (web, code, math, reasoning)</td></tr>
+                                    <tr><td>Year</td><td>2025 (Hugging Face)</td></tr>
                                 </table>
                                 <div class="model-note">
-                                    <strong>Why SmolLM over larger models?</strong> Models like SmolLM3-3B are too large for browser execution. SmolLM-135M provides a good balance of capability and browser performance with ~270MB quantized model size.
+                                    <strong>WebGPU Acceleration:</strong> SmolLM3-3B uses q4f16 quantization (~1.5-2GB) and runs via WebGPU in modern browsers. Falls back to SmolLM-135M on devices without WebGPU support.
                                 </div>
                             </div>
                         </div>
@@ -592,26 +592,26 @@
                 <div class="panel papers-panel">
                     <h3>Key Papers</h3>
                     <div class="papers-list">
-                        <div class="paper-item">
-                            <strong>1966</strong> - <a href="https://dl.acm.org/doi/10.1145/365153.365168" target="_blank">ELIZA</a><br>
+                        <a href="https://dl.acm.org/doi/10.1145/365153.365168" target="_blank" class="paper-item">
+                            <strong>1966</strong> - ELIZA<br>
                             <small>Weizenbaum, J. "ELIZA - A Computer Program for the Study of Natural Language Communication"</small>
-                        </div>
-                        <div class="paper-item">
+                        </a>
+                        <a href="https://www.sciencedirect.com/science/article/abs/pii/0004370272900495" target="_blank" class="paper-item">
                             <strong>1972</strong> - PARRY<br>
                             <small>Colby, K. "Simulating Paranoid Thought in a Computer"</small>
-                        </div>
-                        <div class="paper-item">
-                            <strong>2014</strong> - <a href="https://arxiv.org/abs/1409.3215" target="_blank">Seq2Seq</a><br>
+                        </a>
+                        <a href="https://arxiv.org/abs/1409.3215" target="_blank" class="paper-item">
+                            <strong>2014</strong> - Seq2Seq<br>
                             <small>Sutskever et al. "Sequence to Sequence Learning with Neural Networks"</small>
-                        </div>
-                        <div class="paper-item">
-                            <strong>2017</strong> - <a href="https://arxiv.org/abs/1706.03762" target="_blank">Transformers</a><br>
+                        </a>
+                        <a href="https://arxiv.org/abs/1706.03762" target="_blank" class="paper-item">
+                            <strong>2017</strong> - Transformers<br>
                             <small>Vaswani et al. "Attention Is All You Need"</small>
-                        </div>
-                        <div class="paper-item">
-                            <strong>2020</strong> - <a href="https://arxiv.org/abs/2005.14165" target="_blank">GPT-3</a><br>
+                        </a>
+                        <a href="https://arxiv.org/abs/2005.14165" target="_blank" class="paper-item">
+                            <strong>2020</strong> - GPT-3<br>
                             <small>Brown et al. "Language Models are Few-Shot Learners"</small>
-                        </div>
+                        </a>
                     </div>
                 </div>
 

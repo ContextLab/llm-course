@@ -507,7 +507,9 @@ class TimelineApp {
                     testDiv.className = 'pattern-test ' + (test.matched ? 'matched' : 'not-matched');
 
                     const strongEl = document.createElement('strong');
-                    strongEl.textContent = test.priority !== undefined ? '[P' + test.priority + ']' : '#' + (test.index + 1);
+                    // Use test.index if available, otherwise fall back to loop index i
+                    const displayIndex = test.index !== undefined ? test.index : i;
+                    strongEl.textContent = test.priority !== undefined ? '[P' + test.priority + ']' : '#' + (displayIndex + 1);
                     testDiv.appendChild(strongEl);
                     testDiv.appendChild(document.createTextNode(': ' + test.pattern));
 
@@ -788,14 +790,16 @@ class TimelineApp {
             item.appendChild(document.createTextNode(response));
         };
 
-        // Rule-based bots (synchronous)
+        // ELIZA is async (needs to ensure rules loaded)
         try {
-            updateBotResponse('eliza', this.bots.eliza.getResponse(prompt));
+            const elizaResponse = await this.bots.eliza.getResponse(prompt);
+            updateBotResponse('eliza', elizaResponse);
         } catch (error) {
             console.error('Error from ELIZA:', error);
             updateBotResponse('eliza', 'Error: Unable to get response');
         }
 
+        // Rule-based bots (synchronous)
         try {
             updateBotResponse('parry', this.bots.parry.getResponse(prompt));
         } catch (error) {

@@ -52,7 +52,7 @@ export class Alice {
                 priority: 2
             },
             {
-                pattern: /^who created you$/i,
+                pattern: /^who (created|made|built|programmed|designed) you$/i,
                 template: () => `I was created by Richard Wallace using AIML, starting in 1995.`,
                 priority: 2
             },

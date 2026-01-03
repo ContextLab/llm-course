@@ -364,21 +364,38 @@
 }
 
 .papers-list {
-    max-height: 400px;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.paper-item {
+a.paper-item {
+    display: block;
     padding: 12px;
     background: var(--bg-color);
     border-radius: 8px;
-    margin-bottom: 10px;
     font-size: 0.85em;
     line-height: 1.5;
+    text-decoration: none;
+    color: var(--text-primary);
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+a.paper-item:hover {
+    background: var(--surface-hover);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .paper-item strong {
     color: var(--primary-color);
+}
+
+.paper-item small {
+    color: var(--text-secondary);
 }
 
 .stats-grid {
