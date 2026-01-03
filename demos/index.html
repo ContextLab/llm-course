@@ -839,6 +839,19 @@
             card.style.opacity = '0';
             observer.observe(card);
         });
+
+        // Make entire demo card clickable
+        document.querySelectorAll('.demo-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Don't navigate if clicking on a link inside the card
+                if (e.target.tagName === 'A') return;
+
+                const link = card.querySelector('.demo-link');
+                if (link) {
+                    window.location.href = link.href;
+                }
+            });
+        });
     </script>
 </body>
 </html>
