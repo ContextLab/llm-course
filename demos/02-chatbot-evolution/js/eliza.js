@@ -29,23 +29,9 @@ export class Eliza {
         }
     }
 
-    async getResponseAsync(input) {
+    // Async interface that ensures rules are loaded before responding
+    async getResponse(input) {
         await this.ensureInitialized();
-        const result = this.engine.getResponse(input);
-        return result.response;
-    }
-
-    // Synchronous interface for compatibility with timeline-app.js
-    // Note: First call may return a loading message if not yet initialized
-    getResponse(input) {
-        if (!this.initialized) {
-            // Queue the initialization and return a temporary message
-            this.ensureInitialized().then(() => {
-                // Ready for next call
-            });
-            return "WELCOME. WHAT BRINGS YOU HERE TODAY?";
-        }
-
         const result = this.engine.getResponse(input);
         return result.response;
     }

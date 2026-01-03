@@ -312,7 +312,7 @@ class TimelineApp {
         document.getElementById('alice-username-value').textContent = context.userName || '(unknown)';
     }
 
-    analyzeEliza(input) {
+    async analyzeEliza(input) {
         const inputText = input || document.getElementById('eliza-breakdown-input').value.trim();
 
         if (!inputText) {
@@ -320,12 +320,14 @@ class TimelineApp {
             return;
         }
 
+        // Ensure ELIZA is initialized before getting breakdown
+        await this.bots.eliza.ensureInitialized();
+
         // Get breakdown using preview method to not affect chat state
         const breakdown = this.bots.eliza.getDetailedBreakdownPreview(inputText);
 
         if (!breakdown) {
-            // ELIZA might not be initialized yet
-            alert('ELIZA is still loading. Please wait a moment and try again.');
+            alert('Unable to analyze. Please try again.');
             return;
         }
 
@@ -615,7 +617,7 @@ class TimelineApp {
 
     initializeChats() {
         const initialMessages = {
-            eliza: "WELCOME. WHAT BRINGS YOU HERE TODAY?",
+            eliza: "Welcome. What brings you here today?",
             parry: "What do you want? I don't know you.",
             alice: "Hi! I'm A.L.I.C.E. How can I help you today?",
             seq2seq: "Loading neural model... This may take a minute on first use.",
@@ -640,15 +642,18 @@ class TimelineApp {
         // Get bot response
         try {
             let response;
-            // Neural models (seq2seq and gpt) use async
+            // Neural models show loading indicator
             if (botName === 'gpt' || botName === 'seq2seq') {
                 // Show animated typing indicator for neural models
                 this.addTypingIndicator(botName);
                 response = await this.bots[botName].getResponse(message);
                 // Remove typing indicator
                 this.removeTypingIndicator(botName);
+            } else if (botName === 'eliza') {
+                // ELIZA uses async to ensure rules are loaded
+                response = await this.bots.eliza.getResponse(message);
             } else {
-                // Rule-based bots are synchronous
+                // Other rule-based bots (PARRY, ALICE) are synchronous
                 response = this.bots[botName].getResponse(message);
             }
 
