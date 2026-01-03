@@ -260,7 +260,7 @@ We cannot directly observe consciousness &mdash; even in other humans!
 ---
 <!-- _class: scale-78 -->
 
-# Worked example: The Chinese Room
+# The Chinese room argument
 
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1;">
@@ -272,8 +272,8 @@ We cannot directly observe consciousness &mdash; even in other humans!
 4. You copy out the corresponding response
 5. You slide it back out
 
-**From outside:** Perfect Chinese conversation!
-**From inside:** Just symbol manipulation.
+**Observer sees:** Perfect Chinese conversation!
+**Your perspective:** Just symbol manipulation.
 
 </div>
 <div style="flex: 1;">
@@ -281,7 +281,7 @@ We cannot directly observe consciousness &mdash; even in other humans!
 **Concrete example:**
 ```
 Input:  你好吗? (How are you?)
-Lookup: Rule #42 → 我很好
+Lookup: Rule #42,938 → 我很好
 Output: 我很好 (I am fine)
 ```
 
@@ -318,7 +318,7 @@ LLMs are like a bellows that can only blow air if someone else is pumping it. Wh
 
 <div class="warning-box" data-title="Survey says...">
 
-Most cognitive scientists and AI researchers agree: **Current LLMs are not conscious.**
+Most cognitive scientists and AI researchers agree: **current LLMs are *not* conscious.**
 
 </div>
 
@@ -328,7 +328,7 @@ Most cognitive scientists and AI researchers agree: **Current LLMs are not consc
 
 ---
 
-# Language and thought
+# Another angle: relating language and thought
 
 <div class="note-box" data-title="Discussion">
 
@@ -360,6 +360,8 @@ Current evidence points toward the middle: language and thought interact in comp
 <div class="note-box" data-title="Further reading">
 
 [**Fedorenko et al. (2024, *Nature*):**](https://www.nature.com/articles/s41586-024-07522-w) The language network as a natural kind
+
+[**Stanford Encyclopdia of Philosophy:**](https://plato.stanford.edu/entries/linguistics/whorfianism.html) Whorfianism
 
 </div>
 
@@ -448,34 +450,39 @@ language categories affect *perception*, not just description!
 </div>
 
 ---
-<!-- _class: scale-78 -->
+# Example: Russian blue
 
-# Worked example: The color experiment
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**The task:**
-Look at three color squares. Which one is different?
-
-```
-Trial 1: [dark blue] [dark blue] [light blue]
-         Russian speakers: FAST (different words!)
-         English speakers: slower (both "blue")
-
-Trial 2: [blue] [blue] [green]
-         Both groups: equally fast (cross-category)
-```
-
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy"></span>
+    <span class="label">English: "blue"</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-blue"></span>
+    <span class="label">English: "blue"</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl"> </span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl"> </span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy"></span>
+    <span class="label">Russian: "siniy"</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-blue"></span>
+    <span class="label">Russian: "goluboy"</span>
+  </div>
 </div>
-<div style="flex: 1;">
 
-**What this tells us:**
+<div class="note-box" data-title="What this tells us">
+
 - Having distinct words for colors creates **perceptual boundaries**
 - The brain literally processes colors faster when they cross linguistic categories
 - Language doesn't just describe reality; it *shapes* how we see it
 
-</div>
 </div>
 
 <div class="tip-box" data-title="Implication for LLMs">
@@ -485,10 +492,10 @@ If language shapes perception, what "perception" do LLMs have? They experience l
 </div>
 
 ---
+<!-- _class: scale-90 -->
+# The grounding problem
 
-# So...what about LLMs?
-
-<div class="note-box" data-title="The grounding problem">
+<div class="definition-box">
 
 How do symbols (words) get their meaning?
 
@@ -505,49 +512,44 @@ How do symbols (words) get their meaning?
 
 ---
 <!-- _class: scale-70 -->
-
-# Worked example: Grounding vs. Statistics
+# The grounding problem example: what is "coffee"
 
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1;">
 
-**Human understanding of "coffee":**
-```
-Sensory memories:
+**Humans** learn about coffee through experience:
   - Bitter taste
   - Rich aroma
   - Warm ceramic mug
   - Morning ritual feeling
   - Caffeine effect on body
-```
-These experiences **ground** the word.
 
+These experiences **ground** the word.
 </div>
 <div style="flex: 1;">
 
-**LLM "understanding" of "coffee":**
-```
-Statistical associations:
+**LLMs** learn about coffee through statistics:
   - Often appears with "morning"
   - Frequently near "cup", "drink"
   - Associated with "caffeine"
   - Patterns: "I need my ___"
   - Context: restaurants, breakfast
-```
-Pure pattern matching, no experience.
+
+This is pure pattern matching, not experience-based.
 
 </div>
 </div>
 
-<div class="warning-box" data-title="The question">
+<div class="note-box" data-title="What do you think?">
 
-Can statistical patterns **ever** capture what it *feels like* to drink coffee?
+Can statistical patterns **ever** capture what it *feels like* to drink coffee? Does human learning *not* amount to statistics? Is it about the style of learning per se, our about the kinds of data we are learninig from?
 
 </div>
 
 ---
 
-# How LLMs actually work: A preview
+# How LLMs actually work: a preview
+<!-- _class: scale-70 -->
 
 <div class="note-box" data-title="Next-token prediction">
 
@@ -555,11 +557,10 @@ At their core, LLMs are trained to predict what comes next. Given a sequence of 
 
 </div>
 
-```python
-# Conceptually, this is what an LLM does:
-input_text = "The cat sat on the"
+Suppose we start with some input text: "The cat sat on the"
 
-# LLM predicts probability for each possible next word:
+LLMs predict probability for each possible next word:
+```
 predictions = {
     "mat": 0.35,      # Most likely
     "floor": 0.20,
@@ -613,7 +614,7 @@ We will build language models *from scratch* to understand **what they can and c
 
 ---
 
-# Readings for this week
+# Required readings for this week
 
 1. [Weizenbaum (1966): ELIZA](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf)
 2. [Fedorenko et al. (2024): The language network](https://www.nature.com/articles/s41586-024-07522-w)
@@ -628,6 +629,7 @@ Start with Weizenbaum&mdash; it will help you understand the fundamentals and gi
 ---
 
 # Key ideas from today
+<!-- _class: scale-90 -->
 
 1. **Consciousness is complex:** multiple types, hard to define
 2. **Language $\neq$ Thought:** but they interact in interesting ways
