@@ -191,7 +191,7 @@ new_text = re.sub(r"I am", "You are", text)
 ---
 <!-- _class: scale-70 -->
 
-# Worked example: Building a simple chatbot rule
+# Worked example: building a simple chatbot rule
 
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1;">
@@ -231,12 +231,13 @@ def simple_respond(user_input):
 "Tell me more."
 ```
 
-**Key insight:** The computer has no idea what "tired" or "anxious" mean. It's just copying text!
-
-</div>
+<div class="inline-warning">
+<span class="warning-title">Key insight</span>
+<span class="warning-text">The computer has no idea what "tired" or "anxious" mean. It's just copying text!</span>
 </div>
 
 ---
+<!-- _class: scale-80 -->
 
 # Meet ELIZA: a computerized Rogerian therapist
 
@@ -246,24 +247,21 @@ def simple_respond(user_input):
 
 </div>
 
-<div style="display: flex; gap: 2em;">
-<div>
+<div class="definition-box" data-title="What is a Rogerian therapist?">
 
-**Why a Rogerian therapist?**
 - Non-directive therapy style
 - Reflects statements back to patient
 - Asks open-ended questions
 - Avoids making claims about the world
 
 </div>
-<div>
 
-**Key insight**
+<div class="warning-box" data-title="Key insight">
+
 - Rogerian style requires no real knowledge
-- Simply reflect and rephrase
-- Let the human do the "heavy lifting"
+- Simply reflects and rephrases
+- Lets the human do the "heavy lifting" of "knowing about stuff"
 
-</div>
 </div>
 
 ---
@@ -276,18 +274,22 @@ Have a [conversation with ELIZA](https://contextlab.github.io/llm-course/demos/0
 
 </div>
 
+<div class="note-box" data-title="For your consideration">
+
 - What does ELIZA do surprisingly well?
 - What reveals its limitations?
 - Can you "trick" ELIZA? How?
 - What kinds of inputs break the illusion?
 - **How do you think ELIZA *works*?**
 
+</div>
+
 ---
 <!-- _class: scale-70 -->
 
 # Example ELIZA conversation
 
-<div style="display: flex; gap: 1.5em;">
+<div style="display: flex; gap: 1em;">
 <div style="flex: 1;">
 
 ```
@@ -301,8 +303,7 @@ User:   She always criticizes everything I do
 ELIZA:  Your mother?
 
 User:   Yes, and my father too
-ELIZA:  What else comes to mind when you
-        think of your father?
+ELIZA:  What else comes to mind when you think of your father?
 
 User:   I don't know
 ELIZA:  Why don't you know?
@@ -311,21 +312,33 @@ ELIZA:  Why don't you know?
 </div>
 <div style="flex: 1;">
 
-**Notice how ELIZA:**
+<div class="examples-column">
+<div class="inline-warning">
+<span class="warning-title">Notice how ELIZA:</span>
+<span class="warning-text">
+
 - Picks up on keywords ("mother", "father")
 - Reflects statements back as questions
 - Uses generic prompts when stuck
 - Never makes specific claims about the world
 
-**Where it breaks down:**
+</span>
+</div>
+
+
+<div class="inline-note">
+<span class="note-title">Where it breaks down:</span>
+<span class="note-text">
+
 ```
 User:   What is 2 + 2?
 ELIZA:  Why do you ask?
 
 User:   I want to know if you're intelligent
-ELIZA:  Does it please you to believe I
-        am intelligent?
+ELIZA:  Does it please you to believe I am intelligent?
 ```
+
+</span>
 
 </div>
 </div>
@@ -396,40 +409,50 @@ Have *you* experienced the ELIZA effect with modern AI systems (ChatGPT, Claude,
 
 # Example: The ELIZA effect in modern AI
 
-<div style="display: flex; gap: 1.5em;">
+<div style="display: flex; gap: 1em;">
 <div style="flex: 1;">
 
-**Feels like understanding:**
+<div class="examples-column">
+<div class="inline-example">
+<span class="example-title">Feels like understanding:</span>
+<span class="example-text">
+
 ```
 User: I'm really stressed about my exam
-AI:   I can hear that you're feeling
-      overwhelmed. Exams can be really
-      stressful. What subject is it?
+AI:   I can hear that you're feeling overwhelmed. Exams can be really stressful. What subject is it?
 
 User: Physics. I've been studying for weeks
-AI:   Studying for weeks shows real
-      dedication. What part of physics
-      is giving you trouble?
+AI:   Studying for weeks shows real dedication. What part of physics is giving you trouble?
 ```
 
-**Creates the illusion of empathy**
-
+</span>
+</div>
+</div>
 </div>
 <div style="flex: 1;">
 
-**Reveals the limitation:**
+<div class="examples-column">
+<div class="inline-example">
+<span class="example-title">Reveals the limitation:</span>
+<span class="example-text">
+
 ```
-User: I just realized I left my exam
-      notes in your office
-AI:   I understand that can be frustrating!
-      Would you like tips on how to
-      retrieve your notes?
+User: I just realized I left my exam notes in your office
+AI:   I understand that can be frustrating! Would you like tips on how to retrieve your notes?
 ```
+
+</div>
+
+<div class="inline-warning">
+<span class="warning-title">Pattern matching, not understanding</span>
+
+<span class="warning-text">
 
 The AI has no office. It cannot have your notes. But it responds as if this makes sense!
 
-**Pattern matching, not understanding.**
+</span>
 
+</div>
 </div>
 </div>
 
@@ -468,13 +491,14 @@ The AI has no office. It cannot have your notes. But it responds as if this make
 <div class="tip-box" data-title="Prepare for next time">
 
 - Finish reading Weizenbaum (1966)
-- Play with the ELIZA demo
+- Play with the [ELIZA demo](https://contextlab.github.io/llm-course/demos/01-eliza/)
 - Think about: what would *you* add to ELIZA?
 - Read the [Assignment 1 instructions](../../assignments/Assignment%201:%20ELIZA/README.md)
 
 </div>
 
 ---
+<!-- _class: scale-80 -->
 
 # Key takeaways
 
@@ -505,6 +529,6 @@ The AI has no office. It cannot have your notes. But it responds as if this make
 
 <div class="tip-box">
 
-Feeling lost? Want to make sure we cover something you're excited about? **Please** reach out if you have questions, comments, concerns, or just want to chat!
+Feeling lost? Want to make sure we cover something you're excited about? **Reach out** if you have questions, comments, concerns, or just want to chat!
 
 </div>
