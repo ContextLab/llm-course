@@ -28,7 +28,7 @@
         <!-- Timeline Navigator -->
         <section class="timeline-navigator">
             <div class="timeline-bar">
-                <div class="era era-1960s" data-era="1960s">
+                <div class="era era-1960s active" data-era="1960s">
                     <span class="era-label">1966<br>ELIZA</span>
                 </div>
                 <div class="era era-1970s" data-era="1970s">
@@ -40,8 +40,8 @@
                 <div class="era era-2010s" data-era="2010s">
                     <span class="era-label">2020<br>BlenderBot</span>
                 </div>
-                <div class="era era-2020s active" data-era="2020s">
-                    <span class="era-label">2023<br>LaMini-GPT</span>
+                <div class="era era-2020s" data-era="2020s">
+                    <span class="era-label">2024<br>SmolLM</span>
                 </div>
             </div>
         </section>
@@ -50,7 +50,7 @@
             <!-- Chatbot Showcase -->
             <section class="chatbot-showcase">
                 <!-- ELIZA (1960s) -->
-                <div class="chatbot-era" id="era-1960s">
+                <div class="chatbot-era active" id="era-1960s">
                     <div class="era-header">
                         <h2>1966: ELIZA</h2>
                         <span class="era-badge">Rule-Based Pattern Matching</span>
@@ -76,11 +76,46 @@
                         </div>
                     </div>
 
-                    <div class="chat-interface">
-                        <div class="chat-messages" id="eliza-messages"></div>
-                        <div class="chat-input-area">
-                            <input type="text" class="chat-input" id="eliza-input" placeholder="Talk to ELIZA...">
-                            <button class="chat-send" onclick="sendMessage('eliza')">Send</button>
+                    <!-- Tab Navigation for ELIZA -->
+                    <div class="chatbot-tabs">
+                        <button class="chatbot-tab-button active" data-bot="eliza" data-tab="chat">Chat</button>
+                        <button class="chatbot-tab-button" data-bot="eliza" data-tab="breakdown">Rule Breakdown</button>
+                    </div>
+
+                    <!-- Chat Tab -->
+                    <div class="chatbot-tab-content active" id="eliza-chat-tab">
+                        <div class="chat-interface">
+                            <div class="chat-messages" id="eliza-messages"></div>
+                            <div class="chat-input-area">
+                                <input type="text" class="chat-input" id="eliza-input" placeholder="Talk to ELIZA...">
+                                <button class="chat-send" onclick="sendMessage('eliza')">Send</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown Tab -->
+                    <div class="chatbot-tab-content" id="eliza-breakdown-tab">
+                        <div class="breakdown-interface">
+                            <div class="breakdown-input-section">
+                                <input type="text" class="breakdown-input" id="eliza-breakdown-input"
+                                       placeholder="Enter text to see how ELIZA processes it...">
+                                <select class="example-selector" id="eliza-example-selector">
+                                    <option value="">-- Load Example --</option>
+                                    <option value="I am feeling sad">I am feeling sad</option>
+                                    <option value="My mother hates me">My mother hates me</option>
+                                    <option value="I need help">I need help</option>
+                                    <option value="Why do you ask that">Why do you ask that</option>
+                                    <option value="Hello">Hello</option>
+                                    <option value="I think computers are scary">I think computers are scary</option>
+                                </select>
+                                <button class="btn-analyze" onclick="analyzeEliza()">Analyze</button>
+                            </div>
+                            <div class="breakdown-steps" id="eliza-breakdown-steps">
+                                <div class="empty-state">
+                                    <div class="empty-state-text">Enter text to see ELIZA's pattern matching</div>
+                                    <div class="empty-state-subtext">Watch how keywords, patterns, and transformations work together</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -176,7 +211,6 @@
                             </div>
                             <div class="breakdown-steps" id="parry-breakdown-steps">
                                 <div class="empty-state">
-                                    <div class="empty-state-icon">🔍</div>
                                     <div class="empty-state-text">Enter text to see PARRY's emotional processing</div>
                                     <div class="empty-state-subtext">Watch how emotional states influence responses</div>
                                 </div>
@@ -267,7 +301,6 @@
                             </div>
                             <div class="breakdown-steps" id="alice-breakdown-steps">
                                 <div class="empty-state">
-                                    <div class="empty-state-icon">🔍</div>
                                     <div class="empty-state-text">Enter text to see AIML pattern matching</div>
                                     <div class="empty-state-subtext">Watch how categories, wildcards, and context work together</div>
                                 </div>
@@ -304,18 +337,111 @@
                         </div>
                     </div>
 
-                    <div class="chat-interface">
-                        <div class="chat-messages" id="seq2seq-messages"></div>
-                        <div class="chat-input-area">
-                            <input type="text" class="chat-input" id="seq2seq-input" placeholder="Talk to Seq2Seq model..." disabled>
-                            <button class="chat-send" disabled>Loading...</button>
+                    <!-- Tab Navigation for Seq2Seq -->
+                    <div class="chatbot-tabs">
+                        <button class="chatbot-tab-button active" data-bot="seq2seq" data-tab="chat">Chat</button>
+                        <button class="chatbot-tab-button" data-bot="seq2seq" data-tab="architecture">Architecture</button>
+                    </div>
+
+                    <!-- Chat Tab -->
+                    <div class="chatbot-tab-content active" id="seq2seq-chat-tab">
+                        <div class="chat-interface">
+                            <div class="model-loading-status" id="seq2seq-loading-status">
+                                <div class="loading-spinner"></div>
+                                <div class="loading-text">Loading BlenderBot Small (90M)...</div>
+                                <div class="loading-progress" id="seq2seq-progress">Initializing...</div>
+                            </div>
+                            <div class="chat-messages" id="seq2seq-messages"></div>
+                            <div class="chat-input-area">
+                                <input type="text" class="chat-input" id="seq2seq-input" placeholder="Talk to Seq2Seq model..." disabled>
+                                <button class="chat-send" id="seq2seq-send-btn" disabled>Loading...</button>
+                            </div>
+                            <p class="demo-note">Using BlenderBot Small (90M) - a real neural conversation model. May take ~30s to load initially.</p>
                         </div>
-                        <p class="demo-note">Using BlenderBot Small (90M) - a real neural conversation model. May take ~30s to load initially.</p>
+                    </div>
+
+                    <!-- Architecture Tab -->
+                    <div class="chatbot-tab-content" id="seq2seq-architecture-tab">
+                        <div class="architecture-content">
+                            <div class="architecture-diagram">
+                                <h4>Encoder-Decoder Transformer Architecture</h4>
+                                <div class="arch-flow">
+                                    <div class="arch-block input-block">
+                                        <div class="block-label">Input</div>
+                                        <div class="block-content">"How are you?"</div>
+                                    </div>
+                                    <div class="arch-arrow">&#8595;</div>
+                                    <div class="arch-block">
+                                        <div class="block-label">Tokenizer</div>
+                                        <div class="block-content">Text &#8594; Token IDs</div>
+                                    </div>
+                                    <div class="arch-arrow">&#8595;</div>
+                                    <div class="arch-block encoder-block">
+                                        <div class="block-label">Encoder</div>
+                                        <div class="block-content">
+                                            <div class="sub-block">Self-Attention</div>
+                                            <div class="sub-block">Feed Forward</div>
+                                            <div class="block-note">x6 layers</div>
+                                        </div>
+                                    </div>
+                                    <div class="arch-arrow">&#8595;</div>
+                                    <div class="arch-block decoder-block">
+                                        <div class="block-label">Decoder</div>
+                                        <div class="block-content">
+                                            <div class="sub-block">Masked Self-Attention</div>
+                                            <div class="sub-block">Cross-Attention</div>
+                                            <div class="sub-block">Feed Forward</div>
+                                            <div class="block-note">x6 layers</div>
+                                        </div>
+                                    </div>
+                                    <div class="arch-arrow">&#8595;</div>
+                                    <div class="arch-block output-block">
+                                        <div class="block-label">Output</div>
+                                        <div class="block-content">"I'm doing well!"</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="architecture-explanation">
+                                <h4>Key Concepts</h4>
+                                <div class="concept-grid">
+                                    <div class="concept-card">
+                                        <h5>Encoder</h5>
+                                        <p>Processes the entire input sequence at once. Uses bidirectional self-attention to understand context from both directions.</p>
+                                    </div>
+                                    <div class="concept-card">
+                                        <h5>Decoder</h5>
+                                        <p>Generates output one token at a time. Uses masked self-attention (can only see previous tokens) and cross-attention to the encoder output.</p>
+                                    </div>
+                                    <div class="concept-card">
+                                        <h5>Cross-Attention</h5>
+                                        <p>Allows the decoder to "look at" the encoder's representation of the input while generating each output token.</p>
+                                    </div>
+                                    <div class="concept-card">
+                                        <h5>Tokenization</h5>
+                                        <p>Breaks text into subword units (BPE). "Hello" might become ["Hel", "lo"]. Enables handling of any text.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="model-specs">
+                                <h4>BlenderBot Small Specifications</h4>
+                                <table class="specs-table">
+                                    <tr><td>Parameters</td><td>90 Million</td></tr>
+                                    <tr><td>Architecture</td><td>Encoder-Decoder Transformer</td></tr>
+                                    <tr><td>Layers</td><td>6 encoder + 6 decoder</td></tr>
+                                    <tr><td>Hidden Size</td><td>512</td></tr>
+                                    <tr><td>Attention Heads</td><td>8</td></tr>
+                                    <tr><td>Training Data</td><td>Blended Skill Talk, ConvAI2, Empathetic Dialogues</td></tr>
+                                    <tr><td>Year</td><td>2020 (Facebook AI)</td></tr>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- GPT/Transformer (2020s) -->
-                <div class="chatbot-era active" id="era-2020s">
+                <div class="chatbot-era" id="era-2020s">
                     <div class="era-header">
                         <h2>2020s: GPT & Transformers</h2>
                         <span class="era-badge">Large Language Models</span>
@@ -341,13 +467,106 @@
                         </div>
                     </div>
 
-                    <div class="chat-interface">
-                        <div class="chat-messages" id="gpt-messages"></div>
-                        <div class="chat-input-area">
-                            <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to GPT-style model...">
-                            <button class="chat-send" onclick="sendMessage('gpt')">Send</button>
+                    <!-- Tab Navigation for GPT -->
+                    <div class="chatbot-tabs">
+                        <button class="chatbot-tab-button active" data-bot="gpt" data-tab="chat">Chat</button>
+                        <button class="chatbot-tab-button" data-bot="gpt" data-tab="architecture">Architecture</button>
+                    </div>
+
+                    <!-- Chat Tab -->
+                    <div class="chatbot-tab-content active" id="gpt-chat-tab">
+                        <div class="chat-interface">
+                            <div class="model-loading-status" id="gpt-loading-status">
+                                <div class="loading-spinner"></div>
+                                <div class="loading-text">Loading SmolLM-135M-Instruct...</div>
+                                <div class="loading-progress" id="gpt-progress">Initializing...</div>
+                            </div>
+                            <div class="chat-messages" id="gpt-messages"></div>
+                            <div class="chat-input-area">
+                                <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to GPT-style model..." disabled>
+                                <button class="chat-send" id="gpt-send-btn" onclick="sendMessage('gpt')" disabled>Loading...</button>
+                            </div>
+                            <p class="demo-note">Using SmolLM-135M-Instruct - a compact instruction-tuned model optimized for browser deployment.</p>
                         </div>
-                        <p class="demo-note">Using MBZUAI/LaMini-GPT-124M (instruction-tuned model)</p>
+                    </div>
+
+                    <!-- Architecture Tab -->
+                    <div class="chatbot-tab-content" id="gpt-architecture-tab">
+                        <div class="architecture-content">
+                            <div class="architecture-diagram">
+                                <h4>Decoder-Only Transformer Architecture</h4>
+                                <div class="arch-flow">
+                                    <div class="arch-block input-block">
+                                        <div class="block-label">Input Prompt</div>
+                                        <div class="block-content">"What is AI?"</div>
+                                    </div>
+                                    <div class="arch-arrow">&#8595;</div>
+                                    <div class="arch-block">
+                                        <div class="block-label">Tokenizer + Embeddings</div>
+                                        <div class="block-content">Token IDs &#8594; Vectors + Position</div>
+                                    </div>
+                                    <div class="arch-arrow">&#8595;</div>
+                                    <div class="arch-block decoder-only-block">
+                                        <div class="block-label">Transformer Decoder Stack</div>
+                                        <div class="block-content">
+                                            <div class="sub-block">Causal Self-Attention</div>
+                                            <div class="sub-block">Feed Forward (MLP)</div>
+                                            <div class="sub-block">Layer Normalization</div>
+                                            <div class="block-note">x9 layers (SmolLM)</div>
+                                        </div>
+                                    </div>
+                                    <div class="arch-arrow">&#8595;</div>
+                                    <div class="arch-block">
+                                        <div class="block-label">Language Model Head</div>
+                                        <div class="block-content">Predict next token probability</div>
+                                    </div>
+                                    <div class="arch-arrow">&#8595;</div>
+                                    <div class="arch-block output-block">
+                                        <div class="block-label">Autoregressive Generation</div>
+                                        <div class="block-content">"AI is..." &#8594; token by token</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="architecture-explanation">
+                                <h4>Key Concepts</h4>
+                                <div class="concept-grid">
+                                    <div class="concept-card">
+                                        <h5>Decoder-Only</h5>
+                                        <p>Unlike encoder-decoder models, GPT-style models use only the decoder. Each token can only attend to previous tokens (causal/autoregressive).</p>
+                                    </div>
+                                    <div class="concept-card">
+                                        <h5>Causal Self-Attention</h5>
+                                        <p>Uses a mask to prevent tokens from "seeing" future tokens. This enables left-to-right text generation.</p>
+                                    </div>
+                                    <div class="concept-card">
+                                        <h5>Instruction Tuning</h5>
+                                        <p>After pre-training, models are fine-tuned on instruction-following datasets to better understand and respond to user queries.</p>
+                                    </div>
+                                    <div class="concept-card">
+                                        <h5>Autoregressive Generation</h5>
+                                        <p>Generates text one token at a time. Each new token is conditioned on all previous tokens. Temperature controls randomness.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="model-specs">
+                                <h4>SmolLM-135M-Instruct Specifications</h4>
+                                <table class="specs-table">
+                                    <tr><td>Parameters</td><td>135 Million</td></tr>
+                                    <tr><td>Architecture</td><td>Decoder-Only Transformer (LLaMA-style)</td></tr>
+                                    <tr><td>Layers</td><td>9</td></tr>
+                                    <tr><td>Hidden Size</td><td>576</td></tr>
+                                    <tr><td>Attention Heads</td><td>9</td></tr>
+                                    <tr><td>Context Length</td><td>2048 tokens</td></tr>
+                                    <tr><td>Training</td><td>Pre-trained on SmolLM-Corpus, instruction-tuned</td></tr>
+                                    <tr><td>Year</td><td>2024 (Hugging Face)</td></tr>
+                                </table>
+                                <div class="model-note">
+                                    <strong>Why SmolLM over larger models?</strong> Models like SmolLM3-3B are too large for browser execution. SmolLM-135M provides a good balance of capability and browser performance with ~270MB quantized model size.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -356,7 +575,7 @@
             <aside class="sidebar">
                 <!-- Comparison Panel -->
                 <div class="panel comparison-panel">
-                    <h3>🔄 Compare All Bots</h3>
+                    <h3>Compare All Bots</h3>
                     <p>Send the same prompt to all chatbots simultaneously</p>
                     <textarea id="compare-prompt" rows="3" placeholder="Enter your prompt...">Hello, how are you today?</textarea>
                     <button id="compare-btn" class="btn btn-primary">Compare Responses</button>
@@ -365,16 +584,16 @@
 
                 <!-- Architecture Evolution -->
                 <div class="panel architecture-panel">
-                    <h3>📐 Architecture Evolution</h3>
+                    <h3>Architecture Evolution</h3>
                     <div id="architecture-viz"></div>
                 </div>
 
                 <!-- Key Papers -->
                 <div class="panel papers-panel">
-                    <h3>📚 Key Papers</h3>
+                    <h3>Key Papers</h3>
                     <div class="papers-list">
                         <div class="paper-item">
-                            <strong>1966</strong> - ELIZA<br>
+                            <strong>1966</strong> - <a href="https://dl.acm.org/doi/10.1145/365153.365168" target="_blank">ELIZA</a><br>
                             <small>Weizenbaum, J. "ELIZA - A Computer Program for the Study of Natural Language Communication"</small>
                         </div>
                         <div class="paper-item">
@@ -382,15 +601,15 @@
                             <small>Colby, K. "Simulating Paranoid Thought in a Computer"</small>
                         </div>
                         <div class="paper-item">
-                            <strong>2014</strong> - Seq2Seq<br>
+                            <strong>2014</strong> - <a href="https://arxiv.org/abs/1409.3215" target="_blank">Seq2Seq</a><br>
                             <small>Sutskever et al. "Sequence to Sequence Learning with Neural Networks"</small>
                         </div>
                         <div class="paper-item">
-                            <strong>2017</strong> - Transformers<br>
+                            <strong>2017</strong> - <a href="https://arxiv.org/abs/1706.03762" target="_blank">Transformers</a><br>
                             <small>Vaswani et al. "Attention Is All You Need"</small>
                         </div>
                         <div class="paper-item">
-                            <strong>2020</strong> - GPT-3<br>
+                            <strong>2020</strong> - <a href="https://arxiv.org/abs/2005.14165" target="_blank">GPT-3</a><br>
                             <small>Brown et al. "Language Models are Few-Shot Learners"</small>
                         </div>
                     </div>
@@ -398,7 +617,7 @@
 
                 <!-- Statistics -->
                 <div class="panel stats-panel">
-                    <h3>📊 Evolution Stats</h3>
+                    <h3>Evolution Stats</h3>
                     <div class="stats-grid">
                         <div class="stat-item">
                             <span class="stat-label">ELIZA (1966)</span>
@@ -413,8 +632,8 @@
                             <span class="stat-value">90M params</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">DistilGPT2 (2019)</span>
-                            <span class="stat-value">82M params</span>
+                            <span class="stat-label">SmolLM (2024)</span>
+                            <span class="stat-value">135M params</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">GPT-3 (2020)</span>
@@ -423,18 +642,6 @@
                     </div>
                 </div>
 
-                <!-- Timeline Info -->
-                <div class="panel info-panel">
-                    <h3>ℹ️ About This Demo</h3>
-                    <p>Explore 60 years of chatbot evolution from simple pattern matching to sophisticated language models.</p>
-                    <p><strong>Interactive Features:</strong></p>
-                    <ul>
-                        <li>Chat with historical implementations</li>
-                        <li>Compare responses side-by-side</li>
-                        <li>Learn about each approach</li>
-                        <li>Understand architectural evolution</li>
-                    </ul>
-                </div>
             </aside>
         </div>
     </div>

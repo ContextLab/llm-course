@@ -652,7 +652,7 @@ Start with Weizenbaum&mdash; it will help you understand the fundamentals and gi
   </div>
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-green">💁</span>
-    <span class="label">Come to <a href="context-lab.youcanbook.me">office hours</a></span>
+    <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
   </div>
 </div>
 

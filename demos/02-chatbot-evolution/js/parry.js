@@ -615,7 +615,7 @@ export class Parry {
             description: 'Raw user input received for processing',
             input: input,
             output: input.trim(),
-            details: `Turn count: ${this.turnCount + 1}`
+            details: 'Processing input'
         });
 
         // Step 2: Emotional baseline check
@@ -662,7 +662,7 @@ export class Parry {
             description: 'Testing input against pattern database (first match wins)',
             patternTests: patternTests.slice(0, 10), // Show first 10 patterns tested
             details: matchedIndex !== -1
-                ? `Matched pattern #${matchedIndex + 1}: ${matchedPattern.pattern.toString()}`
+                ? `First match found at pattern #${matchedIndex + 1}`
                 : 'No specific pattern matched, using default response'
         });
 
@@ -743,7 +743,11 @@ export class Parry {
             responseInfo: {
                 highMistrust: this.mistrust > 12,
                 highAnger: this.anger > 15,
-                highFear: this.fear > 15
+                highFear: this.fear > 15,
+                selectedResponse: responseText,
+                emotionalPool: this.mistrust > 12 ? 'high mistrust' :
+                               this.anger > 15 ? 'high anger' :
+                               this.fear > 15 ? 'high fear' : 'moderate paranoia'
             }
         });
 

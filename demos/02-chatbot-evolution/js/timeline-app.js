@@ -33,29 +33,120 @@ class TimelineApp {
     }
 
     async loadNeuralModels() {
-        // Load both neural models - don't block on them
-        const seq2seqPromise = this.bots.seq2seq.loadModel().then(() => {
-            this.updateBotStatus('seq2seq', 'Ready! Try chatting with the neural model.');
-        }).catch(() => {
-            this.updateBotStatus('seq2seq', 'Failed to load. Please refresh the page.');
+        // Set up progress callbacks for both models
+        this.bots.seq2seq.setProgressCallback((progress) => {
+            this.updateLoadingProgress('seq2seq', progress);
         });
 
-        const gptPromise = this.bots.gpt.loadModel().then(() => {
-            this.updateBotStatus('gpt', 'Ready! Start chatting.');
-        }).catch(() => {
-            this.updateBotStatus('gpt', 'Failed to load. Please refresh the page.');
+        this.bots.gpt.setProgressCallback((progress) => {
+            this.updateLoadingProgress('gpt', progress);
         });
 
-        // Enable inputs once models are loaded
-        Promise.all([seq2seqPromise, gptPromise]).then(() => {
-            document.getElementById('seq2seq-input').disabled = false;
-            const seq2seqBtn = document.querySelector('#era-2010s .chat-send');
-            if (seq2seqBtn) {
-                seq2seqBtn.disabled = false;
-                seq2seqBtn.textContent = 'Send';
-                seq2seqBtn.onclick = () => window.sendMessage('seq2seq');
+        // Load both neural models in parallel
+        const seq2seqPromise = this.bots.seq2seq.loadModel().then((success) => {
+            if (success) {
+                this.hideLoadingStatus('seq2seq');
+                this.enableChatInterface('seq2seq');
+                this.updateBotStatus('seq2seq', 'Ready! Try chatting with the neural model.');
+            } else {
+                this.showLoadingError('seq2seq', 'Failed to load model. Please refresh the page.');
             }
+        }).catch((error) => {
+            console.error('Seq2seq loading error:', error);
+            this.showLoadingError('seq2seq', 'Failed to load. Please refresh the page.');
         });
+
+        const gptPromise = this.bots.gpt.loadModel().then((success) => {
+            if (success) {
+                this.hideLoadingStatus('gpt');
+                this.enableChatInterface('gpt');
+                this.updateBotStatus('gpt', 'Ready! Start chatting.');
+                // Update the demo note to reflect the actual model loaded
+                const modelInfo = this.bots.gpt.getModelInfo();
+                const demoNote = document.querySelector('#gpt-chat-tab .demo-note');
+                if (demoNote && modelInfo) {
+                    if (modelInfo.isSmolLM) {
+                        demoNote.textContent = 'Using SmolLM-135M-Instruct - a compact instruction-tuned model optimized for browser deployment.';
+                    } else {
+                        demoNote.textContent = 'Using LaMini-GPT-124M (fallback) - an instruction-tuned model.';
+                    }
+                }
+            } else {
+                this.showLoadingError('gpt', 'Failed to load model. Please refresh the page.');
+            }
+        }).catch((error) => {
+            console.error('GPT loading error:', error);
+            this.showLoadingError('gpt', 'Failed to load. Please refresh the page.');
+        });
+
+        // Wait for both to complete (don't block, just log when done)
+        Promise.all([seq2seqPromise, gptPromise]).then(() => {
+            console.log('All neural models loaded');
+        });
+    }
+
+    /**
+     * Update the loading progress display for a neural model
+     */
+    updateLoadingProgress(botName, progress) {
+        const progressEl = document.getElementById(`${botName}-progress`);
+        const loadingTextEl = document.querySelector(`#${botName}-loading-status .loading-text`);
+
+        if (progressEl) {
+            if (progress.progress !== null) {
+                progressEl.textContent = `${progress.stage} (${progress.progress.toFixed(0)}%)`;
+            } else {
+                progressEl.textContent = progress.stage;
+            }
+        }
+
+        if (loadingTextEl && progress.model) {
+            const modelName = progress.model.split('/').pop();
+            loadingTextEl.textContent = `Loading ${modelName}...`;
+        }
+    }
+
+    /**
+     * Hide the loading status overlay for a bot
+     */
+    hideLoadingStatus(botName) {
+        const loadingStatus = document.getElementById(`${botName}-loading-status`);
+        if (loadingStatus) {
+            loadingStatus.classList.add('hidden');
+        }
+    }
+
+    /**
+     * Show loading error
+     */
+    showLoadingError(botName, message) {
+        const loadingStatus = document.getElementById(`${botName}-loading-status`);
+        if (loadingStatus) {
+            loadingStatus.classList.add('error');
+            const loadingText = loadingStatus.querySelector('.loading-text');
+            const loadingProgress = loadingStatus.querySelector('.loading-progress');
+            if (loadingText) loadingText.textContent = 'Loading Failed';
+            if (loadingProgress) loadingProgress.textContent = message;
+        }
+    }
+
+    /**
+     * Enable the chat interface for a bot after loading
+     */
+    enableChatInterface(botName) {
+        const input = document.getElementById(`${botName}-input`);
+        const sendBtn = document.getElementById(`${botName}-send-btn`);
+
+        if (input) {
+            input.disabled = false;
+            input.placeholder = `Talk to ${botName === 'seq2seq' ? 'BlenderBot' : 'GPT-style model'}...`;
+        }
+
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Send';
+            sendBtn.onclick = () => window.sendMessage(botName);
+        }
     }
 
     updateBotStatus(botName, message) {
@@ -91,7 +182,7 @@ class TimelineApp {
         // Compare button
         document.getElementById('compare-btn').addEventListener('click', () => this.compareAllBots());
 
-        // Chatbot tab switching (for PARRY and ALICE)
+        // Chatbot tab switching (for all bots with tabs: ELIZA, PARRY, ALICE, Seq2Seq, GPT)
         document.querySelectorAll('.chatbot-tab-button').forEach(button => {
             button.addEventListener('click', (e) => {
                 const bot = e.currentTarget.dataset.bot;
@@ -105,7 +196,9 @@ class TimelineApp {
             input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     const botName = input.id.replace('-breakdown-input', '');
-                    if (botName === 'parry') {
+                    if (botName === 'eliza') {
+                        window.analyzeEliza();
+                    } else if (botName === 'parry') {
                         window.analyzeParry();
                     } else if (botName === 'alice') {
                         window.analyzeAlice();
@@ -115,6 +208,17 @@ class TimelineApp {
         });
 
         // Example selector change handlers
+        const elizaSelector = document.getElementById('eliza-example-selector');
+        if (elizaSelector) {
+            elizaSelector.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    document.getElementById('eliza-breakdown-input').value = e.target.value;
+                    window.analyzeEliza();
+                    e.target.value = '';
+                }
+            });
+        }
+
         const parrySelector = document.getElementById('parry-example-selector');
         if (parrySelector) {
             parrySelector.addEventListener('change', (e) => {
@@ -144,9 +248,14 @@ class TimelineApp {
             btn.classList.toggle('active', btn.dataset.tab === tab);
         });
 
-        // Update tab content
-        document.getElementById(bot + '-chat-tab').classList.toggle('active', tab === 'chat');
-        document.getElementById(bot + '-breakdown-tab').classList.toggle('active', tab === 'breakdown');
+        // Update tab content - handle all possible tabs
+        const chatTab = document.getElementById(bot + '-chat-tab');
+        const breakdownTab = document.getElementById(bot + '-breakdown-tab');
+        const architectureTab = document.getElementById(bot + '-architecture-tab');
+
+        if (chatTab) chatTab.classList.toggle('active', tab === 'chat');
+        if (breakdownTab) breakdownTab.classList.toggle('active', tab === 'breakdown');
+        if (architectureTab) architectureTab.classList.toggle('active', tab === 'architecture');
     }
 
     analyzeParry(input) {
@@ -199,11 +308,29 @@ class TimelineApp {
 
     updateAliceContextDisplay(context) {
         document.getElementById('alice-topic-value').textContent = context.topic || 'general';
-        const thatText = context.that
-            ? (context.that.length > 50 ? context.that.substring(0, 50) + '...' : context.that)
-            : '(none)';
-        document.getElementById('alice-that-value').textContent = thatText;
+        document.getElementById('alice-that-value').textContent = context.that || '(none)';
         document.getElementById('alice-username-value').textContent = context.userName || '(unknown)';
+    }
+
+    analyzeEliza(input) {
+        const inputText = input || document.getElementById('eliza-breakdown-input').value.trim();
+
+        if (!inputText) {
+            alert('Please enter some text to analyze');
+            return;
+        }
+
+        // Get breakdown using preview method to not affect chat state
+        const breakdown = this.bots.eliza.getDetailedBreakdownPreview(inputText);
+
+        if (!breakdown) {
+            // ELIZA might not be initialized yet
+            alert('ELIZA is still loading. Please wait a moment and try again.');
+            return;
+        }
+
+        // Display breakdown steps
+        this.displayBreakdown('eliza', breakdown);
     }
 
     displayBreakdown(botName, breakdown) {
@@ -294,7 +421,7 @@ class TimelineApp {
             }
 
             // Add context info (ALICE)
-            if (step.contextInfo && step.name === 'Context Check') {
+            if (step.contextInfo && step.name === 'Context Check (Before)') {
                 const ctx = step.contextInfo;
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'step-content';
@@ -399,13 +526,25 @@ class TimelineApp {
                     contentDiv.appendChild(testDiv);
                 });
 
-                // Show remaining count if truncated
+                // Show remaining count if truncated (expandable)
                 const remaining = step.patternTests.length - shownCount;
                 if (remaining > 0) {
-                    const moreDiv = document.createElement('div');
-                    moreDiv.className = 'step-details';
-                    moreDiv.textContent = '... and ' + remaining + ' more patterns tested';
-                    contentDiv.appendChild(moreDiv);
+                    const detailsEl = document.createElement('details');
+                    detailsEl.className = 'more-patterns';
+                    const summaryEl = document.createElement('summary');
+                    summaryEl.textContent = '...and ' + remaining + ' more patterns tested';
+                    detailsEl.appendChild(summaryEl);
+
+                    // Add the remaining patterns
+                    const remainingPatterns = step.patternTests.slice(shownCount);
+                    remainingPatterns.forEach(test => {
+                        const testDiv = document.createElement('div');
+                        testDiv.className = 'pattern-test ' + (test.matched ? 'matched' : 'not-matched');
+                        testDiv.textContent = test.pattern;
+                        detailsEl.appendChild(testDiv);
+                    });
+
+                    contentDiv.appendChild(detailsEl);
                 }
 
                 stepDiv.appendChild(contentDiv);
@@ -571,13 +710,17 @@ class TimelineApp {
         }
 
         const resultsDiv = document.getElementById('comparison-results');
+        resultsDiv.textContent = ''; // Clear previous results
 
-        // Initialize conversation history if not exists
-        if (!this.comparisonHistory) {
-            this.comparisonHistory = [];
-        }
+        // Get compare button and set loading state
+        const compareBtn = document.getElementById('compare-btn');
+        compareBtn.disabled = true;
+        compareBtn.textContent = 'Comparing...';
 
-        // Add user message to history and display immediately
+        // Ensure ELIZA is initialized before getting response
+        await this.bots.eliza.ensureInitialized();
+
+        // Add user message to display
         const userMsgDiv = document.createElement('div');
         userMsgDiv.className = 'comparison-item';
         userMsgDiv.style.background = 'var(--primary-color)';
@@ -600,7 +743,7 @@ class TimelineApp {
             parry: 'PARRY (1972)',
             alice: 'A.L.I.C.E. (1995)',
             seq2seq: 'BlenderBot (2020)',
-            gpt: 'LaMini-GPT (2023)'
+            gpt: 'SmolLM (2024)'
         };
         const botDivs = {};
 
@@ -672,8 +815,9 @@ class TimelineApp {
 
         await Promise.all(neuralPromises);
 
-        // Save to history
-        this.comparisonHistory.push({ prompt, timestamp: Date.now() });
+        // Restore button state
+        compareBtn.disabled = false;
+        compareBtn.textContent = 'Compare Responses';
     }
 
     displayArchitecture() {
@@ -683,8 +827,8 @@ class TimelineApp {
             'ELIZA (1966)': 'Pattern → Rules → Response',
             'PARRY (1972)': 'Input → State Machine → Emotional Model → Response',
             'ALICE (1995)': 'Input → AIML Parser → Category Match → Response',
-            'BlenderBot (2020)': 'Input → Encoder Transformer → Context → Decoder Transformer → Response',
-            'LaMini-GPT (2023)': 'Input → Tokenizer → Transformer Layers (Instruction Tuned) → Response'
+            'BlenderBot (2020)': 'Input → Encoder → Decoder → Response',
+            'SmolLM (2024)': 'Input → Decoder-Only Transformer → Response'
         };
 
         let html = '<div style="padding: 15px; text-align: left;">';
@@ -712,6 +856,10 @@ window.analyzeParry = function () {
 
 window.analyzeAlice = function () {
     window.timelineApp.analyzeAlice();
+};
+
+window.analyzeEliza = function () {
+    window.timelineApp.analyzeEliza();
 };
 
 // Initialize app when DOM is ready

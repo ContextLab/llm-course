@@ -55,4 +55,36 @@ export class Eliza {
             this.engine.reset();
         }
     }
+
+    // Expose breakdown methods from Demo 01 engine for rule visualization
+    getDetailedBreakdown(input) {
+        if (!this.initialized || !this.engine) {
+            return null;
+        }
+        return this.engine.getDetailedBreakdown(input);
+    }
+
+    getDetailedBreakdownPreview(input) {
+        if (!this.initialized || !this.engine) {
+            return null;
+        }
+        // Demo 01's getDetailedBreakdown doesn't modify conversation state,
+        // so it's safe to use directly as a preview
+        return this.engine.getDetailedBreakdown(input);
+    }
+
+    // Expose other useful methods from the engine
+    getHistory() {
+        if (this.engine) {
+            return this.engine.getHistory();
+        }
+        return [];
+    }
+
+    getRulesAsJSON() {
+        if (this.engine) {
+            return this.engine.getRulesAsJSON();
+        }
+        return null;
+    }
 }

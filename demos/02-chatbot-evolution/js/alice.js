@@ -738,15 +738,15 @@ export class Alice {
 
         // Step 2: Context check
         steps.push({
-            name: 'Context Check',
-            description: 'AIML uses <that> (bot\'s last response) and <topic> tags to constrain pattern matching. Categories with matching constraints take priority.',
+            name: 'Context Check (Before)',
+            description: 'AIML context state before processing this input. The <that> and <topic> tags constrain which patterns can match.',
             contextInfo: {
                 topic: this.context.topic,
-                that: this.context.that || '(none)',
+                that: this.context.that || '(none)',  // Don't truncate!
                 thatInput: this.context.thatInput || '(none)',
                 userName: this.context.userName || '(unknown)'
             },
-            details: `Current topic: "${this.context.topic}", Last bot response: "${this.context.that || '(none)'}"`
+            details: `Topic: "${this.context.topic}", Last response: "${this.context.that || '(none)'}"`
         });
 
         // Step 3: Pattern matching with priority
@@ -805,7 +805,7 @@ export class Alice {
             description: 'AIML searches categories by priority: _ wildcards (highest) > exact patterns > * wildcards (lowest). First matching category wins.',
             patternTests: patternTests.slice(0, 10),
             details: matchedPattern
-                ? `Matched category with pattern: ${matchedPattern.pattern.toString()} (priority: ${matchedPattern.priority || 0})`
+                ? `Match found (priority: ${matchedPattern.priority || 0})`
                 : 'No category matched, using default response'
         });
 
@@ -849,6 +849,11 @@ export class Alice {
         }
 
         // Step 6: Template expansion
+        // Before generating response, capture template info
+        const templateStr = matchedPattern && typeof matchedPattern.template === 'function'
+            ? 'Function template'
+            : String(matchedPattern?.template || 'default');
+
         let responseText = "I'm not sure I understand. Can you rephrase that?";
         if (matchedPattern) {
             responseText = typeof matchedPattern.template === 'function'
@@ -858,15 +863,16 @@ export class Alice {
 
         steps.push({
             name: 'Template Expansion',
-            description: 'AIML <template> tags contain the response. They can include: <star/> (wildcards), <get/><set/> (variables), <random> (randomization), <srai> (recursion), and more.',
-            templateInfo: matchedPattern ? {
-                hasFunction: typeof matchedPattern.template === 'function',
-                usesContext: matchedPattern.template.toString().includes('this.context')
-            } : null,
+            description: 'AIML template is processed: wildcards are substituted, variables resolved, and the final response assembled.',
+            input: templateStr,
             output: responseText,
-            details: matchedPattern
-                ? `Template executed with ${wildcards.length} wildcard value(s)`
-                : 'Using default fallback response'
+            wildcardSubstitutions: wildcards.map((w, i) => ({
+                placeholder: `<star index="${i+1}"/>`,
+                value: w || '(empty)'
+            })),
+            details: wildcards.length > 0
+                ? `Applied ${wildcards.length} wildcard substitution(s)`
+                : 'No wildcard substitutions needed'
         });
 
         // Step 7: Context update

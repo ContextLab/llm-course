@@ -835,6 +835,244 @@
     margin-right: 5px;
 }
 
+/* Model Loading Status */
+.model-loading-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.model-loading-status.hidden {
+    display: none;
+}
+
+.model-loading-status.error {
+    background: var(--error-bg, rgba(239, 68, 68, 0.1));
+    border: 1px solid var(--error-color);
+}
+
+.model-loading-status.error .loading-spinner {
+    display: none;
+}
+
+.model-loading-status.error .loading-text {
+    color: var(--error-color);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.loading-progress {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+/* Architecture Content Styles */
+.architecture-content {
+    background: var(--bg-color);
+    border-radius: var(--radius);
+    padding: 20px;
+}
+
+.architecture-content h4 {
+    color: var(--primary-color);
+    margin: 0 0 15px 0;
+    font-size: 1.1em;
+}
+
+.architecture-diagram {
+    background: var(--surface-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.arch-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.arch-block {
+    background: var(--bg-color);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 20px;
+    min-width: 200px;
+    max-width: 300px;
+    text-align: center;
+}
+
+.arch-block.input-block {
+    background: var(--surface-hover);
+    border-color: var(--primary-color);
+}
+
+.arch-block.output-block {
+    background: var(--surface-hover);
+    border-color: var(--success-color);
+}
+
+.arch-block.encoder-block {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: #3b82f6;
+}
+
+.arch-block.decoder-block {
+    background: rgba(139, 92, 246, 0.1);
+    border-color: #8b5cf6;
+}
+
+.arch-block.decoder-only-block {
+    background: rgba(236, 72, 153, 0.1);
+    border-color: #ec4899;
+}
+
+.block-label {
+    font-weight: 700;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.block-content {
+    font-size: 0.95em;
+    color: var(--text-primary);
+}
+
+.sub-block {
+    background: var(--bg-secondary);
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin: 4px 0;
+    font-size: 0.85em;
+}
+
+.block-note {
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.arch-arrow {
+    font-size: 1.5em;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* Architecture Explanation */
+.architecture-explanation {
+    margin-bottom: 20px;
+}
+
+.concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.concept-card {
+    background: var(--surface-color);
+    border-radius: 8px;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.concept-card h5 {
+    margin: 0 0 8px 0;
+    color: var(--primary-color);
+    font-size: 0.95em;
+}
+
+.concept-card p {
+    margin: 0;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Model Specifications Table */
+.model-specs {
+    background: var(--surface-color);
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.specs-table tr {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.specs-table tr:last-child {
+    border-bottom: none;
+}
+
+.specs-table td {
+    padding: 10px 12px;
+    font-size: 0.9em;
+}
+
+.specs-table td:first-child {
+    font-weight: 600;
+    color: var(--text-secondary);
+    width: 40%;
+}
+
+.specs-table td:last-child {
+    color: var(--text-primary);
+}
+
+.model-note {
+    margin-top: 15px;
+    padding: 12px;
+    background: var(--bg-color);
+    border-radius: 6px;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    border-left: 3px solid var(--primary-color);
+}
+
+.model-note strong {
+    color: var(--text-primary);
+    display: block;
+    margin-bottom: 5px;
+}
+
 @media (max-width: 1200px) {
     .main-layout {
         grid-template-columns: 1fr;
@@ -851,5 +1089,14 @@
     .breakdown-input,
     .example-selector {
         width: 100%;
+    }
+
+    .concept-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .arch-block {
+        min-width: 150px;
+        max-width: 100%;
     }
 }

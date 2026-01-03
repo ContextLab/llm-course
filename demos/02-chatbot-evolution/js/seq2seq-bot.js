@@ -10,10 +10,35 @@ export class Seq2SeqBot {
         this.isReady = false;
         this.isLoading = false;
         this.error = null;
+        this.onProgress = null;
 
         // Using BlenderBot Small - a real neural conversation model
         // This represents the seq2seq era where models learned from conversation data
         this.modelName = 'Xenova/blenderbot_small-90M';
+    }
+
+    /**
+     * Set a progress callback for loading updates
+     * @param {function} callback - Function that receives progress updates
+     */
+    setProgressCallback(callback) {
+        this.onProgress = callback;
+    }
+
+    /**
+     * Report loading progress
+     * @param {string} stage - Current loading stage
+     * @param {number} progress - Progress percentage (0-100)
+     */
+    reportProgress(stage, progress = null) {
+        if (this.onProgress) {
+            this.onProgress({ stage, progress, model: this.modelName });
+        }
+        if (progress !== null) {
+            console.log(`[Seq2Seq] ${stage}: ${progress.toFixed(1)}%`);
+        } else {
+            console.log(`[Seq2Seq] ${stage}`);
+        }
     }
 
     async loadModel() {
@@ -25,33 +50,57 @@ export class Seq2SeqBot {
         this.error = null;
 
         try {
-            console.log('Loading Seq2Seq model (BlenderBot)...');
+            this.reportProgress('Importing Transformers.js library');
             const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1');
 
-            // Load the conversational model
-            this.model = await pipeline('text2text-generation', this.modelName);
+            this.reportProgress('Loading BlenderBot Small (90M)');
+
+            // Load the conversational model with progress tracking
+            this.model = await pipeline('text2text-generation', this.modelName, {
+                progress_callback: (progress) => {
+                    if (progress.status === 'downloading') {
+                        const pct = progress.progress || 0;
+                        this.reportProgress(`Downloading model files`, pct);
+                    } else if (progress.status === 'loading') {
+                        this.reportProgress('Loading model into memory');
+                    } else if (progress.status === 'ready') {
+                        this.reportProgress('Model ready', 100);
+                    }
+                }
+            });
 
             this.isReady = true;
             this.isLoading = false;
-            console.log('Seq2Seq model loaded successfully!');
+            this.reportProgress('BlenderBot loaded successfully!', 100);
             return true;
         } catch (error) {
             console.error('Error loading Seq2Seq model:', error);
             this.error = error.message;
-            this.isLoading = false;
 
             // Fallback to DialoGPT if BlenderBot fails
             try {
-                console.log('Attempting fallback to DialoGPT...');
+                this.reportProgress('Primary model failed, trying DialoGPT fallback');
                 const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1');
-                this.model = await pipeline('text-generation', 'Xenova/DialoGPT-small');
+
+                this.model = await pipeline('text-generation', 'Xenova/DialoGPT-small', {
+                    progress_callback: (progress) => {
+                        if (progress.status === 'downloading') {
+                            const pct = progress.progress || 0;
+                            this.reportProgress(`Downloading fallback model`, pct);
+                        }
+                    }
+                });
+
                 this.modelName = 'Xenova/DialoGPT-small';
                 this.isReady = true;
-                console.log('DialoGPT model loaded successfully!');
+                this.isLoading = false;
+                this.reportProgress('DialoGPT loaded successfully!', 100);
                 return true;
             } catch (fallbackError) {
                 console.error('Fallback model also failed:', fallbackError);
                 this.error = 'Failed to load neural model';
+                this.isLoading = false;
+                this.reportProgress('All models failed to load');
                 return false;
             }
         }
@@ -187,5 +236,62 @@ export class Seq2SeqBot {
             isReady: this.isReady,
             isLoading: this.isLoading
         };
+    }
+
+    /**
+     * Get detailed architecture information for educational display
+     */
+    getArchitectureInfo() {
+        if (this.modelName.includes('blenderbot')) {
+            return {
+                name: 'BlenderBot Small',
+                type: 'Encoder-Decoder Transformer',
+                parameters: '90 Million',
+                layers: '6 encoder + 6 decoder',
+                hiddenSize: 512,
+                attentionHeads: 8,
+                vocabulary: '~8000 BPE tokens',
+                trainingData: 'Blended Skill Talk, ConvAI2, Empathetic Dialogues, Wizard of Wikipedia',
+                year: 2020,
+                organization: 'Facebook AI Research (Meta)',
+                keyFeatures: [
+                    'Encoder processes input bidirectionally',
+                    'Decoder generates response autoregressively',
+                    'Cross-attention connects encoder and decoder',
+                    'Trained for engagingness, knowledge, empathy, and personality'
+                ],
+                architecture: {
+                    encoder: {
+                        description: 'Processes the entire input sequence',
+                        components: ['Self-Attention', 'Feed Forward Network', 'Layer Normalization'],
+                        bidirectional: true
+                    },
+                    decoder: {
+                        description: 'Generates output one token at a time',
+                        components: ['Masked Self-Attention', 'Cross-Attention', 'Feed Forward Network'],
+                        autoregressive: true
+                    }
+                }
+            };
+        } else {
+            return {
+                name: 'DialoGPT Small',
+                type: 'Decoder-Only Transformer',
+                parameters: '117 Million',
+                layers: '12 decoder layers',
+                hiddenSize: 768,
+                attentionHeads: 12,
+                vocabulary: '~50000 BPE tokens',
+                trainingData: 'Reddit conversations',
+                year: 2019,
+                organization: 'Microsoft',
+                keyFeatures: [
+                    'GPT-2 architecture fine-tuned for dialogue',
+                    'Autoregressive generation only',
+                    'No explicit encoder component',
+                    'Conversation history as context'
+                ]
+            };
+        }
     }
 }
