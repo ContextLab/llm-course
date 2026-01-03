@@ -1853,7 +1853,7 @@ section:not(.lead):not(#\31)>.definition-box {
 }
 
 .inline-warning .warning-title {
-    color: var(--bonfire-orange, #ffa00f);
+    color: var(--tuck-orange, #d94415);
     font-weight: 600;
     font-size: 0.85em;
     display: block;
