@@ -15,6 +15,7 @@ import re
 from pathlib import Path
 from typing import List, Dict, Any
 
+
 class AIMLConverter:
     def __init__(self, aiml_dir: str):
         self.aiml_dir = Path(aiml_dir)
@@ -43,59 +44,59 @@ class AIMLConverter:
         result = template_elem.text or ""
 
         for child in template_elem:
-            if child.tag == 'srai':
+            if child.tag == "srai":
                 # Mark for recursive call - we'll handle this specially
                 srai_text = self.get_element_text(child)
                 result += f"{{{{SRAI:{srai_text}}}}}"
-            elif child.tag == 'random':
+            elif child.tag == "random":
                 # Random selection - use parse_template to preserve bot/get/set tags
-                options = [self.parse_template(li) for li in child.findall('li')]
+                options = [self.parse_template(li) for li in child.findall("li")]
                 result += f"{{{{RANDOM:{json.dumps(options)}}}}}"
-            elif child.tag == 'bot':
+            elif child.tag == "bot":
                 # Bot property
-                name = child.get('name', '')
+                name = child.get("name", "")
                 result += f"{{{{BOT:{name}}}}}"
-            elif child.tag == 'get':
+            elif child.tag == "get":
                 # Get context variable
-                name = child.get('name', '')
+                name = child.get("name", "")
                 result += f"{{{{GET:{name}}}}}"
-            elif child.tag == 'set':
+            elif child.tag == "set":
                 # Set context variable
-                name = child.get('name', '')
+                name = child.get("name", "")
                 value = self.get_element_text(child)
                 result += f"{{{{SET:{name}:{value}}}}}"
-            elif child.tag == 'person':
+            elif child.tag == "person":
                 # Pronoun transformation
-                text = self.get_element_text(child) or 'WILDCARD'
+                text = self.get_element_text(child) or "WILDCARD"
                 result += f"{{{{PERSON:{text}}}}}"
-            elif child.tag == 'think':
+            elif child.tag == "think":
                 # Think tag - process but don't output
                 think_content = self.parse_template(child)
                 result += f"{{{{THINK:{think_content}}}}}"
-            elif child.tag == 'star':
+            elif child.tag == "star":
                 # Wildcard capture
-                index = child.get('index', '1')
+                index = child.get("index", "1")
                 result += f"{{{{STAR:{index}}}}}"
-            elif child.tag == 'that':
+            elif child.tag == "that":
                 # Reference to bot's previous response
                 result += "{THAT}"
-            elif child.tag == 'formal':
+            elif child.tag == "formal":
                 # Capitalize first letter
                 text = self.get_element_text(child)
                 result += f"{{{{FORMAL:{text}}}}}"
-            elif child.tag == 'uppercase':
+            elif child.tag == "uppercase":
                 text = self.get_element_text(child)
                 result += f"{{{{UPPERCASE:{text}}}}}"
-            elif child.tag == 'lowercase':
+            elif child.tag == "lowercase":
                 text = self.get_element_text(child)
                 result += f"{{{{LOWERCASE:{text}}}}}"
-            elif child.tag == 'a':
+            elif child.tag == "a":
                 # HTML link
-                href = child.get('href', '')
+                href = child.get("href", "")
                 text = self.get_element_text(child)
                 result += f'<a href="{href}">{text}</a>'
-            elif child.tag == 'br':
-                result += '\n'
+            elif child.tag == "br":
+                result += "\n"
             else:
                 # Unknown tag - just get text
                 result += self.get_element_text(child)
@@ -105,7 +106,7 @@ class AIMLConverter:
                 result += child.tail
 
         # Clean up whitespace
-        result = ' '.join(result.split())
+        result = " ".join(result.split())
         return result.strip()
 
     def get_element_text(self, elem) -> str:
@@ -133,15 +134,15 @@ class AIMLConverter:
 
         # Replace AIML wildcards with regex
         # _ matches one or more words (higher priority)
-        pattern = pattern.replace('_', '(.+)')
+        pattern = pattern.replace("_", "(.+)")
         # * matches one or more words (lower priority)
-        pattern = pattern.replace('*', '(.*)')
+        pattern = pattern.replace("*", "(.*)")
 
         # Escape other special regex characters
-        for char in ['.', '?', '+', '(', ')', '[', ']', '{', '}', '^', '$', '|', '\\']:
-            if char not in pattern or pattern.count(char) == pattern.count('(.'):
+        for char in [".", "?", "+", "(", ")", "[", "]", "{", "}", "^", "$", "|", "\\"]:
+            if char not in pattern or pattern.count(char) == pattern.count("(."):
                 continue
-            pattern = pattern.replace(char, '\\' + char)
+            pattern = pattern.replace(char, "\\" + char)
 
         return pattern
 
@@ -163,8 +164,8 @@ class AIMLConverter:
         base_priority = 0
 
         # Check for wildcards in original pattern
-        has_underscore = '_' in pattern
-        has_star = '*' in pattern
+        has_underscore = "_" in pattern
+        has_star = "*" in pattern
         has_wildcard = has_underscore or has_star
 
         # Exact match (no wildcards)
@@ -197,13 +198,13 @@ class AIMLConverter:
             root = tree.getroot()
 
             # Find all category elements
-            categories = root.findall('.//category')
+            categories = root.findall(".//category")
 
             for category in categories:
-                pattern_elem = category.find('pattern')
-                template_elem = category.find('template')
-                that_elem = category.find('that')
-                topic_elem = category.find('topic')
+                pattern_elem = category.find("pattern")
+                template_elem = category.find("template")
+                that_elem = category.find("that")
+                topic_elem = category.find("topic")
 
                 if pattern_elem is None or template_elem is None:
                     continue
@@ -238,17 +239,17 @@ class AIMLConverter:
 
                 # Create pattern object
                 pattern_obj = {
-                    'pattern': pattern_text,
-                    'regex': regex_pattern,
-                    'template': template_text,
-                    'priority': priority,
-                    'source_file': filepath.name
+                    "pattern": pattern_text,
+                    "regex": regex_pattern,
+                    "template": template_text,
+                    "priority": priority,
+                    "source_file": filepath.name,
                 }
 
                 if that_text:
-                    pattern_obj['that'] = that_text
+                    pattern_obj["that"] = that_text
                 if topic_text:
-                    pattern_obj['topic'] = topic_text
+                    pattern_obj["topic"] = topic_text
 
                 patterns.append(pattern_obj)
                 self.pattern_count += 1
@@ -259,12 +260,79 @@ class AIMLConverter:
 
         return patterns
 
+    def pattern_quality_score(self, pattern: Dict[str, Any]) -> int:
+        """
+        Score pattern for deduplication. Higher = keep this version.
+        Direct responses preferred over SRAI (avoids circular refs).
+        mp files (-500) < core files (+50) < content files (+100)
+        """
+        template = pattern.get("template", "")
+        source = pattern.get("source_file", "")
+        score = 0
+
+        if source.startswith("mp"):
+            score -= 500
+
+        content_files = [
+            "ai.aiml",
+            "knowledge.aiml",
+            "humor.aiml",
+            "science.aiml",
+            "computers.aiml",
+            "geography.aiml",
+            "history.aiml",
+            "literature.aiml",
+        ]
+        if source in content_files:
+            score += 100
+
+        if source in ["atomic.aiml", "default.aiml", "bot.aiml", "that.aiml"]:
+            score += 50
+
+        has_srai = "SRAI" in template
+        has_random = "RANDOM" in template
+
+        if has_random:
+            score += 75
+
+        if not has_srai and len(template) > 20:
+            score += 50
+
+        score += min(len(template), 100)
+
+        return score
+
+    def deduplicate_patterns(
+        self, patterns: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """Remove duplicate (pattern, that, topic) tuples, keeping highest-scored version."""
+        from collections import defaultdict
+
+        groups = defaultdict(list)
+        for p in patterns:
+            key = (p.get("pattern"), p.get("that"), p.get("topic"))
+            groups[key].append(p)
+
+        deduplicated = []
+        duplicates_removed = 0
+
+        for key, group in groups.items():
+            if len(group) == 1:
+                deduplicated.append(group[0])
+            else:
+                group.sort(key=lambda p: self.pattern_quality_score(p), reverse=True)
+                deduplicated.append(group[0])
+                duplicates_removed += len(group) - 1
+
+        print(f"Deduplication: removed {duplicates_removed} duplicate patterns")
+        return deduplicated
+
     def convert_all(self) -> List[Dict[str, Any]]:
         """Convert all AIML files in the directory."""
         all_patterns = []
 
         # Get all .aiml files
-        aiml_files = sorted(self.aiml_dir.glob('*.aiml'))
+        aiml_files = sorted(self.aiml_dir.glob("*.aiml"))
 
         print(f"Found {len(aiml_files)} AIML files")
 
@@ -278,21 +346,31 @@ class AIMLConverter:
         print(f"Files processed: {self.file_count}")
         print(f"Patterns extracted: {self.pattern_count}")
 
+        # Deduplicate patterns
+        all_patterns = self.deduplicate_patterns(all_patterns)
+        self.pattern_count = len(all_patterns)
+        print(f"After deduplication: {self.pattern_count} patterns")
+
         return all_patterns
 
     def save_json(self, patterns: List[Dict[str, Any]], output_file: str):
         """Save patterns to JSON file."""
-        with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump({
-                'metadata': {
-                    'source': 'ALICE AIML Foundation v1.0',
-                    'files_processed': self.file_count,
-                    'total_patterns': self.pattern_count,
-                    'license': 'GNU General Public License',
-                    'copyright': '(c) 2011 ALICE A.I. Foundation'
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(
+                {
+                    "metadata": {
+                        "source": "ALICE AIML Foundation v1.0",
+                        "files_processed": self.file_count,
+                        "total_patterns": self.pattern_count,
+                        "license": "GNU General Public License",
+                        "copyright": "(c) 2011 ALICE A.I. Foundation",
+                    },
+                    "patterns": patterns,
                 },
-                'patterns': patterns
-            }, f, indent=2, ensure_ascii=False)
+                f,
+                indent=2,
+                ensure_ascii=False,
+            )
 
         print(f"\nSaved {self.pattern_count} patterns to {output_file}")
 
@@ -300,8 +378,8 @@ class AIMLConverter:
 def main():
     """Main conversion function."""
     # Set up paths
-    aiml_dir = Path(__file__).parent / 'alice-aiml-original'
-    output_file = Path(__file__).parent / 'data' / 'alice-patterns-full.json'
+    aiml_dir = Path(__file__).parent / "alice-aiml-original"
+    output_file = Path(__file__).parent / "data" / "alice-patterns-full.json"
 
     # Create converter
     converter = AIMLConverter(aiml_dir)
@@ -316,5 +394,5 @@ def main():
     print(f"Output: {output_file}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
