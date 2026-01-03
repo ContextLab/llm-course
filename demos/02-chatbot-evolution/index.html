@@ -41,7 +41,7 @@
                     <span class="era-label">2020<br>BlenderBot</span>
                 </div>
                 <div class="era era-2020s" data-era="2020s">
-                    <span class="era-label">2024<br>SmolLM</span>
+                    <span class="era-label">2024<br>Qwen2.5</span>
                 </div>
             </div>
         </section>
@@ -478,7 +478,7 @@
                         <div class="chat-interface">
                             <div class="model-loading-status" id="gpt-loading-status">
                                 <div class="loading-spinner"></div>
-                                <div class="loading-text">Loading SmolLM3-3B (WebGPU)...</div>
+                                <div class="loading-text">Loading Qwen2.5-1.5B (WebGPU)...</div>
                                 <div class="loading-progress" id="gpt-progress">Checking WebGPU support...</div>
                             </div>
                             <div class="chat-messages" id="gpt-messages"></div>
@@ -486,7 +486,7 @@
                                 <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to GPT-style model..." disabled>
                                 <button class="chat-send" id="gpt-send-btn" onclick="sendMessage('gpt')" disabled>Loading...</button>
                             </div>
-                            <p class="demo-note">Using SmolLM3-3B with WebGPU acceleration. Falls back to SmolLM-135M if WebGPU unavailable.</p>
+                            <p class="demo-note">Using Qwen2.5-1.5B with WebGPU acceleration. Falls back to Qwen2.5-0.5B if WebGPU unavailable.</p>
                         </div>
                     </div>
 
@@ -512,7 +512,7 @@
                                             <div class="sub-block">Causal Self-Attention</div>
                                             <div class="sub-block">Feed Forward (MLP)</div>
                                             <div class="sub-block">Layer Normalization</div>
-                                            <div class="block-note">x9 layers (SmolLM)</div>
+                                            <div class="block-note">x28 layers (Qwen2.5-1.5B)</div>
                                         </div>
                                     </div>
                                     <div class="arch-arrow">&#8595;</div>
@@ -551,19 +551,19 @@
                             </div>
 
                             <div class="model-specs">
-                                <h4>SmolLM3-3B Specifications</h4>
+                                <h4>Qwen2.5-1.5B-Instruct Specifications</h4>
                                 <table class="specs-table">
-                                    <tr><td>Parameters</td><td>3 Billion</td></tr>
+                                    <tr><td>Parameters</td><td>1.5 Billion</td></tr>
                                     <tr><td>Architecture</td><td>Decoder-Only Transformer (LLaMA-style)</td></tr>
                                     <tr><td>Layers</td><td>28</td></tr>
-                                    <tr><td>Hidden Size</td><td>2560</td></tr>
-                                    <tr><td>Attention Heads</td><td>20 (GQA 3:1)</td></tr>
-                                    <tr><td>Context Length</td><td>8192 tokens (up to 128k)</td></tr>
-                                    <tr><td>Training</td><td>11.2T tokens (web, code, math, reasoning)</td></tr>
-                                    <tr><td>Year</td><td>2025 (Hugging Face)</td></tr>
+                                    <tr><td>Hidden Size</td><td>1536</td></tr>
+                                    <tr><td>Attention Heads</td><td>12 query / 2 KV (GQA 6:1)</td></tr>
+                                    <tr><td>Context Length</td><td>32,768 tokens</td></tr>
+                                    <tr><td>Training</td><td>18T tokens (web, books, code, math, multilingual)</td></tr>
+                                    <tr><td>Year</td><td>2024 (Alibaba Qwen Team)</td></tr>
                                 </table>
                                 <div class="model-note">
-                                    <strong>WebGPU Acceleration:</strong> SmolLM3-3B uses q4f16 quantization (~1.5-2GB) and runs via WebGPU in modern browsers. Falls back to SmolLM-135M on devices without WebGPU support.
+                                    <strong>WebGPU Acceleration:</strong> Qwen2.5-1.5B uses q4f16 quantization (~900MB) and runs via WebGPU in modern browsers. Falls back to Qwen2.5-0.5B on devices without WebGPU support.
                                 </div>
                             </div>
                         </div>
@@ -632,8 +632,8 @@
                             <span class="stat-value">90M params</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">SmolLM (2024)</span>
-                            <span class="stat-value">135M params</span>
+                            <span class="stat-label">Qwen2.5 (2024)</span>
+                            <span class="stat-value">1.5B params</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">GPT-3 (2020)</span>
