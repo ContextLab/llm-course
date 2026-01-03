@@ -270,7 +270,7 @@ def simple_respond(user_input):
 
 <div class="example-box" data-title="Try it!">
 
-Have a [conversation with ELIZA](https://contextlab.github.io/llm-course/demos/01-eliza/). Try putting yourself into the "frame of mind" of someone from the 1960s who had never experienced a chatbot before, and likely who had only had limited (if any) exposure to computers. Take on the role of a "patient" seeking help from ELIZA in its role as a therapist. Then use your own (modern) knowledge and experiences to see where ELIZA breaks down.
+Have a [conversation with ELIZA](https://contextlab.github.io/llm-course/demos/eliza/). Try putting yourself into the "frame of mind" of someone from the 1960s who had never experienced a chatbot before, and likely who had only had limited (if any) exposure to computers. Take on the role of a "patient" seeking help from ELIZA in its role as a therapist. Then use your own (modern) knowledge and experiences to see where ELIZA breaks down.
 
 </div>
 
@@ -491,7 +491,7 @@ The AI has no office. It cannot have your notes. But it responds as if this make
 <div class="tip-box" data-title="Prepare for next time">
 
 - Finish reading Weizenbaum (1966)
-- Play with the [ELIZA demo](https://contextlab.github.io/llm-course/demos/01-eliza/)
+- Play with the [ELIZA demo](https://contextlab.github.io/llm-course/demos/eliza/)
 - Think about: what would *you* add to ELIZA?
 - Read the [Assignment 1 instructions](../../assignments/Assignment%201:%20ELIZA/README.md)
 

@@ -18,7 +18,7 @@ global.performance = {
 };
 
 // Load the BM25 module
-const bm25Code = await readFile(join(__dirname, '../demos/13-semantic-search/js/bm25.js'), 'utf-8');
+const bm25Code = await readFile(join(__dirname, '../demos/semantic-search/js/bm25.js'), 'utf-8');
 const executableCode = bm25Code
     .replace(/export class (\w+)/g, 'globalThis.$1 = class $1')
     .replace(/export default .+;?/g, '');

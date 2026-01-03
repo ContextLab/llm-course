@@ -15,21 +15,21 @@ const __dirname = dirname(__filename);
 global.fetch = async function(url) {
     // Handle relative paths - resolve them relative to the demos directory
     let filePath;
-    if (url.startsWith('../01-eliza/')) {
-        // Called from Demo 02 wrapper with path like '../01-eliza/data/eliza-rules.json'
-        // This is relative to demos/02-chatbot-evolution/ in browser context
-        // Resolve to demos/01-eliza/...
+    if (url.startsWith('../eliza/')) {
+        // Called from chatbot-evolution wrapper with path like '../eliza/data/eliza-rules.json'
+        // This is relative to demos/chatbot-evolution/ in browser context
+        // Resolve to demos/eliza/...
         filePath = join(__dirname, '../demos', url.replace('../', ''));
-    } else if (url.startsWith('../../')) {
-        // Called from Demo 02 wrapper (e.g., '../../01-eliza/data/eliza-rules.json')
-        // Resolve relative to demos/02-chatbot-evolution/js/
-        filePath = join(__dirname, '../demos/02-chatbot-evolution/js', url);
+    } else if (url.startsWith('../../eliza/')) {
+        // Called from chatbot-evolution wrapper with deeper path
+        // Resolve relative to demos/chatbot-evolution/js/
+        filePath = join(__dirname, '../demos/chatbot-evolution/js', url);
     } else if (url.startsWith('../')) {
         // One level up from demos directory
         filePath = join(__dirname, '../demos', url);
     } else if (url.startsWith('data/')) {
-        // Called from Demo 01, resolve relative to demos/01-eliza/
-        filePath = join(__dirname, '../demos/01-eliza', url);
+        // Called from eliza demo, resolve relative to demos/eliza/
+        filePath = join(__dirname, '../demos/eliza', url);
     } else {
         // Absolute or other path
         filePath = url;
@@ -42,11 +42,11 @@ global.fetch = async function(url) {
 };
 
 // Import the Eliza wrapper from Demo 02 (which now imports from Demo 01)
-const elizaWrapperPath = pathToFileURL(join(__dirname, '../demos/02-chatbot-evolution/js/eliza.js')).href;
+const elizaWrapperPath = pathToFileURL(join(__dirname, '../demos/chatbot-evolution/js/eliza.js')).href;
 const { Eliza } = await import(elizaWrapperPath);
 
 // Import ElizaEngine directly from Demo 01 for testing
-const elizaEnginePath = pathToFileURL(join(__dirname, '../demos/01-eliza/js/eliza-engine.js')).href;
+const elizaEnginePath = pathToFileURL(join(__dirname, '../demos/eliza/js/eliza-engine.js')).href;
 const { ElizaEngine } = await import(elizaEnginePath);
 
 async function runTests() {

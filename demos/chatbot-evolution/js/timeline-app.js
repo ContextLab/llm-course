@@ -8,7 +8,7 @@ import { Parry } from './parry.js';
 import { Alice } from './alice.js';
 import { Seq2SeqBot } from './seq2seq-bot.js';
 import { GPTBot } from './gpt-bot.js';
-import { ElizaBreakdownRenderer } from '../../01-eliza/js/eliza-breakdown-renderer.js';
+import { ElizaBreakdownRenderer } from '../../eliza/js/eliza-breakdown-renderer.js';
 
 class TimelineApp {
     constructor() {

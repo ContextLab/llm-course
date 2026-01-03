@@ -1,7 +1,7 @@
 
-import { ElizaEngine } from '../demos/01-eliza/js/eliza-engine.js';
+import { ElizaEngine } from '../demos/eliza/js/eliza-engine.js';
 import fs from 'fs';
-const rulesData = JSON.parse(fs.readFileSync('./demos/01-eliza/data/eliza-rules.json', 'utf8'));
+const rulesData = JSON.parse(fs.readFileSync('./demos/eliza/data/eliza-rules.json', 'utf8'));
 
 const engine = new ElizaEngine();
 await engine.loadRules(rulesData);

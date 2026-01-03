@@ -27,15 +27,15 @@ global.window = {};
 global.document = {};
 global.fetch = async function(url) {
     // Mock fetch for loading rules
-    const content = await readFile(join(__dirname, '../demos/01-eliza', url), 'utf-8');
+    const content = await readFile(join(__dirname, '../demos/eliza', url), 'utf-8');
     return {
         json: async () => JSON.parse(content)
     };
 };
 
 // Import the ES6 modules directly using file URLs
-const patternMatcherPath = pathToFileURL(join(__dirname, '../demos/01-eliza/js/pattern-matcher.js')).href;
-const elizaEnginePath = pathToFileURL(join(__dirname, '../demos/01-eliza/js/eliza-engine.js')).href;
+const patternMatcherPath = pathToFileURL(join(__dirname, '../demos/eliza/js/pattern-matcher.js')).href;
+const elizaEnginePath = pathToFileURL(join(__dirname, '../demos/eliza/js/eliza-engine.js')).href;
 
 const { PatternMatcher } = await import(patternMatcherPath);
 const { ElizaEngine } = await import(elizaEnginePath);
@@ -113,7 +113,7 @@ async function runTests() {
     const patternMatcher = new PatternMatcher();
 
     // Load rules
-    const rulesData = JSON.parse(await readFile(join(__dirname, '../demos/01-eliza/data/eliza-rules.json'), 'utf-8'));
+    const rulesData = JSON.parse(await readFile(join(__dirname, '../demos/eliza/data/eliza-rules.json'), 'utf-8'));
     await eliza.loadRules(rulesData);
 
     // ========================================================================

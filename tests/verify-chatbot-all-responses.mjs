@@ -1,4 +1,4 @@
-import { Parry } from '../demos/02-chatbot-evolution/js/parry.js';
+import { Parry } from '../demos/chatbot-evolution/js/parry.js';
 
 const tests = [
     { name: 'BOOKIE QUESTION', input: 'Do you know anything about bookies?', keywords: ['bookie', 'pay', 'cheat'] },

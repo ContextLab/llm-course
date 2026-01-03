@@ -185,9 +185,10 @@
 }
 
 /* Inline code styling - with visible background (very light Dartmouth green, almost white) */
+/* Noto Sans SC provides fallback for CJK (Chinese/Japanese/Korean) characters that Fira Code doesn't support */
 code {
     display: inline-block;
-    font-family: 'Fira Code', 'Fira Code Local', monospace;
+    font-family: 'Fira Code', 'Fira Code Local', 'Noto Sans SC', monospace;
     font-size: 0.9em;
     letter-spacing: 0;
     margin: 0em 0.15em;

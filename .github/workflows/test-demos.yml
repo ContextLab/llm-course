@@ -16,41 +16,41 @@ jobs:
       fail-fast: false
       matrix:
         demo:
-          - name: "Demo 01 - ELIZA"
-            script: "test:demo01"
-          - name: "Demo 02 - Tokenization (BPE)"
-            script: "test:demo02"
-          - name: "Demo 03 - Embeddings (Clustering)"
-            script: "test:demo03"
-          - name: "Demo 04 - Attention"
-            script: "test:demo04"
-          - name: "Demo 05 - Transformer"
-            script: "test:demo05"
-          - name: "Demo 06 - GPT Playground (Sampling)"
-            script: "test:demo06"
-          - name: "Demo 07 - RAG"
-            script: "test:demo07"
+          - name: "ELIZA"
+            script: "test:eliza"
+          - name: "Tokenization (BPE)"
+            script: "test:tokenization"
+          - name: "Embeddings (Clustering)"
+            script: "test:embeddings"
+          - name: "Attention"
+            script: "test:attention"
+          - name: "Transformer"
+            script: "test:transformer"
+          - name: "GPT Playground (Sampling)"
+            script: "test:gpt"
+          - name: "RAG"
+            script: "test:rag"
             memory: "4096"
-          - name: "Demo 08 - Topic Modeling (LDA)"
-            script: "test:demo08"
-          - name: "Demo 09 - Sentiment Analysis"
-            script: "test:demo09"
-          - name: "Demo 10 - POS Tagging"
-            script: "test:demo10"
-          - name: "Demo 11 - Word Analogies"
-            script: "test:demo11"
-          - name: "Demo 12 - Semantic Search (BM25)"
-            script: "test:demo12"
-          - name: "Demo 13 - BERT MLM"
-            script: "test:demo13"
-          - name: "Demo 14 - Embeddings Comparison"
-            script: "test:demo14"
-          - name: "Demo 15 - ELIZA (Evolution)"
-            script: "test:demo15:eliza"
-          - name: "Demo 15 - PARRY"
-            script: "test:demo15:parry"
-          - name: "Demo 15 - ALICE"
-            script: "test:demo15:alice"
+          - name: "Topic Modeling (LDA)"
+            script: "test:topic-modeling"
+          - name: "Sentiment Analysis"
+            script: "test:sentiment"
+          - name: "POS Tagging"
+            script: "test:pos-tagging"
+          - name: "Word Analogies"
+            script: "test:analogies"
+          - name: "Semantic Search (BM25)"
+            script: "test:semantic-search"
+          - name: "BERT MLM"
+            script: "test:bert-mlm"
+          - name: "Embeddings Comparison"
+            script: "test:embeddings-comparison"
+          - name: "Chatbot Evolution - ELIZA"
+            script: "test:chatbot:eliza"
+          - name: "Chatbot Evolution - PARRY"
+            script: "test:chatbot:parry"
+          - name: "Chatbot Evolution - ALICE"
+            script: "test:chatbot:alice"
 
     steps:
       - name: Checkout code
@@ -69,12 +69,12 @@ jobs:
 
       - name: Run ${{ matrix.demo.name }}
         run: |
-          if [ "${{ matrix.demo.script }}" = "test:demo07" ]; then
-            NODE_OPTIONS="--max-old-space-size=4096" npm run ${{ matrix.demo.script }} || echo "Demo 07 has known memory limitations"
+          if [ "${{ matrix.demo.script }}" = "test:rag" ]; then
+            NODE_OPTIONS="--max-old-space-size=4096" npm run ${{ matrix.demo.script }} || echo "RAG has known memory limitations"
           else
             npm run ${{ matrix.demo.script }}
           fi
-        continue-on-error: ${{ matrix.demo.script == 'test:demo07' }}
+        continue-on-error: ${{ matrix.demo.script == 'test:rag' }}
 
   test-all:
     name: Run All Tests
@@ -116,21 +116,23 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Tested Demos - ALL 15 DEMOS COVERED" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 01** - ELIZA Pattern Matching" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 02** - BPE Tokenization Algorithm" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 03** - Embeddings & Clustering (K-means, DBSCAN)" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 04** - Attention Mechanisms" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 05** - Transformer Architecture" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 06** - GPT Sampling Strategies" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 07** - RAG (Retrieval Augmented Generation)" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 08** - Topic Modeling (LDA)" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 09** - Sentiment Analysis" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 10** - POS Tagging" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 11** - Word Analogies & Vector Operations" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 12** - Semantic Search (BM25)" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 13** - BERT Masked Language Modeling" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 14** - Embeddings Comparison" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **Demo 15** - Chatbot Evolution (ELIZA, PARRY, ALICE)" >> $GITHUB_STEP_SUMMARY
+          echo "| Demo | Description |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| eliza | ELIZA Pattern Matching |" >> $GITHUB_STEP_SUMMARY
+          echo "| chatbot-evolution | Chatbot Evolution (ELIZA, PARRY, ALICE) |" >> $GITHUB_STEP_SUMMARY
+          echo "| tokenization | BPE Tokenization Algorithm |" >> $GITHUB_STEP_SUMMARY
+          echo "| embeddings | Embeddings & Clustering (K-means, DBSCAN) |" >> $GITHUB_STEP_SUMMARY
+          echo "| attention | Attention Mechanisms |" >> $GITHUB_STEP_SUMMARY
+          echo "| transformer | Transformer Architecture |" >> $GITHUB_STEP_SUMMARY
+          echo "| gpt-playground | GPT Sampling Strategies |" >> $GITHUB_STEP_SUMMARY
+          echo "| rag | RAG (Retrieval Augmented Generation) |" >> $GITHUB_STEP_SUMMARY
+          echo "| topic-modeling | Topic Modeling (LDA) |" >> $GITHUB_STEP_SUMMARY
+          echo "| sentiment | Sentiment Analysis |" >> $GITHUB_STEP_SUMMARY
+          echo "| pos-tagging | POS Tagging |" >> $GITHUB_STEP_SUMMARY
+          echo "| analogies | Word Analogies & Vector Operations |" >> $GITHUB_STEP_SUMMARY
+          echo "| semantic-search | Semantic Search (BM25) |" >> $GITHUB_STEP_SUMMARY
+          echo "| bert-mlm | BERT Masked Language Modeling |" >> $GITHUB_STEP_SUMMARY
+          echo "| embeddings-comparison | Embeddings Comparison |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Test Categories" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

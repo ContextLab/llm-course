@@ -4,7 +4,7 @@
  */
 
 // Import Alice class
-import { Alice } from '../demos/02-chatbot-evolution/js/alice.js';
+import { Alice } from '../demos/chatbot-evolution/js/alice.js';
 
 // Color codes for terminal output
 const colors = {

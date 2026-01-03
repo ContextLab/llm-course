@@ -1,4 +1,4 @@
-import { Parry } from '../demos/02-chatbot-evolution/js/parry.js';
+import { Parry } from '../demos/chatbot-evolution/js/parry.js';
 
 console.log('='.repeat(70));
 console.log('DETAILED ANALYSIS: EMOTION CLAMPING BUG');

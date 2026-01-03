@@ -483,7 +483,7 @@ SRAI lets you handle many input variations without writing separate rules for ea
 
 Let's interact with these historical systems:
 
-[Chatbot Evolution Demo](https://contextlab.github.io/llm-course/demos/02-chatbot-evolution/)
+[Chatbot Evolution Demo](https://contextlab.github.io/llm-course/demos/chatbot-evolution/)
 
 </div>
 

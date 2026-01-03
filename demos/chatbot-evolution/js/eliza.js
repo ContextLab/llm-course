@@ -6,7 +6,7 @@
  * to maintain compatibility with the timeline app interface.
  */
 
-import { ElizaEngine } from '../../01-eliza/js/eliza-engine.js';
+import { ElizaEngine } from '../../eliza/js/eliza-engine.js';
 
 export class Eliza {
     constructor() {
@@ -20,7 +20,7 @@ export class Eliza {
 
         // Load rules from Demo 01 (the canonical source)
         // Use path relative to HTML page location (not JS file)
-        await this.engine.loadRules('../01-eliza/data/eliza-rules.json');
+        await this.engine.loadRules('../eliza/data/eliza-rules.json');
         this.initialized = true;
     }
 

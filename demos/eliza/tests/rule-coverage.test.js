@@ -16,7 +16,7 @@
  * 9. Edge cases
  * 10. Fallback behavior
  *
- * Run with: node demos/01-eliza/tests/rule-coverage.test.js
+ * Run with: node demos/eliza/tests/rule-coverage.test.js
  */
 
 import { PatternMatcher } from '../js/pattern-matcher.js';

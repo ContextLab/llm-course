@@ -39,7 +39,7 @@ Leave today knowing *exactly* how to build your own ELIZA.
 
 <div class="note-box" data-title="Interactive demo">
 
-[ELIZA Demo](https://contextlab.github.io/llm-course/demos/01-eliza/)
+[ELIZA Demo](https://contextlab.github.io/llm-course/demos/eliza/)
 
 </div>
 
