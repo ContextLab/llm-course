@@ -19,7 +19,8 @@ export class Eliza {
         this.engine = new ElizaEngine();
 
         // Load rules from Demo 01 (the canonical source)
-        await this.engine.loadRules('../../01-eliza/data/eliza-rules.json');
+        // Use path relative to HTML page location (not JS file)
+        await this.engine.loadRules('../01-eliza/data/eliza-rules.json');
         this.initialized = true;
     }
 
