@@ -1799,6 +1799,7 @@ section:not(.lead):not(#\31)>.definition-box {
 .inline-example .example-text {
     font-size: 0.85em;
     display: block;
+    text-align: left !important;
 }
 
 /* ============================================
@@ -1831,6 +1832,7 @@ section:not(.lead):not(#\31)>.definition-box {
 .inline-note .note-text {
     font-size: 0.85em;
     display: block;
+    text-align: left !important;
 }
 
 /* ============================================
@@ -1863,6 +1865,7 @@ section:not(.lead):not(#\31)>.definition-box {
 .inline-warning .warning-text {
     font-size: 0.85em;
     display: block;
+    text-align: left !important;
 }
 
 /* ============================================
@@ -1895,6 +1898,7 @@ section:not(.lead):not(#\31)>.definition-box {
 .inline-tip .tip-text {
     font-size: 0.85em;
     display: block;
+    text-align: left !important;
 }
 
 /* ============================================
@@ -1927,6 +1931,7 @@ section:not(.lead):not(#\31)>.definition-box {
 .inline-definition .definition-text {
     font-size: 0.85em;
     display: block;
+    text-align: left !important;
 }
 
 /* ============================================
@@ -1959,6 +1964,28 @@ section:not(.lead):not(#\31)>.definition-box {
 .inline-important .important-text {
     font-size: 0.85em;
     display: block;
+    text-align: left !important;
+}
+
+/* ============================================
+   INLINE BOX PARAGRAPH OVERRIDES
+   Must override section:not(.lead):not(#\31) p rule that centers all paragraphs
+   ============================================ */
+section:not(.lead):not(#\31) .inline-note p,
+section:not(.lead):not(#\31) .inline-warning p,
+section:not(.lead):not(#\31) .inline-tip p,
+section:not(.lead):not(#\31) .inline-definition p,
+section:not(.lead):not(#\31) .inline-example p,
+section:not(.lead):not(#\31) .inline-important p,
+.inline-note p,
+.inline-warning p,
+.inline-tip p,
+.inline-definition p,
+.inline-example p,
+.inline-important p {
+    text-align: left !important;
+    margin: 0 !important;
+    width: auto !important;
 }
 
 /* ============================================
