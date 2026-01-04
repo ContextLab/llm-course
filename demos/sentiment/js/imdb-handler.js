@@ -12,7 +12,7 @@ export class IMDBHandler {
 
     async loadDataset(size, numReviews) {
         const filename = size === 'sample' ? 'imdb-sample.json' : 'imdb-reviews.json';
-        const maxReviews = size === 'sample' ? 500 : 5000;
+        const maxReviews = size === 'sample' ? 100 : 5000;
 
         // Validate batch size
         if (numReviews > maxReviews) {

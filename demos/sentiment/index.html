@@ -73,7 +73,7 @@
                                 <input type="radio" name="dataset-size" value="sample" checked>
                                 <div class="option-content">
                                     <strong>Sample Dataset</strong>
-                                    <span>500 reviews - Fast loading and analysis</span>
+                                    <span>100 reviews - Fast loading and analysis</span>
                                 </div>
                             </label>
                             <label class="dataset-option">
@@ -409,7 +409,7 @@
 
         async function loadImdbDataset(size, numReviews) {
             const filename = size === 'sample' ? 'imdb-sample.json' : 'imdb-reviews.json';
-            const maxReviews = size === 'sample' ? 500 : 5000;
+            const maxReviews = size === 'sample' ? 100 : 5000;
 
             // Validate batch size
             if (numReviews > maxReviews) {
@@ -464,7 +464,7 @@
             const statsStrong = document.createElement('strong');
             statsStrong.textContent = data.length;
             statsP.appendChild(statsStrong);
-            statsP.appendChild(document.createTextNode(` reviews loaded from ${size === 'sample' ? '500-review sample' : 'full 5000-review dataset'}`));
+            statsP.appendChild(document.createTextNode(` reviews loaded from ${size === 'sample' ? '100-review sample' : 'full 5000-review dataset'}`));
             statsDiv.appendChild(statsP);
 
             const distDiv = document.createElement('div');
