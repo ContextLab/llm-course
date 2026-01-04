@@ -20,12 +20,12 @@ let filteredVocab = [];
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     initializeTabs();
+    setupEventListeners();  // Setup listeners BEFORE loading so button is always responsive
     await loadTokenizers();
-    setupEventListeners();
 
-    // Auto-tokenize with default text
+    // Auto-tokenize with default text after tokenizers are ready
     const defaultText = document.getElementById('text-input').value;
-    if (defaultText) {
+    if (defaultText && tokenizers.gpt2 && tokenizers.bert && tokenizers.t5) {
         await tokenizeText(defaultText);
     }
 });
@@ -268,18 +268,35 @@ function updateComparisonChart() {
     ctx.fillText('Token Count Comparison', 10, 20);
 }
 
-// Vocabulary Browser Functions
 async function updateVocabulary() {
     const tokenizerName = document.getElementById('vocab-tokenizer').value;
     const searchTerm = document.getElementById('vocab-search').value.toLowerCase();
     const filter = document.getElementById('vocab-filter').value;
 
     const tokenizer = tokenizers[tokenizerName];
-    if (!tokenizer) return;
+    if (!tokenizer) {
+        const tbody = document.getElementById('vocab-table-body');
+        tbody.innerHTML = '<tr><td colspan="4" class="loading">Tokenizer not loaded yet. Please wait...</td></tr>';
+        return;
+    }
 
     try {
-        // Get vocabulary
-        const vocab = tokenizer.model.vocab;
+        let vocab = null;
+        
+        if (tokenizer.model && tokenizer.model.vocab) {
+            vocab = tokenizer.model.vocab;
+        } else if (tokenizer.tokenizer && tokenizer.tokenizer.model && tokenizer.tokenizer.model.vocab) {
+            vocab = tokenizer.tokenizer.model.vocab;
+        } else if (tokenizer.vocab) {
+            vocab = tokenizer.vocab;
+        }
+        
+        if (!vocab) {
+            const tbody = document.getElementById('vocab-table-body');
+            tbody.innerHTML = '<tr><td colspan="4" class="loading">Vocabulary not accessible for this tokenizer</td></tr>';
+            console.warn('Could not access vocab for', tokenizerName, 'tokenizer structure:', tokenizer);
+            return;
+        }
 
         // Convert to array
         let vocabArray = Object.entries(vocab).map(([token, id]) => ({
