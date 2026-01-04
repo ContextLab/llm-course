@@ -461,6 +461,36 @@ If you finish the core assignment and want to push further, consider these exten
 
 ## Submission
 
+### GitHub Classroom Submission
+
+This assignment is submitted via **GitHub Classroom**. Follow these steps:
+
+1. **Accept the assignment**: Click the assignment link provided in Canvas or by your instructor
+   - Repository: [github.com/ContextLab/gpt-llm-course](https://github.com/ContextLab/gpt-llm-course)
+   - This creates your own private repository for the assignment
+
+2. **Clone your repository**: 
+   ```bash
+   git clone https://github.com/ContextLab/gpt-llm-course-YOUR_USERNAME.git
+   ```
+
+3. **Complete your work**: 
+   - Work in Google Colab, Jupyter, or your preferred environment
+   - Save your notebook to the repository
+
+4. **Commit and push your changes**:
+   ```bash
+   git add .
+   git commit -m "Complete GPT assignment"
+   git push
+   ```
+
+5. **Verify submission**: Check that your latest commit appears in your GitHub repository before the deadline
+
+**Deadline**: February 13, 2026 at 11:59 PM EST
+
+### Notebook Requirements
+
 Submit a **single Google Colaboratory notebook** that:
 
 1. Runs without errors on a clean Colab instance with GPU runtime

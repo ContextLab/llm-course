@@ -491,13 +491,40 @@ This assignment is designed to be completed in **one week (7 days)**. While subs
 
 ## Submission Guidelines
 
-1. **Format**: Submit a link to your Google Colaboratory notebook
-2. **Permissions**: Ensure the notebook is shared with "Anyone with the link can view"
-3. **Runtime**: The notebook must run from start to finish without errors in a fresh Colab session
-4. **Dependencies**: Include all imports and installations in the notebook
-5. **Data**: The `instructions.txt` file should be loaded in your notebook (upload to Colab or link to it)
-6. **Output**: Keep cell outputs visible in your submission
-7. **Deadline**: [To be announced by instructor]
+### GitHub Classroom Submission
+
+This assignment is submitted via **GitHub Classroom**. Follow these steps:
+
+1. **Accept the assignment**: Click the assignment link provided in Canvas or by your instructor
+   - Repository: [github.com/ContextLab/eliza-llm-course](https://github.com/ContextLab/eliza-llm-course)
+   - This creates your own private repository for the assignment
+
+2. **Clone your repository**: 
+   ```bash
+   git clone https://github.com/ContextLab/eliza-llm-course-YOUR_USERNAME.git
+   ```
+
+3. **Complete your work**: 
+   - Work in Google Colab, Jupyter, or your preferred environment
+   - Save your notebook to the repository
+
+4. **Commit and push your changes**:
+   ```bash
+   git add .
+   git commit -m "Complete ELIZA assignment"
+   git push
+   ```
+
+5. **Verify submission**: Check that your latest commit appears in your GitHub repository before the deadline
+
+**Deadline**: January 16, 2026 at 11:59 PM EST
+
+### Notebook Requirements
+
+1. **Runtime**: The notebook must run from start to finish without errors in a fresh Colab session
+2. **Dependencies**: Include all imports and installations in the notebook
+3. **Data**: The `instructions.txt` file should be loaded in your notebook (upload to Colab or link to it)
+4. **Output**: Keep cell outputs visible in your submission
 
 ### Before Submission Checklist
 

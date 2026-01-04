@@ -454,6 +454,36 @@ Implement at least one real-world application:
 
 ## Submission Guidelines
 
+### GitHub Classroom Submission
+
+This assignment is submitted via **GitHub Classroom**. Follow these steps:
+
+1. **Accept the assignment**: Click the assignment link provided in Canvas or by your instructor
+   - Repository: [github.com/ContextLab/embeddings-llm-course](https://github.com/ContextLab/embeddings-llm-course)
+   - This creates your own private repository for the assignment
+
+2. **Clone your repository**: 
+   ```bash
+   git clone https://github.com/ContextLab/embeddings-llm-course-YOUR_USERNAME.git
+   ```
+
+3. **Complete your work**: 
+   - Work in Google Colab, Jupyter, or your preferred environment
+   - Save your notebook to the repository
+
+4. **Commit and push your changes**:
+   ```bash
+   git add .
+   git commit -m "Complete Wikipedia embeddings assignment"
+   git push
+   ```
+
+5. **Verify submission**: Check that your latest commit appears in your GitHub repository before the deadline
+
+**Deadline**: January 30, 2026 at 11:59 PM EST
+
+### Notebook Requirements
+
 Submit a **Google Colaboratory notebook** (or Jupyter notebook) that includes:
 
 ### Technical Requirements

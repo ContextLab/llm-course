@@ -539,13 +539,41 @@ Your assignment will be graded on the following criteria:
 
 ## Submission Guidelines
 
-1. **Format**: Submit a link to your Google Colaboratory notebook
-2. **Permissions**: Ensure the notebook is shared with "Anyone with the link can view"
-3. **Runtime**: The notebook must run from start to finish without errors
-4. **Dependencies**: All required packages should be installed in the notebook
-5. **Data**: Include code to automatically download any required datasets
-6. **Output**: Keep cell outputs visible in your submission
-7. **Deadline**: [To be announced by instructor]
+### GitHub Classroom Submission
+
+This assignment is submitted via **GitHub Classroom**. Follow these steps:
+
+1. **Accept the assignment**: Click the assignment link provided in Canvas or by your instructor
+   - Repository: [github.com/ContextLab/customer-service-bot-llm-course](https://github.com/ContextLab/customer-service-bot-llm-course)
+   - This creates your own private repository for the assignment
+
+2. **Clone your repository**: 
+   ```bash
+   git clone https://github.com/ContextLab/customer-service-bot-llm-course-YOUR_USERNAME.git
+   ```
+
+3. **Complete your work**: 
+   - Work in Google Colab, Jupyter, or your preferred environment
+   - Save your notebook to the repository
+
+4. **Commit and push your changes**:
+   ```bash
+   git add .
+   git commit -m "Complete customer service chatbot assignment"
+   git push
+   ```
+
+5. **Verify submission**: Check that your latest commit appears in your GitHub repository before the deadline
+
+**Deadline**: February 6, 2026 at 11:59 PM EST
+
+### Notebook Requirements
+
+1. **Runtime**: The notebook must run from start to finish without errors
+2. **Permissions**: Ensure the notebook is accessible (include in your GitHub repository)
+3. **Dependencies**: All required packages should be installed in the notebook
+4. **Data**: Include code to automatically download any required datasets
+5. **Output**: Keep cell outputs visible in your submission
 
 ### Before Submission Checklist
 

@@ -488,8 +488,36 @@ If you use external datasets, you must cite them clearly in your notebook.
 
 ## Submission Guidelines
 
+### GitHub Classroom Submission
+
+This assignment is submitted via **GitHub Classroom**. Follow these steps:
+
+1. **Accept the assignment**: Click the assignment link provided in Canvas or by your instructor
+   - Repository: [github.com/ContextLab/spam-classifier-llm-course](https://github.com/ContextLab/spam-classifier-llm-course)
+   - This creates your own private repository for the assignment
+
+2. **Clone your repository**: 
+   ```bash
+   git clone https://github.com/ContextLab/spam-classifier-llm-course-YOUR_USERNAME.git
+   ```
+
+3. **Complete your work**: 
+   - Work in Google Colab, Jupyter, or your preferred environment
+   - Save your notebook to the repository
+
+4. **Commit and push your changes**:
+   ```bash
+   git add .
+   git commit -m "Complete SPAM classifier assignment"
+   git push
+   ```
+
+5. **Verify submission**: Check that your latest commit appears in your GitHub repository before the deadline
+
+**Deadline**: January 23, 2026 at 11:59 PM EST
+
 ### What to Submit
-Submit **one Jupyter notebook** (.ipynb file) via the course submission system.
+Submit **one Jupyter notebook** (.ipynb file) in your GitHub Classroom repository.
 
 ### Notebook Requirements
 Your notebook must:
