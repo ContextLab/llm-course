@@ -94,7 +94,6 @@
                     <button class="task-tab active" data-task="similarity">Similarity</button>
                     <button class="task-tab" data-task="analogy">Analogy</button>
                     <button class="task-tab" data-task="categorization">Categorization</button>
-                    <button class="task-tab" data-task="custom">Custom Test</button>
                 </div>
 
                 <div class="task-content">
@@ -180,28 +179,6 @@ kale</textarea>
                         <div id="categorization-results" class="results-area"></div>
                     </div>
 
-                    <!-- Custom Test -->
-                    <div id="custom-task" class="task-panel">
-                        <h3>Custom Test</h3>
-                        <p>Create your own benchmark test.</p>
-
-                        <div class="test-inputs">
-                            <div class="input-group">
-                                <label>Test Description:</label>
-                                <input type="text" id="custom-desc" placeholder="What are you testing?">
-                            </div>
-                            <div class="input-group">
-                                <label>Test Sentences (one per line):</label>
-                                <textarea id="custom-sentences" rows="10" placeholder="Enter multiple sentences to compare...">The quick brown fox jumps over the lazy dog.
-A fast auburn fox leaps across an idle canine.
-Python is a programming language.
-The weather is sunny today.</textarea>
-                            </div>
-                            <button id="run-custom-btn" class="btn btn-secondary">Run Custom Test</button>
-                        </div>
-
-                        <div id="custom-results" class="results-area"></div>
-                    </div>
                 </div>
             </section>
 

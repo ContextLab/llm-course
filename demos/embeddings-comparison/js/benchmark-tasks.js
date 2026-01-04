@@ -233,49 +233,4 @@ export class BenchmarkTasks {
         }
         return Math.sqrt(sum);
     }
-
-    async runCustomTest(sentences, modelIds) {
-        const results = [];
-
-        for (const modelId of modelIds) {
-            const startTime = performance.now();
-
-            // Get embeddings for all sentences
-            const embeddings = [];
-            for (const sentence of sentences) {
-                const result = await this.modelsManager.embed(modelId, sentence);
-                embeddings.push(result.embedding);
-            }
-
-            // Calculate pairwise similarities
-            const similarities = [];
-            for (let i = 0; i < sentences.length; i++) {
-                for (let j = i + 1; j < sentences.length; j++) {
-                    const sim = this.modelsManager.cosineSimilarity(
-                        embeddings[i],
-                        embeddings[j]
-                    );
-                    similarities.push({
-                        pair: [i, j],
-                        sentences: [sentences[i].substring(0, 50), sentences[j].substring(0, 50)],
-                        similarity: sim
-                    });
-                }
-            }
-
-            similarities.sort((a, b) => b.similarity - a.similarity);
-
-            const endTime = performance.now();
-
-            results.push({
-                modelId,
-                modelName: this.modelsManager.getModelConfig(modelId).name,
-                similarities: similarities.slice(0, 10),
-                avgSimilarity: similarities.reduce((sum, s) => sum + s.similarity, 0) / similarities.length,
-                time: endTime - startTime
-            });
-        }
-
-        return results;
-    }
 }

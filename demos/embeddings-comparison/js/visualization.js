@@ -186,29 +186,4 @@ export class Visualization {
         });
     }
 
-    displayCustomResults(results) {
-        const container = document.getElementById('custom-results');
-        container.innerHTML = '';
-
-        results.forEach(result => {
-            const card = document.createElement('div');
-            card.className = 'result-card';
-
-            let similaritiesHTML = '<div style="margin-top: 10px; font-size: 0.85em;">Top similarities:<br>';
-            result.similarities.slice(0, 5).forEach((s, i) => {
-                similaritiesHTML += `${i + 1}. "${s.sentences[0]}..." ↔ "${s.sentences[1]}..." (${(s.similarity * 100).toFixed(1)}%)<br>`;
-            });
-            similaritiesHTML += '</div>';
-
-            card.innerHTML = `
-                <div class="result-model">
-                    <span>${result.modelName}</span>
-                    <span class="result-score">Avg: ${(result.avgSimilarity * 100).toFixed(1)}%</span>
-                </div>
-                <div class="result-time">Processing time: ${result.time.toFixed(1)}ms</div>
-                ${similaritiesHTML}
-            `;
-            container.appendChild(card);
-        });
-    }
 }

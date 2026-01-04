@@ -33,7 +33,6 @@ class ComparisonApp {
         document.getElementById('run-similarity-btn').addEventListener('click', () => this.runSimilarityTask());
         document.getElementById('run-analogy-btn').addEventListener('click', () => this.runAnalogyTask());
         document.getElementById('run-categorization-btn').addEventListener('click', () => this.runCategorizationTask());
-        document.getElementById('run-custom-btn').addEventListener('click', () => this.runCustomTask());
     }
 
     setupPresets() {
@@ -226,44 +225,6 @@ class ComparisonApp {
 
         } catch (error) {
             console.error('Error running categorization test:', error);
-            alert('Error: ' + error.message);
-        } finally {
-            this.showLoading(false);
-        }
-    }
-
-    async runCustomTask() {
-        if (!this.checkModelsLoaded()) return;
-
-        const sentencesText = document.getElementById('custom-sentences').value.trim();
-
-        if (!sentencesText) {
-            alert('Please enter sentences to compare');
-            return;
-        }
-
-        const sentences = sentencesText.split('\n').map(s => s.trim()).filter(s => s);
-
-        if (sentences.length < 2) {
-            alert('Please enter at least 2 sentences');
-            return;
-        }
-
-        this.showLoading(true);
-        try {
-            const modelIds = this.modelsManager.getLoadedModels();
-            const results = await this.benchmarkTasks.runCustomTest(sentences, modelIds);
-
-            this.visualization.displayCustomResults(results);
-            this.visualization.updateLeaderboard(results, 'avgSimilarity');
-            this.visualization.plotRadarChart(results);
-            this.visualization.plotTradeoffChart(results);
-
-            this.testsRun++;
-            this.updateStats();
-
-        } catch (error) {
-            console.error('Error running custom test:', error);
             alert('Error: ' + error.message);
         } finally {
             this.showLoading(false);
