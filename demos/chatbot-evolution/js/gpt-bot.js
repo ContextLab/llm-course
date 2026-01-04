@@ -25,16 +25,16 @@ export class GPTBot {
                 org: 'Alibaba'
             },
             {
-                name: 'onnx-community/SmolLM-360M-Instruct',
-                displayName: 'SmolLM 360M',
+                name: 'onnx-community/Llama-3.2-1B-Instruct',
+                displayName: 'Llama 3.2 1B',
                 dtype: 'q4',
-                params: '360M',
+                params: '1B',
                 year: 2024,
-                org: 'HuggingFace'
+                org: 'Meta'
             }
         ];
         
-        this.systemPrompt = 'You are a helpful AI assistant. Answer questions directly and concisely. When writing code, use proper formatting with language tags.';
+        this.systemPrompt = 'You are a helpful assistant.';
         
         this.conversationHistory = [];
         this.currentModel = null;
@@ -340,25 +340,25 @@ export class GPTBot {
     getArchitectureInfo() {
         const model = this.currentModel || this.models[0];
         
-        if (model.name.includes('SmolLM')) {
+        if (model.name.includes('Llama-3.2')) {
             return {
-                name: 'SmolLM 360M Instruct',
+                name: 'Llama 3.2 1B Instruct',
                 type: 'Decoder-Only Transformer',
-                parameters: '360 Million',
-                layers: 32,
-                hiddenSize: 960,
-                attentionHeads: 15,
-                contextLength: 2048,
-                vocabulary: '~49K tokens',
-                trainingData: 'Cosmopedia v2, FineWeb-Edu, Stack-Edu',
+                parameters: '1 Billion',
+                layers: 16,
+                hiddenSize: 2048,
+                attentionHeads: 32,
+                contextLength: 131072,
+                vocabulary: '~128K tokens',
+                trainingData: 'Multilingual web data, code, reasoning',
                 year: 2024,
-                organization: 'HuggingFace',
+                organization: 'Meta',
                 keyFeatures: [
-                    'Designed for browser/on-device use',
-                    'Optimized for WASM execution',
-                    'Fast inference with small memory footprint',
-                    'Instruction-tuned for conversations',
-                    'Open-source with Apache 2.0 license'
+                    'Optimized for edge and mobile devices',
+                    'Strong multilingual capabilities',
+                    'Instruction-tuned for helpfulness',
+                    'Efficient architecture for browser',
+                    'Open-source with Llama license'
                 ],
                 architecture: {
                     type: 'decoder-only',

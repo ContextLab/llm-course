@@ -341,9 +341,9 @@ AIML-inspired pattern matching with improved context handling over ELIZA.
 - Fallback to DialoGPT-small if BlenderBot fails to load
 
 ### GPT / Qwen2.5
-Uses Transformers.js with Qwen2.5-0.5B-Instruct (500M parameters) for actual neural text generation in the browser. Falls back to SmolLM-360M-Instruct if Qwen fails to load. Demonstrates modern transformer capabilities:
+Uses Transformers.js with Qwen2.5-0.5B-Instruct (500M parameters) for actual neural text generation in the browser. Falls back to Llama-3.2-1B-Instruct if Qwen fails to load. Demonstrates modern transformer capabilities:
 - Instruction-tuned for natural conversations
-- System prompt guides behavior for educational demo context
+- Conversation history preserved across turns
 - Runs entirely in-browser via WASM or WebGPU
 - May take 30-60 seconds to download on first load
 
