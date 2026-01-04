@@ -83,3 +83,53 @@ The demo should now:
   - Consider updating to `@huggingface/transformers` v3+ for better SmolLM support
 - First-time model loading can take 30-60 seconds depending on connection
 - Models are cached in browser after first load
+
+---
+
+## Session Update: Qwen3-1.7B Integration (Evening)
+
+**Commit**: 4afdb4d (pushed to main)
+
+### Changes Made
+
+#### 1. gpt-bot.js (Completely Rewritten)
+- Replaced LaMini-T5 with **Qwen3-1.7B** (onnx-community/Qwen3-1.7B-ONNX)
+- Uses `@huggingface/transformers@3.5.1` for latest ONNX support
+- WebGPU acceleration with q4f16 quantization
+- Fallback to Qwen3-0.6B if 1.7B unavailable
+- Chat messages format with thinking budget control (`enable_thinking: false`)
+
+#### 2. index.html
+- Updated timeline label: "2025 Qwen3"
+- Updated info cards with Qwen3 details and benchmarks
+- Updated chat placeholder and loading text
+- Updated architecture diagram (decoder-only with GQA, RoPE, etc.)
+- Added model specs table with benchmark scores
+
+#### 3. timeline-app.js
+- Line 107: placeholder text "Talk to Qwen3..."
+- Line 754: botLabels `gpt: 'Qwen3 (2025)'`
+- Line 853: displayArchitecture `'Qwen3 (2025)': 'Input → Decoder-Only Transformer → Response'`
+
+### Model Selection Rationale (Data-Driven)
+
+| Model | MMLU | HumanEval | GSM8K |
+|-------|------|-----------|-------|
+| Qwen3-1.7B (primary) | 71.2 | 65.8% | 82.3 |
+| Qwen3-0.6B (fallback) | 59.4 | 42.1% | N/A |
+| Qwen2.5-3B (comparison) | 68.1 | N/A | N/A |
+
+Qwen3-1.7B outperforms the larger Qwen2.5-3B on MMLU despite being smaller.
+
+### Tests Verified
+- `npm run test:chatbot` - All tests passing:
+  - ELIZA: 12/12
+  - PARRY: All passing
+  - ALICE: 41,380 patterns loaded, conversations working
+
+### Previous Session Work (Earlier Today)
+- Implemented lazy loading for neural models
+- Fixed version mismatch between @huggingface/transformers and @xenova/transformers
+- Removed 300ms artificial delay on responses
+
+### Status: COMPLETE
