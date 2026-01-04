@@ -41,7 +41,7 @@
                     <span class="era-label">2020<br>BlenderBot</span>
                 </div>
                 <div class="era era-2020s" data-era="2020s">
-                    <span class="era-label">2025<br>Qwen3</span>
+                    <span class="era-label">2025<br>DeepSeek-R1</span>
                 </div>
             </div>
         </section>
@@ -455,20 +455,20 @@
 
                     <div class="chatbot-info">
                         <div class="info-card">
-                            <h3>About Qwen3</h3>
-                            <p><strong>Innovation:</strong> Hybrid thinking/non-thinking reasoning</p>
-                            <p><strong>Method:</strong> Decoder-only transformer, GQA attention</p>
-                            <p><strong>Model:</strong> Qwen3-1.7B (1.7B parameters)</p>
-                            <p><strong>Benchmarks:</strong> MMLU 71.2, HumanEval 65.8%</p>
+                            <h3>About DeepSeek-R1</h3>
+                            <p><strong>Innovation:</strong> Distilled reasoning from DeepSeek-R1</p>
+                            <p><strong>Method:</strong> Decoder-only transformer, chain-of-thought</p>
+                            <p><strong>Model:</strong> DeepSeek-R1-Distill-Qwen-1.5B</p>
+                            <p><strong>Benchmarks:</strong> AIME 28.9%, MATH-500 83.9%</p>
                         </div>
 
                         <div class="info-card">
                             <h3>How It Works</h3>
                             <ul>
-                                <li>Decoder-only transformer (GPT-style)</li>
-                                <li>Grouped-Query Attention for efficiency</li>
-                                <li>100+ language support</li>
-                                <li>WebGPU accelerated in browser</li>
+                                <li>Distilled from larger reasoning model</li>
+                                <li>Chain-of-thought reasoning capabilities</li>
+                                <li>Strong math and coding performance</li>
+                                <li>Fallback: Gemma 3 1B/270M if needed</li>
                             </ul>
                         </div>
                     </div>
@@ -484,15 +484,15 @@
                         <div class="chat-interface">
                             <div class="model-loading-status hidden" id="gpt-loading-status">
                                 <div class="loading-spinner"></div>
-                                <div class="loading-text">Loading Qwen3-1.7B...</div>
+                                <div class="loading-text">Loading DeepSeek-R1...</div>
                                 <div class="loading-progress" id="gpt-progress">Initializing...</div>
                             </div>
                             <div class="chat-messages" id="gpt-messages"></div>
                             <div class="chat-input-area">
-                                <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to Qwen3...">
+                                <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to DeepSeek-R1...">
                                 <button class="chat-send" id="gpt-send-btn" onclick="sendMessage('gpt')">Send</button>
                             </div>
-                            <p class="demo-note">Using Qwen3-1.7B (MMLU 71.2). WebGPU accelerated. Loads on first message.</p>
+                            <p class="demo-note">Using DeepSeek-R1-Distill 1.5B. Fallback: Gemma 3 1B/270M. Loads on first message.</p>
                         </div>
                     </div>
 
@@ -500,7 +500,7 @@
                     <div class="chatbot-tab-content" id="gpt-architecture-tab">
                         <div class="architecture-content">
                             <div class="architecture-diagram">
-                                <h4>Decoder-Only Transformer (Qwen3)</h4>
+                                <h4>Decoder-Only Transformer (DeepSeek-R1)</h4>
                                 <div class="arch-flow">
                                     <div class="arch-block input-block">
                                         <div class="block-label">Input Prompt</div>
@@ -513,10 +513,10 @@
                                     </div>
                                     <div class="arch-arrow">&#8595;</div>
                                     <div class="arch-block decoder-only-block">
-                                        <div class="block-label">Qwen3 Decoder Stack</div>
+                                        <div class="block-label">DeepSeek-R1 Decoder Stack</div>
                                         <div class="block-content">
                                             <div class="sub-block">Grouped-Query Attention</div>
-                                            <div class="sub-block">SwiGLU FFN</div>
+                                            <div class="sub-block">SiLU FFN</div>
                                             <div class="sub-block">RMSNorm</div>
                                             <div class="block-note">x28 layers</div>
                                         </div>
@@ -533,40 +533,44 @@
                                 <h4>Key Concepts</h4>
                                 <div class="concept-grid">
                                     <div class="concept-card">
-                                        <h5>Decoder-Only</h5>
-                                        <p>Like GPT, Qwen3 uses only decoder layers. Each token attends to all previous tokens (causal attention).</p>
+                                        <h5>Knowledge Distillation</h5>
+                                        <p>DeepSeek-R1-Distill captures reasoning abilities from a much larger model, enabling strong performance at small size.</p>
+                                    </div>
+                                    <div class="concept-card">
+                                        <h5>Chain-of-Thought</h5>
+                                        <p>The model learned to break complex problems into steps, improving accuracy on math and coding tasks.</p>
                                     </div>
                                     <div class="concept-card">
                                         <h5>Grouped-Query Attention</h5>
-                                        <p>GQA reduces memory usage by sharing key-value heads across query heads, enabling larger context windows.</p>
-                                    </div>
-                                    <div class="concept-card">
-                                        <h5>Hybrid Reasoning</h5>
-                                        <p>Qwen3 can use "thinking mode" for complex problems or "fast mode" for quick responses.</p>
+                                        <p>GQA reduces memory usage by sharing key-value heads across query heads, enabling efficient inference.</p>
                                     </div>
                                     <div class="concept-card">
                                         <h5>RoPE Positions</h5>
-                                        <p>Rotary Position Embeddings encode position through rotation, enabling better length generalization.</p>
+                                        <p>Rotary Position Embeddings encode position through rotation, enabling long context handling.</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="model-specs">
-                                <h4>Qwen3-1.7B Specifications</h4>
+                                <h4>DeepSeek-R1-Distill-Qwen-1.5B Specifications</h4>
                                 <table class="specs-table">
-                                    <tr><td>Parameters</td><td>1.7 Billion</td></tr>
+                                    <tr><td>Parameters</td><td>1.5 Billion</td></tr>
                                     <tr><td>Architecture</td><td>Decoder-Only Transformer</td></tr>
                                     <tr><td>Layers</td><td>28</td></tr>
-                                    <tr><td>Hidden Size</td><td>2048</td></tr>
-                                    <tr><td>Attention Heads</td><td>16 Q / 4 KV (GQA)</td></tr>
-                                    <tr><td>Context Length</td><td>65,536 tokens</td></tr>
-                                    <tr><td>MMLU</td><td>71.2</td></tr>
-                                    <tr><td>HumanEval</td><td>65.8%</td></tr>
-                                    <tr><td>Training</td><td>36T tokens (web, code, math, multilingual)</td></tr>
-                                    <tr><td>Year</td><td>2025 (Alibaba Qwen)</td></tr>
+                                    <tr><td>Hidden Size</td><td>1536</td></tr>
+                                    <tr><td>Attention Heads</td><td>12</td></tr>
+                                    <tr><td>Context Length</td><td>131,072 tokens</td></tr>
+                                    <tr><td>AIME 2024</td><td>28.9%</td></tr>
+                                    <tr><td>MATH-500</td><td>83.9%</td></tr>
+                                    <tr><td>LiveCodeBench</td><td>16.9%</td></tr>
+                                    <tr><td>Year</td><td>2025 (DeepSeek)</td></tr>
                                 </table>
                                 <div class="model-note">
-                                    <strong>WebGPU Accelerated:</strong> Runs in browser with GPU acceleration. Falls back to Qwen3-0.6B on older devices.
+                                    <strong>Fallback Chain:</strong> 
+                                    <a href="https://huggingface.co/onnx-community/DeepSeek-R1-Distill-Qwen-1.5B-ONNX" target="_blank">DeepSeek-R1 1.5B</a> → 
+                                    <a href="https://huggingface.co/onnx-community/gemma-3-1b-it-ONNX" target="_blank">Gemma 3 1B</a> → 
+                                    <a href="https://huggingface.co/onnx-community/gemma-3-270m-it-ONNX" target="_blank">Gemma 3 270M</a>. 
+                                    Uses largest successful model.
                                 </div>
                             </div>
                         </div>
@@ -635,8 +639,8 @@
                             <span class="stat-value">90M params</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Qwen3 (2025)</span>
-                            <span class="stat-value">1.7B params</span>
+                            <span class="stat-label">DeepSeek-R1 (2025)</span>
+                            <span class="stat-value">1.5B params</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Claude 4 Opus (2025)</span>

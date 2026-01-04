@@ -81,6 +81,12 @@
             margin: 0 auto;
             padding: 2rem;
         }
+        .content h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+        }
         .content h2 {
             font-size: 1.75rem;
             font-weight: 700;
@@ -95,12 +101,18 @@
             color: var(--text-primary);
             margin: 1.5rem 0 0.75rem;
         }
+        .content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.25rem 0 0.5rem;
+        }
         .content p {
             color: var(--text-secondary);
             line-height: 1.8;
             margin-bottom: 1rem;
         }
-        .content ul {
+        .content ul, .content ol {
             color: var(--text-secondary);
             padding-left: 1.5rem;
             margin-bottom: 1rem;
@@ -119,6 +131,11 @@
         .content strong {
             color: var(--text-primary);
         }
+        .content hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
         .content table {
             width: 100%;
             border-collapse: collapse;
@@ -136,6 +153,9 @@
         }
         .content td {
             color: var(--text-secondary);
+        }
+        .content tr:hover {
+            background: var(--surface-color);
         }
         footer {
             background: var(--surface-color);
@@ -183,50 +203,97 @@
 <p>Welcome to the assignments for PSYC 51.17: Models of Language and Communication.</p>
 <h2>Submission Instructions</h2>
 <p>All assignments are submitted via GitHub Classroom. Click the "Accept Assignment" button on each assignment page to get started. This will create a personal repository where you'll complete your work.</p>
-<p><strong>Submission Process:</strong>
-1. Click "Accept Assignment" to create your repository
-2. Clone the repository to your local machine or open in Google Colab
-3. Complete the assignment following the instructions
-4. Commit and push your changes before the deadline
-5. Your latest commit before the deadline will be graded</p>
+<p><strong>Submission Process:</strong></p>
+<ol>
+<li>Click "Accept Assignment" to create your repository</li>
+<li>Clone the repository to your local machine or open in Google Colab</li>
+<li>Complete the assignment following the instructions</li>
+<li>Commit and push your changes before the deadline</li>
+<li>Your latest commit before the deadline will be graded</li>
+</ol>
 <h2>Assignment Schedule</h2>
-<p>| # | Title | Released | Due | Weight |
-|---|-------|----------|-----|--------|
-| 1 | <a href="./assignment-1/" target="_blank">ELIZA Chatbot</a> | Week 1 | End of Week 2 | 15% |
-| 2 | <a href="./assignment-2/" target="_blank">SPAM Classifier</a> | Week 2 | End of Week 3 | 15% |
-| 3 | <a href="./assignment-3/" target="_blank">Wikipedia Embeddings</a> | Week 3 | End of Week 4 | 15% |
-| 4 | <a href="./assignment-4/" target="_blank">Customer Service Chatbot</a> | Week 5 | End of Week 6 | 15% |
-| 5 | <a href="./assignment-5/" target="_blank">Build GPT</a> | Week 7 | Week 9 | 15% |
-| Final | <a href="./final-project/" target="_blank">Research Project</a> | Week 9 | Finals Week | 25% |</p>
+<table>
+<thead><tr>
+<th>#</th>
+<th>Title</th>
+<th>Released</th>
+<th>Due</th>
+<th>Weight</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><a href="./assignment-1/">ELIZA Chatbot</a></td>
+<td>Week 1</td>
+<td>End of Week 2</td>
+<td>15%</td>
+</tr>
+<tr>
+<td>2</td>
+<td><a href="./assignment-2/">SPAM Classifier</a></td>
+<td>Week 2</td>
+<td>End of Week 3</td>
+<td>15%</td>
+</tr>
+<tr>
+<td>3</td>
+<td><a href="./assignment-3/">Wikipedia Embeddings</a></td>
+<td>Week 3</td>
+<td>End of Week 4</td>
+<td>15%</td>
+</tr>
+<tr>
+<td>4</td>
+<td><a href="./assignment-4/">Customer Service Chatbot</a></td>
+<td>Week 5</td>
+<td>End of Week 6</td>
+<td>15%</td>
+</tr>
+<tr>
+<td>5</td>
+<td><a href="./assignment-5/">Build GPT</a></td>
+<td>Week 7</td>
+<td>Week 9</td>
+<td>15%</td>
+</tr>
+<tr>
+<td>Final</td>
+<td><a href="./final-project/">Research Project</a></td>
+<td>Week 9</td>
+<td>Finals Week</td>
+<td>25%</td>
+</tr>
+</tbody>
+</table>
 <h2>Late Policy</h2>
 <p>Assignments receive a 10% deduction for each week late, rounded up to the nearest whole week. The final project must be submitted on time.</p>
 <h2>Grading</h2>
-<p>Each assignment is graded on:
+<p>Each assignment is graded on:</p>
 <ul>
 <li><strong>Correctness</strong>: Does your code produce the expected outputs?</li>
 <li><strong>Code Quality</strong>: Is your code well-organized and documented?</li>
 <li><strong>Understanding</strong>: Do your explanations demonstrate understanding of the concepts?</li>
-</ul></p>
+</ul>
 <h2>Getting Help</h2>
 <ul>
 <li><strong>Office Hours</strong>: By appointment</li>
 <li><strong>Discord</strong>: Join our class server for discussions</li>
 <li><strong>GitHub Issues</strong>: Report bugs or ask questions on the assignment repositories</li>
 </ul>
-<p>---</p>
+<hr>
 <h2>Assignments</h2>
-<h3><a href="./assignment-1/" target="_blank">Assignment 1: ELIZA Chatbot</a></h3>
-Build a pattern-matching chatbot based on Weizenbaum's classic ELIZA program. Learn about string manipulation, regular expressions, and the foundations of conversational AI.
-<h3><a href="./assignment-2/" target="_blank">Assignment 2: SPAM Classifier</a></h3>
-Develop a text classification system to identify spam messages. Explore feature engineering, tokenization, and evaluation metrics.
-<h3><a href="./assignment-3/" target="_blank">Assignment 3: Wikipedia Embeddings</a></h3>
-Compare different text embedding methods on Wikipedia articles. Visualize semantic relationships and evaluate embedding quality.
-<h3><a href="./assignment-4/" target="_blank">Assignment 4: Customer Service Chatbot</a></h3>
-Create a context-aware customer service chatbot using transformer-based models. Implement retrieval and response generation.
-<h3><a href="./assignment-5/" target="_blank">Assignment 5: Build GPT</a></h3>
-Implement and train a small GPT model from scratch. Understand the transformer architecture, attention mechanisms, and autoregressive generation.
-<h3><a href="./final-project/" target="_blank">Final Project: Research Project</a></h3>
-Conduct an independent research project applying concepts from the course. Present your findings to the class.
+<h3><a href="./assignment-1/">Assignment 1: ELIZA Chatbot</a></h3>
+<p>Build a pattern-matching chatbot based on Weizenbaum's classic ELIZA program. Learn about string manipulation, regular expressions, and the foundations of conversational AI.</p>
+<h3><a href="./assignment-2/">Assignment 2: SPAM Classifier</a></h3>
+<p>Develop a text classification system to identify spam messages. Explore feature engineering, tokenization, and evaluation metrics.</p>
+<h3><a href="./assignment-3/">Assignment 3: Wikipedia Embeddings</a></h3>
+<p>Compare different text embedding methods on Wikipedia articles. Visualize semantic relationships and evaluate embedding quality.</p>
+<h3><a href="./assignment-4/">Assignment 4: Customer Service Chatbot</a></h3>
+<p>Create a context-aware customer service chatbot using transformer-based models. Implement retrieval and response generation.</p>
+<h3><a href="./assignment-5/">Assignment 5: Build GPT</a></h3>
+<p>Implement and train a small GPT model from scratch. Understand the transformer architecture, attention mechanisms, and autoregressive generation.</p>
+<h3><a href="./final-project/">Final Project: Research Project</a></h3>
+<p>Conduct an independent research project applying concepts from the course. Present your findings to the class.</p>
     </main>
 
     <footer>

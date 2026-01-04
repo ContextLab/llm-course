@@ -81,6 +81,12 @@
             margin: 0 auto;
             padding: 2rem;
         }
+        .content h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+        }
         .content h2 {
             font-size: 1.75rem;
             font-weight: 700;
@@ -95,12 +101,18 @@
             color: var(--text-primary);
             margin: 1.5rem 0 0.75rem;
         }
+        .content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.25rem 0 0.5rem;
+        }
         .content p {
             color: var(--text-secondary);
             line-height: 1.8;
             margin-bottom: 1rem;
         }
-        .content ul {
+        .content ul, .content ol {
             color: var(--text-secondary);
             padding-left: 1.5rem;
             margin-bottom: 1rem;
@@ -119,6 +131,11 @@
         .content strong {
             color: var(--text-primary);
         }
+        .content hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
         .content table {
             width: 100%;
             border-collapse: collapse;
@@ -136,6 +153,9 @@
         }
         .content td {
             color: var(--text-secondary);
+        }
+        .content tr:hover {
+            background: var(--surface-color);
         }
         footer {
             background: var(--surface-color);
@@ -179,31 +199,68 @@
     </header>
 
     <main class="content">
-        <h2>Course Description</h2>
-Recent advancements in Artificial Intelligence (AI) have led to the development of powerful large language models (LLMs) capable of generating human-like text. These models have revolutionized the way we think about language, cognition, and intelligence. This course introduces students to the various approaches used in building, studying, and using conversational agents.  We will use readings, discussions, and hands-on demonstrations to explore historical approaches, current approaches, and hints about the "next generation" of these models.
-<p>We will investigate what these models can and cannot do from various cognitive, philosophical, computational, and ethical perspectives.  A special focus will be on which aspects of human cognition, experiences, minds, and language these models can vs. cannot capture.</p>
+        <h2>Course Information</h2>
+<table>
+<thead><tr>
+<th>Item</th>
+<th>Details</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Meeting times</td>
+<td>MWF 10:10--11:15</td>
+</tr>
+<tr>
+<td>X-hour</td>
+<td>Th 12:15--1:05</td>
+</tr>
+<tr>
+<td>Classroom</td>
+<td>Moore 302</td>
+</tr>
+<tr>
+<td>Instructor</td>
+<td>Dr. Jeremy R. Manning</td>
+</tr>
+<tr>
+<td>Email</td>
+<td><a href="mailto:jeremy@dartmouth.edu" target="_blank">jeremy@dartmouth.edu</a></td>
+</tr>
+<tr>
+<td>Office location</td>
+<td>349 Moore Hall</td>
+</tr>
+<tr>
+<td>Office hours</td>
+<td>By appointment</td>
+</tr>
+</tbody>
+</table>
+<h2>Course Description</h2>
+<p>Recent advancements in Artificial Intelligence (AI) have led to the development of powerful large language models (LLMs) capable of generating human-like text. These models have revolutionized the way we think about language, cognition, and intelligence. This course introduces students to the various approaches used in building, studying, and using conversational agents. We will use readings, discussions, and hands-on demonstrations to explore historical approaches, current approaches, and hints about the "next generation" of these models.</p>
+<p>We will investigate what these models can and cannot do from various cognitive, philosophical, computational, and ethical perspectives. A special focus will be on which aspects of human cognition, experiences, minds, and language these models can vs. cannot capture.</p>
 <h2>Course Goals</h2>
-This course is intended to train students to:
+<p>This course is intended to train students to:</p>
 <ul>
-<li>Explore a variety of approaches to constructing conversational agents, including string manipulation models, rules-based (decision tree) models, and transformer-based models.  Students will implement and train these models, largely from scratch, to gain a deep understanding of how they work.</li>
-<li>Understand different classic and modern approaches to text embeddings (LSA, LDA, word2vec, USE, BERT, etc.) and dimensionality reduction (PCA, UMAP).  Students will use these approaches to carry out analyses of text corpora.</li>
-<li>Gain a general understanding of computational linguistic text analyses including part of speech tagging, sentiment analysis, etc.  Again, students will implement and apply these tools to text data.</li>
+<li>Explore a variety of approaches to constructing conversational agents, including string manipulation models, rules-based (decision tree) models, and transformer-based models. Students will implement and train these models, largely from scratch, to gain a deep understanding of how they work.</li>
+<li>Understand different classic and modern approaches to text embeddings (LSA, LDA, word2vec, USE, BERT, etc.) and dimensionality reduction (PCA, UMAP). Students will use these approaches to carry out analyses of text corpora.</li>
+<li>Gain a general understanding of computational linguistic text analyses including part of speech tagging, sentiment analysis, etc. Again, students will implement and apply these tools to text data.</li>
 <li>Explore the psychological and cognitive applications of LLMs, such as modeling thought processes, language comprehension, and social cognition</li>
 <li>Critically assess the abilities and limitations of conversational agents in replicating human-like reasoning and understanding</li>
 <li>Discuss the philosophical and ethical implications of AI, including questions around consciousness, agency, and the future of AI</li>
 <li>Develop and implement experiments using LLMs to explore research questions in psychology and cognitive science</li>
 </ul>
 <h2>Pre-Requisites</h2>
-Students <em>must</em> have prior experience with Python programming in order to enroll in this course.  Prior coursework on statistics or probability (e.g., PSYC 10, AP Stats, or similar) is also highly recommended.  An online statistics course is fine as a stand-in, but I will expect you to know about hypothesis testing, probability distributions, and have some intuitions about how to design and interpret statistical analysis before you start this course.  Additional prior coursework and/or experience with linguistics, linear algebra, statistics, machine learning, artificial intelligence, data science, philosophy of mind, and/or creative writing will all be useful, but are not required.
+<p>Students <em>must</em> have prior experience with Python programming in order to enroll in this course. Prior coursework on statistics or probability (e.g., PSYC 10, AP Stats, or similar) is also highly recommended. An online statistics course is fine as a stand-in, but I will expect you to know about hypothesis testing, probability distributions, and have some intuitions about how to design and interpret statistical analysis before you start this course. Additional prior coursework and/or experience with linguistics, linear algebra, statistics, machine learning, artificial intelligence, data science, philosophy of mind, and/or creative writing will all be useful, but are not required.</p>
 <h2>Course Materials</h2>
-<strong>We will use a variety of <em>freely available</em> online materials and research papers, which will be provided throughout the course.</strong> You will also need an internet-enabled computer or tablet capable of displaying and outputting graphics and running a standard web browser (e.g., Chrome or Firefox).
+<p><strong>We will use a variety of <em>freely available</em> online materials and research papers, which will be provided throughout the course.</strong> You will also need an internet-enabled computer or tablet capable of displaying and outputting graphics and running a standard web browser (e.g., Chrome or Firefox).</p>
 <h2>Format and Overview</h2>
-This course follows an <strong>experiential learning</strong> model. Students will engage with lecture materials through hands-on programming exercises, experiments with models and tools, and group discussions. Problem sets will deepen your understanding of the course material, and small projects will allow you to apply concepts to real-world research problems in the relevant domains.
+<p>This course follows an <strong>experiential learning</strong> model. Students will engage with lecture materials through hands-on programming exercises, experiments with models and tools, and group discussions. Problem sets will deepen your understanding of the course material, and small projects will allow you to apply concepts to real-world research problems in the relevant domains.</p>
 <p>Classes will include:</p>
 <ul>
 <li><strong>Lectures</strong>: Foundational topics, discussions on implementing and leveraging conversational agents, text embeddings, and text analysis.</li>
 <li><strong>Hands-on Labs</strong>: Experimenting with conversational agents, designing simple conversational agents, and conducting research using these models.</li>
-<li><strong>Problem Sets and Projects</strong>: Bi-weekly problem sets to apply what you've learned.  These will typically take the form of small-scale "research" projects.</li>
+<li><strong>Problem Sets and Projects</strong>: Bi-weekly problem sets to apply what you've learned. These will typically take the form of small-scale "research" projects.</li>
 </ul>
 <h2>Platforms and Tools</h2>
 <ul>
@@ -213,221 +270,390 @@ This course follows an <strong>experiential learning</strong> model. Students wi
 <li><a href="https://discord.gg/sftEk9Ygdw" target="_blank"><strong>Discord</strong></a>: To facilitate discussions outside of class, share ideas, and collaborate on projects.</li>
 </ul>
 <h2>Grading</h2>
-Grades will be based on the following components:
+<p>Grades will be based on the following components:</p>
 <ul>
 <li><strong>Problem Sets</strong> (75%): A total of 5 problem sets designed to reinforce key concepts (each is worth 15% of the final course grade).</li>
-<li><strong>Final Project</strong> (25%): You will carry out a larger scale (relative to the problem sets) "research" project on a topic of your choosing.  This will include:</li>
+<li><strong>Final Project</strong> (25%): You will carry out a larger scale (relative to the problem sets) "research" project on a topic of your choosing. This will include:</li>
 <li>Python code, organized as a Colaboratory notebook</li>
 <li>A "presentation" to the class (also submitted as a YouTube video), along with an in-class discussion of your project</li>
 <li>A brief (2--5 page) writeup of the main approach and key findings or takeaways</li>
 </ul>
-<p>Students may work together on all of the assignments, unless otherwise noted in class or in the assignment instructions.  However, <strong>each student must submit their own problem set and indicate who they worked with</strong>.  Final projects will (typically) be completed in groups of 2--3 students, with the entire group turning in the same project (and receiving the same grade for it).</p>
-<p>Grading Scale: A (93–100), A- (90–92), B+ (87–89), B (83–86), B- (80–82), C+ (77–79), C (73–76), C- (70–72), D (60–69), E (0–59).  All grades will be rounded to the nearest integer (e.g., a 92.5 avearge will result in a final grade of "A", whereas a 92.4999 average will result in a final grade of "A-").  Out of fairness to all students in the course, there will be no "negotiations" about grading-- e.g., your grade will be determined solely by the numerical average of your assignment scores.</p>
+<p>Students may work together on all of the assignments, unless otherwise noted in class or in the assignment instructions. However, <strong>each student must submit their own problem set and indicate who they worked with</strong>. Final projects will (typically) be completed in groups of 2--3 students, with the entire group turning in the same project (and receiving the same grade for it).</p>
+<p>Grading Scale: A (93–100), A- (90–92), B+ (87–89), B (83–86), B- (80–82), C+ (77–79), C (73–76), C- (70–72), D (60–69), E (0–59). All grades will be rounded to the nearest integer (e.g., a 92.5 average will result in a final grade of "A", whereas a 92.4999 average will result in a final grade of "A-"). Out of fairness to all students in the course, there will be no "negotiations" about grading-- e.g., your grade will be determined solely by the numerical average of your assignment scores.</p>
 <h3>Late Policy</h3>
-Problem sets will receive a 10% deduction for each week late, rounded <strong>up</strong> to the nearest whole week (e.g., from a grading standpoint submitting an assignment 1 minute late is the same as submitting it 1 day late, is the same as submitting it 6 days late).
+<p>Problem sets will receive a 10% deduction for each week late, rounded <strong>up</strong> to the nearest whole week (e.g., from a grading standpoint submitting an assignment 1 minute late is the same as submitting it 1 day late, is the same as submitting it 6 days late).</p>
 <p>Your final project <strong>must be submitted on time</strong> in order to receive credit for it.</p>
 <p>I strongly encourage you to submit your assignments <em>before</em> the last possible moment to avoid grading penalties, unexpected circumstances (e.g., illness, emergencies, etc.).</p>
 <h2>Academic Honor Principle</h2>
-Students are expected to adhere to Dartmouth’s Academic Honor Principle. You are encouraged to collaborate and discuss ideas with classmates, but all submitted work must be your own (aside from the final projects, which will be completed in small groups). If you're unsure about what constitutes a violation, please ask for clarification.
+<p>Students are expected to adhere to Dartmouth's Academic Honor Principle. You are encouraged to collaborate and discuss ideas with classmates, but all submitted work must be your own (aside from the final projects, which will be completed in small groups). If you're unsure about what constitutes a violation, please ask for clarification.</p>
 <h2>Use of Generative AI</h2>
-Given that this is a course about the technologies used to <em>make</em> modern generative AIs like ChatGPT, Claude, Llama, Gemeni, etc., you will be using these models extensively in class and in your assignments.  There are just two "rules" about using GenAI:
+<p>Given that this is a course about the technologies used to <em>make</em> modern generative AIs like ChatGPT, Claude, Llama, Gemini, etc., you will be using these models extensively in class and in your assignments. There are just two "rules" about using GenAI:</p>
 <ul>
 <li>Most importantly, <strong>you</strong> are responsible for the content of your assignments, whether written by you "from scratch" or with the help of a GenAI agent.</li>
-<li>Second, you are bound by the Academic Honor Principle to acknowledge any use of GenAI in your work.  This can be done by either using a brief comment in your code, by explicitly citing the tools you use, or by adding a note to the relevant section(s) of your assignment.  Each situation is unique, but you need to make it clear exactly what work is your own vs. produced by GenAI.  You must also include a chat history (including any prompts you used) as an addendum to your assignment(s).</li>
+<li>Second, you are bound by the Academic Honor Principle to acknowledge any use of GenAI in your work. This can be done by either using a brief comment in your code, by explicitly citing the tools you use, or by adding a note to the relevant section(s) of your assignment. Each situation is unique, but you need to make it clear exactly what work is your own vs. produced by GenAI. You must also include a chat history (including any prompts you used) as an addendum to your assignment(s).</li>
 </ul>
 <h2>Scheduling Conflicts</h2>
-Attendance is expected for all classes unless previously arranged. A critical part of the course is the in-class discussions and demos, and those will only work if you are physically present in class.  If you anticipate any conflicts due to religious observances or other commitments, please inform the instructor by Week 2 to make appropriate arrangements.
+<p>Attendance is expected for all classes unless previously arranged. A critical part of the course is the in-class discussions and demos, and those will only work if you are physically present in class. If you anticipate any conflicts due to religious observances or other commitments, please inform the instructor by Week 2 to make appropriate arrangements.</p>
 <h2>Student Needs</h2>
-We strive to create an inclusive learning environment where all students feel supported and engaged. If you require any accommodations, please contact the Student Accessibility Services office, or discuss your needs with the instructor privately.
+<p>We strive to create an inclusive learning environment where all students feel supported and engaged. If you require any accommodations, please contact the Student Accessibility Services office, or discuss your needs with the instructor privately.</p>
 <h2>Course Schedule</h2>
 <p><strong>Note:</strong> Classes meet MWF 10:10--11:15. X-hours (Th 12:15--1:05) in the first three weeks will be used to make up for instructor absence February 23--27 (no classes that week).</p>
-<h3>Week 1: Introduction & String Manipulation (January 5--9)</h3>
-<p><strong>Monday, January 5</strong> (Lecture 1): Course Introduction, Is ChatGPT Conscious?</p>
-<ul>
-<li>Topics: Course overview, capabilities of LLMs, consciousness debate</li>
-<li>Discussion: What is consciousness? Can machines be conscious?</li>
-<li>Reading: <a href="https://www.nature.com/articles/s41593-024-01711-5" target="_blank">Fedorenko et al. (2024)</a>; <a href="https://www.pnas.org/doi/10.1073/pnas.2105646118" target="_blank">Schrimpf et al. (2021)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week1/lecture1.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week1/lecture1.html}{HTML}]</li>
-</ul>
-<p><strong>Wednesday, January 7</strong> (Lecture 2): Pattern Matching & ELIZA</p>
-<ul>
-<li>Topics: String operations in Python, regular expressions, pattern matching</li>
-<li>Reading: <a href="https://dl.acm.org/doi/10.1145/365153.365168" target="_blank">Weizenbaum (1966)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week1/lecture2.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week1/lecture2.html}{HTML}]</li>
-</ul>
-<p><strong>Thursday, January 8</strong> (X-hour 1): ELIZA Deep Dive</p>
-<ul>
-<li>Topics: Extended discussion of pattern matching, implementation strategies</li>
-<li>Hands-on: Start Assignment 1</li>
-<li>Demo: [\href{https://contextlab.github.io/llm-course/slides/week1/xhour<em>eliza</em>demo.html}{Interactive Notebook}]</li>
-</ul>
-<p><strong>Friday, January 9</strong> (Lecture 3): ELIZA Implementation & The ELIZA Effect</p>
-<ul>
-<li>Topics: Implementing ELIZA from scratch, psychological implications</li>
-<li><strong>📝 Assignment 1 Released:</strong> [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Assignment\%201\%3A\%20ELIZA/README.md}{Building the ELIZA Chatbot}]</li>
-<li>Reading: <a href="https://www.tandfonline.com/doi/full/10.1080/24701475.2020.1814847" target="_blank">Natale (2021)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week1/lecture3.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week1/lecture3.html}{HTML}]</li>
-</ul>
+<table>
+<thead><tr>
+<th>Week</th>
+<th>Dates</th>
+<th>Topics</th>
+<th>Assignments</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Jan 5--9</td>
+<td>Introduction, Pattern Matching, ELIZA</td>
+<td>Assignment 1 released</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Jan 12--16</td>
+<td>Data Cleaning, Tokenization, POS Tagging</td>
+<td>Assignment 2 released, Assignment 1 due</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Jan 19--23</td>
+<td>Classic Embeddings (LSA, LDA), Word Embeddings</td>
+<td>Assignment 3 released, Assignment 2 due</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Jan 26--30</td>
+<td>Contextual Embeddings, Dimensionality Reduction</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Feb 2--6</td>
+<td>Attention Mechanisms, Transformer Architecture</td>
+<td>Assignment 4 released, Assignment 3 due</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Feb 9--13</td>
+<td>BERT Deep Dive, Encoder Models</td>
+<td>Assignment 4 due</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Feb 16--20</td>
+<td>GPT Architecture, Scaling Up</td>
+<td>Assignment 5 released</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Feb 23--27</td>
+<td><strong>No classes</strong> (instructor away)</td>
+<td>Work on Assignment 5</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Mar 2--6</td>
+<td>RAG, Mixture of Experts, Ethics</td>
+<td>Assignment 5 due</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Mar 9</td>
+<td>Final Project Presentations</td>
+<td></td>
+</tr>
+<tr>
+<td>Finals</td>
+<td>Mar 13</td>
+<td></td>
+<td>Final Project due</td>
+</tr>
+</tbody>
+</table>
+<h2>Detailed Schedule</h2>
+<h3>Week 1: Introduction  |  String Manipulation (January 5--9)</h3>
+<table>
+<thead><tr>
+<th>Day</th>
+<th>Lecture</th>
+<th>Topics</th>
+<th>Materials</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Mon Jan 5</td>
+<td>Lecture 1</td>
+<td>Course Introduction, Is ChatGPT Conscious?</td>
+<td><a href="https://www.nature.com/articles/s41593-024-01711-5" target="_blank">Fedorenko et al. (2024)</a>, <a href="https://www.pnas.org/doi/10.1073/pnas.2105646118" target="_blank">Schrimpf et al. (2021)</a></td>
+</tr>
+<tr>
+<td>Wed Jan 7</td>
+<td>Lecture 2</td>
+<td>Pattern Matching</td>
+<td>ELIZA</td>
+<td><a href="https://dl.acm.org/doi/10.1145/365153.365168" target="_blank">Weizenbaum (1966)</a></td>
+</tr>
+<tr>
+<td>Thu Jan 8</td>
+<td>X-hour 1</td>
+<td>ELIZA Deep Dive</td>
+<td>Start Assignment 1</td>
+</tr>
+<tr>
+<td>Fri Jan 9</td>
+<td>Lecture 3</td>
+<td>ELIZA Implementation</td>
+<td>The ELIZA Effect</td>
+<td><a href="https://www.tandfonline.com/doi/full/10.1080/24701475.2020.1814847" target="_blank">Natale (2021)</a>, <strong>Assignment 1 Released</strong></td>
+</tr>
+</tbody>
+</table>
 <h3>Week 2: Computational Linguistics (January 12--16)</h3>
-<p><strong>Monday, January 12</strong> (Lecture 4): Data Cleaning & Preprocessing</p>
-<ul>
-<li>Topics: Web scraping with Beautiful Soup, data cleaning, text normalization</li>
-<li>Reading: HuggingFace NLP Course Chapter 2</li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week2/lecture4.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week2/lecture4.html}{HTML}]</li>
-</ul>
-<p><strong>Wednesday, January 14</strong> (Lecture 5): Tokenization</p>
-<ul>
-<li>Topics: Byte-Pair Encoding (BPE), WordPiece, SentencePiece</li>
-<li>Reading: <a href="https://aclanthology.org/P16-1162/" target="_blank">Sennrich et al. (2016)</a>; <a href="https://aclanthology.org/D18-2012/" target="_blank">Kudo & Richardson (2018)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week2/lecture5.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week2/lecture5.html}{HTML}]</li>
-</ul>
-<p><strong>Thursday, January 15</strong> (X-hour 2): Text Classification Workshop</p>
-<ul>
-<li>Topics: Building classifiers, feature engineering for text</li>
-<li>Hands-on: Explore different classification approaches</li>
-<li>Demo: [\href{https://contextlab.github.io/llm-course/slides/week2/xhour<em>classification</em>demo.html}{Interactive Notebook}]</li>
-</ul>
-<p><strong>Friday, January 16</strong> (Lecture 6): POS Tagging & Sentiment Analysis</p>
-<ul>
-<li>Topics: Part-of-speech tagging, named entity recognition, sentiment analysis</li>
-<li><strong>📝 Assignment 2 Released:</strong> [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Assignment\%202\%3A\%20SPAM\%20classifier/README.md}{SPAM Classifier}]</li>
-<li><strong>✅ Assignment 1 Due</strong></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week2/lecture6.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week2/lecture6.html}{HTML}]</li>
-</ul>
+<table>
+<thead><tr>
+<th>Day</th>
+<th>Lecture</th>
+<th>Topics</th>
+<th>Materials</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Mon Jan 12</td>
+<td>Lecture 4</td>
+<td>Data Cleaning</td>
+<td>Preprocessing</td>
+<td>HuggingFace NLP Course Chapter 2</td>
+</tr>
+<tr>
+<td>Wed Jan 14</td>
+<td>Lecture 5</td>
+<td>Tokenization</td>
+<td><a href="https://aclanthology.org/P16-1162/" target="_blank">Sennrich et al. (2016)</a>, <a href="https://aclanthology.org/D18-2012/" target="_blank">Kudo</td>
+<td>Richardson (2018)</a></td>
+</tr>
+<tr>
+<td>Thu Jan 15</td>
+<td>X-hour 2</td>
+<td>Text Classification Workshop</td>
+<td></td>
+</tr>
+<tr>
+<td>Fri Jan 16</td>
+<td>Lecture 6</td>
+<td>POS Tagging</td>
+<td>Sentiment Analysis</td>
+<td><strong>Assignment 2 Released</strong>, <strong>Assignment 1 Due</strong></td>
+</tr>
+</tbody>
+</table>
 <h3>Week 3: Text Embeddings I (January 19--23)</h3>
-<p><strong>Monday, January 19</strong>: Martin Luther King Jr. Day (No Class)</p>
-<p><strong>Wednesday, January 21</strong> (Lecture 7): Classic Embeddings</p>
-<ul>
-<li>Topics: Latent Semantic Analysis (LSA), Latent Dirichlet Allocation (LDA)</li>
-<li>Reading: <a href="https://psycnet.apa.org/record/1997-02478-006" target="_blank">Landauer & Dumais (1997)</a>; <a href="https://www.jmlr.org/papers/v3/blei03a" target="_blank">Blei et al. (2003)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week3/lecture7.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week3/lecture7.html}{HTML}]</li>
-</ul>
-<p><strong>Thursday, January 22</strong> (X-hour 3): Embeddings Workshop</p>
-<ul>
-<li>Topics: Implementing classic embeddings (LSA, LDA)</li>
-<li>Hands-on: Compare embedding methods on real data</li>
-<li>Demo: [\href{https://contextlab.github.io/llm-course/slides/week3/xhour<em>embeddings</em>demo.html}{Interactive Notebook}]</li>
-</ul>
-<p><strong>Friday, January 23</strong> (Lecture 8): Word Embeddings</p>
-<ul>
-<li>Topics: Word2Vec (CBOW and Skip-gram), GloVe, FastText</li>
-<li><strong>📝 Assignment 3 Released:</strong> [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Assignment\%203\%3A\%20Wikipedia/README.md}{Wikipedia Embeddings Comparison}]</li>
-<li><strong>✅ Assignment 2 Due</strong></li>
-<li>Reading: <a href="https://arxiv.org/abs/1301.3781" target="_blank">Mikolov et al. (2013)</a>; <a href="https://aclanthology.org/D14-1162/" target="_blank">Pennington et al. (2014)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week3/lecture8.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week3/lecture8.html}{HTML}]</li>
-</ul>
+<table>
+<thead><tr>
+<th>Day</th>
+<th>Lecture</th>
+<th>Topics</th>
+<th>Materials</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Mon Jan 19</td>
+<td></td>
+<td>Martin Luther King Jr. Day (No Class)</td>
+<td></td>
+</tr>
+<tr>
+<td>Wed Jan 21</td>
+<td>Lecture 7</td>
+<td>Classic Embeddings (LSA, LDA)</td>
+<td><a href="https://psycnet.apa.org/record/1997-02478-006" target="_blank">Landauer</td>
+<td>Dumais (1997)</a>, <a href="https://www.jmlr.org/papers/v3/blei03a" target="_blank">Blei et al. (2003)</a></td>
+</tr>
+<tr>
+<td>Thu Jan 22</td>
+<td>X-hour 3</td>
+<td>Embeddings Workshop</td>
+<td></td>
+</tr>
+<tr>
+<td>Fri Jan 23</td>
+<td>Lecture 8</td>
+<td>Word Embeddings (Word2Vec, GloVe)</td>
+<td><a href="https://arxiv.org/abs/1301.3781" target="_blank">Mikolov et al. (2013)</a>, <a href="https://aclanthology.org/D14-1162/" target="_blank">Pennington et al. (2014)</a>, <strong>Assignment 3 Released</strong>, <strong>Assignment 2 Due</strong></td>
+</tr>
+</tbody>
+</table>
 <h3>Week 4: Text Embeddings II (January 26--30)</h3>
-<p><strong>Monday, January 26</strong> (Lecture 9): Contextual Embeddings</p>
-<ul>
-<li>Topics: ELMo, Universal Sentence Encoder, BERT embeddings</li>
-<li>Reading: <a href="https://aclanthology.org/N18-1202/" target="_blank">Peters et al. (2018)</a>; <a href="https://arxiv.org/abs/1803.11175" target="_blank">Cer et al. (2018)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.html}{HTML}]</li>
-</ul>
-<p><strong>Wednesday, January 28</strong> (Lecture 10): Dimensionality Reduction</p>
-<ul>
-<li>Topics: PCA, t-SNE, UMAP for visualizing embeddings</li>
-<li>Reading: <a href="https://arxiv.org/abs/1802.03426" target="_blank">McInnes et al. (2018)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.html}{HTML}]</li>
-</ul>
-<p><strong>Friday, January 30</strong> (Lecture 11): Cognitive Models of Semantic Representation</p>
-<ul>
-<li>Topics: Distributional semantics, neural representation of meaning</li>
-<li>Reading: <a href="https://www.jneurosci.org/content/36/45/11444" target="_blank">Anderson et al. (2016)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week3-4/lecture.html}{HTML}]</li>
-</ul>
-<h3>Week 5: Transformers & Attention (February 2--6)</h3>
-<p><strong>Monday, February 2</strong> (Lecture 12): Attention Mechanisms</p>
-<ul>
-<li>Topics: Sequence-to-sequence models, attention mechanism fundamentals</li>
-<li><strong>✅ Assignment 3 Due</strong></li>
-<li>Reading: <a href="https://arxiv.org/abs/1409.0473" target="_blank">Bahdanau et al. (2015)</a>; <a href="https://arxiv.org/abs/1706.03762" target="_blank">Vaswani et al. (2017)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]</li>
-</ul>
-<p><strong>Wednesday, February 4</strong> (Lecture 13): Transformer Architecture</p>
-<ul>
-<li>Topics: Multi-head attention, positional encoding, transformer blocks</li>
-<li>Reading: <a href="https://arxiv.org/abs/1706.03762" target="_blank">Vaswani et al. (2017)</a>; HuggingFace NLP Course Chapter 3</li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]</li>
-</ul>
-<p><strong>Friday, February 6</strong> (Lecture 14): Training Transformers</p>
-<ul>
-<li>Topics: Pre-training objectives, masked language modeling, next token prediction</li>
-<li><strong>📝 Assignment 4 Released:</strong> [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Assignment\%204\%3A\%20Customer\%20Service\%20Chatbot/README.md}{Context-Aware Customer Service Chatbot}]</li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]</li>
-</ul>
+<table>
+<thead><tr>
+<th>Day</th>
+<th>Lecture</th>
+<th>Topics</th>
+<th>Materials</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Mon Jan 26</td>
+<td>Lecture 9</td>
+<td>Contextual Embeddings</td>
+<td><a href="https://aclanthology.org/N18-1202/" target="_blank">Peters et al. (2018)</a>, <a href="https://arxiv.org/abs/1803.11175" target="_blank">Cer et al. (2018)</a></td>
+</tr>
+<tr>
+<td>Wed Jan 28</td>
+<td>Lecture 10</td>
+<td>Dimensionality Reduction</td>
+<td><a href="https://arxiv.org/abs/1802.03426" target="_blank">McInnes et al. (2018)</a></td>
+</tr>
+<tr>
+<td>Fri Jan 30</td>
+<td>Lecture 11</td>
+<td>Cognitive Models of Semantic Representation</td>
+<td><a href="https://www.jneurosci.org/content/36/45/11444" target="_blank">Anderson et al. (2016)</a></td>
+</tr>
+</tbody>
+</table>
+<h3>Week 5: Transformers  |  Attention (February 2--6)</h3>
+<table>
+<thead><tr>
+<th>Day</th>
+<th>Lecture</th>
+<th>Topics</th>
+<th>Materials</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Mon Feb 2</td>
+<td>Lecture 12</td>
+<td>Attention Mechanisms</td>
+<td><a href="https://arxiv.org/abs/1409.0473" target="_blank">Bahdanau et al. (2015)</a>, <a href="https://arxiv.org/abs/1706.03762" target="_blank">Vaswani et al. (2017)</a>, <strong>Assignment 3 Due</strong></td>
+</tr>
+<tr>
+<td>Wed Feb 4</td>
+<td>Lecture 13</td>
+<td>Transformer Architecture</td>
+<td><a href="https://arxiv.org/abs/1706.03762" target="_blank">Vaswani et al. (2017)</a>, HuggingFace NLP Course Chapter 3</td>
+</tr>
+<tr>
+<td>Fri Feb 6</td>
+<td>Lecture 14</td>
+<td>Training Transformers</td>
+<td><strong>Assignment 4 Released</strong></td>
+</tr>
+</tbody>
+</table>
 <h3>Week 6: Encoder Models (February 9--13)</h3>
-<p><strong>Monday, February 9</strong> (Lecture 15): BERT Deep Dive</p>
-<ul>
-<li>Topics: BERT architecture, bidirectional pre-training, fine-tuning</li>
-<li>Reading: <a href="https://aclanthology.org/N19-1423/" target="_blank">Devlin et al. (2019)</a>; HuggingFace NLP Course Chapter 4</li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]</li>
-</ul>
-<p><strong>Wednesday, February 11</strong> (Lecture 16): BERT Variants</p>
-<ul>
-<li>Topics: RoBERTa, ALBERT, DistilBERT, and other encoder models</li>
-<li>Reading: <a href="https://arxiv.org/abs/1907.11692" target="_blank">Liu et al. (2019)</a>; <a href="https://arxiv.org/abs/1910.01108" target="_blank">Sanh et al. (2019)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]</li>
-</ul>
-<p><strong>Friday, February 13</strong> (Lecture 17): Applications of Encoder Models</p>
-<ul>
-<li>Topics: Classification, NER, question answering with BERT</li>
-<li><strong>✅ Assignment 4 Due</strong></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week5-6/lecture.html}{HTML}]</li>
-</ul>
-<h3>Week 7: Decoder Models & GPT (February 16--20)</h3>
-<p><strong>Monday, February 16</strong> (Lecture 18): GPT Architecture</p>
-<ul>
-<li>Topics: Autoregressive language models, GPT-1 and GPT-2</li>
-<li>Reading: <a href="https://cdn.openai.com/research-covers/language-unsupervised/language<em>understanding</em>paper.pdf" target="_blank">Radford et al. (2018)</a>; <a href="https://cdn.openai.com/better-language-models/language<em>models</em>are<em>unsupervised</em>multitask_learners.pdf" target="_blank">Radford et al. (2019)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week7/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week7/lecture.html}{HTML}]</li>
-</ul>
-<p><strong>Wednesday, February 18</strong> (Lecture 19): Scaling Up to GPT-3 and Beyond</p>
-<ul>
-<li>Topics: GPT-3, in-context learning, few-shot prompting, GPT-4 and Claude</li>
-<li><strong>📝 Assignment 5 Released:</strong> [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Assignment\%205\%3A\%20GPT/README.md}{Build and Train a GPT Model}]</li>
-<li>Reading: <a href="https://arxiv.org/abs/2005.14165" target="_blank">Brown et al. (2020)</a>; <a href="https://arxiv.org/abs/2303.08774" target="_blank">OpenAI (2023)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week7/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week7/lecture.html}{HTML}]</li>
-</ul>
-<p><strong>Friday, February 20</strong> (Lecture 20): Implementing GPT from Scratch</p>
-<ul>
-<li>Topics: Building GPT architecture, training considerations</li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week7/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week7/lecture.html}{HTML}]</li>
-</ul>
+<table>
+<thead><tr>
+<th>Day</th>
+<th>Lecture</th>
+<th>Topics</th>
+<th>Materials</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Mon Feb 9</td>
+<td>Lecture 15</td>
+<td>BERT Deep Dive</td>
+<td><a href="https://aclanthology.org/N19-1423/" target="_blank">Devlin et al. (2019)</a>, HuggingFace NLP Course Chapter 4</td>
+</tr>
+<tr>
+<td>Wed Feb 11</td>
+<td>Lecture 16</td>
+<td>BERT Variants</td>
+<td><a href="https://arxiv.org/abs/1907.11692" target="_blank">Liu et al. (2019)</a>, <a href="https://arxiv.org/abs/1910.01108" target="_blank">Sanh et al. (2019)</a></td>
+</tr>
+<tr>
+<td>Fri Feb 13</td>
+<td>Lecture 17</td>
+<td>Applications of Encoder Models</td>
+<td><strong>Assignment 4 Due</strong></td>
+</tr>
+</tbody>
+</table>
+<h3>Week 7: Decoder Models  |  GPT (February 16--20)</h3>
+<table>
+<thead><tr>
+<th>Day</th>
+<th>Lecture</th>
+<th>Topics</th>
+<th>Materials</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Mon Feb 16</td>
+<td>Lecture 18</td>
+<td>GPT Architecture</td>
+<td><a href="https://cdn.openai.com/research-covers/language-unsupervised/language<em>understanding</em>paper.pdf" target="_blank">Radford et al. (2018)</a>, <a href="https://cdn.openai.com/better-language-models/language<em>models</em>are<em>unsupervised</em>multitask_learners.pdf" target="_blank">Radford et al. (2019)</a></td>
+</tr>
+<tr>
+<td>Wed Feb 18</td>
+<td>Lecture 19</td>
+<td>Scaling Up to GPT-3 and Beyond</td>
+<td><a href="https://arxiv.org/abs/2005.14165" target="_blank">Brown et al. (2020)</a>, <a href="https://arxiv.org/abs/2303.08774" target="_blank">OpenAI (2023)</a>, <strong>Assignment 5 Released</strong></td>
+</tr>
+<tr>
+<td>Fri Feb 20</td>
+<td>Lecture 20</td>
+<td>Implementing GPT from Scratch</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <h3>Week 8: No Classes (February 23--27)</h3>
-<p><strong>Instructor away February 23--27. No classes this week. Use this time to work on Assignment 5 and begin planning your final project.</strong></p>
+<p>Instructor away February 23--27. No classes this week. Use this time to work on Assignment 5 and begin planning your final project.</p>
 <h3>Week 9: Advanced Topics (March 2--6)</h3>
-<p><strong>Monday, March 2</strong> (Lecture 21): Retrieval Augmented Generation (RAG)</p>
-<ul>
-<li>Topics: Vector databases, retrieval mechanisms, RAG architectures</li>
-<li><strong>✅ Assignment 5 Due</strong></li>
-<li>Reading: <a href="https://arxiv.org/abs/2005.11401" target="_blank">Lewis et al. (2020)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week9/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week9/lecture.html}{HTML}]</li>
-</ul>
-<p><strong>Wednesday, March 4</strong> (Lecture 22): Mixture of Experts & Efficiency</p>
-<ul>
-<li>Topics: MoE architectures, model compression, distillation</li>
-<li>Reading: <a href="https://arxiv.org/abs/2101.03961" target="_blank">Fedus et al. (2022)</a>; <a href="https://arxiv.org/abs/2401.04088" target="_blank">Jiang et al. (2024)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week9/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week9/lecture.html}{HTML}]</li>
-</ul>
-<p><strong>Friday, March 6</strong> (Lecture 23): Ethics, Bias, and Safety</p>
-<ul>
-<li>Topics: Bias in LLMs, alignment, safety considerations</li>
-<li>Reading: <a href="https://dl.acm.org/doi/10.1145/3442188.3445922" target="_blank">Bender et al. (2021)</a></li>
-<li>Slides: [\href{https://contextlab.github.io/llm-course/slides/week9/lecture.pdf}{PDF}][\href{https://contextlab.github.io/llm-course/slides/week9/lecture.html}{HTML}]</li>
-</ul>
+<table>
+<thead><tr>
+<th>Day</th>
+<th>Lecture</th>
+<th>Topics</th>
+<th>Materials</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Mon Mar 2</td>
+<td>Lecture 21</td>
+<td>Retrieval Augmented Generation (RAG)</td>
+<td><a href="https://arxiv.org/abs/2005.11401" target="_blank">Lewis et al. (2020)</a>, <strong>Assignment 5 Due</strong></td>
+</tr>
+<tr>
+<td>Wed Mar 4</td>
+<td>Lecture 22</td>
+<td>Mixture of Experts</td>
+<td>Efficiency</td>
+<td><a href="https://arxiv.org/abs/2101.03961" target="_blank">Fedus et al. (2022)</a>, <a href="https://arxiv.org/abs/2401.04088" target="_blank">Jiang et al. (2024)</a></td>
+</tr>
+<tr>
+<td>Fri Mar 6</td>
+<td>Lecture 23</td>
+<td>Ethics, Bias, and Safety</td>
+<td><a href="https://dl.acm.org/doi/10.1145/3442188.3445922" target="_blank">Bender et al. (2021)</a></td>
+</tr>
+</tbody>
+</table>
 <h3>Week 10: Final Projects (March 9)</h3>
-<p><strong>Monday, March 9</strong> (Lecture 24): Final Project Presentations & Wrap-up</p>
-<ul>
-<li>Final project presentations (all teams)</li>
-<li>Course wrap-up and reflections</li>
-<li>Last day of classes</li>
-<li><strong>📝 Final Project:</strong> [\href{https://github.com/ContextLab/llm-course/blob/main/assignments/Final\%20Project/README.md}{Research Project}]</li>
-</ul>
+<table>
+<thead><tr>
+<th>Day</th>
+<th>Lecture</th>
+<th>Topics</th>
+<th>Materials</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Mon Mar 9</td>
+<td>Lecture 24</td>
+<td>Final Project Presentations</td>
+<td>Wrap-up</td>
+<td>Last day of classes</td>
+</tr>
+</tbody>
+</table>
 <h3>Final Exam Period (March 13--17)</h3>
-<p><strong>Friday, March 13</strong>
-<ul>
-<li><strong>✅ Final Project Materials Due</strong> (code, video presentation, writeup)</li>
-</ul></p>
+<p><strong>Friday, March 13</strong>: Final Project Materials Due (code, video presentation, writeup)</p>
     </main>
 
     <footer>

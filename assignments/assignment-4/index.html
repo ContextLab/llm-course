@@ -81,6 +81,12 @@
             margin: 0 auto;
             padding: 2rem;
         }
+        .content h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+        }
         .content h2 {
             font-size: 1.75rem;
             font-weight: 700;
@@ -95,12 +101,18 @@
             color: var(--text-primary);
             margin: 1.5rem 0 0.75rem;
         }
+        .content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.25rem 0 0.5rem;
+        }
         .content p {
             color: var(--text-secondary);
             line-height: 1.8;
             margin-bottom: 1rem;
         }
-        .content ul {
+        .content ul, .content ol {
             color: var(--text-secondary);
             padding-left: 1.5rem;
             margin-bottom: 1rem;
@@ -119,6 +131,11 @@
         .content strong {
             color: var(--text-primary);
         }
+        .content hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
         .content table {
             width: 100%;
             border-collapse: collapse;
@@ -136,6 +153,9 @@
         }
         .content td {
             color: var(--text-secondary);
+        }
+        .content tr:hover {
+            background: var(--surface-color);
         }
         footer {
             background: var(--surface-color);
@@ -205,13 +225,15 @@
 <p>This assignment simulates a real-world application where customers need accurate, context-aware assistance, and where hallucinated or incorrect information could damage user trust.</p>
 <h2>Learning Objectives</h2>
 <p>By completing this assignment, you will develop the following skills:</p>
-<p>1. <strong>Semantic Understanding</strong>: Apply transformer-based models (BERT, Sentence-BERT) to encode text into meaningful vector representations
-2. <strong>Information Retrieval</strong>: Implement efficient semantic search using vector similarity and libraries like FAISS
-3. <strong>Retrieval-Augmented Generation (RAG)</strong>: Combine retrieval and generation to produce grounded, factual responses
-4. <strong>Evaluation Design</strong>: Develop metrics to assess chatbot quality, including retrieval accuracy and response relevance
-5. <strong>System Architecture</strong>: Design and implement a complete end-to-end conversational AI system
-6. <strong>Baseline Comparison</strong>: Understand the importance of baselines by comparing against keyword-matching approaches
-7. <strong>Production Considerations</strong>: Handle edge cases, multi-turn conversations, and system scalability</p>
+<ol>
+<li><strong>Semantic Understanding</strong>: Apply transformer-based models (BERT, Sentence-BERT) to encode text into meaningful vector representations</li>
+<li><strong>Information Retrieval</strong>: Implement efficient semantic search using vector similarity and libraries like FAISS</li>
+<li><strong>Retrieval-Augmented Generation (RAG)</strong>: Combine retrieval and generation to produce grounded, factual responses</li>
+<li><strong>Evaluation Design</strong>: Develop metrics to assess chatbot quality, including retrieval accuracy and response relevance</li>
+<li><strong>System Architecture</strong>: Design and implement a complete end-to-end conversational AI system</li>
+<li><strong>Baseline Comparison</strong>: Understand the importance of baselines by comparing against keyword-matching approaches</li>
+<li><strong>Production Considerations</strong>: Handle edge cases, multi-turn conversations, and system scalability</li>
+</ol>
 <h2>Background</h2>
 <h3>Context-Aware Language Understanding</h3>
 <p>Traditional customer service systems often rely on keyword matching or simple pattern recognition (like your Assignment 1 ELIZA chatbot). However, customers express the same need in many different ways:
@@ -222,20 +244,24 @@
 <li>"The login page keeps rejecting my credentials"</li>
 </ul></p>
 <p>Transformer-based models like BERT can understand that these queries are semantically similar, even when they share few keywords. This is achieved through:</p>
-<p>1. <strong>Contextualized Embeddings</strong>: BERT produces vector representations where semantically similar text has similar vectors
-2. <strong>Semantic Similarity</strong>: Using cosine similarity or other distance metrics to find relevant knowledge base entries
-3. <strong>Dense Retrieval</strong>: Unlike sparse keyword methods (TF-IDF, BM25), dense vector representations capture deeper semantic meaning</p>
+<ol>
+<li><strong>Contextualized Embeddings</strong>: BERT produces vector representations where semantically similar text has similar vectors</li>
+<li><strong>Semantic Similarity</strong>: Using cosine similarity or other distance metrics to find relevant knowledge base entries</li>
+<li><strong>Dense Retrieval</strong>: Unlike sparse keyword methods (TF-IDF, BM25), dense vector representations capture deeper semantic meaning</li>
+</ol>
 <h3>Retrieval-Augmented Generation (RAG)</h3>
 <p>RAG systems combine the strengths of retrieval (finding relevant information) and generation (producing natural language). The typical pipeline:</p>
-<p>1. <strong>Encode</strong>: Convert the user query into a vector representation
-2. <strong>Retrieve</strong>: Find the most similar entries in your knowledge base
-3. <strong>Augment</strong>: Include retrieved context with the query
-4. <strong>Generate</strong>: Produce a response grounded in the retrieved information</p>
+<ol>
+<li><strong>Encode</strong>: Convert the user query into a vector representation</li>
+<li><strong>Retrieve</strong>: Find the most similar entries in your knowledge base</li>
+<li><strong>Augment</strong>: Include retrieved context with the query</li>
+<li><strong>Generate</strong>: Produce a response grounded in the retrieved information</li>
+</ol>
 <p>This approach helps prevent hallucination and ensures responses are factually grounded in your knowledge base.</p>
 <h3>Key Papers and Concepts</h3>
 <ul>
 <li><strong>BERT</strong> (Devlin et al., 2018): Bidirectional encoder representations from transformers</li>
-<li><strong>Sentence-BERT</strong> (Reimers & Gurevych, 2019): Modified BERT for efficient sentence embeddings</li>
+<li><strong>Sentence-BERT</strong> (Reimers  |  Gurevych, 2019): Modified BERT for efficient sentence embeddings</li>
 <li><strong>RAG</strong> (Lewis et al., 2020): Retrieval-augmented generation for knowledge-intensive tasks</li>
 <li><strong>Dense Passage Retrieval</strong> (Karpukhin et al., 2020): Using dense representations for passage retrieval</li>
 </ul>
@@ -530,15 +556,17 @@ openai>=0.27.0  # if using OpenAI
 <li>Comparison of semantic vs. keyword baseline on same queries</li>
 </ul>
 <h3>Required Sections in Notebook</h3>
-<p>1. <strong>Introduction</strong>: Overview of your system
-2. <strong>Data Loading</strong>: Load and explore the knowledge base
-3. <strong>Semantic Search Implementation</strong>: Encoder model and FAISS
-4. <strong>Baseline Implementation</strong>: TF-IDF or BM25
-5. <strong>Response Generation</strong>: Template or LLM-based
-6. <strong>Multi-Turn Handling</strong>: Conversation state management
-7. <strong>Evaluation</strong>: Metrics, comparisons, and analysis
-8. <strong>Examples</strong>: Interactive demos
-9. <strong>Conclusion</strong>: Findings, limitations, future improvements</p>
+<ol>
+<li><strong>Introduction</strong>: Overview of your system</li>
+<li><strong>Data Loading</strong>: Load and explore the knowledge base</li>
+<li><strong>Semantic Search Implementation</strong>: Encoder model and FAISS</li>
+<li><strong>Baseline Implementation</strong>: TF-IDF or BM25</li>
+<li><strong>Response Generation</strong>: Template or LLM-based</li>
+<li><strong>Multi-Turn Handling</strong>: Conversation state management</li>
+<li><strong>Evaluation</strong>: Metrics, comparisons, and analysis</li>
+<li><strong>Examples</strong>: Interactive demos</li>
+<li><strong>Conclusion</strong>: Findings, limitations, future improvements</li>
+</ol>
 <h2>Evaluation Criteria</h2>
 <p>Your assignment will be graded on the following criteria:</p>
 <h3>Technical Implementation (40 points)</h3>
@@ -580,28 +608,36 @@ openai>=0.27.0  # if using OpenAI
 </ul>
 <h2>Tips for Success</h2>
 <h3>Getting Started (1-Week Timeline)</h3>
-<p>1. <strong>Start Simple</strong>: Begin with a small knowledge base (20-30 FAQs) to test your pipeline
-2. <strong>Incremental Development</strong>: Build and test each component separately before integration
-3. <strong>Use Examples</strong>: Work through concrete examples at each step
-4. <strong>Validate Early</strong>: Check that embeddings and retrieval make sense before moving to generation
-5. <strong>Leverage GenAI</strong>: Use ChatGPT, Claude, or GitHub Copilot to accelerate implementation. Ask for help understanding libraries, debugging errors, and optimizing code.</p>
+<ol>
+<li><strong>Start Simple</strong>: Begin with a small knowledge base (20-30 FAQs) to test your pipeline</li>
+<li><strong>Incremental Development</strong>: Build and test each component separately before integration</li>
+<li><strong>Use Examples</strong>: Work through concrete examples at each step</li>
+<li><strong>Validate Early</strong>: Check that embeddings and retrieval make sense before moving to generation</li>
+<li><strong>Leverage GenAI</strong>: Use ChatGPT, Claude, or GitHub Copilot to accelerate implementation. Ask for help understanding libraries, debugging errors, and optimizing code.</li>
+</ol>
 <h3>Common Pitfalls to Avoid</h3>
-<p>1. <strong>Ignoring Normalization</strong>: Normalize embeddings for cosine similarity
-2. <strong>Wrong Distance Metric</strong>: FAISS L2 distance requires normalized vectors for cosine similarity, or use IndexFlatIP
-3. <strong>Memory Issues</strong>: Batch embedding generation for large knowledge bases
-4. <strong>Overfitting to Examples</strong>: Test on diverse, unseen queries
-5. <strong>Hallucination</strong>: Always ground responses in retrieved context
-6. <strong>Ignoring Edge Cases</strong>: Handle no-match scenarios gracefully</p>
+<ol>
+<li><strong>Ignoring Normalization</strong>: Normalize embeddings for cosine similarity</li>
+<li><strong>Wrong Distance Metric</strong>: FAISS L2 distance requires normalized vectors for cosine similarity, or use IndexFlatIP</li>
+<li><strong>Memory Issues</strong>: Batch embedding generation for large knowledge bases</li>
+<li><strong>Overfitting to Examples</strong>: Test on diverse, unseen queries</li>
+<li><strong>Hallucination</strong>: Always ground responses in retrieved context</li>
+<li><strong>Ignoring Edge Cases</strong>: Handle no-match scenarios gracefully</li>
+</ol>
 <h3>Debugging Strategies</h3>
-<p>1. <strong>Print Similarities</strong>: Inspect actual similarity scores to understand retrieval
-2. <strong>Manual Inspection</strong>: Look at retrieved documents for sample queries
-3. <strong>Embedding Visualization</strong>: Use t-SNE/UMAP to visualize embedding space
-4. <strong>Start Small</strong>: Debug with 10 FAQs before scaling to 100+</p>
+<ol>
+<li><strong>Print Similarities</strong>: Inspect actual similarity scores to understand retrieval</li>
+<li><strong>Manual Inspection</strong>: Look at retrieved documents for sample queries</li>
+<li><strong>Embedding Visualization</strong>: Use t-SNE/UMAP to visualize embedding space</li>
+<li><strong>Start Small</strong>: Debug with 10 FAQs before scaling to 100+</li>
+</ol>
 <h3>Performance Optimization</h3>
-<p>1. <strong>Cache Embeddings</strong>: Don't re-encode the knowledge base every time
-2. <strong>Batch Processing</strong>: Encode multiple queries at once
-3. <strong>FAISS GPU</strong>: Use GPU-accelerated FAISS for large knowledge bases
-4. <strong>Model Selection</strong>: Balance model size with quality needs</p>
+<ol>
+<li><strong>Cache Embeddings</strong>: Don't re-encode the knowledge base every time</li>
+<li><strong>Batch Processing</strong>: Encode multiple queries at once</li>
+<li><strong>FAISS GPU</strong>: Use GPU-accelerated FAISS for large knowledge bases</li>
+<li><strong>Model Selection</strong>: Balance model size with quality needs</li>
+</ol>
 <h3>Going Beyond Requirements</h3>
 <ul>
 <li>Implement A/B testing framework to compare different models</li>
@@ -612,11 +648,21 @@ openai>=0.27.0  # if using OpenAI
 </ul>
 <h2>Resources and References</h2>
 <h3>Key Papers</h3>
-<p>1. <strong>BERT</strong>: Devlin et al. (2018). "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding". <a href="https://arxiv.org/abs/1810.04805" target="_blank">arXiv:1810.04805</a></p>
-<p>2. <strong>Sentence-BERT</strong>: Reimers & Gurevych (2019). "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks". <a href="https://arxiv.org/abs/1908.10084" target="_blank">arXiv:1908.10084</a></p>
-<p>3. <strong>RAG</strong>: Lewis et al. (2020). "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks". <a href="https://arxiv.org/abs/2005.11401" target="_blank">arXiv:2005.11401</a></p>
-<p>4. <strong>Dense Passage Retrieval</strong>: Karpukhin et al. (2020). "Dense Passage Retrieval for Open-Domain Question Answering". <a href="https://arxiv.org/abs/2004.04906" target="_blank">arXiv:2004.04906</a></p>
-<p>5. <strong>ColBERT</strong>: Khattab & Zaharia (2020). "ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT". <a href="https://arxiv.org/abs/2004.12832" target="_blank">arXiv:2004.12832</a></p>
+<ol>
+<li><strong>BERT</strong>: Devlin et al. (2018). "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding". <a href="https://arxiv.org/abs/1810.04805" target="_blank">arXiv:1810.04805</a></li>
+</ol>
+<ol>
+<li><strong>Sentence-BERT</strong>: Reimers  |  Gurevych (2019). "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks". <a href="https://arxiv.org/abs/1908.10084" target="_blank">arXiv:1908.10084</a></li>
+</ol>
+<ol>
+<li><strong>RAG</strong>: Lewis et al. (2020). "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks". <a href="https://arxiv.org/abs/2005.11401" target="_blank">arXiv:2005.11401</a></li>
+</ol>
+<ol>
+<li><strong>Dense Passage Retrieval</strong>: Karpukhin et al. (2020). "Dense Passage Retrieval for Open-Domain Question Answering". <a href="https://arxiv.org/abs/2004.04906" target="_blank">arXiv:2004.04906</a></li>
+</ol>
+<ol>
+<li><strong>ColBERT</strong>: Khattab  |  Zaharia (2020). "ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT". <a href="https://arxiv.org/abs/2004.12832" target="_blank">arXiv:2004.12832</a></li>
+</ol>
 <h3>Documentation and Tutorials</h3>
 <ul>
 <li><strong>HuggingFace Transformers</strong>: <a href="https://huggingface.co/docs/transformers/" target="_blank">https://huggingface.co/docs/transformers/</a></li>
@@ -641,13 +687,13 @@ openai>=0.27.0  # if using OpenAI
 <ul>
 <li><strong>Gradio</strong> (for UI): <a href="https://gradio.app/" target="_blank">https://gradio.app/</a></li>
 <li><strong>Streamlit</strong> (for UI): <a href="https://streamlit.io/" target="_blank">https://streamlit.io/</a></li>
-<li><strong>Weights & Biases</strong> (for experiment tracking): <a href="https://wandb.ai/" target="_blank">https://wandb.ai/</a></li>
+<li><strong>Weights  |  Biases</strong> (for experiment tracking): <a href="https://wandb.ai/" target="_blank">https://wandb.ai/</a></li>
 </ul>
 <h3>Additional Reading</h3>
 <ul>
 <li>"Building Chatbots with Python" - Sumit Raj</li>
 <li>"Natural Language Processing with Transformers" - Lewis Tunstall et al.</li>
-<li>"Speech and Language Processing" (Chapter on Question Answering) - Jurafsky & Martin</li>
+<li>"Speech and Language Processing" (Chapter on Question Answering) - Jurafsky  |  Martin</li>
 </ul>
 <h3>Related Techniques</h3>
 <ul>
@@ -657,13 +703,15 @@ openai>=0.27.0  # if using OpenAI
 <li><strong>Learning to Rank</strong>: ML approaches to re-ranking results</li>
 </ul>
 <h2>Submission Guidelines</h2>
-<p>1. <strong>Format</strong>: Submit a link to your Google Colaboratory notebook
-2. <strong>Permissions</strong>: Ensure the notebook is shared with "Anyone with the link can view"
-3. <strong>Runtime</strong>: The notebook must run from start to finish without errors
-4. <strong>Dependencies</strong>: All required packages should be installed in the notebook
-5. <strong>Data</strong>: Include code to automatically download any required datasets
-6. <strong>Output</strong>: Keep cell outputs visible in your submission
-7. <strong>Deadline</strong>: [To be announced by instructor]</p>
+<ol>
+<li><strong>Format</strong>: Submit a link to your Google Colaboratory notebook</li>
+<li><strong>Permissions</strong>: Ensure the notebook is shared with "Anyone with the link can view"</li>
+<li><strong>Runtime</strong>: The notebook must run from start to finish without errors</li>
+<li><strong>Dependencies</strong>: All required packages should be installed in the notebook</li>
+<li><strong>Data</strong>: Include code to automatically download any required datasets</li>
+<li><strong>Output</strong>: Keep cell outputs visible in your submission</li>
+<li><strong>Deadline</strong>: [To be announced by instructor]</li>
+</ol>
 <h3>Before Submission Checklist</h3>
 <ul>
 <li>[ ] Notebook runs completely in a fresh Colab session</li>
@@ -695,13 +743,15 @@ openai>=0.27.0  # if using OpenAI
 <p>Violations of academic integrity will result in a failing grade for the assignment and potential course-level consequences.</p>
 <h2>Questions?</h2>
 <p>If you have questions about the assignment:
-1. Check this README thoroughly
-2. Review the resources and references section
-3. Post questions in the course forum
-4. Attend office hours
-5. Email the instructor/TA with specific questions</p>
+<ol>
+<li>Check this README thoroughly</li>
+<li>Review the resources and references section</li>
+<li>Post questions in the course forum</li>
+<li>Attend office hours</li>
+<li>Email the instructor/TA with specific questions</li>
+</ol></p>
 <p>Good luck, and have fun building your customer service chatbot!</p>
-<p>---</p>
+<hr>
 <p><em>This assignment is designed to give you hands-on experience with modern NLP techniques used in production systems. The skills you develop here—semantic search, RAG, and evaluation—are directly applicable to real-world AI applications.</em></p>
     </main>
 

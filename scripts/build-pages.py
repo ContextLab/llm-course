@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+"""
+Build course pages from markdown sources.
+
+Converts markdown files to styled HTML pages with proper:
+- Tables
+- Ordered and unordered lists
+- Links (internal vs external)
+- LaTeX \href commands
+- Headers and formatting
+"""
 
 import re
 import os
@@ -8,13 +18,39 @@ REPO_ROOT = Path(__file__).parent.parent
 
 
 def strip_latex_preamble(text):
+    """Remove LaTeX preamble from markdown files."""
     if "\\begin{" not in text:
         return text
     match = re.search(r"^## ", text, re.MULTILINE)
     return text[match.start() :] if match else text
 
 
+def convert_latex_href(text):
+    """Convert LaTeX \href{url}{text} to markdown [text](url)."""
+    # Match \href{url}{text} pattern
+    pattern = r"\\href\{([^}]+)\}\{([^}]+)\}"
+    return re.sub(pattern, r"[\2](\1)", text)
+
+
+def convert_latex_table(text):
+    """Remove inline LaTeX table blocks."""
+    # Remove LaTeX table environments
+    text = re.sub(r"\\setlength\{[^}]+\}\{[^}]+\}", "", text)
+    text = re.sub(r"\\vspace\{[^}]+\}", "", text)
+    text = re.sub(r"\\begin\{center\}", "", text)
+    text = re.sub(r"\\end\{center\}", "", text)
+    text = re.sub(r"\\begin\{tabular\}\{[^}]+\}", "", text)
+    text = re.sub(r"\\end\{tabular\}", "", text)
+    text = re.sub(r"\\hline", "", text)
+    text = re.sub(r"\\textbf\{([^}]+)\}", r"**\1**", text)
+    text = re.sub(r"\\\\", "", text)
+    text = re.sub(r"&", " | ", text)
+    return text
+
+
 def convert_headers(html):
+    """Convert markdown headers to HTML."""
+    html = re.sub(r"^#### (.+)$", r"<h4>\1</h4>", html, flags=re.MULTILINE)
     html = re.sub(r"^### (.+)$", r"<h3>\1</h3>", html, flags=re.MULTILINE)
     html = re.sub(r"^## (.+)$", r"<h2>\1</h2>", html, flags=re.MULTILINE)
     html = re.sub(r"^# (.+)$", r"<h1>\1</h1>", html, flags=re.MULTILINE)
@@ -22,70 +58,208 @@ def convert_headers(html):
 
 
 def convert_inline_formatting(html):
+    """Convert bold and italic markdown to HTML."""
     html = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", html)
     html = re.sub(r"\*(.+?)\*", r"<em>\1</em>", html)
-    html = re.sub(r"_(.+?)_", r"<em>\1</em>", html)
+    html = re.sub(r"(?<![\\])_(.+?)_", r"<em>\1</em>", html)
     return html
 
 
 def convert_links(html):
-    return re.sub(
-        r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2" target="_blank">\1</a>', html
-    )
+    """Convert markdown links to HTML, handling internal vs external links."""
+
+    def replace_link(match):
+        text = match.group(1)
+        url = match.group(2)
+
+        # Determine if link is internal or external
+        is_external = (
+            url.startswith("http://")
+            or url.startswith("https://")
+            or url.startswith("mailto:")
+        )
+
+        if is_external:
+            return f'<a href="{url}" target="_blank">{text}</a>'
+        else:
+            return f'<a href="{url}">{text}</a>'
+
+    return re.sub(r"\[([^\]]+)\]\(([^)]+)\)", replace_link, html)
 
 
-def convert_lists(html):
+def convert_tables(html):
+    """Convert markdown tables to HTML tables."""
+    lines = html.split("\n")
+    result = []
+    in_table = False
+    table_lines = []
+
+    for line in lines:
+        stripped = line.strip()
+
+        # Detect table row (starts with |)
+        if stripped.startswith("|") and stripped.endswith("|"):
+            if not in_table:
+                in_table = True
+                table_lines = []
+            table_lines.append(stripped)
+        else:
+            if in_table:
+                # End of table, convert it
+                result.append(convert_table_block(table_lines))
+                in_table = False
+                table_lines = []
+            result.append(line)
+
+    # Handle table at end of file
+    if in_table and table_lines:
+        result.append(convert_table_block(table_lines))
+
+    return "\n".join(result)
+
+
+def convert_table_block(lines):
+    """Convert a block of markdown table lines to HTML."""
+    if len(lines) < 2:
+        return "\n".join(lines)
+
+    html = ["<table>"]
+
+    for i, line in enumerate(lines):
+        # Skip separator line (|---|---|...)
+        if re.match(r"^\|[-:\s|]+\|$", line):
+            continue
+
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+
+        if i == 0:
+            # Header row
+            html.append("<thead><tr>")
+            for cell in cells:
+                html.append(f"<th>{cell}</th>")
+            html.append("</tr></thead>")
+            html.append("<tbody>")
+        else:
+            # Data row
+            html.append("<tr>")
+            for cell in cells:
+                html.append(f"<td>{cell}</td>")
+            html.append("</tr>")
+
+    html.append("</tbody>")
+    html.append("</table>")
+
+    return "\n".join(html)
+
+
+def convert_ordered_lists(html):
+    """Convert markdown numbered lists to HTML ordered lists."""
+    lines = html.split("\n")
+    result = []
+    in_list = False
+
+    for line in lines:
+        # Match lines starting with number and period (1. 2. etc)
+        match = re.match(r"^(\d+)\.\s+(.+)$", line.strip())
+
+        if match:
+            if not in_list:
+                result.append("<ol>")
+                in_list = True
+            result.append(f"<li>{match.group(2)}</li>")
+        else:
+            if in_list:
+                result.append("</ol>")
+                in_list = False
+            result.append(line)
+
+    if in_list:
+        result.append("</ol>")
+
+    return "\n".join(result)
+
+
+def convert_unordered_lists(html):
+    """Convert markdown unordered lists to HTML."""
     lines = html.split("\n")
     in_list = False
     result = []
+
     for line in lines:
-        if line.strip().startswith("- "):
+        stripped = line.strip()
+        if stripped.startswith("- "):
             if not in_list:
                 result.append("<ul>")
                 in_list = True
-            result.append(f"<li>{line.strip()[2:]}</li>")
+            result.append(f"<li>{stripped[2:]}</li>")
         else:
             if in_list:
                 result.append("</ul>")
                 in_list = False
             result.append(line)
+
     if in_list:
         result.append("</ul>")
+
     return "\n".join(result)
 
 
+def convert_horizontal_rules(html):
+    """Convert markdown horizontal rules to HTML."""
+    return re.sub(r"^---+$", "<hr>", html, flags=re.MULTILINE)
+
+
 def wrap_paragraphs(html):
+    """Wrap plain text blocks in paragraph tags."""
     paragraphs = re.split(r"\n\n+", html)
     formatted = []
+
     for p in paragraphs:
         p = p.strip()
         if not p:
             continue
+
+        # Don't wrap if already an HTML element
         if (
             p.startswith("<h")
             or p.startswith("<ul")
             or p.startswith("<ol")
             or p.startswith("<table")
+            or p.startswith("<hr")
+            or p.startswith("<div")
+            or p.startswith("<p")
         ):
             formatted.append(p)
         elif p.startswith("<li"):
             formatted.append(p)
         else:
             formatted.append(f"<p>{p}</p>")
+
     return "\n".join(formatted)
 
 
 def parse_markdown_to_html(markdown_text):
+    """Convert markdown text to HTML."""
+    # Pre-processing
     html = strip_latex_preamble(markdown_text)
+    html = convert_latex_href(html)
+    html = convert_latex_table(html)
+
+    # Convert markdown elements
     html = convert_headers(html)
     html = convert_inline_formatting(html)
+    html = convert_tables(html)
+    html = convert_ordered_lists(html)
+    html = convert_unordered_lists(html)
+    html = convert_horizontal_rules(html)
     html = convert_links(html)
-    html = convert_lists(html)
     html = wrap_paragraphs(html)
+
     return html
 
 
 def get_page_template(title, nav_active, content, depth=1):
+    """Generate full HTML page with navigation and styling."""
     prefix = "../" * depth
 
     nav_items = [
@@ -185,6 +359,12 @@ def get_page_template(title, nav_active, content, depth=1):
             margin: 0 auto;
             padding: 2rem;
         }}
+        .content h1 {{
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+        }}
         .content h2 {{
             font-size: 1.75rem;
             font-weight: 700;
@@ -199,12 +379,18 @@ def get_page_template(title, nav_active, content, depth=1):
             color: var(--text-primary);
             margin: 1.5rem 0 0.75rem;
         }}
+        .content h4 {{
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.25rem 0 0.5rem;
+        }}
         .content p {{
             color: var(--text-secondary);
             line-height: 1.8;
             margin-bottom: 1rem;
         }}
-        .content ul {{
+        .content ul, .content ol {{
             color: var(--text-secondary);
             padding-left: 1.5rem;
             margin-bottom: 1rem;
@@ -223,6 +409,11 @@ def get_page_template(title, nav_active, content, depth=1):
         .content strong {{
             color: var(--text-primary);
         }}
+        .content hr {{
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }}
         .content table {{
             width: 100%;
             border-collapse: collapse;
@@ -240,6 +431,9 @@ def get_page_template(title, nav_active, content, depth=1):
         }}
         .content td {{
             color: var(--text-secondary);
+        }}
+        .content tr:hover {{
+            background: var(--surface-color);
         }}
         footer {{
             background: var(--surface-color);
@@ -319,6 +513,7 @@ ACCEPT_ASSIGNMENT_BUTTON = """
 
 
 def build_syllabus():
+    """Build the syllabus page from markdown."""
     source = REPO_ROOT / "admin" / "syllabus.md"
     dest = REPO_ROOT / "syllabus" / "index.html"
 
@@ -336,6 +531,7 @@ def build_syllabus():
 
 
 def build_assignment_hub():
+    """Build the main assignments hub page."""
     source = REPO_ROOT / "assignments" / "README.md"
     dest = REPO_ROOT / "assignments" / "index.html"
 
@@ -362,6 +558,7 @@ ASSIGNMENT_DIRS = [
 
 
 def build_individual_assignments():
+    """Build individual assignment pages."""
     assignments_dir = REPO_ROOT / "assignments"
 
     for source_name, dest_name in ASSIGNMENT_DIRS:
@@ -385,6 +582,7 @@ def build_individual_assignments():
 
 
 def create_assignments_readme():
+    """Create the default assignments README if it doesn't exist."""
     readme_path = REPO_ROOT / "assignments" / "README.md"
 
     content = """# Course Assignments
@@ -396,6 +594,7 @@ Welcome to the assignments for PSYC 51.17: Models of Language and Communication.
 All assignments are submitted via GitHub Classroom. Click the "Accept Assignment" button on each assignment page to get started. This will create a personal repository where you'll complete your work.
 
 **Submission Process:**
+
 1. Click "Accept Assignment" to create your repository
 2. Clone the repository to your local machine or open in Google Colab
 3. Complete the assignment following the instructions
@@ -420,6 +619,7 @@ Assignments receive a 10% deduction for each week late, rounded up to the neares
 ## Grading
 
 Each assignment is graded on:
+
 - **Correctness**: Does your code produce the expected outputs?
 - **Code Quality**: Is your code well-organized and documented?
 - **Understanding**: Do your explanations demonstrate understanding of the concepts?
@@ -458,6 +658,7 @@ Conduct an independent research project applying concepts from the course. Prese
 
 
 def main():
+    """Main build function."""
     print("Building course pages...")
     print("=" * 50)
 

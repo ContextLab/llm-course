@@ -81,6 +81,12 @@
             margin: 0 auto;
             padding: 2rem;
         }
+        .content h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+        }
         .content h2 {
             font-size: 1.75rem;
             font-weight: 700;
@@ -95,12 +101,18 @@
             color: var(--text-primary);
             margin: 1.5rem 0 0.75rem;
         }
+        .content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.25rem 0 0.5rem;
+        }
         .content p {
             color: var(--text-secondary);
             line-height: 1.8;
             margin-bottom: 1rem;
         }
-        .content ul {
+        .content ul, .content ol {
             color: var(--text-secondary);
             padding-left: 1.5rem;
             margin-bottom: 1rem;
@@ -119,6 +131,11 @@
         .content strong {
             color: var(--text-primary);
         }
+        .content hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
         .content table {
             width: 100%;
             border-collapse: collapse;
@@ -136,6 +153,9 @@
         }
         .content td {
             color: var(--text-secondary);
+        }
+        .content tr:hover {
+            background: var(--surface-color);
         }
         footer {
             background: var(--surface-color);
@@ -204,13 +224,15 @@
 <p>You will work in <strong>teams of 2-3 students</strong> over <strong>4 weeks (Weeks 7-10)</strong>, leveraging your combined skills and interests to tackle problems that would be challenging for any individual. The collaborative nature of this project mirrors real-world research and industry practices.</p>
 <h2>Learning Objectives</h2>
 <p>By completing this project, you will:</p>
-<p>1. <strong>Synthesize course concepts</strong>: Integrate knowledge from all assignments—from rule-based systems (ELIZA) to modern transformers (GPT), from embeddings to fine-tuning.
-2. <strong>Design and execute research</strong>: Formulate research questions, design methodologies, implement solutions, and critically evaluate results.
-3. <strong>Master LLM tools and frameworks</strong>: Work extensively with Hugging Face, OpenAI/Anthropic APIs, PyTorch, and other modern ML frameworks.
-4. <strong>Leverage GenAI for ambitious projects</strong>: Use AI coding assistants to implement complex systems that would traditionally take months.
-5. <strong>Communicate technical work</strong>: Present findings clearly through code, visualizations, presentations, and written reports.
-6. <strong>Think critically about AI</strong>: Evaluate limitations, biases, ethical implications, and societal impacts of your work.
-7. <strong>Collaborate effectively</strong>: Work in a team to divide tasks, integrate components, and produce cohesive results.</p>
+<ol>
+<li><strong>Synthesize course concepts</strong>: Integrate knowledge from all assignments—from rule-based systems (ELIZA) to modern transformers (GPT), from embeddings to fine-tuning.</li>
+<li><strong>Design and execute research</strong>: Formulate research questions, design methodologies, implement solutions, and critically evaluate results.</li>
+<li><strong>Master LLM tools and frameworks</strong>: Work extensively with Hugging Face, OpenAI/Anthropic APIs, PyTorch, and other modern ML frameworks.</li>
+<li><strong>Leverage GenAI for ambitious projects</strong>: Use AI coding assistants to implement complex systems that would traditionally take months.</li>
+<li><strong>Communicate technical work</strong>: Present findings clearly through code, visualizations, presentations, and written reports.</li>
+<li><strong>Think critically about AI</strong>: Evaluate limitations, biases, ethical implications, and societal impacts of your work.</li>
+<li><strong>Collaborate effectively</strong>: Work in a team to divide tasks, integrate components, and produce cohesive results.</li>
+</ol>
 <h2>Project Scope</h2>
 <p>Your project should represent approximately <strong>4 weeks of focused work for a team of 2-3 students (Weeks 7-10)</strong>. This translates to roughly 15-20 hours per person per week, though the actual time investment may vary based on your background and the project's complexity.</p>
 <h3>Scale and Ambition</h3>
@@ -297,35 +319,79 @@ Investigate critical issues around AI safety, bias, fairness, or societal impact
 <h2>Project Ideas</h2>
 <p>Here are <strong>20 diverse project ideas</strong> to inspire you. These span different difficulty levels and interest areas. Feel free to use these as starting points, combine elements, or create something entirely new.</p>
 <h3>RAG and Retrieval Systems</h3>
-<p>1. <strong>Domain-Specific RAG System</strong>: Build a retrieval-augmented generation system for a specialized domain (e.g., medical literature, legal documents, historical archives). Implement custom embeddings, retrieval strategies, and evaluate against baselines.</p>
-<p>2. <strong>Conversational Search Engine</strong>: Create a multi-turn conversational search system that maintains context, asks clarifying questions, and provides source citations. Compare different retrieval and reranking strategies.</p>
-<p>3. <strong>Hybrid Retrieval Architecture</strong>: Combine dense embeddings, sparse retrieval (BM25), and knowledge graphs for enhanced retrieval. Systematically evaluate each component's contribution.</p>
+<ol>
+<li><strong>Domain-Specific RAG System</strong>: Build a retrieval-augmented generation system for a specialized domain (e.g., medical literature, legal documents, historical archives). Implement custom embeddings, retrieval strategies, and evaluate against baselines.</li>
+</ol>
+<ol>
+<li><strong>Conversational Search Engine</strong>: Create a multi-turn conversational search system that maintains context, asks clarifying questions, and provides source citations. Compare different retrieval and reranking strategies.</li>
+</ol>
+<ol>
+<li><strong>Hybrid Retrieval Architecture</strong>: Combine dense embeddings, sparse retrieval (BM25), and knowledge graphs for enhanced retrieval. Systematically evaluate each component's contribution.</li>
+</ol>
 <h3>Fine-Tuning and Adaptation</h3>
-<p>4. <strong>Low-Resource Language Adaptation</strong>: Fine-tune an LLM for a low-resource language or dialect using limited data. Explore techniques like cross-lingual transfer, data augmentation, and parameter-efficient fine-tuning.</p>
-<p>5. <strong>Scientific Writing Assistant</strong>: Fine-tune a model to help researchers write better papers by learning from high-quality publications in a specific field. Implement style transfer and citation generation.</p>
-<p>6. <strong>Personalized Conversation Models</strong>: Develop methods to adapt dialogue models to individual user preferences and communication styles while preserving helpfulness and safety.</p>
+<ol>
+<li><strong>Low-Resource Language Adaptation</strong>: Fine-tune an LLM for a low-resource language or dialect using limited data. Explore techniques like cross-lingual transfer, data augmentation, and parameter-efficient fine-tuning.</li>
+</ol>
+<ol>
+<li><strong>Scientific Writing Assistant</strong>: Fine-tune a model to help researchers write better papers by learning from high-quality publications in a specific field. Implement style transfer and citation generation.</li>
+</ol>
+<ol>
+<li><strong>Personalized Conversation Models</strong>: Develop methods to adapt dialogue models to individual user preferences and communication styles while preserving helpfulness and safety.</li>
+</ol>
 <h3>Dialogue and Interaction</h3>
-<p>7. <strong>Multi-Turn Reasoning Dialogues</strong>: Build a conversational system that can engage in extended reasoning tasks (math problems, logic puzzles, strategic planning) while explaining its thought process.</p>
-<p>8. <strong>Empathetic Support Chatbot</strong>: Create a psychologically-informed chatbot for emotional support or mental health check-ins. Evaluate empathy, safety, and effectiveness using human evaluation and automated metrics.</p>
-<p>9. <strong>Socratic Tutoring System</strong>: Implement an educational assistant that uses Socratic questioning to guide students through problem-solving rather than providing direct answers.</p>
+<ol>
+<li><strong>Multi-Turn Reasoning Dialogues</strong>: Build a conversational system that can engage in extended reasoning tasks (math problems, logic puzzles, strategic planning) while explaining its thought process.</li>
+</ol>
+<ol>
+<li><strong>Empathetic Support Chatbot</strong>: Create a psychologically-informed chatbot for emotional support or mental health check-ins. Evaluate empathy, safety, and effectiveness using human evaluation and automated metrics.</li>
+</ol>
+<ol>
+<li><strong>Socratic Tutoring System</strong>: Implement an educational assistant that uses Socratic questioning to guide students through problem-solving rather than providing direct answers.</li>
+</ol>
 <h3>Code and Technical Applications</h3>
-<p>10. <strong>Code Documentation Generator</strong>: Build a system that generates comprehensive documentation for code repositories, including docstrings, README files, and tutorials. Test on diverse codebases and programming languages.</p>
-<p>11. <strong>Bug Detection and Repair</strong>: Develop an LLM-based system for finding and fixing bugs in code. Create a benchmark and compare against existing tools.</p>
-<p>12. <strong>Technical Interview Practice System</strong>: Create an interactive system that conducts realistic technical interviews, provides feedback, and adapts difficulty based on performance.</p>
+<ol>
+<li><strong>Code Documentation Generator</strong>: Build a system that generates comprehensive documentation for code repositories, including docstrings, README files, and tutorials. Test on diverse codebases and programming languages.</li>
+</ol>
+<ol>
+<li><strong>Bug Detection and Repair</strong>: Develop an LLM-based system for finding and fixing bugs in code. Create a benchmark and compare against existing tools.</li>
+</ol>
+<ol>
+<li><strong>Technical Interview Practice System</strong>: Create an interactive system that conducts realistic technical interviews, provides feedback, and adapts difficulty based on performance.</li>
+</ol>
 <h3>Creative and Cultural Applications</h3>
-<p>13. <strong>Interactive Fiction Engine</strong>: Build a system for collaborative storytelling where the model maintains narrative coherence, character consistency, and player agency across long interactions.</p>
-<p>14. <strong>Cross-Cultural Communication Assistant</strong>: Develop a tool that helps bridge cultural communication gaps by explaining context, suggesting phrasing, and highlighting potential misunderstandings.</p>
-<p>15. <strong>Historical Dialogue Simulation</strong>: Create historically-accurate conversational agents representing figures from different time periods, trained on period-appropriate texts and evaluated for authenticity.</p>
+<ol>
+<li><strong>Interactive Fiction Engine</strong>: Build a system for collaborative storytelling where the model maintains narrative coherence, character consistency, and player agency across long interactions.</li>
+</ol>
+<ol>
+<li><strong>Cross-Cultural Communication Assistant</strong>: Develop a tool that helps bridge cultural communication gaps by explaining context, suggesting phrasing, and highlighting potential misunderstandings.</li>
+</ol>
+<ol>
+<li><strong>Historical Dialogue Simulation</strong>: Create historically-accurate conversational agents representing figures from different time periods, trained on period-appropriate texts and evaluated for authenticity.</li>
+</ol>
 <h3>Cognitive Science and Modeling</h3>
-<p>16. <strong>LLMs as Cognitive Models</strong>: Systematically evaluate whether LLMs exhibit human-like cognitive biases, heuristics, and reasoning patterns. Compare model behavior to psychological literature.</p>
-<p>17. <strong>Language Acquisition Simulation</strong>: Investigate how LLMs "learn" linguistic structures by analyzing learning trajectories, comparing to child language acquisition data.</p>
-<p>18. <strong>Theory of Mind in LLMs</strong>: Design experiments to test whether models exhibit theory of mind capabilities—understanding beliefs, intentions, and mental states of others.</p>
+<ol>
+<li><strong>LLMs as Cognitive Models</strong>: Systematically evaluate whether LLMs exhibit human-like cognitive biases, heuristics, and reasoning patterns. Compare model behavior to psychological literature.</li>
+</ol>
+<ol>
+<li><strong>Language Acquisition Simulation</strong>: Investigate how LLMs "learn" linguistic structures by analyzing learning trajectories, comparing to child language acquisition data.</li>
+</ol>
+<ol>
+<li><strong>Theory of Mind in LLMs</strong>: Design experiments to test whether models exhibit theory of mind capabilities—understanding beliefs, intentions, and mental states of others.</li>
+</ol>
 <h3>Interpretability and Analysis</h3>
-<p>19. <strong>Mechanistic Interpretability Study</strong>: Use techniques like attention visualization, activation probing, and causal interventions to understand how models perform specific tasks (e.g., factual recall, arithmetic, syntax).</p>
-<p>20. <strong>Failure Mode Taxonomy</strong>: Systematically categorize and analyze LLM failures across multiple models and tasks. Develop predictors for when failures occur and potential mitigations.</p>
+<ol>
+<li><strong>Mechanistic Interpretability Study</strong>: Use techniques like attention visualization, activation probing, and causal interventions to understand how models perform specific tasks (e.g., factual recall, arithmetic, syntax).</li>
+</ol>
+<ol>
+<li><strong>Failure Mode Taxonomy</strong>: Systematically categorize and analyze LLM failures across multiple models and tasks. Develop predictors for when failures occur and potential mitigations.</li>
+</ol>
 <h3>Advanced Reasoning and Agents</h3>
-<p>21. <strong>Multi-Step Planning Agent</strong>: Build an agent that can decompose complex goals, create plans, execute actions with tools, and adapt based on feedback. Test on challenging benchmarks.</p>
-<p>22. <strong>Scientific Hypothesis Generator</strong>: Create a system that reads research papers, identifies gaps, and proposes testable hypotheses. Evaluate novelty and plausibility with domain experts.</p>
+<ol>
+<li><strong>Multi-Step Planning Agent</strong>: Build an agent that can decompose complex goals, create plans, execute actions with tools, and adapt based on feedback. Test on challenging benchmarks.</li>
+</ol>
+<ol>
+<li><strong>Scientific Hypothesis Generator</strong>: Create a system that reads research papers, identifies gaps, and proposes testable hypotheses. Evaluate novelty and plausibility with domain experts.</li>
+</ol>
 <h2>Requirements</h2>
 <p>Your final project must include four key deliverables:</p>
 <h3>1. Project Proposal (Due Week 8)</h3>
@@ -356,7 +422,7 @@ Investigate critical issues around AI safety, bias, fairness, or societal impact
 <p>Create a <strong>10-12 minute video presentation</strong> and present it in class:</p>
 <ul>
 <li><strong>Video submission</strong>: Upload to YouTube (unlisted is fine) and include the link in your writeup</li>
-<li><strong>In-class component</strong>: Be prepared to present your video and lead a 5-10 minute discussion/Q&A</li>
+<li><strong>In-class component</strong>: Be prepared to present your video and lead a 5-10 minute discussion/Q | A</li>
 <li><strong>Content</strong>: Cover motivation, approach, key results, insights, and limitations</li>
 <li><strong>Visuals</strong>: Use slides, demos, visualizations—make it engaging and clear</li>
 <li><strong>Team participation</strong>: All team members should contribute to the presentation</li>
@@ -490,7 +556,7 @@ Review all assignments and lectures—they contain techniques, tools, and insigh
 <li><strong>LangChain</strong>: Building LLM applications, chains, and agents</li>
 <li><strong>FAISS / Pinecone</strong>: Vector databases for retrieval systems</li>
 <li><strong>PyTorch / TensorFlow</strong>: Deep learning frameworks</li>
-<li><strong>Weights & Biases / TensorBoard</strong>: Experiment tracking and visualization</li>
+<li><strong>Weights  |  Biases / TensorBoard</strong>: Experiment tracking and visualization</li>
 <li><strong>Ollama</strong>: Running open-source models locally</li>
 </ul>
 <h3>Finding Datasets</h3>
@@ -599,7 +665,7 @@ Your project <strong>must run in Google Colab</strong>. This means:
 <li>Communicate results clearly and engagingly</li>
 </ul></p>
 <p>We're excited to see what you create. Good luck, and remember: ambitious goals combined with thoughtful execution lead to extraordinary results.</p>
-<p>---</p>
+<hr>
 <p><strong>Questions?</strong> Use the course Discord or attend office hours. We're here to help you succeed.</p>
 <p><strong>Ready to start?</strong> Form your team, start brainstorming, and prepare to build something amazing.</p>
     </main>

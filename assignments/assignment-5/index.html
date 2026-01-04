@@ -81,6 +81,12 @@
             margin: 0 auto;
             padding: 2rem;
         }
+        .content h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+        }
         .content h2 {
             font-size: 1.75rem;
             font-weight: 700;
@@ -95,12 +101,18 @@
             color: var(--text-primary);
             margin: 1.5rem 0 0.75rem;
         }
+        .content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.25rem 0 0.5rem;
+        }
         .content p {
             color: var(--text-secondary);
             line-height: 1.8;
             margin-bottom: 1rem;
         }
-        .content ul {
+        .content ul, .content ol {
             color: var(--text-secondary);
             padding-left: 1.5rem;
             margin-bottom: 1rem;
@@ -119,6 +131,11 @@
         .content strong {
             color: var(--text-primary);
         }
+        .content hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
         .content table {
             width: 100%;
             border-collapse: collapse;
@@ -136,6 +153,9 @@
         }
         .content td {
             color: var(--text-secondary);
+        }
+        .content tr:hover {
+            background: var(--surface-color);
         }
         footer {
             background: var(--surface-color);
@@ -198,15 +218,17 @@
 <p>This is an ambitious assignment that will challenge you to think deeply about architecture design, optimization, and evaluation. However, with modern tools and GenAI assistance, it's entirely achievable—and incredibly rewarding.</p>
 <h2>Learning Objectives</h2>
 <p>By the end of this assignment, you will be able to:</p>
-<p>1. <strong>Implement transformer architecture components</strong> including multi-head self-attention, feed-forward networks, layer normalization, and residual connections
-2. <strong>Understand autoregressive language modeling</strong> and how GPT models generate text one token at a time
-3. <strong>Implement causal (masked) self-attention</strong> to ensure the model can only attend to previous tokens
-4. <strong>Design and implement positional encodings</strong> to give the model a sense of token position
-5. <strong>Build a complete training pipeline</strong> including data loading, batching, loss computation, and optimization
-6. <strong>Apply different text generation strategies</strong> including greedy decoding, temperature sampling, top-k, and nucleus (top-p) sampling
-7. <strong>Analyze what the model has learned</strong> by visualizing attention patterns and token embeddings
-8. <strong>Compare your model's performance</strong> with established models like GPT-2
-9. <strong>Understand the trade-offs</strong> between model size, training time, and generation quality</p>
+<ol>
+<li><strong>Implement transformer architecture components</strong> including multi-head self-attention, feed-forward networks, layer normalization, and residual connections</li>
+<li><strong>Understand autoregressive language modeling</strong> and how GPT models generate text one token at a time</li>
+<li><strong>Implement causal (masked) self-attention</strong> to ensure the model can only attend to previous tokens</li>
+<li><strong>Design and implement positional encodings</strong> to give the model a sense of token position</li>
+<li><strong>Build a complete training pipeline</strong> including data loading, batching, loss computation, and optimization</li>
+<li><strong>Apply different text generation strategies</strong> including greedy decoding, temperature sampling, top-k, and nucleus (top-p) sampling</li>
+<li><strong>Analyze what the model has learned</strong> by visualizing attention patterns and token embeddings</li>
+<li><strong>Compare your model's performance</strong> with established models like GPT-2</li>
+<li><strong>Understand the trade-offs</strong> between model size, training time, and generation quality</li>
+</ol>
 <h2>Background</h2>
 <h3>The Transformer Architecture</h3>
 <p>The transformer architecture, introduced in the seminal paper "Attention is All You Need" (Vaswani et al., 2017), revolutionized sequence modeling by replacing recurrent neural networks with self-attention mechanisms. GPT uses only the decoder portion of the transformer, removing the cross-attention layers used in encoder-decoder models.</p>
@@ -464,41 +486,51 @@ Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
 </ul>
 <h2>Evaluation Criteria</h2>
 <p>Your assignment will be evaluated on:</p>
-<p>1. <strong>Correctness of Implementation (30%)</strong>
+<ol>
+<li><strong>Correctness of Implementation (30%)</strong></li>
+</ol>
 <ul>
 <li>Model architecture correctly implements GPT design</li>
 <li>Attention mechanisms properly use causal masking</li>
 <li>Training loop correctly computes loss and updates parameters</li>
 <li>No critical bugs or errors</li>
-</ul></p>
-<p>2. <strong>Quality of Training and Results (25%)</strong>
+</ul>
+<ol>
+<li><strong>Quality of Training and Results (25%)</strong></li>
+</ol>
 <ul>
 <li>Model successfully trains and converges</li>
 <li>Reasonable hyperparameter choices</li>
 <li>Generated text demonstrates learning</li>
 <li>Proper evaluation on validation set</li>
-</ul></p>
-<p>3. <strong>Depth of Analysis (25%)</strong>
+</ul>
+<ol>
+<li><strong>Depth of Analysis (25%)</strong></li>
+</ol>
 <ul>
 <li>Thoughtful examination of attention patterns</li>
 <li>Meaningful visualization and interpretation</li>
 <li>Insightful comparison with baseline model</li>
 <li>Understanding of model behavior and limitations</li>
-</ul></p>
-<p>4. <strong>Code Quality and Documentation (10%)</strong>
+</ul>
+<ol>
+<li><strong>Code Quality and Documentation (10%)</strong></li>
+</ol>
 <ul>
 <li>Clean, well-organized code</li>
 <li>Comprehensive markdown explanations</li>
 <li>Clear documentation of design choices</li>
 <li>Reproducible results</li>
-</ul></p>
-<p>5. <strong>Creativity and Insight (10%)</strong>
+</ul>
+<ol>
+<li><strong>Creativity and Insight (10%)</strong></li>
+</ol>
 <ul>
 <li>Interesting dataset choice or experiments</li>
 <li>Novel visualizations or analyses</li>
 <li>Thoughtful discussion of results</li>
 <li>Extensions beyond basic requirements</li>
-</ul></p>
+</ul>
 <h2>Extensions and Bonus Challenges</h2>
 <p>If you finish the core assignment and want to push further, consider these extensions:</p>
 <h3>Architecture Modifications</h3>
@@ -616,35 +648,41 @@ Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
 <li><strong>PyTorch</strong>: <a href="https://pytorch.org/" target="_blank">pytorch.org</a></li>
 <li><strong>HuggingFace Transformers</strong>: <a href="https://huggingface.co/transformers" target="_blank">huggingface.co/transformers</a></li>
 <li><strong>Tokenizers</strong>: <a href="https://huggingface.co/docs/tokenizers" target="_blank">huggingface.co/docs/tokenizers</a></li>
-<li><strong>Weights & Biases</strong>: For experiment tracking <a href="https://wandb.ai/" target="_blank">wandb.ai</a></li>
+<li><strong>Weights  |  Biases</strong>: For experiment tracking <a href="https://wandb.ai/" target="_blank">wandb.ai</a></li>
 <li><strong>BERTViz</strong>: For visualizing attention <a href="https://github.com/jessevig/bertviz" target="_blank">github.com/jessevig/bertviz</a></li>
 </ul>
 <h2>Tips for Success (1-Week Timeline)</h2>
-<p>1. <strong>Use GenAI aggressively</strong>: Claude, ChatGPT, and GitHub Copilot are your friends. Use them to:
+<ol>
+<li><strong>Use GenAI aggressively</strong>: Claude, ChatGPT, and GitHub Copilot are your friends. Use them to:</li>
+</ol>
 <ul>
 <li>Implement transformer components you haven't built before</li>
 <li>Debug errors and understand PyTorch behavior</li>
 <li>Write boilerplate code and data processing pipelines</li>
 <li>Explain unfamiliar concepts or papers</li>
 </ul>
-2. <strong>Start small</strong>: Begin with a tiny model (2-4 layers, small hidden size) to debug your implementation quickly
-3. <strong>Validate components</strong>: Test each component individually before assembling the full model
-4. <strong>Monitor carefully</strong>: Watch for NaN losses, exploding gradients, or other training instabilities
-5. <strong>Use gradient clipping</strong>: This prevents exploding gradients in early training
-6. <strong>Overfit a small batch first</strong>: Ensure your model can memorize a tiny amount of data before scaling up
-7. <strong>Compare with references</strong>: If results seem off, compare your implementation with nanoGPT or other references
-8. <strong>Save often</strong>: Checkpointing is critical—you don't want to lose hours of training
-9. <strong>Document everything</strong>: Future you (and the grader) will thank you for clear explanations
-10. <strong>Have fun</strong>: This is a challenging but incredibly rewarding assignment!</p>
+<ol>
+<li><strong>Start small</strong>: Begin with a tiny model (2-4 layers, small hidden size) to debug your implementation quickly</li>
+<li><strong>Validate components</strong>: Test each component individually before assembling the full model</li>
+<li><strong>Monitor carefully</strong>: Watch for NaN losses, exploding gradients, or other training instabilities</li>
+<li><strong>Use gradient clipping</strong>: This prevents exploding gradients in early training</li>
+<li><strong>Overfit a small batch first</strong>: Ensure your model can memorize a tiny amount of data before scaling up</li>
+<li><strong>Compare with references</strong>: If results seem off, compare your implementation with nanoGPT or other references</li>
+<li><strong>Save often</strong>: Checkpointing is critical—you don't want to lose hours of training</li>
+<li><strong>Document everything</strong>: Future you (and the grader) will thank you for clear explanations</li>
+<li><strong>Have fun</strong>: This is a challenging but incredibly rewarding assignment!</li>
+</ol>
 <h2>Submission</h2>
 <p>Submit a <strong>single Google Colaboratory notebook</strong> that:</p>
-<p>1. Runs without errors on a clean Colab instance with GPU runtime
-2. Automatically downloads/installs any required dependencies
-3. Can load your trained model checkpoint (upload to Google Drive or HuggingFace Hub)
-4. Contains comprehensive markdown cells explaining every step
-5. Includes all code for implementation, training, generation, and analysis
-6. Shows all visualizations and results inline
-7. Demonstrates clear understanding of transformer architecture and training dynamics</p>
+<ol>
+<li>Runs without errors on a clean Colab instance with GPU runtime</li>
+<li>Automatically downloads/installs any required dependencies</li>
+<li>Can load your trained model checkpoint (upload to Google Drive or HuggingFace Hub)</li>
+<li>Contains comprehensive markdown cells explaining every step</li>
+<li>Includes all code for implementation, training, generation, and analysis</li>
+<li>Shows all visualizations and results inline</li>
+<li>Demonstrates clear understanding of transformer architecture and training dynamics</li>
+</ol>
 <p><strong>Note on Training</strong>: If your model takes too long to train in the notebook, you can train it separately and load the checkpoint in your notebook. However, your notebook should include all training code and explain your training process thoroughly.</p>
 <h2>Academic Integrity</h2>
 <p>You may:
@@ -668,7 +706,7 @@ Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
 <li>Plagiarize explanations from other sources</li>
 </ul></p>
 <p>This assignment is about learning. Use all available tools to learn deeply, but ensure the final submission represents your own understanding and effort.</p>
-<p>---</p>
+<hr>
 <p>Good luck! Building a GPT model is a rite of passage for anyone serious about understanding modern AI. Enjoy the journey, and don't hesitate to reach out if you get stuck.</p>
     </main>
 

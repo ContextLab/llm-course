@@ -81,6 +81,12 @@
             margin: 0 auto;
             padding: 2rem;
         }
+        .content h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+        }
         .content h2 {
             font-size: 1.75rem;
             font-weight: 700;
@@ -95,12 +101,18 @@
             color: var(--text-primary);
             margin: 1.5rem 0 0.75rem;
         }
+        .content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.25rem 0 0.5rem;
+        }
         .content p {
             color: var(--text-secondary);
             line-height: 1.8;
             margin-bottom: 1rem;
         }
-        .content ul {
+        .content ul, .content ol {
             color: var(--text-secondary);
             padding-left: 1.5rem;
             margin-bottom: 1rem;
@@ -119,6 +131,11 @@
         .content strong {
             color: var(--text-primary);
         }
+        .content hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
         .content table {
             width: 100%;
             border-collapse: collapse;
@@ -136,6 +153,9 @@
         }
         .content td {
             color: var(--text-secondary);
+        }
+        .content tr:hover {
+            background: var(--surface-color);
         }
         footer {
             background: var(--surface-color);
@@ -231,7 +251,7 @@ with open(dataset_path, 'rb') as f:
 <li>Create publication-quality visualizations of high-dimensional semantic spaces</li>
 <li>Think critically about what different methods capture (and miss) about meaning</li>
 </ul></p>
-<p>---</p>
+<hr>
 <h2>Part 1: Implementing the Embedding Zoo (40 points)</h2>
 <h3>Task 1.1: Classical Statistical Methods (8 points)</h3>
 <p>Implement two foundational approaches from classical NLP:</p>
@@ -309,7 +329,7 @@ with open(dataset_path, 'rb') as f:
 <ul>
 <li>Use `all-MiniLM-L6-v2` or `all-mpnet-base-v2` from `sentence-transformers`</li>
 <li>These are fine-tuned specifically for semantic similarity</li>
-<li>Resources: <a href="https://arxiv.org/abs/1908.10084" target="_blank">Sentence-BERT (Reimers & Gurevych, 2019)</a></li>
+<li>Resources: <a href="https://arxiv.org/abs/1908.10084" target="_blank">Sentence-BERT (Reimers  |  Gurevych, 2019)</a></li>
 </ul></p>
 <p><strong>Llama 3 Embeddings</strong>
 <ul>
@@ -352,7 +372,7 @@ with open(dataset_path, 'rb') as f:
 <li>Analysis of computational cost (time, memory) for each method</li>
 <li>Embeddings saved in a consistent format for downstream analysis</li>
 </ul></p>
-<p>---</p>
+<hr>
 <h2>Part 2: Sophisticated Evaluation and Analysis (30 points)</h2>
 <h3>Task 2.1: Clustering with Multiple Algorithms (10 points)</h3>
 <p>For each embedding method, apply multiple clustering algorithms:</p>
@@ -467,7 +487,7 @@ with open(dataset_path, 'rb') as f:
 <li>Discussion of method families (classical vs. neural vs. LLM)</li>
 <li>Recommendations with justification</li>
 </ul></p>
-<p>---</p>
+<hr>
 <h2>Part 3: Advanced Clustering and Visualization (15 points)</h2>
 <h3>Task 3.1: Multi-Level Clustering (5 points)</h3>
 <p>Explore hierarchical structure in the Wikipedia knowledge space:</p>
@@ -499,26 +519,32 @@ with open(dataset_path, 'rb') as f:
 </ul></p>
 <p><strong>Interactive Plotly Visualizations</strong></p>
 <p>For each major embedding method, create:</p>
-<p>1. <strong>3D Interactive Scatter Plot</strong>
+<ol>
+<li><strong>3D Interactive Scatter Plot</strong></li>
+</ol>
 <ul>
 <li>Each point is an article</li>
 <li>Color by cluster assignment</li>
 <li>Size by article length or importance (e.g., page views)</li>
 <li>Hover: show article title, cluster label, and snippet</li>
 <li>Enable rotation, zoom, selection</li>
-</ul></p>
-<p>2. <strong>2D Hexbin Density Plot</strong>
+</ul>
+<ol>
+<li><strong>2D Hexbin Density Plot</strong></li>
+</ol>
 <ul>
 <li>Show density of articles in embedding space</li>
 <li>Overlay cluster boundaries</li>
 <li>Interactive region selection</li>
-</ul></p>
-<p>3. <strong>Cluster Comparison View</strong>
+</ul>
+<ol>
+<li><strong>Cluster Comparison View</strong></li>
+</ol>
 <ul>
 <li>Side-by-side comparison of same data in different embedding spaces</li>
 <li>Linked selections (select in one, highlight in others)</li>
 <li>Show how cluster assignments change</li>
-</ul></p>
+</ul>
 <p><strong>Advanced Visualizations</strong>
 <ul>
 <li>Embedding space "map" with topic regions labeled</li>
@@ -533,7 +559,7 @@ with open(dataset_path, 'rb') as f:
 <li>Insights discovered through visualization</li>
 <li>Embedded visualizations in notebook with clear captions</li>
 </ul></p>
-<p>---</p>
+<hr>
 <h2>Part 4: Cognitive Science Connection (10 points)</h2>
 <h3>Task 4.1: Distributional Semantics Theory (4 points)</h3>
 <p>Connect your computational work to theories of meaning:</p>
@@ -583,7 +609,7 @@ with open(dataset_path, 'rb') as f:
 <li>Case studies showing different methods' strengths/weaknesses</li>
 <li>Reflection on the limits of distributional semantics</li>
 </ul></p>
-<p>---</p>
+<hr>
 <h2>Part 5: Advanced Extensions and Applications (5 points)</h2>
 <p>Choose at least ONE of the following extensions:</p>
 <h3>Option A: Cross-Lingual Embeddings</h3>
@@ -644,44 +670,54 @@ with open(dataset_path, 'rb') as f:
 <li>Evaluation demonstrating value</li>
 <li>Discussion of how it enhances understanding of semantic representations</li>
 </ul></p>
-<p>---</p>
+<hr>
 <h2>Submission Guidelines</h2>
 <p>Submit a <strong>Google Colaboratory notebook</strong> (or Jupyter notebook) that includes:</p>
 <h3>Technical Requirements</h3>
-<p>1. <strong>Reproducibility</strong>
+<ol>
+<li><strong>Reproducibility</strong></li>
+</ol>
 <ul>
 <li>All code necessary to download datasets and models</li>
 <li>Clear installation instructions for required packages</li>
 <li>Random seeds set for reproducibility</li>
 <li>Must run in Google Colab with GPU runtime (T4 or better)</li>
 <li>Estimated runtime: 2-4 hours for full notebook</li>
-</ul></p>
-<p>2. <strong>Organization</strong>
+</ul>
+<ol>
+<li><strong>Organization</strong></li>
+</ol>
 <ul>
 <li>Clear section headers matching assignment parts</li>
 <li>Table of contents with navigation links</li>
 <li>Markdown cells explaining approach, decisions, and insights</li>
 <li>Code comments for complex operations</li>
 <li>Summary sections after each major part</li>
-</ul></p>
-<p>3. <strong>Outputs</strong>
+</ul>
+<ol>
+<li><strong>Outputs</strong></li>
+</ol>
 <ul>
 <li>All visualizations embedded in notebook</li>
 <li>Tables and metrics clearly formatted</li>
 <li>Long outputs (model training) can be summarized</li>
 <li>Save embeddings to files to avoid recomputation</li>
-</ul></p>
-<p>4. <strong>Writing Quality</strong>
+</ul>
+<ol>
+<li><strong>Writing Quality</strong></li>
+</ol>
 <ul>
 <li>Clear, concise explanations</li>
 <li>Proper citations for papers and methods</li>
 <li>Academic writing style for analysis sections</li>
 <li>Proofread for grammar and clarity</li>
-</ul></p>
+</ul>
 <h3>What to Submit</h3>
-<p>1. <strong>Primary Deliverable</strong>: Google Colab notebook link (ensure sharing is enabled)
-2. <strong>Optional</strong>: Saved embeddings and models (via Google Drive link)
-3. <strong>Optional</strong>: Standalone HTML export of notebook with all outputs</p>
+<ol>
+<li><strong>Primary Deliverable</strong>: Google Colab notebook link (ensure sharing is enabled)</li>
+<li><strong>Optional</strong>: Saved embeddings and models (via Google Drive link)</li>
+<li><strong>Optional</strong>: Standalone HTML export of notebook with all outputs</li>
+</ol>
 <h3>Collaboration Policy</h3>
 <ul>
 <li>You may discuss high-level approaches with classmates</li>
@@ -691,16 +727,43 @@ with open(dataset_path, 'rb') as f:
 <li>All analysis, writing, and insights must be your own</li>
 <li>Cite any external code or ideas used</li>
 </ul>
-<p>---</p>
+<hr>
 <h2>Grading Rubric (100 points total)</h2>
 <h3>Part 1: Implementation (40 points)</h3>
-<p>| Component | Points | Criteria |
-|-----------|--------|----------|
-| Classical Methods (LSA, LDA) | 8 | Correct implementation, reasonable hyperparameters, working embeddings |
-| Static Embeddings (Word2Vec, GloVe, FastText) | 8 | Proper aggregation strategies, handling of OOV words, documented choices |
-| Contextualized Embeddings (BERT, GPT-2) | 8 | Appropriate pooling, handling of long documents, clear methodology |
-| Modern Embeddings (Sentence-BERT, Llama) | 8 | Correct model usage, comparison of approaches, quality embeddings |
-| Topic Models (BERTopic, Top2Vec) | 8 | Proper configuration, coherent topics, analysis of topic quality |</p>
+<table>
+<thead><tr>
+<th>Component</th>
+<th>Points</th>
+<th>Criteria</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Classical Methods (LSA, LDA)</td>
+<td>8</td>
+<td>Correct implementation, reasonable hyperparameters, working embeddings</td>
+</tr>
+<tr>
+<td>Static Embeddings (Word2Vec, GloVe, FastText)</td>
+<td>8</td>
+<td>Proper aggregation strategies, handling of OOV words, documented choices</td>
+</tr>
+<tr>
+<td>Contextualized Embeddings (BERT, GPT-2)</td>
+<td>8</td>
+<td>Appropriate pooling, handling of long documents, clear methodology</td>
+</tr>
+<tr>
+<td>Modern Embeddings (Sentence-BERT, Llama)</td>
+<td>8</td>
+<td>Correct model usage, comparison of approaches, quality embeddings</td>
+</tr>
+<tr>
+<td>Topic Models (BERTopic, Top2Vec)</td>
+<td>8</td>
+<td>Proper configuration, coherent topics, analysis of topic quality</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Grading notes:</strong>
 <ul>
 <li>Full credit requires all methods working with reasonable quality</li>
@@ -708,12 +771,35 @@ with open(dataset_path, 'rb') as f:
 <li>Bonus points (up to +5) for additional methods or particularly elegant implementations</li>
 </ul></p>
 <h3>Part 2: Evaluation and Analysis (30 points)</h3>
-<p>| Component | Points | Criteria |
-|-----------|--------|----------|
-| Clustering Algorithms | 10 | Multiple algorithms implemented, systematic comparison, justified choices |
-| Quantitative Metrics | 8 | Comprehensive metrics, correct implementation, statistical rigor |
-| Qualitative Analysis | 6 | Thoughtful interpretation, case studies, error analysis |
-| Cross-Method Comparison | 6 | Direct comparisons, correlation analysis, actionable insights |</p>
+<table>
+<thead><tr>
+<th>Component</th>
+<th>Points</th>
+<th>Criteria</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Clustering Algorithms</td>
+<td>10</td>
+<td>Multiple algorithms implemented, systematic comparison, justified choices</td>
+</tr>
+<tr>
+<td>Quantitative Metrics</td>
+<td>8</td>
+<td>Comprehensive metrics, correct implementation, statistical rigor</td>
+</tr>
+<tr>
+<td>Qualitative Analysis</td>
+<td>6</td>
+<td>Thoughtful interpretation, case studies, error analysis</td>
+</tr>
+<tr>
+<td>Cross-Method Comparison</td>
+<td>6</td>
+<td>Direct comparisons, correlation analysis, actionable insights</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Grading notes:</strong>
 <ul>
 <li>Quality of analysis matters more than quantity</li>
@@ -721,10 +807,25 @@ with open(dataset_path, 'rb') as f:
 <li>Statistical significance testing required for comparisons</li>
 </ul></p>
 <h3>Part 3: Visualization (15 points)</h3>
-<p>| Component | Points | Criteria |
-|-----------|--------|----------|
-| Multi-Level Clustering | 5 | Clear hierarchy, validated against structure, insightful analysis |
-| Interactive Visualizations | 10 | High-quality Plotly plots, appropriate techniques, informative and beautiful |</p>
+<table>
+<thead><tr>
+<th>Component</th>
+<th>Points</th>
+<th>Criteria</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Multi-Level Clustering</td>
+<td>5</td>
+<td>Clear hierarchy, validated against structure, insightful analysis</td>
+</tr>
+<tr>
+<td>Interactive Visualizations</td>
+<td>10</td>
+<td>High-quality Plotly plots, appropriate techniques, informative and beautiful</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Grading notes:</strong>
 <ul>
 <li>Visualizations must be publication-quality</li>
@@ -733,10 +834,25 @@ with open(dataset_path, 'rb') as f:
 <li>Bonus points (up to +3) for particularly creative or insightful visualizations</li>
 </ul></p>
 <h3>Part 4: Cognitive Science Connection (10 points)</h3>
-<p>| Component | Points | Criteria |
-|-----------|--------|----------|
-| Theoretical Connection | 4 | Clear explanation of distributional semantics, connection to cognitive science |
-| Critical Analysis | 6 | Thoughtful discussion of meaning, limitations, philosophical depth |</p>
+<table>
+<thead><tr>
+<th>Component</th>
+<th>Points</th>
+<th>Criteria</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Theoretical Connection</td>
+<td>4</td>
+<td>Clear explanation of distributional semantics, connection to cognitive science</td>
+</tr>
+<tr>
+<td>Critical Analysis</td>
+<td>6</td>
+<td>Thoughtful discussion of meaning, limitations, philosophical depth</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Grading notes:</strong>
 <ul>
 <li>Must engage seriously with cognitive science literature</li>
@@ -744,10 +860,25 @@ with open(dataset_path, 'rb') as f:
 <li>Depth and nuance valued over length</li>
 </ul></p>
 <h3>Part 5: Advanced Extensions (5 points)</h3>
-<p>| Component | Points | Criteria |
-|-----------|--------|----------|
-| Extension Implementation | 3 | Working implementation of chosen extension, appropriate methodology |
-| Extension Analysis | 2 | Evaluation of extension, insights gained, discussion of implications |</p>
+<table>
+<thead><tr>
+<th>Component</th>
+<th>Points</th>
+<th>Criteria</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Extension Implementation</td>
+<td>3</td>
+<td>Working implementation of chosen extension, appropriate methodology</td>
+</tr>
+<tr>
+<td>Extension Analysis</td>
+<td>2</td>
+<td>Evaluation of extension, insights gained, discussion of implications</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Grading notes:</strong>
 <ul>
 <li>Choose extension that interests you</li>
@@ -755,30 +886,51 @@ with open(dataset_path, 'rb') as f:
 <li>Bonus points (up to +5) for multiple high-quality extensions</li>
 </ul></p>
 <h3>Overall Quality (Holistic Assessment)</h3>
-<p>| Aspect | Impact on Grade |
-|--------|-----------------|
-| Code Quality | Clean, well-documented, efficient code can earn bonus points |
-| Writing Quality | Clear, insightful writing enhances grade; poor writing reduces it |
-| Creativity | Novel approaches or insights can earn significant bonus points |
-| Reproducibility | Non-reproducible results may lose up to 10 points |
-| Late Submission | Standard course late policy applies |</p>
+<table>
+<thead><tr>
+<th>Aspect</th>
+<th>Impact on Grade</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Code Quality</td>
+<td>Clean, well-documented, efficient code can earn bonus points</td>
+</tr>
+<tr>
+<td>Writing Quality</td>
+<td>Clear, insightful writing enhances grade; poor writing reduces it</td>
+</tr>
+<tr>
+<td>Creativity</td>
+<td>Novel approaches or insights can earn significant bonus points</td>
+</tr>
+<tr>
+<td>Reproducibility</td>
+<td>Non-reproducible results may lose up to 10 points</td>
+</tr>
+<tr>
+<td>Late Submission</td>
+<td>Standard course late policy applies</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Maximum Total: 110 points (100 base + 10 possible bonus)</strong></p>
-<p>---</p>
+<hr>
 <h2>Resources and References</h2>
 <h3>Key Papers (from Syllabus Weeks 3-4)</h3>
 <p><strong>Foundational Papers:</strong>
 <ul>
 <li>Deerwester et al. (1990). <a href="https://www.cs.bham.ac.uk/~pxt/IDA/lsa<em>ind</em>ar_02.pdf" target="_blank">Indexing by Latent Semantic Analysis</a></li>
-<li>Blei, Ng, & Jordan (2003). <a href="https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf" target="_blank">Latent Dirichlet Allocation</a></li>
+<li>Blei, Ng,  |  Jordan (2003). <a href="https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf" target="_blank">Latent Dirichlet Allocation</a></li>
 <li>Mikolov et al. (2013). <a href="https://arxiv.org/abs/1301.3781" target="_blank">Efficient Estimation of Word Representations in Vector Space</a></li>
-<li>Pennington, Socher, & Manning (2014). <a href="https://nlp.stanford.edu/pubs/glove.pdf" target="_blank">GloVe: Global Vectors for Word Representation</a></li>
+<li>Pennington, Socher,  |  Manning (2014). <a href="https://nlp.stanford.edu/pubs/glove.pdf" target="_blank">GloVe: Global Vectors for Word Representation</a></li>
 </ul></p>
 <p><strong>Neural Methods:</strong>
 <ul>
 <li>Bojanowski et al. (2017). <a href="https://arxiv.org/abs/1607.04606" target="_blank">Enriching Word Vectors with Subword Information</a></li>
 <li>Devlin et al. (2019). <a href="https://arxiv.org/abs/1810.04805" target="_blank">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></li>
 <li>Radford et al. (2019). <a href="https://d4mucfpksywv.cloudfront.net/better-language-models/language<em>models</em>are<em>unsupervised</em>multitask_learners.pdf" target="_blank">Language Models are Unsupervised Multitask Learners</a></li>
-<li>Reimers & Gurevych (2019). <a href="https://arxiv.org/abs/1908.10084" target="_blank">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</a></li>
+<li>Reimers  |  Gurevych (2019). <a href="https://arxiv.org/abs/1908.10084" target="_blank">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</a></li>
 </ul></p>
 <p><strong>Modern Topic Models:</strong>
 <ul>
@@ -787,13 +939,13 @@ with open(dataset_path, 'rb') as f:
 </ul></p>
 <p><strong>Evaluation and Analysis:</strong>
 <ul>
-<li>van der Maaten & Hinton (2008). <a href="https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf" target="_blank">Visualizing Data using t-SNE</a></li>
-<li>McInnes, Healy, & Melville (2018). <a href="https://arxiv.org/abs/1802.03426" target="_blank">UMAP: Uniform Manifold Approximation and Projection</a></li>
+<li>van der Maaten  |  Hinton (2008). <a href="https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf" target="_blank">Visualizing Data using t-SNE</a></li>
+<li>McInnes, Healy,  |  Melville (2018). <a href="https://arxiv.org/abs/1802.03426" target="_blank">UMAP: Uniform Manifold Approximation and Projection</a></li>
 </ul></p>
 <p><strong>Cognitive Science Connection:</strong>
 <ul>
 <li>Lenci (2008). <a href="https://www.academia.edu/download/43947219/Distributional<em>semantics</em>in<em>linguistic</em>a20160320-31230-nwvv7i.pdf" target="_blank">Distributional semantics in linguistic and cognitive research</a></li>
-<li>Landauer & Dumais (1997). <a href="https://psycnet.apa.org/record/1997-03887-001" target="_blank">A Solution to Plato's Problem: The Latent Semantic Analysis Theory of Acquisition</a></li>
+<li>Landauer  |  Dumais (1997). <a href="https://psycnet.apa.org/record/1997-03887-001" target="_blank">A Solution to Plato's Problem: The Latent Semantic Analysis Theory of Acquisition</a></li>
 </ul></p>
 <h3>Tutorials and Documentation</h3>
 <p><strong>Libraries:</strong>
@@ -819,7 +971,7 @@ with open(dataset_path, 'rb') as f:
 <li><a href="http://alfonseca.org/eng/research/wordsim353.html" target="_blank">WordSim-353</a> - Word similarity dataset</li>
 <li><a href="https://staff.fnwi.uva.nl/e.bruni/MEN" target="_blank">MEN Dataset</a> - Semantic relatedness</li>
 </ul>
-<p>---</p>
+<hr>
 <h2>Tips and Best Practices</h2>
 <h3>Computational Efficiency</h3>
 <p><strong>Working with Large Datasets:</strong>
@@ -924,7 +1076,7 @@ with open(dataset_path, 'rb') as f:
 <li>Avoiding learning the underlying concepts</li>
 </ul></p>
 <p><strong>Remember:</strong> You must understand and be able to explain everything you submit.</p>
-<p>---</p>
+<hr>
 <h2>Expected Timeline</h2>
 <p>This is a 2-week intensive assignment (Weeks 3-4 of the course). With GenAI assistance and focused implementation, here's a suggested timeline:</p>
 <h3>Week 1: Implementation of All Methods, Initial Clustering</h3>
@@ -951,7 +1103,7 @@ with open(dataset_path, 'rb') as f:
 <li>Polish all outputs and finalize documentation</li>
 </ul>
 <p><strong>Total estimated effort: 25-35 hours</strong> (with GenAI assistance for coding and documentation)</p>
-<p>---</p>
+<hr>
 <h2>Frequently Asked Questions</h2>
 <p><strong>Q: Do I really need to implement all 10+ methods?</strong>
 A: Yes. The comparison is the core of the assignment. However, if you have significant technical difficulties with one method, document the issue and move on.</p>
@@ -971,7 +1123,7 @@ A: Very important. They're worth 15 points and central to understanding the resu
 A: Document what you found! Negative results are still results. Analyze why and what it means.</p>
 <p><strong>Q: Can I use commercial APIs (OpenAI, Anthropic)?</strong>
 A: Prefer open-source models, but if you have credits, you can use APIs for comparison.</p>
-<p>---</p>
+<hr>
 <h2>Getting Help</h2>
 <ul>
 <li><strong>Office Hours</strong>: Best place for debugging and conceptual questions</li>
@@ -980,38 +1132,46 @@ A: Prefer open-source models, but if you have credits, you can use APIs for comp
 <li><strong>Library Documentation</strong>: Always check official docs first</li>
 <li><strong>Papers</strong>: When in doubt, read the original paper</li>
 </ul>
-<p>---</p>
+<hr>
 <h2>Learning Goals: What You'll Take Away</h2>
 <p>By completing this assignment, you will:</p>
-<p>1. <strong>Technical Skills</strong>
+<ol>
+<li><strong>Technical Skills</strong></li>
+</ol>
 <ul>
 <li>Mastery of diverse embedding techniques</li>
 <li>Experience with unsupervised learning and clustering</li>
 <li>Expertise in evaluation metrics and analysis</li>
 <li>Ability to create publication-quality visualizations</li>
-</ul></p>
-<p>2. <strong>Conceptual Understanding</strong>
+</ul>
+<ol>
+<li><strong>Conceptual Understanding</strong></li>
+</ol>
 <ul>
 <li>Deep understanding of distributional semantics</li>
 <li>Knowledge of trade-offs between different approaches</li>
 <li>Appreciation for the evolution of NLP methods</li>
 <li>Critical thinking about what "meaning" means computationally</li>
-</ul></p>
-<p>3. <strong>Research Skills</strong>
+</ul>
+<ol>
+<li><strong>Research Skills</strong></li>
+</ol>
 <ul>
 <li>Ability to design and conduct comparative experiments</li>
 <li>Statistical rigor in evaluation</li>
 <li>Clear communication of findings</li>
 <li>Connection between theory and practice</li>
-</ul></p>
-<p>4. <strong>Practical Knowledge</strong>
+</ul>
+<ol>
+<li><strong>Practical Knowledge</strong></li>
+</ol>
 <ul>
 <li>Experience working with large-scale NLP datasets</li>
 <li>Understanding of computational constraints</li>
 <li>Ability to debug and troubleshoot ML pipelines</li>
 <li>Portfolio-worthy project for job applications</li>
-</ul></p>
-<p>---</p>
+</ul>
+<hr>
 <h2>Final Words</h2>
 <p>This assignment is designed to be challenging, extensive, and deeply educational. It's not meant to be completed in a weekend. Take your time, explore the methods, think deeply about the results, and enjoy the process of discovering how machines represent meaning.</p>
 <p>The goal isn't just to get high metrics or pretty plots - it's to develop a sophisticated understanding of how different computational approaches capture semantic information, and to think critically about what these methods reveal (and obscure) about language and meaning.</p>
