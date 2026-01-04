@@ -625,27 +625,28 @@
                 <div class="panel stats-panel">
                     <h3>Evolution Stats</h3>
                     <div class="stats-grid">
-                        <div class="stat-item">
+                        <div class="stat-item clickable-stat" data-era="1960s">
                             <span class="stat-label">ELIZA (1966)</span>
                             <span class="stat-value">~200 rules</span>
                         </div>
-                        <div class="stat-item">
+                        <div class="stat-item clickable-stat" data-era="1990s">
                             <span class="stat-label">ALICE (1995)</span>
                             <span class="stat-value">~41K patterns</span>
                         </div>
-                        <div class="stat-item">
+                        <div class="stat-item clickable-stat" data-era="2010s">
                             <span class="stat-label">BlenderBot (2020)</span>
                             <span class="stat-value">90M params</span>
                         </div>
-                        <div class="stat-item">
+                        <div class="stat-item clickable-stat" data-era="2020s">
                             <span class="stat-label">SmolLM2 (2024)</span>
                             <span class="stat-value">135M-360M params</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Claude 4 Opus (2025)</span>
+                        <div class="stat-item external-link" data-url="https://claude.ai/">
+                            <span class="stat-label">Claude 4.5 Opus (2025)</span>
                             <span class="stat-value">~2T params*</span>
                         </div>
                     </div>
+                    <div id="evolution-chart" style="width: 100%; height: 200px; margin-top: 15px;"></div>
                     <p class="stats-note">*Estimated, not public</p>
                 </div>
 
@@ -654,6 +655,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <script type="module" src="js/eliza.js"></script>
     <script type="module" src="js/parry.js"></script>
     <script type="module" src="js/alice.js"></script>
@@ -688,6 +690,77 @@
                 updateThemeIcon(newTheme);
             });
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.clickable-stat').forEach(el => {
+                el.addEventListener('click', () => {
+                    const era = el.dataset.era;
+                    if (era && window.timelineApp) {
+                        window.timelineApp.switchEra(era);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.external-link').forEach(el => {
+                el.addEventListener('click', () => {
+                    const url = el.dataset.url;
+                    if (url) window.open(url, '_blank');
+                });
+            });
+
+            const chartData = [
+                { year: 1966, name: 'ELIZA', label: 'A', params: 200 },
+                { year: 1995, name: 'ALICE', label: 'B', params: 41000 },
+                { year: 2020, name: 'BlenderBot', label: 'C', params: 90000000 },
+                { year: 2024, name: 'SmolLM2', label: 'D', params: 360000000 },
+                { year: 2025, name: 'Claude 4.5', label: 'E', params: 2000000000000 }
+            ];
+
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const plotConfig = {
+                x: chartData.map(d => d.year),
+                y: chartData.map(d => d.params),
+                text: chartData.map(d => d.label),
+                mode: 'lines+markers+text',
+                type: 'scatter',
+                textposition: ['top center', 'top center', 'top center', 'bottom center', 'bottom center'],
+                textfont: { size: 11, color: isDark ? '#e0e0e0' : '#333', family: 'system-ui, sans-serif' },
+                line: { color: '#6366f1', width: 3 },
+                marker: { size: 8, color: '#6366f1' }
+            };
+
+            const layout = {
+                margin: { l: 55, r: 25, t: 40, b: 40 },
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                xaxis: {
+                    title: { text: 'Year', font: { size: 10, color: isDark ? '#aaa' : '#666' } },
+                    tickfont: { size: 9, color: isDark ? '#aaa' : '#666' },
+                    gridcolor: isDark ? '#333' : '#ddd',
+                    range: [1955, 2035]
+                },
+                yaxis: {
+                    title: { text: 'Rules / Params', font: { size: 10, color: isDark ? '#aaa' : '#666' } },
+                    type: 'log',
+                    tickfont: { size: 9, color: isDark ? '#aaa' : '#666' },
+                    gridcolor: isDark ? '#333' : '#ddd',
+                    range: [1.5, 13.5]
+                },
+                showlegend: false
+            };
+
+            if (document.getElementById('evolution-chart')) {
+                Plotly.newPlot('evolution-chart', [plotConfig], layout, { displayModeBar: false, responsive: true });
+                
+                const keyHtml = chartData.map(d => 
+                    `<span style="margin-right:10px;font-size:0.75em;"><strong>${d.label}</strong>=${d.name}</span>`
+                ).join('');
+                const keyDiv = document.createElement('div');
+                keyDiv.style.cssText = 'text-align:center;margin-top:5px;color:var(--text-secondary);line-height:1.6;';
+                keyDiv.innerHTML = keyHtml;
+                document.getElementById('evolution-chart').parentNode.insertBefore(keyDiv, document.getElementById('evolution-chart').nextSibling);
+            }
+        });
     </script>
 </body>
 </html>

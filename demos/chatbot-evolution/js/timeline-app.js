@@ -11,6 +11,40 @@ import { GPTBot } from './gpt-bot.js';
 import { ElizaBreakdownRenderer } from '../../eliza/js/eliza-breakdown-renderer.js';
 import { RulesViewer } from './rules-viewer.js';
 
+function formatMarkdown(text) {
+    let html = text;
+    
+    html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+        const language = lang || 'plaintext';
+        const escapedCode = code
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .trim();
+        return `<pre class="code-block" data-language="${language}"><code>${escapedCode}</code></pre>`;
+    });
+    
+    html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+    
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    
+    html = html.replace(/^### (.+)$/gm, '<strong style="font-size:1.1em;">$1</strong>');
+    html = html.replace(/^## (.+)$/gm, '<strong style="font-size:1.2em;">$1</strong>');
+    html = html.replace(/^# (.+)$/gm, '<strong style="font-size:1.3em;">$1</strong>');
+    
+    html = html.replace(/^[-*] (.+)$/gm, '• $1');
+    html = html.replace(/^\d+\. (.+)$/gm, (match, item, offset, str) => {
+        const before = str.substring(0, offset);
+        const num = (before.match(/^\d+\. /gm) || []).length + 1;
+        return `${num}. ${item}`;
+    });
+    
+    html = html.replace(/\n/g, '<br>');
+    
+    return html;
+}
+
 class TimelineApp {
     constructor() {
         this.bots = {
@@ -754,8 +788,8 @@ class TimelineApp {
         
         if (useHTML) {
             messageDiv.innerHTML = text;
-        } else if (botName === 'gpt' && type === 'bot' && this.bots.gpt.formatResponseAsHTML) {
-            messageDiv.innerHTML = this.bots.gpt.formatResponseAsHTML(text);
+        } else if (type === 'bot') {
+            messageDiv.innerHTML = formatMarkdown(text);
         } else {
             messageDiv.textContent = text;
         }
@@ -774,17 +808,13 @@ class TimelineApp {
         }
 
         const resultsDiv = document.getElementById('comparison-results');
-        resultsDiv.textContent = ''; // Clear previous results
+        resultsDiv.textContent = '';
 
-        // Get compare button and set loading state
         const compareBtn = document.getElementById('compare-btn');
         compareBtn.disabled = true;
         compareBtn.textContent = 'Comparing...';
 
-        // Ensure ELIZA is initialized before getting response
-        await this.bots.eliza.ensureInitialized();
-
-        // Add user message to display
+        // Show user message IMMEDIATELY before any async operations
         const userMsgDiv = document.createElement('div');
         userMsgDiv.className = 'comparison-item';
         userMsgDiv.style.background = 'var(--primary-color)';
@@ -837,13 +867,14 @@ class TimelineApp {
         // Scroll to show new content
         resultsDiv.scrollTop = resultsDiv.scrollHeight;
 
-        // Get responses - rule-based first (sync), then neural (async)
         const updateBotResponse = (bot, response) => {
             const item = botDivs[bot];
-            // Remove typing indicator and add response
-            const typing = item.querySelector('.typing-indicator');
+            const typing = item.querySelector('.typing-indicator') || item.querySelector('.loading-indicator');
             if (typing) typing.remove();
-            item.appendChild(document.createTextNode(response));
+            const responseSpan = document.createElement('span');
+            responseSpan.className = 'bot-response';
+            responseSpan.innerHTML = formatMarkdown(response);
+            item.appendChild(responseSpan);
         };
 
         // ELIZA is async (needs to ensure rules loaded)
@@ -876,9 +907,24 @@ class TimelineApp {
                 const item = botDivs[botName];
                 const typing = item.querySelector('.typing-indicator');
                 if (typing) {
-                    typing.innerHTML = '<span class="loading-text">Loading model...</span>';
+                    typing.innerHTML = '';
+                    typing.className = 'loading-indicator';
+                    const spinner = document.createElement('span');
+                    spinner.className = 'inline-spinner';
+                    const text = document.createElement('span');
+                    text.textContent = 'Loading model...';
+                    text.style.marginLeft = '8px';
+                    typing.appendChild(spinner);
+                    typing.appendChild(text);
                 }
                 await bot.loadModel();
+                if (typing) {
+                    typing.innerHTML = '';
+                    typing.className = 'typing-indicator';
+                    for (let i = 0; i < 3; i++) {
+                        typing.appendChild(document.createElement('span'));
+                    }
+                }
             }
             return bot.getResponse(prompt);
         };
@@ -900,24 +946,37 @@ class TimelineApp {
     displayArchitecture() {
         const vizDiv = document.getElementById('architecture-viz');
 
-        const architectures = {
-            'ELIZA (1966)': 'Pattern → Rules → Response',
-            'PARRY (1972)': 'Input → State Machine → Emotional Model → Response',
-            'ALICE (1995)': 'Input → AIML Parser → Category Match → Response',
-            'BlenderBot (2020)': 'Input → Encoder → Decoder → Response',
-            'SmolLM2 (2024)': 'Input → Decoder-Only Transformer → Response'
-        };
+        const architectures = [
+            { name: 'ELIZA (1966)', arch: 'Pattern → Rules → Response', era: '1960s' },
+            { name: 'PARRY (1972)', arch: 'Input → State Machine → Emotional Model → Response', era: '1970s' },
+            { name: 'ALICE (1995)', arch: 'Input → AIML Parser → Category Match → Response', era: '1990s' },
+            { name: 'BlenderBot (2020)', arch: 'Input → Encoder → Decoder → Response', era: '2010s' },
+            { name: 'SmolLM2 (2024)', arch: 'Input → Decoder-Only Transformer → Response', era: '2020s' }
+        ];
 
-        let html = '<div style="padding: 15px; text-align: left;">';
-        for (const [name, arch] of Object.entries(architectures)) {
-            html += `<div style="margin-bottom: 12px; font-size: 0.8em;">
-                <strong>${name}</strong><br>
-                <code style="font-size: 0.85em;">${arch}</code>
-            </div>`;
+        const container = document.createElement('div');
+        container.style.cssText = 'padding: 15px; text-align: left;';
+
+        for (const item of architectures) {
+            const div = document.createElement('div');
+            div.style.cssText = 'margin-bottom: 10px; font-size: 0.8em; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.2s; line-height: 1.4;';
+            const strong = document.createElement('strong');
+            strong.textContent = item.name;
+            strong.style.display = 'block';
+            strong.style.marginBottom = '2px';
+            const code = document.createElement('code');
+            code.textContent = item.arch;
+            code.style.cssText = 'font-size: 0.8em; word-break: break-word; display: block;';
+            div.appendChild(strong);
+            div.appendChild(code);
+            div.addEventListener('mouseenter', () => div.style.background = 'var(--surface-hover)');
+            div.addEventListener('mouseleave', () => div.style.background = 'transparent');
+            div.addEventListener('click', () => this.switchEra(item.era));
+            container.appendChild(div);
         }
-        html += '</div>';
 
-        vizDiv.innerHTML = html;
+        vizDiv.innerHTML = '';
+        vizDiv.appendChild(container);
     }
 }
 

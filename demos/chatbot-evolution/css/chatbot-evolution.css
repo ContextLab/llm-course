@@ -412,6 +412,20 @@ a.paper-item:hover {
     border-radius: 8px;
 }
 
+.stat-item.clickable-stat,
+.stat-item.external-link {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.stat-item.clickable-stat:hover,
+.stat-item.external-link:hover {
+    background: var(--surface-hover);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
 .stat-label {
     font-size: 0.85em;
     font-weight: 600;
@@ -946,6 +960,25 @@ a.paper-item:hover {
     to {
         transform: rotate(360deg);
     }
+}
+
+/* Inline spinner for comparison panel */
+.inline-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.loading-indicator {
+    display: inline-flex !important;
+    align-items: center;
+    padding: 8px 12px;
 }
 
 .loading-text {
@@ -1603,10 +1636,43 @@ a.paper-item:hover {
     font-family: system-ui, sans-serif;
 }
 
-.message .inline-code {
+.message .inline-code,
+.comparison-item .inline-code {
     background: var(--surface-hover);
     padding: 2px 6px;
     border-radius: 4px;
     font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
     font-size: 0.9em;
+}
+
+.comparison-item .code-block {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 10px;
+    margin: 6px 0;
+    overflow-x: auto;
+    font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+.comparison-item .code-block code {
+    background: none;
+    padding: 0;
+}
+
+.comparison-item .code-block::before {
+    content: attr(data-language);
+    display: block;
+    font-size: 0.7em;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    font-family: system-ui, sans-serif;
+}
+
+.comparison-item .bot-response {
+    display: block;
+    margin-top: 4px;
 }
