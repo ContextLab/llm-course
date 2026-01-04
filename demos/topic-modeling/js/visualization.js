@@ -51,16 +51,14 @@ export class TopicVisualizer {
         });
     }
 
-    /**
-     * Create a topic card element
-     */
     createTopicCard(topic, topicIdx, results) {
         const card = document.createElement('div');
         card.className = 'topic-card';
         card.style.borderLeftColor = this.colors[topicIdx % this.colors.length];
         card.style.borderLeftWidth = '4px';
 
-        const topWords = topic.slice(0, 10);
+        const topWordsCount = parseInt(document.getElementById('top-words')?.value || 10);
+        const topWords = topic.slice(0, topWordsCount);
 
         // Count documents where this is the dominant topic
         let dominantCount = 0;
@@ -396,11 +394,9 @@ export class TopicVisualizer {
         return coords;
     }
 
-    /**
-     * Show top words for a topic as horizontal bars
-     */
     showTopicWordBars(topicIdx, results) {
-        const topic = results.topics[topicIdx].slice(0, 15);
+        const topWordsCount = parseInt(document.getElementById('top-words')?.value || 10);
+        const topic = results.topics[topicIdx].slice(0, topWordsCount);
 
         const trace = {
             y: topic.map(w => w.word).reverse(),

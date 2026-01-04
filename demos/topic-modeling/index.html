@@ -257,6 +257,16 @@
             const valueDisplay = document.getElementById(valueId);
             slider.addEventListener('input', (e) => {
                 valueDisplay.textContent = e.target.value;
+                
+                if (sliderId === 'top-words' && app.currentResults) {
+                    const viewMode = document.getElementById('view-mode').value;
+                    if (viewMode === 'overview') {
+                        app.visualizer.renderOverview(app.currentResults);
+                    } else if (viewMode === 'intertopic') {
+                        const topicIdx = parseInt(document.getElementById('selected-topic').value) || 0;
+                        app.visualizer.showTopicWordBars(topicIdx === 'all' ? 0 : topicIdx, app.currentResults);
+                    }
+                }
             });
         }
 
