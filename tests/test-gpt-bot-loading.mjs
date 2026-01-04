@@ -54,18 +54,18 @@ async function testGPTBotStructure() {
     );
 
     runner.assert(
-        botCode.includes('DeepSeek-R1-Distill-Qwen-1.5B'),
-        'DeepSeek-R1 is configured as primary model'
+        botCode.includes('SmolLM2-135M-Instruct'),
+        'SmolLM2 135M is configured as smallest model'
     );
 
     runner.assert(
-        botCode.includes('gemma-3-1b-it'),
-        'Gemma 3 1B is configured as first fallback'
+        botCode.includes('SmolLM2-360M-Instruct'),
+        'SmolLM2 360M is configured as medium model'
     );
 
     runner.assert(
-        botCode.includes('gemma-3-270m-it'),
-        'Gemma 3 270M is configured as second fallback'
+        botCode.includes('SmolLM2-1.7B-Instruct'),
+        'SmolLM2 1.7B is configured as largest model'
     );
 
     runner.assert(
@@ -104,8 +104,8 @@ async function testGPTBotStructure() {
     );
 
     runner.assert(
-        botCode.includes('for (let i = 0; i < this.models.length; i++)'),
-        'Iterates through model fallback chain'
+        botCode.includes('for (let i = this.selectedModelIndex; i >= 0; i--)'),
+        'Iterates through model fallback chain (largest to smallest)'
     );
 
     runner.assert(
@@ -139,8 +139,8 @@ async function testModelConfigurations() {
         runner.assertEqual(modelCount, 3, 'Has exactly 3 models configured');
 
         runner.assert(
-            modelsSection.includes('onnx-community/'),
-            'Uses onnx-community models (Transformers.js compatible)'
+            modelsSection.includes('HuggingFaceTB/'),
+            'Uses HuggingFaceTB models (Transformers.js compatible)'
         );
 
         runner.assert(
@@ -154,8 +154,8 @@ async function testModelConfigurations() {
         );
 
         runner.assert(
-            modelsSection.includes('year: 2025'),
-            'Models are from 2025 (modern)'
+            modelsSection.includes('year: 2024'),
+            'Models are from 2024 (SmolLM2 release)'
         );
     }
 
@@ -171,18 +171,18 @@ async function testArchitectureInfo() {
     const botCode = readFileSync(botPath, 'utf-8');
 
     runner.assert(
-        botCode.includes('DeepSeek-R1-Distill-Qwen-1.5B'),
-        'Has DeepSeek architecture info'
+        botCode.includes('SmolLM2-135M'),
+        'Has SmolLM2-135M architecture info'
     );
 
     runner.assert(
-        botCode.includes('Gemma 3 1B IT'),
-        'Has Gemma 3 1B architecture info'
+        botCode.includes('SmolLM2-360M'),
+        'Has SmolLM2-360M architecture info'
     );
 
     runner.assert(
-        botCode.includes('Gemma 3 270M IT'),
-        'Has Gemma 3 270M architecture info'
+        botCode.includes('SmolLM2-1.7B'),
+        'Has SmolLM2-1.7B architecture info'
     );
 
     runner.assert(
@@ -191,8 +191,8 @@ async function testArchitectureInfo() {
     );
 
     runner.assert(
-        botCode.includes('Distilled from DeepSeek-R1 reasoning model'),
-        'Documents DeepSeek distillation origin'
+        botCode.includes('Optimized for browser/edge deployment'),
+        'Documents browser optimization'
     );
 
     runner.assert(
@@ -212,7 +212,7 @@ async function testResponseHandling() {
     const botCode = readFileSync(botPath, 'utf-8');
 
     runner.assert(
-        botCode.includes('max_new_tokens: 150'),
+        botCode.includes('max_new_tokens: 256'),
         'Limits response length'
     );
 

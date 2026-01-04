@@ -1,10 +1,39 @@
 # Session Handoff - January 4, 2026
 
 **Status:** ✅ All tasks completed
-**Completed:** 2026-01-04
+**Last Updated:** 2026-01-04 08:15 AM ET
 
-## Summary
-All three tasks from this handoff were completed:
+## Current Session Summary
+Implemented WASM memory probing for SmolLM2 model auto-selection in GPT bot.
+
+### Changes Made
+1. **Added `GPTBot.probeWasmMemory()`** - Binary search to find max allocatable WASM pages
+2. **Added `GPTBot.checkWebGPU()`** - Async check for WebGPU availability with adapter limits
+3. **Updated `getDefaultModelIndex()`** - Now uses probed WASM limits + WebGPU detection
+4. **Added `wasmMinMB` to model configs** - Minimum WASM heap needed (weights + runtime)
+5. **Updated tests** - `test-gpt-bot-loading.mjs` now tests SmolLM2 configuration
+
+### Key Logic
+- WASM binary search: tries `WebAssembly.Memory({ initial: 1, maximum: N })` to find max N
+- 1 page = 64 KiB, so max pages × 64 / 1024 = max MB
+- Model selection: largest model that fits both RAM AND WASM constraints
+- WebGPU bypass: when WebGPU available, weights go to GPU memory, relaxing WASM limit
+
+### Files Modified
+- `demos/chatbot-evolution/js/gpt-bot.js` - WASM probing, WebGPU detection, model selection
+- `tests/test-gpt-bot-loading.mjs` - Updated for SmolLM2 models
+
+### Tests Status
+- ✅ All GPT bot tests pass (32/32)
+- ✅ All chatbot tests pass (ELIZA, PARRY, ALICE)
+
+### Not Yet Pushed
+Run `git status` to see pending changes, then `git push` when ready.
+
+---
+
+## Previous Session Summary (Morning)
+All three tasks from previous handoff were completed:
 1. ✅ Syllabus table fixes (columns, sequential lecture numbering, slide links)
 2. ✅ Tag filtering removed from demos page
 3. ✅ Related Lectures links added to all 15 demos

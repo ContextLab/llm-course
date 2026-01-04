@@ -4,12 +4,90 @@
  * Model hierarchy (SmolLM2 family - HuggingFace's browser-optimized models):
  * 1. SmolLM2-135M-Instruct - Ultra-light, works on any device
  * 2. SmolLM2-360M-Instruct - Balanced quality/speed (default for 4GB RAM)
- * 3. SmolLM2-1.7B-Instruct - Best quality (requires 8GB+ RAM)
+ * 3. SmolLM2-1.7B-Instruct - Best quality (requires 8GB+ RAM + WebGPU)
  * 
- * Auto-selects based on device RAM (navigator.deviceMemory)
+ * Auto-selects based on device RAM and WASM memory limits.
+ * When WebGPU is available, larger models become feasible since weights
+ * go to GPU memory, bypassing WASM heap limits.
  */
 
 export class GPTBot {
+    // Cached capability detection (computed once)
+    static _wasmMaxMB = null;
+    static _webGPUAvailable = null;
+    
+    /**
+     * Probe maximum WASM memory available in this browser.
+     * Uses binary search to find the largest allocatable memory.
+     * @returns {number} Maximum WASM memory in MB
+     */
+    static probeWasmMemory() {
+        if (GPTBot._wasmMaxMB !== null) {
+            return GPTBot._wasmMaxMB;
+        }
+        
+        // Binary search for max allocatable WASM pages
+        // 1 page = 64 KiB, max theoretical = 65536 pages (4GB)
+        let min = 1;
+        let max = 65536; // 4GB theoretical max
+        let best = min;
+        
+        while (min <= max) {
+            const mid = Math.floor((min + max) / 2);
+            try {
+                // Try to create Memory with this maximum
+                new WebAssembly.Memory({ initial: 1, maximum: mid });
+                best = mid;
+                min = mid + 1;
+            } catch (e) {
+                max = mid - 1;
+            }
+        }
+        
+        // Convert pages to MB (1 page = 64 KiB = 0.0625 MB)
+        GPTBot._wasmMaxMB = Math.floor((best * 64) / 1024);
+        console.log(`[GPT] Probed WASM memory limit: ${GPTBot._wasmMaxMB}MB (${best} pages)`);
+        return GPTBot._wasmMaxMB;
+    }
+    
+    /**
+     * Check if WebGPU is available and functional.
+     * WebGPU allows larger models since weights go to GPU memory.
+     * @returns {Promise<boolean>}
+     */
+    static async checkWebGPU() {
+        if (GPTBot._webGPUAvailable !== null) {
+            return GPTBot._webGPUAvailable;
+        }
+        
+        try {
+            if (!navigator.gpu) {
+                GPTBot._webGPUAvailable = false;
+                console.log('[GPT] WebGPU not supported in this browser');
+                return false;
+            }
+            
+            const adapter = await navigator.gpu.requestAdapter();
+            if (!adapter) {
+                GPTBot._webGPUAvailable = false;
+                console.log('[GPT] WebGPU adapter not available');
+                return false;
+            }
+            
+            const limits = adapter.limits;
+            const maxBufferSize = limits.maxBufferSize || 0;
+            const maxStorageBufferSize = limits.maxStorageBufferBindingSize || 0;
+            
+            console.log(`[GPT] WebGPU available - maxBufferSize: ${Math.floor(maxBufferSize / 1024 / 1024)}MB, maxStorageBuffer: ${Math.floor(maxStorageBufferSize / 1024 / 1024)}MB`);
+            GPTBot._webGPUAvailable = true;
+            return true;
+        } catch (e) {
+            console.log('[GPT] WebGPU check failed:', e.message);
+            GPTBot._webGPUAvailable = false;
+            return false;
+        }
+    }
+    
     constructor() {
         this.generator = null;
         this.isReady = false;
@@ -19,6 +97,7 @@ export class GPTBot {
         this.loadAttempt = 0;
 
         // SmolLM2 family - all have native Transformers.js support (ONNX bundled)
+        // wasmMinMB: minimum WASM heap needed (weights + runtime overhead)
         this.models = [
             {
                 name: 'HuggingFaceTB/SmolLM2-135M-Instruct',
@@ -26,7 +105,8 @@ export class GPTBot {
                 dtype: 'q4',
                 params: '135M',
                 sizeMB: 85,
-                minRAM: 2,  // Works on 2GB+ devices
+                wasmMinMB: 300,   // 85MB weights + ~200MB runtime
+                minRAM: 2,
                 year: 2024,
                 org: 'HuggingFace'
             },
@@ -36,7 +116,8 @@ export class GPTBot {
                 dtype: 'q4',
                 params: '360M',
                 sizeMB: 210,
-                minRAM: 4,  // Recommended for 4GB+ devices
+                wasmMinMB: 600,   // 210MB weights + ~400MB runtime
+                minRAM: 4,
                 year: 2024,
                 org: 'HuggingFace'
             },
@@ -46,6 +127,7 @@ export class GPTBot {
                 dtype: 'q4',
                 params: '1.7B',
                 sizeMB: 1410,
+                wasmMinMB: 2500,  // 1410MB weights + ~1GB runtime - exceeds most WASM limits
                 minRAM: 8,
                 year: 2024,
                 org: 'HuggingFace'
@@ -60,23 +142,43 @@ export class GPTBot {
     }
     
     /**
-     * Detect device RAM and select the largest model that fits
-     * Uses 50% of available RAM as the threshold
+     * Detect device capabilities and select the best model.
+     * 
+     * Selection logic:
+     * 1. Probe WASM memory limit
+     * 2. Check WebGPU availability (allows larger models)
+     * 3. Consider device RAM
+     * 4. Select largest model that fits all constraints
      */
     getDefaultModelIndex() {
         const deviceRAM = navigator.deviceMemory || 4;
+        const wasmMaxMB = GPTBot.probeWasmMemory();
         
-        // Cap at 360M (index 1) - 1.7B model exceeds browser WASM memory limits
-        const maxSafeIndex = 1;
+        // WebGPU check is async, so we optimistically check the cached value
+        // If WebGPU hasn't been checked yet, assume WASM-only for initial selection
+        const hasWebGPU = GPTBot._webGPUAvailable === true;
         
-        for (let i = Math.min(maxSafeIndex, this.models.length - 1); i >= 0; i--) {
-            if (deviceRAM >= this.models[i].minRAM) {
-                console.log(`[GPT] Detected ${deviceRAM}GB RAM, auto-selecting ${this.models[i].displayName}`);
-                return i;
+        console.log(`[GPT] Capability detection: RAM=${deviceRAM}GB, WASM=${wasmMaxMB}MB, WebGPU=${hasWebGPU}`);
+        
+        for (let i = this.models.length - 1; i >= 0; i--) {
+            const model = this.models[i];
+            
+            if (deviceRAM < model.minRAM) {
+                console.log(`[GPT] ${model.displayName}: skipped (needs ${model.minRAM}GB RAM, have ${deviceRAM}GB)`);
+                continue;
             }
+            
+            // WebGPU bypasses WASM heap limits by loading weights to GPU memory
+            if (!hasWebGPU && wasmMaxMB < model.wasmMinMB) {
+                console.log(`[GPT] ${model.displayName}: skipped (needs ${model.wasmMinMB}MB WASM, have ${wasmMaxMB}MB)`);
+                continue;
+            }
+            
+            console.log(`[GPT] Auto-selecting ${model.displayName} (RAM: ${deviceRAM}GB, WASM: ${wasmMaxMB}MB, WebGPU: ${hasWebGPU})`);
+            return i;
         }
         
-        console.log(`[GPT] Low RAM (${deviceRAM}GB), using smallest model`);
+        console.log(`[GPT] Falling back to smallest model (limited resources)`);
         return 0;
     }
     
