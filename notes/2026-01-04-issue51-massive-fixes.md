@@ -282,16 +282,44 @@ Based on explore agent findings:
 - Slide cleanup weeks 2-10
 - Canvas content drafts
 
-## TODO State Summary (Session 6)
+### 2026-01-04 14:22 (Session 7 - Current)
+
+**COMPLETED DEMO FIXES:**
+
+| Commit | Demo | Fix |
+|--------|------|-----|
+| `ea03bcb` | Tokenization | Fix Tokenize button - move setupEventListeners before loadTokenizers + robust vocab access |
+| `66c002e` | Embeddings Comparison | Remove Custom Test tab and all related JS code |
+| `b495d30` | Sentiment | Reduce sample dataset to 100 reviews (50 pos, 50 neg) |
+| `070ec00` | Topic Modeling | Add close button for topic details panel in inter-topic view |
+
+**ALL TESTS PASSING:**
+- Tokenization: 141/141 tests
+- Embeddings Comparison: 84/84 tests
+- Sentiment: 97/97 tests
+- Topic Modeling: 93/93 tests
+
+**HIGH-PRIORITY REMAINING:**
+- Create autograder scripts in `ContextLabCourses/teaching-tools`
+
+**LOW-PRIORITY REMAINING:**
+- Slide cleanup weeks 2-10
+- Canvas content drafts
+- Other minor demo polish items
+
+## TODO State Summary (Session 7)
 
 | ID | Task | Status |
 |----|------|--------|
-| 1 | TOKENIZATION: Fix Tokenize button | pending |
-| 3 | TOKENIZATION: Fix search/vocabulary browser | pending |
+| 1 | TOKENIZATION: Fix Tokenize button | **completed** |
+| 3 | TOKENIZATION: Fix search/vocabulary browser | **completed** |
 | 5 | POS TAGGING: Fix parse all sentences | **completed** |
 | 6 | POS TAGGING: Fix named entity demo | **completed** |
+| 7 | SENTIMENT: Reduce dataset to 100 reviews | **completed** |
 | 8 | SENTIMENT: Fix word-level contribution | **completed** |
 | 10 | EMBEDDINGS: Fix solve analogy button | **completed** |
+| 12 | EMBEDDINGS: Remove Custom Test tab | **completed** |
 | 13 | TOPIC MODELING: Fix inter-topic distance | **completed** |
 | 14 | TOPIC MODELING: Fix top words slider | **completed** |
+| 15 | TOPIC MODELING: Add close button for plots | **completed** |
 | 16 | Create autograder scripts | pending |
