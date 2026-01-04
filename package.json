@@ -54,6 +54,7 @@
     "node": ">=14.0.0"
   },
   "devDependencies": {
+    "@huggingface/transformers": "^3.8.1",
     "compromise": "^14.14.5"
   }
 }

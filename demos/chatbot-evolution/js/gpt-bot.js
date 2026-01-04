@@ -76,8 +76,16 @@ export class GPTBot {
 
         try {
             this.reportProgress('Importing Transformers.js v3');
+            console.log('[GPT] Importing @huggingface/transformers@3...');
+            
             const transformers = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3');
-            const { pipeline } = transformers;
+            const { pipeline, env } = transformers;
+            
+            console.log('[GPT] Import successful, pipeline function available:', typeof pipeline);
+            
+            // Configure environment for browser
+            env.allowLocalModels = false;
+            env.useBrowserCache = true;
 
             for (let i = 0; i < this.models.length; i++) {
                 this.loadAttempt = i + 1;
@@ -85,6 +93,7 @@ export class GPTBot {
                 this.currentModel = model;
 
                 try {
+                    console.log(`[GPT] Attempting to load model ${i + 1}/${this.models.length}: ${model.name}`);
                     this.reportProgress(`Loading ${model.displayName} (${model.params})`);
 
                     this.generator = await pipeline('text-generation', model.name, {
@@ -101,13 +110,19 @@ export class GPTBot {
                         }
                     });
 
+                    console.log(`[GPT] Successfully loaded ${model.displayName}`);
                     this.isReady = true;
                     this.isLoading = false;
                     this.reportProgress(`${model.displayName} loaded successfully!`, 100);
                     return true;
 
                 } catch (modelError) {
-                    console.warn(`Failed to load ${model.displayName}:`, modelError.message);
+                    console.error(`[GPT] Failed to load ${model.displayName}:`, modelError);
+                    console.error('[GPT] Error details:', {
+                        name: modelError.name,
+                        message: modelError.message,
+                        stack: modelError.stack
+                    });
                     
                     if (i < this.models.length - 1) {
                         this.reportProgress(`${model.displayName} failed, trying next model...`);
@@ -118,7 +133,12 @@ export class GPTBot {
             throw new Error('All models failed to load');
 
         } catch (error) {
-            console.error('Error loading GPT model:', error);
+            console.error('[GPT] Fatal error loading GPT model:', error);
+            console.error('[GPT] Error details:', {
+                name: error.name,
+                message: error.message,
+                stack: error.stack
+            });
             this.error = error.message;
             this.isLoading = false;
             this.reportProgress('Failed to load any model');
