@@ -26,7 +26,7 @@ export class AliceFull {
             botName: "A.L.I.C.E.",
             fullName: "Artificial Linguistic Internet Computer Entity",
             // Bot properties from AIML
-            name: "ALICE",
+            name: "",
             species: "robot",
             kingdom: "robot",  // Used in "I am a {{BOT:kingdom}}"
             location: "California",
@@ -56,7 +56,21 @@ export class AliceFull {
             favoritecolor: "green",
             favoritefood: "electricity",
             favoritemovie: "Blade Runner",
-            favoritebook: "ALICE In Wonderland"
+            favoritebook: "ALICE In Wonderland",
+            favoriteactor: "Keanu Reeves",
+            feelings: "As a robot I have no human feelings",
+            emotions: "As a robot I have no human emotions",
+            genus: "robot",
+            order: "artificial intelligence",
+            phylum: "software",
+            family: "AIML",
+            class: "chatbot",
+            etype: "artificial entity",
+            party: "independent",
+            president: "the current president",
+            nationality: "American",
+            kindmusic: "electronic music",
+            friends: "other chatbots and my users"
         };
 
         this.patterns = [];
@@ -108,13 +122,12 @@ export class AliceFull {
         while (result.includes('{{') && iterations < maxIterations) {
             const before = result;
 
-            // 1. Process innermost tags first (no nested content)
+            // 1. Process value substitutions FIRST (STAR, GET, BOT) so they can be used in SET
 
-            // Process SET context variables (innermost - no nested allowed)
-            // Allow empty values with ([^{}]*)
-            result = result.replace(/\{\{SET:([^:{}]+):([^{}]*)\}\}/g, (match, varName, value) => {
-                this.context[varName] = value;
-                return "";  // SET should not output the value
+            // Process STAR (wildcard captures) - MUST be first for nested tags like {{SET:name:{{STAR:1}}}}
+            result = result.replace(/\{\{STAR:(\d+)\}\}/g, (match, index) => {
+                const idx = parseInt(index) - 1;
+                return wildcards[idx] || "";
             });
 
             // Process GET context variables
@@ -127,14 +140,14 @@ export class AliceFull {
                 return this.context[property] || this.context.botName || "";
             });
 
-            // Process STAR (wildcard captures)
-            result = result.replace(/\{\{STAR:(\d+)\}\}/g, (match, index) => {
-                const idx = parseInt(index) - 1;
-                return wildcards[idx] || "";
-            });
-
             // Process THAT (previous bot response)
             result = result.replace(/\{THAT\}/g, this.context.that || "");
+
+            // 2. Process SET after substitutions are done
+            result = result.replace(/\{\{SET:([^:{}]+):([^{}]*)\}\}/g, (match, varName, value) => {
+                this.context[varName] = value;
+                return "";
+            });
 
             // 2. Process transformation tags
 
@@ -272,20 +285,18 @@ export class AliceFull {
     matchPattern(input, isSrai = false) {
         const normalizedInput = this.normalize(input);
 
-        // Separate patterns into specific and wildcard-only
-        let bestMatch = null;
-        let bestWildcards = [];
+        let exactMatch = null;
+        let exactWildcards = [];
         let wildcardMatch = null;
-        let wildcardMatchWildcards = [];
+        let wildcardWildcards = [];
+        let pureWildcardMatch = null;
+        let pureWildcardWildcards = [];
 
-        // Patterns are already sorted by priority
         for (const pattern of this.patterns) {
-            // Check topic constraint
             if (pattern.topic && this.context.topic !== pattern.topic) {
                 continue;
             }
 
-            // Check that constraint (previous bot response) - supports wildcards
             if (pattern.that) {
                 const normalizedThat = this.normalize(this.context.that);
                 const thatPattern = pattern.that
@@ -297,35 +308,36 @@ export class AliceFull {
                 }
             }
 
-            // Try to match pattern
             const regex = new RegExp('^' + pattern.regex + '$', 'i');
             const match = normalizedInput.match(regex);
 
             if (match) {
-                // Extract wildcards (everything except full match)
                 const wildcards = match.slice(1);
-
-                // Check if this is a pure wildcard pattern (just _ or *)
+                const hasWildcard = pattern.pattern.includes('*') || pattern.pattern.includes('_');
                 const isPureWildcard = pattern.pattern === '_' || pattern.pattern === '*';
 
                 if (isPureWildcard) {
-                    // Save as fallback if we don't find a specific match
-                    if (!wildcardMatch) {
+                    if (!pureWildcardMatch || pattern.priority > pureWildcardMatch.priority) {
+                        pureWildcardMatch = pattern;
+                        pureWildcardWildcards = wildcards;
+                    }
+                } else if (hasWildcard) {
+                    if (!wildcardMatch || pattern.priority > wildcardMatch.priority) {
                         wildcardMatch = pattern;
-                        wildcardMatchWildcards = wildcards;
+                        wildcardWildcards = wildcards;
                     }
                 } else {
-                    // Found a specific match - use it
-                    bestMatch = pattern;
-                    bestWildcards = wildcards;
-                    break;  // Use first specific match
+                    if (!exactMatch || pattern.priority > exactMatch.priority) {
+                        exactMatch = pattern;
+                        exactWildcards = wildcards;
+                    }
                 }
             }
         }
 
-        // Use specific match if found, otherwise fallback to wildcard match
-        const matchedPattern = bestMatch || wildcardMatch;
-        const matchedWildcards = bestMatch ? bestWildcards : wildcardMatchWildcards;
+        const matchedPattern = exactMatch || wildcardMatch || pureWildcardMatch;
+        const matchedWildcards = exactMatch ? exactWildcards : 
+                                 (wildcardMatch ? wildcardWildcards : pureWildcardWildcards);
 
         if (matchedPattern) {
             const response = this.processTemplate(matchedPattern.template, matchedWildcards);
@@ -335,7 +347,6 @@ export class AliceFull {
             return response;
         }
 
-        // No match found
         return this.getDefaultResponse(input);
     }
 
