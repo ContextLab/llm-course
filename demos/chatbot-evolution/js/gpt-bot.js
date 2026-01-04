@@ -18,6 +18,14 @@ export class GPTBot {
 
         this.models = [
             {
+                name: 'onnx-community/Qwen2.5-0.5B-Instruct',
+                displayName: 'Qwen 2.5 0.5B',
+                dtype: 'q4',
+                params: '0.5B',
+                year: 2024,
+                org: 'Alibaba'
+            },
+            {
                 name: 'onnx-community/DeepSeek-R1-Distill-Qwen-1.5B-ONNX',
                 displayName: 'DeepSeek-R1 1.5B',
                 dtype: 'q4',
@@ -26,20 +34,12 @@ export class GPTBot {
                 org: 'DeepSeek'
             },
             {
-                name: 'onnx-community/gemma-3-1b-it-ONNX',
-                displayName: 'Gemma 3 1B',
+                name: 'onnx-community/Qwen2.5-Coder-0.5B-Instruct',
+                displayName: 'Qwen 2.5 Coder 0.5B',
                 dtype: 'q4',
-                params: '1B',
-                year: 2025,
-                org: 'Google'
-            },
-            {
-                name: 'onnx-community/gemma-3-270m-it-ONNX',
-                displayName: 'Gemma 3 270M',
-                dtype: 'q4',
-                params: '270M',
-                year: 2025,
-                org: 'Google'
+                params: '0.5B',
+                year: 2024,
+                org: 'Alibaba'
             }
         ];
 
@@ -86,6 +86,22 @@ export class GPTBot {
             // Configure environment for browser
             env.allowLocalModels = false;
             env.useBrowserCache = true;
+            
+            // Check WebGPU availability
+            let device = 'wasm'; // Default to WASM
+            try {
+                if (navigator.gpu) {
+                    const adapter = await navigator.gpu.requestAdapter();
+                    if (adapter) {
+                        device = 'webgpu';
+                        console.log('[GPT] WebGPU available, using GPU acceleration');
+                    }
+                }
+            } catch (e) {
+                console.log('[GPT] WebGPU not available, using WASM backend');
+            }
+            
+            console.log(`[GPT] Using device: ${device}`);
 
             for (let i = 0; i < this.models.length; i++) {
                 this.loadAttempt = i + 1;
@@ -98,6 +114,7 @@ export class GPTBot {
 
                     this.generator = await pipeline('text-generation', model.name, {
                         dtype: model.dtype,
+                        device: device,
                         progress_callback: (progress) => {
                             if (progress.status === 'downloading' || progress.status === 'progress') {
                                 const pct = progress.progress || 0;
@@ -117,12 +134,44 @@ export class GPTBot {
                     return true;
 
                 } catch (modelError) {
-                    console.error(`[GPT] Failed to load ${model.displayName}:`, modelError);
-                    console.error('[GPT] Error details:', {
-                        name: modelError.name,
-                        message: modelError.message,
-                        stack: modelError.stack
-                    });
+                    // Extract meaningful error info
+                    const errorMsg = modelError?.message || String(modelError);
+                    const errorName = modelError?.name || 'Unknown';
+                    
+                    console.error(`[GPT] Failed to load ${model.displayName}:`, errorMsg);
+                    console.error('[GPT] Error type:', errorName);
+                    console.error('[GPT] Full error object:', modelError);
+                    
+                    if (modelError?.stack) {
+                        console.error('[GPT] Stack trace:', modelError.stack);
+                    }
+                    
+                    // If WebGPU failed, try WASM for this model
+                    if (device === 'webgpu') {
+                        console.log(`[GPT] Retrying ${model.displayName} with WASM backend...`);
+                        try {
+                            this.generator = await pipeline('text-generation', model.name, {
+                                dtype: model.dtype,
+                                device: 'wasm',
+                                progress_callback: (progress) => {
+                                    if (progress.status === 'downloading' || progress.status === 'progress') {
+                                        const pct = progress.progress || 0;
+                                        this.reportProgress(`Downloading ${model.displayName} (WASM)`, pct);
+                                    } else if (progress.status === 'ready' || progress.status === 'done') {
+                                        this.reportProgress(`${model.displayName} ready`, 100);
+                                    }
+                                }
+                            });
+                            
+                            console.log(`[GPT] Successfully loaded ${model.displayName} with WASM`);
+                            this.isReady = true;
+                            this.isLoading = false;
+                            this.reportProgress(`${model.displayName} loaded (WASM)!`, 100);
+                            return true;
+                        } catch (wasmError) {
+                            console.error(`[GPT] WASM fallback also failed:`, wasmError?.message || wasmError);
+                        }
+                    }
                     
                     if (i < this.models.length - 1) {
                         this.reportProgress(`${model.displayName} failed, trying next model...`);
@@ -135,11 +184,11 @@ export class GPTBot {
         } catch (error) {
             console.error('[GPT] Fatal error loading GPT model:', error);
             console.error('[GPT] Error details:', {
-                name: error.name,
-                message: error.message,
-                stack: error.stack
+                name: error?.name,
+                message: error?.message,
+                stack: error?.stack
             });
-            this.error = error.message;
+            this.error = error?.message || String(error);
             this.isLoading = false;
             this.reportProgress('Failed to load any model');
             return false;
@@ -274,58 +323,59 @@ export class GPTBot {
                     positionEncoding: 'RoPE'
                 }
             };
-        } else if (model.name.includes('gemma-3-1b')) {
+        } else if (model.name.includes('Qwen2.5-Coder')) {
             return {
-                name: 'Gemma 3 1B IT',
+                name: 'Qwen 2.5 Coder 0.5B Instruct',
                 type: 'Decoder-Only Transformer',
-                parameters: '1 Billion',
-                layers: 26,
-                hiddenSize: 1152,
-                attentionHeads: 8,
+                parameters: '0.5 Billion',
+                layers: 24,
+                hiddenSize: 896,
+                attentionHeads: 14,
                 contextLength: 32768,
-                vocabulary: '~262K tokens',
-                trainingData: 'Web documents, code, mathematics',
-                year: 2025,
-                organization: 'Google',
+                vocabulary: '~151K tokens',
+                trainingData: 'Code and text data',
+                year: 2024,
+                organization: 'Alibaba',
                 keyFeatures: [
+                    'Optimized for coding tasks',
                     'Instruction-tuned for helpfulness',
-                    'Efficient sliding window attention',
-                    'Multilingual support',
-                    'Strong reasoning for size',
-                    'Open weights under Gemma license'
+                    'Efficient architecture for browser',
+                    'Strong code generation',
+                    'Open-source with Apache 2.0'
                 ],
                 architecture: {
                     type: 'decoder-only',
-                    attention: 'Sliding Window + Global Attention',
+                    attention: 'Grouped-Query Attention (GQA)',
                     normalization: 'RMSNorm',
-                    activation: 'GeGLU',
+                    activation: 'SiLU',
                     positionEncoding: 'RoPE'
                 }
             };
         } else {
             return {
-                name: 'Gemma 3 270M IT',
+                name: 'Qwen 2.5 0.5B Instruct',
                 type: 'Decoder-Only Transformer',
-                parameters: '270 Million',
-                layers: 18,
-                hiddenSize: 768,
-                attentionHeads: 8,
-                contextLength: 8192,
-                vocabulary: '~262K tokens',
-                trainingData: 'Web documents, code, mathematics',
-                year: 2025,
-                organization: 'Google',
+                parameters: '0.5 Billion',
+                layers: 24,
+                hiddenSize: 896,
+                attentionHeads: 14,
+                contextLength: 32768,
+                vocabulary: '~151K tokens',
+                trainingData: 'Web documents, code, multilingual text',
+                year: 2024,
+                organization: 'Alibaba',
                 keyFeatures: [
-                    'Ultra-lightweight for edge deployment',
-                    'Instruction-tuned',
-                    'Fast inference',
-                    'Good quality for size'
+                    'Compact yet capable model',
+                    'Instruction-tuned for chat',
+                    'Runs efficiently in browser',
+                    'Multilingual support',
+                    'Open-source with Apache 2.0'
                 ],
                 architecture: {
                     type: 'decoder-only',
-                    attention: 'Multi-Head Attention',
+                    attention: 'Grouped-Query Attention (GQA)',
                     normalization: 'RMSNorm',
-                    activation: 'GeGLU',
+                    activation: 'SiLU',
                     positionEncoding: 'RoPE'
                 }
             };

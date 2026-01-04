@@ -13,18 +13,18 @@ console.log('Testing exact models from gpt-bot.js\n');
 
 const models = [
     {
+        name: 'onnx-community/Qwen2.5-0.5B-Instruct',
+        displayName: 'Qwen 2.5 0.5B',
+        dtype: 'q4',
+    },
+    {
         name: 'onnx-community/DeepSeek-R1-Distill-Qwen-1.5B-ONNX',
         displayName: 'DeepSeek-R1 1.5B',
         dtype: 'q4',
     },
     {
-        name: 'onnx-community/gemma-3-1b-it-ONNX',
-        displayName: 'Gemma 3 1B',
-        dtype: 'q4',
-    },
-    {
-        name: 'onnx-community/gemma-3-270m-it-ONNX',
-        displayName: 'Gemma 3 270M',
+        name: 'onnx-community/Qwen2.5-Coder-0.5B-Instruct',
+        displayName: 'Qwen 2.5 Coder 0.5B',
         dtype: 'q4',
     }
 ];
