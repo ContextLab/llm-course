@@ -376,22 +376,63 @@ class AIMLConverter:
 
 
 def main():
-    """Main conversion function."""
-    # Set up paths
+    import sys
+
     aiml_dir = Path(__file__).parent / "alice-aiml-original"
-    output_file = Path(__file__).parent / "data" / "alice-patterns-full.json"
 
-    # Create converter
-    converter = AIMLConverter(aiml_dir)
+    exclude_mindpixel = "--original" in sys.argv or "--no-mindpixel" in sys.argv
 
-    # Convert all files
-    patterns = converter.convert_all()
+    if exclude_mindpixel:
+        output_file = Path(__file__).parent / "data" / "alice-patterns-original.json"
+        print("Mode: Original ALICE (excluding Mindpixel mp*.aiml files)")
+        print("This matches the ~41,000 pattern 2001 Loebner Prize winning version.\n")
+    else:
+        output_file = Path(__file__).parent / "data" / "alice-patterns-full.json"
+        print("Mode: Full ALICE (including all files)")
+        print("Use --original to exclude Mindpixel data for authentic 2001 version.\n")
 
-    # Save to JSON
-    converter.save_json(patterns, str(output_file))
+    converter = AIMLConverter(str(aiml_dir))
 
-    print(f"\nConversion successful!")
-    print(f"Output: {output_file}")
+    aiml_files = sorted(aiml_dir.glob("*.aiml"))
+
+    if exclude_mindpixel:
+        aiml_files = [f for f in aiml_files if not f.name.startswith("mp")]
+        print(f"Excluding {7} Mindpixel files (mp0-mp6.aiml)")
+
+    print(f"Found {len(aiml_files)} AIML files to process\n")
+
+    all_patterns = []
+    for filepath in aiml_files:
+        print(f"Processing {filepath.name}...")
+        patterns = converter.parse_aiml_file(filepath)
+        all_patterns.extend(patterns)
+        converter.file_count += 1
+
+    print(f"\nExtracted: {converter.pattern_count} patterns")
+
+    all_patterns = converter.deduplicate_patterns(all_patterns)
+    converter.pattern_count = len(all_patterns)
+    print(f"After deduplication: {converter.pattern_count} patterns")
+
+    metadata = {
+        "source": "ALICE AIML Foundation v1.0",
+        "version": "Original 2001" if exclude_mindpixel else "Full with Mindpixel",
+        "files_processed": converter.file_count,
+        "total_patterns": converter.pattern_count,
+        "includes_mindpixel": not exclude_mindpixel,
+        "license": "GNU General Public License",
+        "copyright": "(c) 2011 ALICE A.I. Foundation",
+    }
+
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(
+            {"metadata": metadata, "patterns": all_patterns},
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+    print(f"\nSaved {converter.pattern_count} patterns to {output_file}")
 
 
 if __name__ == "__main__":

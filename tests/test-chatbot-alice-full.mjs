@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Test script for ALICE Full implementation with all 95,026 patterns
- * Runs in Node.js to test pattern matching without browser
+ * Test script for ALICE Full implementation with original ~41K patterns
+ * Uses the authentic 2001 Loebner Prize winning pattern set (no Mindpixel)
  */
 
 import fs from 'fs';
@@ -47,7 +47,7 @@ async function runTests() {
     console.log();
 
     const alice = new AliceFullTest();
-    const patternsFile = path.join(__dirname, '../demos/chatbot-evolution/data', 'alice-patterns-full.json');
+    const patternsFile = path.join(__dirname, '../demos/chatbot-evolution/data', 'alice-patterns-original.json');
 
     // Load patterns from file
     const loaded = alice.loadPatternsFromFile(patternsFile);

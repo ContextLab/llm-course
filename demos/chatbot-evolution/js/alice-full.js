@@ -67,8 +67,9 @@ export class AliceFull {
 
     /**
      * Load patterns from JSON file
+     * Default uses original 2001 Loebner Prize version (~41K patterns, no Mindpixel)
      */
-    async loadPatterns(url = 'data/alice-patterns-full.json') {
+    async loadPatterns(url = 'data/alice-patterns-original.json') {
         try {
             const response = await fetch(url);
             const data = await response.json();
@@ -284,9 +285,16 @@ export class AliceFull {
                 continue;
             }
 
-            // Check that constraint (previous bot response)
-            if (pattern.that && !this.normalize(this.context.that).includes(this.normalize(pattern.that))) {
-                continue;
+            // Check that constraint (previous bot response) - supports wildcards
+            if (pattern.that) {
+                const normalizedThat = this.normalize(this.context.that);
+                const thatPattern = pattern.that
+                    .replace(/\*/g, '.*')
+                    .replace(/_/g, '.+');
+                const thatRegex = new RegExp('^' + thatPattern + '$', 'i');
+                if (!thatRegex.test(normalizedThat)) {
+                    continue;
+                }
             }
 
             // Try to match pattern

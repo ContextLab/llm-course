@@ -9,6 +9,7 @@ import { Alice } from './alice.js';
 import { Seq2SeqBot } from './seq2seq-bot.js';
 import { GPTBot } from './gpt-bot.js';
 import { ElizaBreakdownRenderer } from '../../eliza/js/eliza-breakdown-renderer.js';
+import { RulesViewer } from './rules-viewer.js';
 
 class TimelineApp {
     constructor() {
@@ -25,6 +26,9 @@ class TimelineApp {
         this.elizaBreakdownRenderer = new ElizaBreakdownRenderer({
             containerId: 'eliza-breakdown-steps'
         });
+        
+        this.rulesViewer = new RulesViewer('alice-rules-container');
+        this.rulesViewerLoaded = false;
     }
 
     async init() {
@@ -248,19 +252,36 @@ class TimelineApp {
     }
 
     switchChatbotTab(bot, tab) {
-        // Update tab buttons
         document.querySelectorAll('.chatbot-tab-button[data-bot="' + bot + '"]').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.tab === tab);
         });
 
-        // Update tab content - handle all possible tabs
         const chatTab = document.getElementById(bot + '-chat-tab');
         const breakdownTab = document.getElementById(bot + '-breakdown-tab');
         const architectureTab = document.getElementById(bot + '-architecture-tab');
+        const rulesTab = document.getElementById(bot + '-rules-tab');
 
         if (chatTab) chatTab.classList.toggle('active', tab === 'chat');
         if (breakdownTab) breakdownTab.classList.toggle('active', tab === 'breakdown');
         if (architectureTab) architectureTab.classList.toggle('active', tab === 'architecture');
+        if (rulesTab) rulesTab.classList.toggle('active', tab === 'rules');
+        
+        if (tab === 'rules' && bot === 'alice' && !this.rulesViewerLoaded) {
+            this.loadRulesViewer();
+        }
+    }
+    
+    async loadRulesViewer() {
+        const container = document.getElementById('alice-rules-container');
+        container.innerHTML = '<div class="loading-state">Loading 41,380 patterns...</div>';
+        
+        try {
+            await this.rulesViewer.loadPatterns();
+            this.rulesViewer.render();
+            this.rulesViewerLoaded = true;
+        } catch (error) {
+            container.innerHTML = '<div class="error-state">Failed to load patterns: ' + error.message + '</div>';
+        }
     }
 
     analyzeParry(input) {
