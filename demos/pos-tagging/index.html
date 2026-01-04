@@ -267,16 +267,17 @@
                 words.forEach(word => {
                     let entityType = null;
                     let cleanWord = word.replace(/[.,!?;:]$/, '');
+                    let cleanLower = cleanWord.toLowerCase();
 
-                    if (entities.people.some(e => cleanWord.toLowerCase().includes(e.toLowerCase()))) {
+                    if (entities.people.some(e => e.toLowerCase().split(/\s+/).includes(cleanLower) || e.toLowerCase() === cleanLower)) {
                         entityType = 'person';
-                    } else if (entities.places.some(e => cleanWord.toLowerCase().includes(e.toLowerCase()))) {
+                    } else if (entities.places.some(e => e.toLowerCase().split(/\s+/).includes(cleanLower) || e.toLowerCase() === cleanLower)) {
                         entityType = 'place';
-                    } else if (entities.organizations.some(e => cleanWord.toLowerCase().includes(e.toLowerCase()))) {
+                    } else if (entities.organizations.some(e => e.toLowerCase().split(/\s+/).includes(cleanLower) || e.toLowerCase() === cleanLower)) {
                         entityType = 'organization';
-                    } else if (entities.dates.some(e => cleanWord.toLowerCase().includes(e.toLowerCase()))) {
+                    } else if (entities.dates.some(e => e.toLowerCase().split(/\s+/).includes(cleanLower) || e.toLowerCase() === cleanLower)) {
                         entityType = 'date';
-                    } else if (entities.values.some(e => cleanWord.toLowerCase().includes(e.toLowerCase()))) {
+                    } else if (entities.values.some(e => e.toLowerCase().split(/\s+/).includes(cleanLower) || e.toLowerCase() === cleanLower)) {
                         entityType = 'value';
                     }
 
