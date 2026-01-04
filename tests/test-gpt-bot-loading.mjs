@@ -64,18 +64,13 @@ async function testGPTBotStructure() {
     );
 
     runner.assert(
-        botCode.includes('Qwen2.5-0.5B-Instruct'),
-        'Qwen2.5 0.5B is configured as largest model'
-    );
-
-    runner.assert(
         botCode.includes('@huggingface/transformers@3'),
         'Uses Transformers.js v3'
     );
 
     runner.assert(
-        botCode.includes('dtype: \'q4f16\''),
-        'Uses q4f16 quantization for smaller model size'
+        botCode.includes('dtype: \'q4\''),
+        'Uses q4 quantization for reliable inference'
     );
 
     runner.assert(
@@ -136,7 +131,7 @@ async function testModelConfigurations() {
         const modelsSection = modelsMatch[1];
         
         const modelCount = (modelsSection.match(/name:/g) || []).length;
-        runner.assertEqual(modelCount, 3, 'Has exactly 3 models configured');
+        runner.assertEqual(modelCount, 2, 'Has exactly 2 models configured');
 
         runner.assert(
             modelsSection.includes('onnx-community/'),
@@ -181,8 +176,8 @@ async function testArchitectureInfo() {
     );
 
     runner.assert(
-        botCode.includes('Qwen2.5-0.5B'),
-        'Has Qwen2.5-0.5B architecture info'
+        botCode.includes('SmolLM2-360M'),
+        'Has SmolLM2-360M architecture info'
     );
 
     runner.assert(

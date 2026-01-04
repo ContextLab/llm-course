@@ -455,11 +455,11 @@
 
                     <div class="chatbot-info">
                         <div class="info-card">
-                            <h3>About Modern LLMs</h3>
-                            <p><strong>Models:</strong> SmolLM2 (135M, 360M) & Qwen2.5 (0.5B)</p>
+                            <h3>About SmolLM2</h3>
+                            <p><strong>Creator:</strong> HuggingFace (2024)</p>
+                            <p><strong>Models:</strong> 135M and 360M parameters</p>
                             <p><strong>Method:</strong> Decoder-only transformer with chat templates</p>
                             <p><strong>Innovation:</strong> Optimized for browser/edge deployment</p>
-                            <p><strong>Source:</strong> onnx-community (Transformers.js compatible)</p>
                         </div>
 
                         <div class="info-card">
@@ -522,7 +522,7 @@
                                             <div class="sub-block">Grouped-Query Attention</div>
                                             <div class="sub-block">SwiGLU FFN</div>
                                             <div class="sub-block">RMSNorm</div>
-                                            <div class="block-note">x9 (135M) / x16 (360M) / x24 (Qwen 0.5B) layers</div>
+                                            <div class="block-note">x9 (135M) / x16 (360M) layers</div>
                                         </div>
                                     </div>
                                     <div class="arch-arrow">&#8595;</div>
@@ -556,21 +556,20 @@
                             </div>
 
                             <div class="model-specs">
-                                <h4>Available Models</h4>
+                                <h4>SmolLM2 Model Family</h4>
                                 <table class="specs-table">
-                                    <tr><th>Spec</th><th>SmolLM2 135M</th><th>SmolLM2 360M</th><th>Qwen2.5 0.5B</th></tr>
-                                    <tr><td>Parameters</td><td>135 Million</td><td>360 Million</td><td>494 Million</td></tr>
-                                    <tr><td>Layers</td><td>9</td><td>16</td><td>24</td></tr>
-                                    <tr><td>Hidden Size</td><td>576</td><td>960</td><td>896</td></tr>
-                                    <tr><td>Download (q4f16)</td><td>~111 MB</td><td>~259 MB</td><td>~460 MB</td></tr>
-                                    <tr><td>Min RAM</td><td>2 GB</td><td>4 GB</td><td>4 GB</td></tr>
-                                    <tr><td>Context Length</td><td colspan="2">8,192 tokens</td><td>32,768 tokens</td></tr>
+                                    <tr><th>Spec</th><th>SmolLM2 135M</th><th>SmolLM2 360M</th></tr>
+                                    <tr><td>Parameters</td><td>135 Million</td><td>360 Million</td></tr>
+                                    <tr><td>Layers</td><td>9</td><td>16</td></tr>
+                                    <tr><td>Hidden Size</td><td>576</td><td>960</td></tr>
+                                    <tr><td>Download (q4)</td><td>~172 MB</td><td>~368 MB</td></tr>
+                                    <tr><td>Min RAM</td><td>2 GB</td><td>4 GB</td></tr>
+                                    <tr><td>Context Length</td><td colspan="2">8,192 tokens</td></tr>
                                 </table>
                                 <div class="model-note">
                                     <strong>Model Links:</strong> 
                                     <a href="https://huggingface.co/onnx-community/SmolLM2-135M-Instruct-ONNX" target="_blank">SmolLM2 135M</a> | 
-                                    <a href="https://huggingface.co/onnx-community/SmolLM2-360M-Instruct-ONNX" target="_blank">SmolLM2 360M</a> | 
-                                    <a href="https://huggingface.co/onnx-community/Qwen2.5-0.5B-Instruct" target="_blank">Qwen2.5 0.5B</a>
+                                    <a href="https://huggingface.co/onnx-community/SmolLM2-360M-Instruct-ONNX" target="_blank">SmolLM2 360M</a>
                                 </div>
                             </div>
                         </div>
@@ -639,8 +638,8 @@
                             <span class="stat-value">90M params</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">SmolLM2/Qwen (2024)</span>
-                            <span class="stat-value">135M-500M params</span>
+                            <span class="stat-label">SmolLM2 (2024)</span>
+                            <span class="stat-value">135M-360M params</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Claude 4 Opus (2025)</span>
