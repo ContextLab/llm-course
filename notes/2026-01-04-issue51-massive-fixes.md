@@ -134,10 +134,20 @@ Based on explore agent findings:
    - sentiment/index.html (kept functional emojis for sentiment analysis)
    - chatbot-evolution/test-alice.html + test-alice-comprehensive.html
 
-**NOT COMMITTED YET** - All changes are staged but not committed.
+### 2026-01-04 14:23 (Session 3 - Current)
+**COMPLETED:**
+1. **Demo theming fixes** - All done:
+   - Tokenization: dark mode colors for tokens, BPE, merge tree, mode selection, chart text
+   - POS Tagging: dark mode colors for tokens and NER entities with CSS variables
+   - Sentiment: dark mode word contribution colors
+   - Topic Modeling: Added Plotly theme support for all charts (inter-topic, distributions, word bars)
+   - Embeddings Comparison: Already properly themed with CSS variables
+
+2. **Committed all changes**: `3f64076`
+   - 31 files changed, 489 insertions, 166 deletions
 
 **STILL PENDING:**
-- Demo fixes (tokenization, pos-tagging, sentiment, embeddings-comparison, topic-modeling)
 - Assignment setup (submodules, autograders, templates, tutorial, submission instructions)
 - Canvas content drafts
 - Slide cleanup weeks 2-10
+- End-to-end testing
