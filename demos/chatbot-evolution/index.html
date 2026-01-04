@@ -41,7 +41,7 @@
                     <span class="era-label">2020<br>BlenderBot</span>
                 </div>
                 <div class="era era-2020s" data-era="2020s">
-                    <span class="era-label">2024<br>Qwen2.5</span>
+                    <span class="era-label">2024<br>SmolLM2</span>
                 </div>
             </div>
         </section>
@@ -455,20 +455,20 @@
 
                     <div class="chatbot-info">
                         <div class="info-card">
-                            <h3>About Modern LLMs</h3>
-                            <p><strong>Innovation:</strong> Instruction-tuned transformers</p>
+                            <h3>About SmolLM2</h3>
+                            <p><strong>Creator:</strong> HuggingFace (2024)</p>
                             <p><strong>Method:</strong> Decoder-only transformer with chat templates</p>
-                            <p><strong>Models:</strong> Qwen2.5 0.5B, SmolLM 360M</p>
-                            <p><strong>Context:</strong> Multi-turn conversation support</p>
+                            <p><strong>Models:</strong> 135M, 360M, 1.7B parameters</p>
+                            <p><strong>Innovation:</strong> Optimized for browser/edge deployment</p>
                         </div>
 
                         <div class="info-card">
                             <h3>How It Works</h3>
                             <ul>
-                                <li>Pre-trained on vast text corpora</li>
-                                <li>Fine-tuned for instruction following</li>
-                                <li>System prompts guide behavior</li>
-                                <li>Runs entirely in your browser (WASM/WebGPU)</li>
+                                <li>Auto-selects model based on your device RAM</li>
+                                <li>Pre-trained on web text, code, and reasoning data</li>
+                                <li>Instruction-tuned for helpful conversations</li>
+                                <li>Runs entirely in your browser (WebGPU/WASM)</li>
                             </ul>
                         </div>
                     </div>
@@ -490,16 +490,13 @@
                             <div class="chat-messages" id="gpt-messages"></div>
                             <div class="chat-input-area">
                                 <div class="model-selector-row">
-                                    <select id="gpt-model-selector" class="model-selector">
-                                        <option value="0">Qwen 2.5 0.5B (Alibaba)</option>
-                                        <option value="1">Llama 3.2 1B (Meta)</option>
-                                    </select>
+                                    <select id="gpt-model-selector" class="model-selector"></select>
                                     <button class="btn-clear-chat" id="gpt-clear-btn" title="Clear chat history">Clear</button>
                                 </div>
                                 <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to the model...">
                                 <button class="chat-send" id="gpt-send-btn" onclick="sendMessage('gpt')">Send</button>
                             </div>
-                            <p class="demo-note">Select a model above. Conversation history is preserved. First message loads the model (~30s).</p>
+                            <p class="demo-note">Model auto-selected based on your device RAM. First message loads the model (~30-60s).</p>
                         </div>
                     </div>
 
@@ -507,7 +504,7 @@
                     <div class="chatbot-tab-content" id="gpt-architecture-tab">
                         <div class="architecture-content">
                             <div class="architecture-diagram">
-                                <h4>Decoder-Only Transformer (Qwen2.5 / Llama 3.2)</h4>
+                                <h4>Decoder-Only Transformer (SmolLM2)</h4>
                                 <div class="arch-flow">
                                     <div class="arch-block input-block">
                                         <div class="block-label">Input Prompt</div>
@@ -523,9 +520,9 @@
                                         <div class="block-label">Transformer Decoder Stack</div>
                                         <div class="block-content">
                                             <div class="sub-block">Grouped-Query Attention</div>
-                                            <div class="sub-block">SiLU FFN</div>
+                                            <div class="sub-block">SwiGLU FFN</div>
                                             <div class="sub-block">RMSNorm</div>
-                                            <div class="block-note">x24 layers (Qwen) / x16 layers (Llama)</div>
+                                            <div class="block-note">x9 (135M) / x16 (360M) / x24 (1.7B) layers</div>
                                         </div>
                                     </div>
                                     <div class="arch-arrow">&#8595;</div>
@@ -559,21 +556,21 @@
                             </div>
 
                             <div class="model-specs">
-                                <h4>Available Models</h4>
+                                <h4>SmolLM2 Model Family</h4>
                                 <table class="specs-table">
-                                    <tr><th>Spec</th><th>Qwen 2.5 0.5B</th><th>Llama 3.2 1B</th></tr>
-                                    <tr><td>Parameters</td><td>500 Million</td><td>1 Billion</td></tr>
-                                    <tr><td>Architecture</td><td>Decoder-Only</td><td>Decoder-Only</td></tr>
-                                    <tr><td>Layers</td><td>24</td><td>16</td></tr>
-                                    <tr><td>Hidden Size</td><td>896</td><td>2048</td></tr>
-                                    <tr><td>Context Length</td><td>32,768 tokens</td><td>131,072 tokens</td></tr>
-                                    <tr><td>Organization</td><td>Alibaba</td><td>Meta</td></tr>
-                                    <tr><td>Year</td><td>2024</td><td>2024</td></tr>
+                                    <tr><th>Spec</th><th>135M</th><th>360M</th><th>1.7B</th></tr>
+                                    <tr><td>Parameters</td><td>135 Million</td><td>360 Million</td><td>1.7 Billion</td></tr>
+                                    <tr><td>Layers</td><td>9</td><td>16</td><td>24</td></tr>
+                                    <tr><td>Hidden Size</td><td>576</td><td>960</td><td>2048</td></tr>
+                                    <tr><td>Download (q4)</td><td>~85 MB</td><td>~210 MB</td><td>~980 MB</td></tr>
+                                    <tr><td>Min RAM</td><td>2 GB</td><td>4 GB</td><td>8 GB</td></tr>
+                                    <tr><td>Context Length</td><td colspan="3">8,192 tokens</td></tr>
                                 </table>
                                 <div class="model-note">
                                     <strong>Model Links:</strong> 
-                                    <a href="https://huggingface.co/onnx-community/Qwen2.5-0.5B-Instruct" target="_blank">Qwen2.5-0.5B-Instruct</a> | 
-                                    <a href="https://huggingface.co/onnx-community/Llama-3.2-1B-Instruct" target="_blank">Llama-3.2-1B-Instruct</a>
+                                    <a href="https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct" target="_blank">135M</a> | 
+                                    <a href="https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct" target="_blank">360M</a> | 
+                                    <a href="https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B-Instruct" target="_blank">1.7B</a>
                                 </div>
                             </div>
                         </div>
@@ -642,8 +639,8 @@
                             <span class="stat-value">90M params</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Qwen 2.5 (2024)</span>
-                            <span class="stat-value">500M params</span>
+                            <span class="stat-label">SmolLM2 (2024)</span>
+                            <span class="stat-value">135M-1.7B params</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Claude 4 Opus (2025)</span>

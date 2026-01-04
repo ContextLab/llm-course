@@ -1,9 +1,12 @@
 /**
  * GPT-style Bot (2020s) - Modern LLM via Transformers.js v3
  * 
- * Model hierarchy:
- * 1. Qwen2.5-0.5B-Instruct - Alibaba's efficient instruction model (2024)
- * 2. SmolLM-360M-Instruct - HuggingFace's browser-optimized model (2024)
+ * Model hierarchy (SmolLM2 family - HuggingFace's browser-optimized models):
+ * 1. SmolLM2-135M-Instruct - Ultra-light, works on any device
+ * 2. SmolLM2-360M-Instruct - Balanced quality/speed (default for 4GB RAM)
+ * 3. SmolLM2-1.7B-Instruct - Best quality (requires 8GB+ RAM)
+ * 
+ * Auto-selects based on device RAM (navigator.deviceMemory)
  */
 
 export class GPTBot {
@@ -15,22 +18,37 @@ export class GPTBot {
         this.onProgress = null;
         this.loadAttempt = 0;
 
+        // SmolLM2 family - all have native Transformers.js support (ONNX bundled)
         this.models = [
             {
-                name: 'onnx-community/Qwen2.5-0.5B-Instruct',
-                displayName: 'Qwen 2.5 0.5B',
+                name: 'HuggingFaceTB/SmolLM2-135M-Instruct',
+                displayName: 'SmolLM2 135M',
                 dtype: 'q4',
-                params: '0.5B',
+                params: '135M',
+                sizeMB: 85,
+                minRAM: 2,  // Works on 2GB+ devices
                 year: 2024,
-                org: 'Alibaba'
+                org: 'HuggingFace'
             },
             {
-                name: 'onnx-community/Llama-3.2-1B-Instruct',
-                displayName: 'Llama 3.2 1B',
+                name: 'HuggingFaceTB/SmolLM2-360M-Instruct',
+                displayName: 'SmolLM2 360M',
                 dtype: 'q4',
-                params: '1B',
+                params: '360M',
+                sizeMB: 210,
+                minRAM: 4,  // Recommended for 4GB+ devices
                 year: 2024,
-                org: 'Meta'
+                org: 'HuggingFace'
+            },
+            {
+                name: 'HuggingFaceTB/SmolLM2-1.7B-Instruct',
+                displayName: 'SmolLM2 1.7B',
+                dtype: 'q4',
+                params: '1.7B',
+                sizeMB: 980,
+                minRAM: 8,  // Requires 8GB+ RAM
+                year: 2024,
+                org: 'HuggingFace'
             }
         ];
         
@@ -38,7 +56,30 @@ export class GPTBot {
         
         this.conversationHistory = [];
         this.currentModel = null;
-        this.selectedModelIndex = 0;
+        this.selectedModelIndex = this.getDefaultModelIndex();
+    }
+    
+    /**
+     * Detect device RAM and select the largest model that fits
+     * Uses 50% of available RAM as the threshold
+     */
+    getDefaultModelIndex() {
+        // navigator.deviceMemory returns RAM in GB (rounded to power of 2, max 8)
+        // Falls back to 4GB if unsupported (conservative default)
+        const deviceRAM = navigator.deviceMemory || 4;
+        
+        // Find the largest model that fits in 50% of available RAM
+        // Models are ordered smallest to largest, so iterate backwards
+        for (let i = this.models.length - 1; i >= 0; i--) {
+            if (deviceRAM >= this.models[i].minRAM) {
+                console.log(`[GPT] Detected ${deviceRAM}GB RAM, auto-selecting ${this.models[i].displayName}`);
+                return i;
+            }
+        }
+        
+        // Fallback to smallest model
+        console.log(`[GPT] Low RAM (${deviceRAM}GB), using smallest model`);
+        return 0;
     }
     
     getAvailableModels() {
@@ -47,19 +88,32 @@ export class GPTBot {
             name: m.displayName,
             params: m.params,
             org: m.org,
+            sizeMB: m.sizeMB,
             selected: i === this.selectedModelIndex
         }));
     }
     
-    selectModel(index) {
-        if (index >= 0 && index < this.models.length) {
-            this.selectedModelIndex = index;
-            if (this.isReady) {
-                this.isReady = false;
-                this.generator = null;
-                this.conversationHistory = [];
-            }
+    async selectModel(index) {
+        if (index < 0 || index >= this.models.length) {
+            return;
         }
+        
+        this.selectedModelIndex = index;
+        
+        if (this.generator) {
+            console.log('[GPT] Disposing previous model before switching...');
+            try {
+                await this.generator.dispose();
+            } catch (e) {
+                console.warn('[GPT] Error disposing model:', e);
+            }
+            this.generator = null;
+        }
+        
+        this.isReady = false;
+        this.isLoading = false;
+        this.error = null;
+        this.conversationHistory = [];
     }
     
     clearHistory() {
@@ -338,92 +392,44 @@ export class GPTBot {
     }
 
     getArchitectureInfo() {
-        const model = this.currentModel || this.models[0];
+        const model = this.currentModel || this.models[this.selectedModelIndex];
         
-        if (model.name.includes('Llama-3.2')) {
-            return {
-                name: 'Llama 3.2 1B Instruct',
-                type: 'Decoder-Only Transformer',
-                parameters: '1 Billion',
-                layers: 16,
-                hiddenSize: 2048,
-                attentionHeads: 32,
-                contextLength: 131072,
-                vocabulary: '~128K tokens',
-                trainingData: 'Multilingual web data, code, reasoning',
-                year: 2024,
-                organization: 'Meta',
-                keyFeatures: [
-                    'Optimized for edge and mobile devices',
-                    'Strong multilingual capabilities',
-                    'Instruction-tuned for helpfulness',
-                    'Efficient architecture for browser',
-                    'Open-source with Llama license'
-                ],
-                architecture: {
-                    type: 'decoder-only',
-                    attention: 'Grouped-Query Attention (GQA)',
-                    normalization: 'RMSNorm',
-                    activation: 'SiLU',
-                    positionEncoding: 'RoPE'
-                }
-            };
-        } else if (model.name.includes('Qwen2.5-Coder')) {
-            return {
-                name: 'Qwen 2.5 Coder 0.5B Instruct',
-                type: 'Decoder-Only Transformer',
-                parameters: '0.5 Billion',
-                layers: 24,
-                hiddenSize: 896,
-                attentionHeads: 14,
-                contextLength: 32768,
-                vocabulary: '~151K tokens',
-                trainingData: 'Code and text data',
-                year: 2024,
-                organization: 'Alibaba',
-                keyFeatures: [
-                    'Optimized for coding tasks',
-                    'Instruction-tuned for helpfulness',
-                    'Efficient architecture for browser',
-                    'Strong code generation',
-                    'Open-source with Apache 2.0'
-                ],
-                architecture: {
-                    type: 'decoder-only',
-                    attention: 'Grouped-Query Attention (GQA)',
-                    normalization: 'RMSNorm',
-                    activation: 'SiLU',
-                    positionEncoding: 'RoPE'
-                }
-            };
-        } else {
-            return {
-                name: 'Qwen 2.5 0.5B Instruct',
-                type: 'Decoder-Only Transformer',
-                parameters: '0.5 Billion',
-                layers: 24,
-                hiddenSize: 896,
-                attentionHeads: 14,
-                contextLength: 32768,
-                vocabulary: '~151K tokens',
-                trainingData: 'Web documents, code, multilingual text',
-                year: 2024,
-                organization: 'Alibaba',
-                keyFeatures: [
-                    'Compact yet capable model',
-                    'Instruction-tuned for chat',
-                    'Runs efficiently in browser',
-                    'Multilingual support',
-                    'Open-source with Apache 2.0'
-                ],
-                architecture: {
-                    type: 'decoder-only',
-                    attention: 'Grouped-Query Attention (GQA)',
-                    normalization: 'RMSNorm',
-                    activation: 'SiLU',
-                    positionEncoding: 'RoPE'
-                }
-            };
-        }
+        const specs = {
+            'SmolLM2-135M': { layers: 9, hiddenSize: 576, attentionHeads: 9 },
+            'SmolLM2-360M': { layers: 16, hiddenSize: 960, attentionHeads: 15 },
+            'SmolLM2-1.7B': { layers: 24, hiddenSize: 2048, attentionHeads: 32 }
+        };
+        
+        const modelKey = model.name.includes('135M') ? 'SmolLM2-135M' :
+                         model.name.includes('360M') ? 'SmolLM2-360M' : 'SmolLM2-1.7B';
+        const spec = specs[modelKey];
+        
+        return {
+            name: model.displayName,
+            type: 'Decoder-Only Transformer',
+            parameters: model.params,
+            layers: spec.layers,
+            hiddenSize: spec.hiddenSize,
+            attentionHeads: spec.attentionHeads,
+            contextLength: 8192,
+            vocabulary: '~49K tokens',
+            trainingData: 'FineWeb-Edu, DCLM, The Stack, synthetic data',
+            year: 2024,
+            organization: 'HuggingFace',
+            keyFeatures: [
+                'Optimized for browser/edge deployment',
+                'Instruction-tuned for helpful conversations',
+                'Auto-selects based on device RAM',
+                'Runs via WebGPU or WASM fallback',
+                'Open-source with Apache 2.0'
+            ],
+            architecture: {
+                type: 'decoder-only',
+                attention: 'Grouped-Query Attention (GQA)',
+                normalization: 'RMSNorm',
+                activation: 'SwiGLU',
+                positionEncoding: 'RoPE'
+            }
+        };
     }
 }

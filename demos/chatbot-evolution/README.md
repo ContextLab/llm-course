@@ -120,28 +120,28 @@ An interactive journey through 60 years of conversational AI development, from E
 - Follow-up questions to test context
 - Compare with rule-based responses above
 
-### 5. GPT & Transformers (2020s)
-**Innovation:** Large Language Models with transformers
+### 5. SmolLM2 & Transformers (2020s)
+**Creator:** HuggingFace (2024)
 
-**Approach:** Self-attention, massive scale, pre-training
+**Approach:** Decoder-only transformer, optimized for browser/edge deployment
 
 **How it works:**
-- Transformer architecture (self-attention)
-- Pre-trained on vast text corpora
-- Fine-tuned for instruction following
-- Few-shot learning capabilities
+- Auto-selects model size based on your device RAM
+- Available in 135M, 360M, and 1.7B parameter variants
+- Pre-trained on FineWeb-Edu, code, and synthetic data
+- Instruction-tuned for helpful conversations
+- Runs entirely in your browser via WebGPU or WASM
 
 **Famous for:**
-- ChatGPT, GPT-4, Claude, Gemini
-- Unprecedented fluency and coherence
-- Reasoning and problem-solving
-- Multi-turn conversations
+- Best-in-class quality for browser-sized models
+- Native Transformers.js support (ONNX bundled)
+- Open-source (Apache 2.0)
 
 **Capabilities:**
-- Context understanding
-- Knowledge integration
-- Creative generation
-- Task completion
+- Multi-turn conversation with context preservation
+- General knowledge and reasoning
+- Code generation and explanation
+- Helpful, instruction-following responses
 
 ## Features
 
@@ -237,7 +237,7 @@ An interactive journey through 60 years of conversational AI development, from E
 - Initial model loading time in browser
 
 **What Makes This Demo Special:**
-This demo runs **real neural models** (BlenderBot 90M, Qwen2.5 0.5B) directly in your browser using Transformers.js. You'll experience genuine neural behavior - not simulations - allowing you to see the clear evolution from rule-based to learned conversation.
+This demo runs **real neural models** (BlenderBot 90M, SmolLM2 135M-1.7B) directly in your browser using Transformers.js. The SmolLM2 model auto-selects based on your device RAM. You'll experience genuine neural behavior - not simulations - allowing you to see the clear evolution from rule-based to learned conversation.
 
 ## Historical Timeline
 
@@ -263,7 +263,7 @@ This demo runs **real neural models** (BlenderBot 90M, Qwen2.5 0.5B) directly in
 - **PARRY**: State machine with emotional variables
 - **A.L.I.C.E.**: ~40,000 AIML patterns
 - **BlenderBot Small**: 90 million parameters (real neural model)
-- **Qwen2.5 0.5B**: 500 million parameters (real neural model)
+- **SmolLM2**: 135M-1.7B parameters (real neural model, auto-selected)
 - **GPT-3**: 175 billion parameters (comparison reference)
 
 ### Architectural Progression
@@ -340,11 +340,13 @@ AIML-inspired pattern matching with improved context handling over ELIZA.
 - Loads and runs entirely in your browser (may take 30-60 seconds initially)
 - Fallback to DialoGPT-small if BlenderBot fails to load
 
-### GPT / Qwen2.5
-Uses Transformers.js with Qwen2.5-0.5B-Instruct (500M parameters) for actual neural text generation in the browser. Falls back to Llama-3.2-1B-Instruct if Qwen fails to load. Demonstrates modern transformer capabilities:
+### SmolLM2
+Uses Transformers.js with HuggingFace's SmolLM2 family (135M, 360M, 1.7B parameters) for actual neural text generation in the browser. Key features:
+- **Auto-selects model** based on device RAM (navigator.deviceMemory API)
+- **Proper model switching** with dispose() to prevent memory leaks
 - Instruction-tuned for natural conversations
 - Conversation history preserved across turns
-- Runs entirely in-browser via WASM or WebGPU
+- Runs entirely in-browser via WebGPU (preferred) or WASM fallback
 - May take 30-60 seconds to download on first load
 
 ## Extensions

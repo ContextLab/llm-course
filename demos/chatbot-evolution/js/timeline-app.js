@@ -210,12 +210,17 @@ class TimelineApp {
         
         const gptModelSelector = document.getElementById('gpt-model-selector');
         if (gptModelSelector) {
-            gptModelSelector.addEventListener('change', (e) => {
+            gptModelSelector.addEventListener('change', async (e) => {
                 const index = parseInt(e.target.value, 10);
-                this.bots.gpt.selectModel(index);
+                const model = this.bots.gpt.models[index];
+                
                 const messagesContainer = document.getElementById('gpt-messages');
                 messagesContainer.innerHTML = '';
-                this.addMessage('gpt', 'Model changed. Send a message to load and start chatting.', 'bot');
+                this.addMessage('gpt', `Switching to ${model.displayName}...`, 'bot');
+                
+                await this.bots.gpt.selectModel(index);
+                
+                this.addMessage('gpt', `Ready to chat with ${model.displayName} (${model.params}). Send a message to start.`, 'bot');
             });
         }
         
@@ -624,12 +629,14 @@ class TimelineApp {
     }
 
     initializeChats() {
+        const defaultModel = this.bots.gpt.models[this.bots.gpt.selectedModelIndex];
+        
         const initialMessages = {
             eliza: "Welcome. What brings you here today?",
             parry: "What do you want? I don't know you.",
             alice: "Hi! I'm A.L.I.C.E. How can I help you today?",
             seq2seq: "Send a message to load the neural model and start chatting.",
-            gpt: "Send a message to load the model and start chatting."
+            gpt: `${defaultModel.displayName} selected based on your device. Send a message to start chatting.`
         };
 
         for (const [bot, message] of Object.entries(initialMessages)) {
@@ -640,6 +647,24 @@ class TimelineApp {
         this.hideLoadingStatus('gpt');
         this.enableChatInterface('seq2seq');
         this.enableChatInterface('gpt');
+        
+        this.populateModelSelector();
+    }
+    
+    populateModelSelector() {
+        const selector = document.getElementById('gpt-model-selector');
+        if (!selector) return;
+        
+        selector.innerHTML = '';
+        const models = this.bots.gpt.getAvailableModels();
+        
+        models.forEach((model) => {
+            const option = document.createElement('option');
+            option.value = model.index;
+            option.textContent = `${model.name} (${model.params}) - ${model.sizeMB}MB`;
+            option.selected = model.selected;
+            selector.appendChild(option);
+        });
     }
 
     async sendMessage(botName) {
@@ -781,7 +806,7 @@ class TimelineApp {
             parry: 'PARRY (1972)',
             alice: 'A.L.I.C.E. (1995)',
             seq2seq: 'BlenderBot (2020)',
-            gpt: 'Qwen 2.5 (2024)'
+            gpt: 'SmolLM2 (2024)'
         };
         const botDivs = {};
 
@@ -880,7 +905,7 @@ class TimelineApp {
             'PARRY (1972)': 'Input → State Machine → Emotional Model → Response',
             'ALICE (1995)': 'Input → AIML Parser → Category Match → Response',
             'BlenderBot (2020)': 'Input → Encoder → Decoder → Response',
-            'Qwen 2.5 (2024)': 'Input → Decoder-Only Transformer → Response'
+            'SmolLM2 (2024)': 'Input → Decoder-Only Transformer → Response'
         };
 
         let html = '<div style="padding: 15px; text-align: left;">';
