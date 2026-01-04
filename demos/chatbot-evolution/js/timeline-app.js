@@ -104,7 +104,7 @@ class TimelineApp {
             if (botName === 'seq2seq') {
                 input.placeholder = 'Talk to BlenderBot...';
             } else if (botName === 'gpt') {
-                input.placeholder = 'Talk to LaMini-T5...';
+                input.placeholder = 'Talk to Qwen3...';
             }
         }
 
@@ -751,7 +751,7 @@ class TimelineApp {
             parry: 'PARRY (1972)',
             alice: 'A.L.I.C.E. (1995)',
             seq2seq: 'BlenderBot (2020)',
-            gpt: 'LaMini-T5 (2023)'
+            gpt: 'Qwen3 (2025)'
         };
         const botDivs = {};
 
@@ -850,7 +850,7 @@ class TimelineApp {
             'PARRY (1972)': 'Input → State Machine → Emotional Model → Response',
             'ALICE (1995)': 'Input → AIML Parser → Category Match → Response',
             'BlenderBot (2020)': 'Input → Encoder → Decoder → Response',
-            'LaMini-T5 (2023)': 'Input → T5 Encoder → Decoder → Response'
+            'Qwen3 (2025)': 'Input → Decoder-Only Transformer → Response'
         };
 
         let html = '<div style="padding: 15px; text-align: left;">';
