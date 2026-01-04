@@ -45,8 +45,8 @@ export class GPTBot {
                 displayName: 'SmolLM2 1.7B',
                 dtype: 'q4',
                 params: '1.7B',
-                sizeMB: 980,
-                minRAM: 8,  // Requires 8GB+ RAM
+                sizeMB: 1410,
+                minRAM: 8,
                 year: 2024,
                 org: 'HuggingFace'
             }
@@ -64,20 +64,18 @@ export class GPTBot {
      * Uses 50% of available RAM as the threshold
      */
     getDefaultModelIndex() {
-        // navigator.deviceMemory returns RAM in GB (rounded to power of 2, max 8)
-        // Falls back to 4GB if unsupported (conservative default)
         const deviceRAM = navigator.deviceMemory || 4;
         
-        // Find the largest model that fits in 50% of available RAM
-        // Models are ordered smallest to largest, so iterate backwards
-        for (let i = this.models.length - 1; i >= 0; i--) {
+        // Cap at 360M (index 1) - 1.7B model exceeds browser WASM memory limits
+        const maxSafeIndex = 1;
+        
+        for (let i = Math.min(maxSafeIndex, this.models.length - 1); i >= 0; i--) {
             if (deviceRAM >= this.models[i].minRAM) {
                 console.log(`[GPT] Detected ${deviceRAM}GB RAM, auto-selecting ${this.models[i].displayName}`);
                 return i;
             }
         }
         
-        // Fallback to smallest model
         console.log(`[GPT] Low RAM (${deviceRAM}GB), using smallest model`);
         return 0;
     }
@@ -177,14 +175,14 @@ export class GPTBot {
             
             console.log(`[GPT] Using device: ${device}`);
 
-            const startIndex = this.selectedModelIndex;
-            for (let i = startIndex; i < this.models.length; i++) {
-                this.loadAttempt = i - startIndex + 1;
+            // Try selected model first, then fall back to SMALLER models
+            for (let i = this.selectedModelIndex; i >= 0; i--) {
+                this.loadAttempt = this.selectedModelIndex - i + 1;
                 const model = this.models[i];
                 this.currentModel = model;
 
                 try {
-                    console.log(`[GPT] Attempting to load model ${i + 1}/${this.models.length}: ${model.name}`);
+                    console.log(`[GPT] Attempting to load model: ${model.name}`);
                     this.reportProgress(`Loading ${model.displayName} (${model.params})`);
 
                     this.generator = await pipeline('text-generation', model.name, {
@@ -205,23 +203,14 @@ export class GPTBot {
                     console.log(`[GPT] Successfully loaded ${model.displayName}`);
                     this.isReady = true;
                     this.isLoading = false;
+                    this.selectedModelIndex = i;
                     this.reportProgress(`${model.displayName} loaded successfully!`, 100);
                     return true;
 
                 } catch (modelError) {
-                    // Extract meaningful error info
                     const errorMsg = modelError?.message || String(modelError);
-                    const errorName = modelError?.name || 'Unknown';
-                    
                     console.error(`[GPT] Failed to load ${model.displayName}:`, errorMsg);
-                    console.error('[GPT] Error type:', errorName);
-                    console.error('[GPT] Full error object:', modelError);
                     
-                    if (modelError?.stack) {
-                        console.error('[GPT] Stack trace:', modelError.stack);
-                    }
-                    
-                    // If WebGPU failed, try WASM for this model
                     if (device === 'webgpu') {
                         console.log(`[GPT] Retrying ${model.displayName} with WASM backend...`);
                         try {
@@ -241,6 +230,7 @@ export class GPTBot {
                             console.log(`[GPT] Successfully loaded ${model.displayName} with WASM`);
                             this.isReady = true;
                             this.isLoading = false;
+                            this.selectedModelIndex = i;
                             this.reportProgress(`${model.displayName} loaded (WASM)!`, 100);
                             return true;
                         } catch (wasmError) {
@@ -248,8 +238,8 @@ export class GPTBot {
                         }
                     }
                     
-                    if (i < this.models.length - 1) {
-                        this.reportProgress(`${model.displayName} failed, trying next model...`);
+                    if (i > 0) {
+                        this.reportProgress(`${model.displayName} failed, trying smaller model...`);
                     }
                 }
             }
