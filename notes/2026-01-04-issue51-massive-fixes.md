@@ -249,3 +249,49 @@ Based on explore agent findings:
 | `customer-service-bot-llm-course` | `5ed5051` | Add starter notebook |
 | `gpt-llm-course` | `2d9c6ec` | Add starter notebook |
 | `final-project-llm-course` | `ea98f0e` | Add template notebook |
+
+### 2026-01-04 14:23 (Session 6 - Current)
+
+**COMPLETED DEMO FIXES:**
+
+| Commit | Demo | Fix |
+|--------|------|-----|
+| `c2bcd87` | POS Tagging | Parse all sentences in passage, not just first |
+| `92876c0` | Embeddings Comparison | Dynamic analogy candidates for presets (royalty, capitals, grammar, tense) |
+| `776509c` | POS Tagging | Correct NER entity matching logic (was checking backwards) |
+| `4db5d35` | Sentiment | Lower word contribution threshold (0.1 -> 0.05) for better highlighting |
+| `76390c9` | Topic Modeling | Make top words slider functional (was hardcoded at 10-15) |
+
+**HIGH-PRIORITY ITEMS REMAINING:**
+
+1. **Tokenization Demo:**
+   - Fix Tokenize button on Tokenizer Comparison tab (may need browser testing)
+   - Fix search/vocabulary browser functionality
+
+2. **Autograder scripts** - Create in `ContextLabCourses/teaching-tools`
+
+**MEDIUM-PRIORITY REMAINING:**
+
+- SENTIMENT: Reduce dataset to 100 reviews  
+- SENTIMENT: Add dropdown menu for single text
+- EMBEDDINGS: Move example text near text entry
+- EMBEDDINGS: Remove Custom Test tab
+- TOPIC MODELING: Add close button for plots
+
+**LOW-PRIORITY:**
+- Slide cleanup weeks 2-10
+- Canvas content drafts
+
+## TODO State Summary (Session 6)
+
+| ID | Task | Status |
+|----|------|--------|
+| 1 | TOKENIZATION: Fix Tokenize button | pending |
+| 3 | TOKENIZATION: Fix search/vocabulary browser | pending |
+| 5 | POS TAGGING: Fix parse all sentences | **completed** |
+| 6 | POS TAGGING: Fix named entity demo | **completed** |
+| 8 | SENTIMENT: Fix word-level contribution | **completed** |
+| 10 | EMBEDDINGS: Fix solve analogy button | **completed** |
+| 13 | TOPIC MODELING: Fix inter-topic distance | **completed** |
+| 14 | TOPIC MODELING: Fix top words slider | **completed** |
+| 16 | Create autograder scripts | pending |
