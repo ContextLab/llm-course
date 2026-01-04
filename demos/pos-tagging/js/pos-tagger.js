@@ -42,28 +42,32 @@ const POSTagger = {
 
         // Extract terms with their POS tags
         const terms = doc.terms().out('array');
-        const json = doc.json()[0];
+        const allSentences = doc.json();
 
         let html = '<div class="pos-tokens">';
         const tagCounts = {};
+        let termIndex = 0;
 
-        if (json && json.terms) {
-            json.terms.forEach((term, index) => {
-                const tags = term.tags || [];
-                const word = term.text || terms[index];
-                const primaryTag = this.getPrimaryTag(tags);
-                const tagClass = this.getTagClass(primaryTag);
+        allSentences.forEach((sentence) => {
+            if (sentence && sentence.terms) {
+                sentence.terms.forEach((term) => {
+                    const tags = term.tags || [];
+                    const word = term.text || terms[termIndex];
+                    const primaryTag = this.getPrimaryTag(tags);
+                    const tagClass = this.getTagClass(primaryTag);
 
-                tagCounts[primaryTag] = (tagCounts[primaryTag] || 0) + 1;
+                    tagCounts[primaryTag] = (tagCounts[primaryTag] || 0) + 1;
 
-                html += `
-                    <span class="pos-token ${tagClass}" data-word="${word}" data-tag="${primaryTag}" data-index="${index}">
-                        <span class="word">${word}</span>
-                        <span class="pos-tag">${primaryTag}</span>
-                    </span>
-                `;
-            });
-        }
+                    html += `
+                        <span class="pos-token ${tagClass}" data-word="${word}" data-tag="${primaryTag}" data-index="${termIndex}">
+                            <span class="word">${word}</span>
+                            <span class="pos-tag">${primaryTag}</span>
+                        </span>
+                    `;
+                    termIndex++;
+                });
+            }
+        });
 
         html += '</div>';
         output.innerHTML = html;

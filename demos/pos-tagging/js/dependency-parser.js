@@ -13,13 +13,13 @@ const DependencyParser = {
 
     extractDependencies(doc, text) {
         const dependencies = [];
-        const json = doc.json()[0];
+        const allSentences = doc.json();
 
-        if (!json || !json.terms) {
+        if (!allSentences || allSentences.length === 0) {
             return dependencies;
         }
 
-        const terms = json.terms;
+        const terms = allSentences.flatMap(sentence => sentence.terms || []);
         const words = terms.map((t, idx) => ({
             id: idx,
             word: t.text,
