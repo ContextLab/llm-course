@@ -36,9 +36,9 @@ export class BenchmarkTasks {
     async runAnalogyTest(wordA, wordB, wordC, modelIds, candidates = []) {
         const results = [];
 
-        // Default candidates if none provided
+        // Generate intelligent candidates based on the analogy type
         if (candidates.length === 0) {
-            candidates = ['woman', 'girl', 'female', 'lady', 'princess'];
+            candidates = this.generateAnalogyCandidates(wordA, wordB, wordC);
         }
 
         for (const modelId of modelIds) {
@@ -82,15 +82,54 @@ export class BenchmarkTasks {
     }
 
     vectorArithmetic(vecB, vecA, vecC) {
-        // B - A + C
         const result = [];
         for (let i = 0; i < vecB.length; i++) {
             result.push(vecB[i] - vecA[i] + vecC[i]);
         }
 
-        // Normalize
         const norm = Math.sqrt(result.reduce((sum, val) => sum + val * val, 0));
         return result.map(val => val / norm);
+    }
+
+    generateAnalogyCandidates(wordA, wordB, wordC) {
+        const lower = (w) => w.toLowerCase();
+        const a = lower(wordA), b = lower(wordB), c = lower(wordC);
+        
+        const candidateSets = {
+            royalty: ['woman', 'girl', 'female', 'lady', 'princess', 'duchess', 'empress'],
+            capitals: ['England', 'UK', 'Britain', 'Germany', 'Spain', 'Italy', 'Japan', 'China', 'Canada', 'Australia'],
+            grammar: ['worse', 'worst', 'badly', 'poorly', 'terrible', 'awful'],
+            tense: ['ran', 'walked', 'jumped', 'swam', 'flew', 'drove', 'ate', 'slept'],
+            countries: ['French', 'German', 'Spanish', 'Italian', 'Japanese', 'Chinese', 'British', 'American'],
+            profession: ['actress', 'waitress', 'hostess', 'stewardess', 'heroine', 'woman'],
+            size: ['tiny', 'small', 'little', 'huge', 'giant', 'massive', 'enormous'],
+            emotion: ['sad', 'angry', 'scared', 'excited', 'nervous', 'calm', 'joyful']
+        };
+
+        if ((a === 'king' && b === 'queen') || (a === 'man' && b === 'woman') || 
+            (a === 'boy' && b === 'girl') || (a === 'father' && b === 'mother')) {
+            return candidateSets.royalty;
+        }
+        
+        if (['paris', 'london', 'berlin', 'tokyo', 'rome', 'madrid'].includes(a) ||
+            ['france', 'england', 'germany', 'japan', 'italy', 'spain'].includes(a)) {
+            return candidateSets.capitals;
+        }
+        
+        if (['good', 'bad', 'big', 'small', 'fast', 'slow'].includes(a) &&
+            ['better', 'worse', 'bigger', 'smaller', 'faster', 'slower'].includes(b)) {
+            return candidateSets.grammar;
+        }
+        
+        if (['walk', 'run', 'swim', 'fly', 'drive', 'eat'].includes(a)) {
+            return candidateSets.tense;
+        }
+
+        return [
+            wordB, `${wordB}s`, `${wordC}er`, `${wordC}ing`,
+            'woman', 'man', 'person', 'thing', 'place',
+            'good', 'bad', 'big', 'small', 'new', 'old'
+        ];
     }
 
     async runCategorizationTest(items, numCategories, modelIds) {
