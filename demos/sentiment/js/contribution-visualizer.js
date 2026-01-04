@@ -34,11 +34,10 @@ class ContributionVisualizer {
             // Calculate intensity (0 to 1)
             const intensity = maxScore > 0 ? Math.abs(wordScore.score) / maxScore : 0;
 
-            // Determine sentiment class
             let sentimentClass = 'neutral';
-            if (wordScore.score > 0.1) {
+            if (wordScore.score >= 0.05) {
                 sentimentClass = 'positive';
-            } else if (wordScore.score < -0.1) {
+            } else if (wordScore.score <= -0.05) {
                 sentimentClass = 'negative';
             }
 
@@ -191,15 +190,14 @@ class ContributionVisualizer {
      * Calculate statistics from word scores
      */
     calculateStatistics(wordScores) {
-        const positive = wordScores.filter(ws => ws.score > 0.1);
-        const negative = wordScores.filter(ws => ws.score < -0.1);
-        const neutral = wordScores.filter(ws => Math.abs(ws.score) <= 0.1);
+        const positive = wordScores.filter(ws => ws.score >= 0.05);
+        const negative = wordScores.filter(ws => ws.score <= -0.05);
+        const neutral = wordScores.filter(ws => Math.abs(ws.score) < 0.05);
 
         const totalImpact = wordScores.reduce((sum, ws) => sum + Math.abs(ws.score), 0);
 
-        // Get top 5 contributors
         const sorted = [...wordScores]
-            .filter(ws => Math.abs(ws.score) > 0.1)
+            .filter(ws => Math.abs(ws.score) >= 0.05)
             .sort((a, b) => Math.abs(b.score) - Math.abs(a.score))
             .slice(0, 5);
 
