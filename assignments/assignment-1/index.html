@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 1 - ELIZA - PSYC 51.17</title>
+    <meta name="description" content="Assignment 1 - ELIZA for PSYC 51.17: Language Models from Scratch">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../demos/shared/css/demo-styles.css">
+    <style>
+        .page-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            z-index: var(--z-fixed);
+            backdrop-filter: blur(10px);
+        }
+        .page-nav .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .page-nav .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        .page-nav .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .page-nav .nav-links a:hover,
+        .page-nav .nav-links a.active {
+            color: var(--primary-color);
+        }
+        .page-nav .theme-toggle {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-nav .theme-toggle:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary-color);
+        }
+        .page-header {
+            margin-top: 70px;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
+        }
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.75rem;
+        }
+        .content p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .content ul {
+            color: var(--text-secondary);
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .content li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        .content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .content a:hover {
+            text-decoration: underline;
+        }
+        .content strong {
+            color: var(--text-primary);
+        }
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .content th, .content td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .content th {
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .content td {
+            color: var(--text-secondary);
+        }
+        footer {
+            background: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+        }
+        footer p {
+            color: var(--text-secondary);
+            margin: 0.5rem 0;
+        }
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .page-nav .nav-links { gap: 1rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="page-nav">
+        <div class="logo">PSYC 51.17</div>
+        <div class="nav-links">
+            <a href="../../">Outline</a>
+            <a href="../../syllabus/">Syllabus</a>
+            <a href="../../demos/">Demos</a>
+            <a href="../../assignments/" class="active">Assignments</a>
+            <a href="https://github.com/ContextLab/llm-course" target="_blank">GitHub</a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">&#127769;</span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>Assignment 1 - ELIZA</h1>
+    </header>
+
+    <main class="content">
+        
+<div style="background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin: 2rem 0; text-align: center;">
+    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Ready to Start?</h3>
+    <a href="#" class="accept-btn" style="display: inline-block; background: var(--gradient-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
+        <i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>Accept Assignment
+    </a>
+    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+        GitHub Classroom link coming soon
+    </p>
+</div>
+<h1>Assignment 1: Building the ELIZA Chatbot</h1>
+<h2>Overview</h2>
+<p>In this assignment, you will build a simplified version of ELIZA, one of the earliest programs to mimic human conversation. Created by Joseph Weizenbaum at MIT in 1964-1966, ELIZA was designed to simulate a session with a non-directive (Rogerian) psychotherapist using simple pattern matching and string manipulation.</p>
+<p>But this assignment goes beyond just implementing a chatbot. You'll also analyze what makes ELIZA feel conversational despite its simplicity, compare it to modern chatbots, and reflect on the psychological phenomenon known as the "ELIZA effect"—the tendency for people to attribute human-like understanding to computer programs.</p>
+<p>This is your first assignment in the course, and it's designed to be approachable while introducing you to fundamental concepts in natural language processing: pattern matching, text manipulation, rule-based systems, and the critical distinction between appearing intelligent and actually understanding language.</p>
+<h2>Learning Objectives</h2>
+<p>By completing this assignment, you will:</p>
+<p>1. <strong>Implement a rule-based chatbot</strong> using pattern matching and text transformations
+2. <strong>Understand the mechanics of ELIZA</strong> including pre/post-substitutions, synonym handling, and decomposition/reassembly
+3. <strong>Analyze conversational patterns</strong> by testing ELIZA on diverse inputs
+4. <strong>Compare simple and complex approaches</strong> to conversational AI
+5. <strong>Explore psychological aspects</strong> of human-computer interaction (ELIZA effect, anthropomorphization)
+6. <strong>Reflect critically</strong> on what conversation actually requires vs. what creates the illusion of understanding
+7. <strong>Appreciate historical context</strong> of early AI and its relevance to modern systems</p>
+<h2>Background</h2>
+<h3>The ELIZA Effect</h3>
+<p>When Weizenbaum first demonstrated ELIZA, he was shocked by people's reactions. His secretary, who watched him build the program, asked him to leave the room so she could talk to ELIZA privately. Users shared intimate details of their lives. Some refused to believe it was "just" a program following simple rules.</p>
+<p>This phenomenon—the tendency to attribute human-like understanding to computer systems based on their outputs—became known as the <strong>ELIZA effect</strong>. It's particularly relevant today as we interact with increasingly sophisticated chatbots and AI systems.</p>
+<h3>How ELIZA Works</h3>
+<p>Unlike modern chatbots that use machine learning, ELIZA operates purely through:</p>
+<p>1. <strong>Pattern Matching</strong>: Identifying keywords and patterns in user input
+2. <strong>Text Transformations</strong>: Applying substitutions to normalize and manipulate text
+3. <strong>Template Responses</strong>: Using predefined templates to generate replies
+4. <strong>Context-Free Operation</strong>: No memory, no learning, no real understanding</p>
+<p>Despite this simplicity, ELIZA can create surprisingly convincing conversational experiences, especially when mimicking a Rogerian psychotherapist who reflects questions back to the patient.</p>
+<h3>Why This Matters</h3>
+<p>Understanding ELIZA is crucial for understanding modern AI:
+<ul>
+<li>It demonstrates the difference between <strong>appearing intelligent</strong> and <strong>being intelligent</strong></li>
+<li>It shows how simple rules can create compelling illusions</li>
+<li>It raises questions about what we mean by "understanding" and "conversation"</li>
+<li>It provides historical context for today's language models</li>
+</ul></p>
+<h2>Part 1: Implementation</h2>
+<p>You will follow these steps to complete the assignment. Each part corresponds to specific functionality that the chatbot must have.</p>
+<h3>1. Read the Rules from a File</h3>
+The chatbot will use a predefined file (`instructions.txt`) containing patterns, synonyms, and rules for text manipulations. You will need to write code to read and parse this file into an appropriate data structure that your program can use for:
+<ul>
+<li>Greeting the user at the start and end of the conversation.</li>
+<li>Substituting text before and after pattern matching.</li>
+<li>Handling synonym substitutions.</li>
+<li>Matching user inputs to patterns and responding appropriately.</li>
+</ul>
+<h3>2. Start with a Greeting</h3>
+Once the chatbot starts, it should display one of the pre-defined greeting lines from the `instructions.txt` file. For example:
+```
+Welcome. What brings you here today?
+```
+<h3>3. Implement the Conversation Loop</h3>
+Your chatbot should repeatedly ask for user input and respond based on pattern matching until the user types a quit command. The conversation ends when the user enters one of the quit keywords specified in the instructions file (e.g., `bye`, `quit`).
+<h3>4. Pre-Substitutions</h3>
+Before matching patterns, the chatbot should perform <strong>pre-substitutions</strong>. These substitutions map certain words to alternatives that are easier for the chatbot to handle. For example:
+<ul>
+<li>`dont` → `don't`</li>
+<li>`recollect` → `remember`</li>
+</ul>
+<p>You should implement a function that performs these substitutions on the user’s input before further processing.</p>
+<h3>5. Synonym Handling</h3>
+Your chatbot should also handle <strong>synonym substitution</strong>. The rules file provides sets of synonyms that the chatbot should treat as equivalent for pattern matching purposes. For example, the words "sad", "unhappy", and "depressed" are considered synonymous.
+<p>You will need to implement synonym substitution, where the input is normalized before attempting to match any patterns. For example, if a user says, "I am unhappy," the chatbot should recognize that "unhappy" is synonymous with "sad."</p>
+<h3>6. Pattern Matching</h3>
+Your chatbot needs to match user input against a set of predefined patterns (as specified in the `instructions.txt` file). Patterns contain:
+<ul>
+<li><strong>Decomposition rules</strong>: These define how to break down a sentence into components.</li>
+<li><strong>Reassembly rules</strong>: These dictate how to form a response based on the decomposed parts of the sentence.</li>
+</ul>
+<p>For example, if the user says, "I feel sad," a decomposition rule might match `I feel *`, and a reassembly rule might respond with, "Why do you feel sad?"</p>
+<p>You should:
+<ul>
+<li>Match user input to the most relevant pattern.</li>
+<li>Decompose the input according to the matched pattern.</li>
+<li>Reassemble the parts into a response.</li>
+</ul></p>
+<h3>7. Post-Substitutions</h3>
+Once the chatbot has generated a response, it should perform <strong>post-substitutions</strong> to finalize the output. This step swaps certain words to ensure grammatical correctness. For example:
+<ul>
+<li>`i` → `you`</li>
+<li>`your` → `my`</li>
+</ul>
+<p>For instance, if the user says, "I feel sad," and the chatbot's response is based on a pattern that reflects the user’s words back, the chatbot might generate, "Why do you feel sad?" It will then substitute "I" with "you" to respond with, "Why do you feel sad?"</p>
+<h3>8. Generate Responses and Continue the Loop</h3>
+Once the chatbot generates a response, it should display the response and continue the conversation until the user types a quit command. The chatbot should have default responses if no patterns match the user input, such as:
+```
+I'm not sure I understand you fully. Can you elaborate?
+```
+<h3>9. Quit and Final Message</h3>
+When the user inputs one of the quit keywords (e.g., `bye` or `quit`), the chatbot should print a final message, like:
+```
+That will be $200. See you again next week.
+```
+<h3>Example Conversation</h3>
+<p>Your chatbot should handle a conversation like the following:</p>
+<p>```
+Chatbot: Welcome. What brings you here today?
+User: I am feeling sad.
+Chatbot: Why do you feel sad?
+User: I can't stop thinking about my family.
+Chatbot: Tell me more about your family.
+User: I have to go now.
+Chatbot: That will be $200. See you again next week.
+```</p>
+<h3>Implementation Requirements</h3>
+<ul>
+<li><strong>Initial and final messages</strong>: These must be drawn from the predefined options in <a href="instructions.txt" target="_blank">`instructions.txt`</a></li>
+<li><strong>Pre-substitutions, synonym handling, and post-substitutions</strong>: Must be implemented according to the rules in <a href="instructions.txt" target="_blank">`instructions.txt`</a></li>
+<li><strong>Pattern matching</strong>: Must use the decomposition and reassembly rules from <a href="instructions.txt" target="_blank">`instructions.txt`</a> to generate responses</li>
+<li><strong>Conversation loop</strong>: The chatbot must continue the conversation until the user types a quit word</li>
+<li><strong>Code quality</strong>: Well-organized, commented code with clear function/class structure</li>
+</ul>
+<h2>Part 2: Analysis and Exploration</h2>
+<p>Once your ELIZA implementation is working, conduct the following analyses to understand what makes it tick and where it breaks down.</p>
+<h3>1. Conversation Testing (Required)</h3>
+<p>Test your ELIZA on at least 5 different conversation scenarios:</p>
+<p>a) <strong>Typical therapy session</strong>: Discuss feelings, family, dreams (what ELIZA was designed for)</p>
+<p>b) <strong>Technical/factual questions</strong>: Ask about facts, math problems, or technical information</p>
+<p>c) <strong>Casual conversation</strong>: Try small talk about weather, hobbies, or daily life</p>
+<p>d) <strong>Adversarial testing</strong>: Try to "break" ELIZA with unusual inputs, edge cases, or nonsense</p>
+<p>e) <strong>Emotional depth</strong>: Explore a single topic in depth across multiple turns</p>
+<p>For each conversation:
+<ul>
+<li>Include the full transcript in your notebook</li>
+<li>Analyze what worked and what didn't</li>
+<li>Identify specific patterns that matched (or failed to match)</li>
+<li>Note where ELIZA seems "intelligent" vs. where the illusion breaks</li>
+</ul></p>
+<h3>2. The ELIZA Effect Analysis (Required)</h3>
+<p>Reflect on the psychological aspects of interacting with ELIZA:</p>
+<p>a) <strong>When does ELIZA feel human?</strong>
+<ul>
+<li>What specific responses create the illusion of understanding?</li>
+<li>Which conversational techniques (reflection, questions) are most effective?</li>
+<li>How does the psychotherapist framing affect perception?</li>
+</ul></p>
+<p>b) <strong>When does the illusion break?</strong>
+<ul>
+<li>What inputs expose ELIZA's limitations?</li>
+<li>What types of context does ELIZA fail to maintain?</li>
+<li>How do repetitive responses affect the experience?</li>
+</ul></p>
+<p>c) <strong>Modern parallels</strong>
+<ul>
+<li>How do modern chatbots create similar illusions?</li>
+<li>What techniques do they use beyond pattern matching?</li>
+<li>Where do modern systems still exhibit "ELIZA-like" behaviors?</li>
+</ul></p>
+<h3>3. Pattern Analysis (Required)</h3>
+<p>Analyze ELIZA's rule system:</p>
+<p>a) <strong>Pattern effectiveness</strong>
+<ul>
+<li>Which patterns in `instructions.txt` are most useful?</li>
+<li>Which keywords have priority (higher rank numbers)?</li>
+<li>Why might certain patterns be prioritized over others?</li>
+</ul></p>
+<p>b) <strong>Coverage gaps</strong>
+<ul>
+<li>What topics or conversation types are not covered?</li>
+<li>What patterns would improve ELIZA's performance?</li>
+<li>How would you extend the rule set?</li>
+</ul></p>
+<p>c) <strong>Substitution impact</strong>
+<ul>
+<li>How do pre- and post-substitutions affect responses?</li>
+<li>Find examples where substitutions are critical</li>
+<li>What happens if substitutions are applied incorrectly?</li>
+</ul></p>
+<h3>4. Comparison with Modern Chatbots (Required)</h3>
+<p>Compare your ELIZA implementation with a modern chatbot:</p>
+<p>a) <strong>Choose a comparison system</strong>
+<ul>
+<li>ChatGPT (or similar LLM-based chatbot)</li>
+<li>A simple chatbot library (ChatterBot, Rasa, etc.)</li>
+<li>Another student's enhanced ELIZA (if available)</li>
+</ul></p>
+<p>b) <strong>Side-by-side testing</strong>
+<ul>
+<li>Use the same prompts with both systems</li>
+<li>Compare response quality, coherence, and relevance</li>
+<li>Document at least 3 example conversations</li>
+</ul></p>
+<p>c) <strong>Analysis</strong>
+<ul>
+<li>What capabilities does the modern system have that ELIZA lacks?</li>
+<li>Are there any scenarios where ELIZA performs comparably?</li>
+<li>What's needed to bridge the gap from ELIZA to modern chatbots?</li>
+</ul></p>
+<h2>Part 3: Reflection and Insights (Required)</h2>
+<p>Write a thoughtful reflection (500-1000 words) addressing:</p>
+<p>1. <strong>What is conversation?</strong>
+<ul>
+<li>What does ELIZA reveal about the nature of conversation?</li>
+<li>Can pattern matching alone constitute "conversation"?</li>
+<li>What's missing from ELIZA that humans have?</li>
+</ul></p>
+<p>2. <strong>Understanding vs. simulation</strong>
+<ul>
+<li>Does ELIZA "understand" anything? Why or why not?</li>
+<li>What would it take for a system to truly understand language?</li>
+<li>How do we know if modern LLMs "understand" vs. just simulate?</li>
+</ul></p>
+<p>3. <strong>The gap to modern AI</strong>
+<ul>
+<li>What are the key limitations of rule-based approaches?</li>
+<li>What fundamental advances enabled modern chatbots?</li>
+<li>What problems remain unsolved even with modern systems?</li>
+</ul></p>
+<p>4. <strong>Ethical implications</strong>
+<ul>
+<li>Should users be informed they're talking to a bot?</li>
+<li>What are the risks of systems that simulate understanding?</li>
+<li>How do Weizenbaum's concerns apply to today's AI?</li>
+</ul></p>
+<h2>Part 4: Extensions (Optional Bonus)</h2>
+<p>Choose one or more extensions to enhance your ELIZA:</p>
+<h3>Extension 1: Advanced Pattern Matching</h3>
+<p>Implement improved pattern matching using:
+<ul>
+<li><strong>Regular expressions</strong> instead of simple wildcards</li>
+<li><strong>Part-of-speech tagging</strong> to match grammatical patterns</li>
+<li><strong>Named entity recognition</strong> to identify people, places, etc.</li>
+</ul></p>
+<p>Compare the enhanced version with your original implementation.</p>
+<h3>Extension 2: Emotional State Tracking</h3>
+<p>Add a simple emotion tracking system:
+<ul>
+<li>Detect emotional words (happy, sad, angry, etc.)</li>
+<li>Track emotional state across conversation turns</li>
+<li>Adjust responses based on detected emotion</li>
+<li>Visualize emotional trajectory of the conversation</li>
+</ul></p>
+<h3>Extension 3: Conversation Analytics</h3>
+<p>Build analytics for ELIZA conversations:
+<ul>
+<li>Track which patterns match most frequently</li>
+<li>Measure conversation length and depth</li>
+<li>Identify common conversation topics</li>
+<li>Detect when users disengage or get frustrated</li>
+</ul></p>
+<p>Create visualizations of these metrics across multiple conversations.</p>
+<h3>Extension 4: Simple Transformer Comparison</h3>
+<p>Implement a minimal transformer-based chatbot:
+<ul>
+<li>Fine-tune a small model (GPT-2, DistilGPT-2) on therapy conversations</li>
+<li>Compare with ELIZA on the same test conversations</li>
+<li>Analyze where each system excels</li>
+<li>Measure computational costs vs. performance gains</li>
+</ul></p>
+<h3>Extension 5: Hybrid System</h3>
+<p>Create a hybrid system that combines:
+<ul>
+<li>ELIZA's pattern matching for structure</li>
+<li>Modern NLU for understanding</li>
+<li>Template responses with learned variations</li>
+<li>Memory of conversation context</li>
+</ul></p>
+<p>Document design decisions and performance improvements.</p>
+<h2>Deliverables</h2>
+<p>Submit a <strong>single Jupyter notebook</strong> that includes:</p>
+<h3>1. Implementation (40%)</h3>
+<ul>
+<li>Complete, working ELIZA chatbot implementation</li>
+<li>Clean, well-commented code</li>
+<li>Proper handling of all rule types from `instructions.txt`</li>
+<li>Markdown cells explaining your approach</li>
+</ul>
+<h3>2. Conversation Examples (20%)</h3>
+<ul>
+<li>At least 5 diverse conversation transcripts</li>
+<li>Analysis of each conversation</li>
+<li>Pattern matching explanations</li>
+<li>Examples of successes and failures</li>
+</ul>
+<h3>3. Analysis (25%)</h3>
+<ul>
+<li>ELIZA effect analysis</li>
+<li>Pattern effectiveness analysis</li>
+<li>Comparison with modern chatbot (with examples)</li>
+<li>Insights into why ELIZA works/fails</li>
+</ul>
+<h3>4. Reflection (10%)</h3>
+<ul>
+<li>Thoughtful 500-1000 word reflection</li>
+<li>Addresses all required questions</li>
+<li>Shows critical thinking about conversation and understanding</li>
+<li>Connects to modern AI systems</li>
+</ul>
+<h3>5. Presentation (5%)</h3>
+<ul>
+<li>Well-organized notebook structure</li>
+<li>Clear markdown explanations throughout</li>
+<li>Proper formatting and readability</li>
+<li>Runs without errors in Google Colab</li>
+</ul>
+<h3>Optional Bonus</h3>
+<ul>
+<li>Any extensions you implement (+5-15% extra credit depending on depth)</li>
+</ul>
+<h2>Evaluation Criteria</h2>
+<h3>Technical Implementation (40 points)</h3>
+<ul>
+<li><strong>Core ELIZA functionality</strong> (25 pts): Correct implementation of all required components</li>
+<li>Pattern matching with decomposition/reassembly (8 pts)</li>
+<li>Pre- and post-substitutions (6 pts)</li>
+<li>Synonym handling (6 pts)</li>
+<li>Conversation loop with greeting/quit (5 pts)</li>
+</ul>
+<ul>
+<li><strong>Code quality</strong> (10 pts): Organization, comments, clarity</li>
+</ul>
+<ul>
+<li><strong>Completeness</strong> (5 pts): All features working correctly</li>
+</ul>
+<h3>Conversation Examples and Testing (20 points)</h3>
+<ul>
+<li><strong>Diversity of tests</strong> (8 pts): Cover required scenarios thoroughly</li>
+<li><strong>Documentation</strong> (7 pts): Clear transcripts with analysis</li>
+<li><strong>Insights</strong> (5 pts): Thoughtful observations about pattern matching</li>
+</ul>
+<h3>Analysis (25 points)</h3>
+<ul>
+<li><strong>ELIZA effect analysis</strong> (8 pts): Insightful examination of psychological aspects</li>
+<li><strong>Pattern analysis</strong> (7 pts): Understanding of rule system effectiveness</li>
+<li><strong>Modern comparison</strong> (10 pts): Fair, thorough comparison with analysis</li>
+</ul>
+<h3>Reflection (10 points)</h3>
+<ul>
+<li><strong>Depth of thought</strong> (5 pts): Thoughtful engagement with big questions</li>
+<li><strong>Connections</strong> (3 pts): Links ELIZA to modern AI systems</li>
+<li><strong>Clarity</strong> (2 pts): Well-written and organized</li>
+</ul>
+<h3>Presentation (5 points)</h3>
+<ul>
+<li><strong>Organization</strong> (2 pts): Logical structure and flow</li>
+<li><strong>Formatting</strong> (2 pts): Readable, well-formatted notebook</li>
+<li><strong>Completeness</strong> (1 pt): Runs without errors</li>
+</ul>
+<p><strong>Total: 100 points</strong> (plus potential bonus)</p>
+<h3>Grading Scale</h3>
+<ul>
+<li><strong>A (90-100)</strong>: Excellent implementation with thorough analysis and insightful reflections</li>
+<li><strong>B (80-89)</strong>: Complete working implementation with good analysis</li>
+<li><strong>C (70-79)</strong>: Working ELIZA with basic analysis and some gaps</li>
+<li><strong>D (60-69)</strong>: Partial implementation or weak analysis</li>
+<li><strong>F (<60)</strong>: Incomplete or non-functional submission</li>
+</ul>
+<h2>Tips for Success</h2>
+<h3>Getting Started</h3>
+<p>1. <strong>Read Weizenbaum's paper first</strong>: Understanding the original design will help immensely
+2. <strong>Start with simple patterns</strong>: Get basic matching working before tackling complex cases
+3. <strong>Test incrementally</strong>: Don't write everything at once—test each component separately
+4. <strong>Use print statements</strong>: Debug by printing what patterns match and why
+5. <strong>Study `instructions.txt`</strong>: Understand the format before parsing it</p>
+<h3>Common Pitfalls to Avoid</h3>
+<p>1. <strong>Incorrect pattern priority</strong>: Patterns with higher rank numbers should be checked first
+2. <strong>Substitution order</strong>: Pre-substitutions before pattern matching, post-substitutions after
+3. <strong>Wildcard matching</strong>: The `*` should match any sequence of words
+4. <strong>Synonym expansion</strong>: Remember to treat all synonyms as equivalent during matching
+5. <strong>Reassembly</strong>: Captured groups should be properly reinserted in responses
+6. <strong>Case sensitivity</strong>: Normalize case for matching but preserve it appropriately in output</p>
+<h3>Debugging Strategies</h3>
+<p>1. <strong>Start tiny</strong>: Test with just 2-3 patterns before using the full `instructions.txt`
+2. <strong>Print everything</strong>: Show which pattern matched and which reassembly was selected
+3. <strong>Manual trace</strong>: Walk through a simple example by hand to verify logic
+4. <strong>Edge cases</strong>: Test empty input, very long input, special characters
+5. <strong>Compare outputs</strong>: Check your responses against online ELIZA implementations</p>
+<h3>Making Your Analysis Stand Out</h3>
+<p>1. <strong>Be specific</strong>: Use concrete examples from your conversations
+2. <strong>Think critically</strong>: Don't just describe—analyze why things work or fail
+3. <strong>Make connections</strong>: Link ELIZA to modern AI systems and concepts
+4. <strong>Be honest</strong>: It's okay to note limitations and struggles
+5. <strong>Show creativity</strong>: Test ELIZA in interesting or unexpected ways</p>
+<h3>Time Management</h3>
+<p>This assignment is designed to be completed in <strong>one week (7 days)</strong>. While substantial, it is achievable within a week with focused effort. Here's a suggested daily breakdown:</p>
+<ul>
+<li><strong>Days 1-2</strong>: Implement core ELIZA functionality (pattern matching, pre/post-substitutions, synonym handling, conversation loop)</li>
+<li><strong>Days 3-4</strong>: Conduct conversation testing and analysis (at least 5 diverse conversation scenarios, ELIZA effect analysis, pattern effectiveness analysis)</li>
+<li><strong>Days 5-6</strong>: Complete comparison with modern chatbots and write your reflection (500-1000 word reflection on key questions)</li>
+<li><strong>Day 7</strong>: Polish your notebook, test it in a fresh Colab session, and prepare for submission</li>
+</ul>
+<p><strong>Key tip</strong>: These phases can overlap! While implementing, you can begin testing. While analyzing, you can refine your implementation. The daily breakdown above represents the primary focus for each phase, but iterating and moving between phases is normal and expected. Start early in the week and test incrementally as you build each component.</p>
+<h2>Resources and References</h2>
+<h3>Essential Reading</h3>
+<p>1. <strong>Weizenbaum, J. (1966)</strong>. "ELIZA—A Computer Program For the Study of Natural Language Communication Between Man and Machine"
+<ul>
+<li><a href="https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf" target="_blank">PDF Link</a></li>
+<li><strong>Read this first!</strong> It will help you understand the design and implementation</li>
+</ul></p>
+<p>2. <strong>Weizenbaum, J. (1976)</strong>. "Computer Power and Human Reason: From Judgment to Calculation"
+<ul>
+<li>Weizenbaum's later reflections on ELIZA and AI ethics</li>
+<li>Highly relevant to your reflection section</li>
+</ul></p>
+<h3>Additional Context</h3>
+<p>3. <strong>Hofstadter, D. (1995)</strong>. "Fluid Concepts and Creative Analogies: Computer Models of the Fundamental Mechanisms of Thought"
+<ul>
+<li>Chapter on the Copycat program and understanding vs. simulation</li>
+</ul></p>
+<p>4. <strong>Turkle, S. (2011)</strong>. "Alone Together: Why We Expect More from Technology and Less from Each Other"
+<ul>
+<li>Modern examination of human-computer emotional connections</li>
+</ul></p>
+<h3>Technical Resources</h3>
+<ul>
+<li><strong>ELIZA Online Implementations</strong>: Try online versions to see expected behavior</li>
+<li><a href="http://www.masswerk.at/elizabot/" target="_blank">masswerk.at/elizabot</a></li>
+<li>Useful for testing your implementation</li>
+</ul>
+<ul>
+<li><strong>Python String Methods</strong>: Essential for text manipulation</li>
+<li><a href="https://docs.python.org/3/library/stdtypes.html#string-methods" target="_blank">Python String Documentation</a></li>
+</ul>
+<ul>
+<li><strong>Regular Expressions</strong> (for bonus extensions):</li>
+<li><a href="https://docs.python.org/3/library/re.html" target="_blank">Python re module</a></li>
+<li><a href="https://regexone.com/" target="_blank">RegexOne Tutorial</a></li>
+</ul>
+<h3>Modern Chatbot Comparisons</h3>
+<ul>
+<li><strong>ChatGPT</strong>: <a href="https://chat.openai.com" target="_blank">chat.openai.com</a> - For comparison testing</li>
+<li><strong>Claude</strong>: <a href="https://claude.ai" target="_blank">claude.ai</a> - Another modern system to compare</li>
+<li><strong>Replika</strong>: Example of modern "therapeutic" chatbot</li>
+</ul>
+<h3>Course Materials</h3>
+<ul>
+<li><strong>Week 1 Lecture Slides</strong>: Review pattern matching and ELIZA discussion</li>
+<li><strong>Course Readings</strong>: Fedorenko et al. (2024) and Lupyan et al. (2020) on language and thought</li>
+</ul>
+<h3>Going Deeper (Optional)</h3>
+<ul>
+<li><strong>Searle, J. (1980)</strong>. "Minds, Brains, and Programs" - The Chinese Room argument</li>
+<li><strong>Turing, A. (1950)</strong>. "Computing Machinery and Intelligence" - The original Turing Test</li>
+<li><strong>Bender & Koller (2020)</strong>. "Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data"</li>
+</ul>
+<h2>Submission Guidelines</h2>
+<p>1. <strong>Format</strong>: Submit a link to your Google Colaboratory notebook
+2. <strong>Permissions</strong>: Ensure the notebook is shared with "Anyone with the link can view"
+3. <strong>Runtime</strong>: The notebook must run from start to finish without errors in a fresh Colab session
+4. <strong>Dependencies</strong>: Include all imports and installations in the notebook
+5. <strong>Data</strong>: The `instructions.txt` file should be loaded in your notebook (upload to Colab or link to it)
+6. <strong>Output</strong>: Keep cell outputs visible in your submission
+7. <strong>Deadline</strong>: [To be announced by instructor]</p>
+<h3>Before Submission Checklist</h3>
+<ul>
+<li>[ ] ELIZA implementation is complete and working</li>
+<li>[ ] All conversation examples are included with analysis</li>
+<li>[ ] ELIZA effect analysis is thorough and insightful</li>
+<li>[ ] Modern chatbot comparison is complete with examples</li>
+<li>[ ] Reflection addresses all required questions</li>
+<li>[ ] Code is well-commented and organized</li>
+<li>[ ] All markdown cells provide clear explanations</li>
+<li>[ ] Notebook runs without errors in fresh Colab session</li>
+<li>[ ] Cell outputs are visible and meaningful</li>
+<li>[ ] Formatting is clean and professional</li>
+</ul>
+<h2>Academic Integrity</h2>
+<p>You are encouraged to:
+<ul>
+<li>Use generative AI tools (ChatGPT, Claude, Copilot) to help write and debug code</li>
+<li>Discuss concepts and approaches with classmates</li>
+<li>Search for online tutorials and ELIZA resources</li>
+<li>Ask questions in class, office hours, or discussion forums</li>
+</ul></p>
+<p>You must:
+<ul>
+<li>Write your own code and analysis (even if AI-assisted)</li>
+<li>Understand every line of code you submit</li>
+<li>Write your own reflection in your own words</li>
+<li>Cite any significant code snippets adapted from external sources</li>
+<li>Submit original conversation examples and analysis</li>
+</ul></p>
+<p>Violations of academic integrity will result in a failing grade for the assignment.</p>
+<h2>Questions?</h2>
+<p>If you have questions about the assignment:
+1. Review this README and the Weizenbaum paper
+2. Check the Week 1 lecture materials
+3. Post in the course discussion forum
+4. Attend office hours
+5. Email the instructor/TA with specific questions</p>
+<p>Have fun exploring one of the most important programs in AI history!</p>
+<p>---</p>
+<p><em>ELIZA may be nearly 60 years old, but it raises questions about intelligence, understanding, and human-computer interaction that remain deeply relevant today. By building and analyzing ELIZA, you're engaging with fundamental questions that will resurface throughout this course as we explore modern language models.</em></p>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 <a href="https://www.context-lab.com" target="_blank">Contextual Dynamics Lab</a></p>
+        <p>PSYC 51.17: Language Models from Scratch</p>
+    </footer>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', currentTheme);
+        themeIcon.innerHTML = currentTheme === 'dark' ? '&#127769;' : '&#9728;';
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.innerHTML = newTheme === 'dark' ? '&#127769;' : '&#9728;';
+        });
+    </script>
+</body>
+</html>

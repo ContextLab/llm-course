@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 2 - SPAM classifier - PSYC 51.17</title>
+    <meta name="description" content="Assignment 2 - SPAM classifier for PSYC 51.17: Language Models from Scratch">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../demos/shared/css/demo-styles.css">
+    <style>
+        .page-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            z-index: var(--z-fixed);
+            backdrop-filter: blur(10px);
+        }
+        .page-nav .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .page-nav .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        .page-nav .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .page-nav .nav-links a:hover,
+        .page-nav .nav-links a.active {
+            color: var(--primary-color);
+        }
+        .page-nav .theme-toggle {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-nav .theme-toggle:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary-color);
+        }
+        .page-header {
+            margin-top: 70px;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
+        }
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.75rem;
+        }
+        .content p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .content ul {
+            color: var(--text-secondary);
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .content li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        .content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .content a:hover {
+            text-decoration: underline;
+        }
+        .content strong {
+            color: var(--text-primary);
+        }
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .content th, .content td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .content th {
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .content td {
+            color: var(--text-secondary);
+        }
+        footer {
+            background: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+        }
+        footer p {
+            color: var(--text-secondary);
+            margin: 0.5rem 0;
+        }
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .page-nav .nav-links { gap: 1rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="page-nav">
+        <div class="logo">PSYC 51.17</div>
+        <div class="nav-links">
+            <a href="../../">Outline</a>
+            <a href="../../syllabus/">Syllabus</a>
+            <a href="../../demos/">Demos</a>
+            <a href="../../assignments/" class="active">Assignments</a>
+            <a href="https://github.com/ContextLab/llm-course" target="_blank">GitHub</a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">&#127769;</span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>Assignment 2 - SPAM classifier</h1>
+    </header>
+
+    <main class="content">
+        
+<div style="background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin: 2rem 0; text-align: center;">
+    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Ready to Start?</h3>
+    <a href="#" class="accept-btn" style="display: inline-block; background: var(--gradient-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
+        <i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>Accept Assignment
+    </a>
+    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+        GitHub Classroom link coming soon
+    </p>
+</div>
+<h1>Assignment 2: Advanced SPAM Classifier with Multi-Method Comparison</h1>
+<h2>Overview</h2>
+<p>Spam detection is one of the most successful and widely-deployed applications of machine learning. In this assignment, you will build a comprehensive spam classification system that not only achieves high performance but also provides deep insights into what makes spam detection work—and what makes it fail.</p>
+<p>Unlike a simple "build a classifier" task, this assignment requires you to:
+1. <strong>Implement multiple classification approaches</strong> (traditional ML and neural methods)
+2. <strong>Conduct rigorous comparative analysis</strong> across methods
+3. <strong>Perform extensive error analysis</strong> to understand failure modes
+4. <strong>Test adversarial robustness</strong> by trying to fool your own classifier
+5. <strong>Consider real-world deployment constraints</strong> (speed, memory, class imbalance)</p>
+<p>This assignment mirrors real-world ML engineering: you'll make architecture decisions, justify trade-offs, and demonstrate that you understand not just how to build models, but why they work.</p>
+<p><strong>Timeline:</strong> This assignment is designed to be completed in <strong>1 week (7 days)</strong> while remaining comprehensive in scope. By using GenAI tools to accelerate implementation, you can focus your time on the deeper analytical work—error analysis, robustness testing, and deriving insights—that separates excellent work from good work.</p>
+<h2>Learning Objectives</h2>
+<p>By completing this assignment, you will:
+<ul>
+<li>Understand the full pipeline of text classification from feature engineering to deployment</li>
+<li>Compare traditional ML vs. neural approaches on the same task</li>
+<li>Learn to properly evaluate classifiers using multiple metrics</li>
+<li>Develop skills in systematic error analysis and debugging ML models</li>
+<li>Think adversarially about model robustness</li>
+<li>Make informed decisions about model selection based on performance/efficiency trade-offs</li>
+</ul></p>
+<h2>Dataset</h2>
+<p>A sample dataset is provided (<a href="training.zip" target="_blank">`training.zip`</a>), consisting of two folders:
+<ul>
+<li><strong>spam/</strong>: Contains spam emails in plain text format.</li>
+<li><strong>ham/</strong>: Contains ham emails in plain text format.</li>
+</ul></p>
+<p>You can use this dataset to develop, train, and test your classifiers. When evaluating your solution, a new dataset—structured in the same way (with "spam" and "ham" folders)—will be used. Your models should generalize well to this unseen data.</p>
+<p><strong>Important Notes:</strong>
+<ul>
+<li>You may split the provided data however you like (train/val/test)</li>
+<li>You may augment the dataset with external spam datasets (must cite sources)</li>
+<li>Be aware of potential class imbalance and handle it appropriately</li>
+<li>Consider using stratified splitting to maintain class distributions</li>
+</ul></p>
+<h2>Required Components</h2>
+<h3>Part 1: Multiple Classifier Implementations (40 points)</h3>
+<p>You must implement and train <strong>at least three</strong> different classifiers:</p>
+<p>#### 1. Traditional ML Baseline (15 points)
+Implement <strong>two</strong> of the following with proper feature engineering:
+<ul>
+<li><strong>Naive Bayes</strong> with TF-IDF features</li>
+<li><strong>Support Vector Machine (SVM)</strong> with TF-IDF features</li>
+<li><strong>Logistic Regression</strong> with engineered features</li>
+<li><strong>Random Forest</strong> with custom feature extraction</li>
+</ul></p>
+<p>For traditional methods, you must:
+<ul>
+<li>Document your feature engineering choices (TF-IDF parameters, n-grams, custom features)</li>
+<li>Explain preprocessing decisions (lowercasing, stemming, stop words, etc.)</li>
+<li>Justify hyperparameter selections</li>
+</ul></p>
+<p><strong>Example features to consider:</strong>
+<ul>
+<li>TF-IDF vectors (unigrams, bigrams, trigrams)</li>
+<li>Custom features: email length, number of URLs, exclamation marks, ALL CAPS ratio</li>
+<li>Domain-specific features: sender patterns, header information</li>
+<li>Character-level features for obfuscated spam</li>
+</ul></p>
+<p>#### 2. Neural/Transformer-Based Model (15 points)
+Implement at least one neural approach:
+<ul>
+<li><strong>Fine-tuned BERT</strong> (bert-base-uncased or distilbert-base-uncased)</li>
+<li><strong>Fine-tuned DistilBERT</strong> (recommended for faster training)</li>
+<li><strong>RoBERTa</strong> or other transformer variant</li>
+<li><strong>Custom neural architecture</strong> (LSTM/GRU with embeddings)</li>
+</ul></p>
+<p>For neural methods, you must:
+<ul>
+<li>Use appropriate pre-trained models and fine-tune on spam data</li>
+<li>Document training procedures (learning rate, epochs, batch size)</li>
+<li>Handle sequence length appropriately (truncation/padding)</li>
+<li>Monitor for overfitting (training vs. validation curves)</li>
+</ul></p>
+<p>#### 3. Ensemble Method (10 points)
+Create an ensemble that combines predictions from your best models:
+<ul>
+<li><strong>Voting ensemble</strong> (majority vote or weighted average)</li>
+<li><strong>Stacking</strong> (meta-classifier on top of base models)</li>
+<li><strong>Boosting</strong> (if using multiple traditional classifiers)</li>
+</ul></p>
+<p>Document your ensemble strategy and show whether it improves over individual models.</p>
+<h3>Part 2: Comprehensive Evaluation (25 points)</h3>
+<p>For each classifier, you must report:</p>
+<p>#### Quantitative Metrics (15 points)
+<ul>
+<li><strong>Accuracy</strong>: Overall correctness</li>
+<li><strong>Precision</strong>: Of emails classified as spam, how many are actually spam?</li>
+<li><strong>Recall</strong>: Of actual spam emails, how many did you catch?</li>
+<li><strong>F1 Score</strong>: Harmonic mean of precision and recall</li>
+<li><strong>AUC-ROC</strong>: Area under the receiver operating characteristic curve</li>
+<li><strong>Confusion Matrix</strong>: Visualize true positives, false positives, true negatives, false negatives</li>
+</ul></p>
+<p><strong>Create a comparison table</strong> showing all metrics for all classifiers.</p>
+<p>#### Computational Efficiency (5 points)
+For each model, measure and report:
+<ul>
+<li><strong>Training time</strong>: How long to train on the full dataset?</li>
+<li><strong>Inference time</strong>: Average time to classify a single email</li>
+<li><strong>Model size</strong>: Memory footprint of saved model</li>
+<li><strong>Throughput</strong>: Emails classified per second</li>
+</ul></p>
+<p>This helps understand deployment trade-offs.</p>
+<p>#### Statistical Significance (5 points)
+<ul>
+<li>Use <strong>cross-validation</strong> (at least 5-fold) to get confidence intervals</li>
+<li>Perform <strong>statistical tests</strong> to determine if one model significantly outperforms another</li>
+<li>Report means and standard deviations across folds</li>
+</ul></p>
+<h3>Part 3: Error Analysis (20 points)</h3>
+<p>This is where you demonstrate deep understanding:</p>
+<p>#### Systematic Error Categorization (10 points)
+1. <strong>Identify failure cases</strong>: Find at least 20 misclassified emails (10 false positives, 10 false negatives)
+2. <strong>Categorize errors</strong>: Group them into patterns:
+<ul>
+<li>False Positives: Legitimate emails classified as spam (e.g., promotional emails, newsletters)</li>
+<li>False Negatives: Spam that slipped through (e.g., sophisticated phishing, image-based spam)</li>
+</ul>
+3. <strong>Analyze patterns</strong>: What do misclassified emails have in common?
+<ul>
+<li>Vocabulary overlap between spam and ham</li>
+<li>Short emails with little context</li>
+<li>Emails with unusual formatting</li>
+<li>Multilingual content</li>
+</ul></p>
+<p>#### Comparative Error Analysis (5 points)
+<ul>
+<li>Do different models make different mistakes?</li>
+<li>Are neural models better at certain types of spam vs. traditional models?</li>
+<li>Where does the ensemble help most?</li>
+</ul></p>
+<p>#### Feature Importance Analysis (5 points)
+<ul>
+<li>For traditional models: What features are most predictive? (Use feature coefficients or SHAP values)</li>
+<li>For neural models: Use attention visualization or probing classifiers</li>
+<li>What words/patterns are most strongly associated with spam vs. ham?</li>
+</ul></p>
+<h3>Part 4: Adversarial Testing (10 points)</h3>
+<p>Test the robustness of your classifiers:</p>
+<p>#### Create Adversarial Examples (5 points)
+Manually craft at least <strong>5 emails</strong> that:
+<ul>
+<li>Should be classified as spam but try to evade detection</li>
+<li>Use techniques spammers actually use: character substitution (V1agra), adding legitimate text, etc.</li>
+</ul></p>
+<p>Test these on all your classifiers. Which models are most robust?</p>
+<p>#### Robustness Analysis (5 points)
+Test your classifier against:
+<ul>
+<li><strong>Typos and misspellings</strong>: Add random character swaps</li>
+<li><strong>Case variations</strong>: Change capitalization randomly</li>
+<li><strong>Synonym replacement</strong>: Replace words with synonyms</li>
+<li><strong>Content injection</strong>: Add benign text to spam emails</li>
+</ul></p>
+<p>How much does performance degrade? Which models are most robust?</p>
+<h3>Part 5: Real-World Considerations (5 points)</h3>
+<p>Discuss the following:</p>
+<p>#### Class Imbalance (2 points)
+<ul>
+<li>How did you handle class imbalance in training?</li>
+<li>What happens if spam/ham ratio changes in production?</li>
+<li>Should you use sampling techniques (SMOTE, undersampling)?</li>
+</ul></p>
+<p>#### Deployment Scenarios (3 points)
+Given different constraints, which model would you choose?
+<ul>
+<li><strong>Mobile email app</strong>: Needs fast inference, small model size</li>
+<li><strong>Email server</strong>: Can use larger models, needs high throughput</li>
+<li><strong>Maximum accuracy</strong>: No constraints, best possible performance</li>
+</ul></p>
+<p>Justify your recommendations with evidence from your experiments.</p>
+<h2>Deliverables</h2>
+<p>Submit a <strong>single Jupyter notebook</strong> that includes:</p>
+<h3>1. Code Implementation</h3>
+<ul>
+<li>All classifier implementations with clear documentation</li>
+<li>Training and evaluation code</li>
+<li>Utility functions for metrics, visualization, etc.</li>
+<li>Must run in a clean Google Colab instance without errors</li>
+</ul>
+<h3>2. Markdown Documentation</h3>
+Your notebook must include well-written markdown sections:
+<p>#### Introduction
+<ul>
+<li>Overview of your approach</li>
+<li>High-level architecture decisions</li>
+</ul></p>
+<p>#### Methods
+For each classifier:
+<ul>
+<li>Architecture description</li>
+<li>Feature engineering choices</li>
+<li>Hyperparameter selection process</li>
+<li>Training procedure</li>
+</ul></p>
+<p>#### Results
+<ul>
+<li>Comparison table of all metrics</li>
+<li>Visualizations (confusion matrices, ROC curves, training curves)</li>
+<li>Statistical significance tests</li>
+</ul></p>
+<p>#### Error Analysis
+<ul>
+<li>Categorization of failure cases</li>
+<li>Specific examples with explanations</li>
+<li>Insights about what makes spam detection difficult</li>
+</ul></p>
+<p>#### Adversarial Testing
+<ul>
+<li>Description of adversarial examples you created</li>
+<li>Results of robustness tests</li>
+<li>Analysis of model vulnerabilities</li>
+</ul></p>
+<p>#### Discussion
+<ul>
+<li>What did you learn about spam classification?</li>
+<li>Which approach worked best and why?</li>
+<li>Trade-offs between different models</li>
+<li>Recommendations for deployment scenarios</li>
+<li>Limitations of your approach</li>
+</ul></p>
+<p>#### Reflection
+<ul>
+<li>What was challenging about this assignment?</li>
+<li>What would you do differently with more time/resources?</li>
+<li>What surprised you about the results?</li>
+</ul></p>
+<h3>3. Code Quality</h3>
+<ul>
+<li>Clean, readable code with meaningful variable names</li>
+<li>Comments explaining non-obvious logic</li>
+<li>Modular functions (not one giant cell)</li>
+<li>Reproducible results (set random seeds)</li>
+</ul>
+<h2>Grading Rubric (100 points total)</h2>
+<p>Your assignment will be graded according to the following breakdown:</p>
+<h3>Technical Implementation (40 points)</h3>
+<ul>
+<li><strong>Traditional ML Models (15 points)</strong></li>
+<li>Two different traditional ML classifiers properly implemented (8 pts)</li>
+<li>Proper feature engineering documented and justified (4 pts)</li>
+<li>Appropriate hyperparameter tuning demonstrated (3 pts)</li>
+</ul>
+<ul>
+<li><strong>Neural/Transformer Model (15 points)</strong></li>
+<li>Correct implementation of fine-tuned transformer or neural model (8 pts)</li>
+<li>Proper training procedure with validation monitoring (4 pts)</li>
+<li>Handling of sequence length and preprocessing (3 pts)</li>
+</ul>
+<ul>
+<li><strong>Ensemble Method (10 points)</strong></li>
+<li>Ensemble combines multiple models appropriately (5 pts)</li>
+<li>Improvement over individual models demonstrated (5 pts)</li>
+</ul>
+<h3>Evaluation and Analysis (45 points)</h3>
+<ul>
+<li><strong>Quantitative Metrics (15 points)</strong></li>
+<li>All required metrics computed correctly (5 pts)</li>
+<li>Clear comparison table across all models (5 pts)</li>
+<li>Proper visualizations (confusion matrices, ROC curves) (5 pts)</li>
+</ul>
+<ul>
+<li><strong>Computational Efficiency (5 points)</strong></li>
+<li>Training time, inference time, and model size measured (3 pts)</li>
+<li>Trade-offs discussed appropriately (2 pts)</li>
+</ul>
+<ul>
+<li><strong>Statistical Rigor (5 points)</strong></li>
+<li>Cross-validation performed correctly (3 pts)</li>
+<li>Statistical significance testing (2 pts)</li>
+</ul>
+<ul>
+<li><strong>Error Analysis (20 points)</strong></li>
+<li>Systematic categorization of at least 20 failure cases (8 pts)</li>
+<li>Insightful patterns identified in errors (6 pts)</li>
+<li>Comparative analysis across models (3 pts)</li>
+<li>Feature importance analysis (3 pts)</li>
+</ul>
+<h3>Adversarial Testing and Robustness (10 points)</h3>
+<ul>
+<li>Creation of meaningful adversarial examples (5 pts)</li>
+<li>Robustness testing across perturbations (3 pts)</li>
+<li>Thoughtful analysis of vulnerabilities (2 pts)</li>
+</ul>
+<h3>Real-World Considerations (5 points)</h3>
+<ul>
+<li>Discussion of class imbalance handling (2 pts)</li>
+<li>Deployment scenario recommendations with justification (3 pts)</li>
+</ul>
+<h3>Documentation and Presentation (15 points)</h3>
+<ul>
+<li>Code quality: clean, readable, well-commented (5 pts)</li>
+<li>Markdown documentation: clear, thorough, well-organized (5 pts)</li>
+<li>Visualizations: informative and professional (3 pts)</li>
+<li>Reflection and insights: thoughtful and substantive (2 pts)</li>
+</ul>
+<h3>Bonus Points (up to 10 points)</h3>
+<ul>
+<li><strong>Exceptionally thorough analysis</strong> that goes beyond requirements (+5 pts)</li>
+<li><strong>Novel techniques or insights</strong> not covered in class (+5 pts)</li>
+<li><strong>Additional robustness tests</strong> (e.g., multilingual spam, zero-day attacks) (+3 pts)</li>
+<li><strong>Deployment-ready code</strong> with API endpoint or containerization (+5 pts)</li>
+<li><strong>Interactive demo</strong> or visualization tool (+3 pts)</li>
+</ul>
+<p>Note: Maximum score is capped at 110/100.</p>
+<h2>Evaluation Metrics</h2>
+<p>While your grade is based on the rubric above, your model's performance will also be tested on a held-out dataset. This serves as a sanity check—if your models perform poorly (e.g., below 0.85 AUC), you may lose points even if other components are complete.</p>
+<p><strong>Expected Performance Benchmarks:</strong>
+<ul>
+<li><strong>Minimum acceptable</strong>: AUC > 0.85 on held-out data</li>
+<li><strong>Good performance</strong>: AUC > 0.92 on held-out data</li>
+<li><strong>Excellent performance</strong>: AUC > 0.96 on held-out data</li>
+</ul></p>
+<p>The following code can be used to evaluate your classifiers during development:</p>
+<p>```python
+import os
+import zipfile
+import shutil
+from pathlib import Path
+from sklearn.metrics import roc<em>auc</em>score</p>
+<p>def evaluate<em>classifier(zip</em>path: str, classify<em>email</em>fn) -> float:
+    """
+    Evaluate a classifier's performance on a dataset contained in a zip archive.</p>
+<p>Parameters:
+    zip_path (str): Path to the zip archive containing "spam" and "ham" folders.
+    classify<em>email</em>fn (function): A function handle to classify<em>email(email</em>text: str) -> int.</p>
+<p>Returns:
+    float: The AUC (Area Under the Curve) score of the classifier.
+    """
+    # Step 1: Set up paths and directories
+    dataset<em>dir = Path(zip</em>path).with_suffix('')  # Create a directory name based on the zip name (without .zip)
+    temp_extracted = False  # Track if we extracted the zip (for cleanup)</p>
+<p># Step 2: Check if the dataset is already extracted
+    if not dataset_dir.exists():
+        print(f"Extracting {zip_path}...")
+        with zipfile.ZipFile(zip<em>path, 'r') as zip</em>ref:
+            zip<em>ref.extractall(dataset</em>dir)
+        temp_extracted = True  # Mark that we extracted files</p>
+<p># Step 3: Prepare to collect the data
+    emails = []
+    labels = []</p>
+<p># Traverse the spam folder
+    spam<em>folder = dataset</em>dir / "spam"
+    for file<em>path in spam</em>folder.iterdir():
+        if file<em>path.is</em>file():
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
+                email_text = file.read()
+                emails.append(email_text)
+                labels.append(1)  # Spam is labeled as 1</p>
+<p># Traverse the ham folder
+    ham<em>folder = dataset</em>dir / "ham"
+    for file<em>path in ham</em>folder.iterdir():
+        if file<em>path.is</em>file():
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
+                email_text = file.read()
+                emails.append(email_text)
+                labels.append(0)  # Ham is labeled as 0</p>
+<p># Step 4: Classify all emails
+    predictions = [classify<em>email</em>fn(email) for email in emails]</p>
+<p># Step 5: Calculate AUC score
+    auc<em>score = roc</em>auc_score(labels, predictions)</p>
+<p># Step 6: Clean up if necessary
+    if temp_extracted:
+        print(f"Cleaning up extracted files from {dataset_dir}...")
+        shutil.rmtree(dataset_dir)</p>
+<p>return auc_score
+```</p>
+<p>You can call this function in your notebook to evaluate individual models during development:
+```python
+auc<em>score = evaluate</em>classifier('training.zip', classify_email)
+print(f"Model AUC Score: {auc_score:.4f}")
+```</p>
+<h2>Tips for Success</h2>
+<h3>Complete Within 1 Week: Suggested Daily Schedule</h3>
+While this assignment is comprehensive in scope, it's designed to be completable in <strong>7 days</strong>. Here's a suggested timeline (students can use GenAI to accelerate implementation):
+<ul>
+<li><strong>Day 1: Setup & Data Exploration</strong> - Extract data, perform EDA, create train/val/test splits</li>
+<li><strong>Day 2: Traditional ML Models</strong> - Implement two traditional ML classifiers with feature engineering (use GenAI to accelerate TF-IDF/feature pipeline code)</li>
+<li><strong>Day 3: Neural Model</strong> - Fine-tune transformer (DistilBERT recommended for speed), monitor training</li>
+<li><strong>Day 4: Evaluation & Metrics</strong> - Compute all metrics, generate comparison tables and visualizations</li>
+<li><strong>Day 5: Error Analysis</strong> - Identify and categorize 20+ failure cases, analyze patterns and feature importance</li>
+<li><strong>Day 6: Adversarial Testing & Real-World Considerations</strong> - Create adversarial examples, test robustness, discuss class imbalance and deployment scenarios</li>
+<li><strong>Day 7: Documentation & Polish</strong> - Write markdown sections, verify code runs cleanly, final review</li>
+</ul>
+<p><strong>Key to Success:</strong> Use GenAI coding assistants to accelerate boilerplate code and feature engineering, but invest your time in understanding results, analyzing errors, and writing insightful analysis.</p>
+<h3>Use Version Control</h3>
+<ul>
+<li>Save different model versions as you experiment.</li>
+<li>Track what worked and what didn't in your notebook.</li>
+<li>Use meaningful names for models and experiments.</li>
+</ul>
+<h3>Leverage GenAI Tools Effectively (Critical for 1-Week Timeline)</h3>
+Since this assignment must be completed in 7 days, <strong>using AI coding assistants is essential</strong> to accelerate implementation while you focus on the analytical components:
+<p><strong>DO use GenAI for:</strong>
+<ul>
+<li><strong>Boilerplate code</strong>: Data loading, train/test splits, metric computation</li>
+<li><strong>Feature engineering pipelines</strong>: TF-IDF setup, feature extraction utilities</li>
+<li><strong>Model scaffolding</strong>: Training loops, validation monitoring, hyperparameter grids</li>
+<li><strong>Visualization code</strong>: Confusion matrices, ROC curves, comparison tables</li>
+<li><strong>Debugging</strong>: Finding issues in data processing or model output shape mismatches</li>
+</ul></p>
+<p><strong>DON'T use GenAI as a shortcut for:</strong>
+<ul>
+<li><strong>Understanding results</strong>: Always interpret what your models are doing</li>
+<li><strong>Error analysis</strong>: Manually examine misclassified examples and identify patterns</li>
+<li><strong>Design decisions</strong>: Think critically about which models/features to try and why</li>
+<li><strong>Documentation</strong>: Write your own explanations of methodology and findings</li>
+</ul></p>
+<p><strong>Workflow:</strong> Generate code scaffolds with GenAI, then spend your time on data exploration, result interpretation, error categorization, and insightful analysis. The best submissions show deep understanding of the <em>why</em>, not just the <em>how</em>.</p>
+<p>The goal is to learn ML concepts deeply while shipping a complete, well-analyzed project in 7 days.</p>
+<h3>Feature Engineering Matters</h3>
+For traditional ML models:
+<ul>
+<li>Don't just use default TF-IDF—experiment with n-gram ranges, max features, min/max document frequency.</li>
+<li>Create custom features based on spam characteristics (URLs, special characters, etc.).</li>
+<li>Consider domain-specific patterns (e.g., "Click here", "Free money", etc.).</li>
+</ul>
+<h3>Monitor for Overfitting</h3>
+<ul>
+<li>Always use a validation set separate from your training data.</li>
+<li>Plot training vs. validation curves for neural models.</li>
+<li>Use cross-validation for traditional models.</li>
+<li>If training accuracy >> validation accuracy, you're overfitting.</li>
+</ul>
+<h3>Debugging Poor Performance</h3>
+If your models aren't performing well:
+1. <strong>Check data quality</strong>: Are there mislabeled examples?
+2. <strong>Verify preprocessing</strong>: Are you handling special characters, URLs correctly?
+3. <strong>Inspect predictions</strong>: Look at specific examples where the model fails.
+4. <strong>Try simpler models first</strong>: Debug Naive Bayes before attempting BERT.
+5. <strong>Check class balance</strong>: Are you predicting only the majority class?
+<h3>Make Comparisons Fair</h3>
+<ul>
+<li>Use the same train/validation/test split for all models.</li>
+<li>Report all metrics (not just the best one).</li>
+<li>Don't cherry-pick results.</li>
+</ul>
+<h3>Document Everything</h3>
+<ul>
+<li>Future you (and the grader) will thank you for clear documentation.</li>
+<li>Explain why you made each decision, not just what you did.</li>
+<li>Include negative results—what didn't work and why?</li>
+</ul>
+<h2>Resources</h2>
+<h3>Spam Detection Research</h3>
+<ul>
+<li><a href="https://www.cs.cmu.edu/~tom/mlbook/NBayesSpam.pdf" target="_blank">Spam Filtering with Naive Bayes</a> - Classic paper on Naive Bayes for spam</li>
+<li><a href="https://arxiv.org/abs/1702.01804" target="_blank">Learning to Detect Phishing Emails</a> - Modern ML approaches</li>
+<li><a href="https://arxiv.org/abs/0912.0520" target="_blank">A Survey of Learning-Based Techniques of Email Spam Filtering</a> - Comprehensive overview</li>
+</ul>
+<h3>Transformer Fine-Tuning</h3>
+<ul>
+<li><a href="https://huggingface.co/docs/transformers" target="_blank">Hugging Face Transformers Documentation</a> - Essential for BERT/DistilBERT</li>
+<li><a href="https://huggingface.co/docs/transformers/tasks/sequence_classification" target="_blank">Fine-tuning BERT for Text Classification</a></li>
+<li><a href="https://arxiv.org/abs/1910.01108" target="_blank">DistilBERT Paper</a> - Lighter, faster BERT variant</li>
+</ul>
+<h3>Evaluation and Metrics</h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Precision<em>and</em>recall" target="_blank">Precision and Recall</a> - Understanding the trade-off</li>
+<li><a href="https://developers.google.com/machine-learning/crash-course/classification/roc-and-auc" target="_blank">ROC Curves and AUC</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html#confusion-matrix" target="_blank">Confusion Matrix Guide</a></li>
+</ul>
+<h3>Adversarial Robustness</h3>
+<ul>
+<li><a href="https://arxiv.org/abs/1801.07175" target="_blank">Adversarial Examples for Natural Language</a></li>
+<li><a href="https://github.com/QData/TextAttack" target="_blank">TextAttack: Framework for Adversarial Attacks</a></li>
+</ul>
+<h3>Handling Imbalanced Data</h3>
+<ul>
+<li><a href="https://www.jair.org/index.php/jair/article/view/10302" target="_blank">Learning from Imbalanced Data</a></li>
+<li><a href="https://arxiv.org/abs/1106.1813" target="_blank">SMOTE: Synthetic Minority Over-sampling</a></li>
+</ul>
+<h3>Python Libraries</h3>
+<ul>
+<li><strong>scikit-learn</strong>: Traditional ML, metrics, preprocessing</li>
+<li><strong>transformers</strong>: BERT, DistilBERT, RoBERTa</li>
+<li><strong>pandas</strong>: Data manipulation</li>
+<li><strong>matplotlib/seaborn</strong>: Visualization</li>
+<li><strong>nltk/spaCy</strong>: NLP preprocessing</li>
+<li><strong>imbalanced-learn</strong>: Handling class imbalance</li>
+</ul>
+<h3>Datasets (Optional Augmentation)</h3>
+<ul>
+<li><a href="https://spamassassin.apache.org/old/publiccorpus/" target="_blank">SpamAssassin Public Corpus</a></li>
+<li><a href="https://www.cs.cmu.edu/~enron/" target="_blank">Enron Email Dataset</a></li>
+<li><a href="https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset" target="_blank">SMS Spam Collection</a></li>
+</ul>
+<p>If you use external datasets, you must cite them clearly in your notebook.</p>
+<h2>Submission Guidelines</h2>
+<h3>What to Submit</h3>
+Submit <strong>one Jupyter notebook</strong> (.ipynb file) via the course submission system.
+<h3>Notebook Requirements</h3>
+Your notebook must:
+1. <strong>Run from top to bottom without errors</strong> in a clean Google Colab environment
+2. <strong>Include all necessary code</strong> for training, evaluation, and analysis
+3. <strong>Download any required data/models</strong> within the notebook (don't assume files are present)
+4. <strong>Set random seeds</strong> for reproducibility (e.g., `np.random.seed(42)`)
+5. <strong>Have a reasonable runtime</strong>: Full execution should complete in under 60 minutes on Colab (use DistilBERT instead of BERT-base to stay within this constraint)
+<h3>Organization</h3>
+Structure your notebook with clear sections:
+```
+1. Introduction and Setup
+<ul>
+<li>Import libraries</li>
+<li>Load data</li>
+<li>Exploratory data analysis</li>
+</ul>
+<p>2. Data Preprocessing
+<ul>
+<li>Train/val/test split</li>
+<li>Text cleaning functions</li>
+<li>Feature engineering utilities</li>
+</ul></p>
+<p>3. Model Implementations
+<ul>
+<li>Traditional ML models (separate subsections for each)</li>
+<li>Neural model (BERT/DistilBERT)</li>
+<li>Ensemble method</li>
+</ul></p>
+<p>4. Evaluation
+<ul>
+<li>Metrics computation</li>
+<li>Comparison tables</li>
+<li>Visualizations</li>
+<li>Statistical tests</li>
+</ul></p>
+<p>5. Error Analysis
+<ul>
+<li>Failure case examination</li>
+<li>Pattern identification</li>
+<li>Feature importance</li>
+</ul></p>
+<p>6. Adversarial Testing
+<ul>
+<li>Adversarial examples</li>
+<li>Robustness tests</li>
+</ul></p>
+<p>7. Discussion and Conclusions
+<ul>
+<li>Model comparison</li>
+<li>Real-world considerations</li>
+<li>Reflection</li>
+</ul></p>
+<p>8. References
+<ul>
+<li>Papers cited</li>
+<li>Datasets used</li>
+<li>Resources consulted</li>
+</ul>
+```</p>
+<h3>Formatting</h3>
+<ul>
+<li>Use <strong>descriptive markdown headers</strong> for each section</li>
+<li>Include <strong>explanatory text</strong> before code cells</li>
+<li>Add <strong>inline comments</strong> for complex code</li>
+<li>Create <strong>clear visualizations</strong> with titles and labels</li>
+<li>Use <strong>tables</strong> for metric comparisons</li>
+</ul>
+<h3>File Naming</h3>
+Name your file: `LastName<em>FirstName</em>Assignment2.ipynb`
+<p>Example: `Smith<em>Jane</em>Assignment2.ipynb`</p>
+<h3>Pre-Submission Checklist</h3>
+Before submitting, verify:
+<ul>
+<li>[ ] Notebook runs completely in a fresh Colab instance</li>
+<li>[ ] All required components are implemented (3+ models, evaluation, error analysis, adversarial testing)</li>
+<li>[ ] All metrics are reported for all models</li>
+<li>[ ] At least 20 error cases are analyzed</li>
+<li>[ ] Markdown documentation is thorough and well-written</li>
+<li>[ ] Code is clean and readable</li>
+<li>[ ] Visualizations are clear and professional</li>
+<li>[ ] Random seeds are set for reproducibility</li>
+<li>[ ] Citations are included for external resources</li>
+<li>[ ] File is named correctly</li>
+</ul>
+<h3>Deadline</h3>
+<strong>One week from assignment release</strong> (7 calendar days)
+<p>Late submissions will be penalized according to the course late policy.</p>
+<h2>Academic Integrity</h2>
+<p>While you are encouraged to use AI coding assistants and discuss concepts with peers:
+<ul>
+<li><strong>Your submission must be your own work</strong></li>
+<li><strong>Understand every line of code</strong> you submit</li>
+<li><strong>Do not copy code</strong> from other students or online sources without attribution</li>
+<li><strong>Cite all external resources</strong> (papers, datasets, significant code snippets)</li>
+</ul></p>
+<p>You may be asked to explain your implementation decisions in office hours or during grading. Make sure you can justify your choices.</p>
+<h2>Getting Help</h2>
+<p>If you're stuck:
+1. <strong>Review the tips and resources</strong> in this document
+2. <strong>Ask specific questions</strong> in office hours or on the course forum
+3. <strong>Debug systematically</strong>: Isolate the problem, test components individually
+4. <strong>Start simple</strong>: Get a basic version working before adding complexity</p>
+<p>Remember: The goal is to learn about text classification, evaluation, and error analysis. Don't get lost in trying to achieve the highest possible score—focus on understanding the concepts deeply.</p>
+<h2>Final Notes</h2>
+<p>This assignment is designed to be challenging but achievable <strong>within 1 week</strong>. You're expected to:
+<ul>
+<li>Think critically about model selection and evaluation</li>
+<li>Go beyond "does it work?" to "why does it work?"</li>
+<li>Consider real-world deployment constraints</li>
+<li>Demonstrate both technical skills and analytical thinking</li>
+<li><strong>Use GenAI tools strategically</strong> to manage time constraints without sacrificing rigor</li>
+</ul></p>
+<p>The best submissions will show:
+<ul>
+<li>Deep understanding of classification fundamentals</li>
+<li>Thoughtful comparison across methods</li>
+<li>Insightful error analysis</li>
+<li>Professional code and documentation</li>
+<li>Strategic use of GenAI to accelerate implementation while maintaining analytical depth</li>
+</ul></p>
+<p><strong>Remember:</strong> The 7-day timeline is realistic because:
+1. GenAI can generate boilerplate code (training loops, metrics, visualizations)
+2. DistilBERT trains faster than BERT-base
+3. You can run many experiments in parallel on Colab's GPUs
+4. The most valuable insights come from <em>analysis</em>, not <em>implementation time</em></p>
+<p>Good luck, and enjoy building your spam classifier in a week!</p>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 <a href="https://www.context-lab.com" target="_blank">Contextual Dynamics Lab</a></p>
+        <p>PSYC 51.17: Language Models from Scratch</p>
+    </footer>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', currentTheme);
+        themeIcon.innerHTML = currentTheme === 'dark' ? '&#127769;' : '&#9728;';
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.innerHTML = newTheme === 'dark' ? '&#127769;' : '&#9728;';
+        });
+    </script>
+</body>
+</html>

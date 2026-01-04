@@ -1,18 +1,19 @@
 name: Deploy Demos to GitHub Pages
 
 on:
-  # Trigger on push to main branch
   push:
     branches:
       - main
     paths:
       - 'demos/**'
       - 'slides/**'
+      - 'syllabus/**'
+      - 'assignments/**'
       - 'figures/**'
       - 'fonts/**'
+      - 'index.html'
       - '.github/workflows/deploy-demos.yml'
 
-  # Allow manual trigger from Actions tab
   workflow_dispatch:
 
 # Sets permissions for GitHub Pages deployment
@@ -63,32 +64,29 @@ jobs:
 
       - name: Create build artifact
         run: |
-          echo "Preparing demos, slides, and assets for deployment..."
+          echo "Preparing site for deployment..."
           mkdir -p _site/demos
           mkdir -p _site/slides
+          mkdir -p _site/syllabus
+          mkdir -p _site/assignments
           mkdir -p _site/figures
           mkdir -p _site/fonts
+          
+          cp index.html _site/
           cp -r demos/* _site/demos/
           cp -r slides/* _site/slides/
+          cp -r syllabus/* _site/syllabus/
+          cp -r assignments/*.html _site/assignments/ 2>/dev/null || true
+          cp -r assignments/*.md _site/assignments/ 2>/dev/null || true
+          for dir in assignments/assignment-* assignments/final-project; do
+            if [ -d "$dir" ]; then
+              cp -r "$dir" _site/assignments/
+            fi
+          done
           cp -r figures/* _site/figures/
           cp -r fonts/* _site/fonts/
 
-          # Create a .nojekyll file to bypass Jekyll processing
           touch _site/.nojekyll
-
-          # Create root redirect to course outline
-          cat > _site/index.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <meta http-equiv="refresh" content="0; url=slides/">
-              <script>window.location.href = 'slides/';</script>
-          </head>
-          <body>
-              <p>Redirecting to <a href="slides/">course outline</a>...</p>
-          </body>
-          </html>
-          EOF
 
           # Create a custom 404 page
           cat > _site/404.html << 'EOF'

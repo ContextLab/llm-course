@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Assignments - PSYC 51.17</title>
+    <meta name="description" content="Course Assignments for PSYC 51.17: Language Models from Scratch">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../demos/shared/css/demo-styles.css">
+    <style>
+        .page-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            z-index: var(--z-fixed);
+            backdrop-filter: blur(10px);
+        }
+        .page-nav .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .page-nav .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        .page-nav .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .page-nav .nav-links a:hover,
+        .page-nav .nav-links a.active {
+            color: var(--primary-color);
+        }
+        .page-nav .theme-toggle {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-nav .theme-toggle:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary-color);
+        }
+        .page-header {
+            margin-top: 70px;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
+        }
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.75rem;
+        }
+        .content p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .content ul {
+            color: var(--text-secondary);
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .content li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        .content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .content a:hover {
+            text-decoration: underline;
+        }
+        .content strong {
+            color: var(--text-primary);
+        }
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .content th, .content td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .content th {
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .content td {
+            color: var(--text-secondary);
+        }
+        footer {
+            background: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+        }
+        footer p {
+            color: var(--text-secondary);
+            margin: 0.5rem 0;
+        }
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .page-nav .nav-links { gap: 1rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="page-nav">
+        <div class="logo">PSYC 51.17</div>
+        <div class="nav-links">
+            <a href="../">Outline</a>
+            <a href="../syllabus/">Syllabus</a>
+            <a href="../demos/">Demos</a>
+            <a href="../assignments/" class="active">Assignments</a>
+            <a href="https://github.com/ContextLab/llm-course" target="_blank">GitHub</a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">&#127769;</span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>Course Assignments</h1>
+    </header>
+
+    <main class="content">
+        <h1>Course Assignments</h1>
+<p>Welcome to the assignments for PSYC 51.17: Models of Language and Communication.</p>
+<h2>Submission Instructions</h2>
+<p>All assignments are submitted via GitHub Classroom. Click the "Accept Assignment" button on each assignment page to get started. This will create a personal repository where you'll complete your work.</p>
+<p><strong>Submission Process:</strong>
+1. Click "Accept Assignment" to create your repository
+2. Clone the repository to your local machine or open in Google Colab
+3. Complete the assignment following the instructions
+4. Commit and push your changes before the deadline
+5. Your latest commit before the deadline will be graded</p>
+<h2>Assignment Schedule</h2>
+<p>| # | Title | Released | Due | Weight |
+|---|-------|----------|-----|--------|
+| 1 | <a href="./assignment-1/" target="_blank">ELIZA Chatbot</a> | Week 1 | End of Week 2 | 15% |
+| 2 | <a href="./assignment-2/" target="_blank">SPAM Classifier</a> | Week 2 | End of Week 3 | 15% |
+| 3 | <a href="./assignment-3/" target="_blank">Wikipedia Embeddings</a> | Week 3 | End of Week 4 | 15% |
+| 4 | <a href="./assignment-4/" target="_blank">Customer Service Chatbot</a> | Week 5 | End of Week 6 | 15% |
+| 5 | <a href="./assignment-5/" target="_blank">Build GPT</a> | Week 7 | Week 9 | 15% |
+| Final | <a href="./final-project/" target="_blank">Research Project</a> | Week 9 | Finals Week | 25% |</p>
+<h2>Late Policy</h2>
+<p>Assignments receive a 10% deduction for each week late, rounded up to the nearest whole week. The final project must be submitted on time.</p>
+<h2>Grading</h2>
+<p>Each assignment is graded on:
+<ul>
+<li><strong>Correctness</strong>: Does your code produce the expected outputs?</li>
+<li><strong>Code Quality</strong>: Is your code well-organized and documented?</li>
+<li><strong>Understanding</strong>: Do your explanations demonstrate understanding of the concepts?</li>
+</ul></p>
+<h2>Getting Help</h2>
+<ul>
+<li><strong>Office Hours</strong>: By appointment</li>
+<li><strong>Discord</strong>: Join our class server for discussions</li>
+<li><strong>GitHub Issues</strong>: Report bugs or ask questions on the assignment repositories</li>
+</ul>
+<p>---</p>
+<h2>Assignments</h2>
+<h3><a href="./assignment-1/" target="_blank">Assignment 1: ELIZA Chatbot</a></h3>
+Build a pattern-matching chatbot based on Weizenbaum's classic ELIZA program. Learn about string manipulation, regular expressions, and the foundations of conversational AI.
+<h3><a href="./assignment-2/" target="_blank">Assignment 2: SPAM Classifier</a></h3>
+Develop a text classification system to identify spam messages. Explore feature engineering, tokenization, and evaluation metrics.
+<h3><a href="./assignment-3/" target="_blank">Assignment 3: Wikipedia Embeddings</a></h3>
+Compare different text embedding methods on Wikipedia articles. Visualize semantic relationships and evaluate embedding quality.
+<h3><a href="./assignment-4/" target="_blank">Assignment 4: Customer Service Chatbot</a></h3>
+Create a context-aware customer service chatbot using transformer-based models. Implement retrieval and response generation.
+<h3><a href="./assignment-5/" target="_blank">Assignment 5: Build GPT</a></h3>
+Implement and train a small GPT model from scratch. Understand the transformer architecture, attention mechanisms, and autoregressive generation.
+<h3><a href="./final-project/" target="_blank">Final Project: Research Project</a></h3>
+Conduct an independent research project applying concepts from the course. Present your findings to the class.
+    </main>
+
+    <footer>
+        <p>&copy; 2026 <a href="https://www.context-lab.com" target="_blank">Contextual Dynamics Lab</a></p>
+        <p>PSYC 51.17: Language Models from Scratch</p>
+    </footer>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', currentTheme);
+        themeIcon.innerHTML = currentTheme === 'dark' ? '&#127769;' : '&#9728;';
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.innerHTML = newTheme === 'dark' ? '&#127769;' : '&#9728;';
+        });
+    </script>
+</body>
+</html>

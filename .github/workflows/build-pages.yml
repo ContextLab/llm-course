@@ -1,0 +1,50 @@
+name: Build Course Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'admin/syllabus.md'
+      - 'assignments/**/*.md'
+      - 'scripts/build-pages.py'
+      - '.github/workflows/build-pages.yml'
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build pages
+        run: python scripts/build-pages.py
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git add -A
+          if git diff --staged --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+          git commit -m "chore: Auto-generate HTML pages from markdown"
+          git push

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 5 - GPT - PSYC 51.17</title>
+    <meta name="description" content="Assignment 5 - GPT for PSYC 51.17: Language Models from Scratch">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../demos/shared/css/demo-styles.css">
+    <style>
+        .page-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            z-index: var(--z-fixed);
+            backdrop-filter: blur(10px);
+        }
+        .page-nav .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .page-nav .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        .page-nav .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .page-nav .nav-links a:hover,
+        .page-nav .nav-links a.active {
+            color: var(--primary-color);
+        }
+        .page-nav .theme-toggle {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-nav .theme-toggle:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary-color);
+        }
+        .page-header {
+            margin-top: 70px;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
+        }
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.75rem;
+        }
+        .content p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .content ul {
+            color: var(--text-secondary);
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .content li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        .content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .content a:hover {
+            text-decoration: underline;
+        }
+        .content strong {
+            color: var(--text-primary);
+        }
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .content th, .content td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .content th {
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .content td {
+            color: var(--text-secondary);
+        }
+        footer {
+            background: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+        }
+        footer p {
+            color: var(--text-secondary);
+            margin: 0.5rem 0;
+        }
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .page-nav .nav-links { gap: 1rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="page-nav">
+        <div class="logo">PSYC 51.17</div>
+        <div class="nav-links">
+            <a href="../../">Outline</a>
+            <a href="../../syllabus/">Syllabus</a>
+            <a href="../../demos/">Demos</a>
+            <a href="../../assignments/" class="active">Assignments</a>
+            <a href="https://github.com/ContextLab/llm-course" target="_blank">GitHub</a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">&#127769;</span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>Assignment 5 - GPT</h1>
+    </header>
+
+    <main class="content">
+        
+<div style="background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin: 2rem 0; text-align: center;">
+    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Ready to Start?</h3>
+    <a href="#" class="accept-btn" style="display: inline-block; background: var(--gradient-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
+        <i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>Accept Assignment
+    </a>
+    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+        GitHub Classroom link coming soon
+    </p>
+</div>
+<h1>Assignment 5: Build and Train a GPT Model</h1>
+<p><strong>Timeline: 1 Week</strong></p>
+<h2>Overview</h2>
+<p>In this capstone-style assignment, you will build a GPT (Generative Pre-trained Transformer) model from the ground up and train it to generate text. This assignment goes beyond using pre-trained models—you will implement the core components of a transformer architecture, understand how autoregressive language modeling works, and gain deep insights into what makes modern large language models tick.</p>
+<p>This is a <strong>1-week assignment</strong> designed to be ambitious yet achievable with modern GenAI tools (ChatGPT, Claude, GitHub Copilot) to assist with implementation, debugging, and optimization.</p>
+<p>GPT models are decoder-only transformers that have revolutionized natural language processing. By building one yourself, you'll understand the intricate details of self-attention mechanisms, positional encodings, layer normalization, and the training dynamics that enable these models to generate coherent text.</p>
+<p>This is an ambitious assignment that will challenge you to think deeply about architecture design, optimization, and evaluation. However, with modern tools and GenAI assistance, it's entirely achievable—and incredibly rewarding.</p>
+<h2>Learning Objectives</h2>
+<p>By the end of this assignment, you will be able to:</p>
+<p>1. <strong>Implement transformer architecture components</strong> including multi-head self-attention, feed-forward networks, layer normalization, and residual connections
+2. <strong>Understand autoregressive language modeling</strong> and how GPT models generate text one token at a time
+3. <strong>Implement causal (masked) self-attention</strong> to ensure the model can only attend to previous tokens
+4. <strong>Design and implement positional encodings</strong> to give the model a sense of token position
+5. <strong>Build a complete training pipeline</strong> including data loading, batching, loss computation, and optimization
+6. <strong>Apply different text generation strategies</strong> including greedy decoding, temperature sampling, top-k, and nucleus (top-p) sampling
+7. <strong>Analyze what the model has learned</strong> by visualizing attention patterns and token embeddings
+8. <strong>Compare your model's performance</strong> with established models like GPT-2
+9. <strong>Understand the trade-offs</strong> between model size, training time, and generation quality</p>
+<h2>Background</h2>
+<h3>The Transformer Architecture</h3>
+<p>The transformer architecture, introduced in the seminal paper "Attention is All You Need" (Vaswani et al., 2017), revolutionized sequence modeling by replacing recurrent neural networks with self-attention mechanisms. GPT uses only the decoder portion of the transformer, removing the cross-attention layers used in encoder-decoder models.</p>
+<h3>Key Components</h3>
+<p><strong>Self-Attention</strong>: The core mechanism that allows each token to attend to all previous tokens (in the case of GPT, due to causal masking). The attention mechanism computes:</p>
+<p>```
+Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
+```</p>
+<p><strong>Multi-Head Attention</strong>: Instead of a single attention mechanism, GPT uses multiple attention heads in parallel, each learning different types of relationships between tokens.</p>
+<p><strong>Causal Masking</strong>: Unlike BERT (which uses bidirectional attention), GPT applies a causal mask during attention computation to ensure that when predicting token <em>i</em>, the model can only attend to tokens at positions <em>j < i</em>. This makes the model autoregressive.</p>
+<p><strong>Position Encodings</strong>: Since the attention mechanism is position-agnostic, we must explicitly encode position information. This can be done with sinusoidal encodings (as in the original paper) or learned embeddings (as in GPT).</p>
+<p><strong>Feed-Forward Networks</strong>: After attention, each position is processed by a position-wise feed-forward network (two linear transformations with a non-linearity in between).</p>
+<p><strong>Layer Normalization and Residual Connections</strong>: These help with training stability and gradient flow through deep networks.</p>
+<h3>The GPT Family</h3>
+<ul>
+<li><strong>GPT</strong> (Radford et al., 2018): Demonstrated that pre-training + fine-tuning works well for NLP</li>
+<li><strong>GPT-2</strong> (Radford et al., 2019): Showed that larger models with more data can perform well zero-shot</li>
+<li><strong>GPT-3</strong> (Brown et al., 2020): Scaled to 175B parameters and exhibited impressive few-shot learning</li>
+<li><strong>GPT-4</strong> and beyond: Continued scaling with improved architectures and training techniques</li>
+</ul>
+<h2>Your Task</h2>
+<p>You will implement, train, and analyze a GPT-style model. The assignment is divided into several interconnected tasks:</p>
+<h3>1. Implement Transformer Components</h3>
+<p>Build the core components of the GPT architecture:</p>
+<p><strong>a) Multi-Head Self-Attention with Causal Masking</strong>
+<ul>
+<li>Implement the scaled dot-product attention mechanism</li>
+<li>Add causal masking to prevent attention to future tokens</li>
+<li>Support multiple attention heads</li>
+<li>Include dropout for regularization</li>
+</ul></p>
+<p><strong>b) Position-wise Feed-Forward Network</strong>
+<ul>
+<li>Implement a two-layer MLP with GELU or ReLU activation</li>
+<li>Typically expands to 4x the model dimension and back</li>
+</ul></p>
+<p><strong>c) Positional Encoding</strong>
+<ul>
+<li>Implement either learned positional embeddings (like GPT) or sinusoidal encodings (like the original Transformer)</li>
+<li>Justify your choice</li>
+</ul></p>
+<p><strong>d) Transformer Block</strong>
+<ul>
+<li>Combine attention and feed-forward layers with residual connections and layer normalization</li>
+<li>Consider whether to use pre-norm or post-norm architecture</li>
+</ul></p>
+<p><strong>e) GPT Model</strong>
+<ul>
+<li>Stack multiple transformer blocks</li>
+<li>Add token embedding layer</li>
+<li>Add final linear layer to project to vocabulary size</li>
+<li>Implement the forward pass with causal language modeling objective</li>
+</ul></p>
+<h3>2. Implement the Training Pipeline</h3>
+<p><strong>a) Data Preparation</strong>
+<ul>
+<li>Choose a dataset (see suggestions below)</li>
+<li>Implement tokenization (you can use a pre-built tokenizer like GPT-2's BPE)</li>
+<li>Create data loaders with proper batching</li>
+<li>Handle variable-length sequences appropriately</li>
+</ul></p>
+<p><strong>b) Training Loop</strong>
+<ul>
+<li>Implement the cross-entropy loss for language modeling</li>
+<li>Use AdamW optimizer with learning rate scheduling (consider cosine decay with warmup)</li>
+<li>Implement gradient clipping to prevent instability</li>
+<li>Track training and validation loss</li>
+<li>Save model checkpoints</li>
+</ul></p>
+<p><strong>c) Hyperparameter Selection</strong>
+<ul>
+<li>Justify your choices for:</li>
+<li>Model size (number of layers, hidden dimension, number of heads)</li>
+<li>Batch size and sequence length</li>
+<li>Learning rate and schedule</li>
+<li>Dropout rates</li>
+<li>Training steps/epochs</li>
+</ul></p>
+<h3>3. Generate Text with Multiple Sampling Strategies</h3>
+<p>Implement and compare different text generation methods:</p>
+<p><strong>a) Greedy Decoding</strong>: Always pick the most likely next token</p>
+<p><strong>b) Temperature Sampling</strong>: Sample from the probability distribution with adjustable temperature (higher = more random)</p>
+<p><strong>c) Top-k Sampling</strong>: Sample from only the k most likely tokens</p>
+<p><strong>d) Nucleus (Top-p) Sampling</strong>: Sample from the smallest set of tokens whose cumulative probability exceeds p</p>
+<p>Generate samples with each method and analyze the quality, diversity, and coherence of the outputs. What works best for your model and dataset?</p>
+<h3>4. Analyze Learned Representations</h3>
+<p><strong>a) Attention Pattern Visualization</strong>
+<ul>
+<li>Extract and visualize attention weights from different layers and heads</li>
+<li>Analyze what patterns different heads learn (e.g., do some attend to previous token, to same word type, to syntactic patterns?)</li>
+<li>Create visualizations showing attention patterns for interesting examples</li>
+</ul></p>
+<p><strong>b) Token Embedding Analysis</strong>
+<ul>
+<li>Extract the learned token embeddings</li>
+<li>Visualize them in 2D/3D space using UMAP or t-SNE</li>
+<li>Identify clusters and analyze which tokens are embedded close together</li>
+<li>Does the model learn meaningful semantic relationships?</li>
+</ul></p>
+<p><strong>c) Probing Tasks (Optional)</strong>
+<ul>
+<li>Design simple probing classifiers to test what linguistic information is encoded in the representations</li>
+<li>Examples: POS tagging, syntactic dependencies, semantic relationships</li>
+</ul></p>
+<h3>5. Compare with Pre-trained Models</h3>
+<p><strong>a) Load a Pre-trained Model</strong>
+<ul>
+<li>Load a comparable pre-trained model (e.g., GPT-2 small, DistilGPT-2)</li>
+<li>Ensure fair comparison (similar size, similar data domain if possible)</li>
+</ul></p>
+<p><strong>b) Quantitative Comparison</strong>
+<ul>
+<li>Compare perplexity on a held-out test set</li>
+<li>Compare generation quality using metrics like:</li>
+<li>Perplexity</li>
+<li>Self-BLEU (for diversity)</li>
+<li>Human evaluation (optional but recommended)</li>
+</ul></p>
+<p><strong>c) Qualitative Analysis</strong>
+<ul>
+<li>Generate text from the same prompts with both models</li>
+<li>Analyze differences in coherence, creativity, factual accuracy, and fluency</li>
+<li>What are the strengths and weaknesses of your model?</li>
+</ul></p>
+<h3>6. Dataset Selection</h3>
+<p>Choose one of the following datasets or propose your own:</p>
+<p><strong>a) Code Generation</strong>
+<ul>
+<li>Python code from GitHub (filtered for quality)</li>
+<li>Allows you to build a code-generation model</li>
+<li>Can evaluate on code completion tasks</li>
+</ul></p>
+<p><strong>b) Stories/Creative Writing</strong>
+<ul>
+<li>WritingPrompts dataset from Reddit</li>
+<li>Children's stories</li>
+<li>Fan fiction or short stories</li>
+</ul></p>
+<p><strong>c) Domain-Specific Text</strong>
+<ul>
+<li>Scientific papers (arXiv abstracts)</li>
+<li>News articles</li>
+<li>Wikipedia articles</li>
+<li>Poetry or song lyrics</li>
+</ul></p>
+<p><strong>d) Dialogue</strong>
+<ul>
+<li>Movie scripts</li>
+<li>Reddit conversations</li>
+<li>Chat logs (appropriately anonymized)</li>
+</ul></p>
+<p><strong>e) Shakespeare or Classic Literature</strong>
+<ul>
+<li>Smaller dataset but rich language</li>
+<li>Good for initial testing and rapid iteration</li>
+</ul></p>
+<p>Choose a dataset that interests you and that's appropriate for the model size you can feasibly train. Remember: you don't need billions of tokens to build something impressive!</p>
+<h2>Implementation Options</h2>
+<p>You have flexibility in how you approach this assignment:</p>
+<h3>Option 1: From Scratch (Recommended for Deep Learning)</h3>
+<p>Implement everything from first principles using PyTorch or JAX:
+<ul>
+<li>Full control over every component</li>
+<li>Deepest learning experience</li>
+<li>More time-intensive but most rewarding</li>
+</ul></p>
+<h3>Option 2: Using nanoGPT as a Starting Point</h3>
+<p>Andrej Karpathy's <a href="https://github.com/karpathy/nanoGPT" target="_blank">nanoGPT</a> provides a clean, minimal implementation:
+<ul>
+<li>Start with the codebase and understand every line</li>
+<li>Modify and extend it for your needs</li>
+<li>Add analysis and visualization components</li>
+<li>Good balance of learning and efficiency</li>
+</ul></p>
+<h3>Option 3: Using HuggingFace Transformers</h3>
+<p>Use the HuggingFace library but implement key components yourself:
+<ul>
+<li>Use their data loading and training utilities</li>
+<li>Implement your own attention mechanism or transformer block</li>
+<li>Focus more on experiments and analysis</li>
+<li>Faster to get results but less deep implementation experience</li>
+</ul></p>
+<p><strong>Whichever option you choose, you must demonstrate deep understanding of how the model works. Simply calling library functions without explanation is insufficient.</strong></p>
+<h2>Technical Requirements</h2>
+<h3>Model Specifications</h3>
+<p>Your model should have at minimum:
+<ul>
+<li><strong>4-12 transformer layers</strong> (start small, scale up if resources allow)</li>
+<li><strong>4-8 attention heads</strong></li>
+<li><strong>Hidden dimension of 256-768</strong> (depending on your computational resources)</li>
+<li><strong>Vocabulary size</strong> appropriate for your tokenizer (typically 10K-50K)</li>
+<li><strong>Context window</strong> of at least 128 tokens (256-512 preferred)</li>
+</ul></p>
+<h3>Training Requirements</h3>
+<ul>
+<li>Train for enough steps to see meaningful convergence (exact number depends on dataset and model size)</li>
+<li>Monitor both training and validation loss</li>
+<li>Implement early stopping or checkpointing based on validation performance</li>
+<li>Track key metrics: loss, perplexity, tokens/second</li>
+<li>Should be trainable on Google Colab with GPU (use gradient accumulation if needed for larger effective batch sizes)</li>
+</ul>
+<h3>Code Quality</h3>
+<ul>
+<li>Well-organized, modular code with clear function/class names</li>
+<li>Docstrings for all major functions and classes</li>
+<li>Type hints where appropriate</li>
+<li>Efficient implementation (vectorized operations, no unnecessary loops)</li>
+<li>Memory-efficient (handle large datasets, consider gradient checkpointing if needed)</li>
+</ul>
+<h2>Deliverables</h2>
+<p>Submit a <strong>Google Colaboratory notebook</strong> that includes:</p>
+<h3>1. Implementation (40%)</h3>
+<ul>
+<li>Complete, working implementation of the GPT model</li>
+<li>All transformer components clearly implemented and explained</li>
+<li>Training pipeline with proper data loading, optimization, and checkpointing</li>
+<li>Text generation functions with multiple sampling strategies</li>
+<li>Code should run without errors on a fresh Colab instance</li>
+</ul>
+<h3>2. Training Results (20%)</h3>
+<ul>
+<li>Training curves showing loss over time</li>
+<li>Validation metrics demonstrating the model learns</li>
+<li>Hyperparameter choices with justifications</li>
+<li>Discussion of training dynamics (convergence, stability, any issues encountered)</li>
+<li>Final model checkpoint or clear instructions to reproduce training</li>
+</ul>
+<h3>3. Generated Examples (15%)</h3>
+<ul>
+<li>Multiple examples of generated text using different sampling strategies</li>
+<li>Analysis of generation quality, coherence, and diversity</li>
+<li>Comparison between different sampling methods</li>
+<li>Discussion of failure modes and interesting behaviors</li>
+</ul>
+<h3>4. Analysis and Visualization (15%)</h3>
+<ul>
+<li>Attention pattern visualizations with interpretation</li>
+<li>Token embedding visualizations with analysis</li>
+<li>Evidence of what linguistic patterns the model learned</li>
+<li>Insights into what different layers and heads specialize in</li>
+</ul>
+<h3>5. Comparison with Baseline (10%)</h3>
+<ul>
+<li>Quantitative comparison with a pre-trained model (perplexity, other metrics)</li>
+<li>Qualitative comparison of generated text</li>
+<li>Honest assessment of your model's strengths and limitations</li>
+<li>Discussion of what would improve performance</li>
+</ul>
+<h3>6. Markdown Explanations Throughout</h3>
+<ul>
+<li>Clear explanations of your approach and design decisions</li>
+<li>Discussion of challenges faced and how you overcame them</li>
+<li>Reflections on what you learned</li>
+<li>All visualizations should have captions and interpretations</li>
+</ul>
+<h2>Evaluation Criteria</h2>
+<p>Your assignment will be evaluated on:</p>
+<p>1. <strong>Correctness of Implementation (30%)</strong>
+<ul>
+<li>Model architecture correctly implements GPT design</li>
+<li>Attention mechanisms properly use causal masking</li>
+<li>Training loop correctly computes loss and updates parameters</li>
+<li>No critical bugs or errors</li>
+</ul></p>
+<p>2. <strong>Quality of Training and Results (25%)</strong>
+<ul>
+<li>Model successfully trains and converges</li>
+<li>Reasonable hyperparameter choices</li>
+<li>Generated text demonstrates learning</li>
+<li>Proper evaluation on validation set</li>
+</ul></p>
+<p>3. <strong>Depth of Analysis (25%)</strong>
+<ul>
+<li>Thoughtful examination of attention patterns</li>
+<li>Meaningful visualization and interpretation</li>
+<li>Insightful comparison with baseline model</li>
+<li>Understanding of model behavior and limitations</li>
+</ul></p>
+<p>4. <strong>Code Quality and Documentation (10%)</strong>
+<ul>
+<li>Clean, well-organized code</li>
+<li>Comprehensive markdown explanations</li>
+<li>Clear documentation of design choices</li>
+<li>Reproducible results</li>
+</ul></p>
+<p>5. <strong>Creativity and Insight (10%)</strong>
+<ul>
+<li>Interesting dataset choice or experiments</li>
+<li>Novel visualizations or analyses</li>
+<li>Thoughtful discussion of results</li>
+<li>Extensions beyond basic requirements</li>
+</ul></p>
+<h2>Extensions and Bonus Challenges</h2>
+<p>If you finish the core assignment and want to push further, consider these extensions:</p>
+<h3>Architecture Modifications</h3>
+<ul>
+<li><strong>Different positional encodings</strong>: Try RoPE (Rotary Position Embeddings) or ALiBi</li>
+<li><strong>Alternative architectures</strong>: Implement sparse attention, sliding window attention, or mixture of experts</li>
+<li><strong>Model scaling</strong>: Try different model sizes and analyze scaling laws</li>
+<li><strong>Architecture improvements</strong>: Add techniques like Flash Attention, grouped query attention, or RMSNorm</li>
+</ul>
+<h3>Advanced Training</h3>
+<ul>
+<li><strong>Curriculum learning</strong>: Start with shorter sequences and gradually increase length</li>
+<li><strong>Mixed precision training</strong>: Use fp16 or bfloat16 for faster training</li>
+<li><strong>Distributed training</strong>: Train across multiple GPUs if available</li>
+<li><strong>Data filtering</strong>: Implement quality filtering for your dataset</li>
+</ul>
+<h3>Advanced Evaluation</h3>
+<ul>
+<li><strong>Fine-tuning</strong>: Fine-tune your model on a downstream task</li>
+<li><strong>RLHF (Reinforcement Learning from Human Feedback)</strong>: Implement a simple version with a reward model</li>
+<li><strong>Instruction tuning</strong>: Add instruction-following capabilities</li>
+<li><strong>Benchmark evaluation</strong>: Test on standard NLP benchmarks</li>
+</ul>
+<h3>Specialized Applications</h3>
+<ul>
+<li><strong>Conditional generation</strong>: Add control codes for style, topic, or format</li>
+<li><strong>Retrieval augmented generation</strong>: Combine with a retrieval system</li>
+<li><strong>Multimodal</strong>: Add image inputs (very ambitious!)</li>
+</ul>
+<h3>Interpretability</h3>
+<ul>
+<li><strong>Attention intervention</strong>: Modify attention patterns and observe effects</li>
+<li><strong>Causal tracing</strong>: Identify which components are responsible for specific predictions</li>
+<li><strong>Feature visualization</strong>: What patterns activate specific neurons?</li>
+</ul>
+<h2>Resources</h2>
+<h3>Essential Reading</h3>
+<ul>
+<li><strong>"Attention is All You Need"</strong> (Vaswani et al., 2017) - The transformer paper</li>
+<li><a href="https://arxiv.org/abs/1706.03762" target="_blank">Paper</a></li>
+<li><a href="http://nlp.seas.harvard.edu/2018/04/03/attention.html" target="_blank">Annotated Transformer</a></li>
+</ul>
+<ul>
+<li><strong>"Improving Language Understanding by Generative Pre-Training"</strong> (Radford et al., 2018) - Original GPT</li>
+<li><a href="https://cdn.openai.com/research-covers/language-unsupervised/language<em>understanding</em>paper.pdf" target="_blank">Paper</a></li>
+</ul>
+<ul>
+<li><strong>"Language Models are Unsupervised Multitask Learners"</strong> (Radford et al., 2019) - GPT-2</li>
+<li><a href="https://cdn.openai.com/better-language-models/language<em>models</em>are<em>unsupervised</em>multitask_learners.pdf" target="_blank">Paper</a></li>
+</ul>
+<ul>
+<li><strong>"Language Models are Few-Shot Learners"</strong> (Brown et al., 2020) - GPT-3</li>
+<li><a href="https://arxiv.org/abs/2005.14165" target="_blank">Paper</a></li>
+</ul>
+<h3>Video Resources</h3>
+<ul>
+<li><strong>Andrej Karpathy's "Let's build GPT: from scratch, in code, spelled out"</strong></li>
+<li><a href="https://www.youtube.com/watch?v=kCc8FmEb1nY" target="_blank">YouTube Video</a></li>
+<li>Excellent step-by-step implementation guide</li>
+</ul>
+<ul>
+<li><strong>HuggingFace Course: Transformer Models</strong></li>
+<li><a href="https://huggingface.co/learn/nlp-course/chapter1/1" target="_blank">Course Link</a></li>
+<li>Comprehensive coverage of transformers and applications</li>
+</ul>
+<h3>Code Resources</h3>
+<ul>
+<li><strong>nanoGPT</strong> by Andrej Karpathy</li>
+<li><a href="https://github.com/karpathy/nanoGPT" target="_blank">GitHub</a></li>
+<li>Clean, minimal GPT implementation in PyTorch</li>
+</ul>
+<ul>
+<li><strong>minGPT</strong> by Andrej Karpathy</li>
+<li><a href="https://github.com/karpathy/minGPT" target="_blank">GitHub</a></li>
+<li>Another minimal GPT implementation with good documentation</li>
+</ul>
+<ul>
+<li><strong>HuggingFace Transformers</strong></li>
+<li><a href="https://huggingface.co/docs/transformers/index" target="_blank">Documentation</a></li>
+<li><a href="https://huggingface.co/docs/transformers/model_doc/gpt2" target="_blank">GPT-2 Model Documentation</a></li>
+</ul>
+<ul>
+<li><strong>The Illustrated Transformer</strong> by Jay Alammar</li>
+<li><a href="http://jalammar.github.io/illustrated-transformer/" target="_blank">Blog Post</a></li>
+<li>Excellent visual explanations</li>
+</ul>
+<ul>
+<li><strong>The Illustrated GPT-2</strong> by Jay Alammar</li>
+<li><a href="http://jalammar.github.io/illustrated-gpt2/" target="_blank">Blog Post</a></li>
+<li>Visual guide to GPT-2 architecture</li>
+</ul>
+<h3>Additional Papers</h3>
+<ul>
+<li><strong>"BERT: Pre-training of Deep Bidirectional Transformers"</strong> (Devlin et al., 2018)</li>
+<li>Good contrast with GPT's unidirectional approach</li>
+<li><a href="https://arxiv.org/abs/1810.04805" target="_blank">Paper</a></li>
+</ul>
+<ul>
+<li><strong>"The Pile: An 800GB Dataset of Diverse Text"</strong> (Gao et al., 2020)</li>
+<li>Understanding pre-training datasets</li>
+<li><a href="https://arxiv.org/abs/2101.00027" target="_blank">Paper</a></li>
+</ul>
+<ul>
+<li><strong>"Scaling Laws for Neural Language Models"</strong> (Kaplan et al., 2020)</li>
+<li>Understanding how model size affects performance</li>
+<li><a href="https://arxiv.org/abs/2001.08361" target="_blank">Paper</a></li>
+</ul>
+<ul>
+<li><strong>"Training Compute-Optimal Large Language Models"</strong> (Hoffmann et al., 2022) - Chinchilla</li>
+<li>Optimal model size vs. training tokens trade-offs</li>
+<li><a href="https://arxiv.org/abs/2203.15556" target="_blank">Paper</a></li>
+</ul>
+<h3>Tools and Libraries</h3>
+<ul>
+<li><strong>PyTorch</strong>: <a href="https://pytorch.org/" target="_blank">pytorch.org</a></li>
+<li><strong>HuggingFace Transformers</strong>: <a href="https://huggingface.co/transformers" target="_blank">huggingface.co/transformers</a></li>
+<li><strong>Tokenizers</strong>: <a href="https://huggingface.co/docs/tokenizers" target="_blank">huggingface.co/docs/tokenizers</a></li>
+<li><strong>Weights & Biases</strong>: For experiment tracking <a href="https://wandb.ai/" target="_blank">wandb.ai</a></li>
+<li><strong>BERTViz</strong>: For visualizing attention <a href="https://github.com/jessevig/bertviz" target="_blank">github.com/jessevig/bertviz</a></li>
+</ul>
+<h2>Tips for Success (1-Week Timeline)</h2>
+<p>1. <strong>Use GenAI aggressively</strong>: Claude, ChatGPT, and GitHub Copilot are your friends. Use them to:
+<ul>
+<li>Implement transformer components you haven't built before</li>
+<li>Debug errors and understand PyTorch behavior</li>
+<li>Write boilerplate code and data processing pipelines</li>
+<li>Explain unfamiliar concepts or papers</li>
+</ul>
+2. <strong>Start small</strong>: Begin with a tiny model (2-4 layers, small hidden size) to debug your implementation quickly
+3. <strong>Validate components</strong>: Test each component individually before assembling the full model
+4. <strong>Monitor carefully</strong>: Watch for NaN losses, exploding gradients, or other training instabilities
+5. <strong>Use gradient clipping</strong>: This prevents exploding gradients in early training
+6. <strong>Overfit a small batch first</strong>: Ensure your model can memorize a tiny amount of data before scaling up
+7. <strong>Compare with references</strong>: If results seem off, compare your implementation with nanoGPT or other references
+8. <strong>Save often</strong>: Checkpointing is critical—you don't want to lose hours of training
+9. <strong>Document everything</strong>: Future you (and the grader) will thank you for clear explanations
+10. <strong>Have fun</strong>: This is a challenging but incredibly rewarding assignment!</p>
+<h2>Submission</h2>
+<p>Submit a <strong>single Google Colaboratory notebook</strong> that:</p>
+<p>1. Runs without errors on a clean Colab instance with GPU runtime
+2. Automatically downloads/installs any required dependencies
+3. Can load your trained model checkpoint (upload to Google Drive or HuggingFace Hub)
+4. Contains comprehensive markdown cells explaining every step
+5. Includes all code for implementation, training, generation, and analysis
+6. Shows all visualizations and results inline
+7. Demonstrates clear understanding of transformer architecture and training dynamics</p>
+<p><strong>Note on Training</strong>: If your model takes too long to train in the notebook, you can train it separately and load the checkpoint in your notebook. However, your notebook should include all training code and explain your training process thoroughly.</p>
+<h2>Academic Integrity</h2>
+<p>You may:
+<ul>
+<li>Use GenAI tools (Claude, ChatGPT, Copilot) to help with implementation and understanding</li>
+<li>Reference implementations like nanoGPT as learning resources</li>
+<li>Collaborate with classmates on conceptual understanding</li>
+<li>Ask questions in office hours or on discussion forums</li>
+</ul></p>
+<p>You must:
+<ul>
+<li>Write and understand all code you submit</li>
+<li>Properly cite any code you adapt from other sources</li>
+<li>Do your own analysis and write your own explanations</li>
+<li>Ensure your trained model is your own work</li>
+</ul></p>
+<p>Do not:
+<ul>
+<li>Copy entire implementations without understanding them</li>
+<li>Submit someone else's analysis or visualizations as your own</li>
+<li>Plagiarize explanations from other sources</li>
+</ul></p>
+<p>This assignment is about learning. Use all available tools to learn deeply, but ensure the final submission represents your own understanding and effort.</p>
+<p>---</p>
+<p>Good luck! Building a GPT model is a rite of passage for anyone serious about understanding modern AI. Enjoy the journey, and don't hesitate to reach out if you get stuck.</p>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 <a href="https://www.context-lab.com" target="_blank">Contextual Dynamics Lab</a></p>
+        <p>PSYC 51.17: Language Models from Scratch</p>
+    </footer>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', currentTheme);
+        themeIcon.innerHTML = currentTheme === 'dark' ? '&#127769;' : '&#9728;';
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.innerHTML = newTheme === 'dark' ? '&#127769;' : '&#9728;';
+        });
+    </script>
+</body>
+</html>

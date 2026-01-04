@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Project - PSYC 51.17</title>
+    <meta name="description" content="Final Project for PSYC 51.17: Language Models from Scratch">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../demos/shared/css/demo-styles.css">
+    <style>
+        .page-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            z-index: var(--z-fixed);
+            backdrop-filter: blur(10px);
+        }
+        .page-nav .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .page-nav .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        .page-nav .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .page-nav .nav-links a:hover,
+        .page-nav .nav-links a.active {
+            color: var(--primary-color);
+        }
+        .page-nav .theme-toggle {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-nav .theme-toggle:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary-color);
+        }
+        .page-header {
+            margin-top: 70px;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--surface-color) 0%, var(--bg-color) 100%);
+        }
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.75rem;
+        }
+        .content p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .content ul {
+            color: var(--text-secondary);
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .content li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        .content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .content a:hover {
+            text-decoration: underline;
+        }
+        .content strong {
+            color: var(--text-primary);
+        }
+        .content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .content th, .content td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .content th {
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .content td {
+            color: var(--text-secondary);
+        }
+        footer {
+            background: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+        }
+        footer p {
+            color: var(--text-secondary);
+            margin: 0.5rem 0;
+        }
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .page-nav .nav-links { gap: 1rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="page-nav">
+        <div class="logo">PSYC 51.17</div>
+        <div class="nav-links">
+            <a href="../../">Outline</a>
+            <a href="../../syllabus/">Syllabus</a>
+            <a href="../../demos/">Demos</a>
+            <a href="../../assignments/" class="active">Assignments</a>
+            <a href="https://github.com/ContextLab/llm-course" target="_blank">GitHub</a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">&#127769;</span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>Final Project</h1>
+    </header>
+
+    <main class="content">
+        
+<div style="background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin: 2rem 0; text-align: center;">
+    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Ready to Start?</h3>
+    <a href="#" class="accept-btn" style="display: inline-block; background: var(--gradient-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
+        <i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>Accept Assignment
+    </a>
+    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+        GitHub Classroom link coming soon
+    </p>
+</div>
+<h1>Final Project: Your LLM Research Capstone</h1>
+<h2>Overview</h2>
+<p>The final project is your opportunity to synthesize everything you've learned throughout this course into an ambitious, cutting-edge project that showcases your mastery of large language models and conversational AI. This is a <strong>capstone experience</strong> where you'll tackle a challenging problem that would be nearly impossible in a traditional course—but is achievable with the help of modern GenAI tools like Claude, ChatGPT, and GitHub Copilot.</p>
+<p>Unlike the structured problem sets, this project is <strong>open-ended and research-oriented</strong>. You have the creative freedom to explore novel applications, replicate and extend published research, build innovative systems, or conduct rigorous evaluations of LLM capabilities. The goal is to produce work that is intellectually sophisticated, technically ambitious, and potentially publishable or deployable in the real world.</p>
+<p>This is your chance to:
+<ul>
+<li>Explore a topic you're genuinely passionate about</li>
+<li>Push the boundaries of what you thought possible</li>
+<li>Create something meaningful that extends beyond the classroom</li>
+<li>Build a portfolio piece that demonstrates your AI/ML capabilities</li>
+<li>Potentially contribute to ongoing research in the field</li>
+</ul></p>
+<p>You will work in <strong>teams of 2-3 students</strong> over <strong>4 weeks (Weeks 7-10)</strong>, leveraging your combined skills and interests to tackle problems that would be challenging for any individual. The collaborative nature of this project mirrors real-world research and industry practices.</p>
+<h2>Learning Objectives</h2>
+<p>By completing this project, you will:</p>
+<p>1. <strong>Synthesize course concepts</strong>: Integrate knowledge from all assignments—from rule-based systems (ELIZA) to modern transformers (GPT), from embeddings to fine-tuning.
+2. <strong>Design and execute research</strong>: Formulate research questions, design methodologies, implement solutions, and critically evaluate results.
+3. <strong>Master LLM tools and frameworks</strong>: Work extensively with Hugging Face, OpenAI/Anthropic APIs, PyTorch, and other modern ML frameworks.
+4. <strong>Leverage GenAI for ambitious projects</strong>: Use AI coding assistants to implement complex systems that would traditionally take months.
+5. <strong>Communicate technical work</strong>: Present findings clearly through code, visualizations, presentations, and written reports.
+6. <strong>Think critically about AI</strong>: Evaluate limitations, biases, ethical implications, and societal impacts of your work.
+7. <strong>Collaborate effectively</strong>: Work in a team to divide tasks, integrate components, and produce cohesive results.</p>
+<h2>Project Scope</h2>
+<p>Your project should represent approximately <strong>4 weeks of focused work for a team of 2-3 students (Weeks 7-10)</strong>. This translates to roughly 15-20 hours per person per week, though the actual time investment may vary based on your background and the project's complexity.</p>
+<h3>Scale and Ambition</h3>
+<p>With GenAI assistance, you can tackle projects that would have been impossible just a few years ago. However, be realistic about scope:</p>
+<p><strong>Appropriate scale:</strong>
+<ul>
+<li>Fine-tuning a model on a custom dataset for a specific task</li>
+<li>Building a multi-component system (e.g., RAG with custom embeddings and retrieval)</li>
+<li>Replicating a recent paper and extending it with new experiments</li>
+<li>Creating a novel evaluation framework for LLM capabilities</li>
+<li>Developing an agent-based system with multiple tools and reasoning components</li>
+</ul></p>
+<p><strong>Too small:</strong>
+<ul>
+<li>Simple prompt engineering exercises</li>
+<li>Basic API wrapper applications</li>
+<li>Straightforward classification tasks using existing models</li>
+<li>Tutorials or literature reviews without implementation</li>
+</ul></p>
+<p><strong>Too ambitious (probably):</strong>
+<ul>
+<li>Training a foundation model from scratch</li>
+<li>Building a production-scale application with full frontend/backend</li>
+<li>Projects requiring weeks of data collection</li>
+<li>Multiple independent research questions that should be separate projects</li>
+</ul></p>
+<h3>Finding the Right Balance</h3>
+<p>A good rule of thumb: your project should involve at least 3-4 substantial technical components (e.g., custom data processing + model fine-tuning + evaluation framework + analysis), where each component requires thoughtful design and implementation.</p>
+<h2>Project Types</h2>
+<p>Your project should fall into one or more of the following categories:</p>
+<h3>1. Novel Applications of LLMs</h3>
+Design and implement a new application that leverages LLMs in creative ways. Focus on solving a real problem or creating something genuinely useful.
+<p><strong>Examples:</strong>
+<ul>
+<li>Domain-specific assistants (medical diagnosis helper, legal research tool, educational tutor)</li>
+<li>Creative tools (story co-writer, game master, music lyric generator)</li>
+<li>Accessibility applications (sign language translation, simplified text generation)</li>
+<li>Professional tools (code documentation generator, literature review assistant)</li>
+</ul></p>
+<h3>2. Research Replication and Extension</h3>
+Reproduce results from a recent research paper, then extend the work with new experiments, datasets, or analyses.
+<p><strong>Examples:</strong>
+<ul>
+<li>Replicate a fine-tuning approach from a paper, then test on new domains</li>
+<li>Reproduce an evaluation study, then extend with additional models or metrics</li>
+<li>Implement a published architecture, then ablate components to understand contributions</li>
+</ul></p>
+<h3>3. New Model Architectures or Training Approaches</h3>
+Explore modifications to existing architectures or novel training procedures. This is advanced but achievable with GenAI help.
+<p><strong>Examples:</strong>
+<ul>
+<li>Modified attention mechanisms for specific tasks</li>
+<li>Novel fine-tuning approaches (e.g., parameter-efficient methods)</li>
+<li>Hybrid architectures combining different model types</li>
+<li>Custom loss functions or training objectives</li>
+</ul></p>
+<h3>4. Analysis and Evaluation of LLMs</h3>
+Conduct rigorous empirical studies of LLM capabilities, limitations, or behaviors.
+<p><strong>Examples:</strong>
+<ul>
+<li>Systematic evaluation of reasoning abilities across multiple models</li>
+<li>Bias analysis in specific domains or demographic groups</li>
+<li>Consistency and reliability testing under various conditions</li>
+<li>Comparative studies of different prompting strategies or model families</li>
+</ul></p>
+<h3>5. Multimodal and Agent-Based Systems</h3>
+Build systems that integrate multiple modalities (text, image, audio) or implement autonomous agents with reasoning and tool use.
+<p><strong>Examples:</strong>
+<ul>
+<li>Vision-language systems for image description or visual question answering</li>
+<li>Agents that can plan, use tools, and complete complex tasks</li>
+<li>Multi-agent systems with specialized roles and communication</li>
+<li>Cross-modal retrieval or generation systems</li>
+</ul></p>
+<h3>6. Safety, Alignment, and Ethics</h3>
+Investigate critical issues around AI safety, bias, fairness, or societal impact.
+<p><strong>Examples:</strong>
+<ul>
+<li>Jailbreaking detection and mitigation strategies</li>
+<li>Bias measurement and debiasing techniques</li>
+<li>Factuality and hallucination analysis</li>
+<li>Privacy and security considerations in LLM applications</li>
+</ul></p>
+<h2>Project Ideas</h2>
+<p>Here are <strong>20 diverse project ideas</strong> to inspire you. These span different difficulty levels and interest areas. Feel free to use these as starting points, combine elements, or create something entirely new.</p>
+<h3>RAG and Retrieval Systems</h3>
+<p>1. <strong>Domain-Specific RAG System</strong>: Build a retrieval-augmented generation system for a specialized domain (e.g., medical literature, legal documents, historical archives). Implement custom embeddings, retrieval strategies, and evaluate against baselines.</p>
+<p>2. <strong>Conversational Search Engine</strong>: Create a multi-turn conversational search system that maintains context, asks clarifying questions, and provides source citations. Compare different retrieval and reranking strategies.</p>
+<p>3. <strong>Hybrid Retrieval Architecture</strong>: Combine dense embeddings, sparse retrieval (BM25), and knowledge graphs for enhanced retrieval. Systematically evaluate each component's contribution.</p>
+<h3>Fine-Tuning and Adaptation</h3>
+<p>4. <strong>Low-Resource Language Adaptation</strong>: Fine-tune an LLM for a low-resource language or dialect using limited data. Explore techniques like cross-lingual transfer, data augmentation, and parameter-efficient fine-tuning.</p>
+<p>5. <strong>Scientific Writing Assistant</strong>: Fine-tune a model to help researchers write better papers by learning from high-quality publications in a specific field. Implement style transfer and citation generation.</p>
+<p>6. <strong>Personalized Conversation Models</strong>: Develop methods to adapt dialogue models to individual user preferences and communication styles while preserving helpfulness and safety.</p>
+<h3>Dialogue and Interaction</h3>
+<p>7. <strong>Multi-Turn Reasoning Dialogues</strong>: Build a conversational system that can engage in extended reasoning tasks (math problems, logic puzzles, strategic planning) while explaining its thought process.</p>
+<p>8. <strong>Empathetic Support Chatbot</strong>: Create a psychologically-informed chatbot for emotional support or mental health check-ins. Evaluate empathy, safety, and effectiveness using human evaluation and automated metrics.</p>
+<p>9. <strong>Socratic Tutoring System</strong>: Implement an educational assistant that uses Socratic questioning to guide students through problem-solving rather than providing direct answers.</p>
+<h3>Code and Technical Applications</h3>
+<p>10. <strong>Code Documentation Generator</strong>: Build a system that generates comprehensive documentation for code repositories, including docstrings, README files, and tutorials. Test on diverse codebases and programming languages.</p>
+<p>11. <strong>Bug Detection and Repair</strong>: Develop an LLM-based system for finding and fixing bugs in code. Create a benchmark and compare against existing tools.</p>
+<p>12. <strong>Technical Interview Practice System</strong>: Create an interactive system that conducts realistic technical interviews, provides feedback, and adapts difficulty based on performance.</p>
+<h3>Creative and Cultural Applications</h3>
+<p>13. <strong>Interactive Fiction Engine</strong>: Build a system for collaborative storytelling where the model maintains narrative coherence, character consistency, and player agency across long interactions.</p>
+<p>14. <strong>Cross-Cultural Communication Assistant</strong>: Develop a tool that helps bridge cultural communication gaps by explaining context, suggesting phrasing, and highlighting potential misunderstandings.</p>
+<p>15. <strong>Historical Dialogue Simulation</strong>: Create historically-accurate conversational agents representing figures from different time periods, trained on period-appropriate texts and evaluated for authenticity.</p>
+<h3>Cognitive Science and Modeling</h3>
+<p>16. <strong>LLMs as Cognitive Models</strong>: Systematically evaluate whether LLMs exhibit human-like cognitive biases, heuristics, and reasoning patterns. Compare model behavior to psychological literature.</p>
+<p>17. <strong>Language Acquisition Simulation</strong>: Investigate how LLMs "learn" linguistic structures by analyzing learning trajectories, comparing to child language acquisition data.</p>
+<p>18. <strong>Theory of Mind in LLMs</strong>: Design experiments to test whether models exhibit theory of mind capabilities—understanding beliefs, intentions, and mental states of others.</p>
+<h3>Interpretability and Analysis</h3>
+<p>19. <strong>Mechanistic Interpretability Study</strong>: Use techniques like attention visualization, activation probing, and causal interventions to understand how models perform specific tasks (e.g., factual recall, arithmetic, syntax).</p>
+<p>20. <strong>Failure Mode Taxonomy</strong>: Systematically categorize and analyze LLM failures across multiple models and tasks. Develop predictors for when failures occur and potential mitigations.</p>
+<h3>Advanced Reasoning and Agents</h3>
+<p>21. <strong>Multi-Step Planning Agent</strong>: Build an agent that can decompose complex goals, create plans, execute actions with tools, and adapt based on feedback. Test on challenging benchmarks.</p>
+<p>22. <strong>Scientific Hypothesis Generator</strong>: Create a system that reads research papers, identifies gaps, and proposes testable hypotheses. Evaluate novelty and plausibility with domain experts.</p>
+<h2>Requirements</h2>
+<p>Your final project must include four key deliverables:</p>
+<h3>1. Project Proposal (Due Week 8)</h3>
+<p>Submit a <strong>1-2 page proposal</strong> that includes:</p>
+<ul>
+<li><strong>Title and team members</strong>: Who is working on this?</li>
+<li><strong>Motivation</strong>: What problem are you solving? Why does it matter?</li>
+<li><strong>Research questions</strong>: What specific questions will you investigate?</li>
+<li><strong>Approach</strong>: What methods, models, and datasets will you use?</li>
+<li><strong>Expected outcomes</strong>: What do you hope to achieve or demonstrate?</li>
+<li><strong>Timeline</strong>: How will you allocate work over the project period?</li>
+<li><strong>Division of labor</strong>: How will team members split responsibilities?</li>
+</ul>
+<p>The proposal helps you clarify your ideas and allows us to provide early feedback to ensure your project is appropriately scoped.</p>
+<h3>2. Code Implementation (Due Week 10)</h3>
+<p>Submit a <strong>well-documented Jupyter notebook</strong> that:</p>
+<ul>
+<li><strong>Runs completely in Google Colaboratory</strong> without errors</li>
+<li>Includes clear markdown explanations of your approach, decisions, and findings</li>
+<li>Contains all code necessary to reproduce your results</li>
+<li>Automatically downloads/loads any required datasets, models, or resources</li>
+<li>Follows best practices: modular code, informative comments, reproducible results</li>
+<li>Includes visualizations, tables, and figures to illustrate key findings</li>
+<li>Provides clear instructions for running experiments or using your system</li>
+</ul>
+<p><strong>Code quality matters</strong>: Your notebook should be something you'd be proud to share publicly or include in a portfolio.</p>
+<h3>3. Presentation (Due Week 10)</h3>
+<p>Create a <strong>10-12 minute video presentation</strong> and present it in class:</p>
+<ul>
+<li><strong>Video submission</strong>: Upload to YouTube (unlisted is fine) and include the link in your writeup</li>
+<li><strong>In-class component</strong>: Be prepared to present your video and lead a 5-10 minute discussion/Q&A</li>
+<li><strong>Content</strong>: Cover motivation, approach, key results, insights, and limitations</li>
+<li><strong>Visuals</strong>: Use slides, demos, visualizations—make it engaging and clear</li>
+<li><strong>Team participation</strong>: All team members should contribute to the presentation</li>
+</ul>
+<p>The presentation should be accessible to your classmates—assume they're smart but may not know the specific technical details of your domain.</p>
+<h3>4. Written Writeup (Due Week 10)</h3>
+<p>Submit a <strong>2-5 page writeup</strong> (not including references or appendices) structured as:</p>
+<p><strong>Introduction (0.5-1 page)</strong>
+<ul>
+<li>Motivation and background</li>
+<li>Research questions or goals</li>
+<li>Why this problem is interesting/important</li>
+</ul></p>
+<p><strong>Approach (1-2 pages)</strong>
+<ul>
+<li>Methods, models, datasets used</li>
+<li>Technical details of your implementation</li>
+<li>Design decisions and justifications</li>
+</ul></p>
+<p><strong>Results (1-1.5 pages)</strong>
+<ul>
+<li>Key findings, with figures and tables</li>
+<li>Quantitative metrics and qualitative observations</li>
+<li>Comparison to baselines or related work</li>
+</ul></p>
+<p><strong>Discussion (0.5-1 page)</strong>
+<ul>
+<li>Interpretation of results</li>
+<li>Limitations and potential improvements</li>
+<li>Broader implications</li>
+<li>Future directions</li>
+</ul></p>
+<p><strong>References</strong>
+<ul>
+<li>Cite relevant papers, tools, datasets</li>
+<li>Follow a consistent citation format (APA, IEEE, etc.)</li>
+</ul></p>
+<p>Write clearly and concisely. Think of this as a mini research paper suitable for a workshop or course anthology.</p>
+<h2>Timeline and Milestones</h2>
+<h3>Week 7: Team Formation and Brainstorming</h3>
+<ul>
+<li>Form teams of 2-3 students</li>
+<li>Brainstorm project ideas</li>
+<li>Review recent papers and existing systems for inspiration</li>
+<li>Discuss with instructor or peers to refine ideas</li>
+<li><strong>Deliverable</strong>: Team formed, preliminary idea identified</li>
+</ul>
+<h3>Week 8: Proposal, Feedback, and Implementation Starts</h3>
+<ul>
+<li>Develop detailed project proposal (1-2 pages)</li>
+<li>Identify datasets, models, and tools needed</li>
+<li>Create timeline and divide initial responsibilities</li>
+<li>Submit proposal and receive feedback</li>
+<li>Begin implementation: setup environment, load data, test baseline approaches</li>
+<li><strong>Deliverable</strong>: Proposal submitted, initial codebase, preliminary experiments</li>
+</ul>
+<h3>Week 9: Core Development and Iteration</h3>
+<ul>
+<li>Implement main technical components</li>
+<li>Run experiments and collect results</li>
+<li>Iterate based on findings—adjust approaches as needed</li>
+<li>Begin drafting writeup and presentation materials</li>
+<li><strong>Deliverable</strong>: Major progress on implementation, preliminary results</li>
+</ul>
+<h3>Week 10: Final Push and Presentations</h3>
+<ul>
+<li>Finalize code and ensure reproducibility</li>
+<li>Complete all experiments and analysis</li>
+<li>Finish writeup and presentation video</li>
+<li>Present to class and engage in discussions</li>
+<li><strong>Deliverable</strong>: All final materials submitted, presentation delivered</li>
+</ul>
+<h2>Grading Rubric</h2>
+<p>Your project will be evaluated holistically, with the final grade broken down as:</p>
+<h3>Proposal (10%)</h3>
+<ul>
+<li><strong>Clarity</strong>: Is the project clearly defined?</li>
+<li><strong>Feasibility</strong>: Is the scope appropriate for the timeline?</li>
+<li><strong>Significance</strong>: Does it address an interesting problem?</li>
+</ul>
+<h3>Implementation (40%)</h3>
+<ul>
+<li><strong>Technical quality</strong>: Is the code well-written, documented, and reproducible?</li>
+<li><strong>Sophistication</strong>: Does it demonstrate mastery of course concepts?</li>
+<li><strong>Functionality</strong>: Does it work as intended?</li>
+<li><strong>Reproducibility</strong>: Can results be replicated in Colab?</li>
+</ul>
+<h3>Results and Analysis (20%)</h3>
+<ul>
+<li><strong>Rigor</strong>: Are experiments well-designed and thorough?</li>
+<li><strong>Insights</strong>: Do results provide meaningful insights?</li>
+<li><strong>Evaluation</strong>: Are appropriate metrics and baselines used?</li>
+<li><strong>Critical thinking</strong>: Are limitations and interpretations discussed thoughtfully?</li>
+</ul>
+<h3>Presentation (15%)</h3>
+<ul>
+<li><strong>Clarity</strong>: Is the presentation clear and well-organized?</li>
+<li><strong>Engagement</strong>: Is it interesting and accessible?</li>
+<li><strong>Completeness</strong>: Does it cover all key aspects?</li>
+<li><strong>Participation</strong>: Did all team members contribute?</li>
+</ul>
+<h3>Writeup (10%)</h3>
+<ul>
+<li><strong>Writing quality</strong>: Is it clear, concise, and well-structured?</li>
+<li><strong>Completeness</strong>: Does it cover all required sections?</li>
+<li><strong>Depth</strong>: Does it provide sufficient detail and analysis?</li>
+<li><strong>References</strong>: Are sources properly cited?</li>
+</ul>
+<h3>Teamwork and Collaboration (5%)</h3>
+<ul>
+<li><strong>Distribution of work</strong>: Did all team members contribute meaningfully?</li>
+<li><strong>Integration</strong>: Are components well-integrated into a cohesive whole?</li>
+<li><strong>Process</strong>: Did the team work effectively together?</li>
+</ul>
+<p><strong>Note</strong>: Exceptional projects that go above and beyond expectations may receive bonus points. Projects that demonstrate novel insights, publishable quality, or significant real-world applicability will be highlighted.</p>
+<h2>Resources and Support</h2>
+<h3>Course Materials</h3>
+Review all assignments and lectures—they contain techniques, tools, and insights directly applicable to your project:
+<ul>
+<li><strong>Assignment 1 (ELIZA)</strong>: Rule-based systems, pattern matching, conversation management</li>
+<li><strong>Assignment 2 (SPAM)</strong>: Classification, evaluation metrics, text preprocessing</li>
+<li><strong>Assignment 3 (Wikipedia)</strong>: Embeddings (LDA, BERT, GPT-2, Llama), clustering, dimensionality reduction (PCA, UMAP)</li>
+<li><strong>Assignment 4 (Customer Service)</strong>: Dialogue systems, context management, response generation</li>
+<li><strong>Assignment 5 (GPT)</strong>: Model architectures, training from scratch, transformer mechanics</li>
+</ul>
+<h3>Key Tools and Frameworks</h3>
+<ul>
+<li><strong>Hugging Face Transformers</strong>: Pre-trained models, tokenizers, fine-tuning pipelines</li>
+<li><strong>Hugging Face Datasets</strong>: Access to thousands of datasets</li>
+<li><strong>OpenAI API / Anthropic API</strong>: Access to GPT-4, Claude, and other commercial models</li>
+<li><strong>LangChain</strong>: Building LLM applications, chains, and agents</li>
+<li><strong>FAISS / Pinecone</strong>: Vector databases for retrieval systems</li>
+<li><strong>PyTorch / TensorFlow</strong>: Deep learning frameworks</li>
+<li><strong>Weights & Biases / TensorBoard</strong>: Experiment tracking and visualization</li>
+<li><strong>Ollama</strong>: Running open-source models locally</li>
+</ul>
+<h3>Finding Datasets</h3>
+<ul>
+<li><a href="https://huggingface.co/datasets" target="_blank">Hugging Face Datasets</a></li>
+<li><a href="https://paperswithcode.com/datasets" target="_blank">Papers with Code Datasets</a></li>
+<li><a href="https://datasetsearch.research.google.com/" target="_blank">Google Dataset Search</a></li>
+<li><a href="https://www.kaggle.com/datasets" target="_blank">Kaggle Datasets</a></li>
+<li><a href="https://commoncrawl.org/" target="_blank">Common Crawl</a></li>
+<li><a href="https://pile.eleuther.ai/" target="_blank">The Pile</a></li>
+</ul>
+<h3>Recent Research</h3>
+Stay current with cutting-edge work:
+<ul>
+<li><a href="https://arxiv.org/list/cs.CL/recent" target="_blank">arXiv cs.CL</a> (Computation and Language)</li>
+<li><a href="https://arxiv.org/list/cs.AI/recent" target="_blank">arXiv cs.AI</a> (Artificial Intelligence)</li>
+<li><a href="https://paperswithcode.com/" target="_blank">Papers with Code</a> (Latest research with code)</li>
+<li><a href="https://aclanthology.org/" target="_blank">ACL Anthology</a> (NLP conference papers)</li>
+<li><a href="https://neurips.cc/" target="_blank">NeurIPS</a>, <a href="https://icml.cc/" target="_blank">ICML</a>, <a href="https://iclr.cc/" target="_blank">ICLR</a> (ML conferences)</li>
+</ul>
+<h3>Getting Help</h3>
+<ul>
+<li><strong>Discord</strong>: Use our course Discord for questions, discussions, and collaboration</li>
+<li><strong>Office Hours</strong>: Schedule time to discuss project ideas, troubleshoot issues, or get feedback</li>
+<li><strong>Peers</strong>: Discuss ideas with other teams—collaboration across teams is encouraged</li>
+<li><strong>GenAI Tools</strong>: Use ChatGPT, Claude, GitHub Copilot extensively—document what you use</li>
+</ul>
+<h2>Tips for Success</h2>
+<h3>Start Early</h3>
+Don't underestimate the time required. Even with GenAI assistance, projects take longer than expected. Starting early gives you time to iterate, handle unexpected challenges, and produce polished results.
+<h3>Embrace Failure and Iteration</h3>
+Not everything will work on the first try. That's normal in research. Build in time to try multiple approaches, debug issues, and refine your methods based on what you learn.
+<h3>Use GenAI Aggressively</h3>
+This is where you can be truly ambitious. Use tools like Claude, ChatGPT, and GitHub Copilot to:
+<ul>
+<li>Implement complex architectures you haven't built before</li>
+<li>Write data processing pipelines quickly</li>
+<li>Debug tricky errors</li>
+<li>Generate boilerplate code</li>
+<li>Understand unfamiliar libraries or papers</li>
+<li>Brainstorm ideas and approaches</li>
+</ul>
+<p><strong>Remember</strong>: You're responsible for understanding and validating what AI generates. Always test, verify, and critically evaluate AI-generated code.</p>
+<h3>Scope Appropriately</h3>
+It's better to do one thing really well than three things poorly. If you find your project is too ambitious, narrow the focus rather than delivering incomplete work.
+<h3>Communicate Clearly</h3>
+Technical sophistication is important, but so is clear communication. Make sure your code, writeup, and presentation are understandable to intelligent non-experts.
+<h3>Document Everything</h3>
+Keep track of experiments, decisions, and results as you go. This makes writing the final report much easier and helps you understand what worked and why.
+<h3>Leverage Your Team's Strengths</h3>
+Different team members may excel at different aspects (coding, experimentation, writing, visualization). Divide labor strategically but ensure everyone understands the full project.
+<h3>Make It Yours</h3>
+Choose a project you're genuinely excited about. Passion and curiosity will sustain you through challenges and lead to better results.
+<h2>Example Projects from Prior Years</h2>
+<p><em>Note: As this is a new course, we don't yet have prior student projects to showcase. However, here are examples of the caliber of work we hope to see:</em></p>
+<ul>
+<li><strong>Cognitive bias evaluation framework</strong>: Systematic testing of whether LLMs exhibit human-like cognitive biases, with comparisons across model families</li>
+<li><strong>Domain-adapted medical QA system</strong>: Fine-tuned model for answering medical questions with retrieval augmentation, evaluated against human experts</li>
+<li><strong>Interactive mathematical reasoning tutor</strong>: Socratic dialogue system that guides students through proofs and problem-solving</li>
+<li><strong>Multimodal scientific figure understanding</strong>: System that can interpret graphs, diagrams, and figures from research papers and answer questions about them</li>
+<li><strong>Debate agent with evidence retrieval</strong>: Autonomous system that can argue positions on controversial topics by retrieving and citing evidence</li>
+</ul>
+<p>Your project can match or exceed these examples. With modern tools and GenAI assistance, sophisticated projects are within reach.</p>
+<h2>Technical Requirements</h2>
+<h3>Google Colaboratory Compatibility</h3>
+Your project <strong>must run in Google Colab</strong>. This means:
+<ul>
+<li>Use publicly accessible datasets (or include download code)</li>
+<li>Include all installation commands in the notebook (`!pip install ...`)</li>
+<li>Don't rely on local files or proprietary data</li>
+<li>Test in a fresh Colab session before submission</li>
+<li>Consider compute constraints (RAM, GPU availability)</li>
+<li>Use `!nvidia-smi` to check GPU allocation if needed</li>
+</ul>
+<h3>Model and Data Accessibility</h3>
+<ul>
+<li>Use open-source models (Hugging Face) or provide API keys instructions</li>
+<li>For large models, use quantized versions or API access</li>
+<li>Include code to automatically download datasets</li>
+<li>Document any manual setup steps clearly</li>
+</ul>
+<h3>Reproducibility</h3>
+<ul>
+<li>Set random seeds for reproducible results</li>
+<li>Include version numbers for key libraries</li>
+<li>Save and load model checkpoints appropriately</li>
+<li>Document any hyperparameters used</li>
+</ul>
+<h3>Documentation</h3>
+<ul>
+<li>Use markdown cells liberally to explain your approach</li>
+<li>Include docstrings for functions</li>
+<li>Comment complex code sections</li>
+<li>Provide a "Quick Start" section at the top of your notebook</li>
+<li>Include a table of contents for longer notebooks</li>
+</ul>
+<h2>Final Thoughts</h2>
+<p>This final project is your chance to create something remarkable. You've learned about the full spectrum of language models—from simple pattern matching to sophisticated transformers. You've implemented these systems, evaluated them, and thought critically about their capabilities and limitations.</p>
+<p>Now it's time to apply that knowledge to a problem you care about. With GenAI tools at your disposal, you can tackle projects that would have been impossible for a student team just a few years ago. Take advantage of this unique moment in history.</p>
+<p>The best projects will:
+<ul>
+<li>Demonstrate technical sophistication and mastery</li>
+<li>Provide novel insights or create genuinely useful systems</li>
+<li>Show critical thinking about AI capabilities and limitations</li>
+<li>Be executed with care, rigor, and attention to detail</li>
+<li>Communicate results clearly and engagingly</li>
+</ul></p>
+<p>We're excited to see what you create. Good luck, and remember: ambitious goals combined with thoughtful execution lead to extraordinary results.</p>
+<p>---</p>
+<p><strong>Questions?</strong> Use the course Discord or attend office hours. We're here to help you succeed.</p>
+<p><strong>Ready to start?</strong> Form your team, start brainstorming, and prepare to build something amazing.</p>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 <a href="https://www.context-lab.com" target="_blank">Contextual Dynamics Lab</a></p>
+        <p>PSYC 51.17: Language Models from Scratch</p>
+    </footer>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', currentTheme);
+        themeIcon.innerHTML = currentTheme === 'dark' ? '&#127769;' : '&#9728;';
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.innerHTML = newTheme === 'dark' ? '&#127769;' : '&#9728;';
+        });
+    </script>
+</body>
+</html>
