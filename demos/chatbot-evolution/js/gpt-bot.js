@@ -1,14 +1,16 @@
 /**
  * GPT-style Bot (2020s) - Modern LLM via Transformers.js v3
  * 
- * Model hierarchy (SmolLM2 family - HuggingFace's browser-optimized models):
- * 1. SmolLM2-135M-Instruct - Ultra-light, works on any device
- * 2. SmolLM2-360M-Instruct - Balanced quality/speed (default for 4GB RAM)
- * 3. SmolLM2-1.7B-Instruct - Best quality (requires 8GB+ RAM + WebGPU)
+ * Model hierarchy (using onnx-community models for Transformers.js compatibility):
+ * 1. SmolLM2-135M-Instruct-ONNX - Ultra-light (~110MB), works on any device
+ * 2. SmolLM2-360M-Instruct-ONNX - Balanced quality/speed (~260MB)
+ * 3. Qwen2.5-0.5B-Instruct - Best quality (~460MB, requires 4GB+ RAM)
+ * 
+ * IMPORTANT: Uses onnx-community models which are specifically exported and
+ * tested for Transformers.js browser compatibility. The original HuggingFaceTB
+ * models may have ONNX files but aren't guaranteed to work with Transformers.js.
  * 
  * Auto-selects based on device RAM and WASM memory limits.
- * When WebGPU is available, larger models become feasible since weights
- * go to GPU memory, bypassing WASM heap limits.
  */
 
 export class GPTBot {
@@ -96,41 +98,39 @@ export class GPTBot {
         this.onProgress = null;
         this.loadAttempt = 0;
 
-        // SmolLM2 family - all have native Transformers.js support (ONNX bundled)
-        // wasmMinMB: minimum WASM heap needed (weights + runtime overhead)
         this.models = [
             {
-                name: 'HuggingFaceTB/SmolLM2-135M-Instruct',
+                name: 'onnx-community/SmolLM2-135M-Instruct-ONNX',
                 displayName: 'SmolLM2 135M',
-                dtype: 'q4',
+                dtype: 'q4f16',
                 params: '135M',
-                sizeMB: 85,
-                wasmMinMB: 300,   // 85MB weights + ~200MB runtime
+                sizeMB: 111,
+                wasmMinMB: 400,
                 minRAM: 2,
                 year: 2024,
                 org: 'HuggingFace'
             },
             {
-                name: 'HuggingFaceTB/SmolLM2-360M-Instruct',
+                name: 'onnx-community/SmolLM2-360M-Instruct-ONNX',
                 displayName: 'SmolLM2 360M',
-                dtype: 'q4',
+                dtype: 'q4f16',
                 params: '360M',
-                sizeMB: 210,
-                wasmMinMB: 600,   // 210MB weights + ~400MB runtime
+                sizeMB: 259,
+                wasmMinMB: 700,
                 minRAM: 4,
                 year: 2024,
                 org: 'HuggingFace'
             },
             {
-                name: 'HuggingFaceTB/SmolLM2-1.7B-Instruct',
-                displayName: 'SmolLM2 1.7B',
-                dtype: 'q4',
-                params: '1.7B',
-                sizeMB: 1410,
-                wasmMinMB: 2500,  // 1410MB weights + ~1GB runtime - exceeds most WASM limits
-                minRAM: 8,
+                name: 'onnx-community/Qwen2.5-0.5B-Instruct',
+                displayName: 'Qwen2.5 0.5B',
+                dtype: 'q4f16',
+                params: '0.5B',
+                sizeMB: 460,
+                wasmMinMB: 1200,
+                minRAM: 4,
                 year: 2024,
-                org: 'HuggingFace'
+                org: 'Alibaba'
             }
         ];
         
@@ -489,11 +489,11 @@ export class GPTBot {
         const specs = {
             'SmolLM2-135M': { layers: 9, hiddenSize: 576, attentionHeads: 9 },
             'SmolLM2-360M': { layers: 16, hiddenSize: 960, attentionHeads: 15 },
-            'SmolLM2-1.7B': { layers: 24, hiddenSize: 2048, attentionHeads: 32 }
+            'Qwen2.5-0.5B': { layers: 24, hiddenSize: 896, attentionHeads: 14 }
         };
         
         const modelKey = model.name.includes('135M') ? 'SmolLM2-135M' :
-                         model.name.includes('360M') ? 'SmolLM2-360M' : 'SmolLM2-1.7B';
+                         model.name.includes('360M') ? 'SmolLM2-360M' : 'Qwen2.5-0.5B';
         const spec = specs[modelKey];
         
         return {

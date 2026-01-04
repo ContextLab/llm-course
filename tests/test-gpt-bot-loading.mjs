@@ -54,18 +54,18 @@ async function testGPTBotStructure() {
     );
 
     runner.assert(
-        botCode.includes('SmolLM2-135M-Instruct'),
-        'SmolLM2 135M is configured as smallest model'
+        botCode.includes('SmolLM2-135M-Instruct-ONNX'),
+        'SmolLM2 135M ONNX is configured as smallest model'
     );
 
     runner.assert(
-        botCode.includes('SmolLM2-360M-Instruct'),
-        'SmolLM2 360M is configured as medium model'
+        botCode.includes('SmolLM2-360M-Instruct-ONNX'),
+        'SmolLM2 360M ONNX is configured as medium model'
     );
 
     runner.assert(
-        botCode.includes('SmolLM2-1.7B-Instruct'),
-        'SmolLM2 1.7B is configured as largest model'
+        botCode.includes('Qwen2.5-0.5B-Instruct'),
+        'Qwen2.5 0.5B is configured as largest model'
     );
 
     runner.assert(
@@ -74,8 +74,8 @@ async function testGPTBotStructure() {
     );
 
     runner.assert(
-        botCode.includes('dtype: \'q4\''),
-        'Uses q4 quantization for smaller model size'
+        botCode.includes('dtype: \'q4f16\''),
+        'Uses q4f16 quantization for smaller model size'
     );
 
     runner.assert(
@@ -139,8 +139,8 @@ async function testModelConfigurations() {
         runner.assertEqual(modelCount, 3, 'Has exactly 3 models configured');
 
         runner.assert(
-            modelsSection.includes('HuggingFaceTB/'),
-            'Uses HuggingFaceTB models (Transformers.js compatible)'
+            modelsSection.includes('onnx-community/'),
+            'Uses onnx-community models (Transformers.js compatible)'
         );
 
         runner.assert(
@@ -181,8 +181,8 @@ async function testArchitectureInfo() {
     );
 
     runner.assert(
-        botCode.includes('SmolLM2-1.7B'),
-        'Has SmolLM2-1.7B architecture info'
+        botCode.includes('Qwen2.5-0.5B'),
+        'Has Qwen2.5-0.5B architecture info'
     );
 
     runner.assert(
