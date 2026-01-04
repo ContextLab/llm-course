@@ -2,9 +2,8 @@
  * GPT-style Bot (2020s) - Modern LLM via Transformers.js v3
  * 
  * Model hierarchy:
- * 1. DeepSeek-R1-Distill-Qwen-1.5B - Advanced reasoning model (2025)
- * 2. Gemma 3 1B IT - Google's efficient instruction model (2025)
- * 3. Gemma 3 270M IT - Lightweight fallback (2025)
+ * 1. Qwen2.5-0.5B-Instruct - Alibaba's efficient instruction model (2024)
+ * 2. SmolLM-360M-Instruct - HuggingFace's browser-optimized model (2024)
  */
 
 export class GPTBot {
@@ -18,22 +17,24 @@ export class GPTBot {
 
         this.models = [
             {
-                name: 'onnx-community/DeepSeek-R1-Distill-Qwen-1.5B-ONNX',
-                displayName: 'DeepSeek-R1 1.5B',
-                dtype: 'q4',
-                params: '1.5B',
-                year: 2025,
-                org: 'DeepSeek'
-            },
-            {
                 name: 'onnx-community/Qwen2.5-0.5B-Instruct',
                 displayName: 'Qwen 2.5 0.5B',
                 dtype: 'q4',
                 params: '0.5B',
                 year: 2024,
                 org: 'Alibaba'
+            },
+            {
+                name: 'onnx-community/SmolLM-360M-Instruct',
+                displayName: 'SmolLM 360M',
+                dtype: 'q4',
+                params: '360M',
+                year: 2024,
+                org: 'HuggingFace'
             }
         ];
+        
+        this.systemPrompt = 'You are a friendly AI chatbot in an educational demo about the evolution of conversational AI. Have natural, engaging conversations. Be concise and helpful.';
 
         this.currentModel = null;
     }
@@ -204,6 +205,7 @@ export class GPTBot {
 
         try {
             const messages = [
+                { role: 'system', content: this.systemPrompt },
                 { role: 'user', content: input.trim() }
             ];
 
@@ -282,30 +284,25 @@ export class GPTBot {
     getArchitectureInfo() {
         const model = this.currentModel || this.models[0];
         
-        if (model.name.includes('DeepSeek')) {
+        if (model.name.includes('SmolLM')) {
             return {
-                name: 'DeepSeek-R1-Distill-Qwen-1.5B',
+                name: 'SmolLM 360M Instruct',
                 type: 'Decoder-Only Transformer',
-                parameters: '1.5 Billion',
-                layers: 28,
-                hiddenSize: 1536,
-                attentionHeads: 12,
-                contextLength: 131072,
-                vocabulary: '~151K tokens',
-                trainingData: 'Distilled from DeepSeek-R1 reasoning model',
-                year: 2025,
-                organization: 'DeepSeek',
-                benchmarks: {
-                    AIME2024: '28.9%',
-                    MATH500: '83.9%',
-                    LiveCodeBench: '16.9%'
-                },
+                parameters: '360 Million',
+                layers: 32,
+                hiddenSize: 960,
+                attentionHeads: 15,
+                contextLength: 2048,
+                vocabulary: '~49K tokens',
+                trainingData: 'Cosmopedia v2, FineWeb-Edu, Stack-Edu',
+                year: 2024,
+                organization: 'HuggingFace',
                 keyFeatures: [
-                    'Distilled from DeepSeek-R1 reasoning model',
-                    'Chain-of-thought reasoning capabilities',
-                    'Efficient Qwen architecture base',
-                    'Strong math and coding performance',
-                    'Open-source with MIT license'
+                    'Designed for browser/on-device use',
+                    'Optimized for WASM execution',
+                    'Fast inference with small memory footprint',
+                    'Instruction-tuned for conversations',
+                    'Open-source with Apache 2.0 license'
                 ],
                 architecture: {
                     type: 'decoder-only',

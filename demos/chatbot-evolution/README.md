@@ -237,7 +237,7 @@ An interactive journey through 60 years of conversational AI development, from E
 - Initial model loading time in browser
 
 **What Makes This Demo Special:**
-This demo runs **real neural models** (BlenderBot 90M, LaMini-GPT 124M) directly in your browser using Transformers.js. You'll experience genuine neural behavior - not simulations - allowing you to see the clear evolution from rule-based to learned conversation.
+This demo runs **real neural models** (BlenderBot 90M, Qwen2.5 0.5B) directly in your browser using Transformers.js. You'll experience genuine neural behavior - not simulations - allowing you to see the clear evolution from rule-based to learned conversation.
 
 ## Historical Timeline
 
@@ -263,7 +263,7 @@ This demo runs **real neural models** (BlenderBot 90M, LaMini-GPT 124M) directly
 - **PARRY**: State machine with emotional variables
 - **A.L.I.C.E.**: ~40,000 AIML patterns
 - **BlenderBot Small**: 90 million parameters (real neural model)
-- **LaMini-GPT**: 124 million parameters (real neural model)
+- **Qwen2.5 0.5B**: 500 million parameters (real neural model)
 - **GPT-3**: 175 billion parameters (comparison reference)
 
 ### Architectural Progression
@@ -315,7 +315,7 @@ This demo runs **real neural models** (BlenderBot 90M, LaMini-GPT 124M) directly
 │   ├── parry.js           # PARRY implementation
 │   ├── alice.js           # A.L.I.C.E. implementation
 │   ├── seq2seq-bot.js     # Real BlenderBot neural model
-│   ├── gpt-bot.js         # LaMini-GPT interface
+│   ├── gpt-bot.js         # Qwen2.5/SmolLM interface
 │   └── timeline-app.js    # Main application
 └── README.md              # This file
 ```
@@ -340,8 +340,12 @@ AIML-inspired pattern matching with improved context handling over ELIZA.
 - Loads and runs entirely in your browser (may take 30-60 seconds initially)
 - Fallback to DialoGPT-small if BlenderBot fails to load
 
-### GPT / LaMini-GPT
-Uses Transformers.js with LaMini-GPT-124M (124M parameters) for actual neural text generation in the browser. Demonstrates modern transformer capabilities (instruction tuned).
+### GPT / Qwen2.5
+Uses Transformers.js with Qwen2.5-0.5B-Instruct (500M parameters) for actual neural text generation in the browser. Falls back to SmolLM-360M-Instruct if Qwen fails to load. Demonstrates modern transformer capabilities:
+- Instruction-tuned for natural conversations
+- System prompt guides behavior for educational demo context
+- Runs entirely in-browser via WASM or WebGPU
+- May take 30-60 seconds to download on first load
 
 ## Extensions
 
@@ -378,6 +382,6 @@ This demo relates to:
 
 ---
 
-**Last Updated**: December 2025
+**Last Updated**: January 2026
 **Course**: PSYC 51.17 - Language Models from Scratch
 **Copyright**: Jeremy R. Manning
