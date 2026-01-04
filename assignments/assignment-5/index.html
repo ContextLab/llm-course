@@ -253,60 +253,63 @@ Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
 <p>You will implement, train, and analyze a GPT-style model. The assignment is divided into several interconnected tasks:</p>
 <h3>1. Implement Transformer Components</h3>
 <p>Build the core components of the GPT architecture:</p>
-<p><strong>a) Multi-Head Self-Attention with Causal Masking</strong>
+<strong>a) Multi-Head Self-Attention with Causal Masking</strong>
 <ul>
 <li>Implement the scaled dot-product attention mechanism</li>
 <li>Add causal masking to prevent attention to future tokens</li>
 <li>Support multiple attention heads</li>
 <li>Include dropout for regularization</li>
-</ul></p>
-<p><strong>b) Position-wise Feed-Forward Network</strong>
+</ul>
+<strong>b) Position-wise Feed-Forward Network</strong>
 <ul>
 <li>Implement a two-layer MLP with GELU or ReLU activation</li>
 <li>Typically expands to 4x the model dimension and back</li>
-</ul></p>
-<p><strong>c) Positional Encoding</strong>
+</ul>
+<strong>c) Positional Encoding</strong>
 <ul>
 <li>Implement either learned positional embeddings (like GPT) or sinusoidal encodings (like the original Transformer)</li>
 <li>Justify your choice</li>
-</ul></p>
-<p><strong>d) Transformer Block</strong>
+</ul>
+<strong>d) Transformer Block</strong>
 <ul>
 <li>Combine attention and feed-forward layers with residual connections and layer normalization</li>
 <li>Consider whether to use pre-norm or post-norm architecture</li>
-</ul></p>
-<p><strong>e) GPT Model</strong>
+</ul>
+<strong>e) GPT Model</strong>
 <ul>
 <li>Stack multiple transformer blocks</li>
 <li>Add token embedding layer</li>
 <li>Add final linear layer to project to vocabulary size</li>
 <li>Implement the forward pass with causal language modeling objective</li>
-</ul></p>
+</ul>
 <h3>2. Implement the Training Pipeline</h3>
-<p><strong>a) Data Preparation</strong>
+<strong>a) Data Preparation</strong>
 <ul>
 <li>Choose a dataset (see suggestions below)</li>
 <li>Implement tokenization (you can use a pre-built tokenizer like GPT-2's BPE)</li>
 <li>Create data loaders with proper batching</li>
 <li>Handle variable-length sequences appropriately</li>
-</ul></p>
-<p><strong>b) Training Loop</strong>
+</ul>
+<strong>b) Training Loop</strong>
 <ul>
 <li>Implement the cross-entropy loss for language modeling</li>
 <li>Use AdamW optimizer with learning rate scheduling (consider cosine decay with warmup)</li>
 <li>Implement gradient clipping to prevent instability</li>
 <li>Track training and validation loss</li>
 <li>Save model checkpoints</li>
-</ul></p>
-<p><strong>c) Hyperparameter Selection</strong>
+</ul>
+<strong>c) Hyperparameter Selection</strong>
 <ul>
-<li>Justify your choices for:</li>
+<li>Justify your choices for:
+<ul>
 <li>Model size (number of layers, hidden dimension, number of heads)</li>
 <li>Batch size and sequence length</li>
 <li>Learning rate and schedule</li>
 <li>Dropout rates</li>
 <li>Training steps/epochs</li>
-</ul></p>
+</ul>
+</li>
+</ul>
 <h3>3. Generate Text with Multiple Sampling Strategies</h3>
 <p>Implement and compare different text generation methods:</p>
 <p><strong>a) Greedy Decoding</strong>: Always pick the most likely next token</p>
@@ -315,113 +318,116 @@ Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
 <p><strong>d) Nucleus (Top-p) Sampling</strong>: Sample from the smallest set of tokens whose cumulative probability exceeds p</p>
 <p>Generate samples with each method and analyze the quality, diversity, and coherence of the outputs. What works best for your model and dataset?</p>
 <h3>4. Analyze Learned Representations</h3>
-<p><strong>a) Attention Pattern Visualization</strong>
+<strong>a) Attention Pattern Visualization</strong>
 <ul>
 <li>Extract and visualize attention weights from different layers and heads</li>
 <li>Analyze what patterns different heads learn (e.g., do some attend to previous token, to same word type, to syntactic patterns?)</li>
 <li>Create visualizations showing attention patterns for interesting examples</li>
-</ul></p>
-<p><strong>b) Token Embedding Analysis</strong>
+</ul>
+<strong>b) Token Embedding Analysis</strong>
 <ul>
 <li>Extract the learned token embeddings</li>
 <li>Visualize them in 2D/3D space using UMAP or t-SNE</li>
 <li>Identify clusters and analyze which tokens are embedded close together</li>
 <li>Does the model learn meaningful semantic relationships?</li>
-</ul></p>
-<p><strong>c) Probing Tasks (Optional)</strong>
+</ul>
+<strong>c) Probing Tasks (Optional)</strong>
 <ul>
 <li>Design simple probing classifiers to test what linguistic information is encoded in the representations</li>
 <li>Examples: POS tagging, syntactic dependencies, semantic relationships</li>
-</ul></p>
+</ul>
 <h3>5. Compare with Pre-trained Models</h3>
-<p><strong>a) Load a Pre-trained Model</strong>
+<strong>a) Load a Pre-trained Model</strong>
 <ul>
 <li>Load a comparable pre-trained model (e.g., GPT-2 small, DistilGPT-2)</li>
 <li>Ensure fair comparison (similar size, similar data domain if possible)</li>
-</ul></p>
-<p><strong>b) Quantitative Comparison</strong>
+</ul>
+<strong>b) Quantitative Comparison</strong>
 <ul>
 <li>Compare perplexity on a held-out test set</li>
-<li>Compare generation quality using metrics like:</li>
+<li>Compare generation quality using metrics like:
+<ul>
 <li>Perplexity</li>
 <li>Self-BLEU (for diversity)</li>
 <li>Human evaluation (optional but recommended)</li>
-</ul></p>
-<p><strong>c) Qualitative Analysis</strong>
+</ul>
+</li>
+</ul>
+<strong>c) Qualitative Analysis</strong>
 <ul>
 <li>Generate text from the same prompts with both models</li>
 <li>Analyze differences in coherence, creativity, factual accuracy, and fluency</li>
 <li>What are the strengths and weaknesses of your model?</li>
-</ul></p>
+</ul>
 <h3>6. Dataset Selection</h3>
 <p>Choose one of the following datasets or propose your own:</p>
-<p><strong>a) Code Generation</strong>
+<strong>a) Code Generation</strong>
 <ul>
 <li>Python code from GitHub (filtered for quality)</li>
 <li>Allows you to build a code-generation model</li>
 <li>Can evaluate on code completion tasks</li>
-</ul></p>
-<p><strong>b) Stories/Creative Writing</strong>
+</ul>
+<strong>b) Stories/Creative Writing</strong>
 <ul>
 <li>WritingPrompts dataset from Reddit</li>
 <li>Children's stories</li>
 <li>Fan fiction or short stories</li>
-</ul></p>
-<p><strong>c) Domain-Specific Text</strong>
+</ul>
+<strong>c) Domain-Specific Text</strong>
 <ul>
 <li>Scientific papers (arXiv abstracts)</li>
 <li>News articles</li>
 <li>Wikipedia articles</li>
 <li>Poetry or song lyrics</li>
-</ul></p>
-<p><strong>d) Dialogue</strong>
+</ul>
+<strong>d) Dialogue</strong>
 <ul>
 <li>Movie scripts</li>
 <li>Reddit conversations</li>
 <li>Chat logs (appropriately anonymized)</li>
-</ul></p>
-<p><strong>e) Shakespeare or Classic Literature</strong>
+</ul>
+<strong>e) Shakespeare or Classic Literature</strong>
 <ul>
 <li>Smaller dataset but rich language</li>
 <li>Good for initial testing and rapid iteration</li>
-</ul></p>
-<p>Choose a dataset that interests you and that's appropriate for the model size you can feasibly train. Remember: you don't need billions of tokens to build something impressive!</p>
+</ul>
+Choose a dataset that interests you and that's appropriate for the model size you can feasibly train. Remember: you don't need billions of tokens to build something impressive!
 <h2>Implementation Options</h2>
 <p>You have flexibility in how you approach this assignment:</p>
 <h3>Option 1: From Scratch (Recommended for Deep Learning)</h3>
-<p>Implement everything from first principles using PyTorch or JAX:
+Implement everything from first principles using PyTorch or JAX:
 <ul>
 <li>Full control over every component</li>
 <li>Deepest learning experience</li>
 <li>More time-intensive but most rewarding</li>
-</ul></p>
+</ul>
 <h3>Option 2: Using nanoGPT as a Starting Point</h3>
-<p>Andrej Karpathy's <a href="https://github.com/karpathy/nanoGPT" target="_blank">nanoGPT</a> provides a clean, minimal implementation:
+Andrej Karpathy's <a href="https://github.com/karpathy/nanoGPT" target="_blank">nanoGPT</a> provides a clean, minimal implementation:
 <ul>
 <li>Start with the codebase and understand every line</li>
 <li>Modify and extend it for your needs</li>
 <li>Add analysis and visualization components</li>
 <li>Good balance of learning and efficiency</li>
-</ul></p>
+</ul>
 <h3>Option 3: Using HuggingFace Transformers</h3>
-<p>Use the HuggingFace library but implement key components yourself:
+Use the HuggingFace library but implement key components yourself:
 <ul>
 <li>Use their data loading and training utilities</li>
 <li>Implement your own attention mechanism or transformer block</li>
 <li>Focus more on experiments and analysis</li>
 <li>Faster to get results but less deep implementation experience</li>
-</ul></p>
-<p><strong>Whichever option you choose, you must demonstrate deep understanding of how the model works. Simply calling library functions without explanation is insufficient.</strong></p>
+</ul>
+<strong>Whichever option you choose, you must demonstrate deep understanding of how the model works. Simply calling library functions without explanation is insufficient.</strong>
 <h2>Technical Requirements</h2>
 <h3>Model Specifications</h3>
-<p>Your model should have at minimum:
+Your model should have at minimum:
 <ul>
 <li><strong>4-12 transformer layers</strong> (start small, scale up if resources allow)</li>
 <li><strong>4-8 attention heads</strong></li>
 <li><strong>Hidden dimension of 256-768</strong> (depending on your computational resources)</li>
 <li><strong>Vocabulary size</strong> appropriate for your tokenizer (typically 10K-50K)</li>
 <li><strong>Context window</strong> of at least 128 tokens (256-512 preferred)</li>
-</ul></p>
+</ul>
 <h3>Training Requirements</h3>
 <ul>
 <li>Train for enough steps to see meaningful convergence (exact number depends on dataset and model size)</li>
@@ -487,50 +493,47 @@ Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
 <h2>Evaluation Criteria</h2>
 <p>Your assignment will be evaluated on:</p>
 <ol>
-<li><strong>Correctness of Implementation (30%)</strong></li>
-</ol>
+<li><strong>Correctness of Implementation (30%)</strong>
 <ul>
 <li>Model architecture correctly implements GPT design</li>
 <li>Attention mechanisms properly use causal masking</li>
 <li>Training loop correctly computes loss and updates parameters</li>
 <li>No critical bugs or errors</li>
 </ul>
-<ol>
-<li><strong>Quality of Training and Results (25%)</strong></li>
-</ol>
+</li>
+<li><strong>Quality of Training and Results (25%)</strong>
 <ul>
 <li>Model successfully trains and converges</li>
 <li>Reasonable hyperparameter choices</li>
 <li>Generated text demonstrates learning</li>
 <li>Proper evaluation on validation set</li>
 </ul>
-<ol>
-<li><strong>Depth of Analysis (25%)</strong></li>
-</ol>
+</li>
+<li><strong>Depth of Analysis (25%)</strong>
 <ul>
 <li>Thoughtful examination of attention patterns</li>
 <li>Meaningful visualization and interpretation</li>
 <li>Insightful comparison with baseline model</li>
 <li>Understanding of model behavior and limitations</li>
 </ul>
-<ol>
-<li><strong>Code Quality and Documentation (10%)</strong></li>
-</ol>
+</li>
+<li><strong>Code Quality and Documentation (10%)</strong>
 <ul>
 <li>Clean, well-organized code</li>
 <li>Comprehensive markdown explanations</li>
 <li>Clear documentation of design choices</li>
 <li>Reproducible results</li>
 </ul>
-<ol>
-<li><strong>Creativity and Insight (10%)</strong></li>
-</ol>
+</li>
+<li><strong>Creativity and Insight (10%)</strong>
 <ul>
 <li>Interesting dataset choice or experiments</li>
 <li>Novel visualizations or analyses</li>
 <li>Thoughtful discussion of results</li>
 <li>Extensions beyond basic requirements</li>
 </ul>
+</li>
+</ol>
 <h2>Extensions and Bonus Challenges</h2>
 <p>If you finish the core assignment and want to push further, consider these extensions:</p>
 <h3>Architecture Modifications</h3>
@@ -569,79 +572,102 @@ Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
 <h2>Resources</h2>
 <h3>Essential Reading</h3>
 <ul>
-<li><strong>"Attention is All You Need"</strong> (Vaswani et al., 2017) - The transformer paper</li>
+<li><strong>"Attention is All You Need"</strong> (Vaswani et al., 2017) - The transformer paper
+<ul>
 <li><a href="https://arxiv.org/abs/1706.03762" target="_blank">Paper</a></li>
 <li><a href="http://nlp.seas.harvard.edu/2018/04/03/attention.html" target="_blank">Annotated Transformer</a></li>
 </ul>
+</li>
+<li><strong>"Improving Language Understanding by Generative Pre-Training"</strong> (Radford et al., 2018) - Original GPT
 <ul>
-<li><strong>"Improving Language Understanding by Generative Pre-Training"</strong> (Radford et al., 2018) - Original GPT</li>
 <li><a href="https://cdn.openai.com/research-covers/language-unsupervised/language<em>understanding</em>paper.pdf" target="_blank">Paper</a></li>
 </ul>
+</li>
+<li><strong>"Language Models are Unsupervised Multitask Learners"</strong> (Radford et al., 2019) - GPT-2
 <ul>
-<li><strong>"Language Models are Unsupervised Multitask Learners"</strong> (Radford et al., 2019) - GPT-2</li>
 <li><a href="https://cdn.openai.com/better-language-models/language<em>models</em>are<em>unsupervised</em>multitask_learners.pdf" target="_blank">Paper</a></li>
 </ul>
+</li>
+<li><strong>"Language Models are Few-Shot Learners"</strong> (Brown et al., 2020) - GPT-3
 <ul>
-<li><strong>"Language Models are Few-Shot Learners"</strong> (Brown et al., 2020) - GPT-3</li>
 <li><a href="https://arxiv.org/abs/2005.14165" target="_blank">Paper</a></li>
+</ul>
+</li>
 </ul>
 <h3>Video Resources</h3>
 <ul>
-<li><strong>Andrej Karpathy's "Let's build GPT: from scratch, in code, spelled out"</strong></li>
+<li><strong>Andrej Karpathy's "Let's build GPT: from scratch, in code, spelled out"</strong>
+<ul>
 <li><a href="https://www.youtube.com/watch?v=kCc8FmEb1nY" target="_blank">YouTube Video</a></li>
 <li>Excellent step-by-step implementation guide</li>
 </ul>
+</li>
+<li><strong>HuggingFace Course: Transformer Models</strong>
 <ul>
-<li><strong>HuggingFace Course: Transformer Models</strong></li>
 <li><a href="https://huggingface.co/learn/nlp-course/chapter1/1" target="_blank">Course Link</a></li>
 <li>Comprehensive coverage of transformers and applications</li>
 </ul>
+</li>
+</ul>
 <h3>Code Resources</h3>
 <ul>
-<li><strong>nanoGPT</strong> by Andrej Karpathy</li>
+<li><strong>nanoGPT</strong> by Andrej Karpathy
+<ul>
 <li><a href="https://github.com/karpathy/nanoGPT" target="_blank">GitHub</a></li>
 <li>Clean, minimal GPT implementation in PyTorch</li>
 </ul>
+</li>
+<li><strong>minGPT</strong> by Andrej Karpathy
 <ul>
-<li><strong>minGPT</strong> by Andrej Karpathy</li>
 <li><a href="https://github.com/karpathy/minGPT" target="_blank">GitHub</a></li>
 <li>Another minimal GPT implementation with good documentation</li>
 </ul>
+</li>
+<li><strong>HuggingFace Transformers</strong>
 <ul>
-<li><strong>HuggingFace Transformers</strong></li>
 <li><a href="https://huggingface.co/docs/transformers/index" target="_blank">Documentation</a></li>
 <li><a href="https://huggingface.co/docs/transformers/model_doc/gpt2" target="_blank">GPT-2 Model Documentation</a></li>
 </ul>
+</li>
+<li><strong>The Illustrated Transformer</strong> by Jay Alammar
 <ul>
-<li><strong>The Illustrated Transformer</strong> by Jay Alammar</li>
 <li><a href="http://jalammar.github.io/illustrated-transformer/" target="_blank">Blog Post</a></li>
 <li>Excellent visual explanations</li>
 </ul>
+</li>
+<li><strong>The Illustrated GPT-2</strong> by Jay Alammar
 <ul>
-<li><strong>The Illustrated GPT-2</strong> by Jay Alammar</li>
 <li><a href="http://jalammar.github.io/illustrated-gpt2/" target="_blank">Blog Post</a></li>
 <li>Visual guide to GPT-2 architecture</li>
 </ul>
+</li>
+</ul>
 <h3>Additional Papers</h3>
 <ul>
-<li><strong>"BERT: Pre-training of Deep Bidirectional Transformers"</strong> (Devlin et al., 2018)</li>
+<li><strong>"BERT: Pre-training of Deep Bidirectional Transformers"</strong> (Devlin et al., 2018)
+<ul>
 <li>Good contrast with GPT's unidirectional approach</li>
 <li><a href="https://arxiv.org/abs/1810.04805" target="_blank">Paper</a></li>
 </ul>
+</li>
+<li><strong>"The Pile: An 800GB Dataset of Diverse Text"</strong> (Gao et al., 2020)
 <ul>
-<li><strong>"The Pile: An 800GB Dataset of Diverse Text"</strong> (Gao et al., 2020)</li>
 <li>Understanding pre-training datasets</li>
 <li><a href="https://arxiv.org/abs/2101.00027" target="_blank">Paper</a></li>
 </ul>
+</li>
+<li><strong>"Scaling Laws for Neural Language Models"</strong> (Kaplan et al., 2020)
 <ul>
-<li><strong>"Scaling Laws for Neural Language Models"</strong> (Kaplan et al., 2020)</li>
 <li>Understanding how model size affects performance</li>
 <li><a href="https://arxiv.org/abs/2001.08361" target="_blank">Paper</a></li>
 </ul>
+</li>
+<li><strong>"Training Compute-Optimal Large Language Models"</strong> (Hoffmann et al., 2022) - Chinchilla
 <ul>
-<li><strong>"Training Compute-Optimal Large Language Models"</strong> (Hoffmann et al., 2022) - Chinchilla</li>
 <li>Optimal model size vs. training tokens trade-offs</li>
 <li><a href="https://arxiv.org/abs/2203.15556" target="_blank">Paper</a></li>
+</ul>
+</li>
 </ul>
 <h3>Tools and Libraries</h3>
 <ul>
@@ -653,15 +679,14 @@ Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
 </ul>
 <h2>Tips for Success (1-Week Timeline)</h2>
 <ol>
-<li><strong>Use GenAI aggressively</strong>: Claude, ChatGPT, and GitHub Copilot are your friends. Use them to:</li>
-</ol>
+<li><strong>Use GenAI aggressively</strong>: Claude, ChatGPT, and GitHub Copilot are your friends. Use them to:
 <ul>
 <li>Implement transformer components you haven't built before</li>
 <li>Debug errors and understand PyTorch behavior</li>
 <li>Write boilerplate code and data processing pipelines</li>
 <li>Explain unfamiliar concepts or papers</li>
 </ul>
-<ol>
+</li>
 <li><strong>Start small</strong>: Begin with a tiny model (2-4 layers, small hidden size) to debug your implementation quickly</li>
 <li><strong>Validate components</strong>: Test each component individually before assembling the full model</li>
 <li><strong>Monitor carefully</strong>: Watch for NaN losses, exploding gradients, or other training instabilities</li>
@@ -683,29 +708,29 @@ Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
 <li>Shows all visualizations and results inline</li>
 <li>Demonstrates clear understanding of transformer architecture and training dynamics</li>
 </ol>
-<p><strong>Note on Training</strong>: If your model takes too long to train in the notebook, you can train it separately and load the checkpoint in your notebook. However, your notebook should include all training code and explain your training process thoroughly.</p>
+<strong>Note on Training</strong>: If your model takes too long to train in the notebook, you can train it separately and load the checkpoint in your notebook. However, your notebook should include all training code and explain your training process thoroughly.
 <h2>Academic Integrity</h2>
-<p>You may:
+You may:
 <ul>
 <li>Use GenAI tools (Claude, ChatGPT, Copilot) to help with implementation and understanding</li>
 <li>Reference implementations like nanoGPT as learning resources</li>
 <li>Collaborate with classmates on conceptual understanding</li>
 <li>Ask questions in office hours or on discussion forums</li>
-</ul></p>
-<p>You must:
+</ul>
+You must:
 <ul>
 <li>Write and understand all code you submit</li>
 <li>Properly cite any code you adapt from other sources</li>
 <li>Do your own analysis and write your own explanations</li>
 <li>Ensure your trained model is your own work</li>
-</ul></p>
-<p>Do not:
+</ul>
+Do not:
 <ul>
 <li>Copy entire implementations without understanding them</li>
 <li>Submit someone else's analysis or visualizations as your own</li>
 <li>Plagiarize explanations from other sources</li>
-</ul></p>
-<p>This assignment is about learning. Use all available tools to learn deeply, but ensure the final submission represents your own understanding and effort.</p>
+</ul>
+This assignment is about learning. Use all available tools to learn deeply, but ensure the final submission represents your own understanding and effort.
 <hr>
 <p>Good luck! Building a GPT model is a rite of passage for anyone serious about understanding modern AI. Enjoy the journey, and don't hesitate to reach out if you get stuck.</p>
     </main>

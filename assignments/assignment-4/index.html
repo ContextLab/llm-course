@@ -214,15 +214,15 @@
 <h2>Overview</h2>
 <p>In this assignment, you will build a sophisticated, context-aware customer service chatbot that uses modern transformer models and retrieval-augmented generation (RAG) techniques. Unlike traditional rule-based chatbots, your system will leverage semantic understanding to match customer queries with relevant knowledge base entries and generate contextually appropriate responses.</p>
 <p>This is a <strong>1-week assignment</strong> designed to be achievable with GenAI assistance (ChatGPT, Claude, GitHub Copilot). You can focus on system design, integration, and evaluation rather than getting bogged down in low-level implementation details.</p>
-<p>You will implement a complete RAG pipeline that:
+You will implement a complete RAG pipeline that:
 <ul>
 <li>Uses transformer-based encoders (BERT or similar) to understand customer queries semantically</li>
 <li>Performs efficient semantic search over a knowledge base using vector similarity</li>
 <li>Retrieves relevant context to ground responses in factual information</li>
 <li>Handles multi-turn conversations while maintaining context</li>
 <li>Compares your approach against simpler keyword-matching baselines</li>
-</ul></p>
-<p>This assignment simulates a real-world application where customers need accurate, context-aware assistance, and where hallucinated or incorrect information could damage user trust.</p>
+</ul>
+This assignment simulates a real-world application where customers need accurate, context-aware assistance, and where hallucinated or incorrect information could damage user trust.
 <h2>Learning Objectives</h2>
 <p>By completing this assignment, you will develop the following skills:</p>
 <ol>
@@ -236,14 +236,14 @@
 </ol>
 <h2>Background</h2>
 <h3>Context-Aware Language Understanding</h3>
-<p>Traditional customer service systems often rely on keyword matching or simple pattern recognition (like your Assignment 1 ELIZA chatbot). However, customers express the same need in many different ways:
+Traditional customer service systems often rely on keyword matching or simple pattern recognition (like your Assignment 1 ELIZA chatbot). However, customers express the same need in many different ways:
 <ul>
 <li>"I can't log into my account"</li>
 <li>"My password isn't working"</li>
 <li>"I'm having authentication issues"</li>
 <li>"The login page keeps rejecting my credentials"</li>
-</ul></p>
-<p>Transformer-based models like BERT can understand that these queries are semantically similar, even when they share few keywords. This is achieved through:</p>
+</ul>
+Transformer-based models like BERT can understand that these queries are semantically similar, even when they share few keywords. This is achieved through:
 <ol>
 <li><strong>Contextualized Embeddings</strong>: BERT produces vector representations where semantically similar text has similar vectors</li>
 <li><strong>Semantic Similarity</strong>: Using cosine similarity or other distance metrics to find relevant knowledge base entries</li>
@@ -257,7 +257,7 @@
 <li><strong>Augment</strong>: Include retrieved context with the query</li>
 <li><strong>Generate</strong>: Produce a response grounded in the retrieved information</li>
 </ol>
-<p>This approach helps prevent hallucination and ensures responses are factually grounded in your knowledge base.</p>
+This approach helps prevent hallucination and ensures responses are factually grounded in your knowledge base.
 <h3>Key Papers and Concepts</h3>
 <ul>
 <li><strong>BERT</strong> (Devlin et al., 2018): Bidirectional encoder representations from transformers</li>
@@ -274,12 +274,12 @@ from datasets import load_dataset</p>
 <h1>Load customer support conversations</h1>
 dataset = load<em>dataset("salesken/customer</em>support_twitter")
 ```
-<p>Alternatively, explore these datasets:
+Alternatively, explore these datasets:
 <ul>
 <li>`salesken/customer<em>support</em>twitter`: Real customer support conversations</li>
 <li>`banking77`: Banking customer service intents</li>
 <li>`SetFit/customer_support`: Multi-domain customer support dataset</li>
-</ul></p>
+</ul>
 <h3>Option 2: Create Your Own Knowledge Base</h3>
 <p>You can create a synthetic knowledge base for a specific domain (e-commerce, banking, tech support, etc.):</p>
 <p>```python
@@ -305,99 +305,99 @@ import requests
 from bs4 import BeautifulSoup</p>
 <h1>Your scraping code here</h1>
 ```
-<p><strong>Requirements</strong>:
+<strong>Requirements</strong>:
 <ul>
 <li>Minimum 100 FAQ entries for meaningful evaluation</li>
 <li>Diverse topics/categories (at least 5-10 categories)</li>
 <li>Both simple and complex queries</li>
 <li>Include some ambiguous questions that require context</li>
-</ul></p>
+</ul>
 <h2>Your Tasks</h2>
 <h3>1. Build a Semantic Search System</h3>
 <p>Implement a semantic search system that can find relevant FAQ entries given a customer query.</p>
 <p><strong>Requirements</strong>:</p>
-<p>a) <strong>Encode the Knowledge Base</strong>:
+a) <strong>Encode the Knowledge Base</strong>:
 <ul>
 <li>Use a pre-trained sentence transformer model (e.g., `sentence-transformers/all-MiniLM-L6-v2`)</li>
 <li>Generate embeddings for all FAQ questions/answers</li>
 <li>Store embeddings for efficient retrieval</li>
-</ul></p>
-<p>```python
-from sentence_transformers import SentenceTransformer</p>
+</ul>
+```python
+from sentence_transformers import SentenceTransformer
 <p>model = SentenceTransformer('all-MiniLM-L6-v2')
 <h1>Your code here</h1>
 ```</p>
-<p>b) <strong>Implement Efficient Search</strong>:
+b) <strong>Implement Efficient Search</strong>:
 <ul>
 <li>Use FAISS or similar library for fast similarity search</li>
 <li>Implement both cosine similarity and L2 distance metrics</li>
 <li>Support retrieving top-k results</li>
-</ul></p>
-<p>```python
+</ul>
+```python
 import faiss
-import numpy as np</p>
+import numpy as np
 <h1>Build FAISS index</h1>
 dimension = embeddings.shape[1]
 index = faiss.IndexFlatL2(dimension)
 index.add(embeddings)
 ```
-<p>c) <strong>Query Processing</strong>:
+c) <strong>Query Processing</strong>:
 <ul>
 <li>Encode incoming queries using the same model</li>
 <li>Retrieve top-k most similar FAQ entries</li>
 <li>Return results with similarity scores</li>
-</ul></p>
+</ul>
 <h3>2. Implement a Baseline (Keyword Matching)</h3>
 <p>Create a simple baseline using traditional keyword matching to demonstrate the value of semantic search.</p>
-<p><strong>Requirements</strong>:
+<strong>Requirements</strong>:
 <ul>
 <li>Implement TF-IDF with cosine similarity OR BM25</li>
 <li>Use the same knowledge base</li>
 <li>Compare retrieval quality against your semantic approach</li>
-</ul></p>
-<p>```python
+</ul>
+```python
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity</p>
+from sklearn.metrics.pairwise import cosine_similarity
 <h1>Your baseline implementation</h1>
 ```
 <h3>3. Build the Retrieval Mechanism</h3>
 <p>Develop a complete retrieval system that:</p>
-<p>a) <strong>Handles Query Variations</strong>:
+a) <strong>Handles Query Variations</strong>:
 <ul>
 <li>Test with paraphrased queries</li>
 <li>Handle typos and misspellings (optional: add spelling correction)</li>
 <li>Support queries of varying length</li>
-</ul></p>
-<p>b) <strong>Context Filtering</strong>:
+</ul>
+b) <strong>Context Filtering</strong>:
 <ul>
 <li>Implement category-based filtering (if applicable)</li>
 <li>Use confidence thresholds to reject low-quality matches</li>
 <li>Handle "no good match" scenarios gracefully</li>
-</ul></p>
-<p>c) <strong>Re-ranking</strong> (Advanced):
+</ul>
+c) <strong>Re-ranking</strong> (Advanced):
 <ul>
 <li>Optionally implement a re-ranking step using cross-encoders</li>
 <li>This can improve retrieval quality for ambiguous queries</li>
-</ul></p>
+</ul>
 <h3>4. Generate Contextual Responses</h3>
 <p>Use the retrieved context to generate helpful responses.</p>
 <p><strong>Requirements</strong>:</p>
-<p>a) <strong>Template-Based Generation</strong> (Minimum):
+a) <strong>Template-Based Generation</strong> (Minimum):
 <ul>
 <li>Use retrieved FAQ answers directly</li>
 <li>Format responses naturally</li>
 <li>Include confidence indicators</li>
-</ul></p>
-<p>b) <strong>LLM-Based Generation</strong> (Recommended):
+</ul>
+b) <strong>LLM-Based Generation</strong> (Recommended):
 <ul>
 <li>Use a lightweight LLM (via Ollama, HuggingFace, or OpenAI API)</li>
 <li>Provide retrieved context in the prompt</li>
 <li>Generate natural, conversational responses</li>
-</ul></p>
-<p>```python
+</ul>
+```python
 <h1>Example prompt structure</h1>
 def generate<em>response(query, retrieved</em>contexts):
-    prompt = f"""You are a helpful customer service assistant.</p>
+    prompt = f"""You are a helpful customer service assistant.
 <p>Customer Question: {query}</p>
 <p>Relevant Information:
 {retrieved_contexts}</p>
@@ -406,31 +406,31 @@ Do not make up information not present in the context."""</p>
 <p># Call your LLM here
     return response
 ```</p>
-<p>c) <strong>Response Quality</strong>:
+c) <strong>Response Quality</strong>:
 <ul>
 <li>Ensure responses are grounded in retrieved context</li>
 <li>Handle cases where no good match exists</li>
 <li>Provide clear, actionable information</li>
-</ul></p>
+</ul>
 <h3>5. Handle Multi-Turn Conversations</h3>
 <p>Extend your system to maintain context across multiple conversation turns.</p>
 <p><strong>Requirements</strong>:</p>
-<p>a) <strong>Conversation State</strong>:
+a) <strong>Conversation State</strong>:
 <ul>
 <li>Track conversation history</li>
 <li>Maintain context from previous turns</li>
 <li>Update query encoding with conversation context</li>
-</ul></p>
-<p>b) <strong>Context Integration</strong>:
+</ul>
+b) <strong>Context Integration</strong>:
 <ul>
 <li>Combine current query with relevant prior context</li>
 <li>Implement conversation summarization for long dialogues</li>
 <li>Handle follow-up questions ("What about shipping?", "How long does that take?")</li>
-</ul></p>
-<p>c) <strong>Example Multi-Turn Flow</strong>:
+</ul>
+c) <strong>Example Multi-Turn Flow</strong>:
 ```
 User: "I want to return an item"
-Bot: "Our return policy allows returns within 30 days..."</p>
+Bot: "Our return policy allows returns within 30 days..."
 <p>User: "How do I start the process?"
 Bot: [Uses context that this is about returns]</p>
 <p>User: "What about shipping costs?"
@@ -439,31 +439,31 @@ Bot: [Understands this relates to return shipping]
 <h3>6. Evaluate Response Quality</h3>
 <p>Develop comprehensive evaluation metrics for your system.</p>
 <p><strong>Required Metrics</strong>:</p>
-<p>a) <strong>Retrieval Metrics</strong>:
+a) <strong>Retrieval Metrics</strong>:
 <ul>
 <li><strong>Precision@k</strong>: Of the k retrieved documents, how many are relevant?</li>
 <li><strong>Recall@k</strong>: Of all relevant documents, how many are in top-k?</li>
 <li><strong>MRR (Mean Reciprocal Rank)</strong>: Position of first relevant result</li>
 <li>Create a test set with ground-truth relevant FAQs for queries</li>
-</ul></p>
-<p>b) <strong>Response Quality</strong>:
+</ul>
+b) <strong>Response Quality</strong>:
 <ul>
 <li><strong>Semantic Similarity</strong>: Compare generated response to ground truth</li>
 <li><strong>Factual Grounding</strong>: Verify responses don't hallucinate information</li>
 <li><strong>Human Evaluation</strong>: Test on sample queries and manually assess quality</li>
-</ul></p>
-<p>c) <strong>Baseline Comparison</strong>:
+</ul>
+c) <strong>Baseline Comparison</strong>:
 <ul>
 <li>Compare semantic search vs. keyword matching on all metrics</li>
 <li>Use statistical tests to determine significance</li>
 <li>Visualize results with charts/graphs</li>
-</ul></p>
-<p>d) <strong>Error Analysis</strong>:
+</ul>
+d) <strong>Error Analysis</strong>:
 <ul>
 <li>Identify failure modes (when does the system fail?)</li>
 <li>Categorize errors (retrieval failures vs. generation issues)</li>
 <li>Provide examples of good and bad responses</li>
-</ul></p>
+</ul>
 <h3>7. Advanced Features (Optional Bonus)</h3>
 <p>Implement one or more of these for extra credit:</p>
 <ul>
@@ -500,23 +500,23 @@ openai>=0.27.0  # if using OpenAI
 <h1>or use Ollama for local LLMs</h1>
 ```
 <h3>Recommended Models</h3>
-<p><strong>Sentence Encoders</strong> (choose one or compare multiple):
+<strong>Sentence Encoders</strong> (choose one or compare multiple):
 <ul>
 <li>`sentence-transformers/all-MiniLM-L6-v2` (fast, good quality)</li>
 <li>`sentence-transformers/all-mpnet-base-v2` (higher quality)</li>
 <li>`BAAI/bge-small-en-v1.5` (state-of-the-art for retrieval)</li>
 <li>`intfloat/e5-small-v2` (efficient, strong performance)</li>
-</ul></p>
-<p><strong>Cross-Encoders</strong> (for re-ranking):
+</ul>
+<strong>Cross-Encoders</strong> (for re-ranking):
 <ul>
 <li>`cross-encoder/ms-marco-MiniLM-L-6-v2`</li>
-</ul></p>
-<p><strong>Generation Models</strong> (optional):
+</ul>
+<strong>Generation Models</strong> (optional):
 <ul>
 <li>Local: Llama 3 8B via Ollama</li>
 <li>API: OpenAI GPT-3.5-turbo or GPT-4</li>
 <li>HuggingFace: Flan-T5, GPT-2, or similar</li>
-</ul></p>
+</ul>
 <h3>Computational Requirements</h3>
 <ul>
 <li><strong>CPU</strong>: Sufficient for most encoder models with FAISS</li>
@@ -524,7 +524,7 @@ openai>=0.27.0  # if using OpenAI
 <li><strong>Memory</strong>: 8GB+ RAM recommended</li>
 <li><strong>Storage</strong>: ~2GB for models and data</li>
 </ul>
-<p>The entire assignment should run in <strong>Google Colaboratory</strong> with a free tier GPU and is designed to be completable in <strong>1 week</strong> with GenAI assistance.</p>
+The entire assignment should run in <strong>Google Colaboratory</strong> with a free tier GPU and is designed to be completable in <strong>1 week</strong> with GenAI assistance.
 <h2>Deliverables</h2>
 <p>Submit a <strong>Google Colaboratory notebook</strong> that includes:</p>
 <h3>1. Code Implementation (60%)</h3>
@@ -597,7 +597,7 @@ openai>=0.27.0  # if using OpenAI
 <li><strong>Advanced Features</strong> (3 pts): Implementation of optional features</li>
 <li><strong>Novel Insights</strong> (2 pts): Unique observations or improvements</li>
 </ul>
-<p><strong>Total: 100 points</strong></p>
+<strong>Total: 100 points</strong>
 <h3>Grading Rubric</h3>
 <ul>
 <li><strong>A (90-100)</strong>: Exceptional implementation with advanced features, thorough evaluation, and clear documentation</li>
@@ -650,17 +650,9 @@ openai>=0.27.0  # if using OpenAI
 <h3>Key Papers</h3>
 <ol>
 <li><strong>BERT</strong>: Devlin et al. (2018). "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding". <a href="https://arxiv.org/abs/1810.04805" target="_blank">arXiv:1810.04805</a></li>
-</ol>
-<ol>
 <li><strong>Sentence-BERT</strong>: Reimers  |  Gurevych (2019). "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks". <a href="https://arxiv.org/abs/1908.10084" target="_blank">arXiv:1908.10084</a></li>
-</ol>
-<ol>
 <li><strong>RAG</strong>: Lewis et al. (2020). "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks". <a href="https://arxiv.org/abs/2005.11401" target="_blank">arXiv:2005.11401</a></li>
-</ol>
-<ol>
 <li><strong>Dense Passage Retrieval</strong>: Karpukhin et al. (2020). "Dense Passage Retrieval for Open-Domain Question Answering". <a href="https://arxiv.org/abs/2004.04906" target="_blank">arXiv:2004.04906</a></li>
-</ol>
-<ol>
 <li><strong>ColBERT</strong>: Khattab  |  Zaharia (2020). "ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT". <a href="https://arxiv.org/abs/2004.12832" target="_blank">arXiv:2004.12832</a></li>
 </ol>
 <h3>Documentation and Tutorials</h3>
@@ -678,8 +670,11 @@ openai>=0.27.0  # if using OpenAI
 </ul>
 <h3>Datasets</h3>
 <ul>
-<li><strong>HuggingFace Datasets Hub</strong>: <a href="https://huggingface.co/datasets" target="_blank">https://huggingface.co/datasets</a></li>
+<li><strong>HuggingFace Datasets Hub</strong>: <a href="https://huggingface.co/datasets" target="_blank">https://huggingface.co/datasets</a>
+<ul>
 <li>Search for: "customer support", "FAQ", "helpdesk"</li>
+</ul>
+</li>
 <li><strong>Banking77</strong>: <a href="https://huggingface.co/datasets/banking77" target="_blank">https://huggingface.co/datasets/banking77</a></li>
 <li><strong>MS MARCO</strong> (optional, for retrieval practice): <a href="https://microsoft.github.io/msmarco/" target="_blank">https://microsoft.github.io/msmarco/</a></li>
 </ul>
@@ -714,43 +709,43 @@ openai>=0.27.0  # if using OpenAI
 </ol>
 <h3>Before Submission Checklist</h3>
 <ul>
-<li>[ ] Notebook runs completely in a fresh Colab session</li>
-<li>[ ] All required sections are included with markdown explanations</li>
-<li>[ ] Code is well-commented and organized</li>
-<li>[ ] Evaluation metrics are properly implemented and visualized</li>
-<li>[ ] At least 10 diverse examples are included</li>
-<li>[ ] Multi-turn conversation demo is working</li>
-<li>[ ] Baseline comparison is complete with statistical analysis</li>
-<li>[ ] All visualizations are clear and properly labeled</li>
-<li>[ ] No hardcoded paths (use relative paths or automatic downloads)</li>
-<li>[ ] Cell outputs are visible and meaningful</li>
+<li><input type="checkbox" disabled> Notebook runs completely in a fresh Colab session</li>
+<li><input type="checkbox" disabled> All required sections are included with markdown explanations</li>
+<li><input type="checkbox" disabled> Code is well-commented and organized</li>
+<li><input type="checkbox" disabled> Evaluation metrics are properly implemented and visualized</li>
+<li><input type="checkbox" disabled> At least 10 diverse examples are included</li>
+<li><input type="checkbox" disabled> Multi-turn conversation demo is working</li>
+<li><input type="checkbox" disabled> Baseline comparison is complete with statistical analysis</li>
+<li><input type="checkbox" disabled> All visualizations are clear and properly labeled</li>
+<li><input type="checkbox" disabled> No hardcoded paths (use relative paths or automatic downloads)</li>
+<li><input type="checkbox" disabled> Cell outputs are visible and meaningful</li>
 </ul>
 <h2>Academic Integrity</h2>
-<p>You are encouraged to:
+You are encouraged to:
 <ul>
 <li>Use generative AI tools (ChatGPT, Claude, Copilot) to help write code</li>
 <li>Collaborate with classmates on understanding concepts</li>
 <li>Search for tutorials and examples online</li>
 <li>Ask questions in class or office hours</li>
-</ul></p>
-<p>You must:
+</ul>
+You must:
 <ul>
 <li>Write your own analysis and explanations</li>
 <li>Understand every line of code you submit</li>
 <li>Cite any significant code you use from external sources</li>
 <li>Submit your own original work</li>
-</ul></p>
-<p>Violations of academic integrity will result in a failing grade for the assignment and potential course-level consequences.</p>
+</ul>
+Violations of academic integrity will result in a failing grade for the assignment and potential course-level consequences.
 <h2>Questions?</h2>
-<p>If you have questions about the assignment:
+If you have questions about the assignment:
 <ol>
 <li>Check this README thoroughly</li>
 <li>Review the resources and references section</li>
 <li>Post questions in the course forum</li>
 <li>Attend office hours</li>
 <li>Email the instructor/TA with specific questions</li>
-</ol></p>
-<p>Good luck, and have fun building your customer service chatbot!</p>
+</ol>
+Good luck, and have fun building your customer service chatbot!
 <hr>
 <p><em>This assignment is designed to give you hands-on experience with modern NLP techniques used in production systems. The skills you develop here—semantic search, RAG, and evaluation—are directly applicable to real-world AI applications.</em></p>
     </main>

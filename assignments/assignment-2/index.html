@@ -212,18 +212,18 @@
 <h1>Assignment 2: Advanced SPAM Classifier with Multi-Method Comparison</h1>
 <h2>Overview</h2>
 <p>Spam detection is one of the most successful and widely-deployed applications of machine learning. In this assignment, you will build a comprehensive spam classification system that not only achieves high performance but also provides deep insights into what makes spam detection work—and what makes it fail.</p>
-<p>Unlike a simple "build a classifier" task, this assignment requires you to:
+Unlike a simple "build a classifier" task, this assignment requires you to:
 <ol>
 <li><strong>Implement multiple classification approaches</strong> (traditional ML and neural methods)</li>
 <li><strong>Conduct rigorous comparative analysis</strong> across methods</li>
 <li><strong>Perform extensive error analysis</strong> to understand failure modes</li>
 <li><strong>Test adversarial robustness</strong> by trying to fool your own classifier</li>
 <li><strong>Consider real-world deployment constraints</strong> (speed, memory, class imbalance)</li>
-</ol></p>
-<p>This assignment mirrors real-world ML engineering: you'll make architecture decisions, justify trade-offs, and demonstrate that you understand not just how to build models, but why they work.</p>
+</ol>
+This assignment mirrors real-world ML engineering: you'll make architecture decisions, justify trade-offs, and demonstrate that you understand not just how to build models, but why they work.
 <p><strong>Timeline:</strong> This assignment is designed to be completed in <strong>1 week (7 days)</strong> while remaining comprehensive in scope. By using GenAI tools to accelerate implementation, you can focus your time on the deeper analytical work—error analysis, robustness testing, and deriving insights—that separates excellent work from good work.</p>
 <h2>Learning Objectives</h2>
-<p>By completing this assignment, you will:
+By completing this assignment, you will:
 <ul>
 <li>Understand the full pipeline of text classification from feature engineering to deployment</li>
 <li>Compare traditional ML vs. neural approaches on the same task</li>
@@ -231,21 +231,21 @@
 <li>Develop skills in systematic error analysis and debugging ML models</li>
 <li>Think adversarially about model robustness</li>
 <li>Make informed decisions about model selection based on performance/efficiency trade-offs</li>
-</ul></p>
+</ul>
 <h2>Dataset</h2>
-<p>A sample dataset is provided (<a href="training.zip">`training.zip`</a>), consisting of two folders:
+A sample dataset is provided (<a href="training.zip">`training.zip`</a>), consisting of two folders:
 <ul>
 <li><strong>spam/</strong>: Contains spam emails in plain text format.</li>
 <li><strong>ham/</strong>: Contains ham emails in plain text format.</li>
-</ul></p>
-<p>You can use this dataset to develop, train, and test your classifiers. When evaluating your solution, a new dataset—structured in the same way (with "spam" and "ham" folders)—will be used. Your models should generalize well to this unseen data.</p>
-<p><strong>Important Notes:</strong>
+</ul>
+You can use this dataset to develop, train, and test your classifiers. When evaluating your solution, a new dataset—structured in the same way (with "spam" and "ham" folders)—will be used. Your models should generalize well to this unseen data.
+<strong>Important Notes:</strong>
 <ul>
 <li>You may split the provided data however you like (train/val/test)</li>
 <li>You may augment the dataset with external spam datasets (must cite sources)</li>
 <li>Be aware of potential class imbalance and handle it appropriately</li>
 <li>Consider using stratified splitting to maintain class distributions</li>
-</ul></p>
+</ul>
 <h2>Required Components</h2>
 <h3>Part 1: Multiple Classifier Implementations (40 points)</h3>
 <p>You must implement and train <strong>at least three</strong> different classifiers:</p>
@@ -257,19 +257,19 @@ Implement <strong>two</strong> of the following with proper feature engineering:
 <li><strong>Logistic Regression</strong> with engineered features</li>
 <li><strong>Random Forest</strong> with custom feature extraction</li>
 </ul>
-<p>For traditional methods, you must:
+For traditional methods, you must:
 <ul>
 <li>Document your feature engineering choices (TF-IDF parameters, n-grams, custom features)</li>
 <li>Explain preprocessing decisions (lowercasing, stemming, stop words, etc.)</li>
 <li>Justify hyperparameter selections</li>
-</ul></p>
-<p><strong>Example features to consider:</strong>
+</ul>
+<strong>Example features to consider:</strong>
 <ul>
 <li>TF-IDF vectors (unigrams, bigrams, trigrams)</li>
 <li>Custom features: email length, number of URLs, exclamation marks, ALL CAPS ratio</li>
 <li>Domain-specific features: sender patterns, header information</li>
 <li>Character-level features for obfuscated spam</li>
-</ul></p>
+</ul>
 <h4>2. Neural/Transformer-Based Model (15 points)</h4>
 Implement at least one neural approach:
 <ul>
@@ -278,13 +278,13 @@ Implement at least one neural approach:
 <li><strong>RoBERTa</strong> or other transformer variant</li>
 <li><strong>Custom neural architecture</strong> (LSTM/GRU with embeddings)</li>
 </ul>
-<p>For neural methods, you must:
+For neural methods, you must:
 <ul>
 <li>Use appropriate pre-trained models and fine-tune on spam data</li>
 <li>Document training procedures (learning rate, epochs, batch size)</li>
 <li>Handle sequence length appropriately (truncation/padding)</li>
 <li>Monitor for overfitting (training vs. validation curves)</li>
-</ul></p>
+</ul>
 <h4>3. Ensemble Method (10 points)</h4>
 Create an ensemble that combines predictions from your best models:
 <ul>
@@ -292,7 +292,7 @@ Create an ensemble that combines predictions from your best models:
 <li><strong>Stacking</strong> (meta-classifier on top of base models)</li>
 <li><strong>Boosting</strong> (if using multiple traditional classifiers)</li>
 </ul>
-<p>Document your ensemble strategy and show whether it improves over individual models.</p>
+Document your ensemble strategy and show whether it improves over individual models.
 <h3>Part 2: Comprehensive Evaluation (25 points)</h3>
 <p>For each classifier, you must report:</p>
 <h4>Quantitative Metrics (15 points)</h4>
@@ -304,7 +304,7 @@ Create an ensemble that combines predictions from your best models:
 <li><strong>AUC-ROC</strong>: Area under the receiver operating characteristic curve</li>
 <li><strong>Confusion Matrix</strong>: Visualize true positives, false positives, true negatives, false negatives</li>
 </ul>
-<p><strong>Create a comparison table</strong> showing all metrics for all classifiers.</p>
+<strong>Create a comparison table</strong> showing all metrics for all classifiers.
 <h4>Computational Efficiency (5 points)</h4>
 For each model, measure and report:
 <ul>
@@ -313,7 +313,7 @@ For each model, measure and report:
 <li><strong>Model size</strong>: Memory footprint of saved model</li>
 <li><strong>Throughput</strong>: Emails classified per second</li>
 </ul>
-<p>This helps understand deployment trade-offs.</p>
+This helps understand deployment trade-offs.
 <h4>Statistical Significance (5 points)</h4>
 <ul>
 <li>Use <strong>cross-validation</strong> (at least 5-fold) to get confidence intervals</li>
@@ -325,21 +325,21 @@ For each model, measure and report:
 <h4>Systematic Error Categorization (10 points)</h4>
 <ol>
 <li><strong>Identify failure cases</strong>: Find at least 20 misclassified emails (10 false positives, 10 false negatives)</li>
-<li><strong>Categorize errors</strong>: Group them into patterns:</li>
-</ol>
+<li><strong>Categorize errors</strong>: Group them into patterns:
 <ul>
 <li>False Positives: Legitimate emails classified as spam (e.g., promotional emails, newsletters)</li>
 <li>False Negatives: Spam that slipped through (e.g., sophisticated phishing, image-based spam)</li>
 </ul>
-<ol>
-<li><strong>Analyze patterns</strong>: What do misclassified emails have in common?</li>
-</ol>
+</li>
+<li><strong>Analyze patterns</strong>: What do misclassified emails have in common?
 <ul>
 <li>Vocabulary overlap between spam and ham</li>
 <li>Short emails with little context</li>
 <li>Emails with unusual formatting</li>
 <li>Multilingual content</li>
 </ul>
+</li>
+</ol>
 <h4>Comparative Error Analysis (5 points)</h4>
 <ul>
 <li>Do different models make different mistakes?</li>
@@ -360,7 +360,7 @@ Manually craft at least <strong>5 emails</strong> that:
 <li>Should be classified as spam but try to evade detection</li>
 <li>Use techniques spammers actually use: character substitution (V1agra), adding legitimate text, etc.</li>
 </ul>
-<p>Test these on all your classifiers. Which models are most robust?</p>
+Test these on all your classifiers. Which models are most robust?
 <h4>Robustness Analysis (5 points)</h4>
 Test your classifier against:
 <ul>
@@ -369,7 +369,7 @@ Test your classifier against:
 <li><strong>Synonym replacement</strong>: Replace words with synonyms</li>
 <li><strong>Content injection</strong>: Add benign text to spam emails</li>
 </ul>
-<p>How much does performance degrade? Which models are most robust?</p>
+How much does performance degrade? Which models are most robust?
 <h3>Part 5: Real-World Considerations (5 points)</h3>
 <p>Discuss the following:</p>
 <h4>Class Imbalance (2 points)</h4>
@@ -385,7 +385,7 @@ Given different constraints, which model would you choose?
 <li><strong>Email server</strong>: Can use larger models, needs high throughput</li>
 <li><strong>Maximum accuracy</strong>: No constraints, best possible performance</li>
 </ul>
-<p>Justify your recommendations with evidence from your experiments.</p>
+Justify your recommendations with evidence from your experiments.
 <h2>Deliverables</h2>
 <p>Submit a <strong>single Jupyter notebook</strong> that includes:</p>
 <h3>1. Code Implementation</h3>
@@ -453,45 +453,56 @@ For each classifier:
 <p>Your assignment will be graded according to the following breakdown:</p>
 <h3>Technical Implementation (40 points)</h3>
 <ul>
-<li><strong>Traditional ML Models (15 points)</strong></li>
+<li><strong>Traditional ML Models (15 points)</strong>
+<ul>
 <li>Two different traditional ML classifiers properly implemented (8 pts)</li>
 <li>Proper feature engineering documented and justified (4 pts)</li>
 <li>Appropriate hyperparameter tuning demonstrated (3 pts)</li>
 </ul>
+</li>
+<li><strong>Neural/Transformer Model (15 points)</strong>
 <ul>
-<li><strong>Neural/Transformer Model (15 points)</strong></li>
 <li>Correct implementation of fine-tuned transformer or neural model (8 pts)</li>
 <li>Proper training procedure with validation monitoring (4 pts)</li>
 <li>Handling of sequence length and preprocessing (3 pts)</li>
 </ul>
+</li>
+<li><strong>Ensemble Method (10 points)</strong>
 <ul>
-<li><strong>Ensemble Method (10 points)</strong></li>
 <li>Ensemble combines multiple models appropriately (5 pts)</li>
 <li>Improvement over individual models demonstrated (5 pts)</li>
 </ul>
+</li>
+</ul>
 <h3>Evaluation and Analysis (45 points)</h3>
 <ul>
-<li><strong>Quantitative Metrics (15 points)</strong></li>
+<li><strong>Quantitative Metrics (15 points)</strong>
+<ul>
 <li>All required metrics computed correctly (5 pts)</li>
 <li>Clear comparison table across all models (5 pts)</li>
 <li>Proper visualizations (confusion matrices, ROC curves) (5 pts)</li>
 </ul>
+</li>
+<li><strong>Computational Efficiency (5 points)</strong>
 <ul>
-<li><strong>Computational Efficiency (5 points)</strong></li>
 <li>Training time, inference time, and model size measured (3 pts)</li>
 <li>Trade-offs discussed appropriately (2 pts)</li>
 </ul>
+</li>
+<li><strong>Statistical Rigor (5 points)</strong>
 <ul>
-<li><strong>Statistical Rigor (5 points)</strong></li>
 <li>Cross-validation performed correctly (3 pts)</li>
 <li>Statistical significance testing (2 pts)</li>
 </ul>
+</li>
+<li><strong>Error Analysis (20 points)</strong>
 <ul>
-<li><strong>Error Analysis (20 points)</strong></li>
 <li>Systematic categorization of at least 20 failure cases (8 pts)</li>
 <li>Insightful patterns identified in errors (6 pts)</li>
 <li>Comparative analysis across models (3 pts)</li>
 <li>Feature importance analysis (3 pts)</li>
+</ul>
+</li>
 </ul>
 <h3>Adversarial Testing and Robustness (10 points)</h3>
 <ul>
@@ -519,16 +530,16 @@ For each classifier:
 <li><strong>Deployment-ready code</strong> with API endpoint or containerization (+5 pts)</li>
 <li><strong>Interactive demo</strong> or visualization tool (+3 pts)</li>
 </ul>
-<p>Note: Maximum score is capped at 110/100.</p>
+Note: Maximum score is capped at 110/100.
 <h2>Evaluation Metrics</h2>
 <p>While your grade is based on the rubric above, your model's performance will also be tested on a held-out dataset. This serves as a sanity check—if your models perform poorly (e.g., below 0.85 AUC), you may lose points even if other components are complete.</p>
-<p><strong>Expected Performance Benchmarks:</strong>
+<strong>Expected Performance Benchmarks:</strong>
 <ul>
 <li><strong>Minimum acceptable</strong>: AUC > 0.85 on held-out data</li>
 <li><strong>Good performance</strong>: AUC > 0.92 on held-out data</li>
 <li><strong>Excellent performance</strong>: AUC > 0.96 on held-out data</li>
-</ul></p>
-<p>The following code can be used to evaluate your classifiers during development:</p>
+</ul>
+The following code can be used to evaluate your classifiers during development:
 <p>```python
 import os
 import zipfile
@@ -599,7 +610,7 @@ While this assignment is comprehensive in scope, it's designed to be completable
 <li><strong>Day 6: Adversarial Testing  |  Real-World Considerations</strong> - Create adversarial examples, test robustness, discuss class imbalance and deployment scenarios</li>
 <li><strong>Day 7: Documentation  |  Polish</strong> - Write markdown sections, verify code runs cleanly, final review</li>
 </ul>
-<p><strong>Key to Success:</strong> Use GenAI coding assistants to accelerate boilerplate code and feature engineering, but invest your time in understanding results, analyzing errors, and writing insightful analysis.</p>
+<strong>Key to Success:</strong> Use GenAI coding assistants to accelerate boilerplate code and feature engineering, but invest your time in understanding results, analyzing errors, and writing insightful analysis.
 <h3>Use Version Control</h3>
 <ul>
 <li>Save different model versions as you experiment.</li>
@@ -608,22 +619,22 @@ While this assignment is comprehensive in scope, it's designed to be completable
 </ul>
 <h3>Leverage GenAI Tools Effectively (Critical for 1-Week Timeline)</h3>
 Since this assignment must be completed in 7 days, <strong>using AI coding assistants is essential</strong> to accelerate implementation while you focus on the analytical components:
-<p><strong>DO use GenAI for:</strong>
+<strong>DO use GenAI for:</strong>
 <ul>
 <li><strong>Boilerplate code</strong>: Data loading, train/test splits, metric computation</li>
 <li><strong>Feature engineering pipelines</strong>: TF-IDF setup, feature extraction utilities</li>
 <li><strong>Model scaffolding</strong>: Training loops, validation monitoring, hyperparameter grids</li>
 <li><strong>Visualization code</strong>: Confusion matrices, ROC curves, comparison tables</li>
 <li><strong>Debugging</strong>: Finding issues in data processing or model output shape mismatches</li>
-</ul></p>
-<p><strong>DON'T use GenAI as a shortcut for:</strong>
+</ul>
+<strong>DON'T use GenAI as a shortcut for:</strong>
 <ul>
 <li><strong>Understanding results</strong>: Always interpret what your models are doing</li>
 <li><strong>Error analysis</strong>: Manually examine misclassified examples and identify patterns</li>
 <li><strong>Design decisions</strong>: Think critically about which models/features to try and why</li>
 <li><strong>Documentation</strong>: Write your own explanations of methodology and findings</li>
-</ul></p>
-<p><strong>Workflow:</strong> Generate code scaffolds with GenAI, then spend your time on data exploration, result interpretation, error categorization, and insightful analysis. The best submissions show deep understanding of the <em>why</em>, not just the <em>how</em>.</p>
+</ul>
+<strong>Workflow:</strong> Generate code scaffolds with GenAI, then spend your time on data exploration, result interpretation, error categorization, and insightful analysis. The best submissions show deep understanding of the <em>why</em>, not just the <em>how</em>.
 <p>The goal is to learn ML concepts deeply while shipping a complete, well-analyzed project in 7 days.</p>
 <h3>Feature Engineering Matters</h3>
 For traditional ML models:
@@ -704,7 +715,7 @@ If your models aren't performing well:
 <li><a href="https://www.cs.cmu.edu/~enron/" target="_blank">Enron Email Dataset</a></li>
 <li><a href="https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset" target="_blank">SMS Spam Collection</a></li>
 </ul>
-<p>If you use external datasets, you must cite them clearly in your notebook.</p>
+If you use external datasets, you must cite them clearly in your notebook.
 <h2>Submission Guidelines</h2>
 <h3>What to Submit</h3>
 Submit <strong>one Jupyter notebook</strong> (.ipynb file) via the course submission system.
@@ -721,69 +732,63 @@ Your notebook must:
 Structure your notebook with clear sections:
 ```
 <ol>
-<li>Introduction and Setup</li>
-</ol>
+<li>Introduction and Setup
 <ul>
 <li>Import libraries</li>
 <li>Load data</li>
 <li>Exploratory data analysis</li>
 </ul>
-<ol>
-<li>Data Preprocessing</li>
-</ol>
+</li>
+<li>Data Preprocessing
 <ul>
 <li>Train/val/test split</li>
 <li>Text cleaning functions</li>
 <li>Feature engineering utilities</li>
 </ul>
-<ol>
-<li>Model Implementations</li>
-</ol>
+</li>
+<li>Model Implementations
 <ul>
 <li>Traditional ML models (separate subsections for each)</li>
 <li>Neural model (BERT/DistilBERT)</li>
 <li>Ensemble method</li>
 </ul>
-<ol>
-<li>Evaluation</li>
-</ol>
+</li>
+<li>Evaluation
 <ul>
 <li>Metrics computation</li>
 <li>Comparison tables</li>
 <li>Visualizations</li>
 <li>Statistical tests</li>
 </ul>
-<ol>
-<li>Error Analysis</li>
-</ol>
+</li>
+<li>Error Analysis
 <ul>
 <li>Failure case examination</li>
 <li>Pattern identification</li>
 <li>Feature importance</li>
 </ul>
-<ol>
-<li>Adversarial Testing</li>
-</ol>
+</li>
+<li>Adversarial Testing
 <ul>
 <li>Adversarial examples</li>
 <li>Robustness tests</li>
 </ul>
-<ol>
-<li>Discussion and Conclusions</li>
-</ol>
+</li>
+<li>Discussion and Conclusions
 <ul>
 <li>Model comparison</li>
 <li>Real-world considerations</li>
 <li>Reflection</li>
 </ul>
-<ol>
-<li>References</li>
-</ol>
+</li>
+<li>References
 <ul>
 <li>Papers cited</li>
 <li>Datasets used</li>
 <li>Resources consulted</li>
 </ul>
+</li>
+</ol>
 ```
 <h3>Formatting</h3>
 <ul>
@@ -799,63 +804,63 @@ Name your file: `LastName<em>FirstName</em>Assignment2.ipynb`
 <h3>Pre-Submission Checklist</h3>
 Before submitting, verify:
 <ul>
-<li>[ ] Notebook runs completely in a fresh Colab instance</li>
-<li>[ ] All required components are implemented (3+ models, evaluation, error analysis, adversarial testing)</li>
-<li>[ ] All metrics are reported for all models</li>
-<li>[ ] At least 20 error cases are analyzed</li>
-<li>[ ] Markdown documentation is thorough and well-written</li>
-<li>[ ] Code is clean and readable</li>
-<li>[ ] Visualizations are clear and professional</li>
-<li>[ ] Random seeds are set for reproducibility</li>
-<li>[ ] Citations are included for external resources</li>
-<li>[ ] File is named correctly</li>
+<li><input type="checkbox" disabled> Notebook runs completely in a fresh Colab instance</li>
+<li><input type="checkbox" disabled> All required components are implemented (3+ models, evaluation, error analysis, adversarial testing)</li>
+<li><input type="checkbox" disabled> All metrics are reported for all models</li>
+<li><input type="checkbox" disabled> At least 20 error cases are analyzed</li>
+<li><input type="checkbox" disabled> Markdown documentation is thorough and well-written</li>
+<li><input type="checkbox" disabled> Code is clean and readable</li>
+<li><input type="checkbox" disabled> Visualizations are clear and professional</li>
+<li><input type="checkbox" disabled> Random seeds are set for reproducibility</li>
+<li><input type="checkbox" disabled> Citations are included for external resources</li>
+<li><input type="checkbox" disabled> File is named correctly</li>
 </ul>
 <h3>Deadline</h3>
 <strong>One week from assignment release</strong> (7 calendar days)
 <p>Late submissions will be penalized according to the course late policy.</p>
 <h2>Academic Integrity</h2>
-<p>While you are encouraged to use AI coding assistants and discuss concepts with peers:
+While you are encouraged to use AI coding assistants and discuss concepts with peers:
 <ul>
 <li><strong>Your submission must be your own work</strong></li>
 <li><strong>Understand every line of code</strong> you submit</li>
 <li><strong>Do not copy code</strong> from other students or online sources without attribution</li>
 <li><strong>Cite all external resources</strong> (papers, datasets, significant code snippets)</li>
-</ul></p>
-<p>You may be asked to explain your implementation decisions in office hours or during grading. Make sure you can justify your choices.</p>
+</ul>
+You may be asked to explain your implementation decisions in office hours or during grading. Make sure you can justify your choices.
 <h2>Getting Help</h2>
-<p>If you're stuck:
+If you're stuck:
 <ol>
 <li><strong>Review the tips and resources</strong> in this document</li>
 <li><strong>Ask specific questions</strong> in office hours or on the course forum</li>
 <li><strong>Debug systematically</strong>: Isolate the problem, test components individually</li>
 <li><strong>Start simple</strong>: Get a basic version working before adding complexity</li>
-</ol></p>
-<p>Remember: The goal is to learn about text classification, evaluation, and error analysis. Don't get lost in trying to achieve the highest possible score—focus on understanding the concepts deeply.</p>
+</ol>
+Remember: The goal is to learn about text classification, evaluation, and error analysis. Don't get lost in trying to achieve the highest possible score—focus on understanding the concepts deeply.
 <h2>Final Notes</h2>
-<p>This assignment is designed to be challenging but achievable <strong>within 1 week</strong>. You're expected to:
+This assignment is designed to be challenging but achievable <strong>within 1 week</strong>. You're expected to:
 <ul>
 <li>Think critically about model selection and evaluation</li>
 <li>Go beyond "does it work?" to "why does it work?"</li>
 <li>Consider real-world deployment constraints</li>
 <li>Demonstrate both technical skills and analytical thinking</li>
 <li><strong>Use GenAI tools strategically</strong> to manage time constraints without sacrificing rigor</li>
-</ul></p>
-<p>The best submissions will show:
+</ul>
+The best submissions will show:
 <ul>
 <li>Deep understanding of classification fundamentals</li>
 <li>Thoughtful comparison across methods</li>
 <li>Insightful error analysis</li>
 <li>Professional code and documentation</li>
 <li>Strategic use of GenAI to accelerate implementation while maintaining analytical depth</li>
-</ul></p>
-<p><strong>Remember:</strong> The 7-day timeline is realistic because:
+</ul>
+<strong>Remember:</strong> The 7-day timeline is realistic because:
 <ol>
 <li>GenAI can generate boilerplate code (training loops, metrics, visualizations)</li>
 <li>DistilBERT trains faster than BERT-base</li>
 <li>You can run many experiments in parallel on Colab's GPUs</li>
 <li>The most valuable insights come from <em>analysis</em>, not <em>implementation time</em></li>
-</ol></p>
-<p>Good luck, and enjoy building your spam classifier in a week!</p>
+</ol>
+Good luck, and enjoy building your spam classifier in a week!
     </main>
 
     <footer>

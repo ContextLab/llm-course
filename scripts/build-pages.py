@@ -152,42 +152,117 @@ def convert_table_block(lines):
     return "\n".join(html)
 
 
-def convert_ordered_lists(html):
-    """Convert markdown numbered lists to HTML ordered lists."""
+def convert_lists(html):
+    """Convert markdown lists to HTML with proper nesting support."""
     lines = html.split("\n")
     result = []
-    in_list = False
+    stack = []  # [(indent, list_type, has_open_li)]
 
-    for line in lines:
-        # Match lines starting with number and period (1. 2. etc)
-        match = re.match(r"^(\d+)\.\s+(.+)$", line.strip())
+    def get_indent(line):
+        return len(line) - len(line.lstrip())
 
-        if match:
-            if not in_list:
-                result.append("<ol>")
-                in_list = True
-            result.append(f"<li>{match.group(2)}</li>")
+    def parse_list_item(line):
+        stripped = line.lstrip()
+        indent = get_indent(line)
+
+        checkbox_match = re.match(r"^- \[([ xX])\]\s+(.+)$", stripped)
+        if checkbox_match:
+            checked = checkbox_match.group(1).lower() == "x"
+            content = checkbox_match.group(2)
+            checkbox_html = (
+                f'<input type="checkbox" disabled{" checked" if checked else ""}> '
+            )
+            return indent, "ul", checkbox_html + content
+
+        ordered_match = re.match(r"^(\d+)\.\s+(.+)$", stripped)
+        if ordered_match:
+            return indent, "ol", ordered_match.group(2)
+
+        unordered_match = re.match(r"^[-*]\s+(.+)$", stripped)
+        if unordered_match:
+            return indent, "ul", unordered_match.group(1)
+
+        return -1, "", ""
+
+    def close_to_indent(target_indent):
+        while stack and stack[-1][0] >= target_indent:
+            _, list_type, has_open_li = stack.pop()
+            if has_open_li:
+                result.append("</li>")
+            result.append(f"</{list_type}>")
+
+    def peek_next_list_item(start_idx):
+        for j in range(start_idx, len(lines)):
+            if lines[j].strip():
+                return parse_list_item(lines[j])
+        return -1, "", ""
+
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        indent, list_type, content = parse_list_item(line)
+
+        if list_type:
+            # Check if next line is a nested list
+            next_indent, next_type, _ = peek_next_list_item(i + 1)
+            has_nested = next_type and next_indent > indent
+
+            # Close lists at same or higher indent with different type
+            while stack and stack[-1][0] >= indent:
+                if stack[-1][0] == indent and stack[-1][1] == list_type:
+                    # Same level, same type - just close the previous li
+                    if stack[-1][2]:
+                        result.append("</li>")
+                        stack[-1] = (stack[-1][0], stack[-1][1], False)
+                    break
+                # Different type or higher indent - close completely
+                _, old_type, old_has_li = stack.pop()
+                if old_has_li:
+                    result.append("</li>")
+                result.append(f"</{old_type}>")
+
+            # Open new list if needed
+            if not stack or stack[-1][0] < indent:
+                result.append(f"<{list_type}>")
+                stack.append((indent, list_type, False))
+
+            # Write the li (leave open if nested content follows)
+            if has_nested:
+                result.append(f"<li>{content}")
+                stack[-1] = (stack[-1][0], stack[-1][1], True)
+            else:
+                result.append(f"<li>{content}</li>")
+
+            i += 1
         else:
-            if in_list:
-                result.append("</ol>")
-                in_list = False
+            # Not a list item
+            if line.strip():
+                close_to_indent(0)
             result.append(line)
+            i += 1
 
-    if in_list:
-        result.append("</ol>")
-
+    close_to_indent(0)
     return "\n".join(result)
 
 
+def convert_ordered_lists(html):
+    """Legacy function - now handled by convert_lists."""
+    return html
+
+
 def convert_unordered_lists(html):
-    """Convert markdown unordered lists to HTML."""
+    """Legacy function - now handled by convert_lists."""
     lines = html.split("\n")
     in_list = False
     result = []
 
     for line in lines:
         stripped = line.strip()
-        if stripped.startswith("- "):
+        # Skip if already processed (contains <li>)
+        if "<li>" in line or "<ul>" in line or "<ol>" in line:
+            result.append(line)
+            continue
+        if stripped.startswith("- ") and not stripped.startswith("- ["):
             if not in_list:
                 result.append("<ul>")
                 in_list = True
@@ -219,18 +294,43 @@ def wrap_paragraphs(html):
         if not p:
             continue
 
-        # Don't wrap if already an HTML element
-        if (
+        starts_with_tag = (
             p.startswith("<h")
+            or p.startswith("</h")
             or p.startswith("<ul")
+            or p.startswith("</ul")
             or p.startswith("<ol")
+            or p.startswith("</ol")
+            or p.startswith("<li")
+            or p.startswith("</li")
             or p.startswith("<table")
+            or p.startswith("</table")
+            or p.startswith("<thead")
+            or p.startswith("</thead")
+            or p.startswith("<tbody")
+            or p.startswith("</tbody")
+            or p.startswith("<tr")
+            or p.startswith("</tr")
             or p.startswith("<hr")
             or p.startswith("<div")
+            or p.startswith("</div")
             or p.startswith("<p")
-        ):
-            formatted.append(p)
-        elif p.startswith("<li"):
+            or p.startswith("</p")
+            or p.startswith("<input")
+        )
+
+        contains_block_html = (
+            "<ul>" in p
+            or "</ul>" in p
+            or "<ol>" in p
+            or "</ol>" in p
+            or "<li>" in p
+            or "</li>" in p
+            or "<table>" in p
+            or "</table>" in p
+        )
+
+        if starts_with_tag or contains_block_html:
             formatted.append(p)
         else:
             formatted.append(f"<p>{p}</p>")
@@ -245,12 +345,10 @@ def parse_markdown_to_html(markdown_text):
     html = convert_latex_href(html)
     html = convert_latex_table(html)
 
-    # Convert markdown elements
     html = convert_headers(html)
     html = convert_inline_formatting(html)
     html = convert_tables(html)
-    html = convert_ordered_lists(html)
-    html = convert_unordered_lists(html)
+    html = convert_lists(html)
     html = convert_horizontal_rules(html)
     html = convert_links(html)
     html = wrap_paragraphs(html)
