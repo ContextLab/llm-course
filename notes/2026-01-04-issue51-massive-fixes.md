@@ -322,4 +322,29 @@ Based on explore agent findings:
 | 13 | TOPIC MODELING: Fix inter-topic distance | **completed** |
 | 14 | TOPIC MODELING: Fix top words slider | **completed** |
 | 15 | TOPIC MODELING: Add close button for plots | **completed** |
-| 16 | Create autograder scripts | pending |
+| 16 | Create autograder scripts | **completed** |
+
+### 2026-01-04 14:23 (Session 8 - Current)
+
+**COMPLETED:**
+
+1. **Autograder scripts committed and pushed** to `ContextLabCourses/teaching-tools`:
+   - Commit: `f912440`
+   - Location: `llm-course/assignments/`
+   - Files created:
+     - `base_autograder.py` - Base class with notebook execution, LLM evaluation
+     - `__init__.py` - Package init
+     - `README.md` - Usage documentation
+     - `eliza/autograde.py` - Assignment 1 grader
+     - `spam-classifier/autograde.py` - Assignment 2 grader
+     - `embeddings/autograde.py` - Assignment 3 grader
+     - `customer-service-bot/autograde.py` - Assignment 4 grader
+     - `gpt/autograde.py` - Assignment 5 grader
+     - `final-project/autograde.py` - Final project grader
+
+**ALL HIGH-PRIORITY TASKS COMPLETE**
+
+**REMAINING (LOW PRIORITY):**
+- Slide cleanup weeks 2-10 (remove emojis, simplify)
+- Canvas content drafts
+- Other minor demo polish items
