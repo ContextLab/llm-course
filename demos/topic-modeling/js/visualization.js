@@ -395,6 +395,11 @@ export class TopicVisualizer {
     }
 
     showTopicWordBars(topicIdx, results) {
+        const topicDetails = document.getElementById('topic-details');
+        if (topicDetails) {
+            topicDetails.style.display = 'block';
+        }
+        
         const topWordsCount = parseInt(document.getElementById('top-words')?.value || 10);
         const topic = results.topics[topicIdx].slice(0, topWordsCount);
 

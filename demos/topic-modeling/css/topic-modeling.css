@@ -452,9 +452,32 @@
     border-radius: 12px;
 }
 
+.topic-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
 .topic-details h3 {
     color: var(--primary-color);
-    margin-bottom: 15px;
+    margin-bottom: 0;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: var(--topic-transition);
+}
+
+.close-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
 }
 
 /* Statistics Panel */

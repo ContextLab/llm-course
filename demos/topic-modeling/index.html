@@ -166,7 +166,10 @@
                     <p class="subtitle">Topic similarity in 2D space using PCA</p>
                     <div id="intertopic-plot" class="plot-container"></div>
                     <div id="topic-details" class="topic-details">
-                        <h3>Topic Details</h3>
+                        <div class="topic-details-header">
+                            <h3>Topic Details</h3>
+                            <button id="close-topic-details" class="close-btn" aria-label="Close topic details">&times;</button>
+                        </div>
                         <div id="topic-words-bars"></div>
                     </div>
                 </div>
@@ -250,6 +253,13 @@
             // Export
             document.getElementById('export-topics-btn').addEventListener('click', exportTopics);
             document.getElementById('export-viz-btn').addEventListener('click', exportVisualization);
+
+            document.getElementById('close-topic-details').addEventListener('click', () => {
+                const topicDetails = document.getElementById('topic-details');
+                const barsContainer = document.getElementById('topic-words-bars');
+                barsContainer.innerHTML = '';
+                topicDetails.style.display = 'none';
+            });
         }
 
         function setupRangeSlider(sliderId, valueId) {
