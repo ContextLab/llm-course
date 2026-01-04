@@ -14,6 +14,30 @@ export class TopicVisualizer {
     }
 
     /**
+     * Get theme-aware Plotly layout options
+     */
+    getPlotlyTheme() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        return {
+            paper_bgcolor: isDark ? '#1e1e2e' : '#ffffff',
+            plot_bgcolor: isDark ? '#1e1e2e' : '#ffffff',
+            font: {
+                color: isDark ? '#e0e0e0' : '#333333'
+            },
+            xaxis: {
+                gridcolor: isDark ? '#3a3a4a' : '#e0e0e0',
+                linecolor: isDark ? '#3a3a4a' : '#e0e0e0',
+                tickfont: { color: isDark ? '#e0e0e0' : '#333333' }
+            },
+            yaxis: {
+                gridcolor: isDark ? '#3a3a4a' : '#e0e0e0',
+                linecolor: isDark ? '#3a3a4a' : '#e0e0e0',
+                tickfont: { color: isDark ? '#e0e0e0' : '#333333' }
+            }
+        };
+    }
+
+    /**
      * Render overview with topic cards
      */
     renderOverview(results) {
@@ -215,11 +239,15 @@ export class TopicVisualizer {
             }
         }];
 
+        const theme = this.getPlotlyTheme();
         const layout = {
             title: `Topic Distribution: ${docTitle}`,
-            xaxis: { title: 'Topic' },
-            yaxis: { title: 'Probability', range: [0, 1] },
-            height: 400
+            xaxis: { title: 'Topic', ...theme.xaxis },
+            yaxis: { title: 'Probability', range: [0, 1], ...theme.yaxis },
+            height: 400,
+            paper_bgcolor: theme.paper_bgcolor,
+            plot_bgcolor: theme.plot_bgcolor,
+            font: theme.font
         };
 
         Plotly.newPlot('doc-topic-plot', data, layout, { responsive: true });
@@ -279,13 +307,17 @@ export class TopicVisualizer {
             hovertemplate: '<b>%{text}</b><br>Size: %{marker.size:.1f}<extra></extra>'
         };
 
+        const theme = this.getPlotlyTheme();
         const layout = {
             title: 'Inter-topic Distance Map',
-            xaxis: { title: 'PC1', zeroline: false, showgrid: false },
-            yaxis: { title: 'PC2', zeroline: false, showgrid: false },
+            xaxis: { title: 'PC1', zeroline: false, showgrid: false, ...theme.xaxis },
+            yaxis: { title: 'PC2', zeroline: false, showgrid: false, ...theme.yaxis },
             height: 600,
             hovermode: 'closest',
-            showlegend: false
+            showlegend: false,
+            paper_bgcolor: theme.paper_bgcolor,
+            plot_bgcolor: theme.plot_bgcolor,
+            font: theme.font
         };
 
         Plotly.newPlot('intertopic-plot', [trace], layout, { responsive: true });
@@ -380,12 +412,16 @@ export class TopicVisualizer {
             }
         };
 
+        const theme = this.getPlotlyTheme();
         const layout = {
             title: `Top Words for Topic ${topicIdx + 1}`,
-            xaxis: { title: 'Probability' },
-            yaxis: { title: '' },
+            xaxis: { title: 'Probability', ...theme.xaxis },
+            yaxis: { title: '', ...theme.yaxis },
             height: 400,
-            margin: { l: 150 }
+            margin: { l: 150 },
+            paper_bgcolor: theme.paper_bgcolor,
+            plot_bgcolor: theme.plot_bgcolor,
+            font: theme.font
         };
 
         Plotly.newPlot('topic-words-bars', [trace], layout, { responsive: true });

@@ -226,18 +226,18 @@
                     if (result.pass) {
                         const successMsg = document.createElement('div');
                         successMsg.className = 'success';
-                        successMsg.textContent = `✓ ${result.message || 'Validation passed'}`;
+                        successMsg.textContent = `PASS: ${result.message || 'Validation passed'}`;
                         exchangeDiv.appendChild(successMsg);
                     } else if (result.warning) {
                         const warnMsg = document.createElement('div');
                         warnMsg.className = 'warning';
-                        warnMsg.textContent = `⚠ ${result.message}`;
+                        warnMsg.textContent = `WARN: ${result.message}`;
                         exchangeDiv.appendChild(warnMsg);
                         hasWarning = true;
                     } else {
                         const errorMsg = document.createElement('div');
                         errorMsg.className = 'error';
-                        errorMsg.textContent = `✗ ${result.message}`;
+                        errorMsg.textContent = `FAIL: ${result.message}`;
                         exchangeDiv.appendChild(errorMsg);
                         allPass = false;
 

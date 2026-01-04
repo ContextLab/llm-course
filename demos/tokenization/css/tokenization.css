@@ -329,14 +329,24 @@ button:disabled {
     box-shadow: var(--token-shadow-md);
 }
 
-.token-0 { background: #fef3c7; border: 1px solid #fbbf24; }
-.token-1 { background: #dbeafe; border: 1px solid #60a5fa; }
-.token-2 { background: #fce7f3; border: 1px solid #f472b6; }
-.token-3 { background: #dcfce7; border: 1px solid #4ade80; }
-.token-4 { background: #e0e7ff; border: 1px solid #818cf8; }
-.token-5 { background: #fed7aa; border: 1px solid #fb923c; }
-.token-6 { background: #e9d5ff; border: 1px solid #c084fc; }
-.token-7 { background: #ccfbf1; border: 1px solid #2dd4bf; }
+/* Token colors with dark mode support */
+.token-0 { background: #fbbf24; border: 1px solid #f59e0b; color: #1f2937; }
+.token-1 { background: #60a5fa; border: 1px solid #3b82f6; color: #1f2937; }
+.token-2 { background: #f472b6; border: 1px solid #ec4899; color: #1f2937; }
+.token-3 { background: #4ade80; border: 1px solid #22c55e; color: #1f2937; }
+.token-4 { background: #818cf8; border: 1px solid #6366f1; color: #1f2937; }
+.token-5 { background: #fb923c; border: 1px solid #f97316; color: #1f2937; }
+.token-6 { background: #c084fc; border: 1px solid #a855f7; color: #1f2937; }
+.token-7 { background: #2dd4bf; border: 1px solid #14b8a6; color: #1f2937; }
+
+[data-theme="light"] .token-0 { background: #fef3c7; border: 1px solid #fbbf24; color: #1f2937; }
+[data-theme="light"] .token-1 { background: #dbeafe; border: 1px solid #60a5fa; color: #1f2937; }
+[data-theme="light"] .token-2 { background: #fce7f3; border: 1px solid #f472b6; color: #1f2937; }
+[data-theme="light"] .token-3 { background: #dcfce7; border: 1px solid #4ade80; color: #1f2937; }
+[data-theme="light"] .token-4 { background: #e0e7ff; border: 1px solid #818cf8; color: #1f2937; }
+[data-theme="light"] .token-5 { background: #fed7aa; border: 1px solid #fb923c; color: #1f2937; }
+[data-theme="light"] .token-6 { background: #e9d5ff; border: 1px solid #c084fc; color: #1f2937; }
+[data-theme="light"] .token-7 { background: #ccfbf1; border: 1px solid #2dd4bf; color: #1f2937; }
 
 /* Token IDs */
 .token-ids {
@@ -435,7 +445,8 @@ button:disabled {
 }
 
 .step-info .highlight {
-    background: #fef3c7;
+    background: var(--primary-color);
+    color: white;
     padding: 2px 6px;
     border-radius: var(--radius-sm);
     font-weight: 600;
@@ -497,17 +508,19 @@ button:disabled {
     display: inline-block;
     padding: 6px 10px;
     margin: 4px;
-    background: #dbeafe;
-    border: 2px solid #60a5fa;
+    background: var(--primary-color);
+    border: 2px solid var(--primary-color);
     border-radius: var(--radius-sm);
     font-weight: 500;
     transition: all 0.3s;
+    color: white;
 }
 
 .bpe-token.merged {
     animation: merge 0.5s;
-    background: #dcfce7;
-    border-color: #4ade80;
+    background: #22c55e;
+    border-color: #16a34a;
+    color: white;
 }
 
 @keyframes merge {
@@ -568,11 +581,12 @@ button:disabled {
     display: inline-block;
     padding: 8px 12px;
     margin: 5px;
-    background: white;
+    background: var(--surface-color);
     border: 2px solid var(--primary-color);
     border-radius: var(--radius-sm);
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--token-shadow-sm);
+    color: var(--text-primary);
 }
 
 .tree-level {

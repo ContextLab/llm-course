@@ -1059,8 +1059,8 @@
                     </div>
                 </div>
                 ${result1.sentiment !== result2.sentiment ?
-                    '<p class="comparison-note">⚠️ Models disagree on sentiment classification</p>' :
-                    '<p class="comparison-note">✓ Models agree on sentiment classification</p>'}
+                    '<p class="comparison-note">Warning: Models disagree on sentiment classification</p>' :
+                    '<p class="comparison-note">Models agree on sentiment classification</p>'}
             `;
         }
 

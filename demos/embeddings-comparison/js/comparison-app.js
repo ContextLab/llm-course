@@ -102,14 +102,14 @@ class ComparisonApp {
                 document.getElementById('loading-bar').style.width = percent + '%';
             });
 
-            statusEl.textContent = `✓ Loaded ${selectedModels.length} model(s)`;
+            statusEl.textContent = `Loaded ${selectedModels.length} model(s)`;
             setTimeout(() => statusEl.textContent = '', 3000);
 
             this.updateStats();
 
         } catch (error) {
             console.error('Error loading models:', error);
-            statusEl.textContent = '✗ Error loading models';
+            statusEl.textContent = 'Error loading models';
             alert('Error loading models: ' + error.message);
         } finally {
             this.showLoading(false);

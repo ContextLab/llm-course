@@ -12,7 +12,7 @@ class ComponentExplorer {
         return {
             embedding: {
                 name: 'Token Embedding Layer',
-                icon: '📊',
+                icon: 'E',
                 description: {
                     beginner: 'Converts each word or token into a numerical vector that the model can process.',
                     intermediate: 'Maps discrete tokens to continuous vector representations using a learned embedding matrix. Each token gets a unique d_model dimensional vector.',
@@ -44,7 +44,7 @@ x = embedding(input_ids)  # [batch, seq] → [batch, seq, 512]`,
 
             positional: {
                 name: 'Positional Encoding',
-                icon: '📍',
+                icon: 'P',
                 description: {
                     beginner: 'Adds information about the position of each word in the sentence, since transformers process all words simultaneously.',
                     intermediate: 'Injects position information using sinusoidal functions. Allows the model to understand word order without recurrence.',
@@ -85,7 +85,7 @@ x = embeddings + positional_encoding(seq_len, d_model)`,
 
             attention: {
                 name: 'Multi-Head Attention',
-                icon: '👁️',
+                icon: 'A',
                 description: {
                     beginner: 'Allows the model to focus on different parts of the input when processing each word.',
                     intermediate: 'Computes weighted combinations of values based on query-key similarity. Multiple heads capture different types of relationships in parallel.',
@@ -146,7 +146,7 @@ class MultiHeadAttention(nn.Module):
 
             feedforward: {
                 name: 'Feed-Forward Network',
-                icon: '🔄',
+                icon: 'F',
                 description: {
                     beginner: 'A simple neural network that processes each position independently to add complexity to the model.',
                     intermediate: 'Two-layer fully connected network with ReLU activation. Applied identically to each position. Adds non-linearity and model capacity.',
@@ -190,7 +190,7 @@ class PositionwiseFeedForward(nn.Module):
 
             layernorm: {
                 name: 'Layer Normalization',
-                icon: '⚖️',
+                icon: 'N',
                 description: {
                     beginner: 'Normalizes the data to keep values in a reasonable range, making training more stable.',
                     intermediate: 'Normalizes inputs across features for each example. Stabilizes training and allows higher learning rates. Applied before/after sub-layers.',
@@ -231,7 +231,7 @@ class LayerNorm(nn.Module):
 
             residual: {
                 name: 'Residual Connection',
-                icon: '➕',
+                icon: '+',
                 description: {
                     beginner: 'Creates shortcuts that help information flow through deep networks more easily.',
                     intermediate: 'Adds input directly to output of sub-layer. Enables gradient flow and allows training very deep networks. Combined with layer normalization.',

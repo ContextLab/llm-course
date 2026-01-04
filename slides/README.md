@@ -51,7 +51,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 **Thursday X-hour (Lecture 3):** ELIZA Implementation
 - ELIZA implementation: decomposition, reassembly, substitutions
 - Vibe coding best practices for building chatbots
-- **Assignment 1 Released:** [Building the ELIZA Chatbot](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%201%3A%20ELIZA) (Due: End of Week 2)
+- **Assignment 1 Released:** [Building the ELIZA Chatbot](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%201%3A%20ELIZA) (Due: Jan 16, 11:59 PM EST)
 - 📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week1/xhour_eliza_demo.html)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week1/lecture3.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture3.html)
 
@@ -98,7 +98,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Warstadt et al. (2020)](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00321/96452/) - BLiMP
 - Reading: [Saffran et al. (1996)](https://www.science.org/doi/10.1126/science.274.5294.1926) - Statistical learning by infants
 - HuggingFace: [Chapter 7.2: Token Classification](https://huggingface.co/learn/nlp-course/chapter7/2)
-- **Assignment 2 Released:** [SPAM Classifier](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%202%3A%20SPAM%20classifier) (Due: End of Week 3)
+- **Assignment 2 Released:** [SPAM Classifier](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%202%3A%20SPAM%20classifier) (Due: Jan 23, 11:59 PM EST)
 - **📝 Assignment 1 Due**
 - 🎮 **Try it:** [POS Tagging](https://contextlab.github.io/llm-course/demos/pos-tagging/) | [Sentiment Analysis](https://contextlab.github.io/llm-course/demos/sentiment/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week2/lecture.pdf)
@@ -158,8 +158,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Grand et al. (2022)](https://pubmed.ncbi.nlm.nih.gov/35422527/) - Semantic projection from embeddings
 - HuggingFace: [Chapter 2.2: Models](https://huggingface.co/learn/nlp-course/chapter2/2)
 - HuggingFace: [Chapter 5.6: Semantic Search with FAISS](https://huggingface.co/learn/nlp-course/chapter5/6)
-- **Assignment 3 Released:** [Wikipedia Embeddings](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%203%3A%20Wikipedia) (Due: Wednesday, End of Week 4)
-- **📝 Assignment 3 Due: Wednesday, End of Week 4**
+- **Assignment 3 Released:** [Wikipedia Embeddings](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%203%3A%20Wikipedia) (Due: Jan 30, 11:59 PM EST)
 - 🎮 **Try it:** [Semantic Search](https://contextlab.github.io/llm-course/demos/semantic-search/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3-4/lecture.pdf)
 
@@ -218,8 +217,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 **Wednesday (Lecture 17):** Applications & Fine-tuning
 - Fine-tuning BERT for downstream tasks
 - Practical applications of transformers
-- **Assignment 4 Released:** [Customer Service Chatbot](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%204%3A%20Customer%20Service%20Chatbot) (Due: Friday, End of Week 6)
-- **📝 Assignment 4 Due: Friday, End of Week 6**
+- **Assignment 4 Released:** [Customer Service Chatbot](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%204%3A%20Customer%20Service%20Chatbot) (Due: Feb 6, 11:59 PM EST)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5-6/lecture.pdf)
 
 **Friday (Lecture 18):** Hackathon / Work Session
@@ -256,7 +254,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - HuggingFace: [Chapter 1.6: Decoder Models](https://huggingface.co/learn/nlp-course/chapter1/6)
 - HuggingFace: [Chapter 7.6: Causal Language Modeling](https://huggingface.co/learn/nlp-course/chapter7/6)
 - Tutorial: [Let's build GPT (Karpathy)](https://www.youtube.com/watch?v=kCc8FmEb1nY)
-- **Assignment 5 Released:** [Build and Train GPT](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%205%3A%20GPT) (Due: Friday, March 6)
+- **Assignment 5 Released:** [Build and Train GPT](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%205%3A%20GPT) (Due: Feb 13, 11:59 PM EST)
 - 🎮 **Try it:** [GPT Playground](https://contextlab.github.io/llm-course/demos/gpt-playground/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture.pdf)
 
@@ -292,7 +290,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Jiang et al. (2024)](https://arxiv.org/abs/2401.04088) - Mixtral
 - HuggingFace: [MoE Explained](https://huggingface.co/blog/moe)
 - HuggingFace: [Implementing MoE](https://huggingface.co/blog/AviSoori1x/makemoe-from-scratch)
-- **Final Project Released:** [Capstone Research Project](https://github.com/ContextLab/llm-course/tree/main/assignments/Final%20Project) (Due: Monday, March 9)
+- **Final Project Released:** [Capstone Research Project](https://github.com/ContextLab/llm-course/tree/main/assignments/Final%20Project) (Due: Mar 9, 11:59 PM EST)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture.pdf)
 
 **Friday (Lecture 24):** Future of LLMs & Project Formation
@@ -301,7 +299,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Final project brainstorming and team formation
 - Reading: [Chen et al. (2020)](https://arxiv.org/abs/2002.05709) - SimCLR
 - Reading: [Radford et al. (2021)](https://arxiv.org/abs/2103.00020) - CLIP
-- **📝 Assignment 5 Due: Friday, March 6**
+- Work on final project
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture.pdf)
 
 ---
@@ -312,7 +310,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - All teams present their work (videos + discussion)
 - Course wrap-up and reflections
 - Last day of classes
-- **📝 Final Projects Due: Monday, March 9** (all materials submitted before presentations)
+- **📝 Final Projects Due: Mar 9, 11:59 PM EST** (all materials submitted before presentations)
 
 ---
 

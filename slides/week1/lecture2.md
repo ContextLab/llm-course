@@ -265,6 +265,7 @@ def simple_respond(user_input):
 </div>
 
 ---
+<!-- _class: scale-90 -->
 
 # Chat with ELIZA
 
@@ -493,7 +494,7 @@ The AI has no office. It cannot have your notes. But it responds as if this make
 - Finish reading Weizenbaum (1966)
 - Play with the [ELIZA demo](https://contextlab.github.io/llm-course/demos/eliza/)
 - Think about: what would *you* add to ELIZA?
-- Read the [Assignment 1 instructions](../../assignments/Assignment%201:%20ELIZA/README.md)
+- Read the [Assignment 1 instructions](../../assignments/assignment-1/index.html)
 
 </div>
 

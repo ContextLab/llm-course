@@ -262,56 +262,67 @@ button {
     background: rgba(255, 255, 255, 0.7);
 }
 
-/* POS Tag Colors */
+/* POS Tag Colors - Dark mode uses brighter backgrounds, light mode uses pastel */
 .pos-token.noun {
-    background: #e3f2fd;
-    color: #1565c0;
+    background: #1565c0;
+    color: white;
 }
 
 .pos-token.verb {
-    background: #f3e5f5;
-    color: #6a1b9a;
+    background: #6a1b9a;
+    color: white;
 }
 
 .pos-token.adjective {
-    background: #fff3e0;
-    color: #e65100;
+    background: #e65100;
+    color: white;
 }
 
 .pos-token.adverb {
-    background: #e8f5e9;
-    color: #2e7d32;
+    background: #2e7d32;
+    color: white;
 }
 
 .pos-token.pronoun {
-    background: #fce4ec;
-    color: #c2185b;
+    background: #c2185b;
+    color: white;
 }
 
 .pos-token.preposition {
-    background: #e0f2f1;
-    color: #00695c;
+    background: #00695c;
+    color: white;
 }
 
 .pos-token.conjunction {
-    background: #fff9c4;
-    color: #f57f17;
+    background: #f57f17;
+    color: #1f2937;
 }
 
 .pos-token.determiner {
-    background: #f1f8e9;
-    color: #558b2f;
+    background: #558b2f;
+    color: white;
 }
 
 .pos-token.auxiliary, .pos-token.modal {
-    background: #ede7f6;
-    color: #4527a0;
+    background: #4527a0;
+    color: white;
 }
 
 .pos-token.participle, .pos-token.gerund {
-    background: #fce4ec;
-    color: #ad1457;
+    background: #ad1457;
+    color: white;
 }
+
+[data-theme="light"] .pos-token.noun { background: #e3f2fd; color: #1565c0; }
+[data-theme="light"] .pos-token.verb { background: #f3e5f5; color: #6a1b9a; }
+[data-theme="light"] .pos-token.adjective { background: #fff3e0; color: #e65100; }
+[data-theme="light"] .pos-token.adverb { background: #e8f5e9; color: #2e7d32; }
+[data-theme="light"] .pos-token.pronoun { background: #fce4ec; color: #c2185b; }
+[data-theme="light"] .pos-token.preposition { background: #e0f2f1; color: #00695c; }
+[data-theme="light"] .pos-token.conjunction { background: #fff9c4; color: #f57f17; }
+[data-theme="light"] .pos-token.determiner { background: #f1f8e9; color: #558b2f; }
+[data-theme="light"] .pos-token.auxiliary, [data-theme="light"] .pos-token.modal { background: #ede7f6; color: #4527a0; }
+[data-theme="light"] .pos-token.participle, [data-theme="light"] .pos-token.gerund { background: #fce4ec; color: #ad1457; }
 
 #pos-output.no-colors .pos-token {
     background: var(--surface-hover) !important;
@@ -503,40 +514,47 @@ button {
 }
 
 .entity.person {
-    background: #e3f2fd;
-    color: #1565c0;
-    border: 2px solid #1565c0;
+    background: #1565c0;
+    color: white;
+    border: 2px solid #1976d2;
 }
 
 .entity.place {
-    background: #e8f5e9;
-    color: #2e7d32;
-    border: 2px solid #2e7d32;
+    background: #2e7d32;
+    color: white;
+    border: 2px solid #388e3c;
 }
 
 .entity.organization {
-    background: #fff3e0;
-    color: #e65100;
-    border: 2px solid #e65100;
+    background: #e65100;
+    color: white;
+    border: 2px solid #ef6c00;
 }
 
 .entity.date {
-    background: #f3e5f5;
-    color: #6a1b9a;
-    border: 2px solid #6a1b9a;
+    background: #6a1b9a;
+    color: white;
+    border: 2px solid #7b1fa2;
 }
 
 .entity.value {
-    background: #fce4ec;
-    color: #c2185b;
-    border: 2px solid #c2185b;
+    background: #c2185b;
+    color: white;
+    border: 2px solid #d81b60;
 }
 
 .entity.misc {
-    background: #e0f2f1;
-    color: #00695c;
-    border: 2px solid #00695c;
+    background: #00695c;
+    color: white;
+    border: 2px solid #00796b;
 }
+
+[data-theme="light"] .entity.person { background: #e3f2fd; color: #1565c0; border-color: #1565c0; }
+[data-theme="light"] .entity.place { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
+[data-theme="light"] .entity.organization { background: #fff3e0; color: #e65100; border-color: #e65100; }
+[data-theme="light"] .entity.date { background: #f3e5f5; color: #6a1b9a; border-color: #6a1b9a; }
+[data-theme="light"] .entity.value { background: #fce4ec; color: #c2185b; border-color: #c2185b; }
+[data-theme="light"] .entity.misc { background: #e0f2f1; color: #00695c; border-color: #00695c; }
 
 #ner-output.no-colors .entity {
     background: var(--surface-color) !important;

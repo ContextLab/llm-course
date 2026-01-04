@@ -421,16 +421,31 @@ textarea:focus {
 }
 
 .word-item.sentiment-positive {
+    background: rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+}
+
+.word-item.sentiment-negative {
+    background: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.word-item.sentiment-neutral {
+    background: rgba(148, 163, 184, 0.3);
+    color: #94a3b8;
+}
+
+[data-theme="light"] .word-item.sentiment-positive {
     background: rgba(34, 197, 94, 0.2);
     color: #15803d;
 }
 
-.word-item.sentiment-negative {
+[data-theme="light"] .word-item.sentiment-negative {
     background: rgba(239, 68, 68, 0.2);
     color: #b91c1c;
 }
 
-.word-item.sentiment-neutral {
+[data-theme="light"] .word-item.sentiment-neutral {
     background: rgba(148, 163, 184, 0.2);
     color: #475569;
 }

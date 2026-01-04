@@ -18,12 +18,12 @@ All assignments are submitted via GitHub Classroom. Click the "Accept Assignment
 
 | # | Title | Released | Due | Weight |
 |---|-------|----------|-----|--------|
-| 1 | [ELIZA Chatbot](./assignment-1/) | Week 1 | End of Week 2 | 15% |
-| 2 | [SPAM Classifier](./assignment-2/) | Week 2 | End of Week 3 | 15% |
-| 3 | [Wikipedia Embeddings](./assignment-3/) | Week 3 | End of Week 4 | 15% |
-| 4 | [Customer Service Chatbot](./assignment-4/) | Week 5 | End of Week 6 | 15% |
-| 5 | [Build GPT](./assignment-5/) | Week 7 | Week 9 | 15% |
-| Final | [Research Project](./final-project/) | Week 9 | Finals Week | 25% |
+| 1 | [ELIZA Chatbot](./assignment-1/) | Week 1 (Jan 9) | **Jan 16, 11:59 PM EST** | 15% |
+| 2 | [SPAM Classifier](./assignment-2/) | Week 2 (Jan 16) | **Jan 23, 11:59 PM EST** | 15% |
+| 3 | [Wikipedia Embeddings](./assignment-3/) | Week 3 (Jan 23) | **Jan 30, 11:59 PM EST** | 15% |
+| 4 | [Customer Service Chatbot](./assignment-4/) | Week 4 (Jan 30) | **Feb 6, 11:59 PM EST** | 15% |
+| 5 | [Build GPT](./assignment-5/) | Week 6 (Feb 9) | **Feb 13, 11:59 PM EST** | 15% |
+| Final | [Research Project](./final-project/) | Week 9 (Mar 4) | **Mar 9, 11:59 PM EST** | 25% |
 
 ## Late Policy
 

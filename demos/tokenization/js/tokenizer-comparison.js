@@ -243,8 +243,11 @@ function updateComparisonChart() {
         ctx.fillStyle = item.color;
         ctx.fillRect(startX, y, barWidth, barHeight);
 
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#e5e7eb' : '#111827';
+        
         // Label
-        ctx.fillStyle = '#111827';
+        ctx.fillStyle = textColor;
         ctx.font = 'bold 16px sans-serif';
         ctx.textAlign = 'right';
         ctx.fillText(item.name, startX - 10, y + barHeight / 2 + 6);
@@ -255,8 +258,11 @@ function updateComparisonChart() {
         ctx.fillText(item.count, startX + 10, y + barHeight / 2 + 6);
     });
 
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const titleColor = isDark ? '#e5e7eb' : '#111827';
+    
     // Title
-    ctx.fillStyle = '#111827';
+    ctx.fillStyle = titleColor;
     ctx.font = 'bold 18px sans-serif';
     ctx.textAlign = 'left';
     ctx.fillText('Token Count Comparison', 10, 20);
@@ -329,10 +335,7 @@ function getTokenType(token) {
 function updateVocabStats(vocabArray, totalSize) {
     document.getElementById('vocab-size').textContent = totalSize.toLocaleString();
 
-    const specialCount = vocabArray.filter(item => item.type === 'special').length;
     const subwordCount = vocabArray.filter(item => item.type === 'subword').length;
-
-    document.getElementById('special-tokens-count').textContent = specialCount.toLocaleString();
     document.getElementById('subword-tokens-count').textContent = subwordCount.toLocaleString();
 }
 

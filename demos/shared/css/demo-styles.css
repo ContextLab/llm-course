@@ -484,6 +484,32 @@ pre code {
     color: var(--error-color);
 }
 
+/* Demo Warning Banner */
+.demo-warning-banner {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid var(--warning-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin: 0 auto var(--spacing-lg);
+    max-width: 900px;
+    text-align: center;
+}
+
+.demo-warning-banner strong {
+    color: var(--warning-color);
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.demo-warning-banner p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
 /* ============================================
    Loading States
    ============================================ */

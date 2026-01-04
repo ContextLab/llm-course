@@ -20,6 +20,10 @@
       <p class="hero-subtitle">Explore the classic pattern-matching chatbot with visual rule breakdown</p>
     </div>
   </div>
+  <div class="demo-warning-banner">
+      <strong>Work in Progress</strong>
+      <p>This demo is under development and may contain bugs or incomplete features.</p>
+  </div>
 
   <div class="container">
     <!-- Tab Navigation -->
@@ -34,7 +38,7 @@
       <div class="chat-container">
         <div class="chat-messages" id="chat-messages">
           <div class="empty-state">
-            <div class="empty-state-icon">💬</div>
+            <div class="empty-state-icon"></div>
             <div class="empty-state-text">Start a conversation with ELIZA</div>
             <div class="empty-state-subtext">Type a message below to begin</div>
           </div>
@@ -84,7 +88,7 @@
         </div>
         <div class="breakdown-steps" id="breakdown-steps">
           <div class="empty-state">
-            <div class="empty-state-icon">🔍</div>
+            <div class="empty-state-icon"></div>
             <div class="empty-state-text">Enter text to see detailed processing</div>
             <div class="empty-state-subtext">Watch how ELIZA transforms input into responses step-by-step</div>
           </div>
@@ -405,7 +409,7 @@
 
     function clearChat() {
       const messagesDiv = document.getElementById('chat-messages');
-      messagesDiv.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💬</div><div class="empty-state-text">Chat cleared</div><div class="empty-state-subtext">Start a new conversation</div></div>';
+      messagesDiv.innerHTML = '<div class="empty-state"><div class="empty-state-icon"></div><div class="empty-state-text">Chat cleared</div><div class="empty-state-subtext">Start a new conversation</div></div>';
       eliza.reset();
 
       // Show greeting again
@@ -473,7 +477,7 @@
       const validationDiv = document.getElementById('editor-validation');
       validationDiv.className = 'editor-validation visible ' + (success ? 'success' : 'error');
       validationDiv.innerHTML = `
-        <span class="validation-icon">${success ? '✓' : '✗'}</span>
+        <span class="validation-icon">${success ? 'OK' : 'ERR'}</span>
         <span class="validation-message">${message}</span>
       `;
 

@@ -127,10 +127,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>🤖 A.L.I.C.E. Chatbot Test Suite</h1>
+        <h1>A.L.I.C.E. Chatbot Test Suite</h1>
         <p class="subtitle">Comprehensive testing of ALICE implementation against original 1995 behaviors</p>
 
-        <button class="run-all-btn" onclick="runAllTests()">▶️ Run All Tests</button>
+        <button class="run-all-btn" onclick="runAllTests()">Run All Tests</button>
 
         <div class="summary" id="summary" style="display: none;">
             <h3>Test Results Summary</h3>
@@ -342,7 +342,7 @@
 
                 const statusBadge = document.createElement('span');
                 statusBadge.className = `status ${passed ? 'pass' : 'fail'}`;
-                statusBadge.textContent = passed ? '✓ PASS' : '✗ FAIL';
+                statusBadge.textContent = passed ? 'PASS' : 'FAIL';
                 testCase.querySelector('.input').appendChild(statusBadge);
             }
 

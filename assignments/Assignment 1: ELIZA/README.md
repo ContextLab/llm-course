@@ -426,22 +426,44 @@ This assignment is designed to be completed in **one week (7 days)**. While subs
    - **Read this first!** It will help you understand the design and implementation
 
 2. **Weizenbaum, J. (1976)**. "Computer Power and Human Reason: From Judgment to Calculation"
+   - [PDF Link](http://blogs.evergreen.edu/cpat/files/2013/05/Computer-Power-and-Human-Reason.pdf)
    - Weizenbaum's later reflections on ELIZA and AI ethics
    - Highly relevant to your reflection section
 
 ### Additional Context
 
 3. **Hofstadter, D. (1995)**. "Fluid Concepts and Creative Analogies: Computer Models of the Fundamental Mechanisms of Thought"
+   - [PDF Link](https://psycnet.apa.org/record/1995-98269-000)
    - Chapter on the Copycat program and understanding vs. simulation
 
 4. **Turkle, S. (2011)**. "Alone Together: Why We Expect More from Technology and Less from Each Other"
+   - [PDF Link](https://link.springer.com/article/10.1007/s10615-014-0511-4)
    - Modern examination of human-computer emotional connections
 
 ### Technical Resources
 
 - **ELIZA Online Implementations**: Try online versions to see expected behavior
-  - [masswerk.at/elizabot](http://www.masswerk.at/elizabot/)
+  - [context-lab.com/llm-course/demos/eliza]](https://context-lab.com/llm-course/demos/eliza/)
   - Useful for testing your implementation
+
+- **Google Colaboratory**: Setup-free resource for writing and running code on Google Cloud machines
+  - [Link](https://colab.research.google.com/)
+  - Your assignment **must** run in Google Colaboratory: to test it, press the "Run all" button, or select "Runtime" > "Run all" from the menu. Make sure that *all* parts of the notebook run without crashing before you submit!!
+
+- **Dartmouth GenAI**: Free access to powerful LLMs that can help with coding
+  - [Link (requires Dartmouth NetID)](https://chat.dartmouth.edu/)
+
+- **OpenCode**: Command line interface for vibe coding
+  - [Link](https://opencode.ai/)
+  - Suggested plugin: [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode)
+  - Supports many providers and models, including local models
+
+- **LM Studio**: Run open models on your own computer
+  - [Link](https://lmstudio.ai/)
+  - Suggested model (depending on your machine's power): [gpt-oss](https://lmstudio.ai/models/gpt-oss)
+
+- **Antigravity**: Code development environment designed to faciliate interactions with AI agents
+  - [Link](https://antigravity.google/)
 
 - **Python String Methods**: Essential for text manipulation
   - [Python String Documentation](https://docs.python.org/3/library/stdtypes.html#string-methods)
