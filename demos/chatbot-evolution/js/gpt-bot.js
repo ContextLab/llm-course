@@ -18,14 +18,6 @@ export class GPTBot {
 
         this.models = [
             {
-                name: 'onnx-community/Qwen2.5-0.5B-Instruct',
-                displayName: 'Qwen 2.5 0.5B',
-                dtype: 'q4',
-                params: '0.5B',
-                year: 2024,
-                org: 'Alibaba'
-            },
-            {
                 name: 'onnx-community/DeepSeek-R1-Distill-Qwen-1.5B-ONNX',
                 displayName: 'DeepSeek-R1 1.5B',
                 dtype: 'q4',
@@ -34,8 +26,8 @@ export class GPTBot {
                 org: 'DeepSeek'
             },
             {
-                name: 'onnx-community/Qwen2.5-Coder-0.5B-Instruct',
-                displayName: 'Qwen 2.5 Coder 0.5B',
+                name: 'onnx-community/Qwen2.5-0.5B-Instruct',
+                displayName: 'Qwen 2.5 0.5B',
                 dtype: 'q4',
                 params: '0.5B',
                 year: 2024,
