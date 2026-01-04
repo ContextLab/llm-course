@@ -34,9 +34,36 @@ export class GPTBot {
             }
         ];
         
-        this.systemPrompt = 'You are a friendly AI chatbot in an educational demo about the evolution of conversational AI. Have natural, engaging conversations. Be concise and helpful.';
-
+        this.systemPrompt = 'You are a helpful AI assistant. Answer questions directly and concisely. When writing code, use proper formatting with language tags.';
+        
+        this.conversationHistory = [];
         this.currentModel = null;
+        this.selectedModelIndex = 0;
+    }
+    
+    getAvailableModels() {
+        return this.models.map((m, i) => ({
+            index: i,
+            name: m.displayName,
+            params: m.params,
+            org: m.org,
+            selected: i === this.selectedModelIndex
+        }));
+    }
+    
+    selectModel(index) {
+        if (index >= 0 && index < this.models.length) {
+            this.selectedModelIndex = index;
+            if (this.isReady) {
+                this.isReady = false;
+                this.generator = null;
+                this.conversationHistory = [];
+            }
+        }
+    }
+    
+    clearHistory() {
+        this.conversationHistory = [];
     }
 
     setProgressCallback(callback) {
@@ -96,8 +123,9 @@ export class GPTBot {
             
             console.log(`[GPT] Using device: ${device}`);
 
-            for (let i = 0; i < this.models.length; i++) {
-                this.loadAttempt = i + 1;
+            const startIndex = this.selectedModelIndex;
+            for (let i = startIndex; i < this.models.length; i++) {
+                this.loadAttempt = i - startIndex + 1;
                 const model = this.models[i];
                 this.currentModel = model;
 
@@ -204,13 +232,18 @@ export class GPTBot {
         }
 
         try {
+            this.conversationHistory.push({ role: 'user', content: input.trim() });
+            
+            const maxHistoryLength = 6;
+            const recentHistory = this.conversationHistory.slice(-maxHistoryLength);
+            
             const messages = [
                 { role: 'system', content: this.systemPrompt },
-                { role: 'user', content: input.trim() }
+                ...recentHistory
             ];
 
             const result = await this.generator(messages, {
-                max_new_tokens: 150,
+                max_new_tokens: 256,
                 temperature: 0.7,
                 do_sample: true,
                 top_k: 40,
@@ -229,7 +262,10 @@ export class GPTBot {
                 }
             }
 
-            return this.cleanResponse(response);
+            const cleanedResponse = this.cleanResponse(response);
+            this.conversationHistory.push({ role: 'assistant', content: cleanedResponse });
+            
+            return cleanedResponse;
         } catch (error) {
             console.error('Error generating response:', error);
             return "I'm having trouble generating a response.";
@@ -252,7 +288,7 @@ export class GPTBot {
             .replace(/<think>[\s\S]*?<\/think>/g, '')
             .trim();
 
-        if (cleaned.length > 300) {
+        if (cleaned.length > 500 && !cleaned.includes('```')) {
             const lastPunct = Math.max(
                 cleaned.lastIndexOf('.'),
                 cleaned.lastIndexOf('!'),
@@ -261,11 +297,31 @@ export class GPTBot {
             if (lastPunct > 50) {
                 cleaned = cleaned.substring(0, lastPunct + 1);
             } else {
-                cleaned = cleaned.substring(0, 300) + '...';
+                cleaned = cleaned.substring(0, 500) + '...';
             }
         }
 
         return cleaned || response;
+    }
+    
+    formatResponseAsHTML(response) {
+        let html = response;
+        
+        html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+            const language = lang || 'plaintext';
+            const escapedCode = code
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .trim();
+            return `<pre class="code-block" data-language="${language}"><code>${escapedCode}</code></pre>`;
+        });
+        
+        html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+        
+        html = html.replace(/\n/g, '<br>');
+        
+        return html;
     }
 
     getModelInfo() {

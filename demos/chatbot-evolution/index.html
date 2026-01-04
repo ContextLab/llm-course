@@ -41,7 +41,7 @@
                     <span class="era-label">2020<br>BlenderBot</span>
                 </div>
                 <div class="era era-2020s" data-era="2020s">
-                    <span class="era-label">2025<br>DeepSeek-R1</span>
+                    <span class="era-label">2024<br>Qwen2.5</span>
                 </div>
             </div>
         </section>
@@ -455,20 +455,20 @@
 
                     <div class="chatbot-info">
                         <div class="info-card">
-                            <h3>About DeepSeek-R1</h3>
-                            <p><strong>Innovation:</strong> Distilled reasoning from DeepSeek-R1</p>
-                            <p><strong>Method:</strong> Decoder-only transformer, chain-of-thought</p>
-                            <p><strong>Model:</strong> DeepSeek-R1-Distill-Qwen-1.5B</p>
-                            <p><strong>Benchmarks:</strong> AIME 28.9%, MATH-500 83.9%</p>
+                            <h3>About Modern LLMs</h3>
+                            <p><strong>Innovation:</strong> Instruction-tuned transformers</p>
+                            <p><strong>Method:</strong> Decoder-only transformer with chat templates</p>
+                            <p><strong>Models:</strong> Qwen2.5 0.5B, SmolLM 360M</p>
+                            <p><strong>Context:</strong> Multi-turn conversation support</p>
                         </div>
 
                         <div class="info-card">
                             <h3>How It Works</h3>
                             <ul>
-                                <li>Distilled from larger reasoning model</li>
-                                <li>Chain-of-thought reasoning capabilities</li>
-                                <li>Strong math and coding performance</li>
-                                <li>Fallback: Gemma 3 1B/270M if needed</li>
+                                <li>Pre-trained on vast text corpora</li>
+                                <li>Fine-tuned for instruction following</li>
+                                <li>System prompts guide behavior</li>
+                                <li>Runs entirely in your browser (WASM/WebGPU)</li>
                             </ul>
                         </div>
                     </div>
@@ -484,15 +484,22 @@
                         <div class="chat-interface">
                             <div class="model-loading-status hidden" id="gpt-loading-status">
                                 <div class="loading-spinner"></div>
-                                <div class="loading-text">Loading DeepSeek-R1...</div>
+                                <div class="loading-text">Loading model...</div>
                                 <div class="loading-progress" id="gpt-progress">Initializing...</div>
                             </div>
                             <div class="chat-messages" id="gpt-messages"></div>
                             <div class="chat-input-area">
-                                <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to DeepSeek-R1...">
+                                <div class="model-selector-row">
+                                    <select id="gpt-model-selector" class="model-selector">
+                                        <option value="0">Qwen 2.5 0.5B (Alibaba)</option>
+                                        <option value="1">SmolLM 360M (HuggingFace)</option>
+                                    </select>
+                                    <button class="btn-clear-chat" id="gpt-clear-btn" title="Clear chat history">Clear</button>
+                                </div>
+                                <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to the model...">
                                 <button class="chat-send" id="gpt-send-btn" onclick="sendMessage('gpt')">Send</button>
                             </div>
-                            <p class="demo-note">Using DeepSeek-R1-Distill 1.5B. Fallback: Gemma 3 1B/270M. Loads on first message.</p>
+                            <p class="demo-note">Select a model above. Conversation history is preserved. First message loads the model (~30s).</p>
                         </div>
                     </div>
 
@@ -500,7 +507,7 @@
                     <div class="chatbot-tab-content" id="gpt-architecture-tab">
                         <div class="architecture-content">
                             <div class="architecture-diagram">
-                                <h4>Decoder-Only Transformer (DeepSeek-R1)</h4>
+                                <h4>Decoder-Only Transformer (Qwen2.5 / SmolLM)</h4>
                                 <div class="arch-flow">
                                     <div class="arch-block input-block">
                                         <div class="block-label">Input Prompt</div>
@@ -513,12 +520,12 @@
                                     </div>
                                     <div class="arch-arrow">&#8595;</div>
                                     <div class="arch-block decoder-only-block">
-                                        <div class="block-label">DeepSeek-R1 Decoder Stack</div>
+                                        <div class="block-label">Transformer Decoder Stack</div>
                                         <div class="block-content">
                                             <div class="sub-block">Grouped-Query Attention</div>
                                             <div class="sub-block">SiLU FFN</div>
                                             <div class="sub-block">RMSNorm</div>
-                                            <div class="block-note">x28 layers</div>
+                                            <div class="block-note">x24 layers (Qwen) / x32 layers (SmolLM)</div>
                                         </div>
                                     </div>
                                     <div class="arch-arrow">&#8595;</div>
@@ -533,44 +540,40 @@
                                 <h4>Key Concepts</h4>
                                 <div class="concept-grid">
                                     <div class="concept-card">
-                                        <h5>Knowledge Distillation</h5>
-                                        <p>DeepSeek-R1-Distill captures reasoning abilities from a much larger model, enabling strong performance at small size.</p>
+                                        <h5>Instruction Tuning</h5>
+                                        <p>Models are fine-tuned on instruction-response pairs, learning to follow user requests and generate helpful outputs.</p>
                                     </div>
                                     <div class="concept-card">
-                                        <h5>Chain-of-Thought</h5>
-                                        <p>The model learned to break complex problems into steps, improving accuracy on math and coding tasks.</p>
+                                        <h5>Chat Templates</h5>
+                                        <p>System prompts and message formatting guide model behavior, enabling multi-turn conversations with context.</p>
                                     </div>
                                     <div class="concept-card">
                                         <h5>Grouped-Query Attention</h5>
-                                        <p>GQA reduces memory usage by sharing key-value heads across query heads, enabling efficient inference.</p>
+                                        <p>GQA reduces memory usage by sharing key-value heads across query heads, enabling efficient browser inference.</p>
                                     </div>
                                     <div class="concept-card">
-                                        <h5>RoPE Positions</h5>
-                                        <p>Rotary Position Embeddings encode position through rotation, enabling long context handling.</p>
+                                        <h5>Quantization (q4)</h5>
+                                        <p>4-bit quantization shrinks model size by ~4x while preserving quality, essential for browser deployment.</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="model-specs">
-                                <h4>DeepSeek-R1-Distill-Qwen-1.5B Specifications</h4>
+                                <h4>Available Models</h4>
                                 <table class="specs-table">
-                                    <tr><td>Parameters</td><td>1.5 Billion</td></tr>
-                                    <tr><td>Architecture</td><td>Decoder-Only Transformer</td></tr>
-                                    <tr><td>Layers</td><td>28</td></tr>
-                                    <tr><td>Hidden Size</td><td>1536</td></tr>
-                                    <tr><td>Attention Heads</td><td>12</td></tr>
-                                    <tr><td>Context Length</td><td>131,072 tokens</td></tr>
-                                    <tr><td>AIME 2024</td><td>28.9%</td></tr>
-                                    <tr><td>MATH-500</td><td>83.9%</td></tr>
-                                    <tr><td>LiveCodeBench</td><td>16.9%</td></tr>
-                                    <tr><td>Year</td><td>2025 (DeepSeek)</td></tr>
+                                    <tr><th>Spec</th><th>Qwen 2.5 0.5B</th><th>SmolLM 360M</th></tr>
+                                    <tr><td>Parameters</td><td>500 Million</td><td>360 Million</td></tr>
+                                    <tr><td>Architecture</td><td>Decoder-Only</td><td>Decoder-Only</td></tr>
+                                    <tr><td>Layers</td><td>24</td><td>32</td></tr>
+                                    <tr><td>Hidden Size</td><td>896</td><td>960</td></tr>
+                                    <tr><td>Context Length</td><td>32,768 tokens</td><td>2,048 tokens</td></tr>
+                                    <tr><td>Organization</td><td>Alibaba</td><td>HuggingFace</td></tr>
+                                    <tr><td>Year</td><td>2024</td><td>2024</td></tr>
                                 </table>
                                 <div class="model-note">
-                                    <strong>Fallback Chain:</strong> 
-                                    <a href="https://huggingface.co/onnx-community/DeepSeek-R1-Distill-Qwen-1.5B-ONNX" target="_blank">DeepSeek-R1 1.5B</a> → 
-                                    <a href="https://huggingface.co/onnx-community/gemma-3-1b-it-ONNX" target="_blank">Gemma 3 1B</a> → 
-                                    <a href="https://huggingface.co/onnx-community/gemma-3-270m-it-ONNX" target="_blank">Gemma 3 270M</a>. 
-                                    Uses largest successful model.
+                                    <strong>Model Links:</strong> 
+                                    <a href="https://huggingface.co/onnx-community/Qwen2.5-0.5B-Instruct" target="_blank">Qwen2.5-0.5B-Instruct</a> | 
+                                    <a href="https://huggingface.co/onnx-community/SmolLM-360M-Instruct" target="_blank">SmolLM-360M-Instruct</a>
                                 </div>
                             </div>
                         </div>
@@ -639,8 +642,8 @@
                             <span class="stat-value">90M params</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">DeepSeek-R1 (2025)</span>
-                            <span class="stat-value">1.5B params</span>
+                            <span class="stat-label">Qwen 2.5 (2024)</span>
+                            <span class="stat-value">500M params</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Claude 4 Opus (2025)</span>

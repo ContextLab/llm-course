@@ -104,7 +104,8 @@ class TimelineApp {
             if (botName === 'seq2seq') {
                 input.placeholder = 'Talk to BlenderBot...';
             } else if (botName === 'gpt') {
-                input.placeholder = 'Talk to DeepSeek-R1...';
+                const modelName = this.bots.gpt.currentModel?.displayName || 'the model';
+                input.placeholder = `Talk to ${modelName}...`;
             }
         }
 
@@ -204,6 +205,27 @@ class TimelineApp {
                     window.analyzeAlice();
                     e.target.value = '';
                 }
+            });
+        }
+        
+        const gptModelSelector = document.getElementById('gpt-model-selector');
+        if (gptModelSelector) {
+            gptModelSelector.addEventListener('change', (e) => {
+                const index = parseInt(e.target.value, 10);
+                this.bots.gpt.selectModel(index);
+                const messagesContainer = document.getElementById('gpt-messages');
+                messagesContainer.innerHTML = '';
+                this.addMessage('gpt', 'Model changed. Send a message to load and start chatting.', 'bot');
+            });
+        }
+        
+        const gptClearBtn = document.getElementById('gpt-clear-btn');
+        if (gptClearBtn) {
+            gptClearBtn.addEventListener('click', () => {
+                this.bots.gpt.clearHistory();
+                const messagesContainer = document.getElementById('gpt-messages');
+                messagesContainer.innerHTML = '';
+                this.addMessage('gpt', 'Chat history cleared. Start a new conversation.', 'bot');
             });
         }
     }
@@ -700,11 +722,19 @@ class TimelineApp {
         }
     }
 
-    addMessage(botName, text, type) {
+    addMessage(botName, text, type, useHTML = false) {
         const messagesContainer = document.getElementById(`${botName}-messages`);
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${type}`;
-        messageDiv.textContent = text;
+        
+        if (useHTML) {
+            messageDiv.innerHTML = text;
+        } else if (botName === 'gpt' && type === 'bot' && this.bots.gpt.formatResponseAsHTML) {
+            messageDiv.innerHTML = this.bots.gpt.formatResponseAsHTML(text);
+        } else {
+            messageDiv.textContent = text;
+        }
+        
         messagesContainer.appendChild(messageDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
@@ -751,7 +781,7 @@ class TimelineApp {
             parry: 'PARRY (1972)',
             alice: 'A.L.I.C.E. (1995)',
             seq2seq: 'BlenderBot (2020)',
-            gpt: 'DeepSeek-R1 (2025)'
+            gpt: 'Qwen 2.5 (2024)'
         };
         const botDivs = {};
 
@@ -850,7 +880,7 @@ class TimelineApp {
             'PARRY (1972)': 'Input → State Machine → Emotional Model → Response',
             'ALICE (1995)': 'Input → AIML Parser → Category Match → Response',
             'BlenderBot (2020)': 'Input → Encoder → Decoder → Response',
-            'DeepSeek-R1 (2025)': 'Input → Decoder-Only Transformer → Response'
+            'Qwen 2.5 (2024)': 'Input → Decoder-Only Transformer → Response'
         };
 
         let html = '<div style="padding: 15px; text-align: left;">';
