@@ -147,7 +147,65 @@ Based on explore agent findings:
    - 31 files changed, 489 insertions, 166 deletions
 
 **STILL PENDING:**
-- Assignment setup (submodules, autograders, templates, tutorial, submission instructions)
+- Assignment setup: submodules, autograders, template notebooks
 - Canvas content drafts
 - Slide cleanup weeks 2-10
 - End-to-end testing
+
+### 2026-01-04 14:23 (Session 4 - Current)
+
+**COMPLETED:**
+
+1. **GitHub Classroom submission instructions** - Added to ALL assignment READMEs:
+   - Assignment 1 (ELIZA): `eliza-llm-course`, deadline Jan 16
+   - Assignment 2 (SPAM): `spam-classifier-llm-course`, deadline Jan 23
+   - Assignment 3 (Wikipedia): `embeddings-llm-course`, deadline Jan 30
+   - Assignment 4 (Customer Service): `customer-service-bot-llm-course`, deadline Feb 6
+   - Assignment 5 (GPT): `gpt-llm-course`, deadline Feb 13
+   - Final Project: `final-project-llm-course`, deadline Mar 9
+   - **Commit:** `48796f2`
+
+2. **GitHub tutorial for students** - Created `admin/github-tutorial.md`:
+   - Git/GitHub basics explanation
+   - Installation instructions (Mac, Windows, Linux)
+   - Accepting assignments via GitHub Classroom
+   - Cloning, working, and submitting workflow
+   - Authentication setup (PAT, SSH keys)
+   - Common issues and troubleshooting
+   - Quick reference commands
+   - **Commit:** `565bd93`
+
+**REMAINING HIGH-PRIORITY TASKS:**
+
+1. **Template notebooks** - Each assignment repo needs:
+   - Starter `.ipynb` notebook with skeleton functions
+   - Any required data files (e.g., `instructions.txt` for ELIZA)
+   - Currently repos only have README.md, LICENSE, .gitignore
+
+2. **Autograder scripts** - Need to create in `ContextLabCourses/teaching-tools/llm-course/assignments/`:
+   - `eliza/autograde.py`
+   - `spam-classifier/autograde.py`
+   - `embeddings/autograde.py`
+   - `customer-service-bot/autograde.py`
+   - `gpt/autograde.py`
+   - `final-project/autograde.py`
+   - Should combine automated tests + LLM evaluation (per Issue #50)
+
+3. **Report generation** - Scripts to:
+   - Generate markdown reports from autograder results
+   - Compile to PDF via pandoc
+   - Batch generate for all students
+
+**DEFERRED TASKS:**
+- Submodules: Complex workflow, may need instructor input on whether this is the right approach
+- Canvas content: Waiting for course to be ready
+- Slide cleanup: Lower priority, weeks 2-10 only
+
+## Current Commits (Issue 51)
+
+| Commit | Description |
+|--------|-------------|
+| `3f64076` | Demo fixes: dark mode theming, emoji removal, warning banners |
+| `43c9660` | Update Issue 51 progress notes |
+| `48796f2` | Add GitHub Classroom submission instructions to all assignments |
+| `565bd93` | Add GitHub tutorial for students |
