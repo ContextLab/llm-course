@@ -201,6 +201,35 @@ Based on explore agent findings:
 - Canvas content: Waiting for course to be ready
 - Slide cleanup: Lower priority, weeks 2-10 only
 
+### 2026-01-04 14:23 (Session 5 - Current)
+
+**COMPLETED:**
+
+1. **Template notebooks pushed to ALL assignment repositories**:
+   
+   | Repository | Notebook | Data Files | Commit |
+   |------------|----------|------------|--------|
+   | `eliza-llm-course` | `Assignment1_ELIZA.ipynb` | `instructions.txt` | (previous session) |
+   | `spam-classifier-llm-course` | `Assignment2_SPAM_Classifier.ipynb` | `training.zip` (20MB) | `12b6f90` |
+   | `embeddings-llm-course` | `Assignment3_Wikipedia_Embeddings.ipynb` | Downloads from Dropbox | `22f7091` |
+   | `customer-service-bot-llm-course` | `Assignment4_Customer_Service_Chatbot.ipynb` | HuggingFace datasets | `5ed5051` |
+   | `gpt-llm-course` | `Assignment5_GPT.ipynb` | Downloads Shakespeare | `2d9c6ec` |
+   | `final-project-llm-course` | `FinalProject_Template.ipynb` | N/A | `ea98f0e` |
+
+2. **Notebook features**:
+   - All notebooks run in Google Colab with GPU support
+   - Auto-install dependencies (`!pip install`)
+   - Auto-download datasets
+   - Clear markdown sections matching assignment structure
+   - TODO placeholders for student implementation
+   - Set random seeds for reproducibility
+
+**REMAINING TASKS:**
+
+1. **Autograder scripts** - Still needed in `ContextLabCourses/teaching-tools`
+2. **Canvas content** - Course description, assignment descriptions
+3. **Slide cleanup** - Weeks 2-10 (lower priority)
+
 ## Current Commits (Issue 51)
 
 | Commit | Description |
@@ -209,3 +238,14 @@ Based on explore agent findings:
 | `43c9660` | Update Issue 51 progress notes |
 | `48796f2` | Add GitHub Classroom submission instructions to all assignments |
 | `565bd93` | Add GitHub tutorial for students |
+
+## External Repository Commits (Assignment Templates)
+
+| Repository | Commit | Description |
+|------------|--------|-------------|
+| `eliza-llm-course` | (prev) | Add starter notebook + instructions.txt |
+| `spam-classifier-llm-course` | `12b6f90` | Add starter notebook + training.zip |
+| `embeddings-llm-course` | `22f7091` | Add starter notebook |
+| `customer-service-bot-llm-course` | `5ed5051` | Add starter notebook |
+| `gpt-llm-course` | `2d9c6ec` | Add starter notebook |
+| `final-project-llm-course` | `ea98f0e` | Add template notebook |
