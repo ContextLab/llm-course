@@ -34,15 +34,11 @@ class TimelineApp {
     async init() {
         this.setupEventListeners();
         this.initializeChats();
-
-        // Load neural models asynchronously
-        this.loadNeuralModels();
-
+        this.setupNeuralModelCallbacks();
         this.displayArchitecture();
     }
 
-    async loadNeuralModels() {
-        // Set up progress callbacks for both models
+    setupNeuralModelCallbacks() {
         this.bots.seq2seq.setProgressCallback((progress) => {
             this.updateLoadingProgress('seq2seq', progress);
         });
@@ -50,49 +46,9 @@ class TimelineApp {
         this.bots.gpt.setProgressCallback((progress) => {
             this.updateLoadingProgress('gpt', progress);
         });
-
-        // Load both neural models in parallel
-        const seq2seqPromise = this.bots.seq2seq.loadModel().then((success) => {
-            if (success) {
-                this.hideLoadingStatus('seq2seq');
-                this.enableChatInterface('seq2seq');
-                this.updateBotStatus('seq2seq', 'Ready! Try chatting with the neural model.');
-            } else {
-                this.showLoadingError('seq2seq', 'Failed to load model. Please refresh the page.');
-            }
-        }).catch((error) => {
-            console.error('Seq2seq loading error:', error);
-            this.showLoadingError('seq2seq', 'Failed to load. Please refresh the page.');
-        });
-
-        const gptPromise = this.bots.gpt.loadModel().then((success) => {
-            if (success) {
-                this.hideLoadingStatus('gpt');
-                this.enableChatInterface('gpt');
-                this.updateBotStatus('gpt', 'Ready! Start chatting.');
-                // Update the demo note to reflect the actual model loaded
-                const modelInfo = this.bots.gpt.getModelInfo();
-                const demoNote = document.querySelector('#gpt-chat-tab .demo-note');
-                if (demoNote && modelInfo) {
-                    if (modelInfo.isSmolLM) {
-                        demoNote.textContent = 'Using SmolLM-135M-Instruct - a compact instruction-tuned model optimized for browser deployment.';
-                    } else {
-                        demoNote.textContent = 'Using LaMini-GPT-124M (fallback) - an instruction-tuned model.';
-                    }
-                }
-            } else {
-                this.showLoadingError('gpt', 'Failed to load model. Please refresh the page.');
-            }
-        }).catch((error) => {
-            console.error('GPT loading error:', error);
-            this.showLoadingError('gpt', 'Failed to load. Please refresh the page.');
-        });
-
-        // Wait for both to complete (don't block, just log when done)
-        Promise.all([seq2seqPromise, gptPromise]).then(() => {
-            console.log('All neural models loaded');
-        });
     }
+
+
 
     /**
      * Update the loading progress display for a neural model
@@ -139,16 +95,17 @@ class TimelineApp {
         }
     }
 
-    /**
-     * Enable the chat interface for a bot after loading
-     */
     enableChatInterface(botName) {
         const input = document.getElementById(`${botName}-input`);
         const sendBtn = document.getElementById(`${botName}-send-btn`);
 
         if (input) {
             input.disabled = false;
-            input.placeholder = `Talk to ${botName === 'seq2seq' ? 'BlenderBot' : 'GPT-style model'}...`;
+            if (botName === 'seq2seq') {
+                input.placeholder = 'Talk to BlenderBot...';
+            } else if (botName === 'gpt') {
+                input.placeholder = 'Talk to LaMini-T5...';
+            }
         }
 
         if (sendBtn) {
@@ -649,13 +606,18 @@ class TimelineApp {
             eliza: "Welcome. What brings you here today?",
             parry: "What do you want? I don't know you.",
             alice: "Hi! I'm A.L.I.C.E. How can I help you today?",
-            seq2seq: "Loading neural model... This may take a minute on first use.",
-            gpt: "Loading model... Please wait before chatting."
+            seq2seq: "Send a message to load the neural model and start chatting.",
+            gpt: "Send a message to load the model and start chatting."
         };
 
         for (const [bot, message] of Object.entries(initialMessages)) {
             this.addMessage(bot, message, 'bot');
         }
+
+        this.hideLoadingStatus('seq2seq');
+        this.hideLoadingStatus('gpt');
+        this.enableChatInterface('seq2seq');
+        this.enableChatInterface('gpt');
     }
 
     async sendMessage(botName) {
@@ -664,37 +626,50 @@ class TimelineApp {
 
         if (!message) return;
 
-        // Add user message immediately
         this.addMessage(botName, message, 'user');
         input.value = '';
 
-        // Get bot response
         try {
             let response;
-            // Neural models show loading indicator
+
             if (botName === 'gpt' || botName === 'seq2seq') {
-                // Show animated typing indicator for neural models
+                const bot = this.bots[botName];
+
+                if (!bot.isReady && !bot.isLoading) {
+                    this.showLoadingStatus(botName);
+                    const success = await bot.loadModel();
+                    this.hideLoadingStatus(botName);
+                    
+                    if (!success) {
+                        this.addMessage(botName, "Failed to load model. Please refresh the page.", 'bot');
+                        return;
+                    }
+                    this.enableChatInterface(botName);
+                }
+
                 this.addTypingIndicator(botName);
-                response = await this.bots[botName].getResponse(message);
-                // Remove typing indicator
+                response = await bot.getResponse(message);
                 this.removeTypingIndicator(botName);
+
             } else if (botName === 'eliza') {
-                // ELIZA uses async to ensure rules are loaded
                 response = await this.bots.eliza.getResponse(message);
             } else {
-                // Other rule-based bots (PARRY, ALICE) are synchronous
                 response = this.bots[botName].getResponse(message);
             }
 
-            // Add bot response with slight delay for realism
-            setTimeout(() => {
-                this.addMessage(botName, response, 'bot');
-            }, 300);
+            this.addMessage(botName, response, 'bot');
 
         } catch (error) {
             console.error(`Error getting response from ${botName}:`, error);
-            this.removeTypingIndicator(botName); // Remove typing indicator if present
+            this.removeTypingIndicator(botName);
             this.addMessage(botName, "Sorry, I encountered an error.", 'bot');
+        }
+    }
+
+    showLoadingStatus(botName) {
+        const loadingStatus = document.getElementById(`${botName}-loading-status`);
+        if (loadingStatus) {
+            loadingStatus.classList.remove('hidden');
         }
     }
 
@@ -770,14 +745,13 @@ class TimelineApp {
         // Clear input
         promptInput.value = '';
 
-        // Create bot response containers with loading indicators
         const botNames = ['eliza', 'parry', 'alice', 'seq2seq', 'gpt'];
         const botLabels = {
             eliza: 'ELIZA (1966)',
             parry: 'PARRY (1972)',
             alice: 'A.L.I.C.E. (1995)',
             seq2seq: 'BlenderBot (2020)',
-            gpt: 'SmolLM (2024)'
+            gpt: 'LaMini-T5 (2023)'
         };
         const botDivs = {};
 
@@ -841,11 +815,23 @@ class TimelineApp {
             updateBotResponse('alice', 'Error: Unable to get response');
         }
 
-        // Neural models (asynchronous) - run in parallel
+        const loadAndGetResponse = async (botName) => {
+            const bot = this.bots[botName];
+            if (!bot.isReady && !bot.isLoading) {
+                const item = botDivs[botName];
+                const typing = item.querySelector('.typing-indicator');
+                if (typing) {
+                    typing.innerHTML = '<span class="loading-text">Loading model...</span>';
+                }
+                await bot.loadModel();
+            }
+            return bot.getResponse(prompt);
+        };
+
         const neuralPromises = [
-            this.bots.seq2seq.getResponse(prompt).then(r => updateBotResponse('seq2seq', r))
+            loadAndGetResponse('seq2seq').then(r => updateBotResponse('seq2seq', r))
                 .catch(e => { console.error('Error from Seq2Seq:', e); updateBotResponse('seq2seq', 'Error: Unable to get response'); }),
-            this.bots.gpt.getResponse(prompt).then(r => updateBotResponse('gpt', r))
+            loadAndGetResponse('gpt').then(r => updateBotResponse('gpt', r))
                 .catch(e => { console.error('Error from GPT:', e); updateBotResponse('gpt', 'Error: Unable to get response'); })
         ];
 
@@ -864,7 +850,7 @@ class TimelineApp {
             'PARRY (1972)': 'Input → State Machine → Emotional Model → Response',
             'ALICE (1995)': 'Input → AIML Parser → Category Match → Response',
             'BlenderBot (2020)': 'Input → Encoder → Decoder → Response',
-            'SmolLM (2024)': 'Input → Decoder-Only Transformer → Response'
+            'LaMini-T5 (2023)': 'Input → T5 Encoder → Decoder → Response'
         };
 
         let html = '<div style="padding: 15px; text-align: left;">';

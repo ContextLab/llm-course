@@ -423,6 +423,13 @@ a.paper-item:hover {
     font-weight: 700;
 }
 
+.stats-note {
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    font-style: italic;
+}
+
 .info-panel ul {
     padding-left: 20px;
     font-size: 0.9em;

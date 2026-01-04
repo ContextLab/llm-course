@@ -41,7 +41,7 @@
                     <span class="era-label">2020<br>BlenderBot</span>
                 </div>
                 <div class="era era-2020s" data-era="2020s">
-                    <span class="era-label">2024<br>Qwen2.5</span>
+                    <span class="era-label">2023<br>LaMini-T5</span>
                 </div>
             </div>
         </section>
@@ -352,17 +352,17 @@
                     <!-- Chat Tab -->
                     <div class="chatbot-tab-content active" id="seq2seq-chat-tab">
                         <div class="chat-interface">
-                            <div class="model-loading-status" id="seq2seq-loading-status">
+                            <div class="model-loading-status hidden" id="seq2seq-loading-status">
                                 <div class="loading-spinner"></div>
                                 <div class="loading-text">Loading BlenderBot Small (90M)...</div>
                                 <div class="loading-progress" id="seq2seq-progress">Initializing...</div>
                             </div>
                             <div class="chat-messages" id="seq2seq-messages"></div>
                             <div class="chat-input-area">
-                                <input type="text" class="chat-input" id="seq2seq-input" placeholder="Talk to Seq2Seq model..." disabled>
-                                <button class="chat-send" id="seq2seq-send-btn" disabled>Loading...</button>
+                                <input type="text" class="chat-input" id="seq2seq-input" placeholder="Talk to BlenderBot...">
+                                <button class="chat-send" id="seq2seq-send-btn">Send</button>
                             </div>
-                            <p class="demo-note">Using BlenderBot Small (90M) - a real neural conversation model. May take ~30s to load initially.</p>
+                            <p class="demo-note">Using BlenderBot Small (90M) - a real neural conversation model. Loads on first message (~30s).</p>
                         </div>
                     </div>
 
@@ -450,25 +450,25 @@
                 <div class="chatbot-era" id="era-2020s">
                     <div class="era-header">
                         <h2>2020s: GPT & Transformers</h2>
-                        <span class="era-badge">Large Language Models</span>
+                        <span class="era-badge">Instruction-Tuned Models</span>
                     </div>
 
                     <div class="chatbot-info">
                         <div class="info-card">
-                            <h3>About Modern LLMs</h3>
-                            <p><strong>Innovation:</strong> Transformer architecture with massive scale</p>
-                            <p><strong>Method:</strong> Self-attention, pre-training, fine-tuning</p>
-                            <p><strong>Breakthrough:</strong> Few-shot learning, reasoning, instruction following</p>
-                            <p><strong>Examples:</strong> GPT-4, Claude, Gemini, LLaMA</p>
+                            <h3>About LaMini-T5</h3>
+                            <p><strong>Innovation:</strong> Knowledge distillation from larger LLMs</p>
+                            <p><strong>Method:</strong> T5 encoder-decoder, instruction tuning</p>
+                            <p><strong>Model:</strong> LaMini-Flan-T5-248M (248M parameters)</p>
+                            <p><strong>Inspiration:</strong> GPT-4, Claude, Gemini use similar techniques at scale</p>
                         </div>
 
                         <div class="info-card">
                             <h3>How It Works</h3>
                             <ul>
-                                <li>Transformer architecture (self-attention)</li>
-                                <li>Pre-trained on massive text corpora</li>
-                                <li>Fine-tuned for conversation</li>
-                                <li>Billions of parameters</li>
+                                <li>T5 encoder-decoder architecture</li>
+                                <li>Distilled from larger instruction-tuned models</li>
+                                <li>Optimized for Q&A and chat</li>
+                                <li>Runs entirely in browser</li>
                             </ul>
                         </div>
                     </div>
@@ -482,17 +482,17 @@
                     <!-- Chat Tab -->
                     <div class="chatbot-tab-content active" id="gpt-chat-tab">
                         <div class="chat-interface">
-                            <div class="model-loading-status" id="gpt-loading-status">
+                            <div class="model-loading-status hidden" id="gpt-loading-status">
                                 <div class="loading-spinner"></div>
-                                <div class="loading-text">Loading Qwen2.5-1.5B (WebGPU)...</div>
-                                <div class="loading-progress" id="gpt-progress">Checking WebGPU support...</div>
+                                <div class="loading-text">Loading LaMini-Flan-T5...</div>
+                                <div class="loading-progress" id="gpt-progress">Initializing...</div>
                             </div>
                             <div class="chat-messages" id="gpt-messages"></div>
                             <div class="chat-input-area">
-                                <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to GPT-style model..." disabled>
-                                <button class="chat-send" id="gpt-send-btn" onclick="sendMessage('gpt')" disabled>Loading...</button>
+                                <input type="text" class="chat-input" id="gpt-input" placeholder="Talk to LaMini-T5...">
+                                <button class="chat-send" id="gpt-send-btn" onclick="sendMessage('gpt')">Send</button>
                             </div>
-                            <p class="demo-note">Using Qwen2.5-1.5B with WebGPU acceleration. Falls back to Qwen2.5-0.5B if WebGPU unavailable.</p>
+                            <p class="demo-note">Using LaMini-Flan-T5-248M - an instruction-tuned model. Loads on first message (~30s).</p>
                         </div>
                     </div>
 
@@ -500,7 +500,7 @@
                     <div class="chatbot-tab-content" id="gpt-architecture-tab">
                         <div class="architecture-content">
                             <div class="architecture-diagram">
-                                <h4>Decoder-Only Transformer Architecture</h4>
+                                <h4>Encoder-Decoder Transformer (T5)</h4>
                                 <div class="arch-flow">
                                     <div class="arch-block input-block">
                                         <div class="block-label">Input Prompt</div>
@@ -509,26 +509,30 @@
                                     <div class="arch-arrow">&#8595;</div>
                                     <div class="arch-block">
                                         <div class="block-label">Tokenizer + Embeddings</div>
-                                        <div class="block-content">Token IDs &#8594; Vectors + Position</div>
+                                        <div class="block-content">Token IDs + Position Bias</div>
                                     </div>
                                     <div class="arch-arrow">&#8595;</div>
-                                    <div class="arch-block decoder-only-block">
-                                        <div class="block-label">Transformer Decoder Stack</div>
+                                    <div class="arch-block encoder-block">
+                                        <div class="block-label">T5 Encoder</div>
                                         <div class="block-content">
-                                            <div class="sub-block">Causal Self-Attention</div>
-                                            <div class="sub-block">Feed Forward (MLP)</div>
-                                            <div class="sub-block">Layer Normalization</div>
-                                            <div class="block-note">x28 layers (Qwen2.5-1.5B)</div>
+                                            <div class="sub-block">Self-Attention</div>
+                                            <div class="sub-block">Feed Forward</div>
+                                            <div class="block-note">x12 layers</div>
                                         </div>
                                     </div>
                                     <div class="arch-arrow">&#8595;</div>
-                                    <div class="arch-block">
-                                        <div class="block-label">Language Model Head</div>
-                                        <div class="block-content">Predict next token probability</div>
+                                    <div class="arch-block decoder-block">
+                                        <div class="block-label">T5 Decoder</div>
+                                        <div class="block-content">
+                                            <div class="sub-block">Masked Self-Attention</div>
+                                            <div class="sub-block">Cross-Attention</div>
+                                            <div class="sub-block">Feed Forward</div>
+                                            <div class="block-note">x12 layers</div>
+                                        </div>
                                     </div>
                                     <div class="arch-arrow">&#8595;</div>
                                     <div class="arch-block output-block">
-                                        <div class="block-label">Autoregressive Generation</div>
+                                        <div class="block-label">Generated Response</div>
                                         <div class="block-content">"AI is..." &#8594; token by token</div>
                                     </div>
                                 </div>
@@ -538,38 +542,37 @@
                                 <h4>Key Concepts</h4>
                                 <div class="concept-grid">
                                     <div class="concept-card">
-                                        <h5>Decoder-Only</h5>
-                                        <p>Unlike encoder-decoder models, GPT-style models use only the decoder. Each token can only attend to previous tokens (causal/autoregressive).</p>
+                                        <h5>Encoder-Decoder</h5>
+                                        <p>T5 uses both encoder (understands input) and decoder (generates output). More flexible than decoder-only for certain tasks.</p>
                                     </div>
                                     <div class="concept-card">
-                                        <h5>Causal Self-Attention</h5>
-                                        <p>Uses a mask to prevent tokens from "seeing" future tokens. This enables left-to-right text generation.</p>
+                                        <h5>Knowledge Distillation</h5>
+                                        <p>LaMini models are trained to mimic larger LLMs, compressing their knowledge into a smaller, faster model.</p>
                                     </div>
                                     <div class="concept-card">
                                         <h5>Instruction Tuning</h5>
-                                        <p>After pre-training, models are fine-tuned on instruction-following datasets to better understand and respond to user queries.</p>
+                                        <p>Fine-tuned on instruction-following datasets to understand and respond to user queries naturally.</p>
                                     </div>
                                     <div class="concept-card">
-                                        <h5>Autoregressive Generation</h5>
-                                        <p>Generates text one token at a time. Each new token is conditioned on all previous tokens. Temperature controls randomness.</p>
+                                        <h5>Text-to-Text</h5>
+                                        <p>T5 treats all NLP tasks as text-to-text: input text goes in, output text comes out. Simple but powerful.</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="model-specs">
-                                <h4>Qwen2.5-1.5B-Instruct Specifications</h4>
+                                <h4>LaMini-Flan-T5-248M Specifications</h4>
                                 <table class="specs-table">
-                                    <tr><td>Parameters</td><td>1.5 Billion</td></tr>
-                                    <tr><td>Architecture</td><td>Decoder-Only Transformer (LLaMA-style)</td></tr>
-                                    <tr><td>Layers</td><td>28</td></tr>
-                                    <tr><td>Hidden Size</td><td>1536</td></tr>
-                                    <tr><td>Attention Heads</td><td>12 query / 2 KV (GQA 6:1)</td></tr>
-                                    <tr><td>Context Length</td><td>32,768 tokens</td></tr>
-                                    <tr><td>Training</td><td>18T tokens (web, books, code, math, multilingual)</td></tr>
-                                    <tr><td>Year</td><td>2024 (Alibaba Qwen Team)</td></tr>
+                                    <tr><td>Parameters</td><td>248 Million</td></tr>
+                                    <tr><td>Architecture</td><td>Encoder-Decoder Transformer (T5)</td></tr>
+                                    <tr><td>Layers</td><td>12 encoder + 12 decoder</td></tr>
+                                    <tr><td>Hidden Size</td><td>768</td></tr>
+                                    <tr><td>Attention Heads</td><td>12</td></tr>
+                                    <tr><td>Training</td><td>Distilled from larger LLMs on 2.58M instruction samples</td></tr>
+                                    <tr><td>Year</td><td>2023 (MBZUAI)</td></tr>
                                 </table>
                                 <div class="model-note">
-                                    <strong>WebGPU Acceleration:</strong> Qwen2.5-1.5B uses q4f16 quantization (~900MB) and runs via WebGPU in modern browsers. Falls back to Qwen2.5-0.5B on devices without WebGPU support.
+                                    <strong>Browser Optimized:</strong> Runs entirely in your browser using Transformers.js. Falls back to DistilGPT2 if primary model fails.
                                 </div>
                             </div>
                         </div>
@@ -631,21 +634,22 @@
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">ALICE (1995)</span>
-                            <span class="stat-value">~40K patterns</span>
+                            <span class="stat-value">~41K patterns</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">BlenderBot (2020)</span>
                             <span class="stat-value">90M params</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Qwen2.5 (2024)</span>
-                            <span class="stat-value">1.5B params</span>
+                            <span class="stat-label">LaMini-T5 (2023)</span>
+                            <span class="stat-value">248M params</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">GPT-3 (2020)</span>
-                            <span class="stat-value">175B params</span>
+                            <span class="stat-label">Claude 4 Opus (2025)</span>
+                            <span class="stat-value">~2T params*</span>
                         </div>
                     </div>
+                    <p class="stats-note">*Estimated, not public</p>
                 </div>
 
             </aside>
