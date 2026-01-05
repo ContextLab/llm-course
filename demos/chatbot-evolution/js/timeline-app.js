@@ -70,6 +70,7 @@ class TimelineApp {
         this.initializeChats();
         this.setupNeuralModelCallbacks();
         this.displayArchitecture();
+        await this.bots.alice.loadPatterns();
     }
 
     setupNeuralModelCallbacks() {
@@ -734,6 +735,8 @@ class TimelineApp {
 
             } else if (botName === 'eliza') {
                 response = await this.bots.eliza.getResponse(message);
+            } else if (botName === 'alice') {
+                response = await this.bots.alice.getResponse(message);
             } else {
                 response = this.bots[botName].getResponse(message);
             }
@@ -895,7 +898,8 @@ class TimelineApp {
         }
 
         try {
-            updateBotResponse('alice', this.bots.alice.getResponse(prompt));
+            const aliceResponse = await this.bots.alice.getResponse(prompt);
+            updateBotResponse('alice', aliceResponse);
         } catch (error) {
             console.error('Error from ALICE:', error);
             updateBotResponse('alice', 'Error: Unable to get response');

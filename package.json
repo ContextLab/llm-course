@@ -24,7 +24,7 @@
     "test:chatbot": "npm run test:chatbot:eliza && npm run test:chatbot:parry && npm run test:chatbot:alice",
     "test:chatbot:eliza": "node tests/test-chatbot-eliza-fixes.mjs",
     "test:chatbot:parry": "node tests/test-chatbot-parry-final.mjs",
-    "test:chatbot:alice": "node tests/test-chatbot-alice-full.mjs",
+    "test:chatbot:alice": "node tests/test-chatbot-alice.mjs",
     "test:verbose": "npm test -- --verbose"
   },
   "keywords": [

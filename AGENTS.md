@@ -123,7 +123,7 @@ The chatbot evolution demo has multiple bot implementations:
 |-----|------|----------|-------|
 | ELIZA | Imports from `demos/eliza/js/eliza-engine.js` | ~200 rules | Pattern-matching therapist |
 | PARRY | `js/parry.js` | State machine | Emotional state [0,20], paranoid responses |
-| ALICE | `js/alice-full.js` + `data/alice-patterns-original.json` | 41,380 | Full AIML pattern set |
+| ALICE | `js/alice.js` + `data/alice-patterns-original.json` | 41,380 | Full AIML pattern set |
 | GPT | `js/gpt-bot.js` | Neural | SmolLM2 auto-selects by RAM |
 
 **ALICE Template Syntax:**

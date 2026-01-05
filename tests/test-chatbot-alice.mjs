@@ -7,7 +7,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { AliceFull } from '../demos/chatbot-evolution/js/alice-full.js';
+import { Alice } from '../demos/chatbot-evolution/js/alice.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
 /**
  * Test wrapper that loads patterns from file instead of URL
  */
-class AliceFullTest extends AliceFull {
+class AliceTest extends Alice {
     loadPatternsFromFile(filepath) {
         try {
             const data = JSON.parse(fs.readFileSync(filepath, 'utf8'));
@@ -46,7 +46,7 @@ async function runTests() {
     console.log('='.repeat(70));
     console.log();
 
-    const alice = new AliceFullTest();
+    const alice = new AliceTest();
     const patternsFile = path.join(__dirname, '../demos/chatbot-evolution/data', 'alice-patterns-original.json');
 
     // Load patterns from file

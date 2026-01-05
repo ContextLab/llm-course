@@ -83,11 +83,9 @@ An interactive journey through 60 years of conversational AI development, from E
 - Random response variations
 - Pronoun and person transformations
 
-**Full Implementation:**
-- All 95,026 patterns from original AIML distribution
-- 60 AIML files covering diverse topics
-- See [ALICE_FULL_INTEGRATION.md](ALICE_FULL_INTEGRATION.md) for complete details
-- Test with `test-alice-full.html` or `test-alice-full-node.mjs`
+**Implementation:**
+- All 41,380 patterns from original AIML distribution (2001 Loebner Prize version)
+- Test with `test-alice.html` in browser or `npm run test:chatbot:alice`
 
 ### 4. Seq2Seq / BlenderBot (2014-2020)
 **Innovation:** Neural Conversational Models

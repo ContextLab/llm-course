@@ -3,372 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A.L.I.C.E. Chatbot Test Suite</title>
+    <title>ALICE Full - All 95,026 Patterns</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
+            font-family: 'Courier New', monospace;
+            max-width: 900px;
+            margin: 50px auto;
             padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        .container {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            background-color: #0a0a0a;
+            color: #00ff00;
         }
         h1 {
-            color: #333;
-            margin-bottom: 10px;
+            color: #00ff00;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 10px;
         }
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-        }
-        .test-section {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid #667eea;
-        }
-        .test-section h2 {
-            color: #667eea;
-            margin-top: 0;
-        }
-        .test-case {
-            background: white;
+        .info {
+            background-color: #1a1a1a;
+            border: 1px solid #00ff00;
             padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #dee2e6;
+            margin: 20px 0;
+            border-radius: 5px;
         }
-        .input {
-            color: #007bff;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        .response {
-            color: #28a745;
-            padding: 10px;
-            background: #f1f9f4;
-            border-radius: 4px;
-            margin-top: 8px;
-            font-style: italic;
-        }
-        .expected {
-            color: #6c757d;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .status {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.85em;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        .status.pass {
-            background: #d4edda;
-            color: #155724;
-        }
-        .status.fail {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        .run-all-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .run-all-btn:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-        }
-        .summary {
-            background: #e7f3ff;
-            border: 2px solid #0066cc;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .summary h3 {
+        .info h2 {
             margin-top: 0;
-            color: #0066cc;
+            color: #00ff00;
         }
-        .stat {
-            display: inline-block;
-            margin-right: 20px;
-            font-size: 18px;
-        }
-        .context-display {
-            background: #fff9e6;
-            border: 1px solid #ffd700;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 10px;
-            font-size: 0.9em;
-        }
-        .context-title {
+        .loading {
+            color: #ffff00;
             font-weight: bold;
-            color: #856404;
+        }
+        .chat-container {
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+        }
+        .chat-history {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #000;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .user-message {
+            color: #00ffff;
+            border-left: 3px solid #00ffff;
+            padding-left: 10px;
+        }
+        .bot-message {
+            color: #00ff00;
+            border-left: 3px solid #00ff00;
+            padding-left: 10px;
+        }
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        input {
+            flex: 1;
+            padding: 10px;
+            background-color: #000;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #00ff00;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #00cc00;
+        }
+        .stats {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #1a1a1a;
+            border: 1px solid #00ff00;
+            font-size: 12px;
+        }
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .test-buttons button {
+            background-color: #004400;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+        .test-buttons button:hover {
+            background-color: #006600;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>A.L.I.C.E. Chatbot Test Suite</h1>
-        <p class="subtitle">Comprehensive testing of ALICE implementation against original 1995 behaviors</p>
+    <h1>A.L.I.C.E. Full Implementation</h1>
 
-        <button class="run-all-btn" onclick="runAllTests()">Run All Tests</button>
+    <div class="info">
+        <h2>About This Implementation</h2>
+        <p><strong>Total Patterns:</strong> <span id="pattern-count" class="loading">Loading...</span></p>
+        <p><strong>Source:</strong> ALICE AIML Foundation v1.0</p>
+        <p><strong>Files Processed:</strong> 60 AIML files</p>
+        <p><strong>License:</strong> GNU General Public License</p>
+        <p><strong>Copyright:</strong> (c) 2011 ALICE A.I. Foundation</p>
+        <p><strong>Status:</strong> <span id="status" class="loading">Loading patterns from alice-patterns-full.json...</span></p>
+    </div>
 
-        <div class="summary" id="summary" style="display: none;">
-            <h3>Test Results Summary</h3>
-            <div id="summary-stats"></div>
+    <div class="chat-container">
+        <div class="chat-history" id="chat-history"></div>
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Type your message..." disabled>
+            <button id="send-btn" disabled>Send</button>
         </div>
-
-        <!-- Test Section 1: Identity and Self-Reference -->
-        <div class="test-section">
-            <h2>1. Identity & Self-Reference</h2>
-            <p>ALICE should know about herself, her creator, and AIML</p>
-
-            <div class="test-case" data-test="identity-1">
-                <div class="input">Input: "What is your name?"</div>
-                <div class="expected">Expected: Should mention "A.L.I.C.E." and possibly explain the acronym</div>
-                <div class="response" id="response-identity-1"></div>
-                <div class="context-display" id="context-identity-1"></div>
-            </div>
-
-            <div class="test-case" data-test="identity-2">
-                <div class="input">Input: "Who are you?"</div>
-                <div class="expected">Expected: Should mention being A.L.I.C.E., created by Richard Wallace</div>
-                <div class="response" id="response-identity-2"></div>
-                <div class="context-display" id="context-identity-2"></div>
-            </div>
-
-            <div class="test-case" data-test="identity-3">
-                <div class="input">Input: "Who created you?"</div>
-                <div class="expected">Expected: Should mention Richard Wallace and AIML</div>
-                <div class="response" id="response-identity-3"></div>
-                <div class="context-display" id="context-identity-3"></div>
-            </div>
-
-            <div class="test-case" data-test="identity-4">
-                <div class="input">Input: "What does AIML stand for?"</div>
-                <div class="expected">Expected: Should explain "Artificial Intelligence Markup Language"</div>
-                <div class="response" id="response-identity-4"></div>
-                <div class="context-display" id="context-identity-4"></div>
-            </div>
-
-            <div class="test-case" data-test="identity-5">
-                <div class="input">Input: "Are you a bot?"</div>
-                <div class="expected">Expected: Should confirm being a chatbot/AI</div>
-                <div class="response" id="response-identity-5"></div>
-                <div class="context-display" id="context-identity-5"></div>
-            </div>
-        </div>
-
-        <!-- Test Section 2: Context Awareness -->
-        <div class="test-section">
-            <h2>2. Context Awareness (Name Learning)</h2>
-            <p>ALICE should remember user's name across conversation</p>
-
-            <div class="test-case" data-test="context-1">
-                <div class="input">Input: "My name is John"</div>
-                <div class="expected">Expected: Should acknowledge and store the name</div>
-                <div class="response" id="response-context-1"></div>
-                <div class="context-display" id="context-context-1"></div>
-            </div>
-
-            <div class="test-case" data-test="context-2">
-                <div class="input">Input: "What is my name?"</div>
-                <div class="expected">Expected: Should recall "John" from previous input</div>
-                <div class="response" id="response-context-2"></div>
-                <div class="context-display" id="context-context-2"></div>
-            </div>
-        </div>
-
-        <!-- Test Section 3: Conversational Patterns -->
-        <div class="test-section">
-            <h2>3. Conversational Patterns</h2>
-            <p>ALICE should handle common conversation patterns</p>
-
-            <div class="test-case" data-test="convo-1">
-                <div class="input">Input: "Hello"</div>
-                <div class="expected">Expected: Friendly greeting response</div>
-                <div class="response" id="response-convo-1"></div>
-                <div class="context-display" id="context-convo-1"></div>
-            </div>
-
-            <div class="test-case" data-test="convo-2">
-                <div class="input">Input: "How are you?"</div>
-                <div class="expected">Expected: Positive response about functioning well</div>
-                <div class="response" id="response-convo-2"></div>
-                <div class="context-display" id="context-convo-2"></div>
-            </div>
-
-            <div class="test-case" data-test="convo-3">
-                <div class="input">Input: "Thank you"</div>
-                <div class="expected">Expected: Polite acknowledgment like "You're welcome"</div>
-                <div class="response" id="response-convo-3"></div>
-                <div class="context-display" id="context-convo-3"></div>
-            </div>
-
-            <div class="test-case" data-test="convo-4">
-                <div class="input">Input: "Goodbye"</div>
-                <div class="expected">Expected: Farewell response</div>
-                <div class="response" id="response-convo-4"></div>
-                <div class="context-display" id="context-convo-4"></div>
-            </div>
-        </div>
-
-        <!-- Additional test sections continue... -->
-        <div class="test-section">
-            <h2>4. Wildcard Pattern Matching</h2>
-            <p>ALICE should handle patterns with wildcards</p>
-
-            <div class="test-case" data-test="wildcard-1">
-                <div class="input">Input: "I like pizza"</div>
-                <div class="expected">Expected: Should acknowledge liking pizza</div>
-                <div class="response" id="response-wildcard-1"></div>
-                <div class="context-display" id="context-wildcard-1"></div>
-            </div>
-
-            <div class="test-case" data-test="wildcard-2">
-                <div class="input">Input: "Can you help me with programming?"</div>
-                <div class="expected">Expected: Should respond about ability to help</div>
-                <div class="response" id="response-wildcard-2"></div>
-                <div class="context-display" id="context-wildcard-2"></div>
-            </div>
-        </div>
-
-        <div class="test-section">
-            <h2>5. SRAI - Recursive Patterns</h2>
-            <p>ALICE should redirect similar patterns using SRAI</p>
-
-            <div class="test-case" data-test="srai-1">
-                <div class="input">Input: "What's your name?"</div>
-                <div class="expected">Expected: Should redirect to main name pattern</div>
-                <div class="response" id="response-srai-1"></div>
-                <div class="context-display" id="context-srai-1"></div>
-            </div>
+        <div class="test-buttons">
+            <button class="test-btn" data-input="Hello">Hello</button>
+            <button class="test-btn" data-input="What is your name?">What is your name?</button>
+            <button class="test-btn" data-input="Who created you?">Who created you?</button>
+            <button class="test-btn" data-input="What is AIML?">What is AIML?</button>
+            <button class="test-btn" data-input="How are you different from ELIZA?">Different from ELIZA?</button>
+            <button class="test-btn" data-input="Tell me a joke">Tell me a joke</button>
+            <button class="test-btn" data-input="What is the meaning of life?">Meaning of life?</button>
+            <button class="test-btn" data-input="My name is Bob">My name is Bob</button>
         </div>
     </div>
+
+    <div class="stats" id="stats"></div>
 
     <script type="module">
         import { Alice } from './js/alice.js';
 
-        let alice;
-        let testResults = { total: 0, passed: 0, failed: 0 };
+        const alice = new Alice();
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const statusEl = document.getElementById('status');
+        const patternCountEl = document.getElementById('pattern-count');
+        const statsEl = document.getElementById('stats');
+        const testButtons = document.querySelectorAll('.test-btn');
 
-        const testInputs = {
-            'identity-1': 'What is your name?',
-            'identity-2': 'Who are you?',
-            'identity-3': 'Who created you?',
-            'identity-4': 'What does AIML stand for?',
-            'identity-5': 'Are you a bot?',
-            'context-1': 'My name is John',
-            'context-2': 'What is my name?',
-            'convo-1': 'Hello',
-            'convo-2': 'How are you?',
-            'convo-3': 'Thank you',
-            'convo-4': 'Goodbye',
-            'wildcard-1': 'I like pizza',
-            'wildcard-2': 'Can you help me with programming?',
-            'srai-1': "What's your name?"
-        };
+        // Load patterns
+        (async () => {
+            const loaded = await alice.loadPatterns();
+            if (loaded) {
+                statusEl.textContent = 'Ready! All patterns loaded.';
+                statusEl.className = '';
+                statusEl.style.color = '#00ff00';
+                statusEl.style.fontWeight = 'bold';
 
-        const testValidations = {
-            'identity-1': (r) => r.toLowerCase().includes('alice'),
-            'identity-2': (r) => r.toLowerCase().includes('alice') && r.toLowerCase().includes('wallace'),
-            'identity-3': (r) => r.toLowerCase().includes('wallace'),
-            'identity-4': (r) => r.toLowerCase().includes('markup language'),
-            'identity-5': (r) => r.toLowerCase().includes('bot') || r.toLowerCase().includes('chatbot'),
-            'context-1': (r) => r.toLowerCase().includes('john'),
-            'context-2': (r) => r.toLowerCase().includes('john'),
-            'convo-1': (r) => r.toLowerCase().includes('hello') || r.toLowerCase().includes('hi'),
-            'convo-2': (r) => r.length > 0,
-            'convo-3': (r) => r.toLowerCase().includes('welcome') || r.toLowerCase().includes('pleasure'),
-            'convo-4': (r) => r.toLowerCase().includes('bye') || r.toLowerCase().includes('goodbye'),
-            'wildcard-1': (r) => r.toLowerCase().includes('pizza'),
-            'wildcard-2': (r) => r.toLowerCase().includes('help') || r.toLowerCase().includes('programming'),
-            'srai-1': (r) => r.toLowerCase().includes('alice')
-        };
+                const stats = alice.getStats();
+                patternCountEl.textContent = stats.totalPatterns.toLocaleString();
+                patternCountEl.className = '';
+                patternCountEl.style.fontWeight = 'bold';
 
-        window.runAllTests = async function() {
-            alice = new Alice();
-            testResults = { total: 0, passed: 0, failed: 0 };
+                userInput.disabled = false;
+                sendBtn.disabled = false;
 
-            for (const [testId, input] of Object.entries(testInputs)) {
-                const response = alice.getResponse(input);
-                const context = alice.getContext();
+                // Enable test buttons
+                testButtons.forEach(btn => btn.disabled = false);
 
-                const responseDiv = document.getElementById(`response-${testId}`);
-                responseDiv.textContent = `Response: "${response}"`;
+                // Show welcome message
+                addMessage('bot', 'Hello! I am A.L.I.C.E., with access to all 95,026 patterns from the original AIML distribution. Try talking to me!');
 
-                const contextDiv = document.getElementById(`context-${testId}`);
-                const contextText = `Context: userName: "${context.userName}", topic: "${context.topic}", that: "${context.that.substring(0, 50)}"`;
-
-                contextDiv.textContent = '';
-                const contextTitle = document.createElement('span');
-                contextTitle.className = 'context-title';
-                contextTitle.textContent = 'Context: ';
-                contextDiv.appendChild(contextTitle);
-                contextDiv.appendChild(document.createTextNode(`userName: "${context.userName}", topic: "${context.topic}", that: "${context.that.substring(0, 50)}${context.that.length > 50 ? '...' : ''}"`));
-
-                const validation = testValidations[testId];
-                const passed = validation ? validation(response) : true;
-
-                testResults.total++;
-                if (passed) {
-                    testResults.passed++;
-                } else {
-                    testResults.failed++;
-                }
-
-                const testCase = document.querySelector(`[data-test="${testId}"]`);
-                const oldStatus = testCase.querySelector('.status');
-                if (oldStatus) oldStatus.remove();
-
-                const statusBadge = document.createElement('span');
-                statusBadge.className = `status ${passed ? 'pass' : 'fail'}`;
-                statusBadge.textContent = passed ? 'PASS' : 'FAIL';
-                testCase.querySelector('.input').appendChild(statusBadge);
+                updateStats();
+            } else {
+                statusEl.textContent = 'Error loading patterns. Please check console.';
+                statusEl.style.color = '#ff0000';
             }
+        })();
 
-            const summary = document.getElementById('summary');
-            summary.style.display = 'block';
+        function addMessage(type, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.textContent = type === 'user' ? `YOU: ${text}` : `ALICE: ${text}`;
+            chatHistory.appendChild(messageDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
 
-            const percentage = Math.round((testResults.passed / testResults.total) * 100);
-            const statsDiv = document.getElementById('summary-stats');
-            statsDiv.textContent = '';
+        async function sendMessage() {
+            const input = userInput.value.trim();
+            if (!input) return;
 
-            const stats = [
-                `Total Tests: ${testResults.total}`,
-                `Passed: ${testResults.passed}`,
-                `Failed: ${testResults.failed}`,
-                `Success Rate: ${percentage}%`
-            ];
+            // Add user message
+            addMessage('user', input);
+            userInput.value = '';
 
-            stats.forEach(stat => {
-                const statDiv = document.createElement('div');
-                statDiv.className = 'stat';
-                statDiv.textContent = stat;
-                statsDiv.appendChild(statDiv);
+            // Get bot response
+            const response = await alice.getResponse(input);
+            addMessage('bot', response);
+
+            // Update stats
+            updateStats();
+        }
+
+        function updateStats() {
+            const stats = alice.getStats();
+            // Use DOM methods instead of innerHTML for security
+            statsEl.textContent = '';
+
+            const title = document.createElement('strong');
+            title.textContent = 'Statistics:';
+            statsEl.appendChild(title);
+
+            statsEl.appendChild(document.createElement('br'));
+            statsEl.appendChild(document.createTextNode(`Total Patterns: ${stats.totalPatterns.toLocaleString()}`));
+            statsEl.appendChild(document.createElement('br'));
+            statsEl.appendChild(document.createTextNode(`Current Topic: ${stats.context.topic}`));
+            statsEl.appendChild(document.createElement('br'));
+            statsEl.appendChild(document.createTextNode(`Bot Name: ${stats.context.botName}`));
+            statsEl.appendChild(document.createElement('br'));
+            statsEl.appendChild(document.createTextNode(`Version: ${stats.context.version}`));
+
+            if (stats.context.userName) {
+                statsEl.appendChild(document.createElement('br'));
+                statsEl.appendChild(document.createTextNode(`Your Name: ${stats.context.userName}`));
+            }
+        }
+
+        // Event listeners
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Test buttons
+        testButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                userInput.value = btn.dataset.input;
+                sendMessage();
             });
-
-            summary.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        };
+        });
     </script>
 </body>
 </html>
