@@ -42,21 +42,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.CLASSROOM_SYNC_TOKEN }}
         run: |
-          # Verify token works
-          echo "Testing token access..."
-          if ! gh api repos/ContextLab/${{ matrix.classroom }} --jq '.name' 2>/dev/null; then
-            echo "::error::Token cannot access ContextLab/${{ matrix.classroom }}"
-            echo "Make sure CLASSROOM_SYNC_TOKEN is a Classic PAT with 'repo' scope, authorized for ContextLab org"
-            exit 1
-          fi
-          
           cd assignments/${{ matrix.submodule }}
           
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Use gh CLI to handle authentication
-          gh auth setup-git
+          # Configure git to use the token for this specific remote
+          git config --local credential.helper ""
+          git config --local --add credential.helper "!f() { echo username=x-access-token; echo password=${GH_TOKEN}; }; f"
           
           CLASSROOM_URL="https://github.com/ContextLab/${{ matrix.classroom }}.git"
           git remote add classroom "$CLASSROOM_URL" 2>/dev/null || git remote set-url classroom "$CLASSROOM_URL"
