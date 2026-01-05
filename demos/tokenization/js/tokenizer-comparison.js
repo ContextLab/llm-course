@@ -16,6 +16,8 @@ let vocabData = {
 let currentVocabPage = 0;
 const VOCAB_PAGE_SIZE = 100;
 let filteredVocab = [];
+let currentSortColumn = 'id';
+let sortAscending = true;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
@@ -53,30 +55,33 @@ function initializeTabs() {
     });
 }
 
-// Load all tokenizers
 async function loadTokenizers() {
-    const loadingIndicator = document.getElementById('loading');
-    loadingIndicator.classList.add('active');
+    const loadingOverlay = document.getElementById('tokenizer-loading-overlay');
+    const comparisonContent = document.getElementById('comparison-content');
+    const progressText = document.getElementById('loading-progress-text');
 
     try {
         console.log('Loading tokenizers...');
 
-        // Load in parallel
-        const [gpt2, bert, t5] = await Promise.all([
-            AutoTokenizer.from_pretrained('gpt2'),
-            AutoTokenizer.from_pretrained('bert-base-uncased'),
-            AutoTokenizer.from_pretrained('t5-small')
-        ]);
-
-        tokenizers.gpt2 = gpt2;
-        tokenizers.bert = bert;
-        tokenizers.t5 = t5;
+        progressText.textContent = 'Loading GPT-2 tokenizer...';
+        tokenizers.gpt2 = await AutoTokenizer.from_pretrained('gpt2');
+        
+        progressText.textContent = 'Loading BERT tokenizer...';
+        tokenizers.bert = await AutoTokenizer.from_pretrained('bert-base-uncased');
+        
+        progressText.textContent = 'Loading T5 tokenizer...';
+        tokenizers.t5 = await AutoTokenizer.from_pretrained('t5-small');
 
         console.log('All tokenizers loaded successfully');
-        loadingIndicator.classList.remove('active');
+        
+        loadingOverlay.style.display = 'none';
+        comparisonContent.style.display = 'block';
     } catch (error) {
         console.error('Error loading tokenizers:', error);
-        loadingIndicator.innerHTML = '<span style="color: red;">Error loading tokenizers. Please refresh.</span>';
+        loadingOverlay.classList.add('error');
+        const loadingText = loadingOverlay.querySelector('.loading-text');
+        if (loadingText) loadingText.textContent = 'Loading Failed';
+        progressText.textContent = `Error: ${error.message}. Please refresh the page.`;
     }
 }
 
@@ -298,13 +303,29 @@ async function updateVocabulary() {
             return;
         }
 
-        // Convert to array
-        let vocabArray = Object.entries(vocab).map(([token, id]) => ({
-            token,
-            id,
-            type: getTokenType(token),
-            length: token.length
-        }));
+        let vocabArray = [];
+        const entries = Object.entries(vocab);
+        
+        if (entries.length > 0) {
+            const [firstKey, firstValue] = entries[0];
+            const keyIsNumeric = !isNaN(parseInt(firstKey)) && typeof firstValue === 'string';
+            
+            if (keyIsNumeric) {
+                vocabArray = entries.map(([id, token]) => ({
+                    token: String(token),
+                    id: parseInt(id),
+                    type: getTokenType(String(token)),
+                    length: String(token).length
+                }));
+            } else {
+                vocabArray = entries.map(([token, id]) => ({
+                    token: String(token),
+                    id: typeof id === 'number' ? id : parseInt(id) || 0,
+                    type: getTokenType(String(token)),
+                    length: String(token).length
+                }));
+            }
+        }
 
         // Apply filters
         if (searchTerm) {
@@ -324,11 +345,9 @@ async function updateVocabulary() {
 
         filteredVocab = vocabArray;
         currentVocabPage = 0;
-
-        // Update stats
+        
+        sortVocab();
         updateVocabStats(vocabArray, Object.keys(vocab).length);
-
-        // Display first page
         displayVocabPage();
     } catch (error) {
         console.error('Error loading vocabulary:', error);
@@ -336,17 +355,39 @@ async function updateVocabulary() {
 }
 
 function getTokenType(token) {
-    // Special tokens
     if (token.startsWith('<') && token.endsWith('>')) return 'special';
     if (token.startsWith('[') && token.endsWith(']')) return 'special';
-
-    // Subwords (starts with special characters)
     if (token.startsWith('##') || token.startsWith('▁') || token.startsWith('Ġ')) return 'subword';
-
-    // Regular words
     if (/^[a-zA-Z]+$/.test(token)) return 'word';
-
     return 'other';
+}
+
+function sortVocab() {
+    filteredVocab.sort((a, b) => {
+        let valA = a[currentSortColumn];
+        let valB = b[currentSortColumn];
+        
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+        
+        let comparison = 0;
+        if (valA < valB) comparison = -1;
+        else if (valA > valB) comparison = 1;
+        
+        return sortAscending ? comparison : -comparison;
+    });
+}
+
+function handleSort(column) {
+    if (currentSortColumn === column) {
+        sortAscending = !sortAscending;
+    } else {
+        currentSortColumn = column;
+        sortAscending = true;
+    }
+    sortVocab();
+    currentVocabPage = 0;
+    displayVocabPage();
 }
 
 function updateVocabStats(vocabArray, totalSize) {
@@ -360,6 +401,8 @@ function displayVocabPage() {
     const tbody = document.getElementById('vocab-table-body');
     tbody.innerHTML = '';
 
+    updateTableHeaders();
+
     const start = currentVocabPage * VOCAB_PAGE_SIZE;
     const end = Math.min(start + VOCAB_PAGE_SIZE, filteredVocab.length);
     const pageItems = filteredVocab.slice(start, end);
@@ -371,7 +414,6 @@ function displayVocabPage() {
 
     pageItems.forEach(item => {
         const row = document.createElement('tr');
-
         const typeClass = item.type === 'special' ? 'special' :
                          item.type === 'subword' ? 'subword' : 'word';
 
@@ -381,17 +423,29 @@ function displayVocabPage() {
             <td><span class="token-type ${typeClass}">${item.type}</span></td>
             <td>${item.length}</td>
         `;
-
         tbody.appendChild(row);
     });
 
-    // Update pagination
     const totalPages = Math.ceil(filteredVocab.length / VOCAB_PAGE_SIZE);
     document.getElementById('vocab-page-info').textContent =
         `Page ${currentVocabPage + 1} of ${totalPages} (${filteredVocab.length} tokens)`;
 
     document.getElementById('vocab-prev').disabled = currentVocabPage === 0;
     document.getElementById('vocab-next').disabled = end >= filteredVocab.length;
+}
+
+function updateTableHeaders() {
+    const headers = document.querySelectorAll('.vocab-table th');
+    const columns = ['id', 'token', 'type', 'length'];
+    
+    headers.forEach((th, index) => {
+        const column = columns[index];
+        const arrow = currentSortColumn === column ? (sortAscending ? ' ▲' : ' ▼') : '';
+        const baseText = ['Token ID', 'Token', 'Type', 'Length'][index];
+        th.textContent = baseText + arrow;
+        th.style.cursor = 'pointer';
+        th.onclick = () => handleSort(column);
+    });
 }
 
 function escapeHtml(text) {

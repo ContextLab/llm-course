@@ -62,9 +62,16 @@ class BPEVisualizer {
         document.getElementById('bpe-auto-btn').addEventListener('click', () => this.toggleAutoPlay());
         document.getElementById('bpe-reset-btn').addEventListener('click', () => this.reset());
 
-        // Mode toggle buttons
         document.getElementById('bpe-mode-simplified').addEventListener('click', () => this.setMode('simplified'));
         document.getElementById('bpe-mode-gpt2').addEventListener('click', () => this.setMode('gpt2'));
+
+        document.querySelectorAll('.example-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const text = btn.getAttribute('data-text');
+                document.getElementById('bpe-input').value = text;
+                this.reset();
+            });
+        });
     }
 
     setMode(mode) {
@@ -143,7 +150,7 @@ class BPEVisualizer {
         this.updateDisplay();
 
         const modeText = this.mode === 'gpt2' ? 'Real GPT-2 BPE' : 'Simplified BPE';
-        this.updateStepInfo(`${modeText} initialized. Each character is a separate token. Click "Next Step" to begin merging.`);
+        this.updateStepInfo(`${modeText} initialized with ${this.tokens.length} characters. Click "Next Step" to begin merging pairs.`);
     }
 
     step() {
@@ -309,9 +316,8 @@ class BPEVisualizer {
         document.getElementById('bpe-auto-btn').textContent = 'Auto Play';
 
         this.updateDisplay();
-        this.updateStepInfo('Click "Start BPE Visualization" to begin');
+        this.updateStepInfo('Click "Load Text" to begin the BPE visualization');
 
-        // Clear merge list
         document.getElementById('merge-list').innerHTML = '';
         document.getElementById('bpe-tree').innerHTML = '';
     }
@@ -588,51 +594,11 @@ class SubwordDecomposer {
     }
 }
 
-// Initialize visualizer when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     window.bpeVisualizer = new BPEVisualizer();
     window.tokenFrequencyAnalyzer = new TokenFrequencyAnalyzer(window.bpeVisualizer);
     window.subwordDecomposer = SubwordDecomposer;
-
-    // Add example buttons
-    addExampleButtons();
 });
-
-function addExampleButtons() {
-    const examples = [
-        { label: 'Simple', text: 'hello world' },
-        { label: 'Repeated', text: 'the the the cat sat' },
-        { label: 'Common Words', text: 'tokenization preprocessing' },
-        { label: 'Sentence', text: 'The quick brown fox jumps' }
-    ];
-
-    const container = document.querySelector('#bpe-visualizer .controls');
-    const examplesDiv = document.createElement('div');
-    examplesDiv.style.marginLeft = 'auto';
-    examplesDiv.style.display = 'flex';
-    examplesDiv.style.gap = '5px';
-    examplesDiv.style.flexWrap = 'wrap';
-
-    const label = document.createElement('span');
-    label.textContent = 'Examples: ';
-    label.style.alignSelf = 'center';
-    label.style.color = '#6b7280';
-    examplesDiv.appendChild(label);
-
-    examples.forEach(example => {
-        const btn = document.createElement('button');
-        btn.className = 'secondary-btn';
-        btn.style.padding = '6px 12px';
-        btn.style.fontSize = '0.9rem';
-        btn.textContent = example.label;
-        btn.addEventListener('click', () => {
-            document.getElementById('bpe-input').value = example.text;
-        });
-        examplesDiv.appendChild(btn);
-    });
-
-    container.appendChild(examplesDiv);
-}
 
 // Export for use in other modules
 window.bpe = {

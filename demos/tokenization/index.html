@@ -31,20 +31,25 @@
 
         <!-- Tab 1: Tokenizer Comparison -->
         <div id="comparison" class="tab-content active">
-            <div class="info-box" style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary-color);">
-                <p style="margin: 0; color: var(--text-primary);"><strong>What is tokenization?</strong> Tokenization breaks text into smaller units (tokens) that language models can process. Different models use different algorithms: GPT-2 uses BPE, BERT uses WordPiece, and T5 uses SentencePiece. Compare how each handles the same text below.</p>
+            <!-- Loading overlay for tokenizers -->
+            <div id="tokenizer-loading-overlay" class="model-loading-status">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading Tokenizers...</div>
+                <div class="loading-progress" id="loading-progress-text">Downloading GPT-2, BERT, and T5 tokenizers from HuggingFace</div>
             </div>
-            <div class="input-section">
-                <label for="text-input">Enter text to tokenize:</label>
-                <textarea id="text-input" rows="4" placeholder="Type or paste text here to see how different tokenizers process it...">The quick brown fox jumps over the lazy dog. Tokenization is fundamental to NLP!</textarea>
-                <div class="controls">
-                    <button id="tokenize-btn" class="primary-btn">Tokenize</button>
-                    <button id="clear-btn" class="secondary-btn">Clear</button>
-                    <div class="loading-indicator" id="loading">
-                        <span class="spinner"></span> Loading tokenizers...
+            
+            <div id="comparison-content" style="display: none;">
+                <div class="info-box" style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary-color);">
+                    <p style="margin: 0; color: var(--text-primary);"><strong>What is tokenization?</strong> Tokenization breaks text into smaller units (tokens) that language models can process. Different models use different algorithms: GPT-2 uses BPE, BERT uses WordPiece, and T5 uses SentencePiece. Compare how each handles the same text below.</p>
+                </div>
+                <div class="input-section">
+                    <label for="text-input">Enter text to tokenize:</label>
+                    <textarea id="text-input" rows="4" placeholder="Type or paste text here to see how different tokenizers process it...">The quick brown fox jumps over the lazy dog. Tokenization is fundamental to NLP!</textarea>
+                    <div class="controls">
+                        <button id="tokenize-btn" class="primary-btn">Tokenize</button>
+                        <button id="clear-btn" class="secondary-btn">Clear</button>
                     </div>
                 </div>
-            </div>
 
             <div class="tokenizer-grid">
                 <!-- GPT-2 (BPE) -->
@@ -113,6 +118,7 @@
                 <div id="stats-chart" class="chart-container"></div>
                 <canvas id="comparison-chart" width="800" height="300"></canvas>
             </div>
+            </div>
         </div>
 
         <!-- Tab 2: BPE Step-by-Step Visualizer -->
@@ -126,8 +132,17 @@
                 </ul>
             </div>
             <div class="input-section">
-                <label for="bpe-input">Enter text for BPE visualization:</label>
-                <textarea id="bpe-input" rows="3" placeholder="Enter text to see BPE algorithm step-by-step...">hello world</textarea>
+                <div class="examples-section" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 8px;">Try an example:</label>
+                    <div id="bpe-examples" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="example-btn secondary-btn" data-text="The quick brown fox jumps over the lazy dog">Quick brown fox</button>
+                        <button class="example-btn secondary-btn" data-text="Tokenization is the process of breaking text into smaller units called tokens">Tokenization explained</button>
+                        <button class="example-btn secondary-btn" data-text="Neural networks learn patterns from data through backpropagation">Neural networks</button>
+                        <button class="example-btn secondary-btn" data-text="The cat sat on the mat while the rat ran past the hat">Rhyming patterns</button>
+                    </div>
+                </div>
+                <label for="bpe-input">Or enter your own text:</label>
+                <textarea id="bpe-input" rows="3" placeholder="Enter text to see BPE algorithm step-by-step...">The quick brown fox jumps over the lazy dog</textarea>
 
                 <!-- Mode Selection -->
                 <div class="mode-selection-box" style="margin: 15px 0; padding: 15px; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color);">
@@ -152,7 +167,7 @@
                 </div>
 
                 <div class="controls">
-                    <button id="bpe-start-btn" class="primary-btn">Start BPE Visualization</button>
+                    <button id="bpe-start-btn" class="primary-btn">Load Text</button>
                     <button id="bpe-step-btn" class="secondary-btn" disabled>Next Step</button>
                     <button id="bpe-auto-btn" class="secondary-btn" disabled>Auto Play</button>
                     <button id="bpe-reset-btn" class="secondary-btn">Reset</button>
@@ -163,7 +178,7 @@
                 <div class="bpe-explanation">
                     <h3>BPE Algorithm Steps</h3>
                     <div id="bpe-step-info" class="step-info">
-                        <p>Click "Start BPE Visualization" to begin</p>
+                        <p>Click "Load Text" to begin the BPE visualization</p>
                     </div>
                     <div id="bpe-merge-history" class="merge-history">
                         <h4>Merge History</h4>

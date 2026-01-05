@@ -363,6 +363,22 @@
             50% { opacity: 0.5; }
         }
 
+        /* In Progress Badge */
+        .in-progress-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+            vertical-align: middle;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
         @media (max-width: 768px) {
             .nav-links { gap: 1rem; }
             .demo-grid { grid-template-columns: 1fr; }
@@ -430,7 +446,7 @@
 
             <!-- Lecture 6: Tokenization -->
             <div class="demo-card">
-                <h3 class="demo-title">Text Tokenization</h3>
+                <h3 class="demo-title">Text Tokenization <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Visualize how text is broken down into tokens. Compare different tokenization strategies and understand their impact on language models.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -441,7 +457,7 @@
 
             <!-- Lecture 8: POS Tagging, Sentiment -->
             <div class="demo-card">
-                <h3 class="demo-title">POS Tagging & Parsing</h3>
+                <h3 class="demo-title">POS Tagging & Parsing <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Analyze sentence structure with Part-of-Speech tagging and dependency parsing. Visualize parse trees and grammatical relationships.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -451,7 +467,7 @@
             </div>
 
             <div class="demo-card">
-                <h3 class="demo-title">Sentiment Analysis Dashboard</h3>
+                <h3 class="demo-title">Sentiment Analysis Dashboard <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Analyze sentiment in movie reviews using multiple models. Explore the IMDB dataset and visualize prediction confidence and feature contributions.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -462,7 +478,7 @@
 
             <!-- Lecture 9: Embeddings Comparison, Topic Modeling -->
             <div class="demo-card">
-                <h3 class="demo-title">Embeddings Comparison Lab</h3>
+                <h3 class="demo-title">Embeddings Comparison Lab <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Benchmark multiple embedding models on similarity, analogy, and categorization tasks. Compare speed vs quality trade-offs.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -474,7 +490,7 @@
             </div>
 
             <div class="demo-card">
-                <h3 class="demo-title">Topic Modeling Studio</h3>
+                <h3 class="demo-title">Topic Modeling Studio <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Discover hidden topics in documents using Latent Dirichlet Allocation (LDA). Explore 3000 Wikipedia articles and visualize topic distributions.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -485,7 +501,7 @@
 
             <!-- Lecture 11: Word Analogies, Word Embeddings -->
             <div class="demo-card">
-                <h3 class="demo-title">Word Analogies Explorer</h3>
+                <h3 class="demo-title">Word Analogies Explorer <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Solve word analogies using vector arithmetic. Explore relationships like "king - man + woman = queen" in embedding space.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -495,7 +511,7 @@
             </div>
 
             <div class="demo-card">
-                <h3 class="demo-title">Word Embeddings Explorer</h3>
+                <h3 class="demo-title">Word Embeddings Explorer <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Interactive 3D visualization of word embeddings. Explore semantic relationships and discover how words cluster in vector space.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -506,7 +522,7 @@
 
             <!-- Lecture 12: Semantic Search -->
             <div class="demo-card">
-                <h3 class="demo-title">Semantic Search Engine</h3>
+                <h3 class="demo-title">Semantic Search Engine <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Compare semantic, keyword (BM25), and hybrid search methods on the same corpus. See how embeddings improve search relevance.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -518,7 +534,7 @@
 
             <!-- Lecture 15: Attention -->
             <div class="demo-card">
-                <h3 class="demo-title">Attention Mechanism</h3>
+                <h3 class="demo-title">Attention Mechanism <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Visualize how attention mechanisms work. See how models learn to focus on relevant parts of the input sequence.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -530,7 +546,7 @@
 
             <!-- Lecture 16: Transformer -->
             <div class="demo-card">
-                <h3 class="demo-title">Transformer Architecture</h3>
+                <h3 class="demo-title">Transformer Architecture <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Step through the transformer architecture layer by layer. Understand encoder-decoder interactions and multi-head attention.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -542,7 +558,7 @@
 
             <!-- Lecture 18: BERT -->
             <div class="demo-card">
-                <h3 class="demo-title">BERT Masked Language Modeling</h3>
+                <h3 class="demo-title">BERT Masked Language Modeling <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Experiment with BERT's masked language modeling. See how BERT predicts masked words using bidirectional context.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -554,7 +570,7 @@
 
             <!-- Lecture 21: GPT -->
             <div class="demo-card">
-                <h3 class="demo-title">GPT Playground</h3>
+                <h3 class="demo-title">GPT Playground <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Experiment with a mini GPT model. Adjust parameters, see predictions, and understand autoregressive text generation.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
@@ -567,7 +583,7 @@
 
             <!-- Lecture 24: RAG -->
             <div class="demo-card">
-                <h3 class="demo-title">RAG System Demo</h3>
+                <h3 class="demo-title">RAG System Demo <span class="in-progress-badge">In Progress</span></h3>
                 <p class="demo-description">Build a retrieval-augmented generation system. Query a corpus of 2000 Wikipedia articles and see how context enhances responses.</p>
                 <div class="lecture-links">
                     <div class="lecture-links-title">Related Lectures</div>
