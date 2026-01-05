@@ -19,9 +19,32 @@ llm-course/
 │   ├── week1-10/    # Each week symlinks to template_deck/themes/
 │   └── template_deck/  # Build engine (compile.sh, autoscale.js)
 ├── tests/           # 1500+ tests, custom TestRunner (no framework)
-├── assignments/     # Jupyter notebooks for students
+├── assignments/     # Assignment web pages + GitHub Classroom submodules
+│   ├── assignment-X/    # Rendered HTML instruction pages
+│   └── *-llm-course/    # Submodules (template repos with notebooks)
 ├── notes/           # Internal debugging logs (not student-facing)
 └── admin/           # Syllabus, fonts, compile scripts
+```
+
+## SUBMODULES
+
+Assignment template repositories are git submodules under `assignments/`:
+
+| Submodule | Notebook | Data Files |
+|-----------|----------|------------|
+| `eliza-llm-course` | Assignment1_ELIZA.ipynb | instructions.txt |
+| `spam-classifier-llm-course` | Assignment2_SPAM_Classifier.ipynb | training.zip |
+| `embeddings-llm-course` | Assignment3_Wikipedia_Embeddings.ipynb | - |
+| `customer-service-bot-llm-course` | Assignment4_Customer_Service_Chatbot.ipynb | - |
+| `gpt-llm-course` | Assignment5_GPT.ipynb | - |
+| `final-project-llm-course` | FinalProject_Template.ipynb | - |
+
+Each notebook has an "Open in Colab" badge. Students fork via GitHub Classroom, not direct clone.
+
+**Submodule commands:**
+```bash
+git submodule update --init --recursive  # Clone submodules after fresh clone
+git submodule update --remote            # Pull latest from submodule remotes
 ```
 
 ## WHERE TO LOOK

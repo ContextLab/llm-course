@@ -34,6 +34,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -79,6 +81,12 @@ jobs:
           cp -r assignments/*.html _site/assignments/ 2>/dev/null || true
           cp -r assignments/*.md _site/assignments/ 2>/dev/null || true
           for dir in assignments/assignment-* assignments/final-project; do
+            if [ -d "$dir" ]; then
+              cp -r "$dir" _site/assignments/
+            fi
+          done
+          # Copy assignment submodules (for data files like instructions.txt, training.zip)
+          for dir in assignments/*-llm-course; do
             if [ -d "$dir" ]; then
               cp -r "$dir" _site/assignments/
             fi
