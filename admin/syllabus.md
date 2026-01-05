@@ -27,7 +27,7 @@ output: pdf
 \hline
 \textbf{Office location} & 349 Moore Hall            \\
 \hline
-\textbf{Office hours}    & By appointment            \\
+\textbf{Office hours}    & [By appointment](https://context-lab.youcanbook.me)            \\
 \hline
 \end{tabular}
 \end{center}
