@@ -105,7 +105,7 @@
 }
 
 .btn-primary:hover {
-    background: var(--primary-dark, #4f46e5);
+    background: var(--primary-dark, #005a34);
     transform: translateY(-2px);
     box-shadow: var(--search-shadow-lg);
 }

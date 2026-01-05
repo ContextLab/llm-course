@@ -8,14 +8,27 @@
    ============================================ */
 
 :root {
-    /* Primary Colors */
-    --primary-color: #6366f1;
-    --primary-dark: #4f46e5;
-    --primary-light: #818cf8;
-    --secondary-color: #8b5cf6;
-    --accent-color: #ec4899;
+    /* Primary Colors - Dartmouth Brand */
+    --primary-color: #00693e;      /* Dartmouth Green */
+    --primary-dark: #005a34;       /* Darker Dartmouth Green */
+    --primary-light: #1a8a5a;      /* Lighter Dartmouth Green */
+    --secondary-color: #267aba;    /* River Blue */
+    --accent-color: #ffa00f;       /* Bonfire Orange */
 
-    /* Background Colors */
+    /* Tertiary Colors - for plots, charts, emphasis (Dartmouth palette) */
+    --color-river-blue: #267aba;
+    --color-river-navy: #003c73;
+    --color-spring-green: #c4dd88;
+    --color-rich-spring: #a5d75f;
+    --color-summer-yellow: #f5dc69;
+    --color-bonfire-orange: #ffa00f;
+    --color-bonfire-red: #9d162e;
+    --color-tuck-orange: #d94415;
+    --color-violet: #8a6996;
+    --color-autumn-brown: #643c20;
+    --color-forest-green: #12312b;
+
+    /* Background Colors (original dark slate) */
     --bg-color: #0f172a;
     --bg-secondary: #1e293b;
     --surface-color: #1e293b;
@@ -26,28 +39,28 @@
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
 
-    /* Border & Divider */
+    /* Border & Divider (original) */
     --border-color: #334155;
     --divider-color: #475569;
 
-    /* Status Colors */
+    /* Status Colors (original - universal semantics) */
     --success-color: #10b981;
     --warning-color: #f59e0b;
     --error-color: #ef4444;
     --info-color: #3b82f6;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    /* Gradients - Dartmouth themed */
+    --gradient-primary: linear-gradient(135deg, #00693e 0%, #005a34 100%);
+    --gradient-secondary: linear-gradient(135deg, #267aba 0%, #003c73 100%);
+    --gradient-accent: linear-gradient(135deg, #00693e 0%, #267aba 100%);
+    --gradient-success: linear-gradient(135deg, #00693e 0%, #a5d75f 100%);
 
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-    --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.4);
+    --shadow-glow: 0 0 20px rgba(0, 105, 62, 0.4);
 
     /* Spacing */
     --spacing-xs: 0.25rem;

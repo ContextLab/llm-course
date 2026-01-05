@@ -8,9 +8,9 @@
     --gpt-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     --gpt-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
     --gpt-transition: all 0.3s ease;
-    --token-selected: #818cf8;
+    --token-selected: #a5d75f;
     --token-alternative: #94a3b8;
-    --primary-hover: #4338ca;
+    --primary-hover: #005a34;
 }
 
 .container {
