@@ -180,6 +180,13 @@
             font-size: 0.875rem;
             line-height: 1.6;
         }
+        .content .task-checkbox {
+            width: 1.1em;
+            height: 1.1em;
+            margin-right: 0.5em;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
         footer {
             background: var(--surface-color);
             border-top: 1px solid var(--border-color);
@@ -232,8 +239,8 @@
 <h2 id="overview">Overview</h2>
 <p>In this assignment, you will build a simplified version of ELIZA, one of the earliest programs to mimic human conversation. Created by Joseph Weizenbaum at MIT in 1964-1966, ELIZA was designed to simulate a session with a non-directive (Rogerian) psychotherapist using simple pattern matching and string manipulation.</p>
 <p>But this assignment goes beyond just implementing a chatbot. You'll also analyze what makes ELIZA feel conversational despite its simplicity, compare it to modern chatbots, and reflect on the psychological phenomenon known as the "ELIZA effect"—the tendency for people to attribute human-like understanding to computer programs.</p>
-<p>This is your first assignment in the course, and it's designed to introduce you to fundamental concepts in natural language processing: pattern matching, text manipulation, rule-based systems, and the critical distinction between appearing intelligent and actually understanding language.
-<h3 id="vibe-coding-is-encouraged">Vibe coding is encouraged!</h3></p>
+<p>This is your first assignment in the course, and it's designed to introduce you to fundamental concepts in natural language processing: pattern matching, text manipulation, rule-based systems, and the critical distinction between appearing intelligent and actually understanding language.</p>
+<h3 id="vibe-coding-is-encouraged">Vibe coding is encouraged!</h3>
 <p>For this assignment, it is <em>possible</em> to code everything from scratch in the allotted assignment time (1 week). However, I strongly recommend that you use a coding agent to help you implement the core components. Some suggestions are provided <a href="#resources-and-references">below</a>. If you're already familiar with vibe coding, then feel free to use whatever approach you're comfortable with. If you're new to vibe coding, or if you'd like to try something different, what works well for me is:</p>
 <ol>
 <li>Start with a highly detailed description of <em>exactly</em> what you want your coding agent to make. I would suggest including the assignment as a reference file to provide additional instructions and context. But to increase the chances of <em>working</em> code, hallucinations, and other quality issues, you should explain as clearly as possible precisely what the core algorithms are, how the work should be approached, and so on. In order to create this document, it is critical that <em>you</em> have a detailed and comprehensive understanding of what the solution should look like. You don't necessarily need to know how to <em>code</em> it yourself (LLMs are fantastic at writing code), but you <em>do</em> need to know exactly what each function will do (i.e., what are the inputs, what are the outputs, and how can you convince yourself that it's working-- including tricky edge cases). It helps to include examples to illustrate how each component should work.</li>
@@ -335,6 +342,7 @@ User: I have to go now.
 Chatbot: That will be $200. See you again next week.</code></pre>
 <h3 id="implementation-requirements">Implementation Requirements</h3>
 <ul>
+<li><strong>No hard-coded responses</strong>: You're provided with an example <a href="instructions.txt"><code>instructions.txt</code></a> file. However you should read from the file to generate all of the messages, rules, and patterns <em>when you initialize a new instance of your chatbot</em>. Your code should be able to support other <code>instructions.txt</code> files as long as they follow the same syntax and formatting (even if the numbers of rules are different, the specific words are different, and so on).</li>
 <li><strong>Initial and final messages</strong>: These must be drawn from the predefined options in <a href="instructions.txt"><code>instructions.txt</code></a></li>
 <li><strong>Pre-substitutions, synonym handling, and post-substitutions</strong>: Must be implemented according to the rules in <a href="instructions.txt"><code>instructions.txt</code></a></li>
 <li><strong>Pattern matching</strong>: Must use the decomposition and reassembly rules from <a href="instructions.txt"><code>instructions.txt</code></a> to generate responses</li>
@@ -353,12 +361,12 @@ Chatbot: That will be $200. See you again next week.</code></pre>
 For each conversation:
 <ul>
 <li>Include the full transcript in your notebook</li>
-<li>Analyze what worked and what didn't</li>
+<li>Describe what worked and what didn't</li>
 <li>Identify specific patterns that matched (or failed to match)</li>
-<li>Note where ELIZA seems "intelligent" vs. where the illusion breaks</li>
+<li>Describe where ELIZA seems "intelligent" vs. where the illusion breaks</li>
 </ul>
 <h3 id="2-the-eliza-effect-analysis-required">2. The ELIZA Effect Analysis (Required)</h3>
-<p>Reflect on the psychological aspects of interacting with ELIZA:</p>
+<p>Reflect on the psychological aspects of interacting with ELIZA (500-1000 words in total:</p>
 a) <strong>When does ELIZA feel human?</strong>
 <ul>
 <li>What specific responses create the illusion of understanding?</li>
@@ -378,7 +386,7 @@ c) <strong>Modern parallels</strong>
 <li>Where do modern systems still exhibit "ELIZA-like" behaviors?</li>
 </ul>
 <h3 id="3-pattern-analysis-required">3. Pattern Analysis (Required)</h3>
-<p>Analyze ELIZA's rule system:</p>
+<p>Analyze ELIZA's rule system (500-1000 words in total):</p>
 a) <strong>Pattern effectiveness</strong>
 <ul>
 <li>Which patterns in <code>instructions.txt</code> are most useful?</li>
@@ -398,27 +406,28 @@ c) <strong>Substitution impact</strong>
 <li>What happens if substitutions are applied incorrectly?</li>
 </ul>
 <h3 id="4-comparison-with-modern-chatbots-required">4. Comparison with Modern Chatbots (Required)</h3>
-<p>Compare your ELIZA implementation with a modern chatbot:</p>
+<p>Compare your ELIZA implementation with a modern chatbot (500-1000 words in total, excluding conversation excerpts):</p>
 a) <strong>Choose a comparison system</strong>
 <ul>
 <li>ChatGPT (or similar LLM-based chatbot)</li>
 <li>A simple chatbot library (ChatterBot, Rasa, etc.)</li>
 <li>Another student's enhanced ELIZA (if available)</li>
+<li>Another <a href="https://context-lab.com/llm-course/demos/chatbot-evolution/" target="_blank">demo model</a> from this course</li>
 </ul>
 b) <strong>Side-by-side testing</strong>
 <ul>
 <li>Use the same prompts with both systems</li>
 <li>Compare response quality, coherence, and relevance</li>
-<li>Document at least 3 example conversations</li>
+<li>Document at least 3 example conversations (10+ turns each). Try to really find the limits of each model and <em>also</em> find what each model does especially well.</li>
 </ul>
 c) <strong>Analysis</strong>
 <ul>
 <li>What capabilities does the modern system have that ELIZA lacks?</li>
-<li>Are there any scenarios where ELIZA performs comparably?</li>
-<li>What's needed to bridge the gap from ELIZA to modern chatbots?</li>
+<li>Are there any scenarios where ELIZA performs comparably well?</li>
+<li>What's needed to bridge the gap from ELIZA to modern chatbots?  E.g., if we could just be a bit more clever, or if we had enough time, could we (in principle) write down enough ELIZA-style rules to achieve performance comparable to today's best chatbots?  Or is something "more" needed? What do you think that <em>something</em> is?</li>
 </ul>
 <h2 id="part-3-reflection-and-insights-required">Part 3: Reflection and Insights (Required)</h2>
-<p>Write a thoughtful reflection (500-1000 words) addressing:</p>
+<p>Write a thoughtful reflection (500-1000 words in total) addressing:</p>
 <ol>
 <li><strong>What is conversation?</strong>
 <ul>
@@ -497,17 +506,17 @@ Document design decisions and performance improvements.
 <p>Submit a <strong>single Jupyter notebook</strong> that includes:</p>
 <h3 id="1-implementation-40">1. Implementation (40%)</h3>
 <ul>
-<li>Complete, working ELIZA chatbot implementation</li>
+<li>Complete, working ELIZA chatbot implementation following the template notebook</li>
 <li>Clean, well-commented code</li>
 <li>Proper handling of all rule types from <code>instructions.txt</code></li>
 <li>Markdown cells explaining your approach</li>
 </ul>
 <h3 id="2-conversation-examples-20">2. Conversation Examples (20%)</h3>
 <ul>
-<li>At least 5 diverse conversation transcripts</li>
-<li>Analysis of each conversation</li>
+<li>High quality and diverse content covered in conversation transcripts</li>
+<li>Analysis (reflection) about each conversation</li>
 <li>Pattern matching explanations</li>
-<li>Examples of successes and failures</li>
+<li>Examples (and discussions) of successes and failures</li>
 </ul>
 <h3 id="3-analysis-25">3. Analysis (25%)</h3>
 <ul>
@@ -518,7 +527,7 @@ Document design decisions and performance improvements.
 </ul>
 <h3 id="4-reflection-10">4. Reflection (10%)</h3>
 <ul>
-<li>Thoughtful 500-1000 word reflection</li>
+<li>Thoughtful reflection</li>
 <li>Addresses all required questions</li>
 <li>Shows critical thinking about conversation and understanding</li>
 <li>Connects to modern AI systems</li>
@@ -589,6 +598,7 @@ Document design decisions and performance improvements.
 <li><strong>Test incrementally</strong>: Don't write everything at once—test each component separately</li>
 <li><strong>Use print statements</strong>: Debug by printing what patterns match and why</li>
 <li><strong>Study <code>instructions.txt</code></strong>: Understand the format before parsing it</li>
+<li><strong>Learn from a reference implementation</strong>: Use the <a href="https://context-lab.com/llm-course/demos/eliza/" target="_blank">reference implementation</a> from our course, including the rule breakdown and rule editor tabs, to see how each component should behave.</li>
 </ol>
 <h3 id="common-pitfalls-to-avoid">Common Pitfalls to Avoid</h3>
 <ol>
@@ -620,7 +630,7 @@ Document design decisions and performance improvements.
 <ul>
 <li><strong>Days 1-2</strong>: Implement core ELIZA functionality (pattern matching, pre/post-substitutions, synonym handling, conversation loop)</li>
 <li><strong>Days 3-4</strong>: Conduct conversation testing and analysis (at least 5 diverse conversation scenarios, ELIZA effect analysis, pattern effectiveness analysis)</li>
-<li><strong>Days 5-6</strong>: Complete comparison with modern chatbots and write your reflection (500-1000 word reflection on key questions)</li>
+<li><strong>Days 5-6</strong>: Complete comparison with modern chatbots and write your reflections and discussions</li>
 <li><strong>Day 7</strong>: Polish your notebook, test it in a fresh Colab session, and prepare for submission</li>
 </ul>
 <strong>Key tip</strong>: These phases can overlap! While implementing, you can begin testing. While analyzing, you can refine your implementation. The daily breakdown above represents the primary focus for each phase, but iterating and moving between phases is normal and expected. Start early in the week and test incrementally as you build each component.
@@ -633,6 +643,9 @@ Document design decisions and performance improvements.
 <li><strong>Read this first!</strong> It will help you understand the design and implementation</li>
 </ul>
 </li>
+</ol>
+<h3 id="additional-context">Additional Context</h3>
+<ol>
 <li><strong>Weizenbaum, J. (1976)</strong>. "Computer Power and Human Reason: From Judgment to Calculation"
 <ul>
 <li><a href="http://blogs.evergreen.edu/cpat/files/2013/05/Computer-Power-and-Human-Reason.pdf" target="_blank">PDF Link</a></li>
@@ -640,13 +653,10 @@ Document design decisions and performance improvements.
 <li>Highly relevant to your reflection section</li>
 </ul>
 </li>
-</ol>
-<h3 id="additional-context">Additional Context</h3>
-<ol>
 <li><strong>Hofstadter, D. (1995)</strong>. "Fluid Concepts and Creative Analogies: Computer Models of the Fundamental Mechanisms of Thought"
 <ul>
 <li><a href="https://psycnet.apa.org/record/1995-98269-000" target="_blank">PDF Link</a></li>
-<li>Chapter on the Copycat program and understanding vs. simulation</li>
+<li>Chapter on the copycat program and understanding vs. simulation</li>
 </ul>
 </li>
 <li><strong>Turkle, S. (2011)</strong>. "Alone Together: Why We Expect More from Technology and Less from Each Other"
@@ -658,10 +668,9 @@ Document design decisions and performance improvements.
 </ol>
 <h3 id="technical-resources">Technical Resources</h3>
 <ul>
-<li><strong>ELIZA Online Implementations</strong>: Try online versions to see expected behavior
+<li><strong>ELIZA Online Implementations</strong>: Helpful for seeing expected behavior
 <ul>
 <li>[context-lab.com/llm-course/demos/eliza]](https://context-lab.com/llm-course/demos/eliza/)</li>
-<li>Useful for testing your implementation</li>
 </ul>
 </li>
 <li><strong>Google Colaboratory</strong>: Setup-free resource for writing and running code on Google Cloud machines
@@ -670,7 +679,7 @@ Document design decisions and performance improvements.
 <li>Your assignment <strong>must</strong> run in Google Colaboratory: to test it, press the "Run all" button, or select "Runtime" > "Run all" from the menu. Make sure that <em>all</em> parts of the notebook run without crashing before you submit!!</li>
 </ul>
 </li>
-<li><strong>Dartmouth GenAI</strong>: Free access to powerful LLMs that can help with coding
+<li><strong>Dartmouth GenAI</strong>: Free access to powerful LLMs that can help with coding (only for Dartmouth students, faculty, and staff)
 <ul>
 <li><a href="https://chat.dartmouth.edu/" target="_blank">Link (requires Dartmouth NetID)</a></li>
 </ul>
@@ -729,11 +738,23 @@ Document design decisions and performance improvements.
 <ol>
 <li><strong>Accept the assignment</strong>: Click the <a href="https://classroom.github.com/a/SC1jeftp" target="_blank">accept assignment link</a>
 <ul>
-<li>This creates your own private repository for the assignment</li>
+<li>This creates your own private repository for the assignment (note the repository name!)</li>
 <li>Template repository (your private version will be based on this template): <a href="https://github.com/ContextLab/eliza-llm-course" target="_blank">github.com/ContextLab/eliza-llm-course</a></li>
 </ul>
 </li>
-<li>Click the "</li>
+<li>Click the notebook (<code>.ipynb</code> file) to view it in GitHub</li>
+<li>Click the "Open in Colab" badge at the top.  This will open a new Colaboratory session.</li>
+<li>Click the Copy to Drive button (at the top) to create an editable copy that you can work on.</li>
+<li>Make your edits to the notebook file in Google Colaboratory.</li>
+<li>Save your changes back to GitHub using File > Save a copy in GitHub:
+<ul>
+<li>Select the repository for your assignment from the dropdown menu</li>
+<li>Change the File path to "Assignment1<em>ELIZA.ipynb" (i.e., remove the "Copy</em>of_" text at the beginning)</li>
+<li>Add a note to the Commit message field, or leave it as the default</li>
+<li>Make sure the "Include a link to Colab" box is checked</li>
+<li>Press the "OK" button. This will sync your changes back to your GitHub repository.</li>
+</ul>
+</li>
 <li><strong>Verify submission</strong>: Check that your latest commit appears in your GitHub repository before the deadline</li>
 </ol>
 <strong>Deadline</strong>: January 16, 2026 at 11:59 PM EST
@@ -741,22 +762,22 @@ Document design decisions and performance improvements.
 <ol>
 <li><strong>Runtime</strong>: The notebook must run from start to finish without errors in a fresh Colab session</li>
 <li><strong>Dependencies</strong>: Include all imports and installations in the notebook</li>
-<li><strong>Data</strong>: The <code>instructions.txt</code> file should be loaded in your notebook (upload to Colab or link to it)</li>
+<li><strong>Data</strong>: The <code>instructions.txt</code> file should be loaded in your notebook (code for doing this is in the template notebook provided with the assignment)</li>
 <li><strong>Output</strong>: Keep cell outputs visible in your submission</li>
 <li><strong>Deadline</strong>: January 16, 2026 at 11:59PM EST</li>
 </ol>
 <h3 id="before-submission-checklist">Before Submission Checklist</h3>
 <ul>
-<li><input type="checkbox" disabled> ELIZA implementation is complete and working</li>
-<li><input type="checkbox" disabled> All conversation examples are included with analysis</li>
-<li><input type="checkbox" disabled> ELIZA effect analysis is thorough and insightful</li>
-<li><input type="checkbox" disabled> Modern chatbot comparison is complete with examples</li>
-<li><input type="checkbox" disabled> Reflection addresses all required questions</li>
-<li><input type="checkbox" disabled> Code is well-commented and organized</li>
-<li><input type="checkbox" disabled> All markdown cells provide clear explanations</li>
-<li><input type="checkbox" disabled> Notebook runs without errors in fresh Colab session</li>
-<li><input type="checkbox" disabled> Cell outputs are visible and meaningful</li>
-<li><input type="checkbox" disabled> Formatting is clean and professional</li>
+<li><input type="checkbox" class="task-checkbox"> ELIZA implementation is complete and working</li>
+<li><input type="checkbox" class="task-checkbox"> All conversation examples are included with analysis</li>
+<li><input type="checkbox" class="task-checkbox"> ELIZA effect analysis is thorough and insightful</li>
+<li><input type="checkbox" class="task-checkbox"> Modern chatbot comparison is complete with examples</li>
+<li><input type="checkbox" class="task-checkbox"> Reflection addresses all required questions</li>
+<li><input type="checkbox" class="task-checkbox"> Code is well-commented and organized</li>
+<li><input type="checkbox" class="task-checkbox"> All markdown cells provide clear explanations</li>
+<li><input type="checkbox" class="task-checkbox"> Notebook runs without errors in fresh Colab session</li>
+<li><input type="checkbox" class="task-checkbox"> Cell outputs are visible and meaningful</li>
+<li><input type="checkbox" class="task-checkbox"> Formatting is clean and professional</li>
 </ul>
 <h2 id="academic-integrity">Academic Integrity</h2>
 You are encouraged to:
@@ -770,9 +791,9 @@ You must:
 <ul>
 <li>Write your own code and analysis (even if AI-assisted)</li>
 <li>Understand every line of code you submit</li>
-<li>Write your own reflection in your own words</li>
+<li>Write your own reflection in your own words (do <em>not</em> use generative AI to write your reflections)</li>
 <li>Cite any significant code snippets adapted from external sources</li>
-<li>Submit original conversation examples and analysis</li>
+<li>Submit original conversation examples and analysis (do <em>not</em> use generative AI to come up with your conversation examples)</li>
 </ul>
 Violations of academic integrity will result in a failing grade for the assignment.
 <h2 id="questions">Questions?</h2>
@@ -780,11 +801,11 @@ If you have questions about the assignment:
 <ol>
 <li>Review this README and the Weizenbaum paper</li>
 <li>Check the Week 1 lecture materials</li>
-<li>Post in the course discussion forum</li>
+<li>Post in the course discussion forum on Discord</li>
 <li>Attend office hours</li>
-<li>Email the instructor/TA with specific questions</li>
+<li>Email me with specific questions</li>
 </ol>
-Have fun exploring one of the most important programs in AI history!
+<strong>Have fun exploring one of the most important programs in AI history</strong>!
 <hr>
 <p><em>ELIZA may be nearly 60 years old, but it raises questions about intelligence, understanding, and human-computer interaction that remain deeply relevant today. By building and analyzing ELIZA, you're engaging with fundamental questions that will resurface throughout this course as we explore modern language models.</em></p>
     </main>
@@ -807,6 +828,20 @@ Have fun exploring one of the most important programs in AI history!
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             themeIcon.innerHTML = newTheme === 'dark' ? '&#127769;' : '&#9728;';
+        });
+
+        // Checkbox persistence
+        const pageKey = 'checklist_' + window.location.pathname;
+        const checkboxes = document.querySelectorAll('.task-checkbox');
+        const saved = JSON.parse(localStorage.getItem(pageKey) || '{}');
+        
+        checkboxes.forEach((cb, i) => {
+            if (saved[i] !== undefined) cb.checked = saved[i];
+            cb.addEventListener('change', () => {
+                const state = {};
+                checkboxes.forEach((c, j) => state[j] = c.checked);
+                localStorage.setItem(pageKey, JSON.stringify(state));
+            });
         });
     </script>
 </body>

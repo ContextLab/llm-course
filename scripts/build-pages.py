@@ -228,9 +228,7 @@ def convert_lists(html):
         if checkbox_match:
             checked = checkbox_match.group(1).lower() == "x"
             content = checkbox_match.group(2)
-            checkbox_html = (
-                f'<input type="checkbox" disabled{" checked" if checked else ""}> '
-            )
+            checkbox_html = f'<input type="checkbox" class="task-checkbox"{" checked" if checked else ""}> '
             return indent, "ul", checkbox_html + content
 
         ordered_match = re.match(r"^(\d+)\.\s+(.+)$", stripped)
@@ -616,6 +614,13 @@ def get_page_template(title, nav_active, content, depth=1):
             font-size: 0.875rem;
             line-height: 1.6;
         }}
+        .content .task-checkbox {{
+            width: 1.1em;
+            height: 1.1em;
+            margin-right: 0.5em;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }}
         footer {{
             background: var(--surface-color);
             border-top: 1px solid var(--border-color);
@@ -674,6 +679,20 @@ def get_page_template(title, nav_active, content, depth=1):
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             themeIcon.innerHTML = newTheme === 'dark' ? '&#127769;' : '&#9728;';
+        }});
+
+        // Checkbox persistence
+        const pageKey = 'checklist_' + window.location.pathname;
+        const checkboxes = document.querySelectorAll('.task-checkbox');
+        const saved = JSON.parse(localStorage.getItem(pageKey) || '{{}}');
+        
+        checkboxes.forEach((cb, i) => {{
+            if (saved[i] !== undefined) cb.checked = saved[i];
+            cb.addEventListener('change', () => {{
+                const state = {{}};
+                checkboxes.forEach((c, j) => state[j] = c.checked);
+                localStorage.setItem(pageKey, JSON.stringify(state));
+            }});
         }});
     </script>
 </body>
