@@ -543,7 +543,7 @@ This is pure pattern matching, not experience-based.
 
 <div class="note-box" data-title="What do you think?">
 
-Can statistical patterns **ever** capture what it *feels like* to drink coffee? Does human learning *not* amount to statistics? Is it about the style of learning per se, our about the kinds of data we are learninig from?
+Can statistical patterns **ever** capture what it *feels like* to drink coffee? Does human learning *not* amount to statistics? Is it about the style of learning per se, our about the kinds of data we are learning from?
 
 </div>
 
