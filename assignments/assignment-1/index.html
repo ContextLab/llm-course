@@ -202,18 +202,22 @@
         
 <div style="background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin: 2rem 0; text-align: center;">
     <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Ready to Start?</h3>
-    <a href="#" class="accept-btn" style="display: inline-block; background: var(--gradient-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='';this.style.boxShadow='';">
-        <i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>Accept Assignment
-    </a>
-    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
-        GitHub Classroom link coming soon
-    </p>
+    <a href="https://classroom.github.com/a/SC1jeftp" target="_blank" class="accept-btn" style="display: inline-block; background: var(--gradient-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='';this.style.boxShadow='';"><i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>Accept Assignment</a>
+    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">Due: January 16, 2026 at 11:59 PM EST</p>
 </div>
 <h1>Assignment 1: Building the ELIZA Chatbot</h1>
 <h2>Overview</h2>
 <p>In this assignment, you will build a simplified version of ELIZA, one of the earliest programs to mimic human conversation. Created by Joseph Weizenbaum at MIT in 1964-1966, ELIZA was designed to simulate a session with a non-directive (Rogerian) psychotherapist using simple pattern matching and string manipulation.</p>
 <p>But this assignment goes beyond just implementing a chatbot. You'll also analyze what makes ELIZA feel conversational despite its simplicity, compare it to modern chatbots, and reflect on the psychological phenomenon known as the "ELIZA effect"—the tendency for people to attribute human-like understanding to computer programs.</p>
-<p>This is your first assignment in the course, and it's designed to be approachable while introducing you to fundamental concepts in natural language processing: pattern matching, text manipulation, rule-based systems, and the critical distinction between appearing intelligent and actually understanding language.</p>
+<p>This is your first assignment in the course, and it's designed to introduce you to fundamental concepts in natural language processing: pattern matching, text manipulation, rule-based systems, and the critical distinction between appearing intelligent and actually understanding language.
+<h3>Vibe coding is encouraged!</h3></p>
+<p>For this assignment, it is <em>possible</em> to code everything from scratch in the allotted assignment time (1 week). However, I strongly recommend that you use a coding agent to help you implement the core components. Some suggestions are provided <a href="#resources-and-references">below</a>. If you're already familiar with vibe coding, then feel free to use whatever approach you're comfortable with. If you're new to vibe coding, or if you'd like to try something different, what works well for me is:</p>
+<ol>
+<li>Start with a highly detailed description of <em>exactly</em> what you want your coding agent to make. I would suggest including the assignment as a reference file to provide additional instructions and context. But to increase the chances of <em>working</em> code, hallucinations, and other quality issues, you should explain as clearly as possible precisely what the core algorithms are, how the work should be approached, and so on. In order to create this document, it is critical that <em>you</em> have a detailed and comprehensive understanding of what the solution should look like. You don't necessarily need to know how to <em>code</em> it yourself (LLMs are fantastic at writing code), but you <em>do</em> need to know exactly what each function will do (i.e., what are the inputs, what are the outputs, and how can you convince yourself that it's working-- including tricky edge cases). It helps to include examples to illustrate how each component should work.</li>
+<li>Next, pass your description to your coding agent, and ask it to come up with a detailed <strong>technical design document</strong>. You should review this in detail, edit carefully, and iterate (with help from the coding agent, other LLMs, web searches, and your own intuitions) until you are 100% happy with the design. Ideally the design should contain skeleton code and/or code snippets showing exactly how each component of your project will be implemented.</li>
+<li>Once you have your technical design document, the next step is to construct a detailed <strong>implementation plan</strong>. Given your <em>target</em> (i.e., your technical design document) ask your coding agent to draft a plan for how to implement it. You can use both the assignment instructions and your technical design document as context.  Since implementation plans can get lengthy, you may be pushing up against the context limits of your coding agent of choice. A nice "trick" is to break your task into smaller sub-tasks, and then use agents to do each sub-task. Then no single instance of the coding agent needs to store the full code base and plan in its context.  As with the technical design document, you should iterate until you are 100% happy with the plan.  Importantly, you should include in your plan a way of verifying that everything is working correctly.</li>
+<li>Then let your model "loose" on the problem and have it <strong>draft a solution</strong>.  Provide the assignment, technical design document, and implementation plan as context.  It's highly likely that the first solution your coding agent comes up with will be wrong in important ways-- it might not run, it might not do what you asked, you might have had a conceptual bug in your understanding that propagated to the model's solution, and so on.  That's where you should turn to the verification checks from your implementation plan.  In addition to making sure those checks "pass," you should also (when you're creating chatbots or other interactive applications, like in this assignment) <em>use it yourself</em>. Pretend you're <em>using</em> your chatbot (e.g., pretend you're me, and you're trying to stress test the implementation). Does the code behave like you expect? Does the code break down in unexpected ways? Does it break down in <em>expected</em> ways? Are there any pieces that you don't understand fully?</li>
+</ol>
 <h2>Learning Objectives</h2>
 <p>By completing this assignment, you will:</p>
 <ol>
@@ -316,9 +320,9 @@ Chatbot: That will be $200. See you again next week.
 ```</p>
 <h3>Implementation Requirements</h3>
 <ul>
-<li><strong>Initial and final messages</strong>: These must be drawn from the predefined options in <a href="../eliza-llm-course/instructions.txt">`instructions.txt`</a></li>
-<li><strong>Pre-substitutions, synonym handling, and post-substitutions</strong>: Must be implemented according to the rules in <a href="../eliza-llm-course/instructions.txt">`instructions.txt`</a></li>
-<li><strong>Pattern matching</strong>: Must use the decomposition and reassembly rules from <a href="../eliza-llm-course/instructions.txt">`instructions.txt`</a> to generate responses</li>
+<li><strong>Initial and final messages</strong>: These must be drawn from the predefined options in <a href="instructions.txt">`instructions.txt`</a></li>
+<li><strong>Pre-substitutions, synonym handling, and post-substitutions</strong>: Must be implemented according to the rules in <a href="instructions.txt">`instructions.txt`</a></li>
+<li><strong>Pattern matching</strong>: Must use the decomposition and reassembly rules from <a href="instructions.txt">`instructions.txt`</a> to generate responses</li>
 <li><strong>Conversation loop</strong>: The chatbot must continue the conversation until the user types a quit word</li>
 <li><strong>Code quality</strong>: Well-organized, commented code with clear function/class structure</li>
 </ul>
@@ -690,49 +694,31 @@ Document design decisions and performance improvements.
 <ul>
 <li><strong>ChatGPT</strong>: <a href="https://chat.openai.com" target="_blank">chat.openai.com</a> - For comparison testing</li>
 <li><strong>Claude</strong>: <a href="https://claude.ai" target="_blank">claude.ai</a> - Another modern system to compare</li>
-<li><strong>Replika</strong>: Example of modern "therapeutic" chatbot</li>
+<li><strong>Replika</strong>: <a href="https://replika.com/" target="_blank">replika.com</a> - Example of modern "therapeutic" chatbot</li>
+<li><strong>Evergreen</strong>: <a href="https://evergreenai.dartmouth.edu/" target="_blank">evergreenai.dartmouth.edu</a> - Dartmouth's version of AI-powered therapy!</li>
 </ul>
 <h3>Course Materials</h3>
 <ul>
-<li><strong>Week 1 Lecture Slides</strong>: Review pattern matching and ELIZA discussion</li>
-<li><strong>Course Readings</strong>: Fedorenko et al. (2024) and Lupyan et al. (2020) on language and thought</li>
+<li><a href="https://context-lab.com/llm-course/#week1" target="_blank"><strong>Week 1 Lecture Slides</strong></a>: Review pattern matching and ELIZA discussion</li>
+<li><strong>Course Readings</strong>: <a href="https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf" target="_blank">Weizenbaum (1966)</a>, along with <a href="https://www.nature.com/articles/s41586-024-07522-w" target="_blank">Fedorenko et al. (2024)</a> and <a href="https://doi.org/10.1016/j.tics.2020.08.005" target="_blank">Lupyan et al. (2020)</a> on language and thought</li>
 </ul>
 <h3>Going Deeper (Optional)</h3>
 <ul>
-<li><strong>Searle, J. (1980)</strong>. "Minds, Brains, and Programs" - The Chinese Room argument</li>
-<li><strong>Turing, A. (1950)</strong>. "Computing Machinery and Intelligence" - The original Turing Test</li>
-<li><strong>Bender  |  Koller (2020)</strong>. "Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data"</li>
+<li><a href="http://www.cse.buffalo.edu/~rapaport/Papers/Papers.by.Others/Searle/searle80-MindsBrainsProgs-BBS.pdf" target="_blank"><strong>Searle, J. (1980)</strong></a>. "Minds, Brains, and Programs" - The Chinese Room argument</li>
+<li><a href="https://ebiquity.umbc.edu/get/a/publication/1389.pdf" target="_blank"><strong>Turing, A. (1950)</strong></a>. "Computing Machinery and Intelligence" - The original Turing Test</li>
+<li><a href="https://aclanthology.org/2020.acl-main.463.pdf" target="_blank"><strong>Bender  |  Koller (2020)</strong></a>. "Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data"</li>
 </ul>
 <h2>Submission Guidelines</h2>
 <h3>GitHub Classroom Submission</h3>
 <p>This assignment is submitted via <strong>GitHub Classroom</strong>. Follow these steps:</p>
 <ol>
-<li><strong>Accept the assignment</strong>: Click the assignment link provided in Canvas or by your instructor
+<li><strong>Accept the assignment</strong>: Click the <a href="https://classroom.github.com/a/SC1jeftp" target="_blank">accept assignment link</a>
 <ul>
-<li>Repository: <a href="https://github.com/ContextLab/eliza-llm-course" target="_blank">github.com/ContextLab/eliza-llm-course</a></li>
 <li>This creates your own private repository for the assignment</li>
+<li>Template repository (your private version will be based on this template): <a href="https://github.com/ContextLab/eliza-llm-course" target="_blank">github.com/ContextLab/eliza-llm-course</a></li>
 </ul>
 </li>
-<li><strong>Clone your repository</strong>: </li>
-</ol>
-   ```bash
-   git clone https://github.com/ContextLab/eliza-llm-course-YOUR_USERNAME.git
-   ```
-<ol>
-<li><strong>Complete your work</strong>: 
-<ul>
-<li>Work in Google Colab, Jupyter, or your preferred environment</li>
-<li>Save your notebook to the repository</li>
-</ul>
-</li>
-<li><strong>Commit and push your changes</strong>:</li>
-</ol>
-   ```bash
-   git add .
-   git commit -m "Complete ELIZA assignment"
-   git push
-   ```
-<ol>
+<li>Click the "</li>
 <li><strong>Verify submission</strong>: Check that your latest commit appears in your GitHub repository before the deadline</li>
 </ol>
 <strong>Deadline</strong>: January 16, 2026 at 11:59 PM EST
@@ -742,6 +728,7 @@ Document design decisions and performance improvements.
 <li><strong>Dependencies</strong>: Include all imports and installations in the notebook</li>
 <li><strong>Data</strong>: The `instructions.txt` file should be loaded in your notebook (upload to Colab or link to it)</li>
 <li><strong>Output</strong>: Keep cell outputs visible in your submission</li>
+<li><strong>Deadline</strong>: January 16, 2026 at 11:59PM EST</li>
 </ol>
 <h3>Before Submission Checklist</h3>
 <ul>

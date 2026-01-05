@@ -645,22 +645,92 @@ def build_assignment_hub():
     print(f"Built: {dest}")
 
 
+# Map: (display_title, output_dir, submodule_dir)
 ASSIGNMENT_DIRS = [
-    ("Assignment 1: ELIZA", "assignment-1"),
-    ("Assignment 2: SPAM classifier", "assignment-2"),
-    ("Assignment 3: Wikipedia", "assignment-3"),
-    ("Assignment 4: Customer Service Chatbot", "assignment-4"),
-    ("Assignment 5: GPT", "assignment-5"),
-    ("Final Project", "final-project"),
+    ("Assignment 1 - ELIZA", "assignment-1", "eliza-llm-course"),
+    ("Assignment 2 - SPAM Classifier", "assignment-2", "spam-classifier-llm-course"),
+    ("Assignment 3 - Wikipedia Embeddings", "assignment-3", "embeddings-llm-course"),
+    (
+        "Assignment 4 - Customer Service Chatbot",
+        "assignment-4",
+        "customer-service-bot-llm-course",
+    ),
+    ("Assignment 5 - Build GPT", "assignment-5", "gpt-llm-course"),
+    ("Final Project", "final-project", "final-project-llm-course"),
 ]
 
 
+def extract_github_classroom_link(markdown_text):
+    """Extract GitHub Classroom link from the submission box in README."""
+    match = re.search(
+        r"\[GitHub Classroom Link\]\((https://classroom\.github\.com/[^)]+)\)",
+        markdown_text,
+    )
+    if match:
+        return match.group(1)
+    return None
+
+
+def extract_due_date(markdown_text):
+    """Extract due date from the submission box in README."""
+    match = re.search(r"\*\*Due:\*\*\s*([^\n]+)", markdown_text)
+    if match:
+        return match.group(1).strip()
+    return None
+
+
+def create_accept_button(classroom_link, due_date):
+    """Create the Accept Assignment button HTML with actual link."""
+    if classroom_link:
+        link_html = f'<a href="{classroom_link}" target="_blank" class="accept-btn" style="display: inline-block; background: var(--gradient-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 12px rgba(99,102,241,0.4)\';" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\';">'
+        link_html += '<i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>Accept Assignment</a>'
+        due_html = (
+            f'<p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">Due: {due_date}</p>'
+            if due_date
+            else ""
+        )
+    else:
+        link_html = '<span style="color: var(--text-secondary);">GitHub Classroom link coming soon</span>'
+        due_html = ""
+
+    return f"""
+<div style="background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin: 2rem 0; text-align: center;">
+    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Ready to Start?</h3>
+    {link_html}
+    {due_html}
+</div>
+"""
+
+
+def strip_submission_box(markdown_text):
+    """Remove the submission box blockquote from markdown before processing."""
+    lines = markdown_text.split("\n")
+    result = []
+    in_blockquote = False
+    found_hr = False
+
+    for line in lines:
+        if line.startswith("> ") and not found_hr:
+            in_blockquote = True
+            continue
+        if in_blockquote and line.strip() == "":
+            continue
+        if line.strip() == "---" and in_blockquote:
+            in_blockquote = False
+            found_hr = True
+            continue
+        if not in_blockquote:
+            result.append(line)
+
+    return "\n".join(result)
+
+
 def build_individual_assignments():
-    """Build individual assignment pages."""
+    """Build individual assignment pages from submodule READMEs."""
     assignments_dir = REPO_ROOT / "assignments"
 
-    for source_name, dest_name in ASSIGNMENT_DIRS:
-        source = assignments_dir / source_name / "README.md"
+    for title, dest_name, submodule_name in ASSIGNMENT_DIRS:
+        source = assignments_dir / submodule_name / "README.md"
         dest_dir = assignments_dir / dest_name
         dest = dest_dir / "index.html"
 
@@ -669,9 +739,14 @@ def build_individual_assignments():
             continue
 
         markdown = source.read_text()
-        content = ACCEPT_ASSIGNMENT_BUTTON + parse_markdown_to_html(markdown)
 
-        title = source_name.replace(":", " -")
+        classroom_link = extract_github_classroom_link(markdown)
+        due_date = extract_due_date(markdown)
+        accept_button = create_accept_button(classroom_link, due_date)
+
+        clean_markdown = strip_submission_box(markdown)
+        content = accept_button + parse_markdown_to_html(clean_markdown)
+
         html = get_page_template(title, "assignments", content, depth=2)
 
         dest_dir.mkdir(exist_ok=True)
