@@ -6,6 +6,7 @@ on:
     paths:
       - 'admin/syllabus.md'
       - 'assignments/**/*.md'
+      - 'assignments/**-llm-course'
       - 'scripts/build-pages.py'
       - '.github/workflows/build-pages.yml'
 
