@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - submodule: eliza-llm-course
@@ -47,9 +48,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Configure git to use the token for this specific remote
-          git config --local credential.helper ""
-          git config --local --add credential.helper "!f() { echo username=x-access-token; echo password=${GH_TOKEN}; }; f"
+          # Clear any existing extraheader config that might interfere
+          git config --local --unset-all http.https://github.com/.extraheader || true
+          
+          # Set our token for GitHub
+          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo -n "x-access-token:${GH_TOKEN}" | base64)"
           
           CLASSROOM_URL="https://github.com/ContextLab/${{ matrix.classroom }}.git"
           git remote add classroom "$CLASSROOM_URL" 2>/dev/null || git remote set-url classroom "$CLASSROOM_URL"
