@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-01-03
-**Commit:** a599253
+**Generated:** 2026-01-04
+**Commit:** 2eabcdb
 **Branch:** main
 
 ## OVERVIEW
@@ -84,6 +84,7 @@ git submodule update --remote            # Pull latest from submodule remotes
 | Partial regex matches in chatbots | Use word boundaries (`\b`) to avoid "you" matching "young". |
 | PARRY emotions outside [0,20] | Breaks historical fidelity to Colby 1972. |
 | Bidirectional substitution without placeholders | "I"→"you" then "you"→"me" overwrites. Use temp placeholders. |
+| ALICE `botmaster` = `master` | Template "My {{BOT:botmaster}} is {{BOT:master}}" needs different values. `botmaster`="creator" (role), `master`="Dr. Richard Wallace" (name). |
 
 ## UNIQUE STYLES
 
@@ -103,7 +104,7 @@ python -m http.server 8000      # Serve demos locally
 # Testing
 npm test                        # Run all 1500+ tests
 npm run test:demoXX            # Run specific demo tests (01-15)
-npm run test:demo15            # Runs ELIZA, PARRY, ALICE subtests
+npm run test:chatbot           # Runs ELIZA, PARRY, ALICE subtests
 
 # Slides
 cd slides/weekN
@@ -113,6 +114,27 @@ cd slides && ./compile_all_slides.sh      # Compile all LaTeX slides
 # Syllabus
 cd admin && ./compile.sh       # Rebuild syllabus.pdf
 ```
+
+## CHATBOT EVOLUTION (Demo 02)
+
+The chatbot evolution demo has multiple bot implementations:
+
+| Bot | File | Patterns | Notes |
+|-----|------|----------|-------|
+| ELIZA | Imports from `demos/eliza/js/eliza-engine.js` | ~200 rules | Pattern-matching therapist |
+| PARRY | `js/parry.js` | State machine | Emotional state [0,20], paranoid responses |
+| ALICE | `js/alice-full.js` + `data/alice-patterns-original.json` | 41,380 | Full AIML pattern set |
+| GPT | `js/gpt-bot.js` | Neural | SmolLM2 auto-selects by RAM |
+
+**ALICE Template Syntax:**
+- `{{BOT:property}}` - Bot properties from `this.context`
+- `{{STAR:N}}` - Wildcard captures (1-indexed)
+- `{{SRAI:pattern}}` - Recursive pattern redirect
+- `{{GET:var}}` / `{{SET:var:value}}` - Context variables
+- `{{RANDOM:["a","b","c"]}}` - Random selection
+- `{{THINK:...}}` - Silent execution (no output)
+
+**Critical:** Bot properties `botmaster` and `master` MUST differ. See anti-patterns.
 
 ## NOTES
 
