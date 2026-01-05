@@ -122,11 +122,12 @@ We will explore how machines can understand and generate human language:
 ---
 
 # Course structure
+<!-- _class: scale-80 -->
 
-<div style="display: flex; gap: 1.5em; margin-top: 0.5em; width: 100%;">
+<div style="display: flex; gap: 1.5em">
 <div class="note-box" data-title="Grading" style="flex: 1;">
 
-- Bi-weekly short projects (5): 75%
+- Weekly (roughly) short projects (5): 75%
 - Final project: 25%
 - Can work individually or in groups
 - See [syllabus](https://context-lab.com/llm-course/syllabus/) for additional details
