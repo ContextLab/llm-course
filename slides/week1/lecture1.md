@@ -129,7 +129,7 @@ We will explore how machines can understand and generate human language:
 
 - Weekly (roughly) short projects (5): 75%
 - Final project: 25%
-- Can work individually or in groups
+  - Can work individually or in groups
 - See [syllabus](https://context-lab.com/llm-course/syllabus/) for additional details
 
 </div>
