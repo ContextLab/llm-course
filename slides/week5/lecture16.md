@@ -17,22 +17,22 @@ Winter 2026
 
 ---
 
-# Today's Agenda 📋
+# Today's Agenda 
 
 
 
-1. 🤖 **The Transformer Revolution**: Why it changed everything
-2. 🏗️ **Architecture Overview**: Encoder, Decoder, and components
-3. 🎯 **Self-Attention**: The core mechanism (Q, K, V)
-4. 📝 **Self-Attention Example**: Understanding pronoun resolution
-5. 🎭 **Multi-Head Attention**: Learning diverse relationships
-6. 🔍 **Three Types of Attention**: Self, Masked, Cross
+1. **The Transformer Revolution**: Why it changed everything
+2. **Architecture Overview**: Encoder, Decoder, and components
+3. **Self-Attention**: The core mechanism (Q, K, V)
+4. **Self-Attention Example**: Understanding pronoun resolution
+5. **Multi-Head Attention**: Learning diverse relationships
+6. **Three Types of Attention**: Self, Masked, Cross
 
 *Goal: Understand the Transformer architecture and self-attention*
 
 ---
 
-# The Transformer Revolution 🤖
+# The Transformer Revolution 
 
 
 
@@ -75,7 +75,7 @@ Training speedup: **10-100x faster** on modern hardware
 
 ---
 
-# Why Get Rid of RNNs? 🚫
+# Why Get Rid of RNNs? 
 
 
 **Limitations of Recurrent Architectures:**
@@ -119,7 +119,7 @@ Transformer: Direct connection!
 
 ---
 
-# Transformer Architecture Overview 🏗️
+# Transformer Architecture Overview 
 
 
 
@@ -138,7 +138,7 @@ Transformer: Direct connection!
 
 ---
 
-# Self-Attention: The Core Mechanism 🎯
+# Self-Attention: The Core Mechanism 
 
 
 **Key idea: Each word attends to all other words in the sequence**
@@ -150,9 +150,9 @@ Transformer: Direct connection!
 
 **Computation:**
 ```
-Q = X @ W_Q    # Transform input to queries
-K = X @ W_K    # Transform input to keys
-V = X @ W_V    # Transform input to values
+Q = X @ W_Q # Transform input to queries
+K = X @ W_K # Transform input to keys
+V = X @ W_V # Transform input to values
 
 Attention(Q, K, V) = softmax(Q @ K.T / sqrt(d)) @ V
 ```
@@ -168,7 +168,7 @@ Then collects information from relevant tokens (weighted sum of V)
 
 ---
 
-# Understanding Query, Key, Value 🔑
+# Understanding Query, Key, Value 
 
 
 
@@ -218,7 +218,7 @@ Each token simultaneously acts as:
 
 ---
 
-# Scaled Dot-Product Attention 📐
+# Scaled Dot-Product Attention 
 
 
 **Step-by-step computation with concrete example:**
@@ -227,32 +227,32 @@ Each token simultaneously acts as:
 
 ```python
 # Input embeddings (3 tokens x 4 dims)
-X = [[0.1, 0.2, 0.3, 0.4],   # "The"
-     [0.5, 0.6, 0.7, 0.8],   # "cat"
-     [0.2, 0.3, 0.4, 0.5]]   # "sat"
+X = [[0.1, 0.2, 0.3, 0.4], # "The"
+ [0.5, 0.6, 0.7, 0.8], # "cat"
+ [0.2, 0.3, 0.4, 0.5]] # "sat"
 
 # Step 1: Compute Q, K, V (using learned weights W_q, W_k, W_v)
-Q = X @ W_q  # [3 x 4]
-K = X @ W_k  # [3 x 4]
-V = X @ W_v  # [3 x 4]
+Q = X @ W_q # [3 x 4]
+K = X @ W_k # [3 x 4]
+V = X @ W_v # [3 x 4]
 
 # Step 2: Compute attention scores
-scores = Q @ K.T  # [3 x 3] - each token vs each token
+scores = Q @ K.T # [3 x 3] - each token vs each token
 
 # Step 3: Scale by sqrt(d_k) to prevent large values
-scores = scores / sqrt(4)  # divide by 2
+scores = scores / sqrt(4) # divide by 2
 
 # Step 4: Softmax to get attention weights
-weights = softmax(scores)  # rows sum to 1
+weights = softmax(scores) # rows sum to 1
 
 # Step 5: Weighted sum of values
-output = weights @ V  # [3 x 4] - new contextual embeddings
+output = weights @ V # [3 x 4] - new contextual embeddings
 ```
 
 
 ---
 
-# Self-Attention Example: Pronoun Resolution 📝
+# Self-Attention Example: Pronoun Resolution 
 
 
 **Sentence: "The animal didn't cross the street because it was too tired"**
@@ -262,10 +262,10 @@ output = weights @ V  # [3 x 4] - new contextual embeddings
 ```
 Attention weights when processing "it":
 
-           The  animal  didn't  cross  the  street  because  it   was  too  tired
-"it" →    0.02  [0.45]   0.03   0.05  0.02  0.08    0.05   0.15  0.05 0.02  0.08
-                  ↑
-          High attention to "animal" - model learns coreference!
+ The animal didn't cross the street because it was too tired
+"it" → 0.02 [0.45] 0.03 0.05 0.02 0.08 0.05 0.15 0.05 0.02 0.08
+ ↑
+ High attention to "animal" - model learns coreference!
 ```
 
 **Self-attention allows the model to:**
@@ -277,14 +277,14 @@ Attention weights when processing "it":
 
 ---
 
-# Visualizing the Attention Matrix 🔍
+# Visualizing the Attention Matrix 
 
 
 **For sentence: "The cat sat on the mat"**
 
 | To $\rightarrow$ | The | cat | sat | on | the | mat |
 | --- | --- | --- | --- | --- | --- | --- |
-| From $\downarrow$ |  |  |  |  |  |  |
+| From $\downarrow$ | | | | | | |
 | cat | 0.1 | 0.5 | 0.2 | 0.1 | 0.05 | 0.05 |
 | sat | 0.05 | 0.3 | 0.4 | 0.15 | 0.05 | 0.05 |
 | on | 0.05 | 0.1 | 0.2 | 0.3 | 0.1 | 0.25 |
@@ -301,7 +301,7 @@ Attention weights when processing "it":
 
 ---
 
-# Multi-Head Attention 🎭
+# Multi-Head Attention 
 
 
 **Why use multiple attention heads?**
@@ -334,15 +334,15 @@ output = concat(head_1, head_2, ...) @ W_O
 Sentence: "The cat sat on the mat"
 
 Head 1 (syntax):
-  "sat" → "cat" (subject-verb)
-  "mat" → "the" (determiner)
+ "sat" → "cat" (subject-verb)
+ "mat" → "the" (determiner)
 
 Head 2 (semantics):
-  "sat" → "mat" (action-location)
-  "cat" → "sat" (agent-action)
+ "sat" → "mat" (action-location)
+ "cat" → "sat" (agent-action)
 
 Head 3 (position):
-  Each word → neighbors
+ Each word → neighbors
 ```
 
 </div>
@@ -352,7 +352,7 @@ Head 3 (position):
 
 ---
 
-# Why Multiple Heads? 🤔
+# Why Multiple Heads? 
 
 
 
@@ -400,25 +400,25 @@ Multiple heads provide a richer, more diverse representation by attending to dif
 
 ---
 
-# Three Types of Attention 🔍
+# Three Types of Attention 
 
 
 1. **Self-Attention (Encoder)**
-    - Each position attends to all positions in same sequence
+ - Each position attends to all positions in same sequence
 - Bidirectional: can see past and future
 - Used in: BERT, encoder-only models
 
-    
+ 
 
 2. **Masked Self-Attention (Decoder)**
-    - Each position attends only to previous positions
+ - Each position attends only to previous positions
 - Prevents "looking into the future"
 - Used in: GPT, decoder-only models
 
-    
+ 
 
 3. **Cross-Attention (Encoder-Decoder)**
-    - Decoder attends to encoder outputs
+ - Decoder attends to encoder outputs
 - Queries from decoder, Keys/Values from encoder
 - Used in: T5, BART, machine translation
 
@@ -429,7 +429,7 @@ Multiple heads provide a richer, more diverse representation by attending to dif
 
 ---
 
-# Masked Self-Attention 🎭
+# Masked Self-Attention 
 
 
 **Preventing the model from "cheating" during generation**
@@ -442,14 +442,14 @@ Multiple heads provide a richer, more diverse representation by attending to dif
 # Example: Generating "The cat sat"
 # When predicting "sat", model should only see "The cat"
 
-scores = [[0.5, 0.3, 0.2],    # "The" can see: The
-          [0.4, 0.5, 0.1],    # "cat" can see: The, cat
-          [0.2, 0.4, 0.4]]    # "sat" can see: The, cat, sat
+scores = [[0.5, 0.3, 0.2], # "The" can see: The
+ [0.4, 0.5, 0.1], # "cat" can see: The, cat
+ [0.2, 0.4, 0.4]] # "sat" can see: The, cat, sat
 
 # Apply causal mask (upper triangle = -infinity)
-mask = [[ 0,  -inf, -inf],
-        [ 0,   0,   -inf],
-        [ 0,   0,    0  ]]
+mask = [[ 0, -inf, -inf],
+ [ 0, 0, -inf],
+ [ 0, 0, 0 ]]
 
 masked_scores = scores + mask
 # After softmax: future positions get weight 0!
@@ -462,13 +462,13 @@ masked_scores = scores + mask
 
 ---
 
-# Cross-Attention 🔗
+# Cross-Attention 
 
 
 **Connecting encoder and decoder in seq2seq models**
 
 ```
-Encoder Outputs ->  (Keys & Values) -> Decoder State ->  (Queries) -> Cross-Attention -> Context-Aware Decoder
+Encoder Outputs -> (Keys & Values) -> Decoder State -> (Queries) -> Cross-Attention -> Context-Aware Decoder
 ```
 
 **Key Properties:**
@@ -481,7 +481,7 @@ Encoder Outputs ->  (Keys & Values) -> Decoder State ->  (Queries) -> Cross-Atte
 
 ---
 
-# Implementing Self-Attention in PyTorch 💻
+# Implementing Self-Attention in PyTorch 
 
 
 **Scaled dot-product attention**
@@ -493,33 +493,33 @@ import torch.nn.functional as F
 import math
 
 class SelfAttention(nn.Module):
-    def __init__(self, embed_dim):
-        super().__init__()
-        self.embed_dim = embed_dim
-        self.W_q = nn.Linear(embed_dim, embed_dim)
-        self.W_k = nn.Linear(embed_dim, embed_dim)
-        self.W_v = nn.Linear(embed_dim, embed_dim)
+ def __init__(self, embed_dim):
+ super().__init__()
+ self.embed_dim = embed_dim
+ self.W_q = nn.Linear(embed_dim, embed_dim)
+ self.W_k = nn.Linear(embed_dim, embed_dim)
+ self.W_v = nn.Linear(embed_dim, embed_dim)
 
-    def forward(self, x, mask=None):
-        Q = self.W_q(x)  # Queries: what am I looking for?
-        K = self.W_k(x)  # Keys: what do I contain?
-        V = self.W_v(x)  # Values: what info do I provide?
+ def forward(self, x, mask=None):
+ Q = self.W_q(x) # Queries: what am I looking for?
+ K = self.W_k(x) # Keys: what do I contain?
+ V = self.W_v(x) # Values: what info do I provide?
 
-        # Attention scores: how similar are Q and K?
-        scores = torch.matmul(Q, K.transpose(-2, -1))
-        scores = scores / math.sqrt(self.embed_dim)  # Scale!
+ # Attention scores: how similar are Q and K?
+ scores = torch.matmul(Q, K.transpose(-2, -1))
+ scores = scores / math.sqrt(self.embed_dim) # Scale!
 
-        if mask is not None:  # For causal/decoder attention
-            scores = scores.masked_fill(mask == 0, -1e9)
+ if mask is not None: # For causal/decoder attention
+ scores = scores.masked_fill(mask == 0, -1e9)
 
-        attn_weights = F.softmax(scores, dim=-1)  # Normalize
-        output = torch.matmul(attn_weights, V)    # Weighted sum
+ attn_weights = F.softmax(scores, dim=-1) # Normalize
+ output = torch.matmul(attn_weights, V) # Weighted sum
 
-        return output, attn_weights
+ return output, attn_weights
 
 # Usage example:
 attn = SelfAttention(embed_dim=64)
-x = torch.randn(1, 5, 64)  # 5 tokens, 64-dim embeddings
+x = torch.randn(1, 5, 64) # 5 tokens, 64-dim embeddings
 out, weights = attn(x)
 # out: [1, 5, 64] - contextualized embeddings
 # weights: [1, 5, 5] - attention matrix
@@ -528,7 +528,7 @@ out, weights = attn(x)
 
 ---
 
-# Computational Complexity ⚙️
+# Computational Complexity 
 
 
 **Understanding the cost of self-attention**
@@ -561,38 +561,38 @@ Total: **576 MB** just for attention weights!
 
 ---
 
-# Discussion Questions 💭
+# Discussion Questions 
 
 
 1. **Self-Attention vs RNN Attention:**
-    - What's the key difference?
+ - What's the key difference?
 - Why is self-attention more powerful?
 - When might RNNs still be useful?
 
-    
+ 
 
 2. **Query, Key, Value Framework:**
-    - Why three separate projections instead of one?
+ - Why three separate projections instead of one?
 - What if we used $Q = K = V = X$?
 - How does this relate to information retrieval?
 
-    
+ 
 
 3. **Multi-Head Attention:**
-    - Why not just use one big attention head?
+ - Why not just use one big attention head?
 - How many heads is optimal?
 - Can we interpret what each head learns?
 
-    
+ 
 
 4. **Scalability:**
-    - $O(n^2)$ is problematic for long documents. Solutions?
+ - $O(n^2)$ is problematic for long documents. Solutions?
 - Sparse attention? Local attention? Other ideas?
 
 
 ---
 
-# Looking Ahead 🔮
+# Looking Ahead 
 
 
 **What's Next?**
@@ -611,72 +611,72 @@ Total: **576 MB** just for attention weights!
 - : Encoder, Decoder, Encoder-Decoder
 - : Training and using transformers
 
-**We're building up to BERT and GPT! 🚀**
+**We're building up to BERT and GPT! **
 
 
 ---
 
-# Summary 🎯
+# Summary 
 
 
 **Key Takeaways:**
 
 1. **Transformer Revolution**
-    - Pure attention, no recurrence
+ - Pure attention, no recurrence
 - Parallel processing, faster training
 2. **Self-Attention Mechanism**
-    - Query, Key, Value framework
+ - Query, Key, Value framework
 - Each token attends to all others
 - Scaled dot-product: $(QK^T/)V$
 3. **Multi-Head Attention**
-    - Multiple heads learn diverse relationships
+ - Multiple heads learn diverse relationships
 - Concatenate and project back
 - Richer representations
 4. **Three Attention Types**
-    - Self (encoder), Masked (decoder), Cross (encoder-decoder)
+ - Self (encoder), Masked (decoder), Cross (encoder-decoder)
 - Different uses for different architectures
 
 **Self-attention is the foundation of modern NLP!**
 
 ---
 
-# References 📚
+# References 
 
 
 **Essential Papers:**
 
 - **Vaswani et al. (2017)** - "Attention Is All You Need"
-    
+ 
 - The original Transformer paper
 - Introduced self-attention, multi-head attention
 - Foundation of modern NLP
 
-    
+ 
 
-    \item **Bahdanau et al. (2015)** - "Neural Machine Translation by Jointly Learning to Align and Translate"
-    - Original attention mechanism (for comparison)
+ \item **Bahdanau et al. (2015)** - "Neural Machine Translation by Jointly Learning to Align and Translate"
+ - Original attention mechanism (for comparison)
 
 **Tutorials and Resources:**
 - **The Illustrated Transformer** by Jay Alammar
-    
+ 
 - https://jalammar.github.io/illustrated-transformer/
 - Visual step-by-step explanation
 
-    
+ 
 
-    \item **Annotated Transformer** by Harvard NLP
-    - https://nlp.seas.harvard.edu/annotated-transformer/
+ \item **Annotated Transformer** by Harvard NLP
+ - https://nlp.seas.harvard.edu/annotated-transformer/
 - Line-by-line implementation
 
-    
+ 
 
-    \item **HuggingFace Course** - Chapter 1.4
-    - How Transformers work
+ \item **HuggingFace Course** - Chapter 1.4
+ - How Transformers work
 
 
 ---
 
-# Questions? 🙋
+# Questions? 
 
 
 
@@ -689,7 +689,7 @@ Total: **576 MB** just for attention weights!
 - Masked vs. unmasked attention
 - Implementation questions
 
-Thank you! 🙏
+Thank you! 
 
 Next: Training Transformers!
 

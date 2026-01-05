@@ -17,22 +17,22 @@ Winter 2026
 
 ---
 
-# Today's Lecture 📋
+# Today's Lecture 
 
 
 
-1. 🧠 **Human vs. Computational Semantics**
-2. 🔬 **Cognitive Theories of Meaning**
-3. 🌐 **Embodied & Grounded Cognition**
-4. 📊 **Semantic Similarity: What Does It Mean?**
-5. 🔍 **Empirical Evidence from Cognitive Science**
-6. 🤖 **Bridging the Gap: Models Meet Minds**
+1. **Human vs. Computational Semantics**
+2. **Cognitive Theories of Meaning**
+3. **Embodied & Grounded Cognition**
+4. **Semantic Similarity: What Does It Mean?**
+5. **Empirical Evidence from Cognitive Science**
+6. **Bridging the Gap: Models Meet Minds**
 
 *Goal: Understand what computational models are really learning*
 
 ---
 
-# The Fundamental Question 🤔
+# The Fundamental Question 
 
 
 
@@ -67,7 +67,7 @@ Winter 2026
 
 ---
 
-# How Do Humans Represent Meaning? 🧠
+# How Do Humans Represent Meaning? 
 
 
 **Example: The word "coffee"**
@@ -117,7 +117,7 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 
 ---
 
-# The Symbol Grounding Problem 🔗
+# The Symbol Grounding Problem 
 
 
 **Harnad (1990): Can symbols have intrinsic meaning?**
@@ -128,12 +128,12 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 **The Chinese Room (Searle, 1980):**
 
 ```
-Input:  你好吗？
-        ↓
-[Rule Book: If see 你好吗
-            output 我很好]
-        ↓
-Output: 我很好
+Input: 
+ ↓
+[Rule Book: If see 
+ output ]
+ ↓
+Output: 
 
 Correct response! But no
 understanding of Chinese.
@@ -142,11 +142,11 @@ understanding of Chinese.
 **Analogy to LLMs:**
 
 ```
-Input:  "Is a penguin a bird?"
-        ↓
+Input: "Is a penguin a bird?"
+ ↓
 [Pattern: "X is a bird" often
  follows penguins in text]
-        ↓
+ ↓
 Output: "Yes, a penguin is a bird"
 
 Correct! But does it "know" birds?
@@ -163,10 +163,10 @@ Correct! But does it "know" birds?
 **Grounded Systems:**
 - Symbols connected to perception
 - A child learns "dog" by:
-  - SEEING dogs
-  - PETTING dogs
-  - HEARING barking
-  - Being LICKED by dogs
+ - SEEING dogs
+ - PETTING dogs
+ - HEARING barking
+ - Being LICKED by dogs
 
 The word "dog" is grounded in experience!
 
@@ -177,7 +177,7 @@ The word "dog" is grounded in experience!
 
 ---
 
-# Embodied Cognition Theory 🏃
+# Embodied Cognition Theory 
 
 
 **Meaning arises from bodily experience and sensorimotor interaction**
@@ -212,13 +212,13 @@ Reading "pick up the cup":
 Physical → Abstract mapping:
 
 "WARM personality" ← holding warm drink
-                     primes positive judgments!
+ primes positive judgments!
 
 "HIGH status" ← up = good, down = bad
-               (heads held high)
+ (heads held high)
 
 "GRASPING an idea" ← physical grasping
-                     simulated mentally
+ simulated mentally
 
 "Heavy heart" ← weight = emotional burden
 ```
@@ -233,7 +233,7 @@ Models learn word patterns, not embodied experience.
 
 ---
 
-# The Distributional Hypothesis Revisited 📖
+# The Distributional Hypothesis Revisited 
 
 
 
@@ -281,7 +281,7 @@ Is distributional semantics sufficient for meaning, or just a useful approximati
 
 ---
 
-# What Does "Semantic Similarity" Really Mean? 🔍
+# What Does "Semantic Similarity" Really Mean? 
 
 
 **Different types of similarity:**
@@ -291,25 +291,25 @@ Is distributional semantics sufficient for meaning, or just a useful approximati
 
 **Taxonomic (IS-A):**
 ```
-dog ↔ cat: Both are animals
-         Similarity: HIGH
+dog cat: Both are animals
+ Similarity: HIGH
 ```
 
 **Thematic (GOES-WITH):**
 ```
-dog ↔ leash: Co-occur in events
-            Relatedness: HIGH
-            Similarity: LOW!
+dog leash: Co-occur in events
+ Relatedness: HIGH
+ Similarity: LOW!
 ```
 
 **Test Yourself:**
 ```
 Which is more SIMILAR to "coffee"?
-A) tea      ← Same category (beverages)
-B) cup      ← Co-occurs (thematic)
+A) tea ← Same category (beverages)
+B) cup ← Co-occurs (thematic)
 
 Answer: A (tea) is more SIMILAR
-        B (cup) is more RELATED
+ B (cup) is more RELATED
 ```
 
 </div>
@@ -319,8 +319,8 @@ Answer: A (tea) is more SIMILAR
 
 ```python
 # Word2Vec often gets this wrong!
-model.similarity('coffee', 'cup')   # 0.65
-model.similarity('coffee', 'tea')   # 0.62
+model.similarity('coffee', 'cup') # 0.65
+model.similarity('coffee', 'tea') # 0.62
 
 # Cup ranked higher due to co-occurrence!
 # But tea is categorically more similar
@@ -345,7 +345,7 @@ Models score better on WordSim!
 
 ---
 
-# Semantic Projection: Recovering Human Knowledge 🔬
+# Semantic Projection: Recovering Human Knowledge 
 
 
 **Grand et al. (2022): Can we extract human-like features from embeddings?**
@@ -355,7 +355,7 @@ Models score better on WordSim!
 
 **The Experiment:**
 1. Collect human ratings on perceptual features
-    - Is it edible?
+ - Is it edible?
 - Is it heavy?
 - Is it alive?
 - Can you hold it?
@@ -387,7 +387,7 @@ $[0.23, -0.45, ..., 0.12] -> Perceptual Features -> Size: 0.7 -> Edible: 0.1 -> 
 
 ---
 
-# Multimodal Models: Bridging the Gap 🌉
+# Multimodal Models: Bridging the Gap 
 
 
 **Combining language with perception**
@@ -433,7 +433,7 @@ Vision -> Encoder -> Text -> Encoder -> Similar!
 
 ---
 
-# Conceptual Spaces Theory 🌌
+# Conceptual Spaces Theory 
 
 
 **Gärdenfors (2000): Meaning as geometry**
@@ -472,7 +472,7 @@ Vision -> Encoder -> Text -> Encoder -> Similar!
 
 ---
 
-# Lexical Semantic Theories 📚
+# Lexical Semantic Theories 
 
 
 **How do linguists think about word meaning?**
@@ -529,7 +529,7 @@ Struggle with: Feature analysis, Frame semantics
 
 ---
 
-# Empirical Evidence from Neuroscience 🧬
+# Empirical Evidence from Neuroscience 
 
 
 **What does the brain tell us about semantic representation?**
@@ -556,12 +556,12 @@ Struggle with: Feature analysis, Frame semantics
 
 **Brain vs. Model Representations:**
 
-| Distributed | ✓ | ✓ |
+| Distributed | | |
 | --- | --- | --- |
-| Hierarchical | ✓ | ✓ |
-| Context-sensitive | ✓ | ✓ (BERT) |
-| Grounded | ✓ | ✗ |
-| Fast | ✓ | ✓ |
+| Hierarchical | | |
+| Context-sensitive | | (BERT) |
+| Grounded | | |
+| Fast | | |
 
 **Key Insight:**
 - Models capture some aspects
@@ -576,7 +576,7 @@ Struggle with: Feature analysis, Frame semantics
 
 ---
 
-# The "Stochastic Parrots" Debate 🦜
+# The "Stochastic Parrots" Debate 
 
 
 **Bender et al. (2021): On the Dangers of Stochastic Parrots**
@@ -628,7 +628,7 @@ Or do we need grounding in:
 
 ---
 
-# Common Sense Reasoning 🤯
+# Common Sense Reasoning 
 
 
 **What humans know but models don't**
@@ -640,10 +640,10 @@ Or do we need grounding in:
 
 ```
 Q: "Can you fit an elephant
-    in a refrigerator?"
+ in a refrigerator?"
 
 GPT-3: "Yes, if you open the
-       door wide enough..."
+ door wide enough..."
 ```
 
 **Winograd Schema (reasoning):**
@@ -667,7 +667,7 @@ Requires world knowledge!
 
 ```
 Q: "John told Mary he loved her.
-    How did Mary feel?"
+ How did Mary feel?"
 
 Depends on context:
 - First date? → Surprised/happy
@@ -688,7 +688,7 @@ Models miss social nuance!
 
 ---
 
-# Compositionality: Phrases and Sentences 🧩
+# Compositionality: Phrases and Sentences 
 
 
 **How do we combine word meanings?**
@@ -722,10 +722,10 @@ vec("red") + vec("herring") ≠ vec("red herring")
 
 ```
 Input: "break a leg"
-       ↓
+ ↓
 Attention sees this phrase
 often in "good luck" contexts
-       ↓
+ ↓
 Output: idiomatic meaning
 
 But fails on novel combinations!
@@ -748,7 +748,7 @@ cosine_sim(sent1, sent2) ≈ 0.85
 
 ---
 
-# Grand Discussion 💬
+# Grand Discussion 
 
 
 
@@ -796,7 +796,7 @@ Instead of "Do they understand?", ask: What do they represent? How does it diffe
 
 ---
 
-# Summary 🎯
+# Summary 
 
 
 **What we learned today:**
@@ -814,7 +814,7 @@ Instead of "Do they understand?", ask: What do they represent? How does it diffe
 
 ---
 
-# Key References 📚
+# Key References 
 
 
 
@@ -836,7 +836,7 @@ Instead of "Do they understand?", ask: What do they represent? How does it diffe
 
 ---
 
-# Questions? 🙋
+# Questions? 
 
 
 

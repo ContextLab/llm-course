@@ -17,22 +17,22 @@ Winter 2026
 
 ---
 
-# Today's Lecture 📋
+# Today's Lecture 
 
 
 
-1. 🔄 **From Static to Contextual**
-2. 🧬 **Language Models as Feature Extractors**
-3. 🔮 **ELMo: Embeddings from Language Models**
-4. 🌐 **Universal Sentence Encoder**
-5. 🎭 **BERT: Bidirectional Transformers**
-6. 📊 **Comparison & Applications**
+1. **From Static to Contextual**
+2. **Language Models as Feature Extractors**
+3. **ELMo: Embeddings from Language Models**
+4. **Universal Sentence Encoder**
+5. **BERT: Bidirectional Transformers**
+6. **Comparison & Applications**
 
 *Goal: Understand how context transforms word representation*
 
 ---
 
-# The Polysemy Problem Revisited 🤔
+# The Polysemy Problem Revisited 
 
 
 **Recall: Static embeddings assign ONE vector per word**
@@ -43,11 +43,11 @@ Winter 2026
 **Example: "bank"**
 
 1. "I deposited money at the **bank**"
-   (financial institution)
+ (financial institution)
 2. "We sat by the river **bank**"
-   (riverside)
+ (riverside)
 3. "The plane will **bank** left"
-   (tilt/turn)
+ (tilt/turn)
 
 **Word2Vec/GloVe:** All three get the SAME vector!
 
@@ -60,7 +60,7 @@ Winter 2026
 
 ```python
 # Static embeddings (Word2Vec)
-sim(bank_sent1, bank_sent2) = 1.0  # Same!
+sim(bank_sent1, bank_sent2) = 1.0 # Same!
 
 # Contextual embeddings (BERT)
 sim(bank_sent1, bank_sent2) = 0.45
@@ -78,7 +78,7 @@ sim(bank_sent2, bank_sent3) = 0.28
 
 ---
 
-# Static vs. Contextual Embeddings 🔄
+# Static vs. Contextual Embeddings 
 
 
 <div class="columns">
@@ -92,7 +92,7 @@ model = Word2Vec(...)
 vec1 = model['bank']
 vec2 = model['bank']
 
-assert vec1 == vec2  # True!
+assert vec1 == vec2 # True!
 ```
 
 **Characteristics:**
@@ -117,7 +117,7 @@ sent2 = "money bank"
 vec1 = get_embedding(model, sent1, 'bank')
 vec2 = get_embedding(model, sent2, 'bank')
 
-assert vec1 != vec2  # True!
+assert vec1 != vec2 # True!
 ```
 
 **Characteristics:**
@@ -133,7 +133,7 @@ assert vec1 != vec2  # True!
 
 ---
 
-# Language Models as Feature Extractors 🧬
+# Language Models as Feature Extractors 
 
 
 **Key Insight:** Train a language model, use its internal states as embeddings
@@ -165,7 +165,7 @@ To predict well, the model learns: "sat on the" suggests a surface!
 
 ---
 
-# ELMo: Embeddings from Language Models 🔮
+# ELMo: Embeddings from Language Models 
 
 
 **The first widely-adopted contextual embedding (2018)**
@@ -191,7 +191,7 @@ To predict well, the model learns: "sat on the" suggests a surface!
 **Bidirectional Processing:**
 
 ```
-Forward:  The → cat → sat → ...
+Forward: The → cat → sat → ...
 Backward: ... ← sat ← cat ← The
 ```
 
@@ -213,7 +213,7 @@ Higher layers matter more for meaning!
 
 ---
 
-# ELMo: How It Works 🔍
+# ELMo: How It Works 
 
 
 **Training:**
@@ -245,7 +245,7 @@ The final representation captures that "terrible" is strongly negative in this c
 
 ---
 
-# ELMo in Practice 💻
+# ELMo in Practice 
 
 
 ```python
@@ -259,8 +259,8 @@ elmo = Elmo(options_file, weight_file, 2, dropout=0)
 
 # Prepare sentences
 sentences = [
-    ['I', 'deposited', 'money', 'at', 'the', 'bank'],
-    ['We', 'sat', 'by', 'the', 'river', 'bank']
+ ['I', 'deposited', 'money', 'at', 'the', 'bank'],
+ ['We', 'sat', 'by', 'the', 'river', 'bank']
 ]
 
 # Convert to character ids
@@ -274,8 +274,8 @@ embeddings = elmo(character_ids)
 # - Shape: [batch_size, seq_len, 1024]
 
 # Different vectors for "bank"!
-bank1 = embeddings['elmo_representations'][0][0, 5, :]  # first sentence
-bank2 = embeddings['elmo_representations'][0][1, 5, :]  # second sentence
+bank1 = embeddings['elmo_representations'][0][0, 5, :] # first sentence
+bank2 = embeddings['elmo_representations'][0][1, 5, :] # second sentence
 
 # Cosine similarity will be lower than for static embeddings
 ```
@@ -283,7 +283,7 @@ bank2 = embeddings['elmo_representations'][0][1, 5, :]  # second sentence
 
 ---
 
-# Universal Sentence Encoder (USE) 🌐
+# Universal Sentence Encoder (USE) 
 
 
 **Sentence-level embeddings for semantic similarity**
@@ -336,7 +336,7 @@ bank2 = embeddings['elmo_representations'][0][1, 5, :]  # second sentence
 
 ---
 
-# Universal Sentence Encoder in Practice 💻
+# Universal Sentence Encoder in Practice 
 
 
 ```python
@@ -348,10 +348,10 @@ embed = hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
 
 # Example sentences
 sentences = [
-    "The cat sat on the mat.",
-    "A feline rested on the rug.",
-    "The dog ran in the park.",
-    "I love machine learning."
+ "The cat sat on the mat.",
+ "A feline rested on the rug.",
+ "The dog ran in the park.",
+ "I love machine learning."
 ]
 
 # Generate embeddings
@@ -381,7 +381,7 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 
 ---
 
-# BERT: Bidirectional Encoder Representations 🎭
+# BERT: Bidirectional Encoder Representations 
 
 
 
@@ -391,9 +391,9 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 <div class="column">
 
 **Key Innovations:**
-1.  context (not just left-to-right)
-2.  architecture (attention)
-3.  pre-training
+1. context (not just left-to-right)
+2. architecture (attention)
+3. pre-training
 
 5. Deeply bidirectional
 
@@ -427,7 +427,7 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 
 ---
 
-# Masked Language Modeling (MLM) 🎭
+# Masked Language Modeling (MLM) 
 
 
 **BERT's key training innovation**
@@ -455,8 +455,8 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 **Step 3:** Model sees full context both ways to predict "cat":
 ```
 ← The [MASK] sat on the mat →
-     ↑
-   predict "cat"
+ ↑
+ predict "cat"
 ```
 
 </div>
@@ -470,7 +470,7 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 
 ---
 
-# Next Sentence Prediction (NSP) 🔗
+# Next Sentence Prediction (NSP) 
 
 
 **Second pre-training task: Understand sentence relationships**
@@ -484,7 +484,7 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 
 **Sentence B:** "It was sleeping peacefully."
 
-**Label:** IsNext ✓
+**Label:** IsNext 
 
 </div>
 
@@ -495,7 +495,7 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 
 **Sentence B:** "Machine learning is fascinating."
 
-**Label:** NotNext ✗
+**Label:** NotNext 
 
 </div>
 
@@ -508,7 +508,7 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 
 ---
 
-# BERT Architecture 🏗️
+# BERT Architecture 
 
 **Three types of embeddings are summed for each token:**
 
@@ -538,7 +538,7 @@ print(f"Most similar: {sentences[most_similar_idx]}")
 
 ---
 
-# BERT in Practice 💻
+# BERT in Practice 
 
 
 ```python
@@ -559,8 +559,8 @@ tokens2 = tokenizer(sent2, return_tensors='pt')
 
 # Get embeddings
 with torch.no_grad():
-    output1 = model(**tokens1)
-    output2 = model(**tokens2)
+ output1 = model(**tokens1)
+ output2 = model(**tokens2)
 
 # Last hidden state: [batch_size, seq_len, hidden_size]
 embeddings1 = output1.last_hidden_state
@@ -568,21 +568,21 @@ embeddings2 = output2.last_hidden_state
 
 # Extract "bank" embedding (position varies)
 # tokens1: [CLS] i deposited money at the bank [SEP]
-bank1_embedding = embeddings1[0, 6, :]  # 768-dim vector
+bank1_embedding = embeddings1[0, 6, :] # 768-dim vector
 
 # tokens2: [CLS] we sat by the river bank [SEP]
-bank2_embedding = embeddings2[0, 6, :]  # 768-dim vector
+bank2_embedding = embeddings2[0, 6, :] # 768-dim vector
 
 # Different vectors for "bank"!
 from torch.nn.functional import cosine_similarity
 sim = cosine_similarity(bank1_embedding, bank2_embedding, dim=0)
-print(f"Similarity: {sim:.3f}")  # Lower than with static embeddings
+print(f"Similarity: {sim:.3f}") # Lower than with static embeddings
 ```
 
 
 ---
 
-# Fine-tuning BERT 🎯
+# Fine-tuning BERT 
 
 
 **Two ways to use BERT:**
@@ -599,7 +599,7 @@ print(f"Similarity: {sim:.3f}")  # Lower than with static embeddings
 ```python
 # Freeze BERT
 for param in bert_model.parameters():
-    param.requires_grad = False
+ param.requires_grad = False
 
 # Add classifier
 classifier = nn.Linear(768, num_classes)
@@ -620,7 +620,7 @@ optimizer = Adam(classifier.parameters())
 ```python
 # Keep BERT trainable
 bert_model = BertModel.from_pretrained(
-    'bert-base-uncased'
+ 'bert-base-uncased'
 )
 
 # Add classifier
@@ -628,9 +628,9 @@ classifier = nn.Linear(768, num_classes)
 
 # Train everything
 optimizer = Adam(
-    list(bert_model.parameters()) +
-    list(classifier.parameters()),
-    lr=2e-5  # Small learning rate!
+ list(bert_model.parameters()) +
+ list(classifier.parameters()),
+ lr=2e-5 # Small learning rate!
 )
 ```
 
@@ -641,7 +641,7 @@ optimizer = Adam(
 
 ---
 
-# Contextual Embeddings Comparison 📊
+# Contextual Embeddings Comparison 
 
 
 
@@ -667,7 +667,7 @@ optimizer = Adam(
 
 ---
 
-# Impact on NLP 🌟
+# Impact on NLP 
 
 
 **BERT revolutionized NLP:**
@@ -713,7 +713,7 @@ optimizer = Adam(
 
 ---
 
-# Real-World Applications 🚀
+# Real-World Applications 
 
 <div class="columns">
 <div class="column">
@@ -721,7 +721,7 @@ optimizer = Adam(
 **1. Google Search:**
 ```
 Query: "can you get medicine for
-        someone pharmacy"
+ someone pharmacy"
 
 BERT understands: picking up a
 prescription FOR someone else
@@ -755,15 +755,15 @@ prediction = model(text)
 Input: "Apple CEO Tim Cook announced..."
 
 Output:
-  Apple     → ORG
-  Tim Cook  → PERSON
+ Apple → ORG
+ Tim Cook → PERSON
 ```
 
 **5. Semantic Search:**
 ```
 Query: "affordable laptop for students"
 Matches: "budget-friendly notebook
-          for college" ← synonyms!
+ for college" ← synonyms!
 ```
 
 </div>
@@ -772,7 +772,7 @@ Matches: "budget-friendly notebook
 
 ---
 
-# Discussion Question 💬
+# Discussion Question 
 
 
 
@@ -816,49 +816,49 @@ Even with contextual embeddings, we still lack true grounding in experience, per
 
 ---
 
-# Practical Tips 💡
+# Practical Tips 
 
 
 1. **Choosing a Model:**
-    - BERT-base: Good balance, 110M params
+ - BERT-base: Good balance, 110M params
 - DistilBERT: 40% smaller, 60% faster, 97% performance
 - RoBERTa: Better than BERT, longer training
 - Domain-specific: BioBERT, SciBERT, FinBERT, etc.
 2. **Fine-tuning Best Practices:**
-    - Small learning rate (2e-5 typical)
+ - Small learning rate (2e-5 typical)
 - Few epochs (2-4)
 - Batch size: 16 or 32
 - Warm-up steps
 - Gradient clipping
 3. **Computational Considerations:**
-    - BERT-base: ~110M params, 512 max tokens
+ - BERT-base: ~110M params, 512 max tokens
 - Needs GPU (1-4 GB VRAM minimum)
 - Batching for efficiency
 - Consider DistilBERT for production
 4. **Using HuggingFace:**
-    - Easy access to 1000+ pre-trained models
+ - Easy access to 1000+ pre-trained models
 - Standardized API
 - Good documentation and community
 
 
 ---
 
-# Summary 🎯
+# Summary 
 
 
 **What we learned today:**
 
 1. **Contextual vs. Static:** Different vectors per occurrence
 2. **ELMo (2018):**
-    - BiLSTM language models
+ - BiLSTM language models
 - Character-based, handles OOV
 - Task-specific weighting
 3. **Universal Sentence Encoder (2018):**
-    - Sentence-level embeddings
+ - Sentence-level embeddings
 - Two variants: Transformer & DAN
 - Optimized for semantic similarity
 4. **BERT (2018):**
-    - Masked language modeling
+ - Masked language modeling
 - Deep bidirectional transformers
 - Pre-train + fine-tune paradigm
 - Revolutionized NLP
@@ -868,7 +868,7 @@ Even with contextual embeddings, we still lack true grounding in experience, per
 
 ---
 
-# Key References 📚
+# Key References 
 
 
 
@@ -893,7 +893,7 @@ Even with contextual embeddings, we still lack true grounding in experience, per
 
 ---
 
-# Questions? 🙋
+# Questions? 
 
 
 

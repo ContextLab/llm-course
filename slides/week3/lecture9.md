@@ -17,22 +17,22 @@ Winter 2026
 
 ---
 
-# Today's Lecture 📋
+# Today's Lecture 
 
 
 
-1. 🧠 **The Distributional Hypothesis**
-2. 📊 **Vector Space Models**
-3. 📚 **Latent Semantic Analysis (LSA)**
-4. 🎲 **Latent Dirichlet Allocation (LDA)**
-5. 🎨 **Modern Topic Modeling: BERTopic**
-6. 🔍 **Evaluation & Applications**
+1. **The Distributional Hypothesis**
+2. **Vector Space Models**
+3. **Latent Semantic Analysis (LSA)**
+4. **Latent Dirichlet Allocation (LDA)**
+5. **Modern Topic Modeling: BERTopic**
+6. **Evaluation & Applications**
 
 *Goal: Understand how classic methods represent meaning through co-occurrence*
 
 ---
 
-# The Fundamental Question 🤔
+# The Fundamental Question 
 
 
 
@@ -68,7 +68,7 @@ Winter 2026
 
 ---
 
-# The Distributional Hypothesis 📖
+# The Distributional Hypothesis 
 
 
 
@@ -96,7 +96,7 @@ $\rightarrow$ *cat*, *dog*, *kitten* are semantically related
 
 ---
 
-# From Words to Vectors 🗺️
+# From Words to Vectors 
 
 
 **Goal:** Represent each word as a point in high-dimensional space
@@ -112,19 +112,19 @@ Consider a tiny corpus with 3 documents:
 **Word-context co-occurrence:**
 | Word | appears with "the" | appears with "sat" | appears with "ran" |
 |------|-------------------|--------------------|--------------------|
-| cat  | 2                 | 1                  | 0                  |
-| dog  | 2                 | 0                  | 1                  |
-| mat  | 1                 | 1                  | 0                  |
+| cat | 2 | 1 | 0 |
+| dog | 2 | 0 | 1 |
+| mat | 1 | 1 | 0 |
 
 </div>
 
 **Problem:** Real vocabularies have 10,000+ words, contexts are even more numerous!
 
-$\rightarrow$ We need **dimensionality reduction** 📉
+$\rightarrow$ We need **dimensionality reduction** 
 
 ---
 
-# Building a Term-Document Matrix 📊
+# Building a Term-Document Matrix 
 
 
 **Step 1:** Count how often each word appears in each document
@@ -146,7 +146,7 @@ $\rightarrow$ We need **dimensionality reduction** 📉
 
 ---
 
-# TF-IDF Weighting ⚖️
+# TF-IDF Weighting 
 
 
 **Term Frequency - Inverse Document Frequency**
@@ -180,7 +180,7 @@ How rare is term $t$ across all documents?
 
 ---
 
-# TF-IDF: Worked Example 🔢
+# TF-IDF: Worked Example 
 
 **Corpus:** 3 documents, 1000 total documents in collection
 
@@ -193,23 +193,23 @@ How rare is term $t$ across all documents?
 **Calculate TF-IDF for "learning" in Doc 1:**
 
 ```
-Step 1: TF("learning", Doc1) = 1/4 = 0.25  (1 occurrence, 4 words)
+Step 1: TF("learning", Doc1) = 1/4 = 0.25 (1 occurrence, 4 words)
 
 Step 2: IDF("learning") = log(1000/500) = log(2) = 0.301
-        (appears in 500 of 1000 docs)
+ (appears in 500 of 1000 docs)
 
 Step 3: TF-IDF = 0.25 × 0.301 = 0.075
 ```
 
 **Compare: "the" (appears in 950 docs):**
 ```
-IDF("the") = log(1000/950) = 0.022  ← Much lower! Common words penalized
+IDF("the") = log(1000/950) = 0.022 ← Much lower! Common words penalized
 ```
 
 
 ---
 
-# Latent Semantic Analysis (LSA) 📚
+# Latent Semantic Analysis (LSA) 
 
 
 **The OG of semantic embeddings (1990)**
@@ -235,11 +235,11 @@ IDF("the") = log(1000/950) = 0.022  ← Much lower! Common words penalized
 
 **SVD Decomposition:**
 ```
-X        =   U    ×    Σ    ×    V^T
-(m×n)      (m×k)    (k×k)     (k×n)
+X = U × Σ × V^T
+(m×n) (m×k) (k×k) (k×n)
 
-words×docs  words×  topic    topics×
-            topics  strength  docs
+words×docs words× topic topics×
+ topics strength docs
 ```
 
 **Matrix Interpretation:**
@@ -254,16 +254,16 @@ words×docs  words×  topic    topics×
 
 ---
 
-# LSA: Step-by-Step Worked Example 🔍
+# LSA: Step-by-Step Worked Example 
 
 **Mini corpus (4 words × 3 documents):**
 
 ```
-           Doc1    Doc2    Doc3
-cat         2       0       1
-dog         0       3       1
-pet         1       2       0
-animal      1       1       1
+ Doc1 Doc2 Doc3
+cat 2 0 1
+dog 0 3 1
+pet 1 2 0
+animal 1 1 1
 ```
 
 **Step 1: Apply SVD** $X = U \Sigma V^T$
@@ -279,9 +279,9 @@ svd = TruncatedSVD(n_components=2)
 word_embeddings = svd.fit_transform(X)
 
 print("Word vectors (2D):")
-print(f"cat:    [{word_embeddings[0,0]:.2f}, {word_embeddings[0,1]:.2f}]")
-print(f"dog:    [{word_embeddings[1,0]:.2f}, {word_embeddings[1,1]:.2f}]")
-print(f"pet:    [{word_embeddings[2,0]:.2f}, {word_embeddings[2,1]:.2f}]")
+print(f"cat: [{word_embeddings[0,0]:.2f}, {word_embeddings[0,1]:.2f}]")
+print(f"dog: [{word_embeddings[1,0]:.2f}, {word_embeddings[1,1]:.2f}]")
+print(f"pet: [{word_embeddings[2,0]:.2f}, {word_embeddings[2,1]:.2f}]")
 print(f"animal: [{word_embeddings[3,0]:.2f}, {word_embeddings[3,1]:.2f}]")
 ```
 
@@ -289,7 +289,7 @@ print(f"animal: [{word_embeddings[3,0]:.2f}, {word_embeddings[3,1]:.2f}]")
 
 ---
 
-# LSA: How It Works 🔍
+# LSA: How It Works 
 
 
 **Example: Discovering latent topics**
@@ -343,7 +343,7 @@ Words with similar topic distributions are semantically similar!
 
 ---
 
-# LSA Limitations ⚠️
+# LSA Limitations 
 
 
 <div class="columns">
@@ -374,7 +374,7 @@ Words with similar topic distributions are semantically similar!
 
 </div>
 
-LSA gives  for all meanings!
+LSA gives for all meanings!
 
 **But...**
 - Still useful for many tasks
@@ -387,7 +387,7 @@ LSA gives  for all meanings!
 
 ---
 
-# Latent Dirichlet Allocation (LDA) 🎲
+# Latent Dirichlet Allocation (LDA) 
 
 
 **A probabilistic approach to topic modeling**
@@ -422,7 +422,7 @@ Topic 1 -> Topic 2 -> Topic 3 -> sports, game -> tech, code -> animal, pet
 
 ---
 
-# LDA: The Generative Story 📖
+# LDA: The Generative Story 
 
 
 **How LDA imagines documents are created:**
@@ -433,23 +433,23 @@ Topic 1 -> Topic 2 -> Topic 3 -> sports, game -> tech, code -> animal, pet
 **Generative Process:**
 1. Choose number of topics $K$
 2. For each topic $k$:
-    - Draw word distribution $\phi_k \sim \text{Dir}(\beta)$
+ - Draw word distribution $\phi_k \sim \text{Dir}(\beta)$
 3. For each document $d$:
-    - Draw topic distribution $\theta_d \sim \text{Dir}(\alpha)$
-    - For each word position $n$:
-        - Choose topic $z_{dn} \sim \text{Mult}(\theta_d)$
-        - Choose word $w_{dn} \sim \text{Mult}(\phi_{z_{dn}})$
+ - Draw topic distribution $\theta_d \sim \text{Dir}(\alpha)$
+ - For each word position $n$:
+ - Choose topic $z_{dn} \sim \text{Mult}(\theta_d)$
+ - Choose word $w_{dn} \sim \text{Mult}(\phi_{z_{dn}})$
 
 </div>
 <div class="column">
 
 **Key Parameters:**
 - $\alpha$: Document-topic density
-    - Low $\alpha$ $\rightarrow$ few topics per doc
-    - High $\alpha$ $\rightarrow$ many topics per doc
+ - Low $\alpha$ $\rightarrow$ few topics per doc
+ - High $\alpha$ $\rightarrow$ many topics per doc
 - $\beta$: Topic-word density
-    - Low $\beta$ $\rightarrow$ focused topics
-    - High $\beta$ $\rightarrow$ general topics
+ - Low $\beta$ $\rightarrow$ focused topics
+ - High $\beta$ $\rightarrow$ general topics
 
 **Inference:**
 - Given documents, infer topics
@@ -461,27 +461,27 @@ Topic 1 -> Topic 2 -> Topic 3 -> sports, game -> tech, code -> animal, pet
 
 ---
 
-# LDA: Concrete Generative Example 🎲
+# LDA: Concrete Generative Example 
 
 **Imagine generating a document about "tech pets":**
 
 ```
 Step 1: Pick topic mixture for this document
-        θ_doc = [0.6 Tech, 0.3 Animals, 0.1 Sports]
+ θ_doc = [0.6 Tech, 0.3 Animals, 0.1 Sports]
 
 Step 2: For each word, sample a topic, then sample a word:
 
 Word 1: Sample topic → Tech (60% chance)
-        Sample word from Tech → "software"
+ Sample word from Tech → "software"
 
 Word 2: Sample topic → Animals (30% chance)
-        Sample word from Animals → "cat"
+ Sample word from Animals → "cat"
 
 Word 3: Sample topic → Tech (60% chance)
-        Sample word from Tech → "computer"
+ Sample word from Tech → "computer"
 
 Word 4: Sample topic → Animals (30% chance)
-        Sample word from Animals → "pet"
+ Sample word from Animals → "pet"
 
 Result: "software cat computer pet"
 ```
@@ -491,7 +491,7 @@ Result: "software cat computer pet"
 
 ---
 
-# LDA in Practice 💻
+# LDA in Practice 
 
 
 ```python
@@ -500,10 +500,10 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 # Prepare documents
 documents = [
-    "The cat sat on the mat",
-    "The dog ran in the park",
-    "Machine learning is amazing",
-    # ... more documents
+ "The cat sat on the mat",
+ "The dog ran in the park",
+ "Machine learning is amazing",
+ # ... more documents
 ]
 
 # Create bag-of-words representation
@@ -513,23 +513,23 @@ vocab = vectorizer.get_feature_names_out()
 
 # Fit LDA model
 lda = LatentDirichletAllocation(
-    n_components=10,  # number of topics
-    random_state=42,
-    max_iter=50
+ n_components=10, # number of topics
+ random_state=42,
+ max_iter=50
 )
 
 doc_topics = lda.fit_transform(doc_term_matrix)
 
 # Print top words per topic
 for idx, topic in enumerate(lda.components_):
-    top_words = [vocab[i] for i in topic.argsort()[-10:]]
-    print(f"Topic {idx}: {', '.join(top_words)}")
+ top_words = [vocab[i] for i in topic.argsort()[-10:]]
+ print(f"Topic {idx}: {', '.join(top_words)}")
 ```
 
 
 ---
 
-# LDA Example: Topic Discovery 🔍
+# LDA Example: Topic Discovery 
 
 
 
@@ -567,7 +567,7 @@ for idx, topic in enumerate(lda.components_):
 
 ---
 
-# Modern Topic Modeling: BERTopic 🎨
+# Modern Topic Modeling: BERTopic 
 
 
 **Combining neural embeddings with topic models**
@@ -598,19 +598,19 @@ from sentence_transformers import SentenceTransformer
 
 # Initialize
 embedding_model = SentenceTransformer(
-    "all-MiniLM-L6-v2"
+ "all-MiniLM-L6-v2"
 )
 
 model = BERTopic(
-    embedding_model=embedding_model,
-    language="english",
-    calculate_probabilities=True,
-    verbose=True
+ embedding_model=embedding_model,
+ language="english",
+ calculate_probabilities=True,
+ verbose=True
 )
 
 # Fit and transform
 topics, probs = model.fit_transform(
-    documents
+ documents
 )
 
 # Get topic info
@@ -627,7 +627,7 @@ fig = model.visualize_topics()
 
 ---
 
-# LSA vs. LDA vs. BERTopic 📊
+# LSA vs. LDA vs. BERTopic 
 
 
 
@@ -652,7 +652,7 @@ fig = model.visualize_topics()
 
 ---
 
-# Evaluating Topic Models 📏
+# Evaluating Topic Models 
 
 
 <div class="columns">
@@ -660,15 +660,15 @@ fig = model.visualize_topics()
 
 **Intrinsic Metrics:**
 - **Perplexity:** Lower is better
-    - Measures likelihood
-    - Can be misleading!
+ - Measures likelihood
+ - Can be misleading!
 - **Topic Coherence:** Higher is better
-    - Measures semantic similarity
-    - Better correlation with human judgment
-    - CV, UCI, UMass variants
+ - Measures semantic similarity
+ - Better correlation with human judgment
+ - CV, UCI, UMass variants
 - **Topic Diversity:**
-    - Unique words across topics
-    - Avoids redundant topics
+ - Unique words across topics
+ - Avoids redundant topics
 
 </div>
 <div class="column">
@@ -696,7 +696,7 @@ Always check topic coherence and interpretability.
 
 ---
 
-# Coherence Evaluation: Code Example 💻
+# Coherence Evaluation: Code Example 
 
 ```python
 from gensim.models import LdaModel
@@ -711,14 +711,14 @@ corpus = [dictionary.doc2bow(text) for text in texts]
 # Train LDA with different topic numbers
 coherence_scores = []
 for num_topics in [5, 10, 15, 20, 25]:
-    lda = LdaModel(corpus, num_topics=num_topics,
-                   id2word=dictionary, passes=10)
+ lda = LdaModel(corpus, num_topics=num_topics,
+ id2word=dictionary, passes=10)
 
-    # Calculate coherence (C_V is recommended)
-    coherence = CoherenceModel(model=lda, texts=texts,
-                               dictionary=dictionary,
-                               coherence='c_v')
-    coherence_scores.append((num_topics, coherence.get_coherence()))
+ # Calculate coherence (C_V is recommended)
+ coherence = CoherenceModel(model=lda, texts=texts,
+ dictionary=dictionary,
+ coherence='c_v')
+ coherence_scores.append((num_topics, coherence.get_coherence()))
 
 # Results: [(5, 0.42), (10, 0.51), (15, 0.48), (20, 0.45), (25, 0.41)]
 # Best: 10 topics with coherence 0.51
@@ -729,25 +729,25 @@ for num_topics in [5, 10, 15, 20, 25]:
 
 ---
 
-# Applications of Classic Embeddings 🚀
+# Applications of Classic Embeddings 
 
 
 1. **Information Retrieval**
-    - Semantic search
-    - Document similarity
-    - Query expansion
+ - Semantic search
+ - Document similarity
+ - Query expansion
 2. **Document Organization**
-    - Clustering
-    - Topic discovery
-    - Trend analysis
+ - Clustering
+ - Topic discovery
+ - Trend analysis
 3. **Text Mining**
-    - Opinion mining
-    - Literature review
-    - Knowledge discovery
+ - Opinion mining
+ - Literature review
+ - Knowledge discovery
 4. **Preprocessing**
-    - Feature reduction for ML
-    - Noise reduction
-    - Transfer learning
+ - Feature reduction for ML
+ - Noise reduction
+ - Transfer learning
 
 **Real-world examples:**
 - Academic paper recommendations (LSA)
@@ -756,7 +756,7 @@ for num_topics in [5, 10, 15, 20, 25]:
 
 ---
 
-# Application Example: Semantic Search with LSA 🔎
+# Application Example: Semantic Search with LSA 
 
 ```python
 from sklearn.decomposition import TruncatedSVD
@@ -779,7 +779,7 @@ top_5_docs = similarities.argsort()[-5:][::-1]
 
 print("Most relevant documents:")
 for idx in top_5_docs:
-    print(f"  Doc {idx}: similarity = {similarities[idx]:.3f}")
+ print(f" Doc {idx}: similarity = {similarities[idx]:.3f}")
 ```
 
 **Key insight:** LSA finds documents about "neural networks" and "deep learning" even though those exact words weren't in the query!
@@ -787,7 +787,7 @@ for idx in top_5_docs:
 
 ---
 
-# Discussion Question 💬
+# Discussion Question 
 
 
 
@@ -827,48 +827,48 @@ for idx in top_5_docs:
 
 ---
 
-# Practical Tips 💡
+# Practical Tips 
 
 
 1. **Preprocessing Matters:**
-    - Remove stopwords (but not always!)
+ - Remove stopwords (but not always!)
 - Lemmatization vs. stemming
 - Handle punctuation carefully
 - Consider bigrams/trigrams
 2. **Choosing Parameters:**
-    - Start with 10-50 topics for LDA
+ - Start with 10-50 topics for LDA
 - Use perplexity for model selection
 - Validate with coherence scores
 - Try multiple random seeds
 3. **Interpreting Results:**
-    - Look at top 10-20 words per topic
+ - Look at top 10-20 words per topic
 - Examine representative documents
 - Check for duplicate/junk topics
 - Visualize with pyLDAvis
 4. **When to Use What:**
-    - LSA: Fast exploration, search
+ - LSA: Fast exploration, search
 - LDA: Interpretable topics
 - BERTopic: Best quality, latest research
 
 
 ---
 
-# Summary 🎯
+# Summary 
 
 
 **What we learned today:**
 
 1. **Distributional Hypothesis:** Words in similar contexts have similar meanings
 2. **LSA (1990):**
-    - SVD on term-document matrix
+ - SVD on term-document matrix
 - Linear dimensionality reduction
 - Fast but limited interpretability
 3. **LDA (2003):**
-    - Probabilistic topic modeling
+ - Probabilistic topic modeling
 - Documents as mixtures of topics
 - Highly interpretable
 4. **BERTopic (2022):**
-    - Neural embeddings + clustering
+ - Neural embeddings + clustering
 - State-of-the-art coherence
 - Automatic topic detection
 5. **Evaluation:** Coherence $>$ perplexity
@@ -879,7 +879,7 @@ for idx in top_5_docs:
 
 ---
 
-# Key References 📚
+# Key References 
 
 
 
@@ -902,7 +902,7 @@ for idx in top_5_docs:
 
 ---
 
-# Questions? 🙋
+# Questions? 
 
 
 

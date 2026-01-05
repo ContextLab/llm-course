@@ -107,8 +107,8 @@ Why is autoregressive modeling more natural for text generation?
 1. Input tokens
 2. Token + Position embeddings
 3. N x Transformer blocks:
-   - Masked self-attention
-   - Feed-forward network
+ - Masked self-attention
+ - Feed-forward network
 4. Output logits
 
 </div>
@@ -138,7 +138,7 @@ Masked attention prevents "peeking" at future tokens - essential for autoregress
 
 ```
 Step 1: Token Embeddings
-"The" -> [0.2, -0.1, 0.8, ...]  (768-dim vector)
+"The" -> [0.2, -0.1, 0.8, ...] (768-dim vector)
 "cat" -> [0.5, 0.3, -0.2, ...]
 "sat" -> [-0.1, 0.7, 0.4, ...]
 
@@ -164,12 +164,12 @@ Output logits -> softmax -> "on" (highest probability)
 
 **Attention Matrix for "The cat sat on":**
 
-|         | The  | cat  | sat  | on   |
+| | The | cat | sat | on |
 |---------|------|------|------|------|
-| **The** | 1.0  | -inf | -inf | -inf |
-| **cat** | 0.3  | 0.7  | -inf | -inf |
-| **sat** | 0.2  | 0.3  | 0.5  | -inf |
-| **on**  | 0.1  | 0.2  | 0.3  | 0.4  |
+| **The** | 1.0 | -inf | -inf | -inf |
+| **cat** | 0.3 | 0.7 | -inf | -inf |
+| **sat** | 0.2 | 0.3 | 0.5 | -inf |
+| **on** | 0.1 | 0.2 | 0.3 | 0.4 |
 
 *Values show attention weights after softmax (masking sets values to -inf)*
 
@@ -186,20 +186,20 @@ Output logits -> softmax -> "on" (highest probability)
 import torch
 
 def create_causal_mask(seq_len):
-    """Create lower-triangular mask for causal attention."""
-    # Create a matrix of ones
-    mask = torch.ones(seq_len, seq_len)
-    # Keep only lower triangle (including diagonal)
-    mask = torch.tril(mask)
-    return mask
+ """Create lower-triangular mask for causal attention."""
+ # Create a matrix of ones
+ mask = torch.ones(seq_len, seq_len)
+ # Keep only lower triangle (including diagonal)
+ mask = torch.tril(mask)
+ return mask
 
 # Example for sequence length 4
 mask = create_causal_mask(4)
 print(mask)
 # tensor([[1., 0., 0., 0.],
-#         [1., 1., 0., 0.],
-#         [1., 1., 1., 0.],
-#         [1., 1., 1., 1.]])
+# [1., 1., 0., 0.],
+# [1., 1., 1., 0.],
+# [1., 1., 1., 1.]])
 
 # In attention: scores.masked_fill(mask == 0, float('-inf'))
 ```
@@ -253,24 +253,24 @@ import torch
 import torch.nn as nn
 
 class GPTEmbedding(nn.Module):
-    def __init__(self, vocab_size, d_model, max_seq_len):
-        super().__init__()
-        # Token embeddings: word -> vector
-        self.token_embed = nn.Embedding(vocab_size, d_model)
-        # Position embeddings: position -> vector
-        self.pos_embed = nn.Embedding(max_seq_len, d_model)
+ def __init__(self, vocab_size, d_model, max_seq_len):
+ super().__init__()
+ # Token embeddings: word -> vector
+ self.token_embed = nn.Embedding(vocab_size, d_model)
+ # Position embeddings: position -> vector
+ self.pos_embed = nn.Embedding(max_seq_len, d_model)
 
-    def forward(self, x):
-        seq_len = x.size(1)
-        # Create position indices [0, 1, 2, ..., seq_len-1]
-        positions = torch.arange(seq_len, device=x.device)
-        # Combine: token embedding + position embedding
-        return self.token_embed(x) + self.pos_embed(positions)
+ def forward(self, x):
+ seq_len = x.size(1)
+ # Create position indices [0, 1, 2, ..., seq_len-1]
+ positions = torch.arange(seq_len, device=x.device)
+ # Combine: token embedding + position embedding
+ return self.token_embed(x) + self.pos_embed(positions)
 
 # Example usage
 embed = GPTEmbedding(vocab_size=50000, d_model=768, max_seq_len=512)
-tokens = torch.tensor([[101, 2054, 2003]])  # "The cat sat"
-embeddings = embed(tokens)  # Shape: (1, 3, 768)
+tokens = torch.tensor([[101, 2054, 2003]]) # "The cat sat"
+embeddings = embed(tokens) # Shape: (1, 3, 768)
 ```
 
 ---
@@ -302,24 +302,24 @@ Maximize likelihood of next token given previous context.
 import torch.nn as nn
 
 class GPTBlock(nn.Module):
-    def __init__(self, d_model, n_heads):
-        super().__init__()
-        self.attention = MaskedMultiHeadAttention(d_model, n_heads)
-        self.norm1 = nn.LayerNorm(d_model)
-        self.ffn = nn.Sequential(
-            nn.Linear(d_model, 4 * d_model),
-            nn.GELU(),  # GPT uses GELU, not ReLU
-            nn.Linear(4 * d_model, d_model)
-        )
-        self.norm2 = nn.LayerNorm(d_model)
+ def __init__(self, d_model, n_heads):
+ super().__init__()
+ self.attention = MaskedMultiHeadAttention(d_model, n_heads)
+ self.norm1 = nn.LayerNorm(d_model)
+ self.ffn = nn.Sequential(
+ nn.Linear(d_model, 4 * d_model),
+ nn.GELU(), # GPT uses GELU, not ReLU
+ nn.Linear(4 * d_model, d_model)
+ )
+ self.norm2 = nn.LayerNorm(d_model)
 
-    def forward(self, x):
-        # Pre-norm architecture (LayerNorm before sublayer)
-        # Self-attention with residual connection
-        x = x + self.attention(self.norm1(x))
-        # Feed-forward with residual connection
-        x = x + self.ffn(self.norm2(x))
-        return x
+ def forward(self, x):
+ # Pre-norm architecture (LayerNorm before sublayer)
+ # Self-attention with residual connection
+ x = x + self.attention(self.norm1(x))
+ # Feed-forward with residual connection
+ x = x + self.ffn(self.norm2(x))
+ return x
 ```
 
 ---
@@ -328,25 +328,25 @@ class GPTBlock(nn.Module):
 
 ```python
 class GPT(nn.Module):
-    def __init__(self, vocab_size, d_model, n_layers, n_heads, max_len):
-        super().__init__()
-        self.token_embed = nn.Embedding(vocab_size, d_model)
-        self.pos_embed = nn.Embedding(max_len, d_model)
-        self.blocks = nn.ModuleList([
-            GPTBlock(d_model, n_heads) for _ in range(n_layers)
-        ])
-        self.norm = nn.LayerNorm(d_model)
-        self.head = nn.Linear(d_model, vocab_size)
+ def __init__(self, vocab_size, d_model, n_layers, n_heads, max_len):
+ super().__init__()
+ self.token_embed = nn.Embedding(vocab_size, d_model)
+ self.pos_embed = nn.Embedding(max_len, d_model)
+ self.blocks = nn.ModuleList([
+ GPTBlock(d_model, n_heads) for _ in range(n_layers)
+ ])
+ self.norm = nn.LayerNorm(d_model)
+ self.head = nn.Linear(d_model, vocab_size)
 
-    def forward(self, x):
-        seq_len = x.size(1)
-        positions = torch.arange(seq_len, device=x.device)
-        x = self.token_embed(x) + self.pos_embed(positions)
-        for block in self.blocks:
-            x = block(x)
-        x = self.norm(x)
-        logits = self.head(x)  # (batch, seq_len, vocab_size)
-        return logits
+ def forward(self, x):
+ seq_len = x.size(1)
+ positions = torch.arange(seq_len, device=x.device)
+ x = self.token_embed(x) + self.pos_embed(positions)
+ for block in self.blocks:
+ x = block(x)
+ x = self.norm(x)
+ logits = self.head(x) # (batch, seq_len, vocab_size)
+ return logits
 ```
 
 ---
@@ -413,7 +413,7 @@ class GPT(nn.Module):
 
 ```python
 # Input sequence: "The cat sat on the"
-tokens = [101, 2054, 2003, 2006, 1996]  # Token IDs
+tokens = [101, 2054, 2003, 2006, 1996] # Token IDs
 
 # Model predicts probability distribution for each position
 # Position 0: P(next | "The") = {"cat": 0.3, "dog": 0.2, ...}
@@ -421,12 +421,12 @@ tokens = [101, 2054, 2003, 2006, 1996]  # Token IDs
 # etc.
 
 # Target tokens (shifted by 1)
-targets = [2054, 2003, 2006, 1996, 2282]  # "cat sat on the mat"
+targets = [2054, 2003, 2006, 1996, 2282] # "cat sat on the mat"
 
 # Cross-entropy loss at each position
-loss_0 = -log(0.3)   # P("cat" | "The")
-loss_1 = -log(0.4)   # P("sat" | "The cat")
-loss_2 = -log(0.35)  # P("on" | "The cat sat")
+loss_0 = -log(0.3) # P("cat" | "The")
+loss_1 = -log(0.4) # P("sat" | "The cat")
+loss_2 = -log(0.35) # P("on" | "The cat sat")
 # ...
 
 total_loss = mean(loss_0, loss_1, loss_2, ...)
@@ -501,12 +501,12 @@ input_text = "[START] This movie was absolutely fantastic! [DELIM]"
 # 1. GPT processes the input
 # 2. Take the hidden state at [DELIM] position
 # 3. Pass through classification head
-logits = classification_head(hidden_state)  # [pos_score, neg_score]
+logits = classification_head(hidden_state) # [pos_score, neg_score]
 # 4. Compute cross-entropy with label
 loss = cross_entropy(logits, label_id)
 
 # Fine-tuning hyperparameters
-learning_rate = 6.25e-5  # Much lower than pre-training!
+learning_rate = 6.25e-5 # Much lower than pre-training!
 batch_size = 32
 epochs = 3
 ```
@@ -518,17 +518,17 @@ epochs = 3
 **What changes during fine-tuning?**
 
 1. **Add task-specific input transformations**
-   - Format inputs with delimiters
-   - Add special tokens
+ - Format inputs with delimiters
+ - Add special tokens
 
 2. **Add classification head (optional)**
-   - Linear layer for classification
-   - Or use language modeling head
+ - Linear layer for classification
+ - Or use language modeling head
 
 3. **Train with supervised objective**
-   - Cross-entropy loss
-   - Much lower learning rate
-   - Few epochs (3-5)
+ - Cross-entropy loss
+ - Much lower learning rate
+ - Few epochs (3-5)
 
 **Hyperparameters:**
 - Learning rate: 6.25e-5 (much lower than pre-training!)
@@ -649,20 +649,20 @@ Model learned task format from examples.
 **Why "Generative Pre-Training" was revolutionary:**
 
 1. **Unified Architecture**
-   - Same model for all tasks
-   - vs. task-specific architectures
+ - Same model for all tasks
+ - vs. task-specific architectures
 
 2. **Transfer Learning**
-   - Learn once, apply many times
-   - vs. training from scratch
+ - Learn once, apply many times
+ - vs. training from scratch
 
 3. **Scalability**
-   - More data -> Better performance
-   - Clear path to improvement
+ - More data -> Better performance
+ - Clear path to improvement
 
 4. **Simplicity**
-   - Just predict next token
-   - No complex objectives
+ - Just predict next token
+ - No complex objectives
 
 <div class="callout warning">
 <div class="callout-title">This paradigm enabled GPT-2, GPT-3, and beyond!</div>
@@ -717,23 +717,23 @@ BERT dominated understanding tasks (2018-2019), but GPT's approach proved more s
 # Key Takeaways
 
 1. **GPT introduced generative pre-training**
-   - Transformer decoder architecture
-   - Autoregressive language modeling
+ - Transformer decoder architecture
+ - Autoregressive language modeling
 
 2. **Two-stage training paradigm**
-   - Unsupervised pre-training on massive text
-   - Supervised fine-tuning on task data
+ - Unsupervised pre-training on massive text
+ - Supervised fine-tuning on task data
 
 3. **Masked self-attention is key**
-   - Enables autoregressive generation
-   - Prevents information leakage
+ - Enables autoregressive generation
+ - Prevents information leakage
 
 4. **Transfer learning for NLP**
-   - Learn general patterns once
-   - Apply to many tasks
+ - Learn general patterns once
+ - Apply to many tasks
 
 5. **Foundation for modern LLMs**
-   - GPT-2, GPT-3, ChatGPT all build on this
+ - GPT-2, GPT-3, ChatGPT all build on this
 
 ---
 

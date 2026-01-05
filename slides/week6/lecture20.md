@@ -17,22 +17,22 @@ Winter 2026
 
 ---
 
-# Today's Agenda 📋
+# Today's Agenda 
 
 
 
-1. 🚀 **Real-World Applications**: Where BERT shines
-2. 🧠 **Cognitive Neuroscience**: Brain-model parallels
-3. 🤔 **Understanding vs. Pattern Matching**: The big debate
-4. ⚠️ **Limitations**: What BERT can't do
-5. 💡 **Practical Tips**: Deployment and optimization
-6. 🔮 **Future Directions**: Where are we heading?
+1. **Real-World Applications**: Where BERT shines
+2. **Cognitive Neuroscience**: Brain-model parallels
+3. **Understanding vs. Pattern Matching**: The big debate
+4. **Limitations**: What BERT can't do
+5. **Practical Tips**: Deployment and optimization
+6. **Future Directions**: Where are we heading?
 
 *Goal: Connect BERT to real applications and understand broader implications*
 
 ---
 
-# BERT Applications 🚀
+# BERT Applications 
 
 
 
@@ -82,7 +82,7 @@ BERT powers:
 
 ---
 
-# Case Study: Google Search 🔍
+# Case Study: Google Search 
 
 **BERT revolutionized search in 2019**
 
@@ -96,10 +96,10 @@ keywords = ["brazil", "traveler", "usa", "visa"]
 
 # With BERT (contextual understanding):
 bert_understanding = {
-    "subject": "brazil traveler",      # WHO is traveling
-    "destination": "usa",               # WHERE they're going
-    "direction": "brazil → usa",        # The preposition "to" is key!
-    "intent": "visa requirements"
+ "subject": "brazil traveler", # WHO is traveling
+ "destination": "usa", # WHERE they're going
+ "direction": "brazil → usa", # The preposition "to" is key!
+ "intent": "visa requirements"
 }
 # BERT correctly ranks: "Brazil citizen visa requirements for USA"
 ```
@@ -119,7 +119,7 @@ bert_understanding = {
 
 ---
 
-# Question Answering with BERT 💬
+# Question Answering with BERT 
 
 
 **Extractive QA: Find answer span in passage**
@@ -143,8 +143,8 @@ qa_pipeline = pipeline("question-answering", model="bert-large-uncased-whole-wor
 
 # Ask question
 result = qa_pipeline(
-    question="In what country is Normandy located?",
-    context="The Normans were the people who in the 10th and 11th centuries gave their name to Normandy, a region in France."
+ question="In what country is Normandy located?",
+ context="The Normans were the people who in the 10th and 11th centuries gave their name to Normandy, a region in France."
 )
 
 print(result)
@@ -155,7 +155,7 @@ print(result)
 
 ---
 
-# Named Entity Recognition 🏷️
+# Named Entity Recognition 
 
 
 **Token-level classification task**
@@ -183,7 +183,7 @@ text = "Apple Inc. is headquartered in Cupertino, California."
 entities = ner_pipeline(text)
 
 for entity in entities:
-    print(f"{entity['word']}: {entity['entity']} (score: {entity['score']:.2f})")
+ print(f"{entity['word']}: {entity['entity']} (score: {entity['score']:.2f})")
 
 # Output:
 # Apple: B-ORG (score: 0.99)
@@ -195,7 +195,7 @@ for entity in entities:
 
 ---
 
-# Sentiment Analysis 😊😐😢
+# Sentiment Analysis 
 
 
 **Sequence classification task**
@@ -217,22 +217,22 @@ sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncas
 
 # Analyze sentiments
 texts = [
-    "This movie was absolutely amazing!",
-    "The product broke after one week.",
-    "The weather is cloudy today."
+ "This movie was absolutely amazing!",
+ "The product broke after one week.",
+ "The weather is cloudy today."
 ]
 
 for text in texts:
-    result = sentiment_pipeline(text)[0]
-    print(f"{text}")
-    print(f"  → {result['label']} (confidence: {result['score']:.2f})\n")
+ result = sentiment_pipeline(text)[0]
+ print(f"{text}")
+ print(f" → {result['label']} (confidence: {result['score']:.2f})\n")
 ```
 
 **Applications:** Customer reviews, social media monitoring, brand sentiment
 
 ---
 
-# Semantic Similarity 🔗
+# Semantic Similarity 
 
 
 **Measuring sentence similarity with BERT embeddings**
@@ -246,10 +246,10 @@ tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
 
 def get_sentence_embedding(sentence):
-    inputs = tokenizer(sentence, return_tensors='pt', padding=True, truncation=True)
-    outputs = model(**inputs)
-    # Use [CLS] token embedding as sentence representation
-    return outputs.last_hidden_state[:, 0, :]
+ inputs = tokenizer(sentence, return_tensors='pt', padding=True, truncation=True)
+ outputs = model(**inputs)
+ # Use [CLS] token embedding as sentence representation
+ return outputs.last_hidden_state[:, 0, :]
 
 # Compare sentences
 sent1 = "The cat is sleeping on the couch"
@@ -264,14 +264,14 @@ emb3 = get_sentence_embedding(sent3)
 sim_12 = F.cosine_similarity(emb1, emb2).item()
 sim_13 = F.cosine_similarity(emb1, emb3).item()
 
-print(f"Similarity (1-2): {sim_12:.3f}")  # High (paraphrases)
-print(f"Similarity (1-3): {sim_13:.3f}")  # Low (different topics)
+print(f"Similarity (1-2): {sim_12:.3f}") # High (paraphrases)
+print(f"Similarity (1-3): {sim_13:.3f}") # Low (different topics)
 ```
 
 
 ---
 
-# Cognitive Neuroscience Perspective 🧠
+# Cognitive Neuroscience Perspective 
 
 
 **How do brains and models process language?**
@@ -314,7 +314,7 @@ print(f"Similarity (1-3): {sim_13:.3f}")  # Low (different topics)
 
 ---
 
-# Prediction in Brains vs. Language Models 🧠🤖
+# Prediction in Brains vs. Language Models 
 
 **Parallels between neural and artificial systems**
 
@@ -327,13 +327,13 @@ print(f"Similarity (1-3): {sim_13:.3f}")  # Low (different topics)
 
 ```python
 # Concrete example: Surprise/N400 parallel
-sentence_a = "I take my coffee with cream and sugar"  # Expected
-sentence_b = "I take my coffee with cream and socks"  # Surprising
+sentence_a = "I take my coffee with cream and sugar" # Expected
+sentence_b = "I take my coffee with cream and socks" # Surprising
 
 # Brain: N400 amplitude higher for "socks"
 # Model: Higher loss for "socks"
-loss_a = model.compute_loss("sugar", context)  # Low loss
-loss_b = model.compute_loss("socks", context)  # High loss
+loss_a = model.compute_loss("sugar", context) # Low loss
+loss_b = model.compute_loss("socks", context) # High loss
 
 # Both systems encode "surprisal" = -log P(word | context)
 surprisal = -np.log(model.predict_prob("socks", context))
@@ -346,7 +346,7 @@ surprisal = -np.log(model.predict_prob("socks", context))
 
 ---
 
-# Neural Encoding with Language Models 🔬
+# Neural Encoding with Language Models 
 
 **Can we predict brain activity from language models?**
 
@@ -357,15 +357,15 @@ from transformers import BertModel
 
 # 1. Participant reads sentences while in fMRI scanner
 sentences = ["The dog chased the cat", "She opened the door", ...]
-brain_activity = fmri_scanner.record(sentences)  # (n_sentences, n_voxels)
+brain_activity = fmri_scanner.record(sentences) # (n_sentences, n_voxels)
 
 # 2. Extract BERT representations for same sentences
 bert = BertModel.from_pretrained("bert-base-uncased")
 bert_embeddings = []
 for sent in sentences:
-    outputs = bert(tokenizer(sent, return_tensors="pt"))
-    # Use layer 8 (found to correlate best with semantic areas)
-    bert_embeddings.append(outputs.hidden_states[8].mean(dim=1))
+ outputs = bert(tokenizer(sent, return_tensors="pt"))
+ # Use layer 8 (found to correlate best with semantic areas)
+ bert_embeddings.append(outputs.hidden_states[8].mean(dim=1))
 
 # 3. Train encoding model: BERT → Brain
 from sklearn.linear_model import Ridge
@@ -383,7 +383,7 @@ correlation = np.corrcoef(predictions.flat, brain_activity[80:].flat)[0,1]
 
 ---
 
-# Discussion: What Does the Model "Understand"? 🤔
+# Discussion: What Does the Model "Understand"? 
 
 
 
@@ -431,7 +431,7 @@ correlation = np.corrcoef(predictions.flat, brain_activity[80:].flat)[0,1]
 
 ---
 
-# Adversarial Examples and Brittleness ⚠️
+# Adversarial Examples and Brittleness 
 
 **BERT can be fooled easily**
 
@@ -445,16 +445,16 @@ classifier("This movie was absolutely wonderful!")
 
 # Adding irrelevant negative words flips prediction!
 classifier("This movie was absolutely wonderful! [SEP] bad bad bad bad")
-# → [{'label': 'NEGATIVE', 'score': 0.9234}]  # WRONG!
+# → [{'label': 'NEGATIVE', 'score': 0.9234}] # WRONG!
 
 # Synonym substitution can break it
-classifier("The food was good")   # → POSITIVE (0.99)
-classifier("The food was fine")   # → POSITIVE (0.72)  # Less confident
-classifier("The food was ok")     # → NEGATIVE (0.51)  # WRONG!
+classifier("The food was good") # → POSITIVE (0.99)
+classifier("The food was fine") # → POSITIVE (0.72) # Less confident
+classifier("The food was ok") # → NEGATIVE (0.51) # WRONG!
 
 # Typos cause problems
-classifier("This is amazign!")    # Might work
-classifier("Thsi si amzaign!")    # Likely wrong prediction
+classifier("This is amazign!") # Might work
+classifier("Thsi si amzaign!") # Likely wrong prediction
 ```
 
 <div class="callout warning">
@@ -470,32 +470,32 @@ classifier("Thsi si amzaign!")    # Likely wrong prediction
 
 ---
 
-# Limitations of Current Models ⚠️
+# Limitations of Current Models 
 
 
 **Despite impressive performance, transformers have limitations:**
 
 1. **Quadratic Complexity**
-    - Self-attention scales as $O(n^2)$
+ - Self-attention scales as $O(n^2)$
 - Limited context windows (512-4096 tokens)
 - Cannot process very long documents efficiently
 2. **No True Understanding**
-    - Pattern matching vs. comprehension
+ - Pattern matching vs. comprehension
 - Lack of common sense
 - No world model
 3. **Data Efficiency**
-    - Requires massive training data
+ - Requires massive training data
 - Humans learn language with much less data
 - Not biologically plausible
 4. **Biases and Fairness**
-    - Inherits biases from training data
+ - Inherits biases from training data
 - Can amplify stereotypes
 - Ethical concerns
 
 
 ---
 
-# Bias in Language Models ⚖️
+# Bias in Language Models 
 
 **Models reflect and can amplify societal biases**
 
@@ -512,8 +512,8 @@ unmasker("The nurse said [MASK] would be late.")
 
 # Racial bias (different sentiment for names)
 classifier = pipeline("sentiment-analysis")
-classifier("Emily is a brilliant scientist.")  # POSITIVE: 0.98
-classifier("Jamal is a brilliant scientist.")  # POSITIVE: 0.94  # Lower!
+classifier("Emily is a brilliant scientist.") # POSITIVE: 0.98
+classifier("Jamal is a brilliant scientist.") # POSITIVE: 0.94 # Lower!
 
 # Where does bias come from?
 # Training data (books, Wikipedia) contains historical biases
@@ -533,25 +533,25 @@ classifier("Jamal is a brilliant scientist.")  # POSITIVE: 0.94  # Lower!
 
 ---
 
-# Practical Tips for Working with Transformers 💡
+# Practical Tips for Working with Transformers 
 
 
 1. **Start with Pre-trained Models**
-    - Don't train from scratch (too expensive!)
+ - Don't train from scratch (too expensive!)
 - Use HuggingFace Model Hub
 - Choose appropriate model size
 2. **Fine-tuning Best Practices**
-    - Use small learning rate (1e-5 to 5e-5)
+ - Use small learning rate (1e-5 to 5e-5)
 - Add warmup steps
 - Monitor for overfitting
 - Freeze early layers if data is limited
 3. **Computational Efficiency**
-    - Use mixed precision training (FP16)
+ - Use mixed precision training (FP16)
 - Gradient accumulation for larger batch sizes
 - Consider DistilBERT for faster inference
 - Use FlashAttention when available
 4. **Evaluation**
-    - Use task-specific metrics
+ - Use task-specific metrics
 - Test on out-of-distribution data
 - Check for biases
 - Visualize attention for interpretability
@@ -559,7 +559,7 @@ classifier("Jamal is a brilliant scientist.")  # POSITIVE: 0.94  # Lower!
 
 ---
 
-# Deployment Considerations 🚀
+# Deployment Considerations 
 
 **Moving from research to production**
 
@@ -575,7 +575,7 @@ tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 
 # Step 2: Quantize for speed (INT8 instead of FP32)
 quantized_model = torch.quantization.quantize_dynamic(
-    model, {torch.nn.Linear}, dtype=torch.qint8
+ model, {torch.nn.Linear}, dtype=torch.qint8
 )
 # Result: 4x smaller, 2x faster on CPU
 
@@ -598,41 +598,41 @@ session = onnxruntime.InferenceSession("bert.onnx")
 
 ---
 
-# Future Directions 🔮
+# Future Directions 
 
 
 **Where is the field heading?**
 
 1. **Longer Context**
-    - Efficient attention mechanisms (linear, sparse)
+ - Efficient attention mechanisms (linear, sparse)
 - Models with 100K+ token context
 - Better long-document understanding
 
-    
+ 
 
 2. **Multimodal Models**
-    - Vision + Language (CLIP, DALL-E)
+ - Vision + Language (CLIP, DALL-E)
 - Audio + Language (Whisper)
 - Grounded understanding
 
-    
+ 
 
 3. **Better Pre-training**
-    - More efficient objectives
+ - More efficient objectives
 - Curriculum learning
 - Continual learning
 
-    
+ 
 
 4. **Smaller, More Efficient Models**
-    - Better compression techniques
+ - Better compression techniques
 - Lottery ticket hypothesis
 - Edge deployment
 
-    
+ 
 
 5. **Addressing Limitations**
-    - Debiasing and fairness
+ - Debiasing and fairness
 - Robustness and adversarial training
 - Common sense reasoning
 - Interpretability and explainability
@@ -640,7 +640,7 @@ session = onnxruntime.InferenceSession("bert.onnx")
 
 ---
 
-# Encoder vs Decoder Models Revisited 🔄
+# Encoder vs Decoder Models Revisited 
 
 
 **Different models for different tasks**
@@ -662,95 +662,95 @@ session = onnxruntime.InferenceSession("bert.onnx")
 
 ---
 
-# Discussion Questions 💭
+# Discussion Questions 
 
 
 1. **Understanding vs. Pattern Matching:**
-    - Where do you draw the line?
+ - Where do you draw the line?
 - Is there a test for "true" understanding?
 - Does it matter for applications?
 
-    
+ 
 
 2. **Brain-Model Parallels:**
-    - How useful are these comparisons?
+ - How useful are these comparisons?
 - What can neuroscience learn from AI?
 - What can AI learn from neuroscience?
 
-    
+ 
 
 3. **Bias and Fairness:**
-    - Who is responsible for addressing bias?
+ - Who is responsible for addressing bias?
 - Can we ever have completely unbiased models?
 - How do we balance accuracy and fairness?
 
-    
+ 
 
 4. **Future of NLP:**
-    - Will encoder models remain relevant?
+ - Will encoder models remain relevant?
 - Are decoder-only models the future?
 - What's the next big breakthrough?
 
 
 ---
 
-# Assignment 4: Context-Aware Models 📝
+# Assignment 4: Context-Aware Models 
 
 
 **Hands-on experience with transformers!**
 
 **Tasks:**
 1. **Implement Attention Mechanism**
-    - Build scaled dot-product attention from scratch
+ - Build scaled dot-product attention from scratch
 - Visualize attention weights
 2. **Fine-tune BERT**
-    - Load pre-trained BERT
+ - Load pre-trained BERT
 - Fine-tune on sentiment analysis
 - Compare to baseline models
 3. **Analyze Contextual Embeddings**
-    - Extract embeddings for polysemous words
+ - Extract embeddings for polysemous words
 - Visualize how context changes representations
 - Compare BERT vs Word2Vec
 4. **Explore Different Architectures**
-    - Compare BERT (encoder) vs GPT (decoder)
+ - Compare BERT (encoder) vs GPT (decoder)
 - Test on different tasks
 - Analyze strengths/weaknesses
 5. **Research Component**
-    - Read one paper from references
+ - Read one paper from references
 - Write brief summary & critical analysis
 
 **Due:** Check course website for deadline
 
 ---
 
-# Summary: Weeks 5-6 🎯
+# Summary: Weeks 5-6 
 
 
 **What we learned:**
 
 1. **Evolution of Context**
-    - Seq2Seq → Attention → Transformers
+ - Seq2Seq → Attention → Transformers
 - From bottleneck to full parallelization
 2. **Transformer Architecture**
-    - Self-attention, multi-head attention
+ - Self-attention, multi-head attention
 - Positional encoding, layer norm, residuals
 - Encoder-only (BERT), Decoder-only (GPT), Both (T5)
 3. **BERT & Variants**
-    - Masked Language Modeling
+ - Masked Language Modeling
 - Pre-train then fine-tune paradigm
 - RoBERTa, ALBERT, DistilBERT, ELECTRA
 4. **Applications**
-    - Classification, NER, QA, similarity
+ - Classification, NER, QA, similarity
 - Real-world impact (Google Search, etc.)
 5. **Broader Implications**
-    - Brain-model parallels
+ - Brain-model parallels
 - Understanding vs. pattern matching
 - Limitations and future directions
 
 
 ---
 
-# Resources \& Further Reading 📚
+# Resources \& Further Reading 
 
 
 **Key Papers:**
@@ -773,7 +773,7 @@ session = onnxruntime.InferenceSession("bert.onnx")
 
 ---
 
-# Looking Forward in the Course 🔮
+# Looking Forward in the Course 
 
 
 **Where do we go from here?**
@@ -790,12 +790,12 @@ session = onnxruntime.InferenceSession("bert.onnx")
 - From narrow tasks to general-purpose models
 - From academic research to societal impact
 
-**The transformer revolution continues! 🚀**
+**The transformer revolution continues! **
 
 
 ---
 
-# Questions? 🙋
+# Questions? 
 
 
 
@@ -808,7 +808,7 @@ session = onnxruntime.InferenceSession("bert.onnx")
 - Limitations and future work
 - Assignment 4 questions
 
-Thank you! 🙏
+Thank you! 
 
 See you in Week 7 for GPT and text generation!
 

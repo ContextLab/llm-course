@@ -9,20 +9,20 @@ footer: ''
 <!-- _class: lead -->
 
 # Lecture 27: Final Project Work Session
-## Models of Language and Conversation 🤖
+## Models of Language and Conversation 
 
 **PSYC 51.07: Models of Language and Communication**
 
 ---
 
-# Today's Agenda 🗺️
+# Today's Agenda 
 
 <!-- TODO: Add manual table of contents or navigation -->
 
 
 ---
 
-# Where We Are 🎯
+# Where We Are 
 
 
 
@@ -49,27 +49,27 @@ Today is your **last structured work time** before presentations. Use it wisely!
 
 ---
 
-# Final Project Requirements Review 📋
+# Final Project Requirements Review 
 
 
 **What you need to submit (all due Friday EOD):**
 
 1. **Code Implementation**: Jupyter notebook that runs in Google Colab
-    - Well-documented, reproducible, polished
+ - Well-documented, reproducible, polished
 - Includes all experiments and results
 2. **Video Presentation**: 10-12 minute video (YouTube link)
-    - Cover motivation, approach, results, discussion
+ - Cover motivation, approach, results, discussion
 - All team members participate
 3. **Written Writeup**: 2-5 page report
-    - Intro, approach, results, discussion, references
+ - Intro, approach, results, discussion, references
 - Think mini research paper
 4. **In-Class Presentation**: Wednesday or Friday
-    - Show your video + lead 5-10 min Q&A discussion
+ - Show your video + lead 5-10 min Q&A discussion
 
 
 ---
 
-# Presentation Format 🎬
+# Presentation Format 
 
 
 <div class="columns">
@@ -80,7 +80,7 @@ Today is your **last structured work time** before presentations. Use it wisely!
 - **Format**: Pre-recorded video
 - **Platform**: YouTube (unlisted OK)
 - **Content**:
-    
+ 
 - Motivation (why?)
 - Approach (how?)
 - Results (what?)
@@ -94,7 +94,7 @@ Today is your **last structured work time** before presentations. Use it wisely!
 - **5-10 min Q&A**/discussion
 - **All team members** present
 - Be ready for questions about:
-    
+ 
 - Technical details
 - Design decisions
 - Limitations
@@ -108,7 +108,7 @@ Test your video beforehand! Make sure audio is clear, slides are readable, and d
 
 ---
 
-# What Makes a Great Presentation? ⭐
+# What Makes a Great Presentation? 
 
 
 
@@ -134,26 +134,26 @@ Your audience is smart but may not know your specific domain. Explain technical 
 
 ---
 
-# Presentation Structure Template 📝
+# Presentation Structure Template 
 
 
 **Suggested 10-12 minute structure:**
 
 1. **Title & Introduction** (1 min)
-    - Project title, team members, one-sentence summary
+ - Project title, team members, one-sentence summary
 2. **Motivation & Background** (2 min)
-    - The problem, why it matters, research questions
+ - The problem, why it matters, research questions
 3. **Approach & Methods** (3-4 min)
-    - Models, datasets, techniques, implementation details
+ - Models, datasets, techniques, implementation details
 4. **Results** (3-4 min)
-    - Key findings, metrics, visualizations, demos
+ - Key findings, metrics, visualizations, demos
 5. **Discussion & Conclusions** (1-2 min)
-    - Limitations, future work, takeaways, broader impact
+ - Limitations, future work, takeaways, broader impact
 
 
 ---
 
-# Finishing Your Project: Technical Checklist ✅
+# Finishing Your Project: Technical Checklist 
 
 
 **Code & Implementation:**
@@ -173,7 +173,7 @@ Your audience is smart but may not know your specific domain. Explain technical 
 
 ---
 
-# Testing Reproducibility 🔄
+# Testing Reproducibility 
 
 
 <div class="callout warning">
@@ -196,7 +196,7 @@ Use "Runtime → Restart and run all" frequently during development!
 
 ---
 
-# Code Quality Matters 💎
+# Code Quality Matters 
 
 
 **Good code is:**
@@ -208,44 +208,44 @@ Use "Runtime → Restart and run all" frequently during development!
 **Example of good documentation:**
 ```python
 def compute_embeddings(texts, model_name="sentence-transformers/all-MiniLM-L6-v2"):
-    """
-    Compute semantic embeddings for a list of texts.
+ """
+ Compute semantic embeddings for a list of texts.
 
-    Args:
-        texts (list): List of text strings to embed
-        model_name (str): HuggingFace model identifier
+ Args:
+ texts (list): List of text strings to embed
+ model_name (str): HuggingFace model identifier
 
-    Returns:
-        np.ndarray: Embeddings matrix of shape (len(texts), embedding_dim)
-    """
-    # Load model and encode
-    # ...
+ Returns:
+ np.ndarray: Embeddings matrix of shape (len(texts), embedding_dim)
+ """
+ # Load model and encode
+ # ...
 ```
 
 
 ---
 
-# Common Pitfalls to Avoid ⚠️
+# Common Pitfalls to Avoid 
 
 
 **Technical pitfalls:**
-- ❌ **Scope creep**: Trying to do too much at the last minute
-- ❌ **No baselines**: Results without comparison are hard to interpret
-- ❌ **Cherry-picking**: Only showing best results, hiding failures
-- ❌ **Ignoring errors**: Sweeping bugs under the rug instead of fixing
-- ❌ **Last-minute testing**: Discovering critical bugs right before deadline
+- **Scope creep**: Trying to do too much at the last minute
+- **No baselines**: Results without comparison are hard to interpret
+- **Cherry-picking**: Only showing best results, hiding failures
+- **Ignoring errors**: Sweeping bugs under the rug instead of fixing
+- **Last-minute testing**: Discovering critical bugs right before deadline
 
 **Presentation pitfalls:**
-- ❌ **Too much detail**: Getting lost in implementation minutiae
-- ❌ **No motivation**: Jumping straight to methods without context
-- ❌ **Unclear visuals**: Tiny fonts, cluttered slides, confusing plots
-- ❌ **Going over time**: Practice and time yourself!
-- ❌ **Unbalanced team**: One person doing all the talking
+- **Too much detail**: Getting lost in implementation minutiae
+- **No motivation**: Jumping straight to methods without context
+- **Unclear visuals**: Tiny fonts, cluttered slides, confusing plots
+- **Going over time**: Practice and time yourself!
+- **Unbalanced team**: One person doing all the talking
 
 
 ---
 
-# When Things Don't Work 🔧
+# When Things Don't Work 
 
 
 
@@ -268,31 +268,31 @@ Projects are graded on process, rigor, and critical thinking—not just positive
 
 ---
 
-# Time Management: The Final 72 Hours ⏰
+# Time Management: The Final 72 Hours 
 
 
 **Recommended priorities:**
 
 1. **Priority 1 (Critical)**: Make code run and reproduce core results
-    - Fix any breaking bugs
+ - Fix any breaking bugs
 - Ensure reproducibility
 - Complete essential experiments
 2. **Priority 2 (High)**: Create presentation video
-    - Draft slides
+ - Draft slides
 - Record and edit video
 - Upload to YouTube
 3. **Priority 3 (Medium)**: Polish notebook
-    - Add documentation
+ - Add documentation
 - Clean up code
 - Add visualizations
 4. **Priority 4 (Nice-to-have)**: Written writeup refinement
-    - Draft should be done, now refine
+ - Draft should be done, now refine
 - Proofread, fix formatting
 
 
 ---
 
-# Grading Breakdown 📊
+# Grading Breakdown 
 
 
 **How your project will be evaluated:**
@@ -309,7 +309,7 @@ Focus most of your remaining time on **implementation** and **presentation**—t
 
 ---
 
-# What We're Looking For ⭐
+# What We're Looking For 
 
 
 
@@ -331,7 +331,7 @@ Would you be proud to show this project in a job interview or grad school applic
 
 ---
 
-# Today's Work Session 🛠️
+# Today's Work Session 
 
 
 **Use today for:**
@@ -354,7 +354,7 @@ Work together in your team, but also talk to other teams. Fresh perspectives oft
 
 ---
 
-# Getting Unstuck 🚀
+# Getting Unstuck 
 
 
 **If you're stuck on a technical issue:**
@@ -375,7 +375,7 @@ Work together in your team, but also talk to other teams. Fresh perspectives oft
 
 ---
 
-# Key Takeaways 🔑
+# Key Takeaways 
 
 
 1. **Prioritize ruthlessly**: Focus on what matters most
@@ -396,7 +396,7 @@ This is the culmination of everything you've learned. From ELIZA to GPT, from pa
 
 ---
 
-# Final Submission Checklist 📋
+# Final Submission Checklist 
 
 
 **Before you submit Friday night, verify:**
@@ -413,7 +413,7 @@ Submit early if possible! Don't wait until 11:59 PM—technical issues happen.
 
 ---
 
-# You've Got This! 💪
+# You've Got This! 
 
 
 
@@ -425,7 +425,7 @@ And now you're building sophisticated LLM systems!
 
 **Trust your skills. Use your resources. Do great work.**
 
-We can't wait to see your presentations! 🎉
+We can't wait to see your presentations! 
 
-**Now: Let's get to work! 🚀**
+**Now: Let's get to work! **
 

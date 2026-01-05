@@ -9,7 +9,7 @@ footer: 'Week 9'
 <!-- _class: lead -->
 
 # Lecture 24: Retrieval Augmented Generation
-## Grounding LLMs in External Knowledge 🔍
+## Grounding LLMs in External Knowledge 
 
 **PSYC 51.07: Models of Language and Communication**
 
@@ -17,7 +17,7 @@ Week 9
 
 ---
 
-# Today's Journey 🗺️
+# Today's Journey 
 
 <div class="callout info">
 <div class="callout-title">What we'll cover</div>
@@ -32,26 +32,26 @@ Week 9
 
 ---
 
-# The Limits of Parametric Memory 🧠
+# The Limits of Parametric Memory 
 
 
 
 What are the fundamental limitations of storing knowledge in model parameters?
 
 **Problems with purely parametric models:**
-- ❌ **Knowledge cutoff**: No information after training date
-- ❌ **Hallucinations**: Models confidently generate false information
-- ❌ **No source attribution**: Can't cite where information comes from
-- ❌ **Expensive updates**: Retraining for new information costs millions
-- ❌ **Privacy concerns**: Sensitive data baked into parameters
-- ❌ **Domain specificity**: Limited knowledge of specialized domains
-- ❌ **Outdated facts**: World changes but model weights don't
+- **Knowledge cutoff**: No information after training date
+- **Hallucinations**: Models confidently generate false information
+- **No source attribution**: Can't cite where information comes from
+- **Expensive updates**: Retraining for new information costs millions
+- **Privacy concerns**: Sensitive data baked into parameters
+- **Domain specificity**: Limited knowledge of specialized domains
+- **Outdated facts**: World changes but model weights don't
 
-**Solution:** Combine parametric knowledge with non-parametric retrieval! 🔍
+**Solution:** Combine parametric knowledge with non-parametric retrieval! 
 
 ---
 
-# Example: Knowledge Cutoff Problem 📅
+# Example: Knowledge Cutoff Problem 
 
 
 <div class="callout info">
@@ -66,7 +66,7 @@ What are the fundamental limitations of storing knowledge in model parameters?
 
 **Parametric-only LLM:**
 
-{❌} "I apologize, but my knowledge was last updated in April 2023, so I cannot tell you about the 2024 election results."
+{} "I apologize, but my knowledge was last updated in April 2023, so I cannot tell you about the 2024 election results."
 
 Or worse: Hallucinates an answer!
 
@@ -75,7 +75,7 @@ Or worse: Hallucinates an answer!
 
 **RAG-enhanced LLM:**
 
-{✅} "According to CNN (retrieved Nov 6, 2024), [actual winner] won the 2024 US Presidential election with [details]."
+{} "According to CNN (retrieved Nov 6, 2024), [actual winner] won the 2024 US Presidential election with [details]."
 
 Provides: Fresh info + source!
 
@@ -92,7 +92,7 @@ Retrieval provides a **dynamic, updatable** knowledge base without retraining!
 
 ---
 
-# Retrieval Augmented Generation: Definition 📚
+# Retrieval Augmented Generation: Definition 
 
 
 <div class="callout info">
@@ -129,7 +129,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 
 ---
 
-# RAG Architecture 🏗️
+# RAG Architecture 
 
 ```flow
 [User Query] --> [Embed Query] --> [Vector Search] --> [Retrieve Docs] --> [Augment Prompt] --> [LLM Generate] --> [Response]
@@ -147,7 +147,7 @@ A technique that enhances LLMs by retrieving relevant documents from an external
 
 ---
 
-# RAG: Step-by-Step Walkthrough 🔍
+# RAG: Step-by-Step Walkthrough 
 
 **Query:** "What is the capital of Kazakhstan?"
 
@@ -160,9 +160,9 @@ query_embedding = embedding_model.encode(query)
 # Step 2: Search vector database
 results = vector_db.search(query_embedding, top_k=3)
 # Returns: [
-#   {"text": "Astana is the capital of Kazakhstan...", "score": 0.94},
-#   {"text": "Kazakhstan's capital moved from Almaty...", "score": 0.89},
-#   {"text": "The city was renamed Nur-Sultan in 2019...", "score": 0.85}
+# {"text": "Astana is the capital of Kazakhstan...", "score": 0.94},
+# {"text": "Kazakhstan's capital moved from Almaty...", "score": 0.89},
+# {"text": "The city was renamed Nur-Sultan in 2019...", "score": 0.85}
 # ]
 
 # Step 3: Build augmented prompt
@@ -179,7 +179,7 @@ response = llm.generate(prompt)
 
 ---
 
-# RAG Components Deep Dive 🔬
+# RAG Components Deep Dive 
 
 <div class="columns">
 <div class="column">
@@ -190,15 +190,15 @@ response = llm.generate(prompt)
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 splitter = RecursiveCharacterTextSplitter(
-    chunk_size=500,      # Target size
-    chunk_overlap=50,    # Overlap between chunks
-    separators=["\n\n", "\n", ". ", " "]
+ chunk_size=500, # Target size
+ chunk_overlap=50, # Overlap between chunks
+ separators=["\n\n", "\n", ". ", " "]
 )
 
 chunks = splitter.split_text(long_document)
 # ["First chunk about topic A...",
-#  "Second chunk continues topic A...",
-#  "Third chunk about topic B..."]
+# "Second chunk continues topic A...",
+# "Third chunk about topic B..."]
 ```
 
 </div>
@@ -217,9 +217,9 @@ embeddings = model.encode(chunks)
 client = chromadb.Client()
 collection = client.create_collection("docs")
 collection.add(
-    embeddings=embeddings.tolist(),
-    documents=chunks,
-    ids=[f"chunk_{i}" for i in range(len(chunks))]
+ embeddings=embeddings.tolist(),
+ documents=chunks,
+ ids=[f"chunk_{i}" for i in range(len(chunks))]
 )
 ```
 
@@ -228,7 +228,7 @@ collection.add(
 
 ---
 
-# RAG Implementation Example 💻
+# RAG Implementation Example 
 
 
 **Basic RAG with LangChain:**
@@ -246,48 +246,48 @@ loader = TextLoader('knowledge_base.txt')
 documents = loader.load()
 
 text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=512,
-    chunk_overlap=50
+ chunk_size=512,
+ chunk_overlap=50
 )
 chunks = text_splitter.split_documents(documents)
 
 # 2. Create embeddings and vector store
 embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
+ model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 vectordb = Chroma.from_documents(
-    documents=chunks,
-    embedding=embeddings,
-    persist_directory="./chroma_db"
+ documents=chunks,
+ embedding=embeddings,
+ persist_directory="./chroma_db"
 )
 
 # 3. Set up retriever
 retriever = vectordb.as_retriever(
-    search_type="similarity",
-    search_kwargs={"k": 3}  # Retrieve top 3 chunks
+ search_type="similarity",
+ search_kwargs={"k": 3} # Retrieve top 3 chunks
 )
 ```
 
 
 ---
 
-# RAG Implementation (cont.) 💻
+# RAG Implementation (cont.) 
 
 
 ```python
 # 4. Create LLM
 llm = HuggingFacePipeline.from_model_id(
-    model_id="meta-llama/Llama-2-7b-chat-hf",
-    task="text-generation",
-    model_kwargs={"temperature": 0.7, "max_length": 512}
+ model_id="meta-llama/Llama-2-7b-chat-hf",
+ task="text-generation",
+ model_kwargs={"temperature": 0.7, "max_length": 512}
 )
 
 # 5. Create RAG chain
 qa_chain = RetrievalQA.from_chain_type(
-    llm=llm,
-    retriever=retriever,
-    return_source_documents=True,
-    chain_type="stuff"  # How to combine documents
+ llm=llm,
+ retriever=retriever,
+ return_source_documents=True,
+ chain_type="stuff" # How to combine documents
 )
 
 # 6. Query the system
@@ -297,14 +297,14 @@ result = qa_chain({"query": query})
 print("Answer:", result['result'])
 print("\nSources:")
 for doc in result['source_documents']:
-    print(f"- {doc.metadata['source']}: {doc.page_content[:100]}...")
+ print(f"- {doc.metadata['source']}: {doc.page_content[:100]}...")
 ```
 
 *Tutorial: HuggingFace Advanced RAG - https://huggingface.co/learn/cookbook/advanced_rag*
 
 ---
 
-# Evolution of RAG Approaches 📈
+# Evolution of RAG Approaches 
 
 ```flow
 [Naive RAG:blue] --> [Self-RAG:green] --> [Corrective RAG:orange] --> [Agentic RAG:purple]
@@ -326,7 +326,7 @@ Moving from always-retrieve to **adaptive**, **self-correcting** retrieval syste
 
 ---
 
-# Self-RAG: Adaptive Retrieval 🎯
+# Self-RAG: Adaptive Retrieval 
 
 <div class="columns">
 <div class="column">
@@ -346,16 +346,16 @@ Moving from always-retrieve to **adaptive**, **self-correcting** retrieval syste
 
 ```
 Q: What's 2+2?
-[Retrieve: No]  # No retrieval needed
+[Retrieve: No] # No retrieval needed
 A: 4
 
 Q: Who won the 2024 Olympics?
-[Retrieve: Yes]  # Need current info
+[Retrieve: Yes] # Need current info
 [Retrieved: "Paris 2024 Olympic Games..."]
-[Relevant: Yes]  # Doc is on topic
+[Relevant: Yes] # Doc is on topic
 A: The 2024 Olympics were held in Paris...
-[Support: Fully]  # Answer matches doc
-[Useful: Yes]  # Response is helpful
+[Support: Fully] # Answer matches doc
+[Useful: Yes] # Response is helpful
 ```
 
 </div>
@@ -372,30 +372,30 @@ The model learns these tokens during training, enabling **adaptive** retrieval w
 
 ---
 
-# Corrective RAG (CRAG) 🔧
+# Corrective RAG (CRAG) 
 
 **Problem:** Sometimes retrieved documents are irrelevant or misleading!
 
 ```flow
 [Query] --> [Retrieve] --> [Evaluate Relevance] --> {Correct?} --> [Generate]
-                                                --> {Ambiguous?} --> [Filter & Refine] --> [Generate]
-                                                --> {Wrong?} --> [Web Search] --> [Generate]
+ --> {Ambiguous?} --> [Filter & Refine] --> [Generate]
+ --> {Wrong?} --> [Web Search] --> [Generate]
 ```
 
 **Worked Example:**
 
 ```python
 # Query: "Latest COVID vaccine recommendations"
-retrieved_docs = retriever.search(query)  # Returns old 2021 docs
+retrieved_docs = retriever.search(query) # Returns old 2021 docs
 
 # Evaluator scores relevance
 scores = evaluator.score(query, retrieved_docs)
-# [0.3, 0.4, 0.35]  # All low - docs are outdated!
+# [0.3, 0.4, 0.35] # All low - docs are outdated!
 
-if max(scores) < 0.5:  # Threshold not met
-    # Fallback to web search for current info
-    fresh_docs = web_search(query)
-    # Now returns CDC guidelines from 2024
+if max(scores) < 0.5: # Threshold not met
+ # Fallback to web search for current info
+ fresh_docs = web_search(query)
+ # Now returns CDC guidelines from 2024
 
 response = generate(query, fresh_docs)
 ```
@@ -411,7 +411,7 @@ Don't blindly trust retrieval! Verify relevance and have fallback strategies.
 
 ---
 
-# Comparing RAG Approaches 📊
+# Comparing RAG Approaches 
 
 | Approach | When Retrieve | Filtering | Latency | Best For |
 |----------|---------------|-----------|---------|----------|
@@ -438,7 +438,7 @@ Start with Naive RAG. Add complexity only when you measure specific failures.
 
 ---
 
-# Chunking Strategies 📄
+# Chunking Strategies 
 
 **How you split documents dramatically affects retrieval quality!**
 
@@ -449,7 +449,7 @@ Start with Naive RAG. Add complexity only when you measure specific failures.
 ```python
 # Split every 500 chars
 chunks = [text[i:i+500]
-          for i in range(0, len(text), 500)]
+ for i in range(0, len(text), 500)]
 # Problem: "The mitochondria is the power-"
 # "house of the cell." <- split mid-sentence!
 ```
@@ -457,8 +457,8 @@ chunks = [text[i:i+500]
 **Recursive (Better)**
 ```python
 splitter = RecursiveCharacterTextSplitter(
-    separators=["\n\n", "\n", ". ", " "],
-    chunk_size=500
+ separators=["\n\n", "\n", ". ", " "],
+ chunk_size=500
 )
 # Tries paragraph breaks first, then sentences
 ```
@@ -487,7 +487,7 @@ chunker = SemanticChunker(embeddings)
 
 ---
 
-# Embedding Models for Retrieval 🎯
+# Embedding Models for Retrieval 
 
 **Choosing the Right Embedding Model:**
 
@@ -518,7 +518,7 @@ final_score = 0.7 * dense_score + 0.3 * sparse_score
 
 ---
 
-# Vector Databases 🗄️
+# Vector Databases 
 
 **Purpose:** Fast similarity search over millions of embeddings
 
@@ -535,15 +535,15 @@ collection = client.create_collection("my_docs")
 
 # Add documents (auto-embeds!)
 collection.add(
-    documents=["Paris is in France",
-               "Berlin is in Germany"],
-    ids=["doc1", "doc2"]
+ documents=["Paris is in France",
+ "Berlin is in Germany"],
+ ids=["doc1", "doc2"]
 )
 
 # Query
 results = collection.query(
-    query_texts=["European capitals"],
-    n_results=2
+ query_texts=["European capitals"],
+ n_results=2
 )
 # Returns both docs, ranked by relevance
 ```
@@ -571,7 +571,7 @@ results = collection.query(
 
 ---
 
-# Prompt Engineering for RAG 📝
+# Prompt Engineering for RAG 
 
 **Template for Grounded Generation:**
 
@@ -612,18 +612,18 @@ response = llm.generate(RAG_PROMPT.format(context=context, question=question))
 
 ---
 
-# Production Challenges 🏭
+# Production Challenges 
 
 
 <div class="columns">
 <div class="column">
 
 **Performance Challenges:**
-- 💰 **Cost**: Embedding generation + storage + inference
-- ⚡ **Latency**: Retrieval adds 50-200ms
-- 📏 **Context limits**: LLM window size
-- 🎯 **Quality**: Retrieval accuracy
-- 🔄 **Freshness**: Keeping index up-to-date
+- **Cost**: Embedding generation + storage + inference
+- **Latency**: Retrieval adds 50-200ms
+- **Context limits**: LLM window size
+- **Quality**: Retrieval accuracy
+- **Freshness**: Keeping index up-to-date
 
 </div>
 <div class="column">
@@ -650,7 +650,7 @@ Start simple (Naive RAG), measure performance, iterate based on real bottlenecks
 
 ---
 
-# Evaluation Metrics for RAG 📊
+# Evaluation Metrics for RAG 
 
 
 **How to measure RAG quality:**
@@ -674,24 +674,24 @@ Start simple (Naive RAG), measure performance, iterate based on real bottlenecks
 
 ---
 
-# Common RAG Failure Modes ⚠️
+# Common RAG Failure Modes 
 
 
 1. **Retrieval Failures**
-    - Wrong documents retrieved
+ - Wrong documents retrieved
 - Relevant docs not in knowledge base
 - Poor query formulation
 2. **Context Problems**
-    - Too much irrelevant context
+ - Too much irrelevant context
 - Context too long for LLM
 - Important info not in retrieved chunks
 3. **Generation Issues**
-    - Ignores retrieved context
+ - Ignores retrieved context
 - Hallucinates despite good context
 - Incorrect citations
 - Overly dependent on parametric knowledge
 4. **System Issues**
-    - High latency
+ - High latency
 - Embedding drift
 - Stale index
 
@@ -699,29 +699,29 @@ Start simple (Naive RAG), measure performance, iterate based on real bottlenecks
 
 ---
 
-# Multimodal RAG 🖼️📄
+# Multimodal RAG 
 
 
 **Beyond text: Retrieving images, tables, code, etc.**
 
 - **Vision + Text**
-    
+ 
 - Use CLIP embeddings for images
 - Retrieve relevant diagrams, charts
 - Generate answers referencing visual content
 
-    \item **Code Retrieval**
-    - Embed code snippets
+ \item **Code Retrieval**
+ - Embed code snippets
 - Retrieve relevant functions/examples
 - Code completion and debugging
 
-    \item **Structured Data**
-    - Tables, databases
+ \item **Structured Data**
+ - Tables, databases
 - Knowledge graphs
 - SQL generation from natural language
 
-    \item **Audio/Video**
-    - Transcribe and embed
+ \item **Audio/Video**
+ - Transcribe and embed
 - Retrieve relevant segments
 - Timestamp-aware responses
 
@@ -730,7 +730,7 @@ Future RAG systems will seamlessly integrate multiple modalities!
 
 ---
 
-# Graph-Based RAG 🕸️
+# Graph-Based RAG 
 
 
 **Combining knowledge graphs with RAG:**
@@ -755,7 +755,7 @@ Future RAG systems will seamlessly integrate multiple modalities!
 
 ---
 
-# HyDE: Hypothetical Document Embeddings 💭
+# HyDE: Hypothetical Document Embeddings 
 
 **Clever trick: Generate a hypothetical answer first, then retrieve!**
 
@@ -767,11 +767,11 @@ query = "What causes the aurora borealis?"
 # HyDE: Query -> Generate Hypothesis -> Embed Hypothesis -> Retrieve -> Generate
 hypothesis = llm.generate(f"Write a short explanation: {query}")
 # "The aurora borealis occurs when charged particles from the sun
-#  interact with gases in Earth's atmosphere, causing them to glow."
+# interact with gases in Earth's atmosphere, causing them to glow."
 
 # Now embed the HYPOTHESIS (an answer-like text)
 hypo_embedding = embed(hypothesis)
-docs = vector_db.search(hypo_embedding)  # Better match to scientific docs!
+docs = vector_db.search(hypo_embedding) # Better match to scientific docs!
 
 # Finally generate with real retrieved docs
 final_answer = llm.generate(query, context=docs)
@@ -791,7 +791,7 @@ Answers are more similar to documents than questions are!
 
 ---
 
-# RAG vs Fine-Tuning 🤔
+# RAG vs Fine-Tuning 
 
 
 
@@ -801,23 +801,23 @@ When should you use RAG vs fine-tuning your model?
 <div class="column">
 
 **Use RAG when:**
-- ✅ Knowledge changes frequently
-- ✅ Need citations/provenance
-- ✅ Privacy concerns (data in DB, not weights)
-- ✅ Large knowledge base
-- ✅ Multi-domain applications
-- ✅ Want to update without retraining
+- Knowledge changes frequently
+- Need citations/provenance
+- Privacy concerns (data in DB, not weights)
+- Large knowledge base
+- Multi-domain applications
+- Want to update without retraining
 
 </div>
 <div class="column">
 
 **Use Fine-Tuning when:**
-- ✅ Need specific style/behavior
-- ✅ Low latency critical
-- ✅ Small, stable knowledge domain
-- ✅ Specialized reasoning
-- ✅ Domain-specific language
-- ✅ Want fully self-contained model
+- Need specific style/behavior
+- Low latency critical
+- Small, stable knowledge domain
+- Specialized reasoning
+- Domain-specific language
+- Want fully self-contained model
 
 </div>
 </div>
@@ -832,59 +832,59 @@ Often the answer is **both**: Fine-tune for style/domain, RAG for knowledge!
 
 ---
 
-# Future of RAG 🔮
+# Future of RAG 
 
 
 **Emerging trends and research directions:**
 
 1. **Agentic RAG**
-    - LLM decides retrieval strategy
+ - LLM decides retrieval strategy
 - Multi-step reasoning with retrieval
 - Tool use (web search, APIs, databases)
 2. **Long-context RAG**
-    - Models with 1M+ token windows
+ - Models with 1M+ token windows
 - Entire books as context
 - Retrieval still useful for efficiency
 3. **Personalized RAG**
-    - User-specific knowledge bases
+ - User-specific knowledge bases
 - Privacy-preserving retrieval
 - Federated learning
 4. **Real-time RAG**
-    - Live web scraping
+ - Live web scraping
 - Streaming document updates
 - Event-driven retrieval
 
 
 ---
 
-# Key Takeaways 🔑
+# Key Takeaways 
 
 
 1. **RAG solves fundamental LLM limitations**
-    - Knowledge cutoff, hallucination, no citations
+ - Knowledge cutoff, hallucination, no citations
 2. **Core pipeline: Retrieve → Augment → Generate**
-    - Vector search for relevant documents
+ - Vector search for relevant documents
 - Incorporate into prompt
 3. **Many variants exist**
-    - Naive RAG → Self-RAG → Corrective RAG → Agentic RAG
+ - Naive RAG → Self-RAG → Corrective RAG → Agentic RAG
 4. **Key components matter**
-    - Chunking strategy, embedding model, vector DB
+ - Chunking strategy, embedding model, vector DB
 5. **Production requires careful engineering**
-    - Latency, cost, quality evaluation
+ - Latency, cost, quality evaluation
 6. **RAG + Fine-tuning is powerful combo**
-    - Fine-tune for style, RAG for knowledge
+ - Fine-tune for style, RAG for knowledge
 
 
 ---
 
-# Readings 📖
+# Readings 
 
 
 **Required:**
 1. **Lewis et al. (2020)**: Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
-    [[arXiv]](https://arxiv.org/abs/2005.11401)
+ [[arXiv]](https://arxiv.org/abs/2005.11401)
 2. **Asai et al. (2023)**: Self-RAG: Learning to Retrieve, Generate, and Critique
-    [[arXiv]](https://arxiv.org/abs/2310.11511)
+ [[arXiv]](https://arxiv.org/abs/2310.11511)
 
 **Recommended:**
 - Yan et al. (2024): Corrective RAG [[arXiv]](https://arxiv.org/abs/2401.15884)
@@ -896,7 +896,7 @@ Often the answer is **both**: Fine-tune for style/domain, RAG for knowledge!
 ---
 
 
-Questions? 💬
+Questions? 
 
 Next: Mixture of Experts!
 

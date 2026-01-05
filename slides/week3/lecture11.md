@@ -17,22 +17,22 @@ Winter 2026
 
 ---
 
-# Today's Lecture 📋
+# Today's Lecture 
 
 
 
-1. 🚀 **The 2013 Revolution: Word2Vec**
-2. 🏗️ **Word2Vec Architectures: CBOW & Skip-gram**
-3. 🌍 **GloVe: Global Vectors**
-4. 🔤 **FastText: Subword Information**
-5. 📊 **Comparison & Evaluation**
-6. 💡 **Applications & Best Practices**
+1. **The 2013 Revolution: Word2Vec**
+2. **Word2Vec Architectures: CBOW & Skip-gram**
+3. **GloVe: Global Vectors**
+4. **FastText: Subword Information**
+5. **Comparison & Evaluation**
+6. **Applications & Best Practices**
 
 *Goal: Understand how neural methods learn dense word representations*
 
 ---
 
-# From Count-Based to Prediction-Based 🎯
+# From Count-Based to Prediction-Based 
 
 
 <div class="columns">
@@ -71,7 +71,7 @@ Winter 2026
 
 ---
 
-# Word2Vec: The Revolution 🚀
+# Word2Vec: The Revolution 
 
 
 
@@ -112,7 +112,7 @@ $$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{q
 
 ---
 
-# Word2Vec: Core Intuition 💡
+# Word2Vec: Core Intuition 
 
 
 
@@ -138,19 +138,19 @@ $$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{q
 
 ---
 
-# Context Windows: Worked Example 📝
+# Context Windows: Worked Example 
 
 **Sentence:** "The cat sat on the mat"
 
 **Window size = 2** (2 words on each side)
 
 ```
-Position 0: "The"  → Context: [cat, sat]
-Position 1: "cat"  → Context: [The, sat, on]
-Position 2: "sat"  → Context: [The, cat, on, the]
-Position 3: "on"   → Context: [cat, sat, the, mat]
-Position 4: "the"  → Context: [sat, on, mat]
-Position 5: "mat"  → Context: [on, the]
+Position 0: "The" → Context: [cat, sat]
+Position 1: "cat" → Context: [The, sat, on]
+Position 2: "sat" → Context: [The, cat, on, the]
+Position 3: "on" → Context: [cat, sat, the, mat]
+Position 4: "the" → Context: [sat, on, mat]
+Position 5: "mat" → Context: [on, the]
 ```
 
 **Skip-gram training pairs** (target → context):
@@ -166,7 +166,7 @@ Position 5: "mat"  → Context: [on, the]
 
 ---
 
-# CBOW: Continuous Bag of Words 🎒
+# CBOW: Continuous Bag of Words 
 
 
 **Predict the center word from context words**
@@ -176,10 +176,10 @@ Position 5: "mat"  → Context: [on, the]
 
 ```
 Context words:
-  "the" ──┐
-  "cat" ──┼──→ Average ──→ "sat"
-  "on"  ──┼──→ Hidden  ──→ (predict)
-  "the" ──┘
+ "the" 
+ "cat" → Average → "sat"
+ "on" → Hidden → (predict)
+ "the" 
 ```
 
 </div>
@@ -208,7 +208,7 @@ Context words:
 
 ---
 
-# Skip-gram: The Inverse Approach 🔄
+# Skip-gram: The Inverse Approach 
 
 
 **Predict context words from the center word**
@@ -217,11 +217,11 @@ Context words:
 <div class="column">
 
 ```
-Center word:           Predict context:
-                   ┌──→ "the"
-                   ├──→ "cat"
-  "sat" ──→ Hidden ┼──→ "on"
-                   └──→ "the"
+Center word: Predict context:
+ → "the"
+ → "cat"
+ "sat" → Hidden → "on"
+ → "the"
 ```
 
 </div>
@@ -249,7 +249,7 @@ Center word:           Predict context:
 
 ---
 
-# Negative Sampling: The Speed Trick ⚡
+# Negative Sampling: The Speed Trick 
 
 
 **Problem:** Softmax over entire vocabulary is too expensive!
@@ -274,7 +274,7 @@ Training becomes $O(k)$ instead of $O(V)$ per example!
 
 ---
 
-# Negative Sampling: Concrete Example 🎯
+# Negative Sampling: Concrete Example 
 
 **Training pair:** ("cat", "sat") - cat is center, sat is context
 
@@ -285,11 +285,11 @@ positive_pair = ("cat", "sat", label=1)
 # Negative samples: Random words that DON'T appear near "cat"
 # Sample 5 random words from vocabulary
 negative_pairs = [
-    ("cat", "algorithm", label=0),
-    ("cat", "president", label=0),
-    ("cat", "quantum", label=0),
-    ("cat", "democracy", label=0),
-    ("cat", "software", label=0),
+ ("cat", "algorithm", label=0),
+ ("cat", "president", label=0),
+ ("cat", "quantum", label=0),
+ ("cat", "democracy", label=0),
+ ("cat", "software", label=0),
 ]
 
 # Train binary classifier: Is this a real context pair?
@@ -302,7 +302,7 @@ The 0.75 power gives rare words slightly higher probability of being sampled as 
 
 ---
 
-# Word2Vec in Practice 💻
+# Word2Vec in Practice 
 
 
 ```python
@@ -319,35 +319,35 @@ print(similar)
 
 # Word analogies: king - man + woman = ?
 result = model.most_similar(
-    positive=['king', 'woman'],
-    negative=['man'],
-    topn=1
+ positive=['king', 'woman'],
+ negative=['man'],
+ topn=1
 )
 print(result)
 # Output: [('queen', 0.71)]
 
 # Train your own model
 sentences = [
-    ['the', 'cat', 'sat', 'on', 'the', 'mat'],
-    ['the', 'dog', 'ran', 'in', 'the', 'park'],
-    # ... more sentences
+ ['the', 'cat', 'sat', 'on', 'the', 'mat'],
+ ['the', 'dog', 'ran', 'in', 'the', 'park'],
+ # ... more sentences
 ]
 
 custom_model = Word2Vec(
-    sentences,
-    vector_size=100,    # embedding dimension
-    window=5,           # context window
-    min_count=1,        # ignore rare words
-    sg=1,               # 1=skip-gram, 0=CBOW
-    negative=5,         # negative sampling
-    workers=4           # parallel threads
+ sentences,
+ vector_size=100, # embedding dimension
+ window=5, # context window
+ min_count=1, # ignore rare words
+ sg=1, # 1=skip-gram, 0=CBOW
+ negative=5, # negative sampling
+ workers=4 # parallel threads
 )
 ```
 
 
 ---
 
-# GloVe: Global Vectors for Word Representation 🌍
+# GloVe: Global Vectors for Word Representation 
 
 
 **Combining the best of count-based and prediction-based methods**
@@ -371,10 +371,10 @@ Ratios of co-occurrence probabilities encode meaning better than raw probabiliti
 
 | Probe word | P(word\|ice) | P(word\|steam) | Ratio |
 |------------|-------------|----------------|-------|
-| solid      | high        | low            | >> 1  |
-| gas        | low         | high           | << 1  |
-| water      | high        | high           | ~ 1   |
-| fashion    | low         | low            | ~ 1   |
+| solid | high | low | >> 1 |
+| gas | low | high | << 1 |
+| water | high | high | ~ 1 |
+| fashion | low | low | ~ 1 |
 
 **Idea:**
 Learn word vectors such that their dot product relates to co-occurrence probability ratios
@@ -388,7 +388,7 @@ $$\vec{w}_i^T \vec{w}_j \approx \log P(i,j)$$
 
 ---
 
-# GloVe: The Ratio Intuition 🔢
+# GloVe: The Ratio Intuition 
 
 **Why ratios matter more than raw probabilities:**
 
@@ -396,12 +396,12 @@ $$\vec{w}_i^T \vec{w}_j \approx \log P(i,j)$$
 Given words: "ice" and "steam"
 Probe with: "solid", "gas", "water"
 
-P(solid | ice)  = 0.00019    P(solid | steam) = 0.000022
-P(gas | ice)    = 0.000066   P(gas | steam)   = 0.00078
+P(solid | ice) = 0.00019 P(solid | steam) = 0.000022
+P(gas | ice) = 0.000066 P(gas | steam) = 0.00078
 
-Ratio: P(solid|ice) / P(solid|steam) = 8.9   → "solid" relates to ice
-Ratio: P(gas|ice)   / P(gas|steam)   = 0.085 → "gas" relates to steam
-Ratio: P(water|ice) / P(water|steam) = 1.36  → "water" is neutral
+Ratio: P(solid|ice) / P(solid|steam) = 8.9 → "solid" relates to ice
+Ratio: P(gas|ice) / P(gas|steam) = 0.085 → "gas" relates to steam
+Ratio: P(water|ice) / P(water|steam) = 1.36 → "water" is neutral
 ```
 
 **The insight:** These ratios distinguish relevant context words from irrelevant ones!
@@ -410,7 +410,7 @@ GloVe learns vectors where: $\frac{\vec{w}_{\text{ice}}^T \vec{w}_{\text{solid}}
 
 ---
 
-# GloVe: The Objective Function 🎯
+# GloVe: The Objective Function 
 
 
 **Goal:** Learn vectors that capture co-occurrence statistics
@@ -434,7 +434,7 @@ $$f(x) = \begin{cases} (x/x_{\max})^\alpha & \text{if } x < x_{\max} \\ 1 & \tex
 
 ---
 
-# GloVe vs. Word2Vec 🥊
+# GloVe vs. Word2Vec 
 
 
 
@@ -486,7 +486,7 @@ In practice: Similar performance on most tasks! Choose based on:
 
 ---
 
-# GloVe in Practice 💻
+# GloVe in Practice 
 
 
 ```python
@@ -504,11 +504,11 @@ print(similar)
 
 # Analogies
 result = glove.most_similar(
-    positive=['france', 'berlin'],
-    negative=['paris'],
-    topn=1
+ positive=['france', 'berlin'],
+ negative=['paris'],
+ topn=1
 )
-print(result)  # Should be close to 'germany'
+print(result) # Should be close to 'germany'
 
 # Vector arithmetic
 king = glove['king']
@@ -518,7 +518,7 @@ result_vec = king - man + woman
 
 # Find closest word
 closest = glove.similar_by_vector(result_vec, topn=1)
-print(closest)  # Should be close to 'queen'
+print(closest) # Should be close to 'queen'
 
 # Compute similarity
 similarity = glove.similarity('cat', 'dog')
@@ -528,7 +528,7 @@ print(f"Similarity: {similarity:.3f}")
 
 ---
 
-# FastText: Enriching with Subword Information 🔤
+# FastText: Enriching with Subword Information 
 
 
 **The Problem with Word2Vec and GloVe:**
@@ -554,7 +554,7 @@ print(f"Similarity: {similarity:.3f}")
 
 ---
 
-# FastText: Character N-grams 🧩
+# FastText: Character N-grams 
 
 
 **Key Idea:** Break words into character n-grams
@@ -602,7 +602,7 @@ $\rightarrow$ Can generate reasonable embedding
 
 ---
 
-# FastText: Morphology in Action 🔠
+# FastText: Morphology in Action 
 
 **How FastText handles related words:**
 
@@ -611,29 +611,29 @@ $\rightarrow$ Can generate reasonable embedding
 # <un, unh, nha, hap, app, ppi, pin, ine, nes, ess, ss>
 
 # Shares n-grams with:
-# "unhappy"   → <un, unh, nha, hap, app, ppy
+# "unhappy" → <un, unh, nha, hap, app, ppy
 # "happiness" → hap, app, ppi, pin, ine, nes, ess, ss>
-# "happy"     → hap, app, ppy
+# "happy" → hap, app, ppy
 
 # Therefore: vec("unhappiness") is close to:
-#   - vec("unhappy")     (prefix overlap)
-#   - vec("happiness")   (suffix overlap)
-#   - vec("sadness")     (similar suffix pattern)
+# - vec("unhappy") (prefix overlap)
+# - vec("happiness") (suffix overlap)
+# - vec("sadness") (similar suffix pattern)
 ```
 
 **This is why FastText excels at morphologically rich languages!**
 
 | Language | Morphology | FastText Advantage |
 |----------|------------|-------------------|
-| English  | Low        | Moderate          |
-| German   | High       | Significant       |
-| Turkish  | Very High  | Essential         |
-| Finnish  | Extreme    | Critical          |
+| English | Low | Moderate |
+| German | High | Significant |
+| Turkish | Very High | Essential |
+| Finnish | Extreme | Critical |
 
 
 ---
 
-# FastText in Practice 💻
+# FastText in Practice 
 
 
 ```python
@@ -648,22 +648,22 @@ fasttext_model = api.load('fasttext-wiki-news-subwords-300')
 vec_cat = fasttext_model['cat']
 
 # Also works for unknown words! (OOV)
-vec_unknownword = fasttext_model['unknownword']  # Still get a vector!
+vec_unknownword = fasttext_model['unknownword'] # Still get a vector!
 
 # Even works for misspellings (somewhat)
-vec_misspelling = fasttext_model['computr']  # Close to "computer"
+vec_misspelling = fasttext_model['computr'] # Close to "computer"
 
 # Train your own FastText model
 sentences = [['the', 'cat', 'sat'], ['the', 'dog', 'ran']]
 
 ft_model = FastText(
-    sentences,
-    vector_size=100,
-    window=5,
-    min_count=1,
-    min_n=3,      # minimum n-gram length
-    max_n=6,      # maximum n-gram length
-    word_ngrams=1 # use word + ngrams
+ sentences,
+ vector_size=100,
+ window=5,
+ min_count=1,
+ min_n=3, # minimum n-gram length
+ max_n=6, # maximum n-gram length
+ word_ngrams=1 # use word + ngrams
 )
 
 # Check similar words
@@ -676,15 +676,15 @@ similar = ft_model.wv.most_similar('cat', topn=5)
 
 ---
 
-# Embedding Methods Comparison 📊
+# Embedding Methods Comparison 
 
 
 
-| LDA | 2003 | Probabilistic | ✗ | Slow | Topic modeling |
+| LDA | 2003 | Probabilistic | | Slow | Topic modeling |
 | --- | --- | --- | --- | --- | --- |
-| Word2Vec | 2013 | Neural (local) | ✗ | Fast | General NLP |
-| GloVe | 2014 | Hybrid (global) | ✗ | Fast | Large corpora |
-| FastText | 2017 | Neural + ngrams | ✓ | Fast | Morphology-rich |
+| Word2Vec | 2013 | Neural (local) | | Fast | General NLP |
+| GloVe | 2014 | Hybrid (global) | | Fast | Large corpora |
+| FastText | 2017 | Neural + ngrams | | Fast | Morphology-rich |
 
 <div class="callout info">
 <div class="callout-title">When to Use What?</div>
@@ -700,7 +700,7 @@ similar = ft_model.wv.most_similar('cat', topn=5)
 
 ---
 
-# Evaluating Word Embeddings 📏
+# Evaluating Word Embeddings 
 
 
 <div class="columns">
@@ -752,7 +752,7 @@ Best approach: Evaluate on your actual task.
 
 ---
 
-# Limitations of Static Embeddings ⚠️
+# Limitations of Static Embeddings 
 
 
 **The fundamental problem: One vector per word type**
@@ -798,7 +798,7 @@ All get the ! This conflates different meanings.
 
 ---
 
-# Bias in Word Embeddings ⚖️
+# Bias in Word Embeddings 
 
 
 **Embeddings learn the biases in their training data**
@@ -829,7 +829,7 @@ All get the ! This conflates different meanings.
 
 ---
 
-# Bias Detection: Code Example 🔍
+# Bias Detection: Code Example 
 
 ```python
 import gensim.downloader as api
@@ -837,31 +837,31 @@ model = api.load('word2vec-google-news-300')
 
 # Measure gender bias: which words are closer to "man" vs "woman"?
 def gender_bias_score(word):
-    """Positive = closer to man, Negative = closer to woman"""
-    return model.similarity(word, 'man') - model.similarity(word, 'woman')
+ """Positive = closer to man, Negative = closer to woman"""
+ return model.similarity(word, 'man') - model.similarity(word, 'woman')
 
 occupations = ['doctor', 'nurse', 'engineer', 'teacher',
-               'programmer', 'secretary', 'scientist', 'receptionist']
+ 'programmer', 'secretary', 'scientist', 'receptionist']
 
 for job in occupations:
-    score = gender_bias_score(job)
-    direction = "→ man" if score > 0 else "→ woman"
-    print(f"{job:12}: {score:+.3f} {direction}")
+ score = gender_bias_score(job)
+ direction = "→ man" if score > 0 else "→ woman"
+ print(f"{job:12}: {score:+.3f} {direction}")
 
 # Output:
-# doctor      : +0.089 → man
-# nurse       : -0.109 → woman
-# engineer    : +0.078 → man
-# teacher     : -0.046 → woman
-# programmer  : +0.091 → man
-# secretary   : -0.107 → woman
+# doctor : +0.089 → man
+# nurse : -0.109 → woman
+# engineer : +0.078 → man
+# teacher : -0.046 → woman
+# programmer : +0.091 → man
+# secretary : -0.107 → woman
 ```
 
 **These biases reflect stereotypes in the training data (news articles)!**
 
 ---
 
-# Debiasing Approaches 🔧
+# Debiasing Approaches 
 
 
 **How can we reduce bias in embeddings?**
@@ -914,33 +914,33 @@ Best practice:
 
 ---
 
-# Practical Tips for Using Embeddings 💡
+# Practical Tips for Using Embeddings 
 
 
 1. **Start with pre-trained models**
-    - Word2Vec: Google News (300d, 3B words)
-    - GloVe: Common Crawl (300d, 840B tokens)
-    - FastText: Available in 157 languages
+ - Word2Vec: Google News (300d, 3B words)
+ - GloVe: Common Crawl (300d, 840B tokens)
+ - FastText: Available in 157 languages
 2. **Fine-tune if you have domain data**
-    - Medical: PubMed, clinical notes
-    - Legal: case law, contracts
-    - Social media: tweets, posts
-    - Can significantly improve performance
+ - Medical: PubMed, clinical notes
+ - Legal: case law, contracts
+ - Social media: tweets, posts
+ - Can significantly improve performance
 3. **Choose dimensions wisely**
-    - More dims = more expressiveness, more data needed
-    - 50-100d: small datasets, fast computation
-    - 200-300d: large datasets, better quality
+ - More dims = more expressiveness, more data needed
+ - 50-100d: small datasets, fast computation
+ - 200-300d: large datasets, better quality
 4. **Use cosine similarity**
-    - $\text{sim}(u,v) = \frac{u \cdot v}{||u|| \cdot ||v||}$
-    - Not Euclidean distance (direction matters more than magnitude)
+ - $\text{sim}(u,v) = \frac{u \cdot v}{||u|| \cdot ||v||}$
+ - Not Euclidean distance (direction matters more than magnitude)
 5. **Be aware of biases and limitations**
-    - Test for bias in your use case
-    - Static embeddings can't handle polysemy
-    - Consider contextual embeddings for better performance
+ - Test for bias in your use case
+ - Static embeddings can't handle polysemy
+ - Consider contextual embeddings for better performance
 
 ---
 
-# Loading Pre-trained Embeddings: Quick Reference 💻
+# Loading Pre-trained Embeddings: Quick Reference 
 
 ```python
 import gensim.downloader as api
@@ -949,10 +949,10 @@ import gensim.downloader as api
 w2v = api.load('word2vec-google-news-300')
 
 # GloVe options
-glove_50d = api.load('glove-wiki-gigaword-50')      # Small, fast
-glove_100d = api.load('glove-wiki-gigaword-100')    # Balanced
-glove_300d = api.load('glove-wiki-gigaword-300')    # Best quality
-glove_twitter = api.load('glove-twitter-100')       # Social media
+glove_50d = api.load('glove-wiki-gigaword-50') # Small, fast
+glove_100d = api.load('glove-wiki-gigaword-100') # Balanced
+glove_300d = api.load('glove-wiki-gigaword-300') # Best quality
+glove_twitter = api.load('glove-twitter-100') # Social media
 
 # FastText (handles OOV!)
 fasttext = api.load('fasttext-wiki-news-subwords-300')
@@ -968,7 +968,7 @@ similarity = model.similarity('dog', 'cat')
 
 ---
 
-# Real-World Applications 🌟
+# Real-World Applications 
 
 
 <div class="columns">
@@ -1017,7 +1017,7 @@ similarity = model.similarity('dog', 'cat')
 
 ---
 
-# Discussion Question 💬
+# Discussion Question 
 
 
 
@@ -1046,21 +1046,21 @@ Does the distributional hypothesis have limits?
 
 ---
 
-# Summary 🎯
+# Summary 
 
 
 **What we learned today:**
 
 1. **Word2Vec (2013):** Neural revolution in embeddings
-    - CBOW: Predict center from context
+ - CBOW: Predict center from context
 - Skip-gram: Predict context from center
 - Negative sampling for efficiency
 2. **GloVe (2014):** Combining count + prediction
-    - Global co-occurrence statistics
+ - Global co-occurrence statistics
 - Factorization objective
 - Ratio of probabilities
 3. **FastText (2017):** Subword information
-    - Character n-grams
+ - Character n-grams
 - Handles OOV words
 - Captures morphology
 4. **Evaluation:** Intrinsic vs. extrinsic
@@ -1070,7 +1070,7 @@ Does the distributional hypothesis have limits?
 
 ---
 
-# Key References 📚
+# Key References 
 
 
 
@@ -1095,7 +1095,7 @@ Does the distributional hypothesis have limits?
 
 ---
 
-# Questions? 🙋
+# Questions? 
 
 
 

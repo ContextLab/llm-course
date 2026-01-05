@@ -17,22 +17,22 @@ Winter 2026
 
 ---
 
-# Today's Agenda 📋
+# Today's Agenda 
 
 
 
-1. 📍 **Positional Encoding**: Injecting sequence order
-2. 🔄 **Feed-Forward Networks**: The other key component
-3. 🔗 **Layer Norm & Residuals**: Training deep networks
-4. ⚡ **FlashAttention**: Making transformers faster
-5. 🏗️ **Three Architectures**: Encoder, Decoder, Both
-6. 💻 **Practical Implementation**: Using HuggingFace
+1. **Positional Encoding**: Injecting sequence order
+2. **Feed-Forward Networks**: The other key component
+3. **Layer Norm & Residuals**: Training deep networks
+4. **FlashAttention**: Making transformers faster
+5. **Three Architectures**: Encoder, Decoder, Both
+6. **Practical Implementation**: Using HuggingFace
 
 *Goal: Complete understanding of transformer training and implementation*
 
 ---
 
-# Positional Encoding 📍
+# Positional Encoding 
 
 
 **Problem: Self-attention is permutation-invariant!**
@@ -85,7 +85,7 @@ Final input (add them):
 
 ---
 
-# Why Sinusoidal Positional Encoding? 🌊
+# Why Sinusoidal Positional Encoding? 
 
 
 **Advantages of sine/cosine functions:**
@@ -114,8 +114,8 @@ Final input (add them):
 **Visualization:**
 ```
 Dim 0 (high freq): ~~~~~ (fast oscillation)
-Dim 1 (mid freq):  ~~~   (medium)
-Dim 2 (low freq):  ~     (slow)
+Dim 1 (mid freq): ~~~ (medium)
+Dim 2 (low freq): ~ (slow)
 
 Position 0: [0.0, 0.0, 0.0, ...]
 Position 1: [0.84, 0.01, 0.0001, ...]
@@ -132,7 +132,7 @@ Each position has a unique "barcode"!
 
 ---
 
-# Visualizing Positional Encodings 👁️
+# Visualizing Positional Encodings 
 
 
 **Each position gets a unique pattern across dimensions**
@@ -150,7 +150,7 @@ Pos 0 -> Pos 5 -> Pos 9 -> Dim 0 -> Dim 4 -> Dim 7
 
 ---
 
-# Feed-Forward Networks 🔄
+# Feed-Forward Networks 
 
 
 **After attention, apply position-wise feed-forward network**
@@ -159,18 +159,18 @@ Pos 0 -> Pos 5 -> Pos 9 -> Dim 0 -> Dim 4 -> Dim 7
 
 ```python
 class FeedForward(nn.Module):
-    def __init__(self, d_model=768, d_ff=3072):  # 4x expansion
-        super().__init__()
-        self.linear1 = nn.Linear(d_model, d_ff)    # 768 → 3072
-        self.linear2 = nn.Linear(d_ff, d_model)    # 3072 → 768
-        self.relu = nn.ReLU()
+ def __init__(self, d_model=768, d_ff=3072): # 4x expansion
+ super().__init__()
+ self.linear1 = nn.Linear(d_model, d_ff) # 768 → 3072
+ self.linear2 = nn.Linear(d_ff, d_model) # 3072 → 768
+ self.relu = nn.ReLU()
 
-    def forward(self, x):
-        # x: [batch, seq_len, 768]
-        x = self.linear1(x)   # [batch, seq_len, 3072]
-        x = self.relu(x)      # Non-linearity!
-        x = self.linear2(x)   # [batch, seq_len, 768]
-        return x
+ def forward(self, x):
+ # x: [batch, seq_len, 768]
+ x = self.linear1(x) # [batch, seq_len, 3072]
+ x = self.relu(x) # Non-linearity!
+ x = self.linear2(x) # [batch, seq_len, 768]
+ return x
 
 # Applied to each position independently
 # Same weights for all positions
@@ -182,41 +182,41 @@ class FeedForward(nn.Module):
 
 ---
 
-# Why Feed-Forward Networks? 🤔
+# Why Feed-Forward Networks? 
 
 
 **Role in the Transformer:**
 
 1. **Add Non-linearity**
-    - Attention is mostly linear operations (weighted sums)
+ - Attention is mostly linear operations (weighted sums)
 - FFN introduces non-linear transformations
 - ReLU/GELU activation adds expressiveness
 
-    
+ 
 
 2. **Position-wise Processing**
-    - Attention mixes information across positions
+ - Attention mixes information across positions
 - FFN processes each position independently
 - Allows position-specific feature transformations
 
-    
+ 
 
 3. **Increase Model Capacity**
-    - Expansion (4x) provides more parameters
+ - Expansion (4x) provides more parameters
 - Can learn complex feature combinations
 - Most parameters in transformer are in FFN layers!
 
-    
+ 
 
 4. **Feature Refinement**
-    - Attention gathers context
+ - Attention gathers context
 - FFN refines and transforms the representation
 - Two complementary operations
 
 
 ---
 
-# Layer Normalization & Residual Connections 🔗
+# Layer Normalization & Residual Connections 
 
 
 **Critical for training deep transformers!**
@@ -241,9 +241,9 @@ x = x + self.feedforward(x)
 ```python
 # Normalize across features (not batch)
 def layer_norm(x, gamma, beta):
-    mean = x.mean(dim=-1)
-    std = x.std(dim=-1)
-    return gamma * (x - mean) / std + beta
+ mean = x.mean(dim=-1)
+ std = x.std(dim=-1)
+ return gamma * (x - mean) / std + beta
 
 # Example: x = [0.2, 0.8, 0.5]
 # mean=0.5, std=0.25
@@ -262,7 +262,7 @@ x = LayerNorm(x + FeedForward(x))
 
 ---
 
-# Pre-Norm vs Post-Norm 🔄
+# Pre-Norm vs Post-Norm 
 
 
 
@@ -307,26 +307,26 @@ For deep transformers (24+ layers), Pre-Norm is preferred due to better training
 
 ---
 
-# Complete Transformer Block 🧱
+# Complete Transformer Block 
 
 
 **Putting it all together:**
 
 ```python
 class TransformerBlock(nn.Module):
-    def __init__(self, d_model=768, n_heads=12, d_ff=3072):
-        super().__init__()
-        self.attention = MultiHeadAttention(d_model, n_heads)
-        self.ffn = FeedForward(d_model, d_ff)
-        self.norm1 = nn.LayerNorm(d_model)
-        self.norm2 = nn.LayerNorm(d_model)
+ def __init__(self, d_model=768, n_heads=12, d_ff=3072):
+ super().__init__()
+ self.attention = MultiHeadAttention(d_model, n_heads)
+ self.ffn = FeedForward(d_model, d_ff)
+ self.norm1 = nn.LayerNorm(d_model)
+ self.norm2 = nn.LayerNorm(d_model)
 
-    def forward(self, x):
-        # Self-attention with residual
-        x = x + self.attention(self.norm1(x))
-        # Feed-forward with residual
-        x = x + self.ffn(self.norm2(x))
-        return x
+ def forward(self, x):
+ # Self-attention with residual
+ x = x + self.attention(self.norm1(x))
+ # Feed-forward with residual
+ x = x + self.ffn(self.norm2(x))
+ return x
 
 # Stack N blocks!
 encoder = nn.Sequential(*[TransformerBlock() for _ in range(12)])
@@ -339,7 +339,7 @@ encoder = nn.Sequential(*[TransformerBlock() for _ in range(12)])
 
 ---
 
-# FlashAttention: Making Transformers Faster ⚡
+# FlashAttention: Making Transformers Faster 
 
 
 **Problem: Standard attention is slow and memory-hungry!**
@@ -365,12 +365,12 @@ encoder = nn.Sequential(*[TransformerBlock() for _ in range(12)])
 ```python
 # Standard: materialize full n×n matrix
 attn = softmax(Q @ K.T / sqrt(d))
-out = attn @ V  # O(n^2) memory
+out = attn @ V # O(n^2) memory
 
 # FlashAttention: compute in tiles
 for tile in tiles:
-    # Only load small tile to SRAM
-    # Never materialize full matrix!
+ # Only load small tile to SRAM
+ # Never materialize full matrix!
 ```
 
 </div>
@@ -395,34 +395,34 @@ for tile in tiles:
 
 ---
 
-# Other Attention Optimizations ⚙️
+# Other Attention Optimizations 
 
 
 **Addressing the $O(n^2)$ problem:**
 
 1. **Sparse Attention**
-    - Only attend to subset of positions
+ - Only attend to subset of positions
 - Local windows + global tokens
 - Used in: Longformer, BigBird
 
-    
+ 
 
 2. **Linear Attention**
-    - Approximate attention with linear complexity
+ - Approximate attention with linear complexity
 - Kernel trick to avoid materializing attention matrix
 - Used in: Performer, Linear Transformer
 
-    
+ 
 
 3. **Low-Rank Approximation**
-    - Factorize attention matrix
+ - Factorize attention matrix
 - Reduce memory footprint
 - Used in: Linformer
 
-    
+ 
 
 4. **Sliding Window**
-    - Fixed-size local attention window
+ - Fixed-size local attention window
 - Constant memory usage
 - Used in: Mistral 7B
 
@@ -430,7 +430,7 @@ for tile in tiles:
 
 ---
 
-# Three Transformer Architectures 🏗️
+# Three Transformer Architectures 
 
 
 
@@ -457,7 +457,7 @@ for tile in tiles:
 
 
 ```
-**Encoder-Only (BERT) -> Self-Attention ->  bidirectional -> \textbf{Decoder-Only (GPT) -> Masked Attn ->  causal
+**Encoder-Only (BERT) -> Self-Attention -> bidirectional -> \textbf{Decoder-Only (GPT) -> Masked Attn -> causal
 ```
 
 \end{center**
@@ -470,7 +470,7 @@ for tile in tiles:
 
 ---
 
-# Using Transformers in Practice 💻
+# Using Transformers in Practice 
 
 
 **HuggingFace makes it easy!**
@@ -487,35 +487,35 @@ model = AutoModel.from_pretrained(model_name)
 text = "The animal didn't cross the street because it was too tired"
 inputs = tokenizer(text, return_tensors="pt")
 print(inputs['input_ids'])
-# tensor([[  101,  1996,  4111,  2134,  1005,  1056,  2892,  1996,
-#           2395,  2138,  2009,  2001,  2205,  5458,   102]])
-#         [CLS]  The  animal didn  '     t    cross  the ...
+# tensor([[ 101, 1996, 4111, 2134, 1005, 1056, 2892, 1996,
+# 2395, 2138, 2009, 2001, 2205, 5458, 102]])
+# [CLS] The animal didn ' t cross the ...
 
 # Get contextualized embeddings
 outputs = model(**inputs)
-hidden_states = outputs.last_hidden_state  # [1, 15, 768]
+hidden_states = outputs.last_hidden_state # [1, 15, 768]
 
 # "it" is at position 10 - its embedding knows it refers to "animal"!
-it_embedding = hidden_states[0, 10, :]  # 768-dim context-aware vector
+it_embedding = hidden_states[0, 10, :] # 768-dim context-aware vector
 ```
 
 *Reference: HuggingFace Course - Chapter 1.4*
 
 ---
 
-# Comparing Architectures: Code Examples 💻
+# Comparing Architectures: Code Examples 
 
 
 **Different architectures for different tasks**
 
 ```python
 from transformers import AutoModelForSequenceClassification, \
-                         AutoModelForCausalLM, \
-                         AutoModelForSeq2SeqLM
+ AutoModelForCausalLM, \
+ AutoModelForSeq2SeqLM
 
 # 1. ENCODER-ONLY (BERT): Classification
 encoder_model = AutoModelForSequenceClassification.from_pretrained(
-    "bert-base-uncased", num_labels=2
+ "bert-base-uncased", num_labels=2
 )
 # Use for: Sentiment analysis, NER, classification
 
@@ -534,7 +534,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 
 ---
 
-# Practical Tips for Training Transformers 💡
+# Practical Tips for Training Transformers 
 
 
 <div class="columns">
@@ -545,9 +545,9 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 # Warmup: gradually increase LR
 # Then decay (linear or cosine)
 scheduler = get_linear_schedule_with_warmup(
-    optimizer,
-    num_warmup_steps=1000,  # ~10% of training
-    num_training_steps=10000
+ optimizer,
+ num_warmup_steps=1000, # ~10% of training
+ num_training_steps=10000
 )
 # Fine-tuning: lr=2e-5, From scratch: lr=1e-4
 ```
@@ -555,9 +555,9 @@ scheduler = get_linear_schedule_with_warmup(
 **2. Optimizer**
 ```python
 optimizer = AdamW(
-    model.parameters(),
-    lr=2e-5,
-    weight_decay=0.01  # L2 regularization
+ model.parameters(),
+ lr=2e-5,
+ weight_decay=0.01 # L2 regularization
 )
 ```
 
@@ -571,7 +571,7 @@ self.dropout = nn.Dropout(0.1)
 
 # Gradient clipping
 torch.nn.utils.clip_grad_norm_(
-    model.parameters(), max_norm=1.0
+ model.parameters(), max_norm=1.0
 )
 ```
 
@@ -579,9 +579,9 @@ torch.nn.utils.clip_grad_norm_(
 ```python
 from torch.cuda.amp import autocast
 
-with autocast():  # Use FP16
-    outputs = model(inputs)
-    loss = criterion(outputs, labels)
+with autocast(): # Use FP16
+ outputs = model(inputs)
+ loss = criterion(outputs, labels)
 # 2x faster, 2x less memory!
 ```
 
@@ -591,70 +591,70 @@ with autocast():  # Use FP16
 
 ---
 
-# Computational Efficiency Tips ⚙️
+# Computational Efficiency Tips 
 
 
 1. **Batch Size**
-    - Larger batches = better GPU utilization
+ - Larger batches = better GPU utilization
 - Use gradient accumulation if GPU memory limited
 - Typical: effective batch size 256-2048 tokens
 
-    
+ 
 
 2. **Sequence Length**
-    - Shorter sequences train faster (quadratic complexity!)
+ - Shorter sequences train faster (quadratic complexity!)
 - Consider truncation or sliding windows
 - Pack multiple examples to maximize GPU usage
 
-    
+ 
 
 3. **Model Size**
-    - Start small, scale up if needed
+ - Start small, scale up if needed
 - DistilBERT: 40% smaller, 60% faster, 97% performance
 - Consider model distillation for deployment
 
-    
+ 
 
 4. **Hardware**
-    - GPUs with high memory bandwidth (A100, H100)
+ - GPUs with high memory bandwidth (A100, H100)
 - Multi-GPU training with data parallelism
 - Use FlashAttention when available
 
 
 ---
 
-# Discussion Questions 💭
+# Discussion Questions 
 
 
 1. **Positional Encoding:**
-    - Why add instead of concatenate?
+ - Why add instead of concatenate?
 - What happens without positional encoding?
 - Learned vs. fixed: which is better?
 
-    
+ 
 
 2. **Architecture Choice:**
-    - When would you use encoder-only vs decoder-only?
+ - When would you use encoder-only vs decoder-only?
 - Can GPT do classification? Can BERT generate?
 - Why has decoder-only become more popular recently?
 
-    
+ 
 
 3. **Scaling:**
-    - Is bigger always better?
+ - Is bigger always better?
 - What are the limits to scaling transformers?
 - How do we make them more efficient?
 
-    
+ 
 
 4. **Training Stability:**
-    - Why are residual connections so important?
+ - Why are residual connections so important?
 - Pre-norm vs post-norm: trade-offs?
 
 
 ---
 
-# Looking Ahead to Week 6 🔮
+# Looking Ahead to Week 6 
 
 
 **This week (Week 5) we learned:**
@@ -668,12 +668,12 @@ with autocast():  # Use FP16
 - Pre-training and fine-tuning
 - Contextual embeddings in action
 
-    \item 
-    - RoBERTa, ALBERT, DistilBERT
+ \item 
+ - RoBERTa, ALBERT, DistilBERT
 - Improvements and optimizations
 
-    \item 
-    - Real-world BERT applications
+ \item 
+ - Real-world BERT applications
 - Cognitive neuroscience connections
 - Understanding vs. pattern matching
 
@@ -681,45 +681,45 @@ with autocast():  # Use FP16
 
 ---
 
-# Summary 🎯
+# Summary 
 
 
 **Key Takeaways:**
 
 1. **Positional Encoding**
-    - Sine/cosine functions inject position information
+ - Sine/cosine functions inject position information
 - Enables model to understand order
 2. **Feed-Forward Networks**
-    - Position-wise transformations
+ - Position-wise transformations
 - Add non-linearity and capacity
 3. **LayerNorm & Residuals**
-    - Critical for training deep networks
+ - Critical for training deep networks
 - Stabilize gradients, enable deeper models
 4. **Three Architectures**
-    - Encoder (BERT), Decoder (GPT), Both (T5)
+ - Encoder (BERT), Decoder (GPT), Both (T5)
 - Choose based on task requirements
 5. **Practical Considerations**
-    - Use HuggingFace for easy implementation
+ - Use HuggingFace for easy implementation
 - FlashAttention for efficiency
 - Careful hyperparameter tuning
 
 
 ---
 
-# References 📚
+# References 
 
 
 **Essential Papers:**
 
 - **Vaswani et al. (2017)** - "Attention Is All You Need"
-    
+ 
 - The original Transformer paper
 
-    \item **Su et al. (2021)** - "RoFormer: Enhanced Transformer with Rotary Position Embedding"
-    - Modern positional encoding approach
+ \item **Su et al. (2021)** - "RoFormer: Enhanced Transformer with Rotary Position Embedding"
+ - Modern positional encoding approach
 
-    \item **Dao et al. (2022)** - "FlashAttention: Fast and Memory-Efficient Exact Attention"
-    - Making transformers faster
+ \item **Dao et al. (2022)** - "FlashAttention: Fast and Memory-Efficient Exact Attention"
+ - Making transformers faster
 
 **Tutorials:**
 - HuggingFace Course: Chapters 1.4, 1.5
@@ -729,7 +729,7 @@ with autocast():  # Use FP16
 
 ---
 
-# Questions? 🙋
+# Questions? 
 
 
 
@@ -742,7 +742,7 @@ with autocast():  # Use FP16
 - Implementation questions
 - Assignment 4 preparation
 
-Thank you! 🙏
+Thank you! 
 
 See you next week for BERT!
 

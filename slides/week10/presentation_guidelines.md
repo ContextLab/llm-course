@@ -90,10 +90,10 @@ Your presentation must cover the following sections:
 - **Models used:** Which LLMs, architectures, or techniques?
 - **Datasets:** What data did you use? How much? From where?
 - **Implementation details:** Key technical decisions
-  - Fine-tuning approach (if applicable)
-  - Hyperparameters
-  - Evaluation metrics
-  - Baselines for comparison
+ - Fine-tuning approach (if applicable)
+ - Hyperparameters
+ - Evaluation metrics
+ - Baselines for comparison
 - **Challenges:** What was technically difficult? How did you overcome it?
 
 **Tips:**
@@ -108,8 +108,8 @@ Approach: Fine-Tuning with LoRA
 - Base model: LLaMA-2-7B
 - Training data: 50K counseling conversations from XYZ dataset
 - Method: Low-Rank Adaptation (LoRA) for parameter-efficient fine-tuning
-  - Rank r=16, alpha=32
-  - Target modules: Q, V attention matrices
+ - Rank r=16, alpha=32
+ - Target modules: Q, V attention matrices
 - Training: 3 epochs, batch size 4, learning rate 2e-4
 - Why LoRA? Computational constraints + prevents catastrophic forgetting
 ```
@@ -144,10 +144,10 @@ Approach: Fine-Tuning with LoRA
 **What to include:**
 - **Summary:** Briefly recap main findings
 - **Limitations:** Be honest about what didn't work or limitations of approach
-  - Dataset limitations
-  - Model limitations
-  - Generalizability concerns
-  - Computational constraints
+ - Dataset limitations
+ - Model limitations
+ - Generalizability concerns
+ - Computational constraints
 - **Future work:** What would you do with more time/resources?
 - **Broader implications:** What does this mean for the field or real-world applications?
 - **Takeaways:** What should the audience remember?
@@ -278,26 +278,26 @@ Your presentation is worth **15% of your final project grade**, evaluated on:
 ## Common Pitfalls to Avoid
 
 ### Content Issues
-- ❌ **No motivation:** Jumping straight to methods without explaining why the problem matters
-- ❌ **Too much background:** Spending half the time on related work instead of your contribution
-- ❌ **Unclear methods:** Not explaining your approach well enough to understand what you did
-- ❌ **Cherry-picking results:** Only showing successes, hiding failures
-- ❌ **No baselines:** Presenting metrics without comparison to make them meaningful
-- ❌ **Ignoring limitations:** Claiming everything worked perfectly with no weaknesses
+- **No motivation:** Jumping straight to methods without explaining why the problem matters
+- **Too much background:** Spending half the time on related work instead of your contribution
+- **Unclear methods:** Not explaining your approach well enough to understand what you did
+- **Cherry-picking results:** Only showing successes, hiding failures
+- **No baselines:** Presenting metrics without comparison to make them meaningful
+- **Ignoring limitations:** Claiming everything worked perfectly with no weaknesses
 
 ### Presentation Issues
-- ❌ **Going over time:** Practicing is essential—12 minutes means 12 minutes!
-- ❌ **Too fast:** Racing through slides so audience can't absorb content
-- ❌ **Reading slides verbatim:** Slides should support your talk, not replace it
-- ❌ **Unreadable slides:** Tiny fonts, cluttered layout, too much text
-- ❌ **Poor audio:** Background noise, unclear speech, inconsistent volume
-- ❌ **Unbalanced team:** One person doing 90% of the talking
+- **Going over time:** Practicing is essential—12 minutes means 12 minutes!
+- **Too fast:** Racing through slides so audience can't absorb content
+- **Reading slides verbatim:** Slides should support your talk, not replace it
+- **Unreadable slides:** Tiny fonts, cluttered layout, too much text
+- **Poor audio:** Background noise, unclear speech, inconsistent volume
+- **Unbalanced team:** One person doing 90% of the talking
 
 ### Q&A Issues
-- ❌ **Defensive:** Getting argumentative when questioned about limitations
-- ❌ **Unprepared:** Unable to answer basic questions about your own project
-- ❌ **Making up answers:** Inventing explanations rather than admitting uncertainty
-- ❌ **Too detailed:** Giving 5-minute answers when a 30-second answer would suffice
+- **Defensive:** Getting argumentative when questioned about limitations
+- **Unprepared:** Unable to answer basic questions about your own project
+- **Making up answers:** Inventing explanations rather than admitting uncertainty
+- **Too detailed:** Giving 5-minute answers when a 30-second answer would suffice
 
 ---
 
@@ -526,20 +526,20 @@ While this is a new course without prior student examples, here are characterist
 ## Resources
 
 - **Presentation design:**
-  - [Google Slides templates](https://docs.google.com/presentation/u/0/)
-  - [Canva presentation templates](https://www.canva.com/presentations/templates/)
+ - [Google Slides templates](https://docs.google.com/presentation/u/0/)
+ - [Canva presentation templates](https://www.canva.com/presentations/templates/)
 
 - **Recording tools:**
-  - [Zoom](https://zoom.us)
-  - [OBS Studio](https://obsproject.com/)
+ - [Zoom](https://zoom.us)
+ - [OBS Studio](https://obsproject.com/)
 
 - **Color accessibility:**
-  - [ColorBrewer](https://colorbrewer2.org/) (colorblind-safe palettes)
-  - [Coolors](https://coolors.co/) (palette generator)
+ - [ColorBrewer](https://colorbrewer2.org/) (colorblind-safe palettes)
+ - [Coolors](https://coolors.co/) (palette generator)
 
 - **Presentation skills:**
-  - [TED's secret to great public speaking](https://www.ted.com/talks/chris_anderson_tед_s_secret_to_great_public_speaking)
-  - [How to give a great research talk (Simon Peyton Jones)](https://www.microsoft.com/en-us/research/academic-program/give-great-research-talk/)
+ - [TED's secret to great public speaking](https://www.ted.com/talks/chris_anderson_tед_s_secret_to_great_public_speaking)
+ - [How to give a great research talk (Simon Peyton Jones)](https://www.microsoft.com/en-us/research/academic-program/give-great-research-talk/)
 
 ---
 
@@ -552,4 +552,4 @@ If you have questions about presentation expectations, format, or logistics:
 
 We're excited to see your presentations and learn about the amazing work you've done this quarter!
 
-**Good luck!** 🎉
+**Good luck!** 

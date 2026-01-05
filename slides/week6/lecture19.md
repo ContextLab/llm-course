@@ -17,49 +17,49 @@ Winter 2026
 
 ---
 
-# Today's Agenda 📋
+# Today's Agenda 
 
 
 
-1. 🚀 **RoBERTa**: Robustly Optimized BERT
-2. 🔬 **ALBERT**: A Lite BERT with parameter sharing
-3. ⚡ **DistilBERT**: Knowledge distillation for efficiency
-4. 🔌 **ELECTRA**: Replace Token Detection
-5. 📊 **Comparative Analysis**: When to use which variant
-6. 💻 **Practical Considerations**: Model selection guide
+1. **RoBERTa**: Robustly Optimized BERT
+2. **ALBERT**: A Lite BERT with parameter sharing
+3. **DistilBERT**: Knowledge distillation for efficiency
+4. **ELECTRA**: Replace Token Detection
+5. **Comparative Analysis**: When to use which variant
+6. **Practical Considerations**: Model selection guide
 
 *Goal: Understand improvements to BERT and choose the right model*
 
 ---
 
-# BERT's Limitations ⚠️
+# BERT's Limitations 
 
 
 **What could be improved?**
 
 1. **Training Procedure**
-    - Some choices seemed arbitrary
+ - Some choices seemed arbitrary
 - NSP task might not be useful
 - Static masking (same masks every epoch)
 
-    
+ 
 
 2. **Model Size**
-    - 110M (Base) or 340M (Large) parameters
+ - 110M (Base) or 340M (Large) parameters
 - Large memory footprint
 - Slow inference
 
-    
+ 
 
 3. **Training Efficiency**
-    - Only 15% of tokens are predicted
+ - Only 15% of tokens are predicted
 - 85% of computation "wasted"?
 - Could we learn more efficiently?
 
-    
+ 
 
 4. **Data and Compute**
-    - Trained on limited data (3.3B words)
+ - Trained on limited data (3.3B words)
 - Modern datasets much larger
 - Could benefit from more training
 
@@ -67,7 +67,7 @@ Winter 2026
 
 ---
 
-# RoBERTa: Robustly Optimized BERT 🚀
+# RoBERTa: Robustly Optimized BERT 
 
 
 **Key idea: Better training = Better performance**
@@ -75,35 +75,35 @@ Winter 2026
 **RoBERTa's Improvements (Liu et al. 2019):**
 
 1. **Remove NSP Task**
-    - Next Sentence Prediction hurt performance
+ - Next Sentence Prediction hurt performance
 - Use only Masked Language Modeling
 - Full sentences (don't need sentence pairs)
 
-    
+ 
 
 2. **Dynamic Masking**
-    - Generate masking pattern every time
+ - Generate masking pattern every time
 - BERT: static masks (same for every epoch)
 - More diverse training signal
 
-    
+ 
 
 3. **Larger Batches, More Data**
-    - Batch size: 8K sequences (vs BERT's 256)
+ - Batch size: 8K sequences (vs BERT's 256)
 - 160GB text (vs BERT's 16GB)
 - Longer training (500K steps vs 100K)
 
-    
+ 
 
 4. **Longer Sequences**
-    - Train with longer sequences
+ - Train with longer sequences
 - Better for downstream tasks
 
 *Reference: Liu et al. (2019) - "RoBERTa: A Robustly Optimized BERT Pretraining Approach"*
 
 ---
 
-# RoBERTa Results 📈
+# RoBERTa Results 
 
 
 
@@ -132,7 +132,7 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
 
 ---
 
-# Dynamic vs Static Masking 🎭
+# Dynamic vs Static Masking 
 
 
 **How masking patterns are generated**
@@ -186,7 +186,7 @@ Training procedure matters as much as architecture! RoBERTa shows that BERT was 
 
 ---
 
-# ALBERT: A Lite BERT 🔬
+# ALBERT: A Lite BERT 
 
 **Key idea: Parameter sharing for efficiency**
 
@@ -219,8 +219,8 @@ albert_project = nn.Linear(128, 768)
 ```python
 # NSP (BERT): Is B after A? (too easy)
 # SOP (ALBERT): Are A,B in order?
-#   - Positive: [A, B] (correct order)
-#   - Negative: [B, A] (swapped order)
+# - Positive: [A, B] (correct order)
+# - Negative: [B, A] (swapped order)
 # Harder task → better representations
 ```
 
@@ -231,7 +231,7 @@ albert_project = nn.Linear(128, 768)
 
 ---
 
-# ALBERT Parameter Efficiency 📊
+# ALBERT Parameter Efficiency 
 
 
 
@@ -244,7 +244,7 @@ albert_project = nn.Linear(128, 768)
 | ALBERT-xxlarge | 12 | 4096 | 235M |
 
 **Key Observations:**
-- ALBERT-base:  than BERT-base
+- ALBERT-base: than BERT-base
 - Can train much larger hidden sizes with same memory
 - ALBERT-xxlarge: 4096 hidden dim, still only 235M params
 - Trade-off: fewer params but similar computation (layer sharing)
@@ -261,7 +261,7 @@ albert_project = nn.Linear(128, 768)
 
 ---
 
-# Cross-Layer Parameter Sharing 🔗
+# Cross-Layer Parameter Sharing 
 
 **How ALBERT achieves parameter efficiency**
 
@@ -271,17 +271,17 @@ albert_project = nn.Linear(128, 768)
 **BERT (No Sharing):**
 ```python
 class BERT:
-    def __init__(self):
-        # Each layer has unique parameters
-        self.layers = [
-            TransformerLayer() for _ in range(12)
-        ]
-        # 12 × 7M params = 85M params
+ def __init__(self):
+ # Each layer has unique parameters
+ self.layers = [
+ TransformerLayer() for _ in range(12)
+ ]
+ # 12 × 7M params = 85M params
 
-    def forward(self, x):
-        for layer in self.layers:
-            x = layer(x)  # Different weights
-        return x
+ def forward(self, x):
+ for layer in self.layers:
+ x = layer(x) # Different weights
+ return x
 ```
 
 </div>
@@ -290,15 +290,15 @@ class BERT:
 **ALBERT (Full Sharing):**
 ```python
 class ALBERT:
-    def __init__(self):
-        # Single shared layer!
-        self.shared_layer = TransformerLayer()
-        # 1 × 7M params = 7M params
+ def __init__(self):
+ # Single shared layer!
+ self.shared_layer = TransformerLayer()
+ # 1 × 7M params = 7M params
 
-    def forward(self, x):
-        for _ in range(12):
-            x = self.shared_layer(x)  # Same weights!
-        return x
+ def forward(self, x):
+ for _ in range(12):
+ x = self.shared_layer(x) # Same weights!
+ return x
 ```
 
 </div>
@@ -311,35 +311,35 @@ class ALBERT:
 
 ---
 
-# DistilBERT: Knowledge Distillation ⚡
+# DistilBERT: Knowledge Distillation 
 
 **Key idea: Train small model to mimic large model**
 
 ```python
 # Knowledge Distillation Training Loop
-teacher = BertModel.from_pretrained("bert-base")  # 12 layers, frozen
-student = DistilBertModel(num_layers=6)            # 6 layers, trainable
+teacher = BertModel.from_pretrained("bert-base") # 12 layers, frozen
+student = DistilBertModel(num_layers=6) # 6 layers, trainable
 
 for batch in training_data:
-    # Teacher provides "soft targets" (probability distributions)
-    with torch.no_grad():
-        teacher_logits = teacher(batch)  # e.g., [0.7, 0.2, 0.1, ...]
+ # Teacher provides "soft targets" (probability distributions)
+ with torch.no_grad():
+ teacher_logits = teacher(batch) # e.g., [0.7, 0.2, 0.1, ...]
 
-    # Student tries to match teacher's distribution
-    student_logits = student(batch)
+ # Student tries to match teacher's distribution
+ student_logits = student(batch)
 
-    # Distillation loss: KL divergence between distributions
-    # Temperature T=2 softens the distribution (more informative)
-    loss_distill = KL_divergence(
-        softmax(student_logits / T),
-        softmax(teacher_logits / T)
-    )
+ # Distillation loss: KL divergence between distributions
+ # Temperature T=2 softens the distribution (more informative)
+ loss_distill = KL_divergence(
+ softmax(student_logits / T),
+ softmax(teacher_logits / T)
+ )
 
-    # Also include MLM loss for language modeling
-    loss_mlm = masked_lm_loss(student_logits, labels)
+ # Also include MLM loss for language modeling
+ loss_mlm = masked_lm_loss(student_logits, labels)
 
-    # Combined loss
-    loss = 0.5 * loss_distill + 0.5 * loss_mlm
+ # Combined loss
+ loss = 0.5 * loss_distill + 0.5 * loss_mlm
 ```
 
 **Why soft targets work:** Teacher's "wrong" predictions contain information (e.g., "dog" → "cat" more likely than "car")
@@ -348,7 +348,7 @@ for batch in training_data:
 
 ---
 
-# DistilBERT Results 📊
+# DistilBERT Results 
 
 
 **Significant efficiency gains!**
@@ -372,14 +372,14 @@ for batch in training_data:
 
 ---
 
-# ELECTRA: Efficient Learning 🔌
+# ELECTRA: Efficient Learning 
 
 **Key idea: Learn from all tokens, not just 15%**
 
 ```python
 # ELECTRA Training: Generator + Discriminator setup
 sentence = "The chef cooked a delicious meal"
-masked   = "The chef [MASK] a delicious meal"
+masked = "The chef [MASK] a delicious meal"
 
 # Small generator (like BERT) fills in masks
 generator_output = generator(masked)
@@ -392,7 +392,7 @@ discriminator_output = discriminator(corrupted)
 # Output per token: [orig, orig, REPLACED, orig, orig, orig]
 
 # Loss computed on ALL tokens (not just 15%!)
-labels = [0, 0, 1, 0, 0, 0]  # 1 = replaced
+labels = [0, 0, 1, 0, 0, 0] # 1 = replaced
 loss = binary_cross_entropy(discriminator_output, labels)
 ```
 
@@ -410,7 +410,7 @@ Result: Same quality with 4x less compute!
 
 ---
 
-# ELECTRA Benefits ⚡
+# ELECTRA Benefits 
 
 
 
@@ -418,21 +418,21 @@ Result: Same quality with 4x less compute!
 
 **Advantages:**
 1. **Sample Efficiency**
-    - Learn from all tokens (100%) vs only masked (15%)
+ - Learn from all tokens (100%) vs only masked (15%)
 - Reaches same performance with less data
 - Faster convergence
 
-    
+ 
 
 2. **Better Performance**
-    - ELECTRA-Small outperforms BERT-Small
+ - ELECTRA-Small outperforms BERT-Small
 - ELECTRA-Base competitive with BERT-Large
 - With same compute, ELECTRA is better
 
-    
+ 
 
 3. **Computational Efficiency**
-    - Smaller generator (1/4 to 1/2 size of discriminator)
+ - Smaller generator (1/4 to 1/2 size of discriminator)
 - Faster to train than BERT
 - Lower computational cost for same quality
 
@@ -446,7 +446,7 @@ Replace Token Detection is more sample-efficient than Masked LM because it provi
 
 ---
 
-# BERT Variants Comparison 📊
+# BERT Variants Comparison 
 
 
 **Summary of key variants**
@@ -464,41 +464,41 @@ Replace Token Detection is more sample-efficient than Masked LM because it provi
 
 ---
 
-# Other Notable BERT Variants 🌟
+# Other Notable BERT Variants 
 
 
 **The BERT family keeps growing!**
 
 1. **DeBERTa (Microsoft, 2020)**
-    - Disentangled attention (separate content and position)
+ - Disentangled attention (separate content and position)
 - Enhanced mask decoder
 - State-of-the-art on SuperGLUE
 
-    
+ 
 
 2. **ERNIE (Baidu, 2019)**
-    - Entity-level and phrase-level masking
+ - Entity-level and phrase-level masking
 - Knowledge enhancement
 - Strong on Chinese NLP tasks
 
-    
+ 
 
 3. **SpanBERT (Facebook, 2019)**
-    - Mask random spans instead of random tokens
+ - Mask random spans instead of random tokens
 - Span boundary objective
 - Better for span-based tasks (QA, coreference)
 
-    
+ 
 
 4. **BART (Facebook, 2019)**
-    - Encoder-decoder (not encoder-only)
+ - Encoder-decoder (not encoder-only)
 - Denoising autoencoder with various corruptions
 - Excellent for generation tasks
 
 
 ---
 
-# Model Selection Guide 🎯
+# Model Selection Guide 
 
 
 **How to choose the right model for your task**
@@ -515,7 +515,7 @@ Start -> Quality or Speed? -> RoBERTa-Large -> Memory? -> DistilBERT -> ALBERT -
 
 ---
 
-# Using Different BERT Variants 💻
+# Using Different BERT Variants 
 
 
 **Easy switching with HuggingFace**
@@ -550,7 +550,7 @@ outputs = model(**inputs)
 
 ---
 
-# Benchmarking BERT Variants: Worked Example 💻
+# Benchmarking BERT Variants: Worked Example 
 
 **Practical comparison on sentiment analysis**
 
@@ -560,21 +560,21 @@ from transformers import pipeline
 
 # Load different models for sentiment analysis
 models = {
-    "bert-base": "textattack/bert-base-uncased-SST-2",
-    "distilbert": "distilbert-base-uncased-finetuned-sst-2-english",
-    "albert": "textattack/albert-base-v2-SST-2",
+ "bert-base": "textattack/bert-base-uncased-SST-2",
+ "distilbert": "distilbert-base-uncased-finetuned-sst-2-english",
+ "albert": "textattack/albert-base-v2-SST-2",
 }
 
 test_texts = ["This movie was fantastic!", "I hated every minute of it."] * 100
 
 for name, model_id in models.items():
-    pipe = pipeline("sentiment-analysis", model=model_id)
+ pipe = pipeline("sentiment-analysis", model=model_id)
 
-    start = time.time()
-    results = pipe(test_texts)
-    elapsed = time.time() - start
+ start = time.time()
+ results = pipe(test_texts)
+ elapsed = time.time() - start
 
-    print(f"{name}: {elapsed:.2f}s for 200 samples ({200/elapsed:.1f} samples/sec)")
+ print(f"{name}: {elapsed:.2f}s for 200 samples ({200/elapsed:.1f} samples/sec)")
 ```
 
 **Typical Results:**
@@ -586,39 +586,39 @@ for name, model_id in models.items():
 
 ---
 
-# Discussion Questions 💭
+# Discussion Questions 
 
 
 1. **Training vs Architecture:**
-    - RoBERTa shows training matters. Is architecture overrated?
+ - RoBERTa shows training matters. Is architecture overrated?
 - How much can we improve with just better training?
 - What's the right balance?
 
-    
+ 
 
 2. **Parameter Efficiency:**
-    - ALBERT shares all layers. Why does this work?
+ - ALBERT shares all layers. Why does this work?
 - What are the limits of parameter sharing?
 - Is there a "sweet spot"?
 
-    
+ 
 
 3. **Knowledge Distillation:**
-    - Why does student learn better from teacher than from labels?
+ - Why does student learn better from teacher than from labels?
 - What information is in the soft probabilities?
 - Can we distill even further?
 
-    
+ 
 
 4. **Model Selection:**
-    - How do you decide which model to use?
+ - How do you decide which model to use?
 - Is it worth fine-tuning multiple variants?
 - What about model ensembles?
 
 
 ---
 
-# Looking Ahead 🔮
+# Looking Ahead 
 
 
 **Today we learned:**
@@ -630,37 +630,37 @@ for name, model_id in models.items():
 
 **Next lecture (Lecture 17 - Applications of Encoder Models):**
 
-**From theory to practice! 🚀**
+**From theory to practice! **
 
 
 ---
 
-# Summary 🎯
+# Summary 
 
 
 **Key Takeaways:**
 
 1. **RoBERTa**
-    - Training procedure matters as much as architecture
+ - Training procedure matters as much as architecture
 - Remove NSP, dynamic masking, more data = better results
 2. **ALBERT**
-    - Parameter sharing dramatically reduces model size
+ - Parameter sharing dramatically reduces model size
 - Factorized embeddings for efficiency
 - 89% fewer parameters than BERT
 3. **DistilBERT**
-    - Knowledge distillation for deployment
+ - Knowledge distillation for deployment
 - 40% smaller, 60% faster, 97% performance
 4. **ELECTRA**
-    - Replace token detection more sample-efficient
+ - Replace token detection more sample-efficient
 - Learn from all tokens, not just 15%
 5. **Model Selection**
-    - Choose based on constraints (quality, speed, memory)
+ - Choose based on constraints (quality, speed, memory)
 - HuggingFace makes it easy to experiment
 
 
 ---
 
-# References 📚
+# References 
 
 
 **Essential Papers:**
@@ -679,7 +679,7 @@ for name, model_id in models.items():
 
 ---
 
-# Questions? 🙋
+# Questions? 
 
 
 
@@ -692,7 +692,7 @@ for name, model_id in models.items():
 - Parameter efficiency
 - Implementation questions
 
-Thank you! 🙏
+Thank you! 
 
 Next: Applications and Real-World Use Cases!
 

@@ -139,10 +139,16 @@ export class TopicVisualizer {
         const width = container.offsetWidth || 400;
         const height = 300;
 
-        // Prepare data
-        const words = topic.slice(0, 30).map(({ word, weight }) => ({
+        // Prepare data with normalized font sizes for better visual contrast
+        const topWords = topic.slice(0, 30);
+        const maxWeight = Math.max(...topWords.map(t => t.weight));
+        const minWeight = Math.min(...topWords.map(t => t.weight));
+        const weightRange = maxWeight - minWeight || 1;
+        
+        const words = topWords.map(({ word, weight }) => ({
             text: word,
-            size: Math.max(12, weight * 1000) // Scale font size
+            // Scale to 14-56px range based on normalized weight for clear visual hierarchy
+            size: 14 + ((weight - minWeight) / weightRange) * 42
         }));
 
         // Clear container

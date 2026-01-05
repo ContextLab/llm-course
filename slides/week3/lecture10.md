@@ -77,17 +77,17 @@ By the end of this session, you will:
 # Sparse representation (one-hot / BoW)
 # Vocabulary: [cat, dog, puppy, car, truck, vehicle]
 
-cat_sparse   = [1, 0, 0, 0, 0, 0]  # 6 dimensions, 5 zeros
-dog_sparse   = [0, 1, 0, 0, 0, 0]
+cat_sparse = [1, 0, 0, 0, 0, 0] # 6 dimensions, 5 zeros
+dog_sparse = [0, 1, 0, 0, 0, 0]
 puppy_sparse = [0, 0, 1, 0, 0, 0]
 
-# Cosine similarity: cat-dog = 0, dog-puppy = 0  (orthogonal!)
+# Cosine similarity: cat-dog = 0, dog-puppy = 0 (orthogonal!)
 
 # Dense embedding (learned from data)
-cat_dense   = [0.8, -0.2, 0.5]   # 3 dimensions, all non-zero
-dog_dense   = [0.7, -0.1, 0.6]   # Similar to cat!
-puppy_dense = [0.75, -0.15, 0.55]  # Very similar to dog!
-car_dense   = [-0.3, 0.9, -0.4]  # Different cluster
+cat_dense = [0.8, -0.2, 0.5] # 3 dimensions, all non-zero
+dog_dense = [0.7, -0.1, 0.6] # Similar to cat!
+puppy_dense = [0.75, -0.15, 0.55] # Very similar to dog!
+car_dense = [-0.3, 0.9, -0.4] # Different cluster
 
 # Cosine similarity: cat-dog = 0.98, dog-puppy = 0.99
 ```
@@ -121,19 +121,19 @@ import numpy as np
 
 # Pretend embeddings (simplified to 3D for illustration)
 embeddings = {
-    'king':   np.array([0.9, 0.8, 0.2]),
-    'queen':  np.array([0.85, 0.75, 0.7]),
-    'man':    np.array([0.7, 0.6, 0.1]),
-    'woman':  np.array([0.65, 0.55, 0.6]),
+ 'king': np.array([0.9, 0.8, 0.2]),
+ 'queen': np.array([0.85, 0.75, 0.7]),
+ 'man': np.array([0.7, 0.6, 0.1]),
+ 'woman': np.array([0.65, 0.55, 0.6]),
 }
 
 # The analogy: king - man + woman = ?
 result = embeddings['king'] - embeddings['man'] + embeddings['woman']
 # result = [0.9-0.7+0.65, 0.8-0.6+0.55, 0.2-0.1+0.6]
-#        = [0.85, 0.75, 0.7]  ← Very close to 'queen'!
+# = [0.85, 0.75, 0.7] ← Very close to 'queen'!
 
 # Why does this work?
-# king - man   = "royalty" direction = [0.2, 0.2, 0.1]
+# king - man = "royalty" direction = [0.2, 0.2, 0.1]
 # woman + royalty = queen
 ```
 
@@ -202,23 +202,23 @@ vocab = tfidf.get_feature_names_out()
 word_to_idx = {word: i for i, word in enumerate(vocab)}
 
 def find_similar_words(word, top_n=5):
-    """Find words with similar LSA embeddings."""
-    if word not in word_to_idx:
-        return f"'{word}' not in vocabulary"
+ """Find words with similar LSA embeddings."""
+ if word not in word_to_idx:
+ return f"'{word}' not in vocabulary"
 
-    idx = word_to_idx[word]
-    word_vec = word_embeddings[idx].reshape(1, -1)
+ idx = word_to_idx[word]
+ word_vec = word_embeddings[idx].reshape(1, -1)
 
-    # Compute similarities to all words
-    sims = cosine_similarity(word_vec, word_embeddings)[0]
+ # Compute similarities to all words
+ sims = cosine_similarity(word_vec, word_embeddings)[0]
 
-    # Get top N (excluding the word itself)
-    top_indices = sims.argsort()[-top_n-1:-1][::-1]
-    return [(vocab[i], f"{sims[i]:.3f}") for i in top_indices]
+ # Get top N (excluding the word itself)
+ top_indices = sims.argsort()[-top_n-1:-1][::-1]
+ return [(vocab[i], f"{sims[i]:.3f}") for i in top_indices]
 
 print(find_similar_words("computer"))
 # Output: [('software', 0.82), ('program', 0.79),
-#          ('system', 0.71), ('hardware', 0.68), ('disk', 0.65)]
+# ('system', 0.71), ('hardware', 0.68), ('disk', 0.65)]
 ```
 
 ---
@@ -271,11 +271,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 # 20 Newsgroups sample documents
 documents = [
-    "The hockey team scored three goals in the game",
-    "NASA launched a new satellite into orbit",
-    "Install the software program on your computer",
-    "The doctor prescribed medicine for the patient",
-    # ... more documents
+ "The hockey team scored three goals in the game",
+ "NASA launched a new satellite into orbit",
+ "Install the software program on your computer",
+ "The doctor prescribed medicine for the patient",
+ # ... more documents
 ]
 
 # Step 1: Create bag-of-words matrix
@@ -289,8 +289,8 @@ doc_topics = lda.fit_transform(bow_matrix)
 # Step 3: Print topics
 vocab = vectorizer.get_feature_names_out()
 for topic_idx, topic in enumerate(lda.components_):
-    top_words = [vocab[i] for i in topic.argsort()[-7:]]
-    print(f"Topic {topic_idx}: {', '.join(top_words)}")
+ top_words = [vocab[i] for i in topic.argsort()[-7:]]
+ print(f"Topic {topic_idx}: {', '.join(top_words)}")
 ```
 
 ---
@@ -320,11 +320,11 @@ the, sat, on → **cat**
 from gensim.models import Word2Vec
 
 model = Word2Vec(
-    sentences=tokenized_docs,
-    vector_size=100,
-    window=5,
-    min_count=5,
-    sg=1  # Skip-gram
+ sentences=tokenized_docs,
+ vector_size=100,
+ window=5,
+ min_count=5,
+ sg=1 # Skip-gram
 )
 ```
 
@@ -342,8 +342,8 @@ model.wv.most_similar('computer', topn=5)
 
 # Word analogies
 model.wv.most_similar(
-    positive=['woman', 'king'],
-    negative=['man']
+ positive=['woman', 'king'],
+ negative=['man']
 )
 # [('queen', 0.71), ...]
 ```
@@ -390,9 +390,9 @@ model.wv.most_similar(positive=['sushi', 'italy'], negative=['japan'])
 import umap
 
 reducer = umap.UMAP(
-    n_neighbors=15,
-    min_dist=0.1,
-    metric='cosine'
+ n_neighbors=15,
+ min_dist=0.1,
+ metric='cosine'
 )
 
 embeddings_2d = reducer.fit_transform(word_vectors)
@@ -446,9 +446,9 @@ import matplotlib.pyplot as plt
 
 # Get word vectors for a subset of interesting words
 words_to_plot = ['hockey', 'baseball', 'player', 'team', 'game',
-                 'nasa', 'shuttle', 'orbit', 'space', 'satellite',
-                 'computer', 'software', 'program', 'windows', 'disk',
-                 'doctor', 'patient', 'hospital', 'disease', 'treatment']
+ 'nasa', 'shuttle', 'orbit', 'space', 'satellite',
+ 'computer', 'software', 'program', 'windows', 'disk',
+ 'doctor', 'patient', 'hospital', 'disease', 'treatment']
 
 word_vectors = np.array([model.wv[w] for w in words_to_plot])
 
@@ -460,7 +460,7 @@ embeddings_2d = reducer.fit_transform(word_vectors)
 plt.figure(figsize=(12, 8))
 plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], alpha=0.7)
 for i, word in enumerate(words_to_plot):
-    plt.annotate(word, (embeddings_2d[i, 0], embeddings_2d[i, 1]))
+ plt.annotate(word, (embeddings_2d[i, 0], embeddings_2d[i, 1]))
 plt.title("Word Embeddings Visualized with UMAP")
 plt.savefig("word_clusters.png")
 ```
@@ -471,9 +471,9 @@ plt.savefig("word_clusters.png")
 
 | Method | Speed | Interpretability | Quality | Data Needed |
 |--------|-------|------------------|---------|-------------|
-| LSA    | Fast  | Medium           | Medium  | Small-Medium |
-| LDA    | Medium | High            | Medium  | Medium |
-| Word2Vec | Medium | Low           | High    | Large |
+| LSA | Fast | Medium | Medium | Small-Medium |
+| LDA | Medium | High | Medium | Medium |
+| Word2Vec | Medium | Low | High | Large |
 
 **Recommendations:**
 - **Quick exploration:** LSA
@@ -488,10 +488,10 @@ plt.savefig("word_clusters.png")
 
 ```python
 def document_vector(doc, model):
-    """Average word vectors for document."""
-    tokens = preprocess(doc)
-    vectors = [model.wv[w] for w in tokens if w in model.wv]
-    return np.mean(vectors, axis=0) if vectors else np.zeros(100)
+ """Average word vectors for document."""
+ tokens = preprocess(doc)
+ vectors = [model.wv[w] for w in tokens if w in model.wv]
+ return np.mean(vectors, axis=0) if vectors else np.zeros(100)
 
 # Train classifier
 X_train = [document_vector(doc, w2v) for doc in train_docs]
@@ -526,8 +526,8 @@ X_w2v = np.array([document_vector(doc, model) for doc in train_docs])
 clf_w2v = LogisticRegression(max_iter=1000)
 w2v_scores = cross_val_score(clf_w2v, X_w2v, y_train, cv=5)
 
-print(f"TF-IDF:   {tfidf_scores.mean():.3f} (+/- {tfidf_scores.std():.3f})")
-print(f"LSA:      {lsa_scores.mean():.3f} (+/- {lsa_scores.std():.3f})")
+print(f"TF-IDF: {tfidf_scores.mean():.3f} (+/- {tfidf_scores.std():.3f})")
+print(f"LSA: {lsa_scores.mean():.3f} (+/- {lsa_scores.std():.3f})")
 print(f"Word2Vec: {w2v_scores.mean():.3f} (+/- {w2v_scores.std():.3f})")
 ```
 
@@ -538,16 +538,16 @@ print(f"Word2Vec: {w2v_scores.mean():.3f} (+/- {w2v_scores.std():.3f})")
 1. **Embeddings capture semantic meaning** - similar words have similar vectors
 
 2. **Different methods, different strengths:**
-   - LSA: Fast, linear, interpretable
-   - LDA: Probabilistic, topic-focused
-   - Word2Vec: Neural, best for similarity
+ - LSA: Fast, linear, interpretable
+ - LDA: Probabilistic, topic-focused
+ - Word2Vec: Neural, best for similarity
 
 3. **Visualization reveals structure** - UMAP shows semantic clusters
 
 4. **Limitations:**
-   - Static (one vector per word, no context)
-   - Requires substantial data
-   - Can encode biases
+ - Static (one vector per word, no context)
+ - Requires substantial data
+ - Can encode biases
 
 **Next week:** Contextual embeddings (BERT, GPT)!
 

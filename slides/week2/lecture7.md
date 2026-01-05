@@ -67,18 +67,18 @@ By the end of this session, you will:
 from sklearn.datasets import fetch_20newsgroups
 
 categories = [
-    'sci.space',
-    'rec.sport.hockey',
-    'talk.politics.misc',
-    'comp.graphics'
+ 'sci.space',
+ 'rec.sport.hockey',
+ 'talk.politics.misc',
+ 'comp.graphics'
 ]
 
 train_data = fetch_20newsgroups(
-    subset='train',
-    categories=categories,
-    shuffle=True,
-    random_state=42,
-    remove=('headers', 'footers', 'quotes')  # Remove metadata
+ subset='train',
+ categories=categories,
+ shuffle=True,
+ random_state=42,
+ remove=('headers', 'footers', 'quotes') # Remove metadata
 )
 
 print(f"Loaded {len(train_data.data)} training documents")
@@ -101,7 +101,7 @@ Always look at your data before building models.
 
 ---
 
-# Exploring the Data: Concrete Example 📊
+# Exploring the Data: Concrete Example 
 
 ```python
 import pandas as pd
@@ -110,14 +110,14 @@ from collections import Counter
 # Check class distribution
 print("Documents per category:")
 for i, name in enumerate(train_data.target_names):
-    count = (train_data.target == i).sum()
-    print(f"  {name}: {count}")
+ count = (train_data.target == i).sum()
+ print(f" {name}: {count}")
 
 # Output:
-#   sci.space: 593
-#   rec.sport.hockey: 600
-#   talk.politics.misc: 465
-#   comp.graphics: 584
+# sci.space: 593
+# rec.sport.hockey: 600
+# talk.politics.misc: 465
+# comp.graphics: 584
 
 # Look at a sample document
 print("\n--- Sample document (sci.space) ---")
@@ -126,7 +126,7 @@ print(train_data.data[idx][:500])
 
 # Output might show:
 # "NASA announced today that the Mars rover has discovered
-#  evidence of water ice beneath the surface..."
+# evidence of water ice beneath the surface..."
 ```
 
 **Notice:** Classes are roughly balanced (good!), but `talk.politics.misc` has fewer examples.
@@ -155,10 +155,10 @@ How do we convert text to numbers for machine learning?
 from sklearn.feature_extraction.text import CountVectorizer
 
 bow_vectorizer = CountVectorizer(
-    max_features=5000,      # Keep only top 5000 words
-    min_df=2,               # Word must appear in at least 2 docs
-    max_df=0.8,             # Word must appear in <80% of docs
-    stop_words='english'    # Remove common words
+ max_features=5000, # Keep only top 5000 words
+ min_df=2, # Word must appear in at least 2 docs
+ max_df=0.8, # Word must appear in <80% of docs
+ stop_words='english' # Remove common words
 )
 
 X_train_bow = bow_vectorizer.fit_transform(train_data.data)
@@ -183,7 +183,7 @@ X_train_bow = bow_vectorizer.fit_transform(train_data.data)
 
 ---
 
-# BoW: Concrete Vector Example 📊
+# BoW: Concrete Vector Example 
 
 **What does a BoW vector actually look like?**
 
@@ -191,9 +191,9 @@ X_train_bow = bow_vectorizer.fit_transform(train_data.data)
 from sklearn.feature_extraction.text import CountVectorizer
 
 docs = [
-    "NASA launches rocket to Mars",
-    "Hockey game ends in overtime",
-    "NASA discovers water on Mars"
+ "NASA launches rocket to Mars",
+ "Hockey game ends in overtime",
+ "NASA discovers water on Mars"
 ]
 
 vectorizer = CountVectorizer()
@@ -202,13 +202,13 @@ X = vectorizer.fit_transform(docs)
 # Vocabulary mapping
 print("Vocabulary:", vectorizer.vocabulary_)
 # {'nasa': 5, 'launches': 4, 'rocket': 7, 'to': 8, 'mars': 6,
-#  'hockey': 2, 'game': 1, 'ends': 0, 'in': 3, 'overtime': 9,
-#  'discovers': 10, 'water': 11, 'on': 12}
+# 'hockey': 2, 'game': 1, 'ends': 0, 'in': 3, 'overtime': 9,
+# 'discovers': 10, 'water': 11, 'on': 12}
 
 # Document vectors (sparse matrix)
 print("\nDocument 1:", X[0].toarray())
-# [0 0 0 0 1 1 1 1 1 0 0 0 0]  <- counts for each word
-#        └─ "launches"=1, "nasa"=1, "mars"=1, "rocket"=1, "to"=1
+# [0 0 0 0 1 1 1 1 1 0 0 0 0] <- counts for each word
+# "launches"=1, "nasa"=1, "mars"=1, "rocket"=1, "to"=1
 ```
 
 **Observation:** Most entries are 0 (sparse!). Documents share "mars" and "nasa".
@@ -235,12 +235,12 @@ where:
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 tfidf_vectorizer = TfidfVectorizer(
-    max_features=5000,
-    min_df=2,
-    max_df=0.8,
-    stop_words='english',
-    use_idf=True,
-    sublinear_tf=True  # Use log scaling for term frequency
+ max_features=5000,
+ min_df=2,
+ max_df=0.8,
+ stop_words='english',
+ use_idf=True,
+ sublinear_tf=True # Use log scaling for term frequency
 )
 
 X_train_tfidf = tfidf_vectorizer.fit_transform(train_data.data)
@@ -342,13 +342,13 @@ Input (TF-IDF) -> Hidden Layer 1 (256) -> Hidden Layer 2 (128) -> Output (4 clas
 import torch.nn as nn
 
 class TextClassifier(nn.Module):
-    def __init__(self, input_dim, hidden_dim, output_dim):
-        super().__init__()
-        self.fc1 = nn.Linear(input_dim, hidden_dim)
-        self.fc2 = nn.Linear(hidden_dim, hidden_dim // 2)
-        self.fc3 = nn.Linear(hidden_dim // 2, output_dim)
-        self.dropout = nn.Dropout(0.3)
-        self.relu = nn.ReLU()
+ def __init__(self, input_dim, hidden_dim, output_dim):
+ super().__init__()
+ self.fc1 = nn.Linear(input_dim, hidden_dim)
+ self.fc2 = nn.Linear(hidden_dim, hidden_dim // 2)
+ self.fc3 = nn.Linear(hidden_dim // 2, output_dim)
+ self.dropout = nn.Dropout(0.3)
+ self.relu = nn.ReLU()
 ```
 
 ---
@@ -388,7 +388,7 @@ $$F1 = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + 
 
 **Visual representation of classifier errors:**
 
-|  | Predicted A | Predicted B | Predicted C | Predicted D |
+| | Predicted A | Predicted B | Predicted C | Predicted D |
 |--|-------------|-------------|-------------|-------------|
 | **Actual A** | 85 | 2 | 3 | 0 |
 | **Actual B** | 1 | 92 | 2 | 5 |
@@ -415,7 +415,7 @@ $$F1 = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + 
 
 ---
 
-# Error Analysis: Concrete Example 🔍
+# Error Analysis: Concrete Example 
 
 ```python
 # Find misclassified examples
@@ -427,15 +427,15 @@ print(f"Found {len(errors)} misclassifications out of {len(y_pred)}")
 # Examine a specific error
 idx = errors[0]
 print(f"\nMisclassified document:")
-print(f"  True: {test_data.target_names[test_data.target[idx]]}")
-print(f"  Predicted: {test_data.target_names[y_pred[idx]]}")
+print(f" True: {test_data.target_names[test_data.target[idx]]}")
+print(f" Predicted: {test_data.target_names[y_pred[idx]]}")
 print(f"\nText preview:")
 print(test_data.data[idx][:300])
 ```
 
 **Example output:**
 ```
-True: sci.space       Predicted: comp.graphics
+True: sci.space Predicted: comp.graphics
 
 Text preview:
 "I'm working on a 3D visualization of the solar system for
@@ -477,7 +477,7 @@ planet textures? I've been using data from NASA..."
 
 ```python
 lr_balanced = LogisticRegression(
-    class_weight='balanced'  # Automatically adjust weights
+ class_weight='balanced' # Automatically adjust weights
 )
 ```
 
@@ -513,7 +513,7 @@ lr_balanced = LogisticRegression(
 
 ```
 Data Cleaning -> Tokenization -> Feature Extraction -> Classification
-(Lecture 5)      (Lecture 6)     (Today)              (Today)
+(Lecture 5) (Lecture 6) (Today) (Today)
 ```
 
 **Next lecture:** POS Tagging & Sentiment Analysis

@@ -455,18 +455,18 @@ A: 105
 ```
 # Write a function to check if a number is prime
 def is_prime(n):
-    if n < 2:
-        return False
-    for i in range(2, int(n**0.5) + 1):
-        if n % i == 0:
-            return False
-    return True
+ if n < 2:
+ return False
+ for i in range(2, int(n**0.5) + 1):
+ if n % i == 0:
+ return False
+ return True
 ```
 
 **Multi-step Reasoning:**
 ```
 Q: If I have 3 apples and give 2 to my friend,
-   then buy 4 more, how many do I have?
+ then buy 4 more, how many do I have?
 A: 3 - 2 + 4 = 5 apples
 ```
 
@@ -526,18 +526,18 @@ where:
 
 ```
 Loss
-  ^
-  |
-3.5|  *
-   |    *
-3.0|      *
-   |        *
-2.5|          *
-   |            *
-2.0|              *  *  *  *  * (diminishing returns)
-   +------------------------------------------>
-       10M   100M   1B    10B   100B   1T
-                   Parameters
+ ^
+ |
+3.5| *
+ | *
+3.0| *
+ | *
+2.5| *
+ | *
+2.0| * * * * * (diminishing returns)
+ +------------------------------------------>
+ 10M 100M 1B 10B 100B 1T
+ Parameters
 ```
 
 **Key observation:** Returns diminish but never stop - every 10x increase helps!
@@ -636,11 +636,11 @@ Fine-tune the model on (instruction, response) pairs to make it better at follow
 ```
 Instruction: "Explain quantum computing to a 5-year-old"
 Response: "Imagine you have a magic coin that can be heads
-          AND tails at the same time until you look at it..."
+ AND tails at the same time until you look at it..."
 
 Instruction: "Write a Python function to sort a list"
 Response: "def sort_list(items):
-              return sorted(items)"
+ return sorted(items)"
 
 Instruction: "Summarize this article in 3 sentences"
 Response: [concise 3-sentence summary]
@@ -844,8 +844,8 @@ Text: "You've been selected for a prize!" ->
 
 ```
 Q: Roger has 5 tennis balls. He buys 2 more cans of
-   tennis balls. Each can has 3 balls. How many
-   tennis balls does he have now?
+ tennis balls. Each can has 3 balls. How many
+ tennis balls does he have now?
 
 Let's think step by step:
 1. Roger starts with 5 tennis balls
@@ -870,48 +870,48 @@ Adding "Let's think step by step" dramatically improves reasoning accuracy!
 **What LLMs still struggle with:**
 
 1. **Factual accuracy**
-   - Hallucinations and confabulation
-   - No citations or sources
+ - Hallucinations and confabulation
+ - No citations or sources
 
 2. **Reasoning**
-   - Multi-step logic
-   - Mathematical proofs
+ - Multi-step logic
+ - Mathematical proofs
 
 3. **Knowledge grounding**
-   - Knowledge cutoff date
-   - Can't access real-time info
+ - Knowledge cutoff date
+ - Can't access real-time info
 
 4. **Personalization**
-   - No persistent memory
-   - Stateless conversations
+ - No persistent memory
+ - Stateless conversations
 
 5. **Reliability**
-   - Inconsistent outputs
-   - Prompt sensitivity
+ - Inconsistent outputs
+ - Prompt sensitivity
 
 ---
 
 # Key Takeaways
 
 1. **Scaling works**
-   - GPT -> GPT-2 -> GPT-3 showed clear improvements
-   - Power law scaling continues to hold
+ - GPT -> GPT-2 -> GPT-3 showed clear improvements
+ - Power law scaling continues to hold
 
 2. **Few-shot learning emerged at scale**
-   - No fine-tuning needed for many tasks
-   - In-context learning is powerful
+ - No fine-tuning needed for many tasks
+ - In-context learning is powerful
 
 3. **Scaling laws provide predictability**
-   - But diminishing returns and compute costs are real
-   - Chinchilla scaling: balance model size and data
+ - But diminishing returns and compute costs are real
+ - Chinchilla scaling: balance model size and data
 
 4. **RLHF changed everything**
-   - ChatGPT = GPT-3.5 + instruction tuning + RLHF
-   - Alignment is crucial for deployment
+ - ChatGPT = GPT-3.5 + instruction tuning + RLHF
+ - Alignment is crucial for deployment
 
 5. **The field is rapidly evolving**
-   - Open vs closed debate continues
-   - New capabilities emerging
+ - Open vs closed debate continues
+ - New capabilities emerging
 
 ---
 
