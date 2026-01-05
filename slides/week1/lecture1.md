@@ -563,7 +563,7 @@ Suppose we start with some input text: "The cat sat on the"
 LLMs predict probability for each possible next word:
 ```
 predictions = {
-    "mat": 0.35,      # Most likely
+    "mat": 0.35,       # Most likely
     "floor": 0.20,
     "couch": 0.15,
     "roof": 0.05,
