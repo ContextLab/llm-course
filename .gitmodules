@@ -1,0 +1,18 @@
+[submodule "assignments/eliza-llm-course"]
+	path = assignments/eliza-llm-course
+	url = https://github.com/ContextLab/eliza-llm-course.git
+[submodule "assignments/spam-classifier-llm-course"]
+	path = assignments/spam-classifier-llm-course
+	url = https://github.com/ContextLab/spam-classifier-llm-course.git
+[submodule "assignments/embeddings-llm-course"]
+	path = assignments/embeddings-llm-course
+	url = https://github.com/ContextLab/embeddings-llm-course.git
+[submodule "assignments/customer-service-bot-llm-course"]
+	path = assignments/customer-service-bot-llm-course
+	url = https://github.com/ContextLab/customer-service-bot-llm-course.git
+[submodule "assignments/gpt-llm-course"]
+	path = assignments/gpt-llm-course
+	url = https://github.com/ContextLab/gpt-llm-course.git
+[submodule "assignments/final-project-llm-course"]
+	path = assignments/final-project-llm-course
+	url = https://github.com/ContextLab/final-project-llm-course.git

@@ -6,7 +6,19 @@ In this assignment, you will build a simplified version of ELIZA, one of the ear
 
 But this assignment goes beyond just implementing a chatbot. You'll also analyze what makes ELIZA feel conversational despite its simplicity, compare it to modern chatbots, and reflect on the psychological phenomenon known as the "ELIZA effect"—the tendency for people to attribute human-like understanding to computer programs.
 
-This is your first assignment in the course, and it's designed to be approachable while introducing you to fundamental concepts in natural language processing: pattern matching, text manipulation, rule-based systems, and the critical distinction between appearing intelligent and actually understanding language.
+This is your first assignment in the course, and it's designed to introduce you to fundamental concepts in natural language processing: pattern matching, text manipulation, rule-based systems, and the critical distinction between appearing intelligent and actually understanding language.
+
+### Vibe coding is encouraged!
+
+For this assignment, it is *possible* to code everything from scratch in the allotted assignment time (1 week). However, I strongly recommend that you use a coding agent to help you implement the core components. Some suggestions are provided [below](#resources-and-references). If you're already familiar with vibe coding, then feel free to use whatever approach you're comfortable with. If you're new to vibe coding, or if you'd like to try something different, what works well for me is:
+
+1. Start with a highly detailed description of *exactly* what you want your coding agent to make. I would suggest including the assignment as a reference file to provide additional instructions and context. But to increase the chances of *working* code, hallucinations, and other quality issues, you should explain as clearly as possible precisely what the core algorithms are, how the work should be approached, and so on. In order to create this document, it is critical that *you* have a detailed and comprehensive understanding of what the solution should look like. You don't necessarily need to know how to *code* it yourself (LLMs are fantastic at writing code), but you *do* need to know exactly what each function will do (i.e., what are the inputs, what are the outputs, and how can you convince yourself that it's working-- including tricky edge cases). It helps to include examples to illustrate how each component should work.
+
+2. Next, pass your description to your coding agent, and ask it to come up with a detailed **technical design document**. You should review this in detail, edit carefully, and iterate (with help from the coding agent, other LLMs, web searches, and your own intuitions) until you are 100% happy with the design. Ideally the design should contain skeleton code and/or code snippets showing exactly how each component of your project will be implemented.
+
+3. Once you have your technical design document, the next step is to construct a detailed **implementation plan**. Given your *target* (i.e., your technical design document) ask your coding agent to draft a plan for how to implement it. You can use both the assignment instructions and your technical design document as context.  Since implementation plans can get lengthy, you may be pushing up against the context limits of your coding agent of choice. A nice "trick" is to break your task into smaller sub-tasks, and then use agents to do each sub-task. Then no single instance of the coding agent needs to store the full code base and plan in its context.  As with the technical design document, you should iterate until you are 100% happy with the plan.  Importantly, you should include in your plan a way of verifying that everything is working correctly.
+
+4. Then let your model "loose" on the problem and have it **draft a solution**.  Provide the assignment, technical design document, and implementation plan as context.  It's highly likely that the first solution your coding agent comes up with will be wrong in important ways-- it might not run, it might not do what you asked, you might have had a conceptual bug in your understanding that propagated to the model's solution, and so on.  That's where you should turn to the verification checks from your implementation plan.  In addition to making sure those checks "pass," you should also (when you're creating chatbots or other interactive applications, like in this assignment) *use it yourself*. Pretend you're *using* your chatbot (e.g., pretend you're me, and you're trying to stress test the implementation). Does the code behave like you expect? Does the code break down in unexpected ways? Does it break down in *expected* ways? Are there any pieces that you don't understand fully?
 
 ## Learning Objectives
 
@@ -476,18 +488,19 @@ This assignment is designed to be completed in **one week (7 days)**. While subs
 
 - **ChatGPT**: [chat.openai.com](https://chat.openai.com) - For comparison testing
 - **Claude**: [claude.ai](https://claude.ai) - Another modern system to compare
-- **Replika**: Example of modern "therapeutic" chatbot
+- **Replika**: [replika.com](https://replika.com/) - Example of modern "therapeutic" chatbot
+- **Evergreen**: [evergreenai.dartmouth.edu](https://evergreenai.dartmouth.edu/) - Dartmouth's version of AI-powered therapy!
 
 ### Course Materials
 
-- **Week 1 Lecture Slides**: Review pattern matching and ELIZA discussion
-- **Course Readings**: Fedorenko et al. (2024) and Lupyan et al. (2020) on language and thought
+- [**Week 1 Lecture Slides**](https://context-lab.com/llm-course/#week1): Review pattern matching and ELIZA discussion
+- **Course Readings**: [Weizenbaum (1966)](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf), along with [Fedorenko et al. (2024)](https://www.nature.com/articles/s41586-024-07522-w) and [Lupyan et al. (2020)](https://doi.org/10.1016/j.tics.2020.08.005) on language and thought
 
 ### Going Deeper (Optional)
 
-- **Searle, J. (1980)**. "Minds, Brains, and Programs" - The Chinese Room argument
-- **Turing, A. (1950)**. "Computing Machinery and Intelligence" - The original Turing Test
-- **Bender & Koller (2020)**. "Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data"
+- [**Searle, J. (1980)**](http://www.cse.buffalo.edu/~rapaport/Papers/Papers.by.Others/Searle/searle80-MindsBrainsProgs-BBS.pdf). "Minds, Brains, and Programs" - The Chinese Room argument
+- [**Turing, A. (1950)**](https://ebiquity.umbc.edu/get/a/publication/1389.pdf). "Computing Machinery and Intelligence" - The original Turing Test
+- [**Bender & Koller (2020)**](https://aclanthology.org/2020.acl-main.463.pdf). "Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data"
 
 ## Submission Guidelines
 
@@ -495,25 +508,11 @@ This assignment is designed to be completed in **one week (7 days)**. While subs
 
 This assignment is submitted via **GitHub Classroom**. Follow these steps:
 
-1. **Accept the assignment**: Click the assignment link provided in Canvas or by your instructor
-   - Repository: [github.com/ContextLab/eliza-llm-course](https://github.com/ContextLab/eliza-llm-course)
+1. **Accept the assignment**: Click the [accept assignment link](https://classroom.github.com/a/SC1jeftp)
    - This creates your own private repository for the assignment
+   - Template repository (your private version will be based on this template): [github.com/ContextLab/eliza-llm-course](https://github.com/ContextLab/eliza-llm-course)
 
-2. **Clone your repository**: 
-   ```bash
-   git clone https://github.com/ContextLab/eliza-llm-course-YOUR_USERNAME.git
-   ```
-
-3. **Complete your work**: 
-   - Work in Google Colab, Jupyter, or your preferred environment
-   - Save your notebook to the repository
-
-4. **Commit and push your changes**:
-   ```bash
-   git add .
-   git commit -m "Complete ELIZA assignment"
-   git push
-   ```
+2. Click the "
 
 5. **Verify submission**: Check that your latest commit appears in your GitHub repository before the deadline
 
@@ -525,6 +524,7 @@ This assignment is submitted via **GitHub Classroom**. Follow these steps:
 2. **Dependencies**: Include all imports and installations in the notebook
 3. **Data**: The `instructions.txt` file should be loaded in your notebook (upload to Colab or link to it)
 4. **Output**: Keep cell outputs visible in your submission
+7. **Deadline**: January 16, 2026 at 11:59PM EST
 
 ### Before Submission Checklist
 
