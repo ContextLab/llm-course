@@ -659,6 +659,26 @@ button:disabled {
     border-color: var(--primary-color);
 }
 
+.example-select {
+    padding: 8px 12px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    background: var(--surface-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    min-width: 180px;
+}
+
+.example-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.example-select:hover {
+    border-color: var(--primary-color);
+}
+
 .vocab-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

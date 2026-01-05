@@ -40,10 +40,17 @@
             
             <div id="comparison-content" style="display: none;">
                 <div class="info-box" style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary-color);">
-                    <p style="margin: 0; color: var(--text-primary);"><strong>What is tokenization?</strong> Tokenization breaks text into smaller units (tokens) that language models can process. Different models use different algorithms: GPT-2 uses BPE, BERT uses WordPiece, and T5 uses SentencePiece. Compare how each handles the same text below.</p>
+                    <p style="margin: 0; color: var(--text-primary);"><strong>What is tokenization?</strong> Tokenization breaks text into smaller units (tokens) that language models can process. Different models use different algorithms: GPT-2 uses BPE, BERT uses WordPiece, and T5 uses SentencePiece. The <code>␣</code> symbol indicates a leading space in the original text.</p>
                 </div>
                 <div class="input-section">
-                    <label for="text-input">Enter text to tokenize:</label>
+                    <div class="input-row" style="display: flex; gap: 16px; align-items: flex-end; margin-bottom: 12px;">
+                        <div style="flex: 1;">
+                            <label for="text-input">Enter text to tokenize:</label>
+                        </div>
+                        <div id="comparison-examples" style="display: flex; align-items: center; gap: 8px;">
+                            <label for="example-select" style="margin: 0; white-space: nowrap;">Or try:</label>
+                        </div>
+                    </div>
                     <textarea id="text-input" rows="4" placeholder="Type or paste text here to see how different tokenizers process it...">The quick brown fox jumps over the lazy dog. Tokenization is fundamental to NLP!</textarea>
                     <div class="controls">
                         <button id="tokenize-btn" class="primary-btn">Tokenize</button>
@@ -217,6 +224,16 @@
 
         <!-- Tab 3: Vocabulary Browser -->
         <div id="vocab-browser" class="tab-content">
+            <div class="info-box" style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary-color);">
+                <p style="margin: 0 0 8px 0; color: var(--text-primary);"><strong>Explore Tokenizer Vocabularies</strong></p>
+                <p style="margin: 0; color: var(--text-secondary); font-size: 0.95rem;">Browse the complete vocabulary of each tokenizer. Each model uses different strategies:</p>
+                <ul style="margin: 8px 0 0 0; padding-left: 20px; color: var(--text-secondary); font-size: 0.9rem;">
+                    <li><strong>GPT-2:</strong> 50,257 tokens using Byte Pair Encoding. Leading spaces shown as <code>␣</code> (original: Ġ).</li>
+                    <li><strong>BERT:</strong> 30,522 tokens using WordPiece. Subword continuations shown as <code>··</code> (original: ##). Includes 994 <code>[unused0]</code>–<code>[unused993]</code> placeholder tokens reserved for fine-tuning.</li>
+                    <li><strong>T5:</strong> 32,128 tokens using SentencePiece. Leading spaces shown as <code>␣</code> (original: ▁).</li>
+                </ul>
+                <p style="margin: 8px 0 0 0; color: var(--text-muted); font-size: 0.85rem;"><em>Hover over tokens to see raw values.</em></p>
+            </div>
             <div class="vocab-controls">
                 <label for="vocab-tokenizer">Select Tokenizer:</label>
                 <select id="vocab-tokenizer">

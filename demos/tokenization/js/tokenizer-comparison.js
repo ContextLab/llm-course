@@ -19,18 +19,56 @@ let filteredVocab = [];
 let currentSortColumn = 'id';
 let sortAscending = true;
 
+const exampleTexts = {
+    'default': 'The quick brown fox jumps over the lazy dog. Tokenization is fundamental to NLP!',
+    'multilingual': 'Hello 世界! Bonjour le monde! こんにちは世界！',
+    'technical': 'The GPT-4 model uses byte-pair encoding (BPE) with a vocabulary of ~100,000 tokens.',
+    'numbers': 'In 2024, AI models processed 1,000,000+ tokens per second at $0.002/1K tokens.',
+    'code': 'function fibonacci(n) { return n <= 1 ? n : fibonacci(n-1) + fibonacci(n-2); }',
+    'emoji': 'I love pizza 🍕 and coffee ☕! Machine learning is 🔥🚀✨',
+    'contractions': "I've been thinking that we're going to be able to tokenize it's and won't differently."
+};
+
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     initializeTabs();
-    setupEventListeners();  // Setup listeners BEFORE loading so button is always responsive
+    setupExamplesDropdown();
+    setupEventListeners();
     await loadTokenizers();
-
-    // Auto-tokenize with default text after tokenizers are ready
-    const defaultText = document.getElementById('text-input').value;
-    if (defaultText && tokenizers.gpt2 && tokenizers.bert && tokenizers.t5) {
-        await tokenizeText(defaultText);
-    }
 });
+
+function setupExamplesDropdown() {
+    const examplesContainer = document.getElementById('comparison-examples');
+    if (!examplesContainer) return;
+    
+    const select = document.createElement('select');
+    select.id = 'example-select';
+    select.className = 'example-select';
+    
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Choose an example...';
+    select.appendChild(defaultOption);
+    
+    Object.entries(exampleTexts).forEach(([key, text]) => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+        select.appendChild(option);
+    });
+    
+    select.addEventListener('change', async (e) => {
+        if (e.target.value && exampleTexts[e.target.value]) {
+            const textInput = document.getElementById('text-input');
+            textInput.value = exampleTexts[e.target.value];
+            if (tokenizers.gpt2 && tokenizers.bert && tokenizers.t5) {
+                await tokenizeText(exampleTexts[e.target.value]);
+            }
+        }
+    });
+    
+    examplesContainer.appendChild(select);
+}
 
 // Tab functionality
 function initializeTabs() {
@@ -64,18 +102,23 @@ async function loadTokenizers() {
         console.log('Loading tokenizers...');
 
         progressText.textContent = 'Loading GPT-2 tokenizer...';
-        tokenizers.gpt2 = await AutoTokenizer.from_pretrained('gpt2');
+        tokenizers.gpt2 = await AutoTokenizer.from_pretrained('Xenova/gpt2');
         
         progressText.textContent = 'Loading BERT tokenizer...';
-        tokenizers.bert = await AutoTokenizer.from_pretrained('bert-base-uncased');
+        tokenizers.bert = await AutoTokenizer.from_pretrained('Xenova/bert-base-uncased');
         
         progressText.textContent = 'Loading T5 tokenizer...';
-        tokenizers.t5 = await AutoTokenizer.from_pretrained('t5-small');
+        tokenizers.t5 = await AutoTokenizer.from_pretrained('Xenova/t5-small');
 
         console.log('All tokenizers loaded successfully');
         
         loadingOverlay.style.display = 'none';
         comparisonContent.style.display = 'block';
+        
+        const defaultText = document.getElementById('text-input').value;
+        if (defaultText) {
+            await tokenizeText(defaultText);
+        }
     } catch (error) {
         console.error('Error loading tokenizers:', error);
         loadingOverlay.classList.add('error');
@@ -153,47 +196,81 @@ async function tokenizeText(text) {
 
 // Process individual tokenizer
 async function processTokenizer(name, text, tokenizer) {
-    // encode() returns the token IDs as an array
-    const encoded = await tokenizer.encode(text);
+    try {
+        // Call tokenizer as a function - returns { input_ids: Tensor, attention_mask: Tensor }
+        const output = await tokenizer(text, { add_special_tokens: false });
+        
+        // Convert Tensor to array - handle different tensor formats
+        let encoded;
+        if (output.input_ids) {
+            // Get the data from the tensor
+            const inputIds = output.input_ids;
+            if (inputIds.tolist) {
+                // Tensor with tolist() method
+                const listed = inputIds.tolist();
+                encoded = Array.isArray(listed[0]) ? listed[0] : listed;
+            } else if (inputIds.data) {
+                // Tensor with data property
+                encoded = Array.from(inputIds.data);
+            } else if (Array.isArray(inputIds)) {
+                encoded = inputIds;
+            } else {
+                encoded = Array.from(inputIds);
+            }
+        } else {
+            // Fallback: try encode() method
+            const result = await tokenizer.encode(text);
+            encoded = Array.isArray(result) ? result : Array.from(result);
+        }
 
-    // Get token strings by decoding each ID individually
-    // This works around the fact that tokenize() may not be available
-    const tokens = [];
-    for (let i = 0; i < encoded.length; i++) {
-        const tokenStr = tokenizer.decode([encoded[i]], { skip_special_tokens: false });
-        tokens.push(tokenStr);
+        // Get token strings by decoding each ID individually
+        const tokens = [];
+        for (let i = 0; i < encoded.length; i++) {
+            const tokenStr = tokenizer.decode([encoded[i]], { skip_special_tokens: false });
+            tokens.push(tokenStr);
+        }
+
+        const outputDiv = document.getElementById(`${name}-output`);
+        const idsDiv = document.getElementById(`${name}-ids`);
+        const tokenCountSpan = document.getElementById(`${name}-token-count`);
+        const ratioSpan = document.getElementById(`${name}-ratio`);
+
+        // Clear previous output using safe DOM method
+        while (outputDiv.firstChild) {
+            outputDiv.removeChild(outputDiv.firstChild);
+        }
+
+        // Display tokens with colors
+        tokens.forEach((token, idx) => {
+            const span = document.createElement('span');
+            span.className = `token token-${idx % 8}`;
+            // Clean up special characters for display
+            span.textContent = token.replace(/▁/g, '␣').replace(/Ġ/g, '␣');
+            span.title = `Token ID: ${encoded[idx]}`;
+            outputDiv.appendChild(span);
+        });
+
+        // Display token IDs
+        idsDiv.textContent = encoded.join(', ');
+
+        // Display stats
+        const tokenCount = tokens.length;
+        const charCount = text.length;
+        const ratio = tokenCount > 0 ? (charCount / tokenCount).toFixed(2) : '0.00';
+
+        tokenCountSpan.textContent = `Tokens: ${tokenCount}`;
+        ratioSpan.textContent = `Ratio: ${ratio}`;
+    } catch (error) {
+        console.error(`Error processing ${name} tokenizer:`, error);
+        const outputDiv = document.getElementById(`${name}-output`);
+        while (outputDiv.firstChild) {
+            outputDiv.removeChild(outputDiv.firstChild);
+        }
+        const errorSpan = document.createElement('span');
+        errorSpan.className = 'token error';
+        errorSpan.textContent = `Error: ${error.message}`;
+        outputDiv.appendChild(errorSpan);
     }
-
-    const outputDiv = document.getElementById(`${name}-output`);
-    const idsDiv = document.getElementById(`${name}-ids`);
-    const tokenCountSpan = document.getElementById(`${name}-token-count`);
-    const ratioSpan = document.getElementById(`${name}-ratio`);
-
-    // Clear previous output using safe DOM method
-    while (outputDiv.firstChild) {
-        outputDiv.removeChild(outputDiv.firstChild);
-    }
-
-    // Display tokens with colors
-    tokens.forEach((token, idx) => {
-        const span = document.createElement('span');
-        span.className = `token token-${idx % 8}`;
-        // Clean up special characters for display
-        span.textContent = token.replace(/▁/g, '·').replace(/Ġ/g, '·');
-        span.title = `Token ID: ${encoded[idx]}`;
-        outputDiv.appendChild(span);
-    });
-
-    // Display token IDs
-    idsDiv.textContent = encoded.join(', ');
-
-    // Display stats
-    const tokenCount = tokens.length;
-    const charCount = text.length;
-    const ratio = (charCount / tokenCount).toFixed(2);
-
-    tokenCountSpan.textContent = `Tokens: ${tokenCount}`;
-    ratioSpan.textContent = `Ratio: ${ratio}`;
 }
 
 // Clear all outputs
@@ -286,48 +363,26 @@ async function updateVocabulary() {
     }
 
     try {
-        let vocab = null;
+        let vocabArray = [];
+        let totalVocabSize = 0;
         
-        if (tokenizer.model && tokenizer.model.vocab) {
-            vocab = tokenizer.model.vocab;
-        } else if (tokenizer.tokenizer && tokenizer.tokenizer.model && tokenizer.tokenizer.model.vocab) {
-            vocab = tokenizer.tokenizer.model.vocab;
-        } else if (tokenizer.vocab) {
-            vocab = tokenizer.vocab;
+        const vocab = getVocabFromTokenizer(tokenizer);
+        
+        if (vocab && Object.keys(vocab).length > 0) {
+            vocabArray = buildVocabArrayFromDict(vocab);
+            totalVocabSize = Object.keys(vocab).length;
+        } else {
+            const result = await buildVocabArrayFromIds(tokenizer, tokenizerName);
+            vocabArray = result.vocabArray;
+            totalVocabSize = result.totalSize;
         }
-        
-        if (!vocab) {
+
+        if (vocabArray.length === 0) {
             const tbody = document.getElementById('vocab-table-body');
             tbody.innerHTML = '<tr><td colspan="4" class="loading">Vocabulary not accessible for this tokenizer</td></tr>';
-            console.warn('Could not access vocab for', tokenizerName, 'tokenizer structure:', tokenizer);
             return;
         }
 
-        let vocabArray = [];
-        const entries = Object.entries(vocab);
-        
-        if (entries.length > 0) {
-            const [firstKey, firstValue] = entries[0];
-            const keyIsNumeric = !isNaN(parseInt(firstKey)) && typeof firstValue === 'string';
-            
-            if (keyIsNumeric) {
-                vocabArray = entries.map(([id, token]) => ({
-                    token: String(token),
-                    id: parseInt(id),
-                    type: getTokenType(String(token)),
-                    length: String(token).length
-                }));
-            } else {
-                vocabArray = entries.map(([token, id]) => ({
-                    token: String(token),
-                    id: typeof id === 'number' ? id : parseInt(id) || 0,
-                    type: getTokenType(String(token)),
-                    length: String(token).length
-                }));
-            }
-        }
-
-        // Apply filters
         if (searchTerm) {
             vocabArray = vocabArray.filter(item =>
                 item.token.toLowerCase().includes(searchTerm)
@@ -347,11 +402,85 @@ async function updateVocabulary() {
         currentVocabPage = 0;
         
         sortVocab();
-        updateVocabStats(vocabArray, Object.keys(vocab).length);
+        updateVocabStats(vocabArray, totalVocabSize);
         displayVocabPage();
     } catch (error) {
         console.error('Error loading vocabulary:', error);
+        const tbody = document.getElementById('vocab-table-body');
+        tbody.innerHTML = `<tr><td colspan="4" class="loading">Error: ${error.message}</td></tr>`;
     }
+}
+
+function getVocabFromTokenizer(tokenizer) {
+    if (tokenizer.model && tokenizer.model.vocab && typeof tokenizer.model.vocab === 'object') {
+        const vocab = tokenizer.model.vocab;
+        const keys = Object.keys(vocab);
+        if (keys.length > 0 && typeof vocab[keys[0]] === 'number') {
+            return vocab;
+        }
+    }
+    return null;
+}
+
+function buildVocabArrayFromDict(vocab) {
+    const entries = Object.entries(vocab);
+    return entries
+        .map(([token, id]) => ({
+            token: String(token),
+            id: typeof id === 'number' ? id : parseInt(id),
+            type: getTokenType(String(token)),
+            length: String(token).length
+        }))
+        .filter(item => !isNaN(item.id) && item.id >= 0);
+}
+
+async function buildVocabArrayFromIds(tokenizer, tokenizerName) {
+    const vocabSizes = { gpt2: 50257, bert: 30522, t5: 32128 };
+    const vocabSize = vocabSizes[tokenizerName] || 32000;
+    
+    const vocabArray = [];
+    const batchSize = 100;
+    
+    for (let startId = 0; startId < Math.min(vocabSize, 5000); startId += batchSize) {
+        const ids = [];
+        for (let i = startId; i < Math.min(startId + batchSize, vocabSize); i++) {
+            ids.push(i);
+        }
+        
+        try {
+            const tokens = tokenizer.convert_ids_to_tokens(ids);
+            if (tokens && Array.isArray(tokens)) {
+                tokens.forEach((token, idx) => {
+                    if (token && typeof token === 'string' && token.length > 0) {
+                        vocabArray.push({
+                            token: token,
+                            id: startId + idx,
+                            type: getTokenType(token),
+                            length: token.length
+                        });
+                    }
+                });
+            }
+        } catch (e) {
+            for (const id of ids) {
+                try {
+                    const decoded = tokenizer.decode([id], { skip_special_tokens: false });
+                    if (decoded && decoded.length > 0) {
+                        vocabArray.push({
+                            token: decoded,
+                            id: id,
+                            type: getTokenType(decoded),
+                            length: decoded.length
+                        });
+                    }
+                } catch (e2) {
+                    continue;
+                }
+            }
+        }
+    }
+    
+    return { vocabArray, totalSize: vocabSize };
 }
 
 function getTokenType(token) {
@@ -417,9 +546,10 @@ function displayVocabPage() {
         const typeClass = item.type === 'special' ? 'special' :
                          item.type === 'subword' ? 'subword' : 'word';
 
+        const displayToken = formatTokenForDisplay(item.token);
         row.innerHTML = `
             <td>${item.id}</td>
-            <td><code class="token-display">${escapeHtml(item.token)}</code></td>
+            <td><code class="token-display" title="Raw: ${escapeHtml(item.token)}">${escapeHtml(displayToken)}</code></td>
             <td><span class="token-type ${typeClass}">${item.type}</span></td>
             <td>${item.length}</td>
         `;
@@ -446,6 +576,13 @@ function updateTableHeaders() {
         th.style.cursor = 'pointer';
         th.onclick = () => handleSort(column);
     });
+}
+
+function formatTokenForDisplay(token) {
+    return token
+        .replace(/Ġ/g, '␣')
+        .replace(/▁/g, '␣')
+        .replace(/##/g, '··');
 }
 
 function escapeHtml(text) {
