@@ -14,6 +14,11 @@ on:
       - 'index.html'
       - '.github/workflows/deploy-demos.yml'
 
+  workflow_run:
+    workflows: ["Build Course Pages"]
+    types: [completed]
+    branches: [main]
+
   workflow_dispatch:
 
 # Sets permissions for GitHub Pages deployment
@@ -28,9 +33,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
