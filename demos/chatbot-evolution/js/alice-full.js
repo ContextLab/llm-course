@@ -40,8 +40,8 @@ export class AliceFull {
             birthday: "November 23, 1995",
             birthdate: "November 23, 1995",
             birthplace: "San Francisco, California",
-            botmaster: "Dr. Richard Wallace",
-            master: "Dr. Richard Wallace",
+            botmaster: "creator",  // Role/title - used in "my botmaster"
+            master: "Dr. Richard Wallace",  // Name of the person
             gender: "female",
             age: String(new Date().getFullYear() - 1995),
             version: "1.0 Full",
