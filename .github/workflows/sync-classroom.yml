@@ -1,0 +1,66 @@
+name: Sync to GitHub Classroom
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assignments/**-llm-course/**'
+  workflow_run:
+    workflows: ["Build Course Pages"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    strategy:
+      matrix:
+        include:
+          - submodule: eliza-llm-course
+            classroom: models-of-language-and-conversation-eliza-chatbot-eliza-llm-course
+          - submodule: spam-classifier-llm-course
+            classroom: models-of-language-and-conversation-spam-classifier-spam-classifier-llm-course
+          - submodule: embeddings-llm-course
+            classroom: models-of-language-and-conversation-wikipedia-embeddings-embeddings-llm-course
+          - submodule: customer-service-bot-llm-course
+            classroom: models-of-language-and-conversation-customer-service-chatbot-customer-service-bot-llm-course
+          - submodule: gpt-llm-course
+            classroom: models-of-language-and-conversation-built-gpt-gpt-llm-course
+          - submodule: final-project-llm-course
+            classroom: models-of-language-and-conversation-final-project-final-project-llm-course
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Check token exists
+        run: |
+          if [ -z "${{ secrets.CLASSROOM_SYNC_TOKEN }}" ]; then
+            echo "::error::CLASSROOM_SYNC_TOKEN secret is not set"
+            exit 1
+          fi
+
+      - name: Sync ${{ matrix.submodule }} to classroom
+        env:
+          GH_TOKEN: ${{ secrets.CLASSROOM_SYNC_TOKEN }}
+        run: |
+          cd assignments/${{ matrix.submodule }}
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          CLASSROOM_URL="https://x-access-token:${GH_TOKEN}@github.com/ContextLab/${{ matrix.classroom }}.git"
+          git remote add classroom "$CLASSROOM_URL" 2>/dev/null || git remote set-url classroom "$CLASSROOM_URL"
+          
+          echo "Pushing ${{ matrix.submodule }} to ContextLab/${{ matrix.classroom }}..."
+          if git push classroom HEAD:main --force; then
+            echo "::notice::Successfully synced ${{ matrix.submodule }}"
+          else
+            echo "::error::Failed to sync ${{ matrix.submodule }}"
+            exit 1
+          fi
