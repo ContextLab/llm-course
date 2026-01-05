@@ -48,12 +48,35 @@ def convert_latex_table(text):
     return text
 
 
+def slugify(text):
+    """Convert text to URL-friendly slug for anchor IDs."""
+    slug = text.lower()
+    slug = re.sub(r"[^\w\s-]", "", slug)
+    slug = re.sub(r"[\s_]+", "-", slug)
+    slug = slug.strip("-")
+    return slug
+
+
 def convert_headers(html):
-    """Convert markdown headers to HTML."""
-    html = re.sub(r"^#### (.+)$", r"<h4>\1</h4>", html, flags=re.MULTILINE)
-    html = re.sub(r"^### (.+)$", r"<h3>\1</h3>", html, flags=re.MULTILINE)
-    html = re.sub(r"^## (.+)$", r"<h2>\1</h2>", html, flags=re.MULTILINE)
-    html = re.sub(r"^# (.+)$", r"<h1>\1</h1>", html, flags=re.MULTILINE)
+    """Convert markdown headers to HTML with anchor IDs."""
+
+    def replace_header(match, tag):
+        text = match.group(1)
+        slug = slugify(text)
+        return f'<{tag} id="{slug}">{text}</{tag}>'
+
+    html = re.sub(
+        r"^#### (.+)$", lambda m: replace_header(m, "h4"), html, flags=re.MULTILINE
+    )
+    html = re.sub(
+        r"^### (.+)$", lambda m: replace_header(m, "h3"), html, flags=re.MULTILINE
+    )
+    html = re.sub(
+        r"^## (.+)$", lambda m: replace_header(m, "h2"), html, flags=re.MULTILINE
+    )
+    html = re.sub(
+        r"^# (.+)$", lambda m: replace_header(m, "h1"), html, flags=re.MULTILINE
+    )
     return html
 
 
@@ -63,6 +86,42 @@ def convert_inline_formatting(html):
     html = re.sub(r"\*(.+?)\*", r"<em>\1</em>", html)
     html = re.sub(r"(?<![\\])_(.+?)_", r"<em>\1</em>", html)
     return html
+
+
+def convert_code_blocks(text):
+    """Convert fenced code blocks (```) to HTML pre/code tags."""
+    lines = text.split("\n")
+    result = []
+    in_code_block = False
+    code_lines = []
+    lang = ""
+
+    for line in lines:
+        if line.strip().startswith("```") and not in_code_block:
+            in_code_block = True
+            lang = line.strip()[3:].strip()
+            code_lines = []
+        elif line.strip() == "```" and in_code_block:
+            in_code_block = False
+            code_content = "\n".join(code_lines)
+            code_content = (
+                code_content.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+            )
+            lang_class = f' class="language-{lang}"' if lang else ""
+            result.append(f"<pre><code{lang_class}>{code_content}</code></pre>")
+        elif in_code_block:
+            code_lines.append(line)
+        else:
+            result.append(line)
+
+    return "\n".join(result)
+
+
+def convert_inline_code(text):
+    """Convert backtick inline code to HTML code tags."""
+    return re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
 
 
 def convert_links(html):
@@ -340,13 +399,14 @@ def wrap_paragraphs(html):
 
 def parse_markdown_to_html(markdown_text):
     """Convert markdown text to HTML."""
-    # Pre-processing
     html = strip_latex_preamble(markdown_text)
     html = convert_latex_href(html)
     html = convert_latex_table(html)
 
+    html = convert_code_blocks(html)
     html = convert_headers(html)
     html = convert_inline_formatting(html)
+    html = convert_inline_code(html)
     html = convert_tables(html)
     html = convert_lists(html)
     html = convert_horizontal_rules(html)
@@ -532,6 +592,29 @@ def get_page_template(title, nav_active, content, depth=1):
         }}
         .content tr:hover {{
             background: var(--surface-color);
+        }}
+        .content code {{
+            background: var(--surface-color);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--primary-color);
+        }}
+        .content pre {{
+            background: var(--surface-color);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }}
+        .content pre code {{
+            background: none;
+            padding: 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
         }}
         footer {{
             background: var(--surface-color);

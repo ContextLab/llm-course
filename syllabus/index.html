@@ -157,6 +157,29 @@
         .content tr:hover {
             background: var(--surface-color);
         }
+        .content code {
+            background: var(--surface-color);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--primary-color);
+        }
+        .content pre {
+            background: var(--surface-color);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }
+        .content pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
         footer {
             background: var(--surface-color);
             border-top: 1px solid var(--border-color);
@@ -199,7 +222,7 @@
     </header>
 
     <main class="content">
-        <h2>Course Information</h2>
+        <h2 id="course-information">Course Information</h2>
 <table>
 <thead><tr>
 <th>Item</th>
@@ -236,10 +259,10 @@
 </tr>
 </tbody>
 </table>
-<h2>Course Description</h2>
+<h2 id="course-description">Course Description</h2>
 <p>Recent advancements in Artificial Intelligence (AI) have led to the development of powerful large language models (LLMs) capable of generating human-like text. These models have revolutionized the way we think about language, cognition, and intelligence. This course introduces students to the various approaches used in building, studying, and using conversational agents. We will use readings, discussions, and hands-on demonstrations to explore historical approaches, current approaches, and hints about the "next generation" of these models.</p>
 <p>We will investigate what these models can and cannot do from various cognitive, philosophical, computational, and ethical perspectives. A special focus will be on which aspects of human cognition, experiences, minds, and language these models can vs. cannot capture.</p>
-<h2>Course Goals</h2>
+<h2 id="course-goals">Course Goals</h2>
 <p>This course is intended to train students to:</p>
 <ul>
 <li>Explore a variety of approaches to constructing conversational agents, including string manipulation models, rules-based (decision tree) models, and transformer-based models. Students will implement and train these models, largely from scratch, to gain a deep understanding of how they work.</li>
@@ -250,11 +273,11 @@
 <li>Discuss the philosophical and ethical implications of AI, including questions around consciousness, agency, and the future of AI</li>
 <li>Develop and implement experiments using LLMs to explore research questions in psychology and cognitive science</li>
 </ul>
-<h2>Pre-Requisites</h2>
+<h2 id="pre-requisites">Pre-Requisites</h2>
 <p>Students <em>must</em> have prior experience with Python programming in order to enroll in this course. Prior coursework on statistics or probability (e.g., PSYC 10, AP Stats, or similar) is also highly recommended. An online statistics course is fine as a stand-in, but I will expect you to know about hypothesis testing, probability distributions, and have some intuitions about how to design and interpret statistical analysis before you start this course. Additional prior coursework and/or experience with linguistics, linear algebra, statistics, machine learning, artificial intelligence, data science, philosophy of mind, and/or creative writing will all be useful, but are not required.</p>
-<h2>Course Materials</h2>
+<h2 id="course-materials">Course Materials</h2>
 <p><strong>We will use a variety of <em>freely available</em> online materials and research papers, which will be provided throughout the course.</strong> You will also need an internet-enabled computer or tablet capable of displaying and outputting graphics and running a standard web browser (e.g., Chrome or Firefox).</p>
-<h2>Format and Overview</h2>
+<h2 id="format-and-overview">Format and Overview</h2>
 <p>This course follows an <strong>experiential learning</strong> model. Students will engage with lecture materials through hands-on programming exercises, experiments with models and tools, and group discussions. Problem sets will deepen your understanding of the course material, and small projects will allow you to apply concepts to real-world research problems in the relevant domains.</p>
 <p>Classes will include:</p>
 <ul>
@@ -262,14 +285,14 @@
 <li><strong>Hands-on Labs</strong>: Experimenting with conversational agents, designing simple conversational agents, and conducting research using these models.</li>
 <li><strong>Problem Sets and Projects</strong>: Bi-weekly problem sets to apply what you've learned. These will typically take the form of small-scale "research" projects.</li>
 </ul>
-<h2>Platforms and Tools</h2>
+<h2 id="platforms-and-tools">Platforms and Tools</h2>
 <ul>
 <li><a href="https://colab.research.google.com/" target="_blank"><strong>Google Colaboratory</strong></a>: For developing and running Python code.</li>
 <li><a href="https://huggingface.co/models" target="_blank"><strong>Hugging Face Models</strong></a>: We will use pre-trained models available through <a href="https://huggingface.co" target="_blank">Hugging Face</a>'s model hub.</li>
 <li><a href="https://github.com/" target="_blank"><strong>GitHub</strong></a>: Used for managing and sharing code, data, and project work.</li>
 <li><a href="https://discord.gg/sftEk9Ygdw" target="_blank"><strong>Discord</strong></a>: To facilitate discussions outside of class, share ideas, and collaborate on projects.</li>
 </ul>
-<h2>Grading</h2>
+<h2 id="grading">Grading</h2>
 <p>Grades will be based on the following components:</p>
 <ul>
 <li><strong>Problem Sets</strong> (75%): A total of 5 problem sets designed to reinforce key concepts (each is worth 15% of the final course grade).</li>
@@ -283,23 +306,23 @@
 </ul>
 Students may work together on all of the assignments, unless otherwise noted in class or in the assignment instructions. However, <strong>each student must submit their own problem set and indicate who they worked with</strong>. Final projects will (typically) be completed in groups of 2--3 students, with the entire group turning in the same project (and receiving the same grade for it).
 <p>Grading Scale: A (93–100), A- (90–92), B+ (87–89), B (83–86), B- (80–82), C+ (77–79), C (73–76), C- (70–72), D (60–69), E (0–59). All grades will be rounded to the nearest integer (e.g., a 92.5 average will result in a final grade of "A", whereas a 92.4999 average will result in a final grade of "A-"). Out of fairness to all students in the course, there will be no "negotiations" about grading-- e.g., your grade will be determined solely by the numerical average of your assignment scores.</p>
-<h3>Late Policy</h3>
+<h3 id="late-policy">Late Policy</h3>
 <p>Problem sets will receive a 10% deduction for each week late, rounded <strong>up</strong> to the nearest whole week (e.g., from a grading standpoint submitting an assignment 1 minute late is the same as submitting it 1 day late, is the same as submitting it 6 days late).</p>
 <p>Your final project <strong>must be submitted on time</strong> in order to receive credit for it.</p>
 <p>I strongly encourage you to submit your assignments <em>before</em> the last possible moment to avoid grading penalties, unexpected circumstances (e.g., illness, emergencies, etc.).</p>
-<h2>Academic Honor Principle</h2>
+<h2 id="academic-honor-principle">Academic Honor Principle</h2>
 <p>Students are expected to adhere to Dartmouth's Academic Honor Principle. You are encouraged to collaborate and discuss ideas with classmates, but all submitted work must be your own (aside from the final projects, which will be completed in small groups). If you're unsure about what constitutes a violation, please ask for clarification.</p>
-<h2>Use of Generative AI</h2>
+<h2 id="use-of-generative-ai">Use of Generative AI</h2>
 <p>Given that this is a course about the technologies used to <em>make</em> modern generative AIs like ChatGPT, Claude, Llama, Gemini, etc., you will be using these models extensively in class and in your assignments. There are just two "rules" about using GenAI:</p>
 <ul>
 <li>Most importantly, <strong>you</strong> are responsible for the content of your assignments, whether written by you "from scratch" or with the help of a GenAI agent.</li>
 <li>Second, you are bound by the Academic Honor Principle to acknowledge any use of GenAI in your work. This can be done by either using a brief comment in your code, by explicitly citing the tools you use, or by adding a note to the relevant section(s) of your assignment. Each situation is unique, but you need to make it clear exactly what work is your own vs. produced by GenAI. You must also include a chat history (including any prompts you used) as an addendum to your assignment(s).</li>
 </ul>
-<h2>Scheduling Conflicts</h2>
+<h2 id="scheduling-conflicts">Scheduling Conflicts</h2>
 <p>Attendance is expected for all classes unless previously arranged. A critical part of the course is the in-class discussions and demos, and those will only work if you are physically present in class. If you anticipate any conflicts due to religious observances or other commitments, please inform the instructor by Week 2 to make appropriate arrangements.</p>
-<h2>Student Needs</h2>
+<h2 id="student-needs">Student Needs</h2>
 <p>We strive to create an inclusive learning environment where all students feel supported and engaged. If you require any accommodations, please contact the Student Accessibility Services office, or discuss your needs with the instructor privately.</p>
-<h2>Course Schedule</h2>
+<h2 id="course-schedule">Course Schedule</h2>
 <p><strong>Note:</strong> Classes meet MWF 10:10--11:15. X-hours (Th 12:15--1:05) in the first three weeks will be used to make up for instructor absence February 23--27 (no classes that week).</p>
 <table>
 <thead><tr>
@@ -377,8 +400,8 @@ Students may work together on all of the assignments, unless otherwise noted in 
 </tr>
 </tbody>
 </table>
-<h2>Detailed Schedule</h2>
-<h3>Week 1: Introduction  |  String Manipulation (January 5--9)</h3>
+<h2 id="detailed-schedule">Detailed Schedule</h2>
+<h3 id="week-1-introduction-string-manipulation-january-5--9">Week 1: Introduction  |  String Manipulation (January 5--9)</h3>
 <table>
 <thead><tr>
 <th>Day</th>
@@ -420,7 +443,7 @@ Students may work together on all of the assignments, unless otherwise noted in 
 </tr>
 </tbody>
 </table>
-<h3>Week 2: Computational Linguistics (January 12--16)</h3>
+<h3 id="week-2-computational-linguistics-january-12--16">Week 2: Computational Linguistics (January 12--16)</h3>
 <table>
 <thead><tr>
 <th>Day</th>
@@ -463,7 +486,7 @@ Students may work together on all of the assignments, unless otherwise noted in 
 </tr>
 </tbody>
 </table>
-<h3>Week 3: Text Embeddings I (January 19--23)</h3>
+<h3 id="week-3-text-embeddings-i-january-19--23">Week 3: Text Embeddings I (January 19--23)</h3>
 <table>
 <thead><tr>
 <th>Day</th>
@@ -504,7 +527,7 @@ Students may work together on all of the assignments, unless otherwise noted in 
 </tr>
 </tbody>
 </table>
-<h3>Week 4: Text Embeddings II (January 26--30)</h3>
+<h3 id="week-4-text-embeddings-ii-january-26--30">Week 4: Text Embeddings II (January 26--30)</h3>
 <table>
 <thead><tr>
 <th>Day</th>
@@ -537,7 +560,7 @@ Students may work together on all of the assignments, unless otherwise noted in 
 </tr>
 </tbody>
 </table>
-<h3>Week 5: Transformers  |  Attention (February 2--6)</h3>
+<h3 id="week-5-transformers-attention-february-2--6">Week 5: Transformers  |  Attention (February 2--6)</h3>
 <table>
 <thead><tr>
 <th>Day</th>
@@ -570,7 +593,7 @@ Students may work together on all of the assignments, unless otherwise noted in 
 </tr>
 </tbody>
 </table>
-<h3>Week 6: Encoder Models (February 9--13)</h3>
+<h3 id="week-6-encoder-models-february-9--13">Week 6: Encoder Models (February 9--13)</h3>
 <table>
 <thead><tr>
 <th>Day</th>
@@ -603,7 +626,7 @@ Students may work together on all of the assignments, unless otherwise noted in 
 </tr>
 </tbody>
 </table>
-<h3>Week 7: Decoder Models  |  GPT (February 16--20)</h3>
+<h3 id="week-7-decoder-models-gpt-february-16--20">Week 7: Decoder Models  |  GPT (February 16--20)</h3>
 <table>
 <thead><tr>
 <th>Day</th>
@@ -636,9 +659,9 @@ Students may work together on all of the assignments, unless otherwise noted in 
 </tr>
 </tbody>
 </table>
-<h3>Week 8: No Classes (February 23--27)</h3>
+<h3 id="week-8-no-classes-february-23--27">Week 8: No Classes (February 23--27)</h3>
 <p>Instructor away February 23--27. No classes this week. Use this time to work on your <a href="../assignments/final-project/">final project</a>.</p>
-<h3>Week 9: Advanced Topics (March 2--6)</h3>
+<h3 id="week-9-advanced-topics-march-2--6">Week 9: Advanced Topics (March 2--6)</h3>
 <table>
 <thead><tr>
 <th>Day</th>
@@ -672,7 +695,7 @@ Students may work together on all of the assignments, unless otherwise noted in 
 </tr>
 </tbody>
 </table>
-<h3>Week 10: Final Projects (March 9)</h3>
+<h3 id="week-10-final-projects-march-9">Week 10: Final Projects (March 9)</h3>
 <table>
 <thead><tr>
 <th>Day</th>
@@ -692,7 +715,7 @@ Students may work together on all of the assignments, unless otherwise noted in 
 </tr>
 </tbody>
 </table>
-<h3>Final Exam Period (March 13--17)</h3>
+<h3 id="final-exam-period-march-13--17">Final Exam Period (March 13--17)</h3>
 <p>No additional submissions required. Final project materials were due March 9.</p>
     </main>
 

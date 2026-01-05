@@ -157,6 +157,29 @@
         .content tr:hover {
             background: var(--surface-color);
         }
+        .content code {
+            background: var(--surface-color);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--primary-color);
+        }
+        .content pre {
+            background: var(--surface-color);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }
+        .content pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
         footer {
             background: var(--surface-color);
             border-top: 1px solid var(--border-color);
@@ -199,9 +222,9 @@
     </header>
 
     <main class="content">
-        <h1>Course Assignments</h1>
+        <h1 id="course-assignments">Course Assignments</h1>
 <p>Welcome to the assignments for PSYC 51.17: Models of Language and Communication.</p>
-<h2>Submission Instructions</h2>
+<h2 id="submission-instructions">Submission Instructions</h2>
 <p>All assignments are submitted via GitHub Classroom. Click the "Accept Assignment" button on each assignment page to get started. This will create a personal repository where you'll complete your work.</p>
 <p><strong>Submission Process:</strong></p>
 <ol>
@@ -211,7 +234,7 @@
 <li>Commit and push your changes before the deadline</li>
 <li>Your latest commit before the deadline will be graded</li>
 </ol>
-<h2>Assignment Schedule</h2>
+<h2 id="assignment-schedule">Assignment Schedule</h2>
 <table>
 <thead><tr>
 <th>#</th>
@@ -265,34 +288,34 @@
 </tr>
 </tbody>
 </table>
-<h2>Late Policy</h2>
+<h2 id="late-policy">Late Policy</h2>
 <p>Assignments receive a 10% deduction for each week late, rounded up to the nearest whole week. The final project must be submitted on time.</p>
-<h2>Grading</h2>
+<h2 id="grading">Grading</h2>
 <p>Each assignment is graded on:</p>
 <ul>
 <li><strong>Correctness</strong>: Does your code produce the expected outputs?</li>
 <li><strong>Code Quality</strong>: Is your code well-organized and documented?</li>
 <li><strong>Understanding</strong>: Do your explanations demonstrate understanding of the concepts?</li>
 </ul>
-<h2>Getting Help</h2>
+<h2 id="getting-help">Getting Help</h2>
 <ul>
 <li><strong>Office Hours</strong>: By appointment</li>
 <li><strong>Discord</strong>: Join our class server for discussions</li>
 <li><strong>GitHub Issues</strong>: Report bugs or ask questions on the assignment repositories</li>
 </ul>
 <hr>
-<h2>Assignments</h2>
-<h3><a href="./assignment-1/">Assignment 1: ELIZA Chatbot</a></h3>
+<h2 id="assignments">Assignments</h2>
+<h3 id="assignment-1-eliza-chatbotassignment-1"><a href="./assignment-1/">Assignment 1: ELIZA Chatbot</a></h3>
 <p>Build a pattern-matching chatbot based on Weizenbaum's classic ELIZA program. Learn about string manipulation, regular expressions, and the foundations of conversational AI.</p>
-<h3><a href="./assignment-2/">Assignment 2: SPAM Classifier</a></h3>
+<h3 id="assignment-2-spam-classifierassignment-2"><a href="./assignment-2/">Assignment 2: SPAM Classifier</a></h3>
 <p>Develop a text classification system to identify spam messages. Explore feature engineering, tokenization, and evaluation metrics.</p>
-<h3><a href="./assignment-3/">Assignment 3: Wikipedia Embeddings</a></h3>
+<h3 id="assignment-3-wikipedia-embeddingsassignment-3"><a href="./assignment-3/">Assignment 3: Wikipedia Embeddings</a></h3>
 <p>Compare different text embedding methods on Wikipedia articles. Visualize semantic relationships and evaluate embedding quality.</p>
-<h3><a href="./assignment-4/">Assignment 4: Customer Service Chatbot</a></h3>
+<h3 id="assignment-4-customer-service-chatbotassignment-4"><a href="./assignment-4/">Assignment 4: Customer Service Chatbot</a></h3>
 <p>Create a context-aware customer service chatbot using transformer-based models. Implement retrieval and response generation.</p>
-<h3><a href="./assignment-5/">Assignment 5: Build GPT</a></h3>
+<h3 id="assignment-5-build-gptassignment-5"><a href="./assignment-5/">Assignment 5: Build GPT</a></h3>
 <p>Implement and train a small GPT model from scratch. Understand the transformer architecture, attention mechanisms, and autoregressive generation.</p>
-<h3><a href="./final-project/">Final Project: Research Project</a></h3>
+<h3 id="final-project-research-projectfinal-project"><a href="./final-project/">Final Project: Research Project</a></h3>
 <p>Conduct an independent research project applying concepts from the course. Present your findings to the class.</p>
     </main>
 

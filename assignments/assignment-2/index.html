@@ -157,6 +157,29 @@
         .content tr:hover {
             background: var(--surface-color);
         }
+        .content code {
+            background: var(--surface-color);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--primary-color);
+        }
+        .content pre {
+            background: var(--surface-color);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }
+        .content pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
         footer {
             background: var(--surface-color);
             border-top: 1px solid var(--border-color);
@@ -205,8 +228,8 @@
     <a href="https://classroom.github.com/a/ttYZnDoc" target="_blank" class="accept-btn" style="display: inline-block; background: var(--gradient-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='';this.style.boxShadow='';"><i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>Accept Assignment</a>
     <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">Due: January 23, 2026 at 11:59 PM EST</p>
 </div>
-<h1>Assignment 2: Advanced SPAM Classifier with Multi-Method Comparison</h1>
-<h2>Overview</h2>
+<h1 id="assignment-2-advanced-spam-classifier-with-multi-method-comparison">Assignment 2: Advanced SPAM Classifier with Multi-Method Comparison</h1>
+<h2 id="overview">Overview</h2>
 <p>Spam detection is one of the most successful and widely-deployed applications of machine learning. In this assignment, you will build a comprehensive spam classification system that not only achieves high performance but also provides deep insights into what makes spam detection work—and what makes it fail.</p>
 Unlike a simple "build a classifier" task, this assignment requires you to:
 <ol>
@@ -218,7 +241,7 @@ Unlike a simple "build a classifier" task, this assignment requires you to:
 </ol>
 This assignment mirrors real-world ML engineering: you'll make architecture decisions, justify trade-offs, and demonstrate that you understand not just how to build models, but why they work.
 <p><strong>Timeline:</strong> This assignment is designed to be completed in <strong>1 week (7 days)</strong> while remaining comprehensive in scope. By using GenAI tools to accelerate implementation, you can focus your time on the deeper analytical work—error analysis, robustness testing, and deriving insights—that separates excellent work from good work.
-<h2>Learning Objectives</h2></p>
+<h2 id="learning-objectives">Learning Objectives</h2></p>
 By completing this assignment, you will:
 <ul>
 <li>Understand the full pipeline of text classification from feature engineering to deployment</li>
@@ -228,8 +251,8 @@ By completing this assignment, you will:
 <li>Think adversarially about model robustness</li>
 <li>Make informed decisions about model selection based on performance/efficiency trade-offs</li>
 </ul>
-<h2>Dataset</h2>
-A sample dataset is provided (<a href="training.zip">`training.zip`</a>), consisting of two folders:
+<h2 id="dataset">Dataset</h2>
+A sample dataset is provided (<a href="training.zip"><code>training.zip</code></a>), consisting of two folders:
 <ul>
 <li><strong>spam/</strong>: Contains spam emails in plain text format.</li>
 <li><strong>ham/</strong>: Contains ham emails in plain text format.</li>
@@ -242,10 +265,10 @@ You can use this dataset to develop, train, and test your classifiers. When eval
 <li>Be aware of potential class imbalance and handle it appropriately</li>
 <li>Consider using stratified splitting to maintain class distributions</li>
 </ul>
-<h2>Required Components</h2>
-<h3>Part 1: Multiple Classifier Implementations (40 points)</h3>
+<h2 id="required-components">Required Components</h2>
+<h3 id="part-1-multiple-classifier-implementations-40-points">Part 1: Multiple Classifier Implementations (40 points)</h3>
 <p>You must implement and train <strong>at least three</strong> different classifiers:</p>
-<h4>1. Traditional ML Baseline (15 points)</h4>
+<h4 id="1-traditional-ml-baseline-15-points">1. Traditional ML Baseline (15 points)</h4>
 Implement <strong>two</strong> of the following with proper feature engineering:
 <ul>
 <li><strong>Naive Bayes</strong> with TF-IDF features</li>
@@ -266,7 +289,7 @@ For traditional methods, you must:
 <li>Domain-specific features: sender patterns, header information</li>
 <li>Character-level features for obfuscated spam</li>
 </ul>
-<h4>2. Neural/Transformer-Based Model (15 points)</h4>
+<h4 id="2-neuraltransformer-based-model-15-points">2. Neural/Transformer-Based Model (15 points)</h4>
 Implement at least one neural approach:
 <ul>
 <li><strong>Fine-tuned BERT</strong> (bert-base-uncased or distilbert-base-uncased)</li>
@@ -281,7 +304,7 @@ For neural methods, you must:
 <li>Handle sequence length appropriately (truncation/padding)</li>
 <li>Monitor for overfitting (training vs. validation curves)</li>
 </ul>
-<h4>3. Ensemble Method (10 points)</h4>
+<h4 id="3-ensemble-method-10-points">3. Ensemble Method (10 points)</h4>
 Create an ensemble that combines predictions from your best models:
 <ul>
 <li><strong>Voting ensemble</strong> (majority vote or weighted average)</li>
@@ -289,9 +312,9 @@ Create an ensemble that combines predictions from your best models:
 <li><strong>Boosting</strong> (if using multiple traditional classifiers)</li>
 </ul>
 Document your ensemble strategy and show whether it improves over individual models.
-<h3>Part 2: Comprehensive Evaluation (25 points)</h3>
+<h3 id="part-2-comprehensive-evaluation-25-points">Part 2: Comprehensive Evaluation (25 points)</h3>
 <p>For each classifier, you must report:</p>
-<h4>Quantitative Metrics (15 points)</h4>
+<h4 id="quantitative-metrics-15-points">Quantitative Metrics (15 points)</h4>
 <ul>
 <li><strong>Accuracy</strong>: Overall correctness</li>
 <li><strong>Precision</strong>: Of emails classified as spam, how many are actually spam?</li>
@@ -301,7 +324,7 @@ Document your ensemble strategy and show whether it improves over individual mod
 <li><strong>Confusion Matrix</strong>: Visualize true positives, false positives, true negatives, false negatives</li>
 </ul>
 <strong>Create a comparison table</strong> showing all metrics for all classifiers.
-<h4>Computational Efficiency (5 points)</h4>
+<h4 id="computational-efficiency-5-points">Computational Efficiency (5 points)</h4>
 For each model, measure and report:
 <ul>
 <li><strong>Training time</strong>: How long to train on the full dataset?</li>
@@ -310,15 +333,15 @@ For each model, measure and report:
 <li><strong>Throughput</strong>: Emails classified per second</li>
 </ul>
 This helps understand deployment trade-offs.
-<h4>Statistical Significance (5 points)</h4>
+<h4 id="statistical-significance-5-points">Statistical Significance (5 points)</h4>
 <ul>
 <li>Use <strong>cross-validation</strong> (at least 5-fold) to get confidence intervals</li>
 <li>Perform <strong>statistical tests</strong> to determine if one model significantly outperforms another</li>
 <li>Report means and standard deviations across folds</li>
 </ul>
-<h3>Part 3: Error Analysis (20 points)</h3>
+<h3 id="part-3-error-analysis-20-points">Part 3: Error Analysis (20 points)</h3>
 <p>This is where you demonstrate deep understanding:</p>
-<h4>Systematic Error Categorization (10 points)</h4>
+<h4 id="systematic-error-categorization-10-points">Systematic Error Categorization (10 points)</h4>
 <ol>
 <li><strong>Identify failure cases</strong>: Find at least 20 misclassified emails (10 false positives, 10 false negatives)</li>
 <li><strong>Categorize errors</strong>: Group them into patterns:
@@ -336,28 +359,28 @@ This helps understand deployment trade-offs.
 </ul>
 </li>
 </ol>
-<h4>Comparative Error Analysis (5 points)</h4>
+<h4 id="comparative-error-analysis-5-points">Comparative Error Analysis (5 points)</h4>
 <ul>
 <li>Do different models make different mistakes?</li>
 <li>Are neural models better at certain types of spam vs. traditional models?</li>
 <li>Where does the ensemble help most?</li>
 </ul>
-<h4>Feature Importance Analysis (5 points)</h4>
+<h4 id="feature-importance-analysis-5-points">Feature Importance Analysis (5 points)</h4>
 <ul>
 <li>For traditional models: What features are most predictive? (Use feature coefficients or SHAP values)</li>
 <li>For neural models: Use attention visualization or probing classifiers</li>
 <li>What words/patterns are most strongly associated with spam vs. ham?</li>
 </ul>
-<h3>Part 4: Adversarial Testing (10 points)</h3>
+<h3 id="part-4-adversarial-testing-10-points">Part 4: Adversarial Testing (10 points)</h3>
 <p>Test the robustness of your classifiers:</p>
-<h4>Create Adversarial Examples (5 points)</h4>
+<h4 id="create-adversarial-examples-5-points">Create Adversarial Examples (5 points)</h4>
 Manually craft at least <strong>5 emails</strong> that:
 <ul>
 <li>Should be classified as spam but try to evade detection</li>
 <li>Use techniques spammers actually use: character substitution (V1agra), adding legitimate text, etc.</li>
 </ul>
 Test these on all your classifiers. Which models are most robust?
-<h4>Robustness Analysis (5 points)</h4>
+<h4 id="robustness-analysis-5-points">Robustness Analysis (5 points)</h4>
 Test your classifier against:
 <ul>
 <li><strong>Typos and misspellings</strong>: Add random character swaps</li>
@@ -366,15 +389,15 @@ Test your classifier against:
 <li><strong>Content injection</strong>: Add benign text to spam emails</li>
 </ul>
 How much does performance degrade? Which models are most robust?
-<h3>Part 5: Real-World Considerations (5 points)</h3>
+<h3 id="part-5-real-world-considerations-5-points">Part 5: Real-World Considerations (5 points)</h3>
 <p>Discuss the following:</p>
-<h4>Class Imbalance (2 points)</h4>
+<h4 id="class-imbalance-2-points">Class Imbalance (2 points)</h4>
 <ul>
 <li>How did you handle class imbalance in training?</li>
 <li>What happens if spam/ham ratio changes in production?</li>
 <li>Should you use sampling techniques (SMOTE, undersampling)?</li>
 </ul>
-<h4>Deployment Scenarios (3 points)</h4>
+<h4 id="deployment-scenarios-3-points">Deployment Scenarios (3 points)</h4>
 Given different constraints, which model would you choose?
 <ul>
 <li><strong>Mobile email app</strong>: Needs fast inference, small model size</li>
@@ -382,23 +405,23 @@ Given different constraints, which model would you choose?
 <li><strong>Maximum accuracy</strong>: No constraints, best possible performance</li>
 </ul>
 Justify your recommendations with evidence from your experiments.
-<h2>Deliverables</h2>
+<h2 id="deliverables">Deliverables</h2>
 <p>Submit a <strong>single Jupyter notebook</strong> that includes:</p>
-<h3>1. Code Implementation</h3>
+<h3 id="1-code-implementation">1. Code Implementation</h3>
 <ul>
 <li>All classifier implementations with clear documentation</li>
 <li>Training and evaluation code</li>
 <li>Utility functions for metrics, visualization, etc.</li>
 <li>Must run in a clean Google Colab instance without errors</li>
 </ul>
-<h3>2. Markdown Documentation</h3>
+<h3 id="2-markdown-documentation">2. Markdown Documentation</h3>
 Your notebook must include well-written markdown sections:
-<h4>Introduction</h4>
+<h4 id="introduction">Introduction</h4>
 <ul>
 <li>Overview of your approach</li>
 <li>High-level architecture decisions</li>
 </ul>
-<h4>Methods</h4>
+<h4 id="methods">Methods</h4>
 For each classifier:
 <ul>
 <li>Architecture description</li>
@@ -406,25 +429,25 @@ For each classifier:
 <li>Hyperparameter selection process</li>
 <li>Training procedure</li>
 </ul>
-<h4>Results</h4>
+<h4 id="results">Results</h4>
 <ul>
 <li>Comparison table of all metrics</li>
 <li>Visualizations (confusion matrices, ROC curves, training curves)</li>
 <li>Statistical significance tests</li>
 </ul>
-<h4>Error Analysis</h4>
+<h4 id="error-analysis">Error Analysis</h4>
 <ul>
 <li>Categorization of failure cases</li>
 <li>Specific examples with explanations</li>
 <li>Insights about what makes spam detection difficult</li>
 </ul>
-<h4>Adversarial Testing</h4>
+<h4 id="adversarial-testing">Adversarial Testing</h4>
 <ul>
 <li>Description of adversarial examples you created</li>
 <li>Results of robustness tests</li>
 <li>Analysis of model vulnerabilities</li>
 </ul>
-<h4>Discussion</h4>
+<h4 id="discussion">Discussion</h4>
 <ul>
 <li>What did you learn about spam classification?</li>
 <li>Which approach worked best and why?</li>
@@ -432,22 +455,22 @@ For each classifier:
 <li>Recommendations for deployment scenarios</li>
 <li>Limitations of your approach</li>
 </ul>
-<h4>Reflection</h4>
+<h4 id="reflection">Reflection</h4>
 <ul>
 <li>What was challenging about this assignment?</li>
 <li>What would you do differently with more time/resources?</li>
 <li>What surprised you about the results?</li>
 </ul>
-<h3>3. Code Quality</h3>
+<h3 id="3-code-quality">3. Code Quality</h3>
 <ul>
 <li>Clean, readable code with meaningful variable names</li>
 <li>Comments explaining non-obvious logic</li>
 <li>Modular functions (not one giant cell)</li>
 <li>Reproducible results (set random seeds)</li>
 </ul>
-<h2>Grading Rubric (100 points total)</h2>
+<h2 id="grading-rubric-100-points-total">Grading Rubric (100 points total)</h2>
 <p>Your assignment will be graded according to the following breakdown:</p>
-<h3>Technical Implementation (40 points)</h3>
+<h3 id="technical-implementation-40-points">Technical Implementation (40 points)</h3>
 <ul>
 <li><strong>Traditional ML Models (15 points)</strong>
 <ul>
@@ -470,7 +493,7 @@ For each classifier:
 </ul>
 </li>
 </ul>
-<h3>Evaluation and Analysis (45 points)</h3>
+<h3 id="evaluation-and-analysis-45-points">Evaluation and Analysis (45 points)</h3>
 <ul>
 <li><strong>Quantitative Metrics (15 points)</strong>
 <ul>
@@ -500,25 +523,25 @@ For each classifier:
 </ul>
 </li>
 </ul>
-<h3>Adversarial Testing and Robustness (10 points)</h3>
+<h3 id="adversarial-testing-and-robustness-10-points">Adversarial Testing and Robustness (10 points)</h3>
 <ul>
 <li>Creation of meaningful adversarial examples (5 pts)</li>
 <li>Robustness testing across perturbations (3 pts)</li>
 <li>Thoughtful analysis of vulnerabilities (2 pts)</li>
 </ul>
-<h3>Real-World Considerations (5 points)</h3>
+<h3 id="real-world-considerations-5-points">Real-World Considerations (5 points)</h3>
 <ul>
 <li>Discussion of class imbalance handling (2 pts)</li>
 <li>Deployment scenario recommendations with justification (3 pts)</li>
 </ul>
-<h3>Documentation and Presentation (15 points)</h3>
+<h3 id="documentation-and-presentation-15-points">Documentation and Presentation (15 points)</h3>
 <ul>
 <li>Code quality: clean, readable, well-commented (5 pts)</li>
 <li>Markdown documentation: clear, thorough, well-organized (5 pts)</li>
 <li>Visualizations: informative and professional (3 pts)</li>
 <li>Reflection and insights: thoughtful and substantive (2 pts)</li>
 </ul>
-<h3>Bonus Points (up to 10 points)</h3>
+<h3 id="bonus-points-up-to-10-points">Bonus Points (up to 10 points)</h3>
 <ul>
 <li><strong>Exceptionally thorough analysis</strong> that goes beyond requirements (+5 pts)</li>
 <li><strong>Novel techniques or insights</strong> not covered in class (+5 pts)</li>
@@ -527,7 +550,7 @@ For each classifier:
 <li><strong>Interactive demo</strong> or visualization tool (+3 pts)</li>
 </ul>
 Note: Maximum score is capped at 110/100.
-<h2>Evaluation Metrics</h2>
+<h2 id="evaluation-metrics">Evaluation Metrics</h2>
 <p>While your grade is based on the rubric above, your model's performance will also be tested on a held-out dataset. This serves as a sanity check—if your models perform poorly (e.g., below 0.85 AUC), you may lose points even if other components are complete.</p>
 <strong>Expected Performance Benchmarks:</strong>
 <ul>
@@ -536,18 +559,17 @@ Note: Maximum score is capped at 110/100.
 <li><strong>Excellent performance</strong>: AUC > 0.96 on held-out data</li>
 </ul>
 The following code can be used to evaluate your classifiers during development:
-<p>```python
-import os
+<pre><code class="language-python">import os
 import zipfile
 import shutil
 from pathlib import Path
-from sklearn.metrics import roc<em>auc</em>score</p>
-<p>def evaluate<em>classifier(zip</em>path: str, classify<em>email</em>fn) -> float:
+from sklearn.metrics import roc<em>auc</em>score
+<p>def evaluate<em>classifier(zip</em>path: str, classify<em>email</em>fn) -&gt; float:
     """
     Evaluate a classifier's performance on a dataset contained in a zip archive.</p>
 <p>Parameters:
     zip_path (str): Path to the zip archive containing "spam" and "ham" folders.
-    classify<em>email</em>fn (function): A function handle to classify<em>email(email</em>text: str) -> int.</p>
+    classify<em>email</em>fn (function): A function handle to classify<em>email(email</em>text: str) -&gt; int.</p>
 <p>Returns:
     float: The AUC (Area Under the Curve) score of the classifier.
     """
@@ -587,15 +609,12 @@ from sklearn.metrics import roc<em>auc</em>score</p>
     if temp_extracted:
         print(f"Cleaning up extracted files from {dataset_dir}...")
         shutil.rmtree(dataset_dir)</p>
-<p>return auc_score
-```</p>
+<p>return auc_score</code></pre></p>
 <p>You can call this function in your notebook to evaluate individual models during development:
-```python
-auc<em>score = evaluate</em>classifier('training.zip', classify_email)
-print(f"Model AUC Score: {auc_score:.4f}")
-```</p>
-<h2>Tips for Success</h2>
-<h3>Complete Within 1 Week: Suggested Daily Schedule</h3>
+<pre><code class="language-python">auc<em>score = evaluate</em>classifier('training.zip', classify_email)
+print(f"Model AUC Score: {auc_score:.4f}")</code></pre></p>
+<h2 id="tips-for-success">Tips for Success</h2>
+<h3 id="complete-within-1-week-suggested-daily-schedule">Complete Within 1 Week: Suggested Daily Schedule</h3>
 While this assignment is comprehensive in scope, it's designed to be completable in <strong>7 days</strong>. Here's a suggested timeline (students can use GenAI to accelerate implementation):
 <ul>
 <li><strong>Day 1: Setup  |  Data Exploration</strong> - Extract data, perform EDA, create train/val/test splits</li>
@@ -607,13 +626,13 @@ While this assignment is comprehensive in scope, it's designed to be completable
 <li><strong>Day 7: Documentation  |  Polish</strong> - Write markdown sections, verify code runs cleanly, final review</li>
 </ul>
 <strong>Key to Success:</strong> Use GenAI coding assistants to accelerate boilerplate code and feature engineering, but invest your time in understanding results, analyzing errors, and writing insightful analysis.
-<h3>Use Version Control</h3>
+<h3 id="use-version-control">Use Version Control</h3>
 <ul>
 <li>Save different model versions as you experiment.</li>
 <li>Track what worked and what didn't in your notebook.</li>
 <li>Use meaningful names for models and experiments.</li>
 </ul>
-<h3>Leverage GenAI Tools Effectively (Critical for 1-Week Timeline)</h3>
+<h3 id="leverage-genai-tools-effectively-critical-for-1-week-timeline">Leverage GenAI Tools Effectively (Critical for 1-Week Timeline)</h3>
 Since this assignment must be completed in 7 days, <strong>using AI coding assistants is essential</strong> to accelerate implementation while you focus on the analytical components:
 <strong>DO use GenAI for:</strong>
 <ul>
@@ -632,21 +651,21 @@ Since this assignment must be completed in 7 days, <strong>using AI coding assis
 </ul>
 <strong>Workflow:</strong> Generate code scaffolds with GenAI, then spend your time on data exploration, result interpretation, error categorization, and insightful analysis. The best submissions show deep understanding of the <em>why</em>, not just the <em>how</em>.
 <p>The goal is to learn ML concepts deeply while shipping a complete, well-analyzed project in 7 days.</p>
-<h3>Feature Engineering Matters</h3>
+<h3 id="feature-engineering-matters">Feature Engineering Matters</h3>
 For traditional ML models:
 <ul>
 <li>Don't just use default TF-IDF—experiment with n-gram ranges, max features, min/max document frequency.</li>
 <li>Create custom features based on spam characteristics (URLs, special characters, etc.).</li>
 <li>Consider domain-specific patterns (e.g., "Click here", "Free money", etc.).</li>
 </ul>
-<h3>Monitor for Overfitting</h3>
+<h3 id="monitor-for-overfitting">Monitor for Overfitting</h3>
 <ul>
 <li>Always use a validation set separate from your training data.</li>
 <li>Plot training vs. validation curves for neural models.</li>
 <li>Use cross-validation for traditional models.</li>
 <li>If training accuracy >> validation accuracy, you're overfitting.</li>
 </ul>
-<h3>Debugging Poor Performance</h3>
+<h3 id="debugging-poor-performance">Debugging Poor Performance</h3>
 If your models aren't performing well:
 <ol>
 <li><strong>Check data quality</strong>: Are there mislabeled examples?</li>
@@ -655,48 +674,48 @@ If your models aren't performing well:
 <li><strong>Try simpler models first</strong>: Debug Naive Bayes before attempting BERT.</li>
 <li><strong>Check class balance</strong>: Are you predicting only the majority class?</li>
 </ol>
-<h3>Make Comparisons Fair</h3>
+<h3 id="make-comparisons-fair">Make Comparisons Fair</h3>
 <ul>
 <li>Use the same train/validation/test split for all models.</li>
 <li>Report all metrics (not just the best one).</li>
 <li>Don't cherry-pick results.</li>
 </ul>
-<h3>Document Everything</h3>
+<h3 id="document-everything">Document Everything</h3>
 <ul>
 <li>Future you (and the grader) will thank you for clear documentation.</li>
 <li>Explain why you made each decision, not just what you did.</li>
 <li>Include negative results—what didn't work and why?</li>
 </ul>
-<h2>Resources</h2>
-<h3>Spam Detection Research</h3>
+<h2 id="resources">Resources</h2>
+<h3 id="spam-detection-research">Spam Detection Research</h3>
 <ul>
 <li><a href="https://www.cs.cmu.edu/~tom/mlbook/NBayesSpam.pdf" target="_blank">Spam Filtering with Naive Bayes</a> - Classic paper on Naive Bayes for spam</li>
 <li><a href="https://arxiv.org/abs/1702.01804" target="_blank">Learning to Detect Phishing Emails</a> - Modern ML approaches</li>
 <li><a href="https://arxiv.org/abs/0912.0520" target="_blank">A Survey of Learning-Based Techniques of Email Spam Filtering</a> - Comprehensive overview</li>
 </ul>
-<h3>Transformer Fine-Tuning</h3>
+<h3 id="transformer-fine-tuning">Transformer Fine-Tuning</h3>
 <ul>
 <li><a href="https://huggingface.co/docs/transformers" target="_blank">Hugging Face Transformers Documentation</a> - Essential for BERT/DistilBERT</li>
 <li><a href="https://huggingface.co/docs/transformers/tasks/sequence_classification" target="_blank">Fine-tuning BERT for Text Classification</a></li>
 <li><a href="https://arxiv.org/abs/1910.01108" target="_blank">DistilBERT Paper</a> - Lighter, faster BERT variant</li>
 </ul>
-<h3>Evaluation and Metrics</h3>
+<h3 id="evaluation-and-metrics">Evaluation and Metrics</h3>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Precision<em>and</em>recall" target="_blank">Precision and Recall</a> - Understanding the trade-off</li>
 <li><a href="https://developers.google.com/machine-learning/crash-course/classification/roc-and-auc" target="_blank">ROC Curves and AUC</a></li>
 <li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html#confusion-matrix" target="_blank">Confusion Matrix Guide</a></li>
 </ul>
-<h3>Adversarial Robustness</h3>
+<h3 id="adversarial-robustness">Adversarial Robustness</h3>
 <ul>
 <li><a href="https://arxiv.org/abs/1801.07175" target="_blank">Adversarial Examples for Natural Language</a></li>
 <li><a href="https://github.com/QData/TextAttack" target="_blank">TextAttack: Framework for Adversarial Attacks</a></li>
 </ul>
-<h3>Handling Imbalanced Data</h3>
+<h3 id="handling-imbalanced-data">Handling Imbalanced Data</h3>
 <ul>
 <li><a href="https://www.jair.org/index.php/jair/article/view/10302" target="_blank">Learning from Imbalanced Data</a></li>
 <li><a href="https://arxiv.org/abs/1106.1813" target="_blank">SMOTE: Synthetic Minority Over-sampling</a></li>
 </ul>
-<h3>Python Libraries</h3>
+<h3 id="python-libraries">Python Libraries</h3>
 <ul>
 <li><strong>scikit-learn</strong>: Traditional ML, metrics, preprocessing</li>
 <li><strong>transformers</strong>: BERT, DistilBERT, RoBERTa</li>
@@ -705,15 +724,15 @@ If your models aren't performing well:
 <li><strong>nltk/spaCy</strong>: NLP preprocessing</li>
 <li><strong>imbalanced-learn</strong>: Handling class imbalance</li>
 </ul>
-<h3>Datasets (Optional Augmentation)</h3>
+<h3 id="datasets-optional-augmentation">Datasets (Optional Augmentation)</h3>
 <ul>
 <li><a href="https://spamassassin.apache.org/old/publiccorpus/" target="_blank">SpamAssassin Public Corpus</a></li>
 <li><a href="https://www.cs.cmu.edu/~enron/" target="_blank">Enron Email Dataset</a></li>
 <li><a href="https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset" target="_blank">SMS Spam Collection</a></li>
 </ul>
 If you use external datasets, you must cite them clearly in your notebook.
-<h2>Submission Guidelines</h2>
-<h3>GitHub Classroom Submission</h3>
+<h2 id="submission-guidelines">Submission Guidelines</h2>
+<h3 id="github-classroom-submission">GitHub Classroom Submission</h3>
 <p>This assignment is submitted via <strong>GitHub Classroom</strong>. Follow these steps:</p>
 <ol>
 <li><strong>Accept the assignment</strong>: Click the assignment link provided in Canvas or by your instructor
@@ -724,9 +743,7 @@ If you use external datasets, you must cite them clearly in your notebook.
 </li>
 <li><strong>Clone your repository</strong>: </li>
 </ol>
-   ```bash
-   git clone https://github.com/ContextLab/spam-classifier-llm-course-YOUR_USERNAME.git
-   ```
+<pre><code class="language-bash">   git clone https://github.com/ContextLab/spam-classifier-llm-course-YOUR_USERNAME.git</code></pre>
 <ol>
 <li><strong>Complete your work</strong>: 
 <ul>
@@ -736,37 +753,33 @@ If you use external datasets, you must cite them clearly in your notebook.
 </li>
 <li><strong>Commit and push your changes</strong>:</li>
 </ol>
-   ```bash
-   git add .
+<pre><code class="language-bash">   git add .
    git commit -m "Complete SPAM classifier assignment"
-   git push
-   ```
+   git push</code></pre>
 <ol>
 <li><strong>Verify submission</strong>: Check that your latest commit appears in your GitHub repository before the deadline</li>
 </ol>
 <strong>Deadline</strong>: January 23, 2026 at 11:59 PM EST
-<h3>What to Submit</h3>
+<h3 id="what-to-submit">What to Submit</h3>
 Submit <strong>one Jupyter notebook</strong> (.ipynb file) in your GitHub Classroom repository.
-<h3>Notebook Requirements</h3>
+<h3 id="notebook-requirements">Notebook Requirements</h3>
 Your notebook must:
 <ol>
 <li><strong>Run from top to bottom without errors</strong> in a clean Google Colab environment</li>
 <li><strong>Include all necessary code</strong> for training, evaluation, and analysis</li>
 <li><strong>Download any required data/models</strong> within the notebook (don't assume files are present)</li>
-<li><strong>Set random seeds</strong> for reproducibility (e.g., `np.random.seed(42)`)</li>
+<li><strong>Set random seeds</strong> for reproducibility (e.g., <code>np.random.seed(42)</code>)</li>
 <li><strong>Have a reasonable runtime</strong>: Full execution should complete in under 60 minutes on Colab (use DistilBERT instead of BERT-base to stay within this constraint)</li>
 </ol>
-<h3>Organization</h3>
+<h3 id="organization">Organization</h3>
 Structure your notebook with clear sections:
-```
-<ol>
-<li>Introduction and Setup
+<pre><code>1. Introduction and Setup
 <ul>
 <li>Import libraries</li>
 <li>Load data</li>
 <li>Exploratory data analysis</li>
 </ul>
-</li>
+<ol>
 <li>Data Preprocessing
 <ul>
 <li>Train/val/test split</li>
@@ -813,12 +826,11 @@ Structure your notebook with clear sections:
 <ul>
 <li>Papers cited</li>
 <li>Datasets used</li>
-<li>Resources consulted</li>
+<li>Resources consulted</code></pre></li>
 </ul>
 </li>
 </ol>
-```
-<h3>Formatting</h3>
+<h3 id="formatting">Formatting</h3>
 <ul>
 <li>Use <strong>descriptive markdown headers</strong> for each section</li>
 <li>Include <strong>explanatory text</strong> before code cells</li>
@@ -826,10 +838,10 @@ Structure your notebook with clear sections:
 <li>Create <strong>clear visualizations</strong> with titles and labels</li>
 <li>Use <strong>tables</strong> for metric comparisons</li>
 </ul>
-<h3>File Naming</h3>
-Name your file: `LastName<em>FirstName</em>Assignment2.ipynb`
-<p>Example: `Smith<em>Jane</em>Assignment2.ipynb`</p>
-<h3>Pre-Submission Checklist</h3>
+<h3 id="file-naming">File Naming</h3>
+Name your file: <code>LastName<em>FirstName</em>Assignment2.ipynb</code>
+<p>Example: <code>Smith<em>Jane</em>Assignment2.ipynb</code></p>
+<h3 id="pre-submission-checklist">Pre-Submission Checklist</h3>
 Before submitting, verify:
 <ul>
 <li><input type="checkbox" disabled> Notebook runs completely in a fresh Colab instance</li>
@@ -843,10 +855,10 @@ Before submitting, verify:
 <li><input type="checkbox" disabled> Citations are included for external resources</li>
 <li><input type="checkbox" disabled> File is named correctly</li>
 </ul>
-<h3>Deadline</h3>
+<h3 id="deadline">Deadline</h3>
 <strong>One week from assignment release</strong> (7 calendar days)
 <p>Late submissions will be penalized according to the course late policy.</p>
-<h2>Academic Integrity</h2>
+<h2 id="academic-integrity">Academic Integrity</h2>
 While you are encouraged to use AI coding assistants and discuss concepts with peers:
 <ul>
 <li><strong>Your submission must be your own work</strong></li>
@@ -855,7 +867,7 @@ While you are encouraged to use AI coding assistants and discuss concepts with p
 <li><strong>Cite all external resources</strong> (papers, datasets, significant code snippets)</li>
 </ul>
 You may be asked to explain your implementation decisions in office hours or during grading. Make sure you can justify your choices.
-<h2>Getting Help</h2>
+<h2 id="getting-help">Getting Help</h2>
 If you're stuck:
 <ol>
 <li><strong>Review the tips and resources</strong> in this document</li>
@@ -864,7 +876,7 @@ If you're stuck:
 <li><strong>Start simple</strong>: Get a basic version working before adding complexity</li>
 </ol>
 Remember: The goal is to learn about text classification, evaluation, and error analysis. Don't get lost in trying to achieve the highest possible score—focus on understanding the concepts deeply.
-<h2>Final Notes</h2>
+<h2 id="final-notes">Final Notes</h2>
 This assignment is designed to be challenging but achievable <strong>within 1 week</strong>. You're expected to:
 <ul>
 <li>Think critically about model selection and evaluation</li>

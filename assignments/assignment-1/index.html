@@ -157,6 +157,29 @@
         .content tr:hover {
             background: var(--surface-color);
         }
+        .content code {
+            background: var(--surface-color);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--primary-color);
+        }
+        .content pre {
+            background: var(--surface-color);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }
+        .content pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
         footer {
             background: var(--surface-color);
             border-top: 1px solid var(--border-color);
@@ -205,12 +228,12 @@
     <a href="https://classroom.github.com/a/SC1jeftp" target="_blank" class="accept-btn" style="display: inline-block; background: var(--gradient-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='';this.style.boxShadow='';"><i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>Accept Assignment</a>
     <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">Due: January 16, 2026 at 11:59 PM EST</p>
 </div>
-<h1>Assignment 1: Building the ELIZA Chatbot</h1>
-<h2>Overview</h2>
+<h1 id="assignment-1-building-the-eliza-chatbot">Assignment 1: Building the ELIZA Chatbot</h1>
+<h2 id="overview">Overview</h2>
 <p>In this assignment, you will build a simplified version of ELIZA, one of the earliest programs to mimic human conversation. Created by Joseph Weizenbaum at MIT in 1964-1966, ELIZA was designed to simulate a session with a non-directive (Rogerian) psychotherapist using simple pattern matching and string manipulation.</p>
 <p>But this assignment goes beyond just implementing a chatbot. You'll also analyze what makes ELIZA feel conversational despite its simplicity, compare it to modern chatbots, and reflect on the psychological phenomenon known as the "ELIZA effect"—the tendency for people to attribute human-like understanding to computer programs.</p>
 <p>This is your first assignment in the course, and it's designed to introduce you to fundamental concepts in natural language processing: pattern matching, text manipulation, rule-based systems, and the critical distinction between appearing intelligent and actually understanding language.
-<h3>Vibe coding is encouraged!</h3></p>
+<h3 id="vibe-coding-is-encouraged">Vibe coding is encouraged!</h3></p>
 <p>For this assignment, it is <em>possible</em> to code everything from scratch in the allotted assignment time (1 week). However, I strongly recommend that you use a coding agent to help you implement the core components. Some suggestions are provided <a href="#resources-and-references">below</a>. If you're already familiar with vibe coding, then feel free to use whatever approach you're comfortable with. If you're new to vibe coding, or if you'd like to try something different, what works well for me is:</p>
 <ol>
 <li>Start with a highly detailed description of <em>exactly</em> what you want your coding agent to make. I would suggest including the assignment as a reference file to provide additional instructions and context. But to increase the chances of <em>working</em> code, hallucinations, and other quality issues, you should explain as clearly as possible precisely what the core algorithms are, how the work should be approached, and so on. In order to create this document, it is critical that <em>you</em> have a detailed and comprehensive understanding of what the solution should look like. You don't necessarily need to know how to <em>code</em> it yourself (LLMs are fantastic at writing code), but you <em>do</em> need to know exactly what each function will do (i.e., what are the inputs, what are the outputs, and how can you convince yourself that it's working-- including tricky edge cases). It helps to include examples to illustrate how each component should work.</li>
@@ -218,7 +241,7 @@
 <li>Once you have your technical design document, the next step is to construct a detailed <strong>implementation plan</strong>. Given your <em>target</em> (i.e., your technical design document) ask your coding agent to draft a plan for how to implement it. You can use both the assignment instructions and your technical design document as context.  Since implementation plans can get lengthy, you may be pushing up against the context limits of your coding agent of choice. A nice "trick" is to break your task into smaller sub-tasks, and then use agents to do each sub-task. Then no single instance of the coding agent needs to store the full code base and plan in its context.  As with the technical design document, you should iterate until you are 100% happy with the plan.  Importantly, you should include in your plan a way of verifying that everything is working correctly.</li>
 <li>Then let your model "loose" on the problem and have it <strong>draft a solution</strong>.  Provide the assignment, technical design document, and implementation plan as context.  It's highly likely that the first solution your coding agent comes up with will be wrong in important ways-- it might not run, it might not do what you asked, you might have had a conceptual bug in your understanding that propagated to the model's solution, and so on.  That's where you should turn to the verification checks from your implementation plan.  In addition to making sure those checks "pass," you should also (when you're creating chatbots or other interactive applications, like in this assignment) <em>use it yourself</em>. Pretend you're <em>using</em> your chatbot (e.g., pretend you're me, and you're trying to stress test the implementation). Does the code behave like you expect? Does the code break down in unexpected ways? Does it break down in <em>expected</em> ways? Are there any pieces that you don't understand fully?</li>
 </ol>
-<h2>Learning Objectives</h2>
+<h2 id="learning-objectives">Learning Objectives</h2>
 <p>By completing this assignment, you will:</p>
 <ol>
 <li><strong>Implement a rule-based chatbot</strong> using pattern matching and text transformations</li>
@@ -229,11 +252,11 @@
 <li><strong>Reflect critically</strong> on what conversation actually requires vs. what creates the illusion of understanding</li>
 <li><strong>Appreciate historical context</strong> of early AI and its relevance to modern systems</li>
 </ol>
-<h2>Background</h2>
-<h3>The ELIZA Effect</h3>
+<h2 id="background">Background</h2>
+<h3 id="the-eliza-effect">The ELIZA Effect</h3>
 <p>When Weizenbaum first demonstrated ELIZA, he was shocked by people's reactions. His secretary, who watched him build the program, asked him to leave the room so she could talk to ELIZA privately. Users shared intimate details of their lives. Some refused to believe it was "just" a program following simple rules.</p>
 <p>This phenomenon—the tendency to attribute human-like understanding to computer systems based on their outputs—became known as the <strong>ELIZA effect</strong>. It's particularly relevant today as we interact with increasingly sophisticated chatbots and AI systems.</p>
-<h3>How ELIZA Works</h3>
+<h3 id="how-eliza-works">How ELIZA Works</h3>
 <p>Unlike modern chatbots that use machine learning, ELIZA operates purely through:</p>
 <ol>
 <li><strong>Pattern Matching</strong>: Identifying keywords and patterns in user input</li>
@@ -242,7 +265,7 @@
 <li><strong>Context-Free Operation</strong>: No memory, no learning, no real understanding</li>
 </ol>
 Despite this simplicity, ELIZA can create surprisingly convincing conversational experiences, especially when mimicking a Rogerian psychotherapist who reflects questions back to the patient.
-<h3>Why This Matters</h3>
+<h3 id="why-this-matters">Why This Matters</h3>
 Understanding ELIZA is crucial for understanding modern AI:
 <ul>
 <li>It demonstrates the difference between <strong>appearing intelligent</strong> and <strong>being intelligent</strong></li>
@@ -250,85 +273,77 @@ Understanding ELIZA is crucial for understanding modern AI:
 <li>It raises questions about what we mean by "understanding" and "conversation"</li>
 <li>It provides historical context for today's language models</li>
 </ul>
-<h2>Part 1: Implementation</h2>
+<h2 id="part-1-implementation">Part 1: Implementation</h2>
 <p>You will follow these steps to complete the assignment. Each part corresponds to specific functionality that the chatbot must have.</p>
-<h3>1. Read the Rules from a File</h3>
-The chatbot will use a predefined file (`instructions.txt`) containing patterns, synonyms, and rules for text manipulations. You will need to write code to read and parse this file into an appropriate data structure that your program can use for:
+<h3 id="1-read-the-rules-from-a-file">1. Read the Rules from a File</h3>
+The chatbot will use a predefined file (<code>instructions.txt</code>) containing patterns, synonyms, and rules for text manipulations. You will need to write code to read and parse this file into an appropriate data structure that your program can use for:
 <ul>
 <li>Greeting the user at the start and end of the conversation.</li>
 <li>Substituting text before and after pattern matching.</li>
 <li>Handling synonym substitutions.</li>
 <li>Matching user inputs to patterns and responding appropriately.</li>
 </ul>
-<h3>2. Start with a Greeting</h3>
-Once the chatbot starts, it should display one of the pre-defined greeting lines from the `instructions.txt` file. For example:
-```
-Welcome. What brings you here today?
-```
-<h3>3. Implement the Conversation Loop</h3>
-Your chatbot should repeatedly ask for user input and respond based on pattern matching until the user types a quit command. The conversation ends when the user enters one of the quit keywords specified in the instructions file (e.g., `bye`, `quit`).
-<h3>4. Pre-Substitutions</h3>
+<h3 id="2-start-with-a-greeting">2. Start with a Greeting</h3>
+Once the chatbot starts, it should display one of the pre-defined greeting lines from the <code>instructions.txt</code> file. For example:
+<pre><code>Welcome. What brings you here today?</code></pre>
+<h3 id="3-implement-the-conversation-loop">3. Implement the Conversation Loop</h3>
+Your chatbot should repeatedly ask for user input and respond based on pattern matching until the user types a quit command. The conversation ends when the user enters one of the quit keywords specified in the instructions file (e.g., <code>bye</code>, <code>quit</code>).
+<h3 id="4-pre-substitutions">4. Pre-Substitutions</h3>
 Before matching patterns, the chatbot should perform <strong>pre-substitutions</strong>. These substitutions map certain words to alternatives that are easier for the chatbot to handle. For example:
 <ul>
-<li>`dont` → `don't`</li>
-<li>`recollect` → `remember`</li>
+<li><code>dont</code> → <code>don't</code></li>
+<li><code>recollect</code> → <code>remember</code></li>
 </ul>
 You should implement a function that performs these substitutions on the user’s input before further processing.
-<h3>5. Synonym Handling</h3>
+<h3 id="5-synonym-handling">5. Synonym Handling</h3>
 Your chatbot should also handle <strong>synonym substitution</strong>. The rules file provides sets of synonyms that the chatbot should treat as equivalent for pattern matching purposes. For example, the words "sad", "unhappy", and "depressed" are considered synonymous.
 <p>You will need to implement synonym substitution, where the input is normalized before attempting to match any patterns. For example, if a user says, "I am unhappy," the chatbot should recognize that "unhappy" is synonymous with "sad."</p>
-<h3>6. Pattern Matching</h3>
-Your chatbot needs to match user input against a set of predefined patterns (as specified in the `instructions.txt` file). Patterns contain:
+<h3 id="6-pattern-matching">6. Pattern Matching</h3>
+Your chatbot needs to match user input against a set of predefined patterns (as specified in the <code>instructions.txt</code> file). Patterns contain:
 <ul>
 <li><strong>Decomposition rules</strong>: These define how to break down a sentence into components.</li>
 <li><strong>Reassembly rules</strong>: These dictate how to form a response based on the decomposed parts of the sentence.</li>
 </ul>
-For example, if the user says, "I feel sad," a decomposition rule might match `I feel *`, and a reassembly rule might respond with, "Why do you feel sad?"
+For example, if the user says, "I feel sad," a decomposition rule might match <code>I feel *</code>, and a reassembly rule might respond with, "Why do you feel sad?"
 You should:
 <ul>
 <li>Match user input to the most relevant pattern.</li>
 <li>Decompose the input according to the matched pattern.</li>
 <li>Reassemble the parts into a response.</li>
 </ul>
-<h3>7. Post-Substitutions</h3>
+<h3 id="7-post-substitutions">7. Post-Substitutions</h3>
 Once the chatbot has generated a response, it should perform <strong>post-substitutions</strong> to finalize the output. This step swaps certain words to ensure grammatical correctness. For example:
 <ul>
-<li>`i` → `you`</li>
-<li>`your` → `my`</li>
+<li><code>i</code> → <code>you</code></li>
+<li><code>your</code> → <code>my</code></li>
 </ul>
 For instance, if the user says, "I feel sad," and the chatbot's response is based on a pattern that reflects the user’s words back, the chatbot might generate, "Why do you feel sad?" It will then substitute "I" with "you" to respond with, "Why do you feel sad?"
-<h3>8. Generate Responses and Continue the Loop</h3>
+<h3 id="8-generate-responses-and-continue-the-loop">8. Generate Responses and Continue the Loop</h3>
 Once the chatbot generates a response, it should display the response and continue the conversation until the user types a quit command. The chatbot should have default responses if no patterns match the user input, such as:
-```
-I'm not sure I understand you fully. Can you elaborate?
-```
-<h3>9. Quit and Final Message</h3>
-When the user inputs one of the quit keywords (e.g., `bye` or `quit`), the chatbot should print a final message, like:
-```
-That will be $200. See you again next week.
-```
-<h3>Example Conversation</h3>
+<pre><code>I'm not sure I understand you fully. Can you elaborate?</code></pre>
+<h3 id="9-quit-and-final-message">9. Quit and Final Message</h3>
+When the user inputs one of the quit keywords (e.g., <code>bye</code> or <code>quit</code>), the chatbot should print a final message, like:
+<pre><code>That will be $200. See you again next week.</code></pre>
+<h3 id="example-conversation">Example Conversation</h3>
 <p>Your chatbot should handle a conversation like the following:</p>
-<p>```
-Chatbot: Welcome. What brings you here today?
+<pre><code>Chatbot: Welcome. What brings you here today?
 User: I am feeling sad.
 Chatbot: Why do you feel sad?
 User: I can't stop thinking about my family.
 Chatbot: Tell me more about your family.
 User: I have to go now.
-Chatbot: That will be $200. See you again next week.
-```</p>
-<h3>Implementation Requirements</h3>
+Chatbot: That will be $200. See you again next week.</code></pre>
+<h3 id="implementation-requirements">Implementation Requirements</h3>
 <ul>
-<li><strong>Initial and final messages</strong>: These must be drawn from the predefined options in <a href="instructions.txt">`instructions.txt`</a></li>
-<li><strong>Pre-substitutions, synonym handling, and post-substitutions</strong>: Must be implemented according to the rules in <a href="instructions.txt">`instructions.txt`</a></li>
-<li><strong>Pattern matching</strong>: Must use the decomposition and reassembly rules from <a href="instructions.txt">`instructions.txt`</a> to generate responses</li>
+<li><strong>Initial and final messages</strong>: These must be drawn from the predefined options in <a href="instructions.txt"><code>instructions.txt</code></a></li>
+<li><strong>Pre-substitutions, synonym handling, and post-substitutions</strong>: Must be implemented according to the rules in <a href="instructions.txt"><code>instructions.txt</code></a></li>
+<li><strong>Pattern matching</strong>: Must use the decomposition and reassembly rules from <a href="instructions.txt"><code>instructions.txt</code></a> to generate responses</li>
 <li><strong>Conversation loop</strong>: The chatbot must continue the conversation until the user types a quit word</li>
 <li><strong>Code quality</strong>: Well-organized, commented code with clear function/class structure</li>
 </ul>
-<h2>Part 2: Analysis and Exploration</h2>
+<h2 id="part-2-analysis-and-exploration">Part 2: Analysis and Exploration</h2>
 <p>Once your ELIZA implementation is working, conduct the following analyses to understand what makes it tick and where it breaks down.</p>
-<h3>1. Conversation Testing (Required)</h3>
+<h3 id="1-conversation-testing-required">1. Conversation Testing (Required)</h3>
 <p>Test your ELIZA on at least 5 different conversation scenarios:</p>
 <p>a) <strong>Typical therapy session</strong>: Discuss feelings, family, dreams (what ELIZA was designed for)</p>
 <p>b) <strong>Technical/factual questions</strong>: Ask about facts, math problems, or technical information</p>
@@ -342,7 +357,7 @@ For each conversation:
 <li>Identify specific patterns that matched (or failed to match)</li>
 <li>Note where ELIZA seems "intelligent" vs. where the illusion breaks</li>
 </ul>
-<h3>2. The ELIZA Effect Analysis (Required)</h3>
+<h3 id="2-the-eliza-effect-analysis-required">2. The ELIZA Effect Analysis (Required)</h3>
 <p>Reflect on the psychological aspects of interacting with ELIZA:</p>
 a) <strong>When does ELIZA feel human?</strong>
 <ul>
@@ -362,11 +377,11 @@ c) <strong>Modern parallels</strong>
 <li>What techniques do they use beyond pattern matching?</li>
 <li>Where do modern systems still exhibit "ELIZA-like" behaviors?</li>
 </ul>
-<h3>3. Pattern Analysis (Required)</h3>
+<h3 id="3-pattern-analysis-required">3. Pattern Analysis (Required)</h3>
 <p>Analyze ELIZA's rule system:</p>
 a) <strong>Pattern effectiveness</strong>
 <ul>
-<li>Which patterns in `instructions.txt` are most useful?</li>
+<li>Which patterns in <code>instructions.txt</code> are most useful?</li>
 <li>Which keywords have priority (higher rank numbers)?</li>
 <li>Why might certain patterns be prioritized over others?</li>
 </ul>
@@ -382,7 +397,7 @@ c) <strong>Substitution impact</strong>
 <li>Find examples where substitutions are critical</li>
 <li>What happens if substitutions are applied incorrectly?</li>
 </ul>
-<h3>4. Comparison with Modern Chatbots (Required)</h3>
+<h3 id="4-comparison-with-modern-chatbots-required">4. Comparison with Modern Chatbots (Required)</h3>
 <p>Compare your ELIZA implementation with a modern chatbot:</p>
 a) <strong>Choose a comparison system</strong>
 <ul>
@@ -402,7 +417,7 @@ c) <strong>Analysis</strong>
 <li>Are there any scenarios where ELIZA performs comparably?</li>
 <li>What's needed to bridge the gap from ELIZA to modern chatbots?</li>
 </ul>
-<h2>Part 3: Reflection and Insights (Required)</h2>
+<h2 id="part-3-reflection-and-insights-required">Part 3: Reflection and Insights (Required)</h2>
 <p>Write a thoughtful reflection (500-1000 words) addressing:</p>
 <ol>
 <li><strong>What is conversation?</strong>
@@ -434,9 +449,9 @@ c) <strong>Analysis</strong>
 </ul>
 </li>
 </ol>
-<h2>Part 4: Extensions (Optional Bonus)</h2>
+<h2 id="part-4-extensions-optional-bonus">Part 4: Extensions (Optional Bonus)</h2>
 <p>Choose one or more extensions to enhance your ELIZA:</p>
-<h3>Extension 1: Advanced Pattern Matching</h3>
+<h3 id="extension-1-advanced-pattern-matching">Extension 1: Advanced Pattern Matching</h3>
 Implement improved pattern matching using:
 <ul>
 <li><strong>Regular expressions</strong> instead of simple wildcards</li>
@@ -444,7 +459,7 @@ Implement improved pattern matching using:
 <li><strong>Named entity recognition</strong> to identify people, places, etc.</li>
 </ul>
 Compare the enhanced version with your original implementation.
-<h3>Extension 2: Emotional State Tracking</h3>
+<h3 id="extension-2-emotional-state-tracking">Extension 2: Emotional State Tracking</h3>
 Add a simple emotion tracking system:
 <ul>
 <li>Detect emotional words (happy, sad, angry, etc.)</li>
@@ -452,7 +467,7 @@ Add a simple emotion tracking system:
 <li>Adjust responses based on detected emotion</li>
 <li>Visualize emotional trajectory of the conversation</li>
 </ul>
-<h3>Extension 3: Conversation Analytics</h3>
+<h3 id="extension-3-conversation-analytics">Extension 3: Conversation Analytics</h3>
 Build analytics for ELIZA conversations:
 <ul>
 <li>Track which patterns match most frequently</li>
@@ -461,7 +476,7 @@ Build analytics for ELIZA conversations:
 <li>Detect when users disengage or get frustrated</li>
 </ul>
 Create visualizations of these metrics across multiple conversations.
-<h3>Extension 4: Simple Transformer Comparison</h3>
+<h3 id="extension-4-simple-transformer-comparison">Extension 4: Simple Transformer Comparison</h3>
 Implement a minimal transformer-based chatbot:
 <ul>
 <li>Fine-tune a small model (GPT-2, DistilGPT-2) on therapy conversations</li>
@@ -469,7 +484,7 @@ Implement a minimal transformer-based chatbot:
 <li>Analyze where each system excels</li>
 <li>Measure computational costs vs. performance gains</li>
 </ul>
-<h3>Extension 5: Hybrid System</h3>
+<h3 id="extension-5-hybrid-system">Extension 5: Hybrid System</h3>
 Create a hybrid system that combines:
 <ul>
 <li>ELIZA's pattern matching for structure</li>
@@ -478,49 +493,49 @@ Create a hybrid system that combines:
 <li>Memory of conversation context</li>
 </ul>
 Document design decisions and performance improvements.
-<h2>Deliverables</h2>
+<h2 id="deliverables">Deliverables</h2>
 <p>Submit a <strong>single Jupyter notebook</strong> that includes:</p>
-<h3>1. Implementation (40%)</h3>
+<h3 id="1-implementation-40">1. Implementation (40%)</h3>
 <ul>
 <li>Complete, working ELIZA chatbot implementation</li>
 <li>Clean, well-commented code</li>
-<li>Proper handling of all rule types from `instructions.txt`</li>
+<li>Proper handling of all rule types from <code>instructions.txt</code></li>
 <li>Markdown cells explaining your approach</li>
 </ul>
-<h3>2. Conversation Examples (20%)</h3>
+<h3 id="2-conversation-examples-20">2. Conversation Examples (20%)</h3>
 <ul>
 <li>At least 5 diverse conversation transcripts</li>
 <li>Analysis of each conversation</li>
 <li>Pattern matching explanations</li>
 <li>Examples of successes and failures</li>
 </ul>
-<h3>3. Analysis (25%)</h3>
+<h3 id="3-analysis-25">3. Analysis (25%)</h3>
 <ul>
 <li>ELIZA effect analysis</li>
 <li>Pattern effectiveness analysis</li>
 <li>Comparison with modern chatbot (with examples)</li>
 <li>Insights into why ELIZA works/fails</li>
 </ul>
-<h3>4. Reflection (10%)</h3>
+<h3 id="4-reflection-10">4. Reflection (10%)</h3>
 <ul>
 <li>Thoughtful 500-1000 word reflection</li>
 <li>Addresses all required questions</li>
 <li>Shows critical thinking about conversation and understanding</li>
 <li>Connects to modern AI systems</li>
 </ul>
-<h3>5. Presentation (5%)</h3>
+<h3 id="5-presentation-5">5. Presentation (5%)</h3>
 <ul>
 <li>Well-organized notebook structure</li>
 <li>Clear markdown explanations throughout</li>
 <li>Proper formatting and readability</li>
 <li>Runs without errors in Google Colab</li>
 </ul>
-<h3>Optional Bonus</h3>
+<h3 id="optional-bonus">Optional Bonus</h3>
 <ul>
 <li>Any extensions you implement (+5-15% extra credit depending on depth)</li>
 </ul>
-<h2>Evaluation Criteria</h2>
-<h3>Technical Implementation (40 points)</h3>
+<h2 id="evaluation-criteria">Evaluation Criteria</h2>
+<h3 id="technical-implementation-40-points">Technical Implementation (40 points)</h3>
 <ul>
 <li><strong>Core ELIZA functionality</strong> (25 pts): Correct implementation of all required components
 <ul>
@@ -533,32 +548,32 @@ Document design decisions and performance improvements.
 <li><strong>Code quality</strong> (10 pts): Organization, comments, clarity</li>
 <li><strong>Completeness</strong> (5 pts): All features working correctly</li>
 </ul>
-<h3>Conversation Examples and Testing (20 points)</h3>
+<h3 id="conversation-examples-and-testing-20-points">Conversation Examples and Testing (20 points)</h3>
 <ul>
 <li><strong>Diversity of tests</strong> (8 pts): Cover required scenarios thoroughly</li>
 <li><strong>Documentation</strong> (7 pts): Clear transcripts with analysis</li>
 <li><strong>Insights</strong> (5 pts): Thoughtful observations about pattern matching</li>
 </ul>
-<h3>Analysis (25 points)</h3>
+<h3 id="analysis-25-points">Analysis (25 points)</h3>
 <ul>
 <li><strong>ELIZA effect analysis</strong> (8 pts): Insightful examination of psychological aspects</li>
 <li><strong>Pattern analysis</strong> (7 pts): Understanding of rule system effectiveness</li>
 <li><strong>Modern comparison</strong> (10 pts): Fair, thorough comparison with analysis</li>
 </ul>
-<h3>Reflection (10 points)</h3>
+<h3 id="reflection-10-points">Reflection (10 points)</h3>
 <ul>
 <li><strong>Depth of thought</strong> (5 pts): Thoughtful engagement with big questions</li>
 <li><strong>Connections</strong> (3 pts): Links ELIZA to modern AI systems</li>
 <li><strong>Clarity</strong> (2 pts): Well-written and organized</li>
 </ul>
-<h3>Presentation (5 points)</h3>
+<h3 id="presentation-5-points">Presentation (5 points)</h3>
 <ul>
 <li><strong>Organization</strong> (2 pts): Logical structure and flow</li>
 <li><strong>Formatting</strong> (2 pts): Readable, well-formatted notebook</li>
 <li><strong>Completeness</strong> (1 pt): Runs without errors</li>
 </ul>
 <strong>Total: 100 points</strong> (plus potential bonus)
-<h3>Grading Scale</h3>
+<h3 id="grading-scale">Grading Scale</h3>
 <ul>
 <li><strong>A (90-100)</strong>: Excellent implementation with thorough analysis and insightful reflections</li>
 <li><strong>B (80-89)</strong>: Complete working implementation with good analysis</li>
@@ -566,33 +581,33 @@ Document design decisions and performance improvements.
 <li><strong>D (60-69)</strong>: Partial implementation or weak analysis</li>
 <li><strong>F (<60)</strong>: Incomplete or non-functional submission</li>
 </ul>
-<h2>Tips for Success</h2>
-<h3>Getting Started</h3>
+<h2 id="tips-for-success">Tips for Success</h2>
+<h3 id="getting-started">Getting Started</h3>
 <ol>
 <li><strong>Read Weizenbaum's paper first</strong>: Understanding the original design will help immensely</li>
 <li><strong>Start with simple patterns</strong>: Get basic matching working before tackling complex cases</li>
 <li><strong>Test incrementally</strong>: Don't write everything at once—test each component separately</li>
 <li><strong>Use print statements</strong>: Debug by printing what patterns match and why</li>
-<li><strong>Study `instructions.txt`</strong>: Understand the format before parsing it</li>
+<li><strong>Study <code>instructions.txt</code></strong>: Understand the format before parsing it</li>
 </ol>
-<h3>Common Pitfalls to Avoid</h3>
+<h3 id="common-pitfalls-to-avoid">Common Pitfalls to Avoid</h3>
 <ol>
 <li><strong>Incorrect pattern priority</strong>: Patterns with higher rank numbers should be checked first</li>
 <li><strong>Substitution order</strong>: Pre-substitutions before pattern matching, post-substitutions after</li>
-<li><strong>Wildcard matching</strong>: The `*` should match any sequence of words</li>
+<li><strong>Wildcard matching</strong>: The <code>*</code> should match any sequence of words</li>
 <li><strong>Synonym expansion</strong>: Remember to treat all synonyms as equivalent during matching</li>
 <li><strong>Reassembly</strong>: Captured groups should be properly reinserted in responses</li>
 <li><strong>Case sensitivity</strong>: Normalize case for matching but preserve it appropriately in output</li>
 </ol>
-<h3>Debugging Strategies</h3>
+<h3 id="debugging-strategies">Debugging Strategies</h3>
 <ol>
-<li><strong>Start tiny</strong>: Test with just 2-3 patterns before using the full `instructions.txt`</li>
+<li><strong>Start tiny</strong>: Test with just 2-3 patterns before using the full <code>instructions.txt</code></li>
 <li><strong>Print everything</strong>: Show which pattern matched and which reassembly was selected</li>
 <li><strong>Manual trace</strong>: Walk through a simple example by hand to verify logic</li>
 <li><strong>Edge cases</strong>: Test empty input, very long input, special characters</li>
 <li><strong>Compare outputs</strong>: Check your responses against online ELIZA implementations</li>
 </ol>
-<h3>Making Your Analysis Stand Out</h3>
+<h3 id="making-your-analysis-stand-out">Making Your Analysis Stand Out</h3>
 <ol>
 <li><strong>Be specific</strong>: Use concrete examples from your conversations</li>
 <li><strong>Think critically</strong>: Don't just describe—analyze why things work or fail</li>
@@ -600,7 +615,7 @@ Document design decisions and performance improvements.
 <li><strong>Be honest</strong>: It's okay to note limitations and struggles</li>
 <li><strong>Show creativity</strong>: Test ELIZA in interesting or unexpected ways</li>
 </ol>
-<h3>Time Management</h3>
+<h3 id="time-management">Time Management</h3>
 <p>This assignment is designed to be completed in <strong>one week (7 days)</strong>. While substantial, it is achievable within a week with focused effort. Here's a suggested daily breakdown:</p>
 <ul>
 <li><strong>Days 1-2</strong>: Implement core ELIZA functionality (pattern matching, pre/post-substitutions, synonym handling, conversation loop)</li>
@@ -609,8 +624,8 @@ Document design decisions and performance improvements.
 <li><strong>Day 7</strong>: Polish your notebook, test it in a fresh Colab session, and prepare for submission</li>
 </ul>
 <strong>Key tip</strong>: These phases can overlap! While implementing, you can begin testing. While analyzing, you can refine your implementation. The daily breakdown above represents the primary focus for each phase, but iterating and moving between phases is normal and expected. Start early in the week and test incrementally as you build each component.
-<h2>Resources and References</h2>
-<h3>Essential Reading</h3>
+<h2 id="resources-and-references">Resources and References</h2>
+<h3 id="essential-reading">Essential Reading</h3>
 <ol>
 <li><strong>Weizenbaum, J. (1966)</strong>. "ELIZA—A Computer Program For the Study of Natural Language Communication Between Man and Machine"
 <ul>
@@ -626,7 +641,7 @@ Document design decisions and performance improvements.
 </ul>
 </li>
 </ol>
-<h3>Additional Context</h3>
+<h3 id="additional-context">Additional Context</h3>
 <ol>
 <li><strong>Hofstadter, D. (1995)</strong>. "Fluid Concepts and Creative Analogies: Computer Models of the Fundamental Mechanisms of Thought"
 <ul>
@@ -641,7 +656,7 @@ Document design decisions and performance improvements.
 </ul>
 </li>
 </ol>
-<h3>Technical Resources</h3>
+<h3 id="technical-resources">Technical Resources</h3>
 <ul>
 <li><strong>ELIZA Online Implementations</strong>: Try online versions to see expected behavior
 <ul>
@@ -690,26 +705,26 @@ Document design decisions and performance improvements.
 </ul>
 </li>
 </ul>
-<h3>Modern Chatbot Comparisons</h3>
+<h3 id="modern-chatbot-comparisons">Modern Chatbot Comparisons</h3>
 <ul>
 <li><strong>ChatGPT</strong>: <a href="https://chat.openai.com" target="_blank">chat.openai.com</a> - For comparison testing</li>
 <li><strong>Claude</strong>: <a href="https://claude.ai" target="_blank">claude.ai</a> - Another modern system to compare</li>
 <li><strong>Replika</strong>: <a href="https://replika.com/" target="_blank">replika.com</a> - Example of modern "therapeutic" chatbot</li>
 <li><strong>Evergreen</strong>: <a href="https://evergreenai.dartmouth.edu/" target="_blank">evergreenai.dartmouth.edu</a> - Dartmouth's version of AI-powered therapy!</li>
 </ul>
-<h3>Course Materials</h3>
+<h3 id="course-materials">Course Materials</h3>
 <ul>
 <li><a href="https://context-lab.com/llm-course/#week1" target="_blank"><strong>Week 1 Lecture Slides</strong></a>: Review pattern matching and ELIZA discussion</li>
 <li><strong>Course Readings</strong>: <a href="https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf" target="_blank">Weizenbaum (1966)</a>, along with <a href="https://www.nature.com/articles/s41586-024-07522-w" target="_blank">Fedorenko et al. (2024)</a> and <a href="https://doi.org/10.1016/j.tics.2020.08.005" target="_blank">Lupyan et al. (2020)</a> on language and thought</li>
 </ul>
-<h3>Going Deeper (Optional)</h3>
+<h3 id="going-deeper-optional">Going Deeper (Optional)</h3>
 <ul>
 <li><a href="http://www.cse.buffalo.edu/~rapaport/Papers/Papers.by.Others/Searle/searle80-MindsBrainsProgs-BBS.pdf" target="_blank"><strong>Searle, J. (1980)</strong></a>. "Minds, Brains, and Programs" - The Chinese Room argument</li>
 <li><a href="https://ebiquity.umbc.edu/get/a/publication/1389.pdf" target="_blank"><strong>Turing, A. (1950)</strong></a>. "Computing Machinery and Intelligence" - The original Turing Test</li>
 <li><a href="https://aclanthology.org/2020.acl-main.463.pdf" target="_blank"><strong>Bender  |  Koller (2020)</strong></a>. "Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data"</li>
 </ul>
-<h2>Submission Guidelines</h2>
-<h3>GitHub Classroom Submission</h3>
+<h2 id="submission-guidelines">Submission Guidelines</h2>
+<h3 id="github-classroom-submission">GitHub Classroom Submission</h3>
 <p>This assignment is submitted via <strong>GitHub Classroom</strong>. Follow these steps:</p>
 <ol>
 <li><strong>Accept the assignment</strong>: Click the <a href="https://classroom.github.com/a/SC1jeftp" target="_blank">accept assignment link</a>
@@ -722,15 +737,15 @@ Document design decisions and performance improvements.
 <li><strong>Verify submission</strong>: Check that your latest commit appears in your GitHub repository before the deadline</li>
 </ol>
 <strong>Deadline</strong>: January 16, 2026 at 11:59 PM EST
-<h3>Notebook Requirements</h3>
+<h3 id="notebook-requirements">Notebook Requirements</h3>
 <ol>
 <li><strong>Runtime</strong>: The notebook must run from start to finish without errors in a fresh Colab session</li>
 <li><strong>Dependencies</strong>: Include all imports and installations in the notebook</li>
-<li><strong>Data</strong>: The `instructions.txt` file should be loaded in your notebook (upload to Colab or link to it)</li>
+<li><strong>Data</strong>: The <code>instructions.txt</code> file should be loaded in your notebook (upload to Colab or link to it)</li>
 <li><strong>Output</strong>: Keep cell outputs visible in your submission</li>
 <li><strong>Deadline</strong>: January 16, 2026 at 11:59PM EST</li>
 </ol>
-<h3>Before Submission Checklist</h3>
+<h3 id="before-submission-checklist">Before Submission Checklist</h3>
 <ul>
 <li><input type="checkbox" disabled> ELIZA implementation is complete and working</li>
 <li><input type="checkbox" disabled> All conversation examples are included with analysis</li>
@@ -743,7 +758,7 @@ Document design decisions and performance improvements.
 <li><input type="checkbox" disabled> Cell outputs are visible and meaningful</li>
 <li><input type="checkbox" disabled> Formatting is clean and professional</li>
 </ul>
-<h2>Academic Integrity</h2>
+<h2 id="academic-integrity">Academic Integrity</h2>
 You are encouraged to:
 <ul>
 <li>Use generative AI tools (ChatGPT, Claude, Copilot) to help write and debug code</li>
@@ -760,7 +775,7 @@ You must:
 <li>Submit original conversation examples and analysis</li>
 </ul>
 Violations of academic integrity will result in a failing grade for the assignment.
-<h2>Questions?</h2>
+<h2 id="questions">Questions?</h2>
 If you have questions about the assignment:
 <ol>
 <li>Review this README and the Weizenbaum paper</li>
