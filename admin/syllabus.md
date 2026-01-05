@@ -42,7 +42,7 @@ output: pdf
 | Instructor | Dr. Jeremy R. Manning |
 | Email | [jeremy@dartmouth.edu](mailto:jeremy@dartmouth.edu) |
 | Office location | 349 Moore Hall |
-| Office hours | By appointment |
+| Office hours | [By appointment](https://context-lab.youcanbook.me) |
 
 ## Course Description
 
