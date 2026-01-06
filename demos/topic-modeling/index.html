@@ -108,6 +108,24 @@
                         <span id="top-words-value">10</span>
                     </div>
 
+                    <!-- Analyze New Text -->
+                    <div id="analyze-section" class="control-section hidden">
+                        <h4>Analyze New Text</h4>
+                        <div class="example-select-group">
+                            <label>Try an example:</label>
+                            <select id="analyze-example-select">
+                                <option value="">-- Select Example --</option>
+                                <option value="tech">Technology article</option>
+                                <option value="sports">Sports article</option>
+                                <option value="science">Science article</option>
+                                <option value="history">History article</option>
+                            </select>
+                        </div>
+                        <textarea id="analyze-text" rows="4" placeholder="Enter text to analyze..."></textarea>
+                        <button id="analyze-text-btn" class="btn btn-secondary">Analyze Text</button>
+                        <div id="analyze-results" class="analyze-results hidden"></div>
+                    </div>
+
                     <!-- Export -->
                     <div class="control-section">
                         <h4>Export</h4>
@@ -260,6 +278,21 @@
                 barsContainer.innerHTML = '';
                 topicDetails.style.display = 'none';
             });
+
+            document.getElementById('analyze-text-btn').addEventListener('click', analyzeNewText);
+            
+            document.getElementById('analyze-example-select').addEventListener('change', (e) => {
+                const examples = {
+                    tech: 'Artificial intelligence and machine learning are transforming the technology industry. New neural network architectures enable computers to process natural language and recognize images with unprecedented accuracy. Cloud computing platforms provide the infrastructure for training these deep learning models.',
+                    sports: 'The championship basketball game went into overtime as the two teams battled for the title. Star players made crucial three-point shots in the final minutes. The coach called timeout to draw up a decisive play that would determine the winner.',
+                    science: 'Researchers discovered a new species of bacteria that can break down plastic waste in the ocean. The microorganisms produce enzymes that decompose polymer chains into harmless compounds. This breakthrough could help address the global pollution crisis affecting marine ecosystems.',
+                    history: 'The ancient Roman Empire expanded across Europe and the Mediterranean through military conquest and strategic alliances. Emperors built roads, aqueducts, and monuments that still stand today. The civilization influenced law, architecture, and language for centuries.'
+                };
+                const text = examples[e.target.value];
+                if (text) {
+                    document.getElementById('analyze-text').value = text;
+                }
+            });
         }
 
         function setupRangeSlider(sliderId, valueId) {
@@ -350,10 +383,16 @@
 
                 app.lda = new LDAModel(params);
                 app.currentResults = await app.lda.fit(app.currentDataset.documents);
+                app.visualizer.currentDataset = app.currentDataset;
 
                 updateTopicSelector();
                 updateStats();
                 switchView();
+
+                document.getElementById('analyze-section').classList.remove('hidden');
+                document.getElementById('analyze-results').classList.add('hidden');
+                document.getElementById('analyze-text').value = '';
+                document.getElementById('analyze-example-select').value = '';
 
                 document.getElementById('lda-status').textContent = 'LDA completed successfully!';
                 setTimeout(() => {
@@ -504,6 +543,48 @@
             if (text) {
                 document.getElementById('loading-text').textContent = text;
             }
+        }
+
+        function analyzeNewText() {
+            if (!app.lda || !app.currentResults) {
+                alert('Please run LDA first before analyzing new text');
+                return;
+            }
+
+            const text = document.getElementById('analyze-text').value.trim();
+            if (!text) {
+                alert('Please enter some text to analyze');
+                return;
+            }
+
+            const distribution = app.lda.predict(text);
+            const resultsDiv = document.getElementById('analyze-results');
+            
+            const sortedTopics = distribution
+                .map((score, idx) => ({ idx, score }))
+                .sort((a, b) => b.score - a.score);
+
+            const topicColors = app.visualizer.colors;
+            
+            let html = '<h5>Topic Distribution</h5><div class="doc-distribution-bars">';
+            sortedTopics.forEach(({ idx, score }) => {
+                const color = topicColors[idx % topicColors.length];
+                const topWords = app.currentResults.topics[idx].slice(0, 5).map(w => w.word).join(', ');
+                html += `
+                    <div class="dist-bar-row">
+                        <span class="dist-bar-label">Topic ${idx + 1}</span>
+                        <div class="dist-bar-track">
+                            <div class="dist-bar-fill" style="width: ${score * 100}%; background: ${color}"></div>
+                        </div>
+                        <span class="dist-bar-value">${(score * 100).toFixed(1)}%</span>
+                    </div>
+                    <div style="font-size: 0.8em; color: var(--text-secondary); margin: -5px 0 10px 80px;">${topWords}</div>
+                `;
+            });
+            html += '</div>';
+
+            resultsDiv.innerHTML = html;
+            resultsDiv.classList.remove('hidden');
         }
 
         window.app = app;
