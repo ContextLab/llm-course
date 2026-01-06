@@ -43,7 +43,16 @@ export class AttentionExtractor {
             const attentions = outputs.attentions;
 
             if (!attentions || attentions.length === 0) {
-                throw new Error('Model did not return attention weights. Make sure to use a model that supports attention output.');
+                // Most ONNX models don't export attention weights
+                // Generate simulated attention patterns for educational purposes
+                console.warn('Model did not return attention weights. Generating simulated patterns for demonstration.');
+                const simulatedAttentions = this.generateSimulatedAttention(inputs.input_ids);
+                return {
+                    attentions: simulatedAttentions,
+                    tokens: this.getTokens(inputs.input_ids),
+                    modelName: modelName,
+                    simulated: true
+                };
             }
 
             // Get tokens for display
@@ -271,5 +280,52 @@ export class AttentionExtractor {
         return attentionMatrix.map(row =>
             row.map(val => (val - min) / range)
         );
+    }
+
+    generateSimulatedAttention(inputIds) {
+        const seqLen = inputIds.dims ? inputIds.dims[1] : inputIds.data.length;
+        const numLayers = 6;
+        const numHeads = 8;
+        
+        const layers = [];
+        
+        for (let layer = 0; layer < numLayers; layer++) {
+            const heads = [];
+            
+            for (let head = 0; head < numHeads; head++) {
+                const matrix = [];
+                
+                for (let query = 0; query < seqLen; query++) {
+                    const row = [];
+                    let sum = 0;
+                    
+                    for (let key = 0; key < seqLen; key++) {
+                        let weight;
+                        
+                        if (head % 4 === 0) {
+                            weight = key <= query ? Math.exp(-0.5 * (query - key)) : 0.01;
+                        } else if (head % 4 === 1) {
+                            const dist = Math.abs(query - key);
+                            weight = Math.exp(-0.3 * dist);
+                        } else if (head % 4 === 2) {
+                            weight = (key === 0 || key === seqLen - 1) ? 2 : 0.5;
+                        } else {
+                            weight = 0.5 + Math.random() * 0.5;
+                        }
+                        
+                        row.push(weight);
+                        sum += weight;
+                    }
+                    
+                    matrix.push(row.map(w => w / sum));
+                }
+                
+                heads.push(matrix);
+            }
+            
+            layers.push(heads);
+        }
+        
+        return layers;
     }
 }

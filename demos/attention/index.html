@@ -233,6 +233,15 @@
                 document.getElementById('num-layers').textContent = numLayers;
                 document.getElementById('num-heads').textContent = numHeads;
                 modelInfo.style.display = 'block';
+                
+                if (result.simulated) {
+                    const warning = document.createElement('div');
+                    warning.className = 'demo-warning-banner';
+                    warning.innerHTML = '<strong>Note:</strong> Showing simulated attention patterns. Most ONNX models do not export attention weights.';
+                    const existingWarning = vizContent.querySelector('.demo-warning-banner');
+                    if (existingWarning) existingWarning.remove();
+                    vizContent.insertBefore(warning, vizContent.firstChild);
+                }
 
                 // Populate layer and head selectors
                 layerSelect.innerHTML = '';

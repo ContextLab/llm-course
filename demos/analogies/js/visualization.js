@@ -19,6 +19,10 @@ export class EmbeddingVisualizer {
      */
     renderVectorArithmetic(vectors, wordA, wordB, wordC, resultWord) {
         const container = document.getElementById('vector-plot');
+        if (!container) {
+            console.error('Vector plot container not found');
+            return;
+        }
 
         const vecA = vectors[wordA];
         const vecB = vectors[wordB];
@@ -165,6 +169,10 @@ export class EmbeddingVisualizer {
      */
     async renderEmbeddingSpace(model, mode, numWords, showLabels) {
         const container = document.getElementById('embedding-plot');
+        if (!container) {
+            console.error('Embedding plot container not found');
+            return;
+        }
 
         // Get random subset of words
         const words = model.getRandomWords(Math.min(numWords, model.vocabularySize));
@@ -245,6 +253,10 @@ export class EmbeddingVisualizer {
      */
     render2DVectorSpace(vectors, wordA, wordB, wordC, resultWord) {
         const container = document.getElementById('vector-plot');
+        if (!container) {
+            console.error('Vector plot container not found');
+            return;
+        }
 
         // Use PCA to project to 2D
         const words = [wordA, wordB, wordC, resultWord];
