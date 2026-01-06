@@ -240,6 +240,42 @@ def simple_respond(user_input):
 </div>
 
 ---
+# Let's build our first (very simple) chatbot!
+
+```python
+import re
+
+# response function: process user input and
+# respond appropriately
+def respond(user_input):
+  # look for "I am ___" patterns
+  i_am = re.search(r"I am (.*)", user_input, re.IGNORECASE)
+
+  # look for "You are ___" patterns
+  you_are = re.search(r"You are (.*)", user_input, re.IGNORECASE)
+
+  if i_am:
+    feeling = i_am.group(1)
+    return f"Why are you {feeling}?"
+  elif you_are:
+    trait = you_are.group(1)
+    return f"What makes you think I am {trait}?"
+  # add some more patterns!
+  else:    
+    return "Tell me more."
+# main loop: interact with user
+print("Bot: Hello! I'm here to listen. Type 'exit' to quit.")
+while True:
+  user_input = input("You: ")
+  if user_input.lower() in ["exit", "quit"]:
+    break
+  else: 
+    response = respond(user_input)
+  print("Bot:", response)
+print("Bot: Goodbye!")
+```
+
+---
 <!-- _class: scale-80 -->
 
 # Meet ELIZA: a computerized Rogerian therapist

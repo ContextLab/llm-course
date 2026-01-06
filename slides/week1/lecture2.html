@@ -934,7 +934,48 @@ Winter 2026</p>
 <span class="warning-text">The computer has no idea what "tired" or "anxious" mean. It's just copying text!</span>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-90" data-theme="cdl-theme" lang="en-US" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="lets-build-our-first-very-simple-chatbot">Let's build our first (very simple) chatbot!</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">import</span> <span class="hl-nn">re</span></span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"><span class="hl-c1"># response function: process user input and</span></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-c1"># respond appropriately</span></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"><span class="hl-k">def</span> <span class="hl-nf">respond</span><span class="hl-p">(</span><span class="hl-n">user_input</span><span class="hl-p">):</span></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">  <span class="hl-c1"># look for &quot;I am ___&quot; patterns</span></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">  <span class="hl-n">i_am</span> <span class="hl-o">=</span> <span class="hl-n">re</span><span class="hl-o">.</span><span class="hl-n">search</span><span class="hl-p">(</span><span class="hl-sa">r</span><span class="hl-s2">&quot;I am (.*)&quot;</span><span class="hl-p">,</span> <span class="hl-n">user_input</span><span class="hl-p">,</span> <span class="hl-n">re</span><span class="hl-o">.</span><span class="hl-n">IGNORECASE</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">  <span class="hl-c1"># look for &quot;You are ___&quot; patterns</span></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">  <span class="hl-n">you_are</span> <span class="hl-o">=</span> <span class="hl-n">re</span><span class="hl-o">.</span><span class="hl-n">search</span><span class="hl-p">(</span><span class="hl-sa">r</span><span class="hl-s2">&quot;You are (.*)&quot;</span><span class="hl-p">,</span> <span class="hl-n">user_input</span><span class="hl-p">,</span> <span class="hl-n">re</span><span class="hl-o">.</span><span class="hl-n">IGNORECASE</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">  <span class="hl-k">if</span> <span class="hl-n">i_am</span><span class="hl-p">:</span></span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">    <span class="hl-n">feeling</span> <span class="hl-o">=</span> <span class="hl-n">i_am</span><span class="hl-o">.</span><span class="hl-n">group</span><span class="hl-p">(</span><span class="hl-mi">1</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    <span class="hl-k">return</span> <span class="hl-sa">f</span><span class="hl-s2">&quot;Why are you </span><span class="hl-si">{</span><span class="hl-n">feeling</span><span class="hl-si">}</span><span class="hl-s2">?&quot;</span></span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">  <span class="hl-k">elif</span> <span class="hl-n">you_are</span><span class="hl-p">:</span></span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">    <span class="hl-n">trait</span> <span class="hl-o">=</span> <span class="hl-n">you_are</span><span class="hl-o">.</span><span class="hl-n">group</span><span class="hl-p">(</span><span class="hl-mi">1</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">    <span class="hl-k">return</span> <span class="hl-sa">f</span><span class="hl-s2">&quot;What makes you think I am </span><span class="hl-si">{</span><span class="hl-n">trait</span><span class="hl-si">}</span><span class="hl-s2">?&quot;</span></span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">  <span class="hl-c1"># add your own additional patterns!</span></span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">  <span class="hl-k">else</span><span class="hl-p">:</span>    </span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code">    <span class="hl-k">return</span> <span class="hl-s2">&quot;Tell me more.&quot;</span></span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="lets-build-our-first-very-simple-chatbot-1">Let's build our first (very simple) chatbot!</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="21">
+<span class="line"><span class="line-num">21</span><span class="line-code"><span class="hl-c1"># main loop: interact with user</span></span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code"><span class="hl-k">while</span> <span class="hl-kc">True</span><span class="hl-p">:</span></span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code">  <span class="hl-n">user_input</span> <span class="hl-o">=</span> <span class="hl-nb">input</span><span class="hl-p">(</span><span class="hl-s2">&quot;You: &quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">24</span><span class="line-code">  <span class="hl-k">if</span> <span class="hl-n">user_input</span><span class="hl-o">.</span><span class="hl-n">lower</span><span class="hl-p">()</span> <span class="hl-ow">in</span> <span class="hl-p">[</span><span class="hl-s2">&quot;exit&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;quit&quot;</span><span class="hl-p">]:</span></span></span>
+<span class="line"><span class="line-num">25</span><span class="line-code">    <span class="hl-k">break</span></span></span>
+<span class="line"><span class="line-num">26</span><span class="line-code">  <span class="hl-k">else</span><span class="hl-p">:</span> </span></span>
+<span class="line"><span class="line-num">27</span><span class="line-code">    <span class="hl-n">response</span> <span class="hl-o">=</span> <span class="hl-n">respond</span><span class="hl-p">(</span><span class="hl-n">user_input</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">28</span><span class="line-code">  <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-s2">&quot;Bot:&quot;</span><span class="hl-p">,</span> <span class="hl-n">response</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">29</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-s2">&quot;Bot: Goodbye!&quot;</span><span class="hl-p">)</span></span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="meet-eliza-a-computerized-rogerian-therapist">Meet ELIZA: a computerized Rogerian therapist</h1>
 <div class="note-box" data-title="Historical context">
 <p><strong>ELIZA</strong> was created by Joseph Weizenbaum at MIT in 1966. It was the first-ever interactive chatbot, and one of the first programs to attempt natural language processing. ELIZA plays the role of a Rogerian therapist, using simple pattern matching to simulate a conversation with a human patient.</p>
@@ -955,7 +996,7 @@ Winter 2026</p>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-90" data-theme="cdl-theme" lang="en-US" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-90" data-theme="cdl-theme" lang="en-US" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="chat-with-eliza">Chat with ELIZA</h1>
 <div class="example-box" data-title="Try it!">
 <p>Have a <a href="https://contextlab.github.io/llm-course/demos/eliza/">conversation with ELIZA</a>. Try putting yourself into the &quot;frame of mind&quot; of someone from the 1960s who had never experienced a chatbot before, and likely who had only had limited (if any) exposure to computers. Take on the role of a &quot;patient&quot; seeking help from ELIZA in its role as a therapist. Then use your own (modern) knowledge and experiences to see where ELIZA breaks down.</p>
@@ -970,7 +1011,7 @@ Winter 2026</p>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-70" data-theme="cdl-theme" lang="en-US" class="scale-70" style="--class:scale-70;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-70" data-theme="cdl-theme" lang="en-US" class="scale-70" style="--class:scale-70;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="example-eliza-conversation">Example ELIZA conversation</h1>
 <div style="display: flex; gap: 1em;">
 <div style="flex: 1;">
@@ -1018,7 +1059,7 @@ Winter 2026</p>
 </div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-eliza-effect">The ELIZA effect</h1>
 <div class="definition-box" data-title="The ELIZA effect">
 <p>The tendency to unconsciously assume that computer behaviors are analogous to human behaviors; to attribute human-like understanding to programs that merely simulate it.</p>
@@ -1027,7 +1068,7 @@ Winter 2026</p>
 <p>Weizenbaum was surprised (and disturbed) by how quickly users became emotionally involved with ELIZA. His secretary reportedly asked him to leave the room so she could have a private conversation with the program!</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="why-do-we-anthropomorphize-machines">Why do we anthropomorphize machines?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
@@ -1051,7 +1092,7 @@ Winter 2026</p>
 <p>Humans are social creatures. We evolved to detect minds and intentions, and we often over-apply this tendency, even to clearly non-conscious entities.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="discussion">Discussion</h1>
 <div class="note-box" data-title="Reflect on your own experiences">
 <p>Have <em>you</em> experienced the ELIZA effect with modern AI systems (ChatGPT, Claude, Siri, Alexa)?</p>
@@ -1064,7 +1105,7 @@ Winter 2026</p>
 <li>How would we <em>know</em> if an AI truly understood us?</li>
 </ul>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-78" data-theme="cdl-theme" lang="en-US" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-78" data-theme="cdl-theme" lang="en-US" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="example-the-eliza-effect-in-modern-ai">Example: The ELIZA effect in modern AI</h1>
 <div style="display: flex; gap: 1em;">
 <div style="flex: 1;">
@@ -1102,7 +1143,7 @@ Winter 2026</p>
 </div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="reading-weizenbaum-1966">Reading: Weizenbaum (1966)</h1>
 <div class="note-box" data-title="Required reading">
 <p><a href="https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf">Weizenbaum, J. (1966)</a>. ELIZA—A computer program for the study of natural language communication between man and machine. <em>Communications of the ACM</em>, 9(1), 36–45.</p>
@@ -1116,7 +1157,7 @@ Winter 2026</p>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="up-next">Up next</h1>
 <div class="note-box" data-title="Lecture 3 (Thursday X-hour)">
 <p><strong>How ELIZA <em>actually</em> works</strong></p>
@@ -1136,7 +1177,7 @@ Winter 2026</p>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="key-takeaways">Key takeaways</h1>
 <ol>
 <li><strong>String manipulation is foundational:</strong> all text-based AI builds on finding, replacing, and extracting patterns</li>
@@ -1146,7 +1187,7 @@ Winter 2026</p>
 <li><strong>Seeming <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo mathvariant="normal">≠</mo></mrow><annotation encoding="application/x-tex">\neq</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mrel">=</span></span></span></span></span> Being:</strong> appearing intelligent does not require actual understanding</li>
 </ol>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions-want-to-chat-more">Questions? Want to chat more?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
