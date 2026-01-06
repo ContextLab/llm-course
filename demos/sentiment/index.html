@@ -19,12 +19,45 @@
     <div class="hero-header">
         <div class="container">
             <h1 class="hero-title">Sentiment Analysis Dashboard</h1>
-            <p class="hero-subtitle">Real-time emotion detection with multiple models - Powered by 5000 real IMDB movie reviews</p>
+            <p class="hero-subtitle">Compare rule-based and neural network sentiment analysis in real-time</p>
         </div>
     </div>
     <div class="dashboard">
 
         <div class="container">
+            <!-- Educational Info Box -->
+            <div class="info-box educational-panel">
+                <p><strong>How do sentiment analysis models work?</strong> This demo compares two fundamentally different approaches:</p>
+                <div class="model-explanations">
+                    <details>
+                        <summary>Rule-Based (VADER-like)</summary>
+                        <div class="explanation-content">
+                            <p>Uses a <strong>sentiment lexicon</strong> with ~100+ words rated from -3 (very negative) to +3 (very positive).</p>
+                            <ul>
+                                <li><strong>Negation handling:</strong> "not good" → reverses sentiment</li>
+                                <li><strong>Intensifiers:</strong> "very good" → amplifies positive score</li>
+                                <li><strong>Diminishers:</strong> "somewhat good" → reduces intensity</li>
+                                <li><strong>Punctuation:</strong> Exclamation marks boost sentiment!</li>
+                            </ul>
+                            <p class="pros-cons"><span class="pro">✓ Fast, interpretable, no training needed</span> <span class="con">✗ Limited vocabulary, misses context</span></p>
+                        </div>
+                    </details>
+                    <details>
+                        <summary>Transformer (DistilBERT)</summary>
+                        <div class="explanation-content">
+                            <p>A <strong>neural network</strong> with 6 transformer layers, trained on the Stanford Sentiment Treebank (SST-2).</p>
+                            <ul>
+                                <li><strong>Contextual understanding:</strong> "The movie was not bad" understood as positive</li>
+                                <li><strong>Nuance detection:</strong> Handles sarcasm and complex sentences better</li>
+                                <li><strong>Pre-trained:</strong> Leverages knowledge from massive text corpora</li>
+                                <li><strong>Fine-tuned:</strong> Specifically trained for sentiment classification</li>
+                            </ul>
+                            <p class="pros-cons"><span class="pro">✓ ~90% accuracy, handles nuance</span> <span class="con">✗ Slower, requires download, less interpretable</span></p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
             <!-- Input Section -->
             <div class="card input-section">
                 <h2>Input Text</h2>
@@ -35,9 +68,23 @@
                 </div>
 
                 <div id="single-mode" class="input-mode">
+                    <div class="example-selector-row">
+                        <label for="example-select">Try an example:</label>
+                        <select id="example-select" class="example-select">
+                            <option value="">-- Select Example --</option>
+                            <option value="I absolutely love this product! It's amazing and works perfectly!">Very positive</option>
+                            <option value="This is the worst experience I've ever had. Completely disappointed.">Very negative</option>
+                            <option value="The weather is okay today, nothing special.">Neutral</option>
+                            <option value="The movie was good but the ending was disappointing.">Mixed (positive + negative)</option>
+                            <option value="Great customer service but the product quality could be better.">Mixed (contrast)</option>
+                            <option value="I don't hate it, but it's not great either.">Double negation</option>
+                            <option value="This is literally the best thing ever!!! 😍">Intensified + emoji</option>
+                            <option value="meh, it was whatever 🤷">Casual/slang</option>
+                        </select>
+                    </div>
                     <textarea id="text-input"
-                              placeholder="Type or paste text here for real-time sentiment analysis...&#10;&#10;Examples:&#10;- I absolutely love this product! It's amazing!&#10;- This is the worst experience I've ever had.&#10;- The weather is okay today."
-                              rows="6"></textarea>
+                              placeholder="Type or paste text here for real-time sentiment analysis...&#10;&#10;Or select an example above to see how each model handles different types of text."
+                              rows="5"></textarea>
                     <div class="character-count">
                         <span id="char-count">0</span> characters
                     </div>
@@ -67,123 +114,256 @@
                         <h3>IMDB Movie Reviews Dataset</h3>
                         <p class="dataset-info">
                             Analyze real movie reviews from the Internet Movie Database with pre-labeled sentiment.
+                            Compare how each model performs on real-world data.
                         </p>
-                        <div class="dataset-selection">
-                            <label class="dataset-option">
-                                <input type="radio" name="dataset-size" value="sample" checked>
-                                <div class="option-content">
-                                    <strong>Sample Dataset</strong>
-                                    <span>100 reviews - Fast loading and analysis</span>
-                                </div>
-                            </label>
-                            <label class="dataset-option">
-                                <input type="radio" name="dataset-size" value="full">
-                                <div class="option-content">
-                                    <strong>Full Dataset</strong>
-                                    <span>5000 reviews - Comprehensive analysis (slower)</span>
-                                </div>
-                            </label>
+                        <div class="review-count-control">
+                            <label for="review-count">Number of reviews to load:</label>
+                            <input type="number" id="review-count" min="1" max="5000" value="100" step="1">
+                            <span class="review-count-info">Enter 1-5000 reviews (more reviews = better accuracy measurement but slower)</span>
                         </div>
-                        <div class="batch-size-control">
-                            <label for="batch-size">Number of reviews to analyze:</label>
-                            <input type="number" id="batch-size" min="10" max="5000" value="100" step="10">
-                            <span class="batch-size-info">Analyzing more reviews provides better insights but takes longer</span>
+                        <button id="load-imdb-btn" class="load-btn">Load Reviews</button>
+                    </div>
+                    <div id="imdb-browser" style="display: none;">
+                        <div class="imdb-browser-header">
+                            <h3>Loaded Reviews <span id="loaded-count"></span></h3>
+                            <div class="imdb-filter-controls">
+                                <button class="filter-btn active" data-filter="all">All</button>
+                                <button class="filter-btn" data-filter="positive">Positive</button>
+                                <button class="filter-btn" data-filter="negative">Negative</button>
+                            </div>
+                            <div class="selection-info">
+                                <span id="selection-count">0</span> selected
+                                <button id="clear-selection-btn" class="btn-small">Clear</button>
+                                <button id="select-all-btn" class="btn-small">Select All Visible</button>
+                            </div>
                         </div>
-                        <button id="load-imdb-btn" class="load-btn">Load & Analyze Reviews</button>
+                        <div id="review-list" class="review-list">
+                            <!-- Reviews populated by JS -->
+                        </div>
+                        <div class="imdb-actions">
+                            <button id="analyze-selected-btn" class="analyze-btn">Analyze Selected Reviews</button>
+                            <button id="analyze-all-btn" class="analyze-btn secondary">Analyze All Loaded Reviews</button>
+                        </div>
                     </div>
-                    <div id="imdb-preview" style="display: none;">
-                        <h3>Dataset Loaded</h3>
-                        <div id="imdb-preview-content"></div>
-                    </div>
-                </div>
-
-                <div class="model-selection">
-                    <label>
-                        <input type="radio" name="model" value="rule-based" checked>
-                        Rule-Based (VADER-like)
-                    </label>
-                    <label>
-                        <input type="radio" name="model" value="transformer">
-                        Transformer (DistilBERT)
-                    </label>
-                    <label>
-                        <input type="checkbox" id="compare-models">
-                        Compare Models
-                    </label>
                 </div>
 
                 <button id="analyze-btn" class="analyze-btn">Analyze Sentiment</button>
             </div>
 
-            <!-- Results Section -->
+            <!-- Results Section - Always Side-by-Side -->
+            <div class="results-comparison">
+                <!-- Left Column: Rule-Based Model -->
+                <div class="model-results-column">
+                    <div class="model-header rule-based-header">
+                        <h2>Rule-Based (VADER-like)</h2>
+                        <span class="model-tag fast">Fast</span>
+                    </div>
+                    
+                    <!-- Sentiment Gauge -->
+                    <div class="card gauge-card">
+                        <h3>Overall Sentiment</h3>
+                        <div class="sentiment-gauge" id="sentiment-gauge-rules">
+                            <svg viewBox="0 0 200 120">
+                                <path id="gauge-bg-rules" d="M 20 100 A 80 80 0 0 1 180 100"
+                                      fill="none" stroke="#e0e0e0" stroke-width="20"/>
+                                <path class="gauge-negative" d="M 20 100 A 80 80 0 0 1 60 40"
+                                      fill="none" stroke="#ef4444" stroke-width="20"/>
+                                <path class="gauge-neutral" d="M 60 40 A 80 80 0 0 1 140 40"
+                                      fill="none" stroke="#94a3b8" stroke-width="20"/>
+                                <path class="gauge-positive" d="M 140 40 A 80 80 0 0 1 180 100"
+                                      fill="none" stroke="#22c55e" stroke-width="20"/>
+                                <line id="gauge-needle-rules" x1="100" y1="100" x2="100" y2="30"
+                                      stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+                                <circle cx="100" cy="100" r="8" fill="#1e293b"/>
+                            </svg>
+                            <div class="gauge-label">
+                                <span id="sentiment-label-rules" class="sentiment-neutral">Neutral</span>
+                                <span id="confidence-score-rules">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confidence Breakdown -->
+                    <div class="card">
+                        <h3>Confidence Breakdown</h3>
+                        <div class="confidence-bars">
+                            <div class="confidence-item">
+                                <div class="confidence-header">
+                                    <span class="sentiment-icon positive">😊</span>
+                                    <span>Positive</span>
+                                    <span id="positive-percent-rules" class="percent">0%</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div id="positive-bar-rules" class="bar positive-bar"></div>
+                                </div>
+                            </div>
+                            <div class="confidence-item">
+                                <div class="confidence-header">
+                                    <span class="sentiment-icon neutral">😐</span>
+                                    <span>Neutral</span>
+                                    <span id="neutral-percent-rules" class="percent">0%</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div id="neutral-bar-rules" class="bar neutral-bar"></div>
+                                </div>
+                            </div>
+                            <div class="confidence-item">
+                                <div class="confidence-header">
+                                    <span class="sentiment-icon negative">😞</span>
+                                    <span>Negative</span>
+                                    <span id="negative-percent-rules" class="percent">0%</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div id="negative-bar-rules" class="bar negative-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Distribution Chart (Batch) -->
+                    <div class="card distribution-card" id="distribution-card-rules" style="display: none;">
+                        <h3>Sentiment Distribution</h3>
+                        <div class="chart-wrapper-small">
+                            <canvas id="distribution-chart-rules"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Performance Metrics (IMDB) -->
+                    <div class="card metrics-card" id="metrics-card-rules" style="display: none;">
+                        <h3>Performance Metrics</h3>
+                        <div class="metrics-mini-grid">
+                            <div class="metric-mini">
+                                <span class="metric-label">Accuracy</span>
+                                <span id="accuracy-rules" class="metric-value">-</span>
+                            </div>
+                            <div class="metric-mini">
+                                <span class="metric-label">Precision</span>
+                                <span id="precision-rules" class="metric-value">-</span>
+                            </div>
+                            <div class="metric-mini">
+                                <span class="metric-label">Recall</span>
+                                <span id="recall-rules" class="metric-value">-</span>
+                            </div>
+                            <div class="metric-mini">
+                                <span class="metric-label">F1 Score</span>
+                                <span id="f1-rules" class="metric-value">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Transformer Model -->
+                <div class="model-results-column">
+                    <div class="model-header transformer-header">
+                        <h2>Transformer (DistilBERT)</h2>
+                        <span class="model-tag accurate">Accurate</span>
+                    </div>
+                    
+                    <!-- Sentiment Gauge -->
+                    <div class="card gauge-card">
+                        <h3>Overall Sentiment</h3>
+                        <div class="sentiment-gauge" id="sentiment-gauge-transformer">
+                            <svg viewBox="0 0 200 120">
+                                <path id="gauge-bg-transformer" d="M 20 100 A 80 80 0 0 1 180 100"
+                                      fill="none" stroke="#e0e0e0" stroke-width="20"/>
+                                <path class="gauge-negative" d="M 20 100 A 80 80 0 0 1 60 40"
+                                      fill="none" stroke="#ef4444" stroke-width="20"/>
+                                <path class="gauge-neutral" d="M 60 40 A 80 80 0 0 1 140 40"
+                                      fill="none" stroke="#94a3b8" stroke-width="20"/>
+                                <path class="gauge-positive" d="M 140 40 A 80 80 0 0 1 180 100"
+                                      fill="none" stroke="#22c55e" stroke-width="20"/>
+                                <line id="gauge-needle-transformer" x1="100" y1="100" x2="100" y2="30"
+                                      stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+                                <circle cx="100" cy="100" r="8" fill="#1e293b"/>
+                            </svg>
+                            <div class="gauge-label">
+                                <span id="sentiment-label-transformer" class="sentiment-neutral">Neutral</span>
+                                <span id="confidence-score-transformer">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confidence Breakdown -->
+                    <div class="card">
+                        <h3>Confidence Breakdown</h3>
+                        <div class="confidence-bars">
+                            <div class="confidence-item">
+                                <div class="confidence-header">
+                                    <span class="sentiment-icon positive">😊</span>
+                                    <span>Positive</span>
+                                    <span id="positive-percent-transformer" class="percent">0%</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div id="positive-bar-transformer" class="bar positive-bar"></div>
+                                </div>
+                            </div>
+                            <div class="confidence-item">
+                                <div class="confidence-header">
+                                    <span class="sentiment-icon neutral">😐</span>
+                                    <span>Neutral</span>
+                                    <span id="neutral-percent-transformer" class="percent">0%</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div id="neutral-bar-transformer" class="bar neutral-bar"></div>
+                                </div>
+                            </div>
+                            <div class="confidence-item">
+                                <div class="confidence-header">
+                                    <span class="sentiment-icon negative">😞</span>
+                                    <span>Negative</span>
+                                    <span id="negative-percent-transformer" class="percent">0%</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div id="negative-bar-transformer" class="bar negative-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Distribution Chart (Batch) -->
+                    <div class="card distribution-card" id="distribution-card-transformer" style="display: none;">
+                        <h3>Sentiment Distribution</h3>
+                        <div class="chart-wrapper-small">
+                            <canvas id="distribution-chart-transformer"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Performance Metrics (IMDB) -->
+                    <div class="card metrics-card" id="metrics-card-transformer" style="display: none;">
+                        <h3>Performance Metrics</h3>
+                        <div class="metrics-mini-grid">
+                            <div class="metric-mini">
+                                <span class="metric-label">Accuracy</span>
+                                <span id="accuracy-transformer" class="metric-value">-</span>
+                            </div>
+                            <div class="metric-mini">
+                                <span class="metric-label">Precision</span>
+                                <span id="precision-transformer" class="metric-value">-</span>
+                            </div>
+                            <div class="metric-mini">
+                                <span class="metric-label">Recall</span>
+                                <span id="recall-transformer" class="metric-value">-</span>
+                            </div>
+                            <div class="metric-mini">
+                                <span class="metric-label">F1 Score</span>
+                                <span id="f1-transformer" class="metric-value">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model Agreement Indicator -->
+            <div class="card model-agreement" id="model-agreement" style="display: none;">
+                <div id="agreement-content"></div>
+            </div>
+
+            <!-- Shared Results Section -->
             <div class="results-grid">
-                <!-- Sentiment Gauge -->
-                <div class="card gauge-card">
-                    <h2>Overall Sentiment</h2>
-                    <div class="sentiment-gauge" id="sentiment-gauge">
-                        <svg viewBox="0 0 200 120">
-                            <!-- Background arc -->
-                            <path id="gauge-bg" d="M 20 100 A 80 80 0 0 1 180 100"
-                                  fill="none" stroke="#e0e0e0" stroke-width="20"/>
-                            <!-- Colored segments -->
-                            <path id="gauge-negative" d="M 20 100 A 80 80 0 0 1 60 40"
-                                  fill="none" stroke="#ef4444" stroke-width="20"/>
-                            <path id="gauge-neutral" d="M 60 40 A 80 80 0 0 1 140 40"
-                                  fill="none" stroke="#94a3b8" stroke-width="20"/>
-                            <path id="gauge-positive" d="M 140 40 A 80 80 0 0 1 180 100"
-                                  fill="none" stroke="#22c55e" stroke-width="20"/>
-                            <!-- Needle -->
-                            <line id="gauge-needle" x1="100" y1="100" x2="100" y2="30"
-                                  stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
-                            <circle cx="100" cy="100" r="8" fill="#1e293b"/>
-                        </svg>
-                        <div class="gauge-label">
-                            <span id="sentiment-label">Neutral</span>
-                            <span id="confidence-score">0%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Confidence Breakdown -->
-                <div class="card">
-                    <h2>Confidence Breakdown</h2>
-                    <div class="confidence-bars">
-                        <div class="confidence-item">
-                            <div class="confidence-header">
-                                <span class="sentiment-icon positive">😊</span>
-                                <span>Positive</span>
-                                <span id="positive-percent" class="percent">0%</span>
-                            </div>
-                            <div class="bar-container">
-                                <div id="positive-bar" class="bar positive-bar"></div>
-                            </div>
-                        </div>
-                        <div class="confidence-item">
-                            <div class="confidence-header">
-                                <span class="sentiment-icon neutral">😐</span>
-                                <span>Neutral</span>
-                                <span id="neutral-percent" class="percent">0%</span>
-                            </div>
-                            <div class="bar-container">
-                                <div id="neutral-bar" class="bar neutral-bar"></div>
-                            </div>
-                        </div>
-                        <div class="confidence-item">
-                            <div class="confidence-header">
-                                <span class="sentiment-icon negative">😞</span>
-                                <span>Negative</span>
-                                <span id="negative-percent" class="percent">0%</span>
-                            </div>
-                            <div class="bar-container">
-                                <div id="negative-bar" class="bar negative-bar"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Word Contributions -->
                 <div class="card full-width">
                     <h2>Word-Level Sentiment Contribution</h2>
+                    <p class="word-contribution-note">Based on rule-based lexicon scores (transformer models don't provide word-level attribution)</p>
                     <div id="word-contribution" class="word-contribution">
                         <p class="placeholder">Analyze text to see word-level sentiment contributions</p>
                     </div>
@@ -220,21 +400,9 @@
                     </div>
                 </div>
 
-                <!-- Distribution Chart (for batch analysis) -->
-                <div class="card full-width" id="distribution-card" style="display: none;">
-                    <h2>Sentiment Distribution</h2>
-                    <canvas id="distribution-chart"></canvas>
-                </div>
-
-                <!-- Model Comparison -->
-                <div class="card full-width" id="comparison-card" style="display: none;">
-                    <h2>Model Comparison</h2>
-                    <div id="model-comparison" class="model-comparison"></div>
-                </div>
-
                 <!-- Batch Results Table -->
                 <div class="card full-width" id="batch-results-card" style="display: none;">
-                    <h2>Batch Results</h2>
+                    <h2>Detailed Results</h2>
                     <div class="batch-controls">
                         <button id="export-results" class="export-btn">Export Results</button>
                         <div class="filter-controls">
@@ -254,6 +422,37 @@
                     </div>
                     <div id="batch-results-table" class="batch-results"></div>
                 </div>
+
+                <!-- Confusion Matrix (IMDB) -->
+                <div class="card full-width" id="confusion-matrix-card" style="display: none;">
+                    <h2>Confusion Matrix Comparison</h2>
+                    <div class="confusion-matrix-comparison">
+                        <div class="matrix-column">
+                            <h4>Rule-Based</h4>
+                            <table class="matrix-table" id="matrix-rules">
+                                <thead>
+                                    <tr><th></th><th>Pred +</th><th>Pred -</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><th>Actual +</th><td class="tp" id="tp-rules">-</td><td class="fn" id="fn-rules">-</td></tr>
+                                    <tr><th>Actual -</th><td class="fp" id="fp-rules">-</td><td class="tn" id="tn-rules">-</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="matrix-column">
+                            <h4>Transformer</h4>
+                            <table class="matrix-table" id="matrix-transformer">
+                                <thead>
+                                    <tr><th></th><th>Pred +</th><th>Pred -</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><th>Actual +</th><td class="tp" id="tp-transformer">-</td><td class="fn" id="fn-transformer">-</td></tr>
+                                    <tr><th>Actual -</th><td class="fp" id="fp-transformer">-</td><td class="tn" id="tn-transformer">-</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -272,9 +471,13 @@
 
         const analyzer = new SentimentAnalyzer();
         let batchData = [];
-        let currentResults = [];
+        let currentResults = { rules: [], transformer: [] };
         let imdbData = [];
-        let loadedDatasetSize = null;
+        let selectedReviews = new Set();
+
+        // Chart instances
+        let chartRules = null;
+        let chartTransformer = null;
 
         // UI Elements
         const textInput = document.getElementById('text-input');
@@ -284,9 +487,19 @@
         const fileDropZone = document.getElementById('file-drop-zone');
         const csvFileInput = document.getElementById('csv-file');
         const loadingOverlay = document.getElementById('loading-overlay');
-        const compareModelsCheckbox = document.getElementById('compare-models');
+        const exampleSelect = document.getElementById('example-select');
         const loadImdbBtn = document.getElementById('load-imdb-btn');
-        const batchSizeInput = document.getElementById('batch-size');
+        const reviewCountInput = document.getElementById('review-count');
+
+        // Example selector
+        exampleSelect.addEventListener('change', (e) => {
+            if (e.target.value) {
+                textInput.value = e.target.value;
+                charCount.textContent = e.target.value.length;
+                // Trigger analysis
+                analyzeBothModels(e.target.value);
+            }
+        });
 
         // Mode switching
         modeBtns.forEach(btn => {
@@ -302,9 +515,14 @@
                 document.getElementById('imdb-mode').style.display =
                     mode === 'imdb' ? 'block' : 'none';
 
+                // Show/hide analyze button based on mode
+                analyzeBtn.style.display = mode === 'imdb' ? 'none' : 'block';
+
                 // Reset results
                 document.getElementById('batch-results-card').style.display = 'none';
-                document.getElementById('distribution-card').style.display = 'none';
+                hideDistributionCharts();
+                hideMetricsCards();
+                document.getElementById('confusion-matrix-card').style.display = 'none';
             });
         });
 
@@ -313,7 +531,7 @@
             charCount.textContent = e.target.value.length;
         });
 
-        // File upload
+        // File upload handling
         fileDropZone.addEventListener('click', () => csvFileInput.click());
 
         fileDropZone.addEventListener('dragover', (e) => {
@@ -354,7 +572,6 @@
             const dataLines = hasHeader ? lines.slice(1) : lines;
 
             return dataLines.map(line => {
-                // Simple CSV parsing (handle quotes)
                 const match = line.match(/^"?([^"]*)"?$/);
                 return match ? match[1].trim() : line.trim();
             }).filter(text => text.length > 0);
@@ -365,11 +582,8 @@
             const content = document.getElementById('preview-content');
 
             preview.style.display = 'block';
-
-            // Clear existing content
             content.innerHTML = '';
 
-            // Add count
             const countP = document.createElement('p');
             const strong = document.createElement('strong');
             strong.textContent = data.length;
@@ -377,7 +591,6 @@
             countP.appendChild(document.createTextNode(' texts loaded'));
             content.appendChild(countP);
 
-            // Add preview items
             const previewDiv = document.createElement('div');
             previewDiv.className = 'preview-items';
 
@@ -401,43 +614,30 @@
 
         // IMDB Dataset Loading
         loadImdbBtn.addEventListener('click', async () => {
-            const datasetSize = document.querySelector('input[name="dataset-size"]:checked').value;
-            const batchSize = parseInt(batchSizeInput.value);
-
-            await loadImdbDataset(datasetSize, batchSize);
-        });
-
-        async function loadImdbDataset(size, numReviews) {
-            const filename = size === 'sample' ? 'imdb-sample.json' : 'imdb-reviews.json';
-            const maxReviews = size === 'sample' ? 100 : 5000;
-
-            // Validate batch size
-            if (numReviews > maxReviews) {
-                alert(`The ${size} dataset only has ${maxReviews} reviews. Please select a smaller number.`);
-                batchSizeInput.value = maxReviews;
+            const numReviews = parseInt(reviewCountInput.value);
+            if (numReviews < 1 || numReviews > 5000) {
+                alert('Please enter a number between 1 and 5000');
                 return;
             }
+            await loadImdbDataset(numReviews);
+        });
 
-            showLoading(`Loading ${size} IMDB dataset (${numReviews} reviews)...`);
+        async function loadImdbDataset(numReviews) {
+            showLoading(`Loading ${numReviews} IMDB reviews...`);
 
             try {
-                const response = await fetch(`data/${filename}`);
+                const response = await fetch('data/imdb-reviews.json');
                 if (!response.ok) {
                     throw new Error(`Failed to load dataset: ${response.statusText}`);
                 }
 
                 const allReviews = await response.json();
-
-                // Shuffle and take requested number of reviews
                 const shuffled = allReviews.sort(() => Math.random() - 0.5);
                 imdbData = shuffled.slice(0, numReviews);
-                loadedDatasetSize = size;
+                selectedReviews.clear();
 
-                showImdbPreview(imdbData, size);
-
-                // Automatically start analysis
-                const selectedModel = document.querySelector('input[name="model"]:checked').value;
-                await analyzeImdbBatch(imdbData, selectedModel);
+                showImdbBrowser(imdbData);
+                hideLoading();
 
             } catch (error) {
                 console.error('Error loading IMDB dataset:', error);
@@ -446,80 +646,127 @@
             }
         }
 
-        function showImdbPreview(data, size) {
-            const preview = document.getElementById('imdb-preview');
-            const content = document.getElementById('imdb-preview-content');
+        function showImdbBrowser(reviews) {
+            const browser = document.getElementById('imdb-browser');
+            const loadedCount = document.getElementById('loaded-count');
+            const reviewList = document.getElementById('review-list');
 
-            const positiveCount = data.filter(r => r.sentiment === 'positive').length;
-            const negativeCount = data.filter(r => r.sentiment === 'negative').length;
+            browser.style.display = 'block';
+            loadedCount.textContent = `(${reviews.length} reviews)`;
 
-            preview.style.display = 'block';
-            content.innerHTML = '';
+            // Clear and populate review list
+            reviewList.innerHTML = '';
+            reviews.forEach((review, index) => {
+                const item = document.createElement('div');
+                item.className = `review-item ${review.sentiment}`;
+                item.dataset.index = index;
+                item.innerHTML = `
+                    <div class="review-checkbox">
+                        <input type="checkbox" id="review-${index}">
+                    </div>
+                    <div class="review-content">
+                        <span class="review-label ${review.sentiment}">${review.sentiment}</span>
+                        <p class="review-text">${review.text.substring(0, 150)}${review.text.length > 150 ? '...' : ''}</p>
+                    </div>
+                `;
 
-            // Dataset stats
-            const statsDiv = document.createElement('div');
-            statsDiv.className = 'dataset-stats';
+                item.addEventListener('click', (e) => {
+                    if (e.target.type !== 'checkbox') {
+                        const checkbox = item.querySelector('input[type="checkbox"]');
+                        checkbox.checked = !checkbox.checked;
+                    }
+                    toggleReviewSelection(index);
+                });
 
-            const statsP = document.createElement('p');
-            const statsStrong = document.createElement('strong');
-            statsStrong.textContent = data.length;
-            statsP.appendChild(statsStrong);
-            statsP.appendChild(document.createTextNode(` reviews loaded from ${size === 'sample' ? '100-review sample' : 'full 5000-review dataset'}`));
-            statsDiv.appendChild(statsP);
-
-            const distDiv = document.createElement('div');
-            distDiv.className = 'label-distribution';
-
-            const posSpan = document.createElement('span');
-            posSpan.className = 'label-stat positive';
-            posSpan.textContent = `Positive: ${positiveCount} (${Math.round(positiveCount/data.length*100)}%)`;
-            distDiv.appendChild(posSpan);
-
-            const negSpan = document.createElement('span');
-            negSpan.className = 'label-stat negative';
-            negSpan.textContent = `Negative: ${negativeCount} (${Math.round(negativeCount/data.length*100)}%)`;
-            distDiv.appendChild(negSpan);
-
-            statsDiv.appendChild(distDiv);
-            content.appendChild(statsDiv);
-
-            // Sample reviews
-            const previewDiv = document.createElement('div');
-            previewDiv.className = 'preview-items';
-
-            const h4 = document.createElement('h4');
-            h4.textContent = 'Sample Reviews:';
-            previewDiv.appendChild(h4);
-
-            data.slice(0, 3).forEach((review, i) => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'preview-item';
-
-                const strong = document.createElement('strong');
-                strong.textContent = `${i + 1}. [${review.sentiment.toUpperCase()}]`;
-                itemDiv.appendChild(strong);
-                itemDiv.appendChild(document.createElement('br'));
-
-                const truncated = review.text.length > 150 ? review.text.substring(0, 150) + '...' : review.text;
-                itemDiv.appendChild(document.createTextNode(truncated));
-
-                previewDiv.appendChild(itemDiv);
+                reviewList.appendChild(item);
             });
 
-            content.appendChild(previewDiv);
+            updateSelectionCount();
+
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    filterReviews(btn.dataset.filter);
+                });
+            });
         }
 
-        async function analyzeImdbBatch(reviews, model) {
-            showLoading(`Analyzing ${reviews.length} IMDB reviews...`);
-            currentResults = [];
+        function filterReviews(filter) {
+            const items = document.querySelectorAll('.review-item');
+            items.forEach(item => {
+                if (filter === 'all') {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = item.classList.contains(filter) ? 'flex' : 'none';
+                }
+            });
+        }
+
+        function toggleReviewSelection(index) {
+            if (selectedReviews.has(index)) {
+                selectedReviews.delete(index);
+            } else {
+                selectedReviews.add(index);
+            }
+            updateSelectionCount();
+        }
+
+        function updateSelectionCount() {
+            document.getElementById('selection-count').textContent = selectedReviews.size;
+        }
+
+        document.getElementById('clear-selection-btn').addEventListener('click', () => {
+            selectedReviews.clear();
+            document.querySelectorAll('.review-item input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateSelectionCount();
+        });
+
+        document.getElementById('select-all-btn').addEventListener('click', () => {
+            document.querySelectorAll('.review-item').forEach(item => {
+                if (item.style.display !== 'none') {
+                    const index = parseInt(item.dataset.index);
+                    selectedReviews.add(index);
+                    item.querySelector('input[type="checkbox"]').checked = true;
+                }
+            });
+            updateSelectionCount();
+        });
+
+        document.getElementById('analyze-selected-btn').addEventListener('click', async () => {
+            if (selectedReviews.size === 0) {
+                alert('Please select at least one review');
+                return;
+            }
+            const selectedData = Array.from(selectedReviews).map(i => imdbData[i]);
+            await analyzeImdbBatch(selectedData);
+        });
+
+        document.getElementById('analyze-all-btn').addEventListener('click', async () => {
+            await analyzeImdbBatch(imdbData);
+        });
+
+        async function analyzeImdbBatch(reviews) {
+            showLoading(`Analyzing ${reviews.length} reviews with both models...`);
+            currentResults = { rules: [], transformer: [] };
 
             try {
+                // Analyze with both models
                 for (let i = 0; i < reviews.length; i++) {
-                    const result = await analyzer.analyze(reviews[i].text, model);
-                    currentResults.push({
+                    const rulesResult = await analyzer.analyze(reviews[i].text, 'rule-based');
+                    const transformerResult = await analyzer.analyze(reviews[i].text, 'transformer');
+
+                    currentResults.rules.push({
                         text: reviews[i].text,
                         trueLabel: reviews[i].sentiment,
-                        ...result
+                        ...rulesResult
+                    });
+
+                    currentResults.transformer.push({
+                        text: reviews[i].text,
+                        trueLabel: reviews[i].sentiment,
+                        ...transformerResult
                     });
 
                     if ((i + 1) % 10 === 0 || i === reviews.length - 1) {
@@ -527,9 +774,12 @@
                     }
                 }
 
-                displayImdbResults(currentResults);
-                displayDistributionChart(currentResults);
-                displayAccuracyMetrics(currentResults);
+                displayBatchResultsComparison(currentResults);
+                displayDistributionCharts(currentResults);
+                displayMetrics(currentResults);
+                displayConfusionMatrix(currentResults);
+                updateAggregatedGauges(currentResults);
+
             } catch (error) {
                 console.error('IMDB batch analysis error:', error);
                 alert('Error during analysis: ' + error.message);
@@ -538,204 +788,9 @@
             }
         }
 
-        function displayImdbResults(results) {
-            const card = document.getElementById('batch-results-card');
-            const table = document.getElementById('batch-results-table');
-
-            card.style.display = 'block';
-            table.innerHTML = '';
-
-            // Calculate accuracy
-            const correct = results.filter(r => r.sentiment === r.trueLabel).length;
-            const accuracy = (correct / results.length * 100).toFixed(1);
-
-            // Create accuracy banner
-            const banner = document.createElement('div');
-            banner.className = 'accuracy-banner';
-            const bannerH3 = document.createElement('h3');
-            bannerH3.textContent = `Model Accuracy: ${accuracy}% (${correct}/${results.length} correct predictions)`;
-            banner.appendChild(bannerH3);
-            table.appendChild(banner);
-
-            // Create table
-            const tableEl = document.createElement('table');
-            const thead = document.createElement('thead');
-            const headerRow = document.createElement('tr');
-
-            ['#', 'Review Text', 'True Label', 'Predicted', 'Match', 'Confidence', 'Pos', 'Neg'].forEach(header => {
-                const th = document.createElement('th');
-                th.textContent = header;
-                headerRow.appendChild(th);
-            });
-            thead.appendChild(headerRow);
-            tableEl.appendChild(thead);
-
-            const tbody = document.createElement('tbody');
-            results.forEach((r, i) => {
-                const isCorrect = r.sentiment === r.trueLabel;
-                const row = document.createElement('tr');
-                row.className = `sentiment-row ${isCorrect ? 'correct' : 'incorrect'}`;
-
-                // Index
-                const td1 = document.createElement('td');
-                td1.textContent = i + 1;
-                row.appendChild(td1);
-
-                // Text
-                const td2 = document.createElement('td');
-                td2.className = 'text-cell';
-                const truncated = r.text.length > 100 ? r.text.substring(0, 100) + '...' : r.text;
-                td2.textContent = truncated;
-                row.appendChild(td2);
-
-                // True Label
-                const td3 = document.createElement('td');
-                const badge1 = document.createElement('span');
-                badge1.className = `sentiment-badge sentiment-${r.trueLabel}`;
-                badge1.textContent = r.trueLabel;
-                td3.appendChild(badge1);
-                row.appendChild(td3);
-
-                // Predicted
-                const td4 = document.createElement('td');
-                const badge2 = document.createElement('span');
-                badge2.className = `sentiment-badge sentiment-${r.sentiment}`;
-                badge2.textContent = r.sentiment;
-                td4.appendChild(badge2);
-                row.appendChild(td4);
-
-                // Match
-                const td5 = document.createElement('td');
-                td5.className = 'match-cell';
-                td5.textContent = isCorrect ? '✓' : '✗';
-                row.appendChild(td5);
-
-                // Confidence
-                const td6 = document.createElement('td');
-                td6.textContent = Math.round(r.confidence * 100) + '%';
-                row.appendChild(td6);
-
-                // Positive score
-                const td7 = document.createElement('td');
-                td7.textContent = Math.round(r.scores.positive * 100) + '%';
-                row.appendChild(td7);
-
-                // Negative score
-                const td8 = document.createElement('td');
-                td8.textContent = Math.round(r.scores.negative * 100) + '%';
-                row.appendChild(td8);
-
-                tbody.appendChild(row);
-            });
-
-            tableEl.appendChild(tbody);
-            table.appendChild(tableEl);
-        }
-
-        function displayAccuracyMetrics(results) {
-            // Calculate confusion matrix
-            const tp = results.filter(r => r.sentiment === 'positive' && r.trueLabel === 'positive').length;
-            const tn = results.filter(r => r.sentiment === 'negative' && r.trueLabel === 'negative').length;
-            const fp = results.filter(r => r.sentiment === 'positive' && r.trueLabel === 'negative').length;
-            const fn = results.filter(r => r.sentiment === 'negative' && r.trueLabel === 'positive').length;
-
-            const precision = tp + fp > 0 ? (tp / (tp + fp) * 100).toFixed(1) : 0;
-            const recall = tp + fn > 0 ? (tp / (tp + fn) * 100).toFixed(1) : 0;
-            const f1 = precision > 0 && recall > 0 ? (2 * precision * recall / (parseFloat(precision) + parseFloat(recall))).toFixed(1) : 0;
-
-            // Remove existing metrics card
-            const existing = document.getElementById('metrics-card');
-            if (existing) existing.remove();
-
-            // Create metrics card
-            const metricsCard = document.createElement('div');
-            metricsCard.className = 'card full-width';
-            metricsCard.id = 'metrics-card';
-
-            const h2 = document.createElement('h2');
-            h2.textContent = 'Performance Metrics';
-            metricsCard.appendChild(h2);
-
-            // Metrics grid
-            const metricsGrid = document.createElement('div');
-            metricsGrid.className = 'metrics-grid';
-
-            // Precision
-            const precDiv = document.createElement('div');
-            precDiv.className = 'metric-item';
-            precDiv.innerHTML = `
-                <div class="metric-label">Precision</div>
-                <div class="metric-value">${precision}%</div>
-                <div class="metric-desc">Of predicted positive, how many were correct</div>
-            `;
-            metricsGrid.appendChild(precDiv);
-
-            // Recall
-            const recDiv = document.createElement('div');
-            recDiv.className = 'metric-item';
-            recDiv.innerHTML = `
-                <div class="metric-label">Recall</div>
-                <div class="metric-value">${recall}%</div>
-                <div class="metric-desc">Of actual positive, how many were found</div>
-            `;
-            metricsGrid.appendChild(recDiv);
-
-            // F1
-            const f1Div = document.createElement('div');
-            f1Div.className = 'metric-item';
-            f1Div.innerHTML = `
-                <div class="metric-label">F1 Score</div>
-                <div class="metric-value">${f1}%</div>
-                <div class="metric-desc">Harmonic mean of precision and recall</div>
-            `;
-            metricsGrid.appendChild(f1Div);
-
-            metricsCard.appendChild(metricsGrid);
-
-            // Confusion matrix
-            const matrixDiv = document.createElement('div');
-            matrixDiv.className = 'confusion-matrix';
-
-            const matrixH3 = document.createElement('h3');
-            matrixH3.textContent = 'Confusion Matrix';
-            matrixDiv.appendChild(matrixH3);
-
-            const matrixTable = document.createElement('table');
-            matrixTable.className = 'matrix-table';
-            matrixTable.innerHTML = `
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Predicted Positive</th>
-                        <th>Predicted Negative</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>Actually Positive</th>
-                        <td class="tp">${tp}</td>
-                        <td class="fn">${fn}</td>
-                    </tr>
-                    <tr>
-                        <th>Actually Negative</th>
-                        <td class="fp">${fp}</td>
-                        <td class="tn">${tn}</td>
-                    </tr>
-                </tbody>
-            `;
-            matrixDiv.appendChild(matrixTable);
-            metricsCard.appendChild(matrixDiv);
-
-            // Insert after distribution card
-            const distributionCard = document.getElementById('distribution-card');
-            distributionCard.parentNode.insertBefore(metricsCard, distributionCard.nextSibling);
-        }
-
-        // Analyze button
+        // Main analyze button
         analyzeBtn.addEventListener('click', async () => {
             const mode = document.querySelector('.mode-btn.active').dataset.mode;
-            const selectedModel = document.querySelector('input[name="model"]:checked').value;
-            const compareModels = compareModelsCheckbox.checked;
 
             if (mode === 'single') {
                 const text = textInput.value.trim();
@@ -743,29 +798,43 @@
                     alert('Please enter some text to analyze');
                     return;
                 }
-                await analyzeSingleText(text, selectedModel, compareModels);
-            } else {
+                await analyzeBothModels(text);
+            } else if (mode === 'batch') {
                 if (batchData.length === 0) {
                     alert('Please upload a CSV file first');
                     return;
                 }
-                await analyzeBatch(batchData, selectedModel);
+                await analyzeBatch(batchData);
             }
         });
 
-        async function analyzeSingleText(text, model, compare) {
-            showLoading('Analyzing sentiment...');
+        async function analyzeBothModels(text) {
+            showLoading('Analyzing with both models...');
 
             try {
-                const result = await analyzer.analyze(text, model);
-                updateUI(result, text);
+                // Analyze with rule-based model
+                const rulesResult = await analyzer.analyze(text, 'rule-based');
+                updateModelUI('rules', rulesResult, text);
 
-                if (compare) {
-                    const otherModel = model === 'rule-based' ? 'transformer' : 'rule-based';
-                    showLoading(`Comparing with ${otherModel} model...`);
-                    const otherResult = await analyzer.analyze(text, otherModel);
-                    showModelComparison(result, otherResult, model, otherModel);
-                }
+                // Analyze with transformer model
+                showLoading('Analyzing with transformer model...');
+                const transformerResult = await analyzer.analyze(text, 'transformer');
+                updateModelUI('transformer', transformerResult, text);
+
+                // Show agreement indicator
+                showModelAgreement(rulesResult, transformerResult);
+
+                // Update shared sections
+                updateWordContribution(text, rulesResult);
+                updateEmojiAnalysis(text, rulesResult);
+                updateAspectSentiment(text, rulesResult);
+
+                // Hide batch-specific elements
+                document.getElementById('batch-results-card').style.display = 'none';
+                hideDistributionCharts();
+                hideMetricsCards();
+                document.getElementById('confusion-matrix-card').style.display = 'none';
+
             } catch (error) {
                 console.error('Analysis error:', error);
                 alert('Error analyzing text: ' + error.message);
@@ -774,22 +843,27 @@
             }
         }
 
-        async function analyzeBatch(texts, model) {
-            showLoading(`Analyzing ${texts.length} texts...`);
-            currentResults = [];
+        async function analyzeBatch(texts) {
+            showLoading(`Analyzing ${texts.length} texts with both models...`);
+            currentResults = { rules: [], transformer: [] };
 
             try {
                 for (let i = 0; i < texts.length; i++) {
-                    const result = await analyzer.analyze(texts[i], model);
-                    currentResults.push({ text: texts[i], ...result });
+                    const rulesResult = await analyzer.analyze(texts[i], 'rule-based');
+                    const transformerResult = await analyzer.analyze(texts[i], 'transformer');
+
+                    currentResults.rules.push({ text: texts[i], ...rulesResult });
+                    currentResults.transformer.push({ text: texts[i], ...transformerResult });
 
                     if ((i + 1) % 10 === 0) {
                         showLoading(`Analyzed ${i + 1}/${texts.length} texts...`);
                     }
                 }
 
-                displayBatchResults(currentResults);
-                displayDistributionChart(currentResults);
+                displayBatchResultsComparison(currentResults);
+                displayDistributionCharts(currentResults);
+                updateAggregatedGauges(currentResults);
+
             } catch (error) {
                 console.error('Batch analysis error:', error);
                 alert('Error during batch analysis: ' + error.message);
@@ -798,40 +872,25 @@
             }
         }
 
-        function updateUI(result, text) {
+        function updateModelUI(model, result, text) {
             // Update gauge
-            updateGauge(result);
-
+            updateGauge(model, result);
             // Update confidence bars
-            updateConfidenceBars(result.scores);
-
-            // Update word contribution
-            updateWordContribution(text, result);
-
-            // Update emoji analysis
-            updateEmojiAnalysis(text, result);
-
-            // Update aspect-based sentiment
-            updateAspectSentiment(text, result);
-
-            // Hide batch-specific elements
-            document.getElementById('batch-results-card').style.display = 'none';
-            document.getElementById('distribution-card').style.display = 'none';
+            updateConfidenceBars(model, result.scores);
         }
 
-        function updateGauge(result) {
-            const needle = document.getElementById('gauge-needle');
-            const label = document.getElementById('sentiment-label');
-            const confidenceScore = document.getElementById('confidence-score');
+        function updateGauge(model, result) {
+            const needle = document.getElementById(`gauge-needle-${model}`);
+            const label = document.getElementById(`sentiment-label-${model}`);
+            const confidenceScore = document.getElementById(`confidence-score-${model}`);
 
-            // Calculate angle based on sentiment (-90 to 90 degrees)
             let angle;
             if (result.sentiment === 'positive') {
-                angle = 45; // Right side
+                angle = 45;
             } else if (result.sentiment === 'negative') {
-                angle = -45; // Left side
+                angle = -45;
             } else {
-                angle = 0; // Center
+                angle = 0;
             }
 
             needle.style.transform = `rotate(${angle}deg)`;
@@ -842,17 +901,17 @@
             confidenceScore.textContent = Math.round(result.confidence * 100) + '%';
         }
 
-        function updateConfidenceBars(scores) {
+        function updateConfidenceBars(model, scores) {
             const bars = {
-                positive: document.getElementById('positive-bar'),
-                neutral: document.getElementById('neutral-bar'),
-                negative: document.getElementById('negative-bar')
+                positive: document.getElementById(`positive-bar-${model}`),
+                neutral: document.getElementById(`neutral-bar-${model}`),
+                negative: document.getElementById(`negative-bar-${model}`)
             };
 
             const percents = {
-                positive: document.getElementById('positive-percent'),
-                neutral: document.getElementById('neutral-percent'),
-                negative: document.getElementById('negative-percent')
+                positive: document.getElementById(`positive-percent-${model}`),
+                neutral: document.getElementById(`neutral-percent-${model}`),
+                negative: document.getElementById(`negative-percent-${model}`)
             };
 
             Object.keys(scores).forEach(key => {
@@ -860,6 +919,50 @@
                 bars[key].style.width = value + '%';
                 percents[key].textContent = Math.round(value) + '%';
             });
+        }
+
+        function updateAggregatedGauges(results) {
+            // Calculate average scores for each model
+            ['rules', 'transformer'].forEach(model => {
+                const modelResults = results[model];
+                const avgScores = {
+                    positive: modelResults.reduce((sum, r) => sum + r.scores.positive, 0) / modelResults.length,
+                    neutral: modelResults.reduce((sum, r) => sum + r.scores.neutral, 0) / modelResults.length,
+                    negative: modelResults.reduce((sum, r) => sum + r.scores.negative, 0) / modelResults.length
+                };
+
+                // Determine dominant sentiment
+                const maxScore = Math.max(avgScores.positive, avgScores.neutral, avgScores.negative);
+                let sentiment;
+                if (avgScores.positive === maxScore) sentiment = 'positive';
+                else if (avgScores.negative === maxScore) sentiment = 'negative';
+                else sentiment = 'neutral';
+
+                updateGauge(model, { sentiment, confidence: maxScore });
+                updateConfidenceBars(model, avgScores);
+            });
+        }
+
+        function showModelAgreement(rulesResult, transformerResult) {
+            const agreementDiv = document.getElementById('model-agreement');
+            const contentDiv = document.getElementById('agreement-content');
+            agreementDiv.style.display = 'block';
+
+            const agree = rulesResult.sentiment === transformerResult.sentiment;
+
+            if (agree) {
+                contentDiv.innerHTML = `
+                    <span class="agreement-icon agree">✓</span>
+                    <span class="agreement-text">Both models agree: <strong class="sentiment-${rulesResult.sentiment}">${rulesResult.sentiment}</strong></span>
+                `;
+                contentDiv.className = 'agreement-agree';
+            } else {
+                contentDiv.innerHTML = `
+                    <span class="agreement-icon disagree">≠</span>
+                    <span class="agreement-text">Models disagree: Rule-based says <strong class="sentiment-${rulesResult.sentiment}">${rulesResult.sentiment}</strong>, Transformer says <strong class="sentiment-${transformerResult.sentiment}">${transformerResult.sentiment}</strong></span>
+                `;
+                contentDiv.className = 'agreement-disagree';
+            }
         }
 
         function updateWordContribution(text, result) {
@@ -892,7 +995,6 @@
         function updateAspectSentiment(text, result) {
             const container = document.getElementById('aspect-sentiment');
 
-            // Simple aspect detection based on common keywords
             const aspects = {
                 'product': ['product', 'item', 'thing', 'device'],
                 'service': ['service', 'support', 'help', 'staff'],
@@ -926,11 +1028,13 @@
             }
         }
 
-        function displayBatchResults(results) {
+        function displayBatchResultsComparison(results) {
             const card = document.getElementById('batch-results-card');
             const table = document.getElementById('batch-results-table');
 
             card.style.display = 'block';
+
+            const hasLabels = results.rules.some(r => r.trueLabel);
 
             table.innerHTML = `
                 <table>
@@ -938,25 +1042,27 @@
                         <tr>
                             <th>#</th>
                             <th>Text</th>
-                            <th>Sentiment</th>
-                            <th>Confidence</th>
-                            <th>Pos</th>
-                            <th>Neu</th>
-                            <th>Neg</th>
+                            ${hasLabels ? '<th>True Label</th>' : ''}
+                            <th>Rule-Based</th>
+                            <th>Transformer</th>
+                            <th>Agreement</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${results.map((r, i) => `
-                            <tr class="sentiment-row sentiment-${r.sentiment}">
-                                <td>${i + 1}</td>
-                                <td class="text-cell">${r.text}</td>
-                                <td><span class="sentiment-badge sentiment-${r.sentiment}">${r.sentiment}</span></td>
-                                <td>${Math.round(r.confidence * 100)}%</td>
-                                <td>${Math.round(r.scores.positive * 100)}%</td>
-                                <td>${Math.round(r.scores.neutral * 100)}%</td>
-                                <td>${Math.round(r.scores.negative * 100)}%</td>
-                            </tr>
-                        `).join('')}
+                        ${results.rules.map((r, i) => {
+                            const t = results.transformer[i];
+                            const agree = r.sentiment === t.sentiment;
+                            return `
+                                <tr class="sentiment-row ${agree ? 'agree' : 'disagree'}">
+                                    <td>${i + 1}</td>
+                                    <td class="text-cell">${r.text.substring(0, 100)}${r.text.length > 100 ? '...' : ''}</td>
+                                    ${hasLabels ? `<td><span class="sentiment-badge sentiment-${r.trueLabel}">${r.trueLabel}</span></td>` : ''}
+                                    <td><span class="sentiment-badge sentiment-${r.sentiment}">${r.sentiment}</span> (${Math.round(r.confidence * 100)}%)</td>
+                                    <td><span class="sentiment-badge sentiment-${t.sentiment}">${t.sentiment}</span> (${Math.round(t.confidence * 100)}%)</td>
+                                    <td class="agreement-cell">${agree ? '✓' : '≠'}</td>
+                                </tr>
+                            `;
+                        }).join('')}
                     </tbody>
                 </table>
             `;
@@ -974,117 +1080,144 @@
 
             const rows = document.querySelectorAll('.sentiment-row');
             rows.forEach(row => {
-                const sentimentClass = row.className.split(' ').find(c => c.startsWith('sentiment-'));
-                if (sentimentClass) {
-                    const sentiment = sentimentClass.replace('sentiment-', '');
-                    row.style.display = activeFilters.includes(sentiment) ? '' : 'none';
-                }
+                const badges = row.querySelectorAll('.sentiment-badge');
+                const sentiments = Array.from(badges).map(b => {
+                    const classes = Array.from(b.classList);
+                    return classes.find(c => c.startsWith('sentiment-'))?.replace('sentiment-', '');
+                });
+                const hasMatch = sentiments.some(s => activeFilters.includes(s));
+                row.style.display = hasMatch ? '' : 'none';
             });
         }
 
-        function displayDistributionChart(results) {
-            const card = document.getElementById('distribution-card');
-            card.style.display = 'block';
+        function displayDistributionCharts(results) {
+            // Show distribution cards
+            document.getElementById('distribution-card-rules').style.display = 'block';
+            document.getElementById('distribution-card-transformer').style.display = 'block';
 
-            const counts = {
-                positive: results.filter(r => r.sentiment === 'positive').length,
-                neutral: results.filter(r => r.sentiment === 'neutral').length,
-                negative: results.filter(r => r.sentiment === 'negative').length
-            };
+            // Create charts for each model
+            ['rules', 'transformer'].forEach(model => {
+                const counts = {
+                    positive: results[model].filter(r => r.sentiment === 'positive').length,
+                    neutral: results[model].filter(r => r.sentiment === 'neutral').length,
+                    negative: results[model].filter(r => r.sentiment === 'negative').length
+                };
 
-            const ctx = document.getElementById('distribution-chart');
+                const ctx = document.getElementById(`distribution-chart-${model}`);
 
-            // Destroy existing chart if any
-            if (window.distributionChart) {
-                window.distributionChart.destroy();
-            }
+                // Destroy existing chart
+                if (model === 'rules' && chartRules) chartRules.destroy();
+                if (model === 'transformer' && chartTransformer) chartTransformer.destroy();
 
-            window.distributionChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Positive', 'Neutral', 'Negative'],
-                    datasets: [{
-                        data: [counts.positive, counts.neutral, counts.negative],
-                        backgroundColor: ['#22c55e', '#94a3b8', '#ef4444'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
+                const chart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Positive', 'Neutral', 'Negative'],
+                        datasets: [{
+                            data: [counts.positive, counts.neutral, counts.negative],
+                            backgroundColor: ['#22c55e', '#94a3b8', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12,
+                                    font: { size: 11 }
+                                }
+                            }
                         }
                     }
-                }
+                });
+
+                if (model === 'rules') chartRules = chart;
+                else chartTransformer = chart;
             });
         }
 
-        function showModelComparison(result1, result2, model1, model2) {
-            const card = document.getElementById('comparison-card');
-            const container = document.getElementById('model-comparison');
+        function hideDistributionCharts() {
+            document.getElementById('distribution-card-rules').style.display = 'none';
+            document.getElementById('distribution-card-transformer').style.display = 'none';
+        }
 
+        function displayMetrics(results) {
+            ['rules', 'transformer'].forEach(model => {
+                const modelResults = results[model];
+                const card = document.getElementById(`metrics-card-${model}`);
+                card.style.display = 'block';
+
+                // Calculate metrics
+                const tp = modelResults.filter(r => r.sentiment === 'positive' && r.trueLabel === 'positive').length;
+                const tn = modelResults.filter(r => r.sentiment === 'negative' && r.trueLabel === 'negative').length;
+                const fp = modelResults.filter(r => r.sentiment === 'positive' && r.trueLabel === 'negative').length;
+                const fn = modelResults.filter(r => r.sentiment === 'negative' && r.trueLabel === 'positive').length;
+
+                const accuracy = ((tp + tn) / modelResults.length * 100).toFixed(1);
+                const precision = tp + fp > 0 ? (tp / (tp + fp) * 100).toFixed(1) : '0.0';
+                const recall = tp + fn > 0 ? (tp / (tp + fn) * 100).toFixed(1) : '0.0';
+                const f1 = parseFloat(precision) > 0 && parseFloat(recall) > 0 
+                    ? (2 * parseFloat(precision) * parseFloat(recall) / (parseFloat(precision) + parseFloat(recall))).toFixed(1) 
+                    : '0.0';
+
+                document.getElementById(`accuracy-${model}`).textContent = accuracy + '%';
+                document.getElementById(`precision-${model}`).textContent = precision + '%';
+                document.getElementById(`recall-${model}`).textContent = recall + '%';
+                document.getElementById(`f1-${model}`).textContent = f1 + '%';
+            });
+        }
+
+        function hideMetricsCards() {
+            document.getElementById('metrics-card-rules').style.display = 'none';
+            document.getElementById('metrics-card-transformer').style.display = 'none';
+        }
+
+        function displayConfusionMatrix(results) {
+            const card = document.getElementById('confusion-matrix-card');
             card.style.display = 'block';
 
-            container.innerHTML = `
-                <div class="comparison-grid">
-                    <div class="comparison-model">
-                        <h3>${model1.replace('-', ' ').toUpperCase()}</h3>
-                        <div class="comparison-result">
-                            <div class="sentiment-badge sentiment-${result1.sentiment}">
-                                ${result1.sentiment}
-                            </div>
-                            <div class="confidence-value">${Math.round(result1.confidence * 100)}% confidence</div>
-                            <div class="score-breakdown">
-                                <div>Positive: ${Math.round(result1.scores.positive * 100)}%</div>
-                                <div>Neutral: ${Math.round(result1.scores.neutral * 100)}%</div>
-                                <div>Negative: ${Math.round(result1.scores.negative * 100)}%</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="comparison-model">
-                        <h3>${model2.replace('-', ' ').toUpperCase()}</h3>
-                        <div class="comparison-result">
-                            <div class="sentiment-badge sentiment-${result2.sentiment}">
-                                ${result2.sentiment}
-                            </div>
-                            <div class="confidence-value">${Math.round(result2.confidence * 100)}% confidence</div>
-                            <div class="score-breakdown">
-                                <div>Positive: ${Math.round(result2.scores.positive * 100)}%</div>
-                                <div>Neutral: ${Math.round(result2.scores.neutral * 100)}%</div>
-                                <div>Negative: ${Math.round(result2.scores.negative * 100)}%</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                ${result1.sentiment !== result2.sentiment ?
-                    '<p class="comparison-note">Warning: Models disagree on sentiment classification</p>' :
-                    '<p class="comparison-note">Models agree on sentiment classification</p>'}
-            `;
+            ['rules', 'transformer'].forEach(model => {
+                const modelResults = results[model];
+
+                const tp = modelResults.filter(r => r.sentiment === 'positive' && r.trueLabel === 'positive').length;
+                const tn = modelResults.filter(r => r.sentiment === 'negative' && r.trueLabel === 'negative').length;
+                const fp = modelResults.filter(r => r.sentiment === 'positive' && r.trueLabel === 'negative').length;
+                const fn = modelResults.filter(r => r.sentiment === 'negative' && r.trueLabel === 'positive').length;
+
+                document.getElementById(`tp-${model}`).textContent = tp;
+                document.getElementById(`tn-${model}`).textContent = tn;
+                document.getElementById(`fp-${model}`).textContent = fp;
+                document.getElementById(`fn-${model}`).textContent = fn;
+            });
         }
 
         // Export functionality
         document.getElementById('export-results').addEventListener('click', () => {
-            if (currentResults.length === 0) return;
+            if (currentResults.rules.length === 0) return;
 
             const csv = [
-                ['Text', 'Sentiment', 'Confidence', 'Positive', 'Neutral', 'Negative'],
-                ...currentResults.map(r => [
-                    `"${r.text.replace(/"/g, '""')}"`,
-                    r.sentiment,
-                    r.confidence,
-                    r.scores.positive,
-                    r.scores.neutral,
-                    r.scores.negative
-                ])
+                ['Text', 'Rule-Based Sentiment', 'Rule-Based Confidence', 'Transformer Sentiment', 'Transformer Confidence', 'Agreement'],
+                ...currentResults.rules.map((r, i) => {
+                    const t = currentResults.transformer[i];
+                    return [
+                        `"${r.text.replace(/"/g, '""')}"`,
+                        r.sentiment,
+                        (r.confidence * 100).toFixed(1),
+                        t.sentiment,
+                        (t.confidence * 100).toFixed(1),
+                        r.sentiment === t.sentiment ? 'Yes' : 'No'
+                    ];
+                })
             ].map(row => row.join(',')).join('\n');
 
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `sentiment-analysis-${Date.now()}.csv`;
+            a.download = `sentiment-analysis-comparison-${Date.now()}.csv`;
             a.click();
         });
 
@@ -1103,33 +1236,29 @@
             clearTimeout(analysisTimeout);
             const text = textInput.value.trim();
 
-            if (text.length > 10) { // Only analyze if there's meaningful text
+            if (text.length > 10) {
                 analysisTimeout = setTimeout(async () => {
-                    const selectedModel = document.querySelector('input[name="model"]:checked').value;
                     try {
-                        const result = await analyzer.analyze(text, selectedModel);
-                        updateUI(result, text);
+                        await analyzeBothModels(text);
                     } catch (error) {
                         console.error('Real-time analysis error:', error);
                     }
-                }, 1000); // Wait 1 second after user stops typing
+                }, 1000);
             }
         });
     </script>
 
     <script>
-        // Theme toggle functionality (synced with main index via localStorage)
+        // Theme toggle functionality
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');
         const html = document.documentElement;
 
-        // Load saved theme from localStorage
         const savedTheme = localStorage.getItem('theme') || 'dark';
         html.setAttribute('data-theme', savedTheme);
         updateThemeIcon(savedTheme);
 
         function updateThemeIcon(theme) {
-            // Using the same icons as main index.html (moon/sun HTML entities)
             if (themeIcon) {
                 themeIcon.textContent = theme === 'dark' ? '\u{1F319}' : '\u2600\uFE0F';
             }
