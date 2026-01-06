@@ -36,44 +36,79 @@ class ComparisonApp {
     }
 
     setupPresets() {
-        // Similarity presets
-        const simPresets = {
-            'high-sim': {
-                sent1: 'The cat is sleeping on the couch.',
-                sent2: 'A cat is napping on the sofa.'
-            },
-            'medium-sim': {
-                sent1: 'I love programming in Python.',
-                sent2: 'I enjoy coding in JavaScript.'
-            },
-            'low-sim': {
-                sent1: 'The weather is sunny today.',
-                sent2: 'Machine learning is fascinating.'
-            }
+        // Similarity example dropdown
+        const simExamples = {
+            'high-1': { sent1: 'The cat is sleeping on the couch.', sent2: 'A cat is napping on the sofa.' },
+            'high-2': { sent1: 'It is raining heavily outside.', sent2: 'Heavy rain is falling outdoors.' },
+            'high-3': { sent1: 'I love programming in Python.', sent2: 'I enjoy coding in Python.' },
+            'med-1': { sent1: 'I love programming in Python.', sent2: 'I enjoy coding in JavaScript.' },
+            'med-2': { sent1: 'The car drove down the highway.', sent2: 'The train traveled along the tracks.' },
+            'med-3': { sent1: 'She cooked a delicious dinner.', sent2: 'He baked a wonderful cake.' },
+            'low-1': { sent1: 'The weather is sunny today.', sent2: 'Machine learning is fascinating.' },
+            'low-2': { sent1: 'The football game was exciting.', sent2: 'Quantum physics explains particle behavior.' },
+            'low-3': { sent1: 'The guitar solo was amazing.', sent2: 'The equation had three variables.' }
         };
 
-        document.querySelectorAll('#similarity-task .preset-btn').forEach(btn => {
+        document.getElementById('sim-example-select').addEventListener('change', (e) => {
+            const example = simExamples[e.target.value];
+            if (example) {
+                document.getElementById('sim-sent1').value = example.sent1;
+                document.getElementById('sim-sent2').value = example.sent2;
+            }
+        });
+
+        // Analogy example dropdown
+        const analogyExamples = {
+            'royalty': { a: 'king', b: 'queen', c: 'man' },
+            'actor': { a: 'actor', b: 'actress', c: 'waiter' },
+            'hero': { a: 'hero', b: 'heroine', c: 'prince' },
+            'capitals': { a: 'Paris', b: 'France', c: 'London' },
+            'capitals2': { a: 'Tokyo', b: 'Japan', c: 'Berlin' },
+            'capitals3': { a: 'Rome', b: 'Italy', c: 'Madrid' },
+            'grammar': { a: 'good', b: 'better', c: 'bad' },
+            'grammar2': { a: 'big', b: 'bigger', c: 'small' },
+            'tense': { a: 'walk', b: 'walked', c: 'run' },
+            'animal': { a: 'dog', b: 'puppy', c: 'cat' },
+            'material': { a: 'wood', b: 'tree', c: 'paper' },
+            'tool': { a: 'hammer', b: 'nail', c: 'screwdriver' }
+        };
+
+        document.getElementById('analogy-example-select').addEventListener('change', (e) => {
+            const example = analogyExamples[e.target.value];
+            if (example) {
+                document.getElementById('analogy-a').value = example.a;
+                document.getElementById('analogy-b').value = example.b;
+                document.getElementById('analogy-c').value = example.c;
+            }
+        });
+
+        // Categorization word groups
+        const categoryWords = {
+            'fruits': ['apple', 'banana', 'orange', 'grape', 'mango', 'strawberry'],
+            'vegetables': ['carrot', 'broccoli', 'spinach', 'kale', 'tomato', 'cucumber'],
+            'animals': ['dog', 'cat', 'elephant', 'tiger', 'dolphin', 'eagle'],
+            'vehicles': ['car', 'bicycle', 'airplane', 'train', 'motorcycle', 'boat'],
+            'sports': ['football', 'basketball', 'tennis', 'swimming', 'golf', 'soccer'],
+            'colors': ['red', 'blue', 'green', 'yellow', 'purple', 'orange'],
+            'countries': ['France', 'Japan', 'Brazil', 'Canada', 'Australia', 'Germany'],
+            'professions': ['doctor', 'teacher', 'engineer', 'lawyer', 'chef', 'artist']
+        };
+
+        document.querySelectorAll('.cat-preset-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const preset = simPresets[btn.dataset.preset];
-                document.getElementById('sim-sent1').value = preset.sent1;
-                document.getElementById('sim-sent2').value = preset.sent2;
+                const category = btn.dataset.category;
+                const words = categoryWords[category];
+                if (words) {
+                    const textarea = document.getElementById('cat-items');
+                    const currentItems = textarea.value.trim();
+                    const newItems = words.join('\n');
+                    textarea.value = currentItems ? currentItems + '\n' + newItems : newItems;
+                }
             });
         });
 
-        // Analogy presets
-        const analogyPresets = {
-            'royalty': { a: 'king', b: 'queen', c: 'man' },
-            'capitals': { a: 'Paris', b: 'France', c: 'London' },
-            'grammar': { a: 'good', b: 'better', c: 'bad' }
-        };
-
-        document.querySelectorAll('#analogy-task .preset-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const preset = analogyPresets[btn.dataset.preset];
-                document.getElementById('analogy-a').value = preset.a;
-                document.getElementById('analogy-b').value = preset.b;
-                document.getElementById('analogy-c').value = preset.c;
-            });
+        document.getElementById('clear-cat-items').addEventListener('click', () => {
+            document.getElementById('cat-items').value = '';
         });
     }
 
@@ -104,6 +139,7 @@ class ComparisonApp {
             statusEl.textContent = `Loaded ${selectedModels.length} model(s)`;
             setTimeout(() => statusEl.textContent = '', 3000);
 
+            this.visualization.clearCharts();
             this.updateStats();
 
         } catch (error) {
@@ -216,7 +252,7 @@ class ComparisonApp {
             const results = await this.benchmarkTasks.runCategorizationTest(items, numCategories, modelIds);
 
             this.visualization.displayCategorizationResults(results);
-            this.visualization.updateLeaderboard(results, 'time');
+            this.visualization.updateLeaderboard(results, 'similarity');
             this.visualization.plotRadarChart(results);
             this.visualization.plotTradeoffChart(results);
 

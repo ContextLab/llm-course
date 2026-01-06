@@ -96,6 +96,7 @@
                             <option value="wordclouds">Word Clouds</option>
                             <option value="distributions">Document Distributions</option>
                             <option value="intertopic">Inter-topic Distance</option>
+                            <option value="howitworks">How It Works</option>
                         </select>
 
                         <label for="selected-topic">Focus Topic:</label>
@@ -106,6 +107,24 @@
                         <label for="top-words">Top Words per Topic:</label>
                         <input type="range" id="top-words" min="5" max="30" value="10" step="5">
                         <span id="top-words-value">10</span>
+                    </div>
+
+                    <!-- Analyze New Text -->
+                    <div id="analyze-section" class="control-section hidden">
+                        <h4>Analyze New Text</h4>
+                        <div class="example-select-group">
+                            <label>Try an example:</label>
+                            <select id="analyze-example-select">
+                                <option value="">-- Select Example --</option>
+                                <option value="tech">Technology article</option>
+                                <option value="sports">Sports article</option>
+                                <option value="science">Science article</option>
+                                <option value="history">History article</option>
+                            </select>
+                        </div>
+                        <textarea id="analyze-text" rows="4" placeholder="Enter text to analyze..."></textarea>
+                        <button id="analyze-text-btn" class="btn btn-secondary">Analyze Text</button>
+                        <div id="analyze-results" class="analyze-results hidden"></div>
                     </div>
 
                     <!-- Export -->
@@ -171,6 +190,119 @@
                             <button id="close-topic-details" class="close-btn" aria-label="Close topic details">&times;</button>
                         </div>
                         <div id="topic-words-bars"></div>
+                    </div>
+                </div>
+
+                <!-- How It Works Tab -->
+                <div id="howitworks-view" class="view-container hidden">
+                    <h2>How LDA Works</h2>
+                    <p class="subtitle">Understanding Latent Dirichlet Allocation</p>
+
+                    <div class="lda-explanation">
+                        <div class="graphical-model-section">
+                            <h3>Graphical Model</h3>
+                            <div class="plate-diagram">
+                                <div class="plate outer-plate">
+                                    <div class="plate-label">M documents</div>
+                                    <div class="plate-content">
+                                        <div class="node theta-node">
+                                            <span class="node-symbol">&theta;</span>
+                                            <span class="node-label">Doc-Topic</span>
+                                        </div>
+                                        <div class="arrow-down"></div>
+                                        <div class="plate inner-plate">
+                                            <div class="plate-label">N words</div>
+                                            <div class="plate-content">
+                                                <div class="node z-node">
+                                                    <span class="node-symbol">z</span>
+                                                    <span class="node-label">Topic</span>
+                                                </div>
+                                                <div class="arrow-down"></div>
+                                                <div class="node w-node observed">
+                                                    <span class="node-symbol">w</span>
+                                                    <span class="node-label">Word</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="hyperparams">
+                                    <div class="hyperparam alpha-param">
+                                        <span class="node-symbol">&alpha;</span>
+                                        <div class="arrow-right"></div>
+                                    </div>
+                                    <div class="hyperparam beta-param">
+                                        <span class="node-symbol">&beta;</span>
+                                        <div class="arrow-right"></div>
+                                        <div class="node phi-node">
+                                            <span class="node-symbol">&phi;</span>
+                                            <span class="node-label">Topic-Word</span>
+                                        </div>
+                                        <div class="plate-label-small">K topics</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lda-concepts">
+                            <h3>Key Concepts</h3>
+                            <div class="concept-grid">
+                                <div class="concept-card">
+                                    <h4>&alpha; (Alpha)</h4>
+                                    <p>Document-topic concentration. Lower &alpha; means documents focus on fewer topics. Higher &alpha; means documents spread across many topics.</p>
+                                </div>
+                                <div class="concept-card">
+                                    <h4>&beta; (Beta)</h4>
+                                    <p>Topic-word concentration. Lower &beta; means topics have distinct vocabulary. Higher &beta; means topics share more words.</p>
+                                </div>
+                                <div class="concept-card">
+                                    <h4>&theta; (Theta)</h4>
+                                    <p>Per-document topic distribution. Each document has its own &theta; defining how much it belongs to each topic.</p>
+                                </div>
+                                <div class="concept-card">
+                                    <h4>&phi; (Phi)</h4>
+                                    <p>Per-topic word distribution. Each topic has its own &phi; defining probabilities over the vocabulary.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lda-process">
+                            <h3>Generative Process</h3>
+                            <div class="process-steps">
+                                <div class="process-step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h4>For each topic k</h4>
+                                        <p>Draw word distribution &phi;<sub>k</sub> ~ Dirichlet(&beta;)</p>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <h4>For each document d</h4>
+                                        <p>Draw topic distribution &theta;<sub>d</sub> ~ Dirichlet(&alpha;)</p>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <h4>For each word n in document d</h4>
+                                        <p>Draw topic z<sub>d,n</sub> ~ Multinomial(&theta;<sub>d</sub>)</p>
+                                        <p>Draw word w<sub>d,n</sub> ~ Multinomial(&phi;<sub>z</sub>)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lda-inference">
+                            <h3>Inference: Gibbs Sampling</h3>
+                            <p class="inference-intro">Since we observe only words (shaded node), we need to infer the hidden topics. This demo uses Collapsed Gibbs Sampling:</p>
+                            <div class="formula-box">
+                                <p><strong>Topic Assignment Update:</strong></p>
+                                <div class="formula">P(z<sub>i</sub> = k | z<sub>-i</sub>, w) &propto; (n<sub>d,k</sub><sup>-i</sup> + &alpha;) &times; (n<sub>k,w</sub><sup>-i</sup> + &beta;) / (n<sub>k</sub><sup>-i</sup> + V&beta;)</div>
+                                <p class="formula-desc">Probability of assigning word i to topic k depends on: how much topic k appears in this document, and how often this word appears in topic k.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -259,6 +391,21 @@
                 const barsContainer = document.getElementById('topic-words-bars');
                 barsContainer.innerHTML = '';
                 topicDetails.style.display = 'none';
+            });
+
+            document.getElementById('analyze-text-btn').addEventListener('click', analyzeNewText);
+            
+            document.getElementById('analyze-example-select').addEventListener('change', (e) => {
+                const examples = {
+                    tech: 'Artificial intelligence and machine learning are transforming the technology industry. New neural network architectures enable computers to process natural language and recognize images with unprecedented accuracy. Cloud computing platforms provide the infrastructure for training these deep learning models.',
+                    sports: 'The championship basketball game went into overtime as the two teams battled for the title. Star players made crucial three-point shots in the final minutes. The coach called timeout to draw up a decisive play that would determine the winner.',
+                    science: 'Researchers discovered a new species of bacteria that can break down plastic waste in the ocean. The microorganisms produce enzymes that decompose polymer chains into harmless compounds. This breakthrough could help address the global pollution crisis affecting marine ecosystems.',
+                    history: 'The ancient Roman Empire expanded across Europe and the Mediterranean through military conquest and strategic alliances. Emperors built roads, aqueducts, and monuments that still stand today. The civilization influenced law, architecture, and language for centuries.'
+                };
+                const text = examples[e.target.value];
+                if (text) {
+                    document.getElementById('analyze-text').value = text;
+                }
             });
         }
 
@@ -350,10 +497,16 @@
 
                 app.lda = new LDAModel(params);
                 app.currentResults = await app.lda.fit(app.currentDataset.documents);
+                app.visualizer.currentDataset = app.currentDataset;
 
                 updateTopicSelector();
                 updateStats();
                 switchView();
+
+                document.getElementById('analyze-section').classList.remove('hidden');
+                document.getElementById('analyze-results').classList.add('hidden');
+                document.getElementById('analyze-text').value = '';
+                document.getElementById('analyze-example-select').value = '';
 
                 document.getElementById('lda-status').textContent = 'LDA completed successfully!';
                 setTimeout(() => {
@@ -381,23 +534,20 @@
         }
 
         function switchView() {
-            if (!app.currentResults) {
+            const viewMode = document.getElementById('view-mode').value;
+
+            if (viewMode !== 'howitworks' && !app.currentResults) {
                 alert('Please run LDA first');
                 return;
             }
 
-            const viewMode = document.getElementById('view-mode').value;
-
-            // Hide all views
             document.querySelectorAll('.view-container').forEach(el => {
                 el.classList.add('hidden');
             });
 
-            // Show selected view
             const viewEl = document.getElementById(`${viewMode}-view`);
             viewEl.classList.remove('hidden');
 
-            // Render visualization
             switch (viewMode) {
                 case 'overview':
                     app.visualizer.renderOverview(app.currentResults);
@@ -410,6 +560,8 @@
                     break;
                 case 'intertopic':
                     app.visualizer.renderInterTopicDistance(app.currentResults);
+                    break;
+                case 'howitworks':
                     break;
             }
         }
@@ -504,6 +656,48 @@
             if (text) {
                 document.getElementById('loading-text').textContent = text;
             }
+        }
+
+        function analyzeNewText() {
+            if (!app.lda || !app.currentResults) {
+                alert('Please run LDA first before analyzing new text');
+                return;
+            }
+
+            const text = document.getElementById('analyze-text').value.trim();
+            if (!text) {
+                alert('Please enter some text to analyze');
+                return;
+            }
+
+            const distribution = app.lda.predict(text);
+            const resultsDiv = document.getElementById('analyze-results');
+            
+            const sortedTopics = distribution
+                .map((score, idx) => ({ idx, score }))
+                .sort((a, b) => b.score - a.score);
+
+            const topicColors = app.visualizer.colors;
+            
+            let html = '<h5>Topic Distribution</h5><div class="doc-distribution-bars">';
+            sortedTopics.forEach(({ idx, score }) => {
+                const color = topicColors[idx % topicColors.length];
+                const topWords = app.currentResults.topics[idx].slice(0, 5).map(w => w.word).join(', ');
+                html += `
+                    <div class="dist-bar-row">
+                        <span class="dist-bar-label">Topic ${idx + 1}</span>
+                        <div class="dist-bar-track">
+                            <div class="dist-bar-fill" style="width: ${score * 100}%; background: ${color}"></div>
+                        </div>
+                        <span class="dist-bar-value">${(score * 100).toFixed(1)}%</span>
+                    </div>
+                    <div style="font-size: 0.8em; color: var(--text-secondary); margin: -5px 0 10px 80px;">${topWords}</div>
+                `;
+            });
+            html += '</div>';
+
+            resultsDiv.innerHTML = html;
+            resultsDiv.classList.remove('hidden');
         }
 
         window.app = app;

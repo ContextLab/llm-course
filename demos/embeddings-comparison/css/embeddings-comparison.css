@@ -411,6 +411,69 @@
     border-color: var(--primary-color);
 }
 
+/* Example Select Dropdown */
+.example-select {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95em;
+    background: var(--surface-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.example-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.example-select optgroup {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Category Preset Buttons */
+.category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.cat-preset-btn {
+    padding: 6px 12px;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: var(--comparison-transition);
+    color: var(--text-primary);
+}
+
+.cat-preset-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.btn-small {
+    padding: 4px 10px;
+    margin-top: 8px;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    color: var(--text-secondary);
+}
+
+.btn-small:hover {
+    background: var(--bg-secondary);
+}
+
 /* Results Sidebar */
 .results-sidebar {
     grid-column: 2;
@@ -644,6 +707,227 @@
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
+}
+
+/* How It Works Tab - Architecture Styles */
+.architecture-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.architecture-diagram {
+    background: var(--bg-secondary);
+    padding: 25px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.architecture-diagram h4 {
+    margin: 0 0 20px 0;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.arch-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.arch-block {
+    background: var(--surface-color);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 15px 25px;
+    min-width: 280px;
+    max-width: 400px;
+    text-align: center;
+    transition: var(--comparison-transition);
+}
+
+.arch-block:hover {
+    transform: scale(1.02);
+    border-color: var(--primary-color);
+    box-shadow: var(--comparison-shadow-lg);
+}
+
+.arch-block.input-block {
+    border-color: var(--success-color);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+}
+
+.arch-block.encoder-block {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05));
+}
+
+.arch-block.output-block {
+    border-color: var(--secondary-color);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.05));
+}
+
+.block-label {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+.block-content {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    font-family: 'Monaco', 'Menlo', monospace;
+}
+
+.sub-block {
+    background: var(--bg-secondary);
+    padding: 8px 12px;
+    margin: 6px 0;
+    border-radius: 6px;
+    font-size: 0.9em;
+    border: 1px solid var(--border-color);
+}
+
+.arch-arrow {
+    font-size: 1.5em;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.architecture-explanation h4 {
+    margin: 0 0 15px 0;
+    color: var(--text-primary);
+}
+
+.concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.concept-card {
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    transition: var(--comparison-transition);
+}
+
+.concept-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--comparison-shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.concept-card h5 {
+    margin: 0 0 10px 0;
+    color: var(--primary-color);
+    font-size: 1em;
+}
+
+.concept-card p {
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.model-comparison-table {
+    background: var(--bg-secondary);
+    padding: 25px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.model-comparison-table h4 {
+    margin: 0 0 15px 0;
+    color: var(--text-primary);
+}
+
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.specs-table th,
+.specs-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.specs-table th {
+    background: var(--surface-color);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.85em;
+    text-transform: uppercase;
+}
+
+.specs-table td {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.specs-table tr:hover td {
+    background: var(--surface-color);
+}
+
+.specs-table tr:last-child td {
+    border-bottom: none;
+}
+
+.math-section {
+    background: var(--bg-secondary);
+    padding: 25px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.math-section h4 {
+    margin: 0 0 20px 0;
+    color: var(--text-primary);
+}
+
+.formula-box {
+    background: var(--surface-color);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.formula-box:last-child {
+    margin-bottom: 0;
+}
+
+.formula-box p {
+    margin: 0 0 10px 0;
+    color: var(--text-primary);
+}
+
+.formula-box p:first-child {
+    font-weight: 600;
+}
+
+.formula {
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 1.1em;
+    color: var(--primary-color);
+    background: var(--bg-secondary);
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-align: center;
+    margin: 10px 0;
+    border: 1px solid var(--border-color);
+}
+
+.formula-desc {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin: 10px 0 0 0 !important;
 }
 
 /* Responsive Design */

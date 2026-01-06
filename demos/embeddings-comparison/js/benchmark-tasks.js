@@ -146,32 +146,98 @@ export class BenchmarkTasks {
             }
 
             // Simple k-means clustering
-            const clusters = this.kMeansClustering(embeddings, numCategories);
+            const { assignments, centroids } = this.kMeansClusteringWithCentroids(embeddings, numCategories);
 
             const endTime = performance.now();
 
             // Organize items by cluster
             const categories = Array.from({ length: numCategories }, () => []);
             items.forEach((item, idx) => {
-                categories[clusters[idx]].push(item);
+                categories[assignments[idx]].push(item);
             });
+
+            // Calculate silhouette score as quality metric
+            const silhouetteScore = this.calculateSilhouetteScore(embeddings, assignments, numCategories);
 
             results.push({
                 modelId,
                 modelName: this.modelsManager.getModelConfig(modelId).name,
                 categories,
-                time: endTime - startTime
+                time: endTime - startTime,
+                silhouetteScore,
+                // Use silhouetteScore for similarity field so charts display it
+                similarity: (silhouetteScore + 1) / 2  // Normalize from [-1,1] to [0,1]
             });
         }
 
         return results;
     }
 
-    kMeansClustering(embeddings, k, maxIters = 10) {
+    /**
+     * Calculate Silhouette Score for clustering quality
+     * Score ranges from -1 to 1:
+     *   1: Perfect clustering (points are far from other clusters)
+     *   0: Overlapping clusters
+     *  -1: Wrong clustering (points closer to other clusters)
+     */
+    calculateSilhouetteScore(embeddings, assignments, k) {
+        const n = embeddings.length;
+        if (n <= k) return 0; // Not enough points
+
+        let totalScore = 0;
+        let validPoints = 0;
+
+        for (let i = 0; i < n; i++) {
+            const myCluster = assignments[i];
+
+            // Calculate a(i): average distance to points in same cluster
+            let sameClusterDist = 0;
+            let sameClusterCount = 0;
+            for (let j = 0; j < n; j++) {
+                if (i !== j && assignments[j] === myCluster) {
+                    sameClusterDist += this.euclideanDistance(embeddings[i], embeddings[j]);
+                    sameClusterCount++;
+                }
+            }
+            const a = sameClusterCount > 0 ? sameClusterDist / sameClusterCount : 0;
+
+            // Calculate b(i): minimum average distance to points in other clusters
+            let minOtherClusterDist = Infinity;
+            for (let c = 0; c < k; c++) {
+                if (c === myCluster) continue;
+
+                let otherClusterDist = 0;
+                let otherClusterCount = 0;
+                for (let j = 0; j < n; j++) {
+                    if (assignments[j] === c) {
+                        otherClusterDist += this.euclideanDistance(embeddings[i], embeddings[j]);
+                        otherClusterCount++;
+                    }
+                }
+                if (otherClusterCount > 0) {
+                    const avgDist = otherClusterDist / otherClusterCount;
+                    if (avgDist < minOtherClusterDist) {
+                        minOtherClusterDist = avgDist;
+                    }
+                }
+            }
+            const b = minOtherClusterDist === Infinity ? 0 : minOtherClusterDist;
+
+            // Silhouette coefficient for point i
+            if (Math.max(a, b) > 0) {
+                const s = (b - a) / Math.max(a, b);
+                totalScore += s;
+                validPoints++;
+            }
+        }
+
+        return validPoints > 0 ? totalScore / validPoints : 0;
+    }
+
+    kMeansClusteringWithCentroids(embeddings, k, maxIters = 10) {
         const n = embeddings.length;
         const dim = embeddings[0].length;
 
-        // Initialize centroids randomly
         const centroids = [];
         const indices = new Set();
         while (centroids.length < k) {
@@ -185,7 +251,6 @@ export class BenchmarkTasks {
         let assignments = Array(n).fill(0);
 
         for (let iter = 0; iter < maxIters; iter++) {
-            // Assign points to nearest centroid
             for (let i = 0; i < n; i++) {
                 let minDist = Infinity;
                 let bestCluster = 0;
@@ -201,7 +266,6 @@ export class BenchmarkTasks {
                 assignments[i] = bestCluster;
             }
 
-            // Update centroids
             const clusterSums = Array.from({ length: k }, () => Array(dim).fill(0));
             const clusterCounts = Array(k).fill(0);
 
@@ -222,7 +286,7 @@ export class BenchmarkTasks {
             }
         }
 
-        return assignments;
+        return { assignments, centroids };
     }
 
     euclideanDistance(vecA, vecB) {
