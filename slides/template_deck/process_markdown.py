@@ -796,6 +796,7 @@ TWO_COLUMN_PATTERN = re.compile(
 CODE_BLOCK_PATTERN = re.compile(r"```(?:\w+)?\n(.*?)```", re.DOTALL)
 TABLE_PATTERN = re.compile(r"^\|.*\|$", re.MULTILINE)
 SCALE_CLASS_PATTERN = re.compile(r"<!--\s*_class:\s*([^>]*scale-\d+[^>]*)\s*-->")
+NO_AUTOSCALE_PATTERN = re.compile(r"<!--\s*no-autoscale\s*-->", re.IGNORECASE)
 EMOJI_FIGURE_PATTERN = re.compile(r'<div\s+class="emoji-figure"')
 FLOW_DIAGRAM_PATTERN = re.compile(r"```flow\n.*?```", re.DOTALL)
 
@@ -837,6 +838,7 @@ def analyze_slide_content(slide_content: str) -> dict:
     metrics = {
         "has_scale_class": False,
         "existing_scale_class": None,
+        "no_autoscale": False,
         "callout_count": 0,
         "callout_types": [],
         "has_two_column": False,
@@ -853,6 +855,10 @@ def analyze_slide_content(slide_content: str) -> dict:
         "estimated_height": 0.0,
         "overflow_warnings": [],
     }
+
+    # Check for no-autoscale directive (opt-out of auto-scaling)
+    if NO_AUTOSCALE_PATTERN.search(slide_content):
+        metrics["no_autoscale"] = True
 
     # Check for existing scale class
     scale_match = SCALE_CLASS_PATTERN.search(slide_content)
@@ -1021,8 +1027,7 @@ def determine_scale_class(metrics: dict):
     Returns:
         Scale class string (e.g., 'scale-78') or None if no scaling needed
     """
-    # If already has a scale class, don't override
-    if metrics["has_scale_class"]:
+    if metrics["has_scale_class"] or metrics.get("no_autoscale", False):
         return None
 
     height = metrics["estimated_height"]
