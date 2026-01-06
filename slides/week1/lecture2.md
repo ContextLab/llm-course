@@ -25,9 +25,10 @@ Winter 2026
 
 </div>
 
-<div class="warning-box" data-title="However...">
+<div class="warning-box" data-title="For further reflection...">
 
-Does the "experience" need to be first-hand? Can we "share" experience with another person? Or with a machine? What might that look like?
+- Does the "experience" need to be first-hand? Can we "share" experience with another person? Or with a machine? What might that look like?
+- Can we have understanding without consciousness (or vice versa)?
 
 </div>
 
@@ -52,7 +53,7 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 
 - Go to [colab.research.google.com](https://colab.research.google.com/)
 - Click "New notebook"
-- Click to start new `text` or `code` cells
+- Click to create new `text` or `code` cells
 - Copy and paste code from slides
 - Press `Shift + Enter` to run cells
 
@@ -110,7 +111,6 @@ The illusion of understanding comes from the programmer's skill at designing cle
 - **Transforming:** Convert text to different formats
 
 </div>
-<div>
 
 ```python
 text = "Hello, how are you today?"
@@ -139,7 +139,7 @@ text.split(", ")[1]
 
 <div class="note-box">
 
-Every conversational AI system, from ELIZA to ChatGPT, fundamentally processes text through some form of pattern matching, though with vastly different levels of sophistication.
+*Every* substantive conversational AI system, from ELIZA to ChatGPT, fundamentally processes text through some form of pattern matching and pattern completion, though with vastly different levels of sophistication.
 
 </div>
 
