@@ -166,7 +166,10 @@ const DependencyParser = {
             return;
         }
 
-        const width = container.clientWidth || 900;
+        const numWords = dependencies.length;
+        const minWidthPerWord = 60;
+        const containerWidth = container.clientWidth || 900;
+        const width = Math.max(containerWidth, numWords * minWidthPerWord);
         const height = 400;
         const padding = { top: 100, right: 40, bottom: 60, left: 40 };
 
@@ -175,7 +178,6 @@ const DependencyParser = {
             .attr('width', width)
             .attr('height', height);
 
-        // Create word positions
         const words = dependencies.map(d => d.word);
         const wordWidth = (width - padding.left - padding.right) / words.length;
         const positions = words.map((word, i) => ({
