@@ -39,13 +39,14 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 
 ---
 <!-- transition: flip 0.5s -->
+<!-- _class: scale-80 -->
 
 # Side note: follow along with [Google Colab](https://colab.research.google.com/)!
 
-<div style="display: flex; gap: 0.5em;">
+<div style="display: flex; gap: 0.25em;">
 <div>
 
-![height:600px](../../figures/colab_screenshot.png)
+![width:580px](../../figures/colab_screenshot.png)
 
 </div>
 <div class="inline-note">
@@ -56,6 +57,8 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 - Copy and paste code from slides
 - Press `Shift + Enter` to run cells
 
+- Riff on the examples and see what happens!
+
 </div>
 </div>
 
@@ -63,7 +66,7 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 
 ---
 <!-- transition: fade 0.25s -->
-
+<!-- _class: scale-80 -->
 # Creating the illusion of experience and understanding
 
 <div style="display: flex; gap: 1em;">
@@ -98,7 +101,7 @@ The illusion of understanding comes from the programmer's skill at designing cle
 </div>
 
 ---
-
+<!-- _class: scale-80 -->
 # Text processing and string manipulation
 
 <div style="display: flex; gap: 1.5em;">
