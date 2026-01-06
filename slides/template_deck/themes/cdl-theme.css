@@ -3618,6 +3618,113 @@ section.scale-70 pre {
     font-size: calc(22pt * 0.7) !important;
 }
 
+/* Scale 60% - for extremely dense content */
+section.scale-60 {
+    --content-scale: 0.6;
+}
+
+section.scale-60 > h1 {
+    font-size: calc(1.72em * 0.6) !important;
+    margin-top: 0 !important;
+    margin-bottom: calc(15px * 0.6) !important;
+}
+
+section.scale-60 > *:not(h1) {
+    font-size: calc(35px * 0.6) !important;
+}
+
+section.scale-60 > div[style*="flex"] {
+    gap: calc(2em * 0.6) !important;
+}
+
+section.scale-60 .note-box,
+section.scale-60 .warning-box,
+section.scale-60 .tip-box,
+section.scale-60 .example-box,
+section.scale-60 .definition-box,
+section.scale-60 .important-box {
+    font-size: calc(35px * 0.65 * 0.6) !important;
+    padding: calc(10px * 0.6) calc(16px * 0.6) calc(12px * 0.6) !important;
+}
+
+section.scale-60 pre {
+    font-size: calc(22pt * 0.6) !important;
+}
+
+/* Scale 50% - minimum readable size for exceptional cases */
+section.scale-50 {
+    --content-scale: 0.5;
+}
+
+section.scale-50 > h1 {
+    font-size: calc(1.72em * 0.5) !important;
+    margin-top: 0 !important;
+    margin-bottom: calc(15px * 0.5) !important;
+}
+
+section.scale-50 > *:not(h1) {
+    font-size: calc(35px * 0.5) !important;
+}
+
+section.scale-50 > div[style*="flex"] {
+    gap: calc(2em * 0.5) !important;
+}
+
+section.scale-50 .note-box,
+section.scale-50 .warning-box,
+section.scale-50 .tip-box,
+section.scale-50 .example-box,
+section.scale-50 .definition-box,
+section.scale-50 .important-box {
+    font-size: calc(35px * 0.65 * 0.5) !important;
+    padding: calc(10px * 0.5) calc(16px * 0.5) calc(12px * 0.5) !important;
+}
+
+section.scale-50 pre {
+    font-size: calc(22pt * 0.5) !important;
+}
+
+/* ============================================
+   DIAGRAM CONTAINER EXCEPTIONS FOR SCALE CLASSES
+   Diagrams should NOT be scaled - they have fixed viewBox sizing
+   ============================================ */
+
+section.scale-90 .diagram-container,
+section.scale-90 .chart-container,
+section.scale-80 .diagram-container,
+section.scale-80 .chart-container,
+section.scale-78 .diagram-container,
+section.scale-78 .chart-container,
+section.scale-70 .diagram-container,
+section.scale-70 .chart-container,
+section.scale-60 .diagram-container,
+section.scale-60 .chart-container,
+section.scale-50 .diagram-container,
+section.scale-50 .chart-container {
+    /* Override any font-size scaling - diagrams use viewBox for sizing */
+    font-size: 1em !important;
+    /* No transform scaling - diagrams handle their own sizing */
+    transform: none !important;
+}
+
+/* Tables inside scale classes */
+section.scale-90 table { font-size: calc(35px * 0.7 * 0.9) !important; }
+section.scale-80 table { font-size: calc(35px * 0.7 * 0.8) !important; }
+section.scale-78 table { font-size: calc(35px * 0.7 * 0.78) !important; }
+section.scale-70 table { font-size: calc(35px * 0.7 * 0.7) !important; }
+section.scale-60 table { font-size: calc(35px * 0.7 * 0.6) !important; }
+section.scale-50 table { font-size: calc(35px * 0.7 * 0.5) !important; }
+
+/* Table-compact class for very dense tables */
+section.table-compact table {
+    font-size: calc(35px * 0.6) !important;
+}
+
+section.table-compact th,
+section.table-compact td {
+    padding: 0.2em 0.4em !important;
+}
+
 /* ============================================
    RUNTIME UNIFORM SCALING VIA CSS VARIABLE
    Used by autoscale.js for aspect-ratio-based layout

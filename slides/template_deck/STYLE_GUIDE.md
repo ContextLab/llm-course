@@ -852,35 +852,108 @@ See `notes/diagrams_and_charts_research.md` for detailed implementation guidance
 
 ---
 
-## Autoscaling System
+## Content Scaling System
 
-The CDL theme includes an intelligent autoscaling system (`autoscale.js`) that automatically adjusts content to fit within slide boundaries. This ensures consistent appearance across different content densities while preserving visual hierarchy.
+The CDL theme uses a **compile-time scaling system** that analyzes slide content during compilation and applies appropriate CSS scale classes. This ensures HTML and PDF outputs look identical, since scaling is embedded in the CSS rather than applied at runtime.
 
 ### How It Works
 
-The autoscaling system uses a CSS custom property (`--slide-scale`) to uniformly scale all slide content:
+During compilation, `process_markdown.py` analyzes each slide:
 
-1. **Measure** - Calculate the natural size of all slide content
-2. **Compare** - Determine if content exceeds available space
-3. **Scale** - Apply uniform scaling factor to fit content within bounds
+1. **Analyze** - Measure content density (callouts, tables, code, text length)
+2. **Estimate** - Calculate approximate content height in abstract units
+3. **Decide** - Determine if scaling is needed and which scale class to use
+4. **Inject** - Add `<!-- _class: scale-XX -->` directive to the slide
 
-### Rigid vs Flexible Elements
+### Content Density Heuristics
 
-The system distinguishes between two types of elements:
+The analyzer considers these factors when estimating slide density:
 
-| Type | Elements | Behavior |
-|------|----------|----------|
-| **Rigid** | Images, diagrams, charts, SVGs | Must preserve aspect ratio; scale uniformly in both dimensions |
-| **Flexible** | Text, callouts, tables, lists | Can reflow when width changes; height adjusts naturally |
+| Content Type | Weight (units) | Notes |
+|--------------|----------------|-------|
+| H1 title | 2.0 | Always present |
+| Callout box | 2.5 | Base overhead per box |
+| List item | 0.7 | Per bullet point |
+| Code block line | 0.6 | Per line of code |
+| Table row | 1.0 | Per data row |
+| Paragraph (~50 chars) | 0.4 | Text content |
+| Emoji figure | 4.0 | Large visual element |
+| Flow diagram | 3.0 | SVG diagram |
+| Two-column flex container | 1.0 | Layout overhead |
 
-### Scaling Cascade
+**Slide budget:** ~20 units. Content exceeding this triggers scaling.
 
-When content doesn't fit, the system applies a cascade of adjustments:
+### Scale Class Selection
 
-1. **Reduce gaps** - Shrink spacing between elements (from 30px to 20px minimum)
-2. **Reduce scale** - Shrink all content uniformly (minimum 50% scale)
+| Estimated Height | Scale Class | Reduction |
+|------------------|-------------|-----------|
+| ≤ 20 units | None | 100% |
+| 20-22 units | `.scale-90` | 90% |
+| 22-24 units | `.scale-80` | 80% |
+| 24-28 units | `.scale-78` | 78% |
+| 28-34 units | `.scale-70` | 70% |
+| 34-40 units | `.scale-60` | 60% |
+| > 40 units | `.scale-50` | 50% |
 
-Font ratios between element types are always preserved:
+### Manual Scale Classes
+
+Override automatic scaling with explicit CSS classes:
+
+```markdown
+---
+<!-- _class: scale-78 -->
+
+# Dense Content Slide
+
+Content here will be rendered at 78% scale...
+```
+
+Available classes: `.scale-90`, `.scale-80`, `.scale-78`, `.scale-70`, `.scale-60`, `.scale-50`
+
+### Opting Out of Auto-Scaling
+
+Use the `<!-- no-autoscale -->` directive to prevent automatic scale class injection:
+
+```markdown
+---
+<!-- no-autoscale -->
+
+# Manually Controlled Slide
+
+This slide will not receive automatic scale classes.
+```
+
+### Special Cases
+
+| Scenario | Behavior |
+|----------|----------|
+| **Table inside callout box** | Always uses `.scale-78` (high overflow risk) |
+| **3+ callout boxes** | Uses `.scale-80` minimum |
+| **Two-column + multiple callouts** | Uses `.scale-78` if near budget |
+| **Existing `_class:` directive** | Scale class appended, not replaced |
+| **Diagram containers** | Diagrams are NOT scaled (CSS exceptions) |
+
+### Compile-Time Warnings
+
+During compilation, warnings are printed for potential overflow issues:
+
+```
+=== Slide Analysis Warnings for lecture.md ===
+  Slide 3: Multiple callout boxes (3) may cause overflow
+  Slide 3: Auto-injecting scale-80 (estimated height: 15.4)
+  Slide 8: TABLE INSIDE CALLOUT BOX detected - high overflow risk
+  Slide 8: Auto-injecting scale-78 (estimated height: 17.5)
+```
+
+### Chart Animation Replay
+
+When navigating between slides in HTML, Chart.js animations are automatically replayed for charts on the newly visible slide. This is handled by `chart-animations.js`.
+
+### Table Column Alignment
+
+Tables with wrapped text are detected at runtime and left-aligned for readability. This is independent of scaling.
+
+### Font Ratios (Preserved During Scaling)
 
 | Element Type | Font Ratio | Base Size |
 |--------------|------------|-----------|
@@ -890,73 +963,14 @@ Font ratios between element types are always preserved:
 | Callouts | 0.65 | ~23px |
 | Code blocks | 0.63 | ~22px |
 
-### Text-Only Slide Scaling
-
-For slides containing only text (no images or diagrams), the system can scale **up** to fill available space:
-- Maximum scale-up: 15% larger (scale factor 1.15)
-- Minimum threshold: Only scales up if increase exceeds 3%
-
-### Mixed Flex Container Handling
-
-When a flex container (two-column layout) contains both images and text:
-- **Images** receive the full scale factor (preserving aspect ratio)
-- **Text/callouts** remain at natural size (no scaling applied)
-
-This prevents text from becoming too small when an image requires shrinking.
-
-### Compile-Time Scaling Classes
-
-For manual control, use these CSS classes to override autoscaling:
-
-| Class | Scale Factor | Use Case |
-|-------|--------------|----------|
-| `.scale-90` | 90% | Slightly dense content |
-| `.scale-80` | 80% | Moderately dense content |
-| `.scale-78` | 78% | Fine-tuned fit |
-| `.scale-70` | 70% | Dense content |
-| `.scale-60` | 60% | Very dense content |
-| `.scale-50` | 50% | Maximum density |
-
-```markdown
-<!-- _class: scale-80 -->
-
-# Dense Content Slide
-
-Content here will be rendered at 80% scale...
-```
-
-### Excluded Slides
-
-The following slides are not processed by autoscaling:
-- Title slides (first slide, `.lead` class)
-- Slides with `id="1"`
-- Slides with `.manual-layout` class
-- Slides with compile-time scaling classes (`.scale-*`)
-
-### CSS Variable Usage
-
-The `--slide-scale` CSS variable can be used in custom styles:
-
-```css
-/* Example: Scale a custom element with the slide */
-.my-custom-element {
-  font-size: calc(20px * var(--slide-scale, 1));
-  padding: calc(10px * var(--slide-scale, 1));
-}
-```
-
-### Chart Animation Replay
-
-When navigating between slides, Chart.js animations are automatically replayed for any charts on the newly visible slide. This creates a polished presentation experience.
-
 ### Troubleshooting
 
 | Issue | Cause | Solution |
 |-------|-------|----------|
-| Content appears too small | Autoscaling reduced scale significantly | Split content across multiple slides or use `.scale-*` class |
-| Inconsistent scaling on refresh | Resources not fully loaded | Wait for page load; system re-scales on navigation |
-| Images not scaling with text | Mixed flex container handling | Expected behavior; text stays readable |
-| Diagram not scaling | Diagram containers are excluded | By design; diagrams maintain fixed size |
+| Content too small | Auto-scaling applied aggressively | Split content or use `<!-- no-autoscale -->` |
+| HTML ≠ PDF | Old `autoscale.js` still present | Recompile; ensure using new system |
+| Wrong scale class | Heuristics misestimated | Use manual `<!-- _class: scale-XX -->` |
+| Diagram scaled incorrectly | CSS exception not applied | Check for `.diagram-container` class |
 
 ---
 
@@ -992,8 +1006,9 @@ presentation/
 │   └── cdl-theme.css     # Theme file
 ├── images/               # Custom images
 ├── compile.sh            # Compilation script
-├── process_markdown.py   # Preprocessing script
-└── autoscale.js          # Auto-scaling script
+├── process_markdown.py   # Preprocessing + content analysis
+├── chart-defaults.js     # Chart.js theme defaults
+└── chart-animations.js   # Chart replay + table alignment
 ```
 
 ---
@@ -1363,5 +1378,5 @@ Before finalizing a presentation, verify:
 
 ---
 
-*Last updated: December 2025*
-*CDL Theme v1.3 - Added inline callout boxes, definitions-examples layout, autoscaling system documentation*
+*Last updated: January 2026*
+*CDL Theme v1.4 - Replaced runtime autoscale.js with compile-time scaling system*

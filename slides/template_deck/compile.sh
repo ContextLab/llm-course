@@ -238,15 +238,13 @@ with open('$OUTPUT_FILE', 'w') as f:
 "
 fi
 
-# Inject auto-scaling script for HTML output
-AUTOSCALE_JS="$SCRIPT_DIR/autoscale.js"
-if [[ ("$OUTPUT_FORMAT" == "html" || "$OUTPUT_FORMAT" == "both") && -f "$OUTPUT_FILE" && -f "$AUTOSCALE_JS" ]]; then
-    log_info "Injecting auto-scaling script..."
+# Inject chart-animations script for HTML output (table alignment + chart replay)
+CHART_ANIMATIONS_JS="$SCRIPT_DIR/chart-animations.js"
+if [[ ("$OUTPUT_FORMAT" == "html" || "$OUTPUT_FORMAT" == "both") && -f "$OUTPUT_FILE" && -f "$CHART_ANIMATIONS_JS" ]]; then
+    log_info "Injecting chart-animations script..."
 
-    # Read the script content and wrap in <script> tags
-    SCRIPT_CONTENT=$(cat "$AUTOSCALE_JS")
+    SCRIPT_CONTENT=$(cat "$CHART_ANIMATIONS_JS")
 
-    # Use Python to inject the script (handles special characters properly)
     python3 -c "
 import sys
 with open('$OUTPUT_FILE', 'r') as f:

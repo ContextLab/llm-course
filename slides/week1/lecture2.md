@@ -40,13 +40,14 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 
 ---
 <!-- transition: flip 0.5s -->
+<!-- _class: scale-80 -->
 
 # Side note: follow along with [Google Colab](https://colab.research.google.com/)!
 
-<div style="display: flex; gap: 0.5em;">
+<div style="display: flex; gap: 0.25em;">
 <div>
 
-![height:600px](../../figures/colab_screenshot.png)
+![width:580px](../../figures/colab_screenshot.png)
 
 </div>
 <div class="inline-note">
@@ -57,6 +58,8 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 - Copy and paste code from slides
 - Press `Shift + Enter` to run cells
 
+- Riff on the examples and see what happens!
+
 </div>
 </div>
 
@@ -64,7 +67,7 @@ Pattern matching can create powerful *illusions* of understanding, even without 
 
 ---
 <!-- transition: fade 0.25s -->
-
+<!-- _class: scale-80 -->
 # Creating the illusion of experience and understanding
 
 <div style="display: flex; gap: 1em;">
@@ -99,7 +102,7 @@ The illusion of understanding comes from the programmer's skill at designing cle
 </div>
 
 ---
-
+<!-- _class: scale-80 -->
 # Text processing and string manipulation
 
 <div style="display: flex; gap: 1.5em;">
@@ -235,6 +238,42 @@ def simple_respond(user_input):
 <span class="warning-title">Key insight</span>
 <span class="warning-text">The computer has no idea what "tired" or "anxious" mean. It's just copying text!</span>
 </div>
+
+---
+# Let's build our first (very simple) chatbot!
+
+```python
+import re
+
+# response function: process user input and
+# respond appropriately
+def respond(user_input):
+  # look for "I am ___" patterns
+  i_am = re.search(r"I am (.*)", user_input, re.IGNORECASE)
+
+  # look for "You are ___" patterns
+  you_are = re.search(r"You are (.*)", user_input, re.IGNORECASE)
+
+  if i_am:
+    feeling = i_am.group(1)
+    return f"Why are you {feeling}?"
+  elif you_are:
+    trait = you_are.group(1)
+    return f"What makes you think I am {trait}?"
+  # add some more patterns!
+  else:    
+    return "Tell me more."
+# main loop: interact with user
+print("Bot: Hello! I'm here to listen. Type 'exit' to quit.")
+while True:
+  user_input = input("You: ")
+  if user_input.lower() in ["exit", "quit"]:
+    break
+  else: 
+    response = respond(user_input)
+  print("Bot:", response)
+print("Bot: Goodbye!")
+```
 
 ---
 <!-- _class: scale-80 -->
