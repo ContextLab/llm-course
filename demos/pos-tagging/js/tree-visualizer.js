@@ -14,10 +14,13 @@ const TreeVisualizer = {
             return;
         }
 
-        const width = container.clientWidth || 900;
+        const numWords = dependencies.length;
+        const minWidthPerWord = 80;
+        const containerWidth = container.clientWidth || 900;
+        const width = Math.max(containerWidth, numWords * minWidthPerWord);
         const height = 600;
 
-        // Create SVG
+        // Create SVG with dynamic width for scrolling
         this.svg = d3.select('#dependency-tree')
             .append('svg')
             .attr('width', width)
@@ -25,7 +28,7 @@ const TreeVisualizer = {
 
         // Create zoom behavior
         this.zoom = d3.zoom()
-            .scaleExtent([0.5, 3])
+            .scaleExtent([0.3, 3])
             .on('zoom', (event) => {
                 this.g.attr('transform', event.transform);
                 this.currentZoom = event.transform.k;
@@ -39,7 +42,7 @@ const TreeVisualizer = {
         // Convert dependencies to tree structure
         const root = this.buildTree(dependencies);
 
-        // Create tree layout
+        // Create tree layout with dynamic width
         const treeLayout = d3.tree()
             .size([width - 100, height - 150]);
 
