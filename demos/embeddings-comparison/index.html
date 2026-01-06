@@ -104,6 +104,27 @@
 
                         <div class="test-inputs">
                             <div class="input-group">
+                                <label>Try an example:</label>
+                                <select id="sim-example-select" class="example-select">
+                                    <option value="">-- Select Example --</option>
+                                    <optgroup label="High Similarity">
+                                        <option value="high-1">Paraphrase: Cat sleeping</option>
+                                        <option value="high-2">Paraphrase: Weather statement</option>
+                                        <option value="high-3">Synonym swap: Programming</option>
+                                    </optgroup>
+                                    <optgroup label="Medium Similarity">
+                                        <option value="med-1">Related: Programming languages</option>
+                                        <option value="med-2">Related: Transportation</option>
+                                        <option value="med-3">Related: Food and cooking</option>
+                                    </optgroup>
+                                    <optgroup label="Low Similarity">
+                                        <option value="low-1">Unrelated: Weather vs ML</option>
+                                        <option value="low-2">Unrelated: Sports vs Science</option>
+                                        <option value="low-3">Unrelated: Music vs Math</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="input-group">
                                 <label>Sentence 1:</label>
                                 <textarea id="sim-sent1" rows="2" placeholder="The cat sat on the mat.">A man is eating food.</textarea>
                             </div>
@@ -115,13 +136,6 @@
                         </div>
 
                         <div id="similarity-results" class="results-area"></div>
-
-                        <div class="preset-tests">
-                            <h4>Quick Tests:</h4>
-                            <button class="preset-btn" data-preset="high-sim">High Similarity</button>
-                            <button class="preset-btn" data-preset="medium-sim">Medium Similarity</button>
-                            <button class="preset-btn" data-preset="low-sim">Low Similarity</button>
-                        </div>
                     </div>
 
                     <!-- Analogy Task -->
@@ -130,6 +144,32 @@
                         <p>Test reasoning: "A is to B as C is to ?"</p>
 
                         <div class="test-inputs">
+                            <div class="input-group">
+                                <label>Try an example:</label>
+                                <select id="analogy-example-select" class="example-select">
+                                    <option value="">-- Select Example --</option>
+                                    <optgroup label="Gender Relations">
+                                        <option value="royalty">King : Queen :: Man : ?</option>
+                                        <option value="actor">Actor : Actress :: Waiter : ?</option>
+                                        <option value="hero">Hero : Heroine :: Prince : ?</option>
+                                    </optgroup>
+                                    <optgroup label="Geography">
+                                        <option value="capitals">Paris : France :: London : ?</option>
+                                        <option value="capitals2">Tokyo : Japan :: Berlin : ?</option>
+                                        <option value="capitals3">Rome : Italy :: Madrid : ?</option>
+                                    </optgroup>
+                                    <optgroup label="Grammar">
+                                        <option value="grammar">Good : Better :: Bad : ?</option>
+                                        <option value="grammar2">Big : Bigger :: Small : ?</option>
+                                        <option value="tense">Walk : Walked :: Run : ?</option>
+                                    </optgroup>
+                                    <optgroup label="Semantic Relations">
+                                        <option value="animal">Dog : Puppy :: Cat : ?</option>
+                                        <option value="material">Wood : Tree :: Paper : ?</option>
+                                        <option value="tool">Hammer : Nail :: Screwdriver : ?</option>
+                                    </optgroup>
+                                </select>
+                            </div>
                             <div class="analogy-inputs">
                                 <input type="text" id="analogy-a" placeholder="king" value="king">
                                 <span class="analogy-label">is to</span>
@@ -143,21 +183,27 @@
                         </div>
 
                         <div id="analogy-results" class="results-area"></div>
-
-                        <div class="preset-tests">
-                            <h4>Classic Analogies:</h4>
-                            <button class="preset-btn" data-preset="royalty">King:Queen::Man:?</button>
-                            <button class="preset-btn" data-preset="capitals">Paris:France::London:?</button>
-                            <button class="preset-btn" data-preset="grammar">Good:Better::Bad:?</button>
-                        </div>
                     </div>
 
                     <!-- Categorization Task -->
                     <div id="categorization-task" class="task-panel">
                         <h3>Topic Categorization</h3>
-                        <p>Test how well models group similar items.</p>
+                        <p>Test how well models group similar items using k-means clustering.</p>
 
                         <div class="test-inputs">
+                            <div class="input-group">
+                                <label>Add word groups:</label>
+                                <div class="category-buttons">
+                                    <button class="cat-preset-btn" data-category="fruits">+ Fruits</button>
+                                    <button class="cat-preset-btn" data-category="vegetables">+ Vegetables</button>
+                                    <button class="cat-preset-btn" data-category="animals">+ Animals</button>
+                                    <button class="cat-preset-btn" data-category="vehicles">+ Vehicles</button>
+                                    <button class="cat-preset-btn" data-category="sports">+ Sports</button>
+                                    <button class="cat-preset-btn" data-category="colors">+ Colors</button>
+                                    <button class="cat-preset-btn" data-category="countries">+ Countries</button>
+                                    <button class="cat-preset-btn" data-category="professions">+ Professions</button>
+                                </div>
+                            </div>
                             <div class="input-group">
                                 <label>Items to categorize (one per line):</label>
                                 <textarea id="cat-items" rows="8" placeholder="Enter items to categorize...">apple
@@ -168,6 +214,7 @@ orange
 spinach
 grape
 kale</textarea>
+                                <button id="clear-cat-items" class="btn-small">Clear</button>
                             </div>
                             <div class="input-group">
                                 <label>Number of categories:</label>

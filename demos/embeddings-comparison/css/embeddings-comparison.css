@@ -411,6 +411,69 @@
     border-color: var(--primary-color);
 }
 
+/* Example Select Dropdown */
+.example-select {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95em;
+    background: var(--surface-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.example-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.example-select optgroup {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Category Preset Buttons */
+.category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.cat-preset-btn {
+    padding: 6px 12px;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: var(--comparison-transition);
+    color: var(--text-primary);
+}
+
+.cat-preset-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.btn-small {
+    padding: 4px 10px;
+    margin-top: 8px;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    color: var(--text-secondary);
+}
+
+.btn-small:hover {
+    background: var(--bg-secondary);
+}
+
 /* Results Sidebar */
 .results-sidebar {
     grid-column: 2;
