@@ -252,12 +252,26 @@
                 const output = document.getElementById('ner-output');
                 const statsContent = document.getElementById('ner-stats-content');
 
+                // Helper function to safely extract entities
+                // Compromise v14 moved some methods to plugins, so we handle missing methods gracefully
+                const safeExtract = (method) => {
+                    try {
+                        if (typeof this.currentDoc[method] === 'function') {
+                            return this.currentDoc[method]().out('array');
+                        }
+                        return [];
+                    } catch (e) {
+                        console.warn(`NER method ${method}() not available:`, e.message);
+                        return [];
+                    }
+                };
+
                 const entities = {
-                    people: this.currentDoc.people().out('array'),
-                    places: this.currentDoc.places().out('array'),
-                    organizations: this.currentDoc.organizations().out('array'),
-                    dates: this.currentDoc.dates().out('array'),
-                    values: this.currentDoc.values().out('array')
+                    people: safeExtract('people'),
+                    places: safeExtract('places'),
+                    organizations: safeExtract('organizations'),
+                    dates: safeExtract('dates'),
+                    values: safeExtract('values')
                 };
 
                 let html = '<div class="ner-tokens">';

@@ -58,7 +58,11 @@ export class BERTModel {
         });
 
         // Convert token IDs back to tokens
-        const tokens = encoded.input_ids.map(id => {
+        // Handle both regular arrays and typed arrays (Int32Array, etc.)
+        const inputIds = encoded.input_ids;
+        const idsArray = Array.isArray(inputIds) ? inputIds : Array.from(inputIds.data || inputIds);
+        
+        const tokens = idsArray.map(id => {
             return this.tokenizer.decode([id], { skip_special_tokens: false });
         });
 
