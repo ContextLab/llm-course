@@ -135,6 +135,7 @@
                                 <span id="selection-count">0</span> selected
                                 <button id="clear-selection-btn" class="btn-small">Clear</button>
                                 <button id="select-all-btn" class="btn-small">Select All Visible</button>
+                                <button id="select-all-dataset-btn" class="btn-small btn-primary">Select All (<span id="total-review-count">0</span>)</button>
                             </div>
                         </div>
                         <div id="review-list" class="review-list">
@@ -392,11 +393,12 @@
                     </div>
                 </div>
 
-                <!-- Aspect-Based Sentiment -->
+                <!-- Keyword Detection -->
                 <div class="card">
-                    <h2>Detected Aspects</h2>
-                    <div id="aspect-sentiment" class="aspect-sentiment">
-                        <p class="placeholder">Aspect-based sentiment will appear here</p>
+                    <h2>Keyword Detection</h2>
+                    <p class="keyword-note">Simple keyword matching - not aspect-based sentiment analysis</p>
+                    <div id="keyword-detection" class="keyword-detection">
+                        <p class="placeholder">Keywords will appear here after analysis</p>
                     </div>
                 </div>
 
@@ -460,6 +462,23 @@
         <div id="loading-overlay" class="loading-overlay" style="display: none;">
             <div class="spinner"></div>
             <p id="loading-message">Loading model...</p>
+        </div>
+
+        <!-- Review Detail Modal -->
+        <div id="review-modal" class="modal-overlay" style="display: none;">
+            <div class="modal-content review-detail-modal">
+                <button class="modal-close" id="close-review-modal">&times;</button>
+                <div class="modal-header">
+                    <h3>Review Details</h3>
+                    <span id="modal-review-label" class="review-label">positive</span>
+                </div>
+                <div class="modal-body">
+                    <div id="modal-review-text" class="review-full-text"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="analyze-single-review-btn" class="analyze-btn">Analyze This Review</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -653,8 +672,8 @@
 
             browser.style.display = 'block';
             loadedCount.textContent = `(${reviews.length} reviews)`;
+            document.getElementById('total-review-count').textContent = reviews.length;
 
-            // Clear and populate review list
             reviewList.innerHTML = '';
             reviews.forEach((review, index) => {
                 const item = document.createElement('div');
@@ -668,14 +687,31 @@
                         <span class="review-label ${review.sentiment}">${review.sentiment}</span>
                         <p class="review-text">${review.text.substring(0, 150)}${review.text.length > 150 ? '...' : ''}</p>
                     </div>
+                    <button class="view-review-btn" data-index="${index}" title="View full review">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
                 `;
 
-                item.addEventListener('click', (e) => {
-                    if (e.target.type !== 'checkbox') {
-                        const checkbox = item.querySelector('input[type="checkbox"]');
-                        checkbox.checked = !checkbox.checked;
-                    }
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     toggleReviewSelection(index);
+                });
+
+                const viewBtn = item.querySelector('.view-review-btn');
+                viewBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showReviewModal(review, index);
+                });
+
+                item.addEventListener('click', (e) => {
+                    if (e.target.type !== 'checkbox' && !e.target.closest('.view-review-btn')) {
+                        checkbox.checked = !checkbox.checked;
+                        toggleReviewSelection(index);
+                    }
                 });
 
                 reviewList.appendChild(item);
@@ -734,6 +770,58 @@
             updateSelectionCount();
         });
 
+        document.getElementById('select-all-dataset-btn').addEventListener('click', () => {
+            imdbData.forEach((_, index) => {
+                selectedReviews.add(index);
+            });
+            document.querySelectorAll('.review-item input[type="checkbox"]').forEach(cb => cb.checked = true);
+            updateSelectionCount();
+        });
+
+        let currentModalReview = null;
+
+        function showReviewModal(review, index) {
+            currentModalReview = { review, index };
+            const modal = document.getElementById('review-modal');
+            const label = document.getElementById('modal-review-label');
+            const text = document.getElementById('modal-review-text');
+
+            label.textContent = review.sentiment;
+            label.className = `review-label ${review.sentiment}`;
+            text.textContent = review.text;
+
+            modal.style.display = 'flex';
+        }
+
+        document.getElementById('close-review-modal').addEventListener('click', () => {
+            document.getElementById('review-modal').style.display = 'none';
+            currentModalReview = null;
+        });
+
+        document.getElementById('review-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'review-modal') {
+                document.getElementById('review-modal').style.display = 'none';
+                currentModalReview = null;
+            }
+        });
+
+        document.getElementById('analyze-single-review-btn').addEventListener('click', async () => {
+            if (!currentModalReview) return;
+            document.getElementById('review-modal').style.display = 'none';
+            
+            document.querySelector('.mode-btn.active').classList.remove('active');
+            document.querySelector('.mode-btn[data-mode="single"]').classList.add('active');
+            document.getElementById('single-mode').style.display = 'block';
+            document.getElementById('batch-mode').style.display = 'none';
+            document.getElementById('imdb-mode').style.display = 'none';
+            analyzeBtn.style.display = 'block';
+            
+            textInput.value = currentModalReview.review.text;
+            charCount.textContent = currentModalReview.review.text.length;
+            await analyzeBothModels(currentModalReview.review.text);
+            currentModalReview = null;
+        });
+
         document.getElementById('analyze-selected-btn').addEventListener('click', async () => {
             if (selectedReviews.size === 0) {
                 alert('Please select at least one review');
@@ -779,6 +867,8 @@
                 displayMetrics(currentResults);
                 displayConfusionMatrix(currentResults);
                 updateAggregatedGauges(currentResults);
+                showBatchModelAgreement(currentResults);
+                hideSingleTextSections();
 
             } catch (error) {
                 console.error('IMDB batch analysis error:', error);
@@ -821,15 +911,13 @@
                 const transformerResult = await analyzer.analyze(text, 'transformer');
                 updateModelUI('transformer', transformerResult, text);
 
-                // Show agreement indicator
                 showModelAgreement(rulesResult, transformerResult);
 
-                // Update shared sections
+                showSingleTextSections();
                 updateWordContribution(text, rulesResult);
                 updateEmojiAnalysis(text, rulesResult);
-                updateAspectSentiment(text, rulesResult);
+                updateKeywordDetection(text, rulesResult);
 
-                // Hide batch-specific elements
                 document.getElementById('batch-results-card').style.display = 'none';
                 hideDistributionCharts();
                 hideMetricsCards();
@@ -863,6 +951,8 @@
                 displayBatchResultsComparison(currentResults);
                 displayDistributionCharts(currentResults);
                 updateAggregatedGauges(currentResults);
+                showBatchModelAgreement(currentResults);
+                hideSingleTextSections();
 
             } catch (error) {
                 console.error('Batch analysis error:', error);
@@ -965,6 +1055,55 @@
             }
         }
 
+        function showBatchModelAgreement(results) {
+            const agreementDiv = document.getElementById('model-agreement');
+            const contentDiv = document.getElementById('agreement-content');
+            agreementDiv.style.display = 'block';
+
+            let agreeCount = 0;
+            const total = results.rules.length;
+            for (let i = 0; i < total; i++) {
+                if (results.rules[i].sentiment === results.transformer[i].sentiment) {
+                    agreeCount++;
+                }
+            }
+
+            const agreementPercent = ((agreeCount / total) * 100).toFixed(1);
+            const disagreeCount = total - agreeCount;
+
+            if (agreeCount === total) {
+                contentDiv.innerHTML = `
+                    <span class="agreement-icon agree">✓</span>
+                    <span class="agreement-text">Models agree on <strong>100%</strong> of ${total} reviews</span>
+                `;
+                contentDiv.className = 'agreement-agree';
+            } else if (agreeCount === 0) {
+                contentDiv.innerHTML = `
+                    <span class="agreement-icon disagree">≠</span>
+                    <span class="agreement-text">Models disagree on all ${total} reviews</span>
+                `;
+                contentDiv.className = 'agreement-disagree';
+            } else {
+                contentDiv.innerHTML = `
+                    <span class="agreement-icon ${agreeCount > disagreeCount ? 'agree' : 'disagree'}">${agreeCount > disagreeCount ? '≈' : '≠'}</span>
+                    <span class="agreement-text">Models agree on <strong>${agreementPercent}%</strong> (${agreeCount}/${total}) of reviews</span>
+                `;
+                contentDiv.className = agreeCount > disagreeCount ? 'agreement-agree' : 'agreement-disagree';
+            }
+        }
+
+        function hideSingleTextSections() {
+            document.querySelector('.word-contribution').closest('.card').style.display = 'none';
+            document.querySelector('.emoji-analysis').closest('.card').style.display = 'none';
+            document.querySelector('.aspect-sentiment').closest('.card').style.display = 'none';
+        }
+
+        function showSingleTextSections() {
+            document.querySelector('.word-contribution').closest('.card').style.display = 'block';
+            document.querySelector('.emoji-analysis').closest('.card').style.display = 'block';
+            document.querySelector('.aspect-sentiment').closest('.card').style.display = 'block';
+        }
+
         function updateWordContribution(text, result) {
             const container = document.getElementById('word-contribution');
             const visualizer = new ContributionVisualizer(container);
@@ -992,39 +1131,41 @@
             }
         }
 
-        function updateAspectSentiment(text, result) {
-            const container = document.getElementById('aspect-sentiment');
+        function updateKeywordDetection(text, result) {
+            const container = document.getElementById('keyword-detection');
 
-            const aspects = {
-                'product': ['product', 'item', 'thing', 'device'],
-                'service': ['service', 'support', 'help', 'staff'],
-                'quality': ['quality', 'build', 'material'],
-                'price': ['price', 'cost', 'expensive', 'cheap', 'value'],
-                'delivery': ['delivery', 'shipping', 'arrival']
+            const categories = {
+                'product': ['product', 'item', 'thing', 'device', 'purchase'],
+                'service': ['service', 'support', 'help', 'staff', 'customer'],
+                'quality': ['quality', 'build', 'material', 'durable', 'craftsmanship'],
+                'price': ['price', 'cost', 'expensive', 'cheap', 'value', 'money', 'worth'],
+                'delivery': ['delivery', 'shipping', 'arrival', 'package', 'shipped'],
+                'movie': ['movie', 'film', 'acting', 'actor', 'director', 'plot', 'scene', 'character'],
+                'food': ['food', 'taste', 'meal', 'restaurant', 'delicious', 'flavor']
             };
 
             const lowerText = text.toLowerCase();
-            const detectedAspects = [];
+            const detectedKeywords = [];
 
-            Object.keys(aspects).forEach(aspect => {
-                const found = aspects[aspect].some(keyword => lowerText.includes(keyword));
-                if (found) {
-                    detectedAspects.push({
-                        aspect: aspect,
-                        sentiment: result.sentiment
+            Object.keys(categories).forEach(category => {
+                const matchedKeywords = categories[category].filter(keyword => lowerText.includes(keyword));
+                if (matchedKeywords.length > 0) {
+                    detectedKeywords.push({
+                        category: category,
+                        keywords: matchedKeywords
                     });
                 }
             });
 
-            if (detectedAspects.length > 0) {
-                container.innerHTML = detectedAspects.map(a => `
-                    <div class="aspect-item">
-                        <span class="aspect-name">${a.aspect}</span>
-                        <span class="aspect-sentiment sentiment-${a.sentiment}">${a.sentiment}</span>
+            if (detectedKeywords.length > 0) {
+                container.innerHTML = detectedKeywords.map(d => `
+                    <div class="keyword-item">
+                        <span class="keyword-category">${d.category}</span>
+                        <span class="keyword-list">${d.keywords.join(', ')}</span>
                     </div>
                 `).join('');
             } else {
-                container.innerHTML = '<p class="placeholder">No specific aspects detected</p>';
+                container.innerHTML = '<p class="placeholder">No category keywords detected</p>';
             }
         }
 

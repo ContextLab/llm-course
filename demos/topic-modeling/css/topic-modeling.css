@@ -850,3 +850,344 @@
         max-height: calc(90vh - 280px);
     }
 }
+
+/* How It Works - LDA Explanation */
+.lda-explanation {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.lda-explanation h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.graphical-model-section {
+    background: var(--bg-secondary);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.plate-diagram {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 20px;
+    justify-content: center;
+}
+
+.plate {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+}
+
+.outer-plate {
+    background: rgba(99, 102, 241, 0.05);
+    border-color: var(--primary-color);
+}
+
+.inner-plate {
+    background: rgba(168, 85, 247, 0.05);
+    border-color: var(--secondary-color);
+    margin-top: 15px;
+}
+
+.plate-label {
+    position: absolute;
+    bottom: -10px;
+    right: 10px;
+    background: var(--surface-color);
+    padding: 2px 8px;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.plate-label-small {
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.plate-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.node {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-color);
+    transition: var(--topic-transition);
+}
+
+.node:hover {
+    transform: scale(1.1);
+    box-shadow: var(--topic-shadow-lg);
+}
+
+.node.observed {
+    background: var(--text-secondary);
+    border-color: var(--text-secondary);
+}
+
+.node.observed .node-symbol,
+.node.observed .node-label {
+    color: var(--surface-color);
+}
+
+.node-symbol {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.node-label {
+    font-size: 0.65em;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.theta-node {
+    border-color: #22c55e;
+}
+
+.theta-node .node-symbol {
+    color: #22c55e;
+}
+
+.z-node {
+    border-color: var(--secondary-color);
+}
+
+.z-node .node-symbol {
+    color: var(--secondary-color);
+}
+
+.phi-node {
+    border-color: #f59e0b;
+}
+
+.phi-node .node-symbol {
+    color: #f59e0b;
+}
+
+.arrow-down {
+    width: 2px;
+    height: 20px;
+    background: var(--border-color);
+    position: relative;
+}
+
+.arrow-down::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -4px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 8px solid var(--border-color);
+}
+
+.arrow-right {
+    width: 30px;
+    height: 2px;
+    background: var(--border-color);
+    position: relative;
+}
+
+.arrow-right::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -4px;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid var(--border-color);
+}
+
+.hyperparams {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding-top: 30px;
+}
+
+.hyperparam {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.hyperparam .node-symbol {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: var(--warning-color);
+}
+
+.alpha-param {
+    margin-top: 20px;
+}
+
+.beta-param {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+}
+
+.lda-concepts .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.lda-concepts .concept-card {
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: var(--topic-transition);
+}
+
+.lda-concepts .concept-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--topic-shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.lda-concepts .concept-card h4 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.lda-concepts .concept-card p {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+.lda-process {
+    background: var(--bg-secondary);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.process-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.process-step {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    padding: 15px;
+    background: var(--surface-color);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.step-content h4 {
+    color: var(--text-primary);
+    margin-bottom: 5px;
+    font-size: 1em;
+}
+
+.step-content p {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin: 5px 0;
+    font-family: 'Monaco', 'Menlo', monospace;
+}
+
+.lda-inference {
+    background: var(--bg-secondary);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.inference-intro {
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.lda-inference .formula-box {
+    background: var(--surface-color);
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.lda-inference .formula-box p {
+    margin: 0 0 10px 0;
+    color: var(--text-primary);
+}
+
+.lda-inference .formula-box p:first-child {
+    font-weight: 600;
+}
+
+.lda-inference .formula {
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 1em;
+    color: var(--primary-color);
+    background: var(--bg-secondary);
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-align: center;
+    margin: 10px 0;
+    border: 1px solid var(--border-color);
+    overflow-x: auto;
+}
+
+.lda-inference .formula-desc {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .plate-diagram {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .hyperparams {
+        flex-direction: row;
+        gap: 20px;
+        padding-top: 20px;
+    }
+}

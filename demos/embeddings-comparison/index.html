@@ -94,6 +94,7 @@
                     <button class="task-tab active" data-task="similarity">Similarity</button>
                     <button class="task-tab" data-task="analogy">Analogy</button>
                     <button class="task-tab" data-task="categorization">Categorization</button>
+                    <button class="task-tab" data-task="how-it-works">How It Works</button>
                 </div>
 
                 <div class="task-content">
@@ -224,6 +225,129 @@ kale</textarea>
                         </div>
 
                         <div id="categorization-results" class="results-area"></div>
+                    </div>
+
+                    <!-- How It Works Tab -->
+                    <div id="how-it-works-task" class="task-panel">
+                        <h3>How Embedding Models Work</h3>
+                        <p>Understanding the transformer architecture behind modern text embeddings.</p>
+
+                        <div class="architecture-content">
+                            <div class="architecture-diagram">
+                                <h4>Sentence Embedding Pipeline</h4>
+                                <div class="arch-flow">
+                                    <div class="arch-block input-block">
+                                        <div class="block-label">Input Text</div>
+                                        <div class="block-content">"The cat sat on the mat"</div>
+                                    </div>
+                                    <div class="arch-arrow">↓</div>
+                                    <div class="arch-block">
+                                        <div class="block-label">Tokenizer</div>
+                                        <div class="block-content">["The", "cat", "sat", "on", "the", "mat"]</div>
+                                    </div>
+                                    <div class="arch-arrow">↓</div>
+                                    <div class="arch-block encoder-block">
+                                        <div class="block-label">Transformer Encoder</div>
+                                        <div class="block-content">
+                                            <div class="sub-block">Token Embeddings</div>
+                                            <div class="sub-block">Self-Attention (×N layers)</div>
+                                            <div class="sub-block">Feed-Forward Network</div>
+                                        </div>
+                                    </div>
+                                    <div class="arch-arrow">↓</div>
+                                    <div class="arch-block">
+                                        <div class="block-label">Pooling</div>
+                                        <div class="block-content">Mean of all token vectors</div>
+                                    </div>
+                                    <div class="arch-arrow">↓</div>
+                                    <div class="arch-block output-block">
+                                        <div class="block-label">Sentence Embedding</div>
+                                        <div class="block-content">[0.12, -0.45, 0.78, ...] (384 or 768 dims)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="architecture-explanation">
+                                <h4>Key Concepts</h4>
+                                <div class="concept-grid">
+                                    <div class="concept-card">
+                                        <h5>Tokenization</h5>
+                                        <p>Text is split into subword units (WordPiece/BPE). "embedding" → ["em", "##bed", "##ding"]. This handles unknown words gracefully.</p>
+                                    </div>
+                                    <div class="concept-card">
+                                        <h5>Self-Attention</h5>
+                                        <p>Each token attends to all other tokens, learning contextual relationships. "bank" gets different representations in "river bank" vs "bank account".</p>
+                                    </div>
+                                    <div class="concept-card">
+                                        <h5>Mean Pooling</h5>
+                                        <p>Token vectors are averaged to create a single sentence vector. This captures the overall semantic meaning of the text.</p>
+                                    </div>
+                                    <div class="concept-card">
+                                        <h5>Contrastive Learning</h5>
+                                        <p>Models are trained to make similar sentences close in vector space and dissimilar sentences far apart.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="model-comparison-table">
+                                <h4>Model Specifications</h4>
+                                <table class="specs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Model</th>
+                                            <th>Dimensions</th>
+                                            <th>Parameters</th>
+                                            <th>Layers</th>
+                                            <th>Best For</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>MiniLM-L6-v2</td>
+                                            <td>384</td>
+                                            <td>22M</td>
+                                            <td>6</td>
+                                            <td>Fast inference, real-time apps</td>
+                                        </tr>
+                                        <tr>
+                                            <td>MPNet-base-v2</td>
+                                            <td>768</td>
+                                            <td>110M</td>
+                                            <td>12</td>
+                                            <td>High quality, semantic search</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Multilingual-MiniLM</td>
+                                            <td>384</td>
+                                            <td>118M</td>
+                                            <td>12</td>
+                                            <td>50+ languages, cross-lingual</td>
+                                        </tr>
+                                        <tr>
+                                            <td>BGE-small-en</td>
+                                            <td>384</td>
+                                            <td>33M</td>
+                                            <td>6</td>
+                                            <td>Retrieval, RAG systems</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="math-section">
+                                <h4>Similarity Computation</h4>
+                                <div class="formula-box">
+                                    <p><strong>Cosine Similarity:</strong></p>
+                                    <div class="formula">cos(A, B) = (A · B) / (||A|| × ||B||)</div>
+                                    <p class="formula-desc">Measures the angle between two vectors. Value ranges from -1 (opposite) to 1 (identical direction).</p>
+                                </div>
+                                <div class="formula-box">
+                                    <p><strong>Word Analogy (Vector Arithmetic):</strong></p>
+                                    <div class="formula">king - man + woman ≈ queen</div>
+                                    <p class="formula-desc">Semantic relationships are encoded as vector differences. Adding/subtracting captures analogies.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
