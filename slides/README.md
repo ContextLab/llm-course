@@ -41,7 +41,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 **Wednesday (Lecture 2):** Pattern Matching & ELIZA
 - Pattern matching and string manipulation techniques
-- Introduction to ELIZA chatbot architecture
+- Introduction to ELIZA chatbot
 - Live demo of ELIZA in action
 - The ELIZA effect: why users anthropomorphize chatbots
 - Reading: [Weizenbaum (1966)](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf) - ELIZA: A Computer Program For Natural Language Communication
