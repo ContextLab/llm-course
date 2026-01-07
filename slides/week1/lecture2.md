@@ -164,6 +164,7 @@ A sequence of characters that defines a search pattern. Regular expressions prov
 | `*` | Zero or more | `ab*c` matches "ac", "abc", "abbc" |
 | `()` | Capture group | `(hello)` captures "hello" |
 | `\|` | Alternation | `cat\|dog` matches "cat" or "dog" |
+|  `^`  | Negation | `[^a-z]` matches any non-lowercase letter |
 
 </div>
 
