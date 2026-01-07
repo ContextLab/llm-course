@@ -102,7 +102,7 @@ The illusion of understanding comes from the programmer's skill at designing cle
 </div>
 
 ---
-<!-- _class: scale-80 -->
+<!-- _class: scale-70 -->
 # Text processing and string manipulation
 
 <div style="display: flex; gap: 1.5em;">
@@ -126,6 +126,9 @@ text.replace("you", "we")
 
 # Extracting ("how are you today?")
 text.split(", ")[1]
+
+# Transforming (["hello", "how", "are", "you", "today?"])
+text.lower().split()
 ```
 
 </div>
