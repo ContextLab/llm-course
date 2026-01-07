@@ -19,11 +19,10 @@ Winter 2026
 
 <div class="note-box" data-title="What we'll cover">
 
-1. **Demo:** See ELIZA in action
-2. **Algorithm:** How ELIZA actually works
-3. **Code:** Key implementation patterns
-4. **Vibe coding:** Tools and best practices
-5. **Assignment 1:** Getting started
+1. **Algorithm:** How ELIZA actually works
+2. **Code:** Key implementation patterns
+3. **Vibe coding:** Tools and best practices
+4. **Assignment 1:** Getting started
 
 </div>
 
@@ -33,26 +32,6 @@ Leave today knowing *exactly* how to build your own ELIZA.
 
 </div>
 
----
-
-# Let's try ELIZA
-
-<div class="note-box" data-title="Interactive demo">
-
-[ELIZA Demo](https://contextlab.github.io/llm-course/demos/eliza/)
-
-</div>
-
-**Try these inputs:**
-- "I am feeling sad"
-- "My mother never understood me"
-- "I think you are just a computer"
-
-<div class="tip-box" data-title="Exercise">
-
-Before I reveal how it works: can you guess what rules are being used?
-
-</div>
 
 ---
 
@@ -65,382 +44,261 @@ Before I reveal how it works: can you guess what rules are being used?
 
 <div class="note-box" data-title="Key insight">
 
-Each step is simple string manipulation. No "understanding" required!
+Each step is simple string manipulation. The illusion of "intelligence" comes from three things:
+
+- The *user's* text, which provides structured content
+- Hand-crafted patterns and templates that guide the response
+- Hard-to-shake human tendencies to anthropomorphize
+
+</div>
+
+<div class="tip-box" data-title="Under the hood">
+
+ELIZA's complete [instruction set](https://github.com/ContextLab/eliza-llm-course/blob/a112d7f6a7004773fc9b20cf181fe2269bd3001c/instructions.txt) comprises ~200 simple rules.
+
+</div>
+
+---
+<!-- _class: scale-80 -->
+# **Pre-substitutions:** normalize input before pattern matching
+
+```flow
+[User input:gray] --> [Pre-subs:green] --> [Pattern match:gray] --> [Decompose:gray] --> [Reassemble:gray] --> [Post-subs:gray] --> [Response:gray]
+```
+
+<div class="note-box" data-title="What's the point?">
+
+Normalizing common variations helps patterns match more reliably, allowing fewer rules to effectively cover more inputs. This step also handles common misspellings, simplifies phrasing, and helps to set the right tone in the final response.
+
+</div>
+
+<div class="example-box" data-title="Example pre-substitutions">
+
+- "dont" -> "don't"
+- "cant" -> "can't"
+- "recollect" -> "remember"
+- "how" -> "what"
+- "machine" -> "computer"
 
 </div>
 
 ---
 
-# Step 1: Pre-substitutions
+# **Pattern matching:** detect keywords, synonyms, and patterns in the input
 
-Normalize input before pattern matching.
-
-```python
-pre_subs = {
-    "dont": "don't",
-    "cant": "can't",
-    "im": "I'm",
-    "youre": "you're",
-    "recollect": "remember"
-}
-
-def apply_pre_subs(text, subs):
-    for old, new in subs.items():
-        text = text.replace(old, new)
-    return text
+```flow
+[User input:gray] --> [Pre-subs:gray] --> [Pattern match:green] --> [Decompose:gray] --> [Reassemble:gray] --> [Post-subs:gray] --> [Response:gray]
 ```
 
-<div class="note-box" data-title="Why pre-substitutions?">
+<div class="note-box" data-title="What's the point?">
 
-Users type in many ways. Normalize first, then match patterns.
+We need to identify which rule to apply based on the user's input. ELIZA uses basic regular expressions to define patterns that can capture important keywords and structure in the input text.
+
+</div>
+
+<div class="tip-box" data-title="Types of patterns">
+
+- **Keywords:** look for specific words (e.g., "mother", "father")
+- **Synonyms:** equate different words with similar meanings
+- **Sequences:** identify when words appear in a certain order
 
 </div>
 
 ---
 
-# Step 2: Pattern matching
+# **Pattern matching:** detect **keywords**, synonyms, and patterns in the input
 
-Find the best matching rule for the input.
-
-```python
-rules = [
-    {"pattern": r"(.*) my (mother|father|family) (.*)",
-     "rank": 100},
-    {"pattern": r"I am (.*)",
-     "rank": 50},
-    {"pattern": r"(.*)",
-     "rank": 0}  # Fallback
-]
+```flow
+[User input:gray] --> [Pre-subs:gray] --> [Pattern match:green] --> [Decompose:gray] --> [Reassemble:gray] --> [Post-subs:gray] --> [Response:gray]
 ```
 
-<div class="warning-box" data-title="Priority matters">
+<div class="definition-box" data-title="How does it work?">
 
-Higher rank = higher priority. Check specific patterns before general ones.
+ELIZA uses a ranked list of *keywords* to check for. Each keyword is associated with one or more *patterns* based on regular expressions.
+
+</div>
+
+<div class="example-box" data-title="Example keywords and ranks">
+
+- computer (rank 50)
+- dreamed (rank 4)
+- everyone (rank 2)
+...
+-  xnone (rank 0): fallback when no other patterns match
 
 </div>
 
 ---
 
-# Step 3: Decomposition
+# **Pattern matching:** detect keywords, **synonyms**, and patterns in the input
 
-Capture groups extract the important parts.
-
-```python
-import re
-
-pattern = r"I am (.*)"
-text = "I am feeling sad"
-
-match = re.search(pattern, text)
-if match:
-    captured = match.group(1)  # "feeling sad"
+```flow
+[User input:gray] --> [Pre-subs:gray] --> [Pattern match:green] --> [Decompose:gray] --> [Reassemble:gray] --> [Post-subs:gray] --> [Response:gray]
 ```
 
-<div class="note-box" data-title="Regular expressions">
+<div class="definition-box" data-title="How does it work?">
 
-The `(.*)` captures "anything" into a group we can use later.
+Some keywords have *synonyms*&mdash; alternative words with similar meanings. ELIZA treats these as equivalent when matching patterns.
+
+</div>
+
+<div class="example-box" data-title="Example synonyms">
+
+- belief feel think believe wish
+- family mother mom father dad sister brother wife children child
+- desire want need
+- sad unhappy depressed sick
+- happy elated glad better
 
 </div>
 
 ---
 
-# Step 4: Reassembly
+# **Pattern matching:** detect keywords, synonyms, and **patterns** in the input
 
-Insert captured content into response templates.
-
-```python
-templates = [
-    "Why are you {1}?",
-    "How long have you been {1}?",
-    "What made you {1}?"
-]
-
-# "feeling sad" -> "Why are you feeling sad?"
-response = random.choice(templates).format(captured)
+```flow
+[User input:gray] --> [Pre-subs:gray] --> [Pattern match:green] --> [Decompose:gray] --> [Reassemble:gray] --> [Post-subs:gray] --> [Response:gray]
 ```
 
-<div class="tip-box" data-title="Variety">
+<div class="definition-box" data-title="How does it work?">
 
-Multiple templates prevent repetitive responses.
+*Patterns* are defined using simple regular expressions. They can include specific words or wildcards (*). Synonyms are denoted by "@".
+
+</div>
+
+<div class="example-box" data-title="Example patterns">
+
+| keyword | patterns (selected) | matching text |
+|---------|---------------------|---------------|
+| *am* | \* am \*; \* | I am really excited to build a chatbot |
+| *are* | \* are you \*; \* are \* | Why are you asking me that? |
+| *i* | \* i @desire \*; \* i am \* @happy \*; ... | I am so glad to hear that! |
+| *yes* | \* | Yes, I guess that's true but I never really thought about it before. |
 
 </div>
 
 ---
 
-# Step 5: Post-substitutions
+# **Pattern matching:** rankings
 
-Flip pronouns for grammatical responses.
-
-```python
-post_subs = {
-    " i ": " you ",
-    " my ": " your ",
-    " am ": " are ",
-    " me ": " you ",
-    " I ": " you "
-}
-
-# "Tell me about your mother"
-# -> "Tell you about your mother" (fixed pronouns)
+```flow
+[User input:gray] --> [Pre-subs:gray] --> [Pattern match:green] --> [Decompose:gray] --> [Reassemble:gray] --> [Post-subs:gray] --> [Response:gray]
 ```
 
-<div class="warning-box" data-title="Tricky">
+<div class="definition-box" data-title="How does it work?">
 
-Order and spacing matter. Be careful with word boundaries.
+Text is matched against patterns in decreasing order of keyword *rank*. The first pattern that matches is selected for further processing.
 
 </div>
 
----
-<!-- _class: scale-70 -->
 
-# Worked example: Complete ELIZA pipeline
+<div class="example-box" data-title="Example patterns">
 
-**Input:** `"I am worried about my mother"`
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Step 1: Pre-subs** (normalize input)
-```
-"I am worried about my mother"
-→ No changes needed
-```
-
-**Step 2: Pattern match**
-```
-Pattern: r"(.*) my (mother|father) (.*)"
-Rank: 100 (high priority - family!)
-MATCH!
-```
-
-**Step 3: Decompose** (extract groups)
-```
-Group 1: "I am worried about"
-Group 2: "mother"
-Group 3: "" (empty)
-```
-
-</div>
-<div style="flex: 1;">
-
-**Step 4: Reassemble**
-```
-Template: "Tell me more about your {2}."
-→ "Tell me more about your mother."
-```
-
-**Step 5: Post-subs** (fix pronouns)
-```
-"Tell me more about your mother."
-→ No changes needed (no "I", "my", etc.)
-```
-
-**Final output:**
-```
-"Tell me more about your mother."
-```
-
-</div>
-</div>
-
----
-
-# Worked example: Pronoun substitution
-
-**Input:** `"I think you hate me"`
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Pattern matched:**
-```
-r"(.*) you (.*) me"
-Template: "What makes you think I {2} you?"
-```
-
-**Raw reassembly:**
-```
-"What makes you think I hate you?"
-```
-Wait - this is wrong! The user said "you hate me" but we're putting "I hate you" in our response.
-
-</div>
-<div style="flex: 1;">
-
-**Post-substitution fixes this:**
-```
-Original captured: "hate"
-In template: "I {2} you"
-→ "I hate you"
-
-Post-sub applied:
-  "I" → "you" (ELIZA speaking)
-  But we need to be careful!
-```
-
-The template is written from ELIZA's perspective, so pronouns are already correct here!
-
-</div>
-</div>
-
-<div class="warning-box" data-title="The tricky part">
-
-Post-substitutions apply to the **captured text**, not the template. When the user says "I am sad", we capture "sad" and put it in "Why are you {1}?" to get "Why are you sad?" - no substitution needed!
+Since "computer" has a rank of 50, whereas "dreamed" has a rank of 4, the text "I dreamed about my computer" would be tested against patterns associated with "computer" first. However, if no patterns for higher-ranked keywords match, ELIZA continues down the list until a match is found. The "xnone" keyword (rank 0) provides a fallback pattern (\*) when no other patterns match.
 
 </div>
 
 ---
 
-# Putting it together
+# **Decomposition:** extract relevant parts of the input
 
-```python
-def eliza_respond(user_input):
-    # 1. Normalize input
-    text = apply_pre_subs(user_input, pre_subs)
-
-    # 2. Find matching rule (highest rank first)
-    rule = find_best_match(text, rules)
-
-    # 3. Decompose: extract captured groups
-    groups = decompose(text, rule["pattern"])
-
-    # 4. Reassemble: build response
-    response = reassemble(groups, rule["templates"])
-
-    # 5. Fix pronouns
-    return apply_post_subs(response, post_subs)
+```flow
+[User input:gray] --> [Pre-subs:gray] --> [Pattern match:gray] --> [Decompose:green] --> [Reassemble:gray] --> [Post-subs:gray] --> [Response:gray]
 ```
 
----
+<div class="definition-box" data-title="How does it work?">
 
-# Vibe coding: AI-assisted development
-
-<style scoped>
-.small-boxes ul { font-size: 0.65em !important; }
-.small-boxes li { font-size: inherit !important; }
-</style>
-
-<div class="small-boxes" style="display: flex; gap: 1.5em; margin-top: 0.5em; width: 100%;">
-<div class="note-box" data-title="Dartmouth AI Tools" style="flex: 1;">
-
-- [ai-tools.dartmouth.edu](https://ai-tools.dartmouth.edu/)
-- Free access to Claude, GPT-4, Gemini
-- Dartmouth login required
-
-</div>
-<div class="tip-box" data-title="Other options" style="flex: 1;">
-
-- [ChatGPT](https://chat.openai.com)
-- [Claude](https://claude.ai)
-- [Gemini](https://gemini.google.com)
-- GitHub Copilot
-
-</div>
-</div>
-
----
-
-# Recommended IDEs
-
-<div class="note-box" data-title="For this course">
-
-**Google Colaboratory** (recommended)
-- Free, runs in browser
-- Easy to share notebooks
-- GPU access when needed
+Once text is matched to a pattern, ELIZA breaks down the input into *capture groups* that can be used to craft a response. Each synonym and wildcard (\*) in the pattern corresponds to a capture group. Capture groups are numbered in order of appearance, starting from 1.
 
 </div>
 
-<div class="tip-box" data-title="For advanced users">
+<div class="example-box" data-title="Example decomposition">
 
-- VS Code with Copilot extension
-- [Cursor](https://cursor.sh/) - AI-first editor
-- [Antigravity](https://antigravity.dev/) - Python-focused
+| Pattern | Input | Captured groups |
+|---------|-------|-----------------|
+| \* i am \* @sad | "I am feeling unhappy today" | 1: "", 2: "feeling", 3: "unhappy", 4: "today" |
+| \* my \* @family \* | "My mother and father are kind" | 1: "", 2: "", 3: "mother", 4: "and father are kind" |
+| \* | "I am worried about my dream" | 1: "I am worried about my dream" |
 
 </div>
 
 ---
 
-# Effective prompting
+# **Reassembly:** generate a response using templates
 
-<div class="note-box" data-title="Start with a plan">
-
-Before coding, describe what you want to build. Be specific about inputs, outputs, and behavior.
-
-</div>
-
-<div class="tip-box" data-title="Good prompt example">
-
-"I'm building an ELIZA chatbot in Python. I need a function that takes a user input string, applies pre-substitutions from a dictionary, then matches against a list of regex patterns sorted by rank. Show me how to structure this."
-
-</div>
-
----
-
-# Prompting best practices
-
-1. **Be specific** about what you want
-2. **Provide context** about your project
-3. **Show examples** of input/output
-4. **Iterate** on the response
-5. **Test incrementally** as you build
-
-<div class="warning-box" data-title="Important">
-
-Don't expect perfect code on the first try. Refine your prompts based on what you get.
-
-</div>
-
----
-
-# Testing strategies
-
-<div class="note-box" data-title="Test incrementally">
-
-1. Test pre-substitutions alone
-2. Test pattern matching alone
-3. Test full pipeline with simple inputs
-4. Test edge cases
-
-</div>
-
-**Edge cases to consider:**
-- Empty input
-- Very long input
-- Special characters (!@#$%)
-- No pattern matches
-- Multiple patterns could match
-
----
-<!-- _class: scale-70 -->
-
-# Worked example: Testing edge cases
-
-```python
-# Test 1: Empty input
->>> eliza_respond("")
-"I see."  # Fallback response
-
-# Test 2: Special characters
->>> eliza_respond("I am @#$%^& confused!")
-"Why are you @#$%^& confused?"  # Copies them verbatim
-
-# Test 3: Multiple patterns match
->>> eliza_respond("I am sad about my mother")
-# Pattern 1: "I am (.*)" → rank 50
-# Pattern 2: "(.*) my mother (.*)" → rank 100
-# Winner: Pattern 2 (higher rank)!
-"Tell me more about your mother."
-
-# Test 4: Greedy matching problem
->>> pattern = r"I am (.*)"
->>> text = "I am happy. I am sad."
->>> re.search(pattern, text).group(1)
-"happy. I am sad."  # Matched too much!
-
-# Fix: Use non-greedy
->>> pattern = r"I am (.*?)\."  # .*? stops at first .
+```flow
+[User input:gray] --> [Pre-subs:gray] --> [Pattern match:gray] --> [Decompose:gray] --> [Reassemble:green] --> [Post-subs:gray] --> [Response:gray]
 ```
+
+<div class="definition-box" data-title="How does it work?">
+
+ELIZA's responses "reflect back" parts of the user's input using *reassembly templates*. The templates define how to construct a response&mdash; often using capture groups from the decomposition step.
+
+</div>
+
+<div class="example-box" data-title="Example reassembly">
+
+| Input | Captured groups | Reassembly template | Result |
+|--------|-------------|-----------------|--------------------|
+| "I can't ever trust people" | 1: "", 2: "can't", 3: "ever trust people" | "Perhaps you could (3) now." | "Perhaps you could trust people now." |
+| "I don't remember why I said that" | 1: "", 2: "remember why I said that" | "Do you wish to be able to (2)?" | "Do you wish to be able to remember why you said that?" |
+| "I suppose it wasn't that long ago" | 1: "I suppose it wasn't that long ago" | "Do you say (1) for some special reason?" | "Do you say I suppose it wasn't that long ago for some special reason?" |
+
+</div>
+
+---
+
+# **Post-substitutions:** reflect first and second person
+
+```flow
+[User input:gray] --> [Pre-subs:gray] --> [Pattern match:gray] --> [Decompose:gray] --> [Reassemble:gray] --> [Post-subs:green] --> [Response:gray]
+```
+
+<div class="definition-box" data-title="How does it work?">
+
+To ensure the response sounds natural, ELIZA applies *post-substitutions* to adjust pronouns and verb forms. This step flips first-person references to second-person and vice versa. It works similarly to pre-substitutions; it's a simple string replacement based on a predefined dictionary.
+
+</div>
+
+<div class="example-box" data-title="Example post-substitutions">
+
+  - "am" -> "are"
+  - "your" -> "my"
+  - "me" -> "you"
+  - "myself" -> "yourself"
+  - "i'm" -> "you are"
+
+</div>
+
+---
+
+# It's....*demo time*!
+
+```flow
+[User input:blue] --> [Pre-subs:teal] --> [Pattern match:green] --> [Decompose:orange] --> [Reassemble:violet] --> [Post-subs:pink] --> [Response:blue]
+```
+
+With this complete pipeline in mind, let's revisit our [ELIZA demo](https://context-lab.com/llm-course/demos/eliza/) to see how it all fits together. Use the "Rule Breakdown" tab to trace each step of the pipeline for different inputs.
+
+<div class="tip-box" data-title="Try it out...">
+
+Take a look at the [complete list of rules](https://github.com/ContextLab/eliza-llm-course/blob/a112d7f6a7004773fc9b20cf181fe2269bd3001c/instructions.txt), or view them in the "Live Rule Editor" tab of the demo. Pick out a few patterns and see if you can get ELIZA to pick up on them. Also try to find some edge cases where the pipeline breaks down! For a special challenge, try creating your own rules to see if you can "patch up" the edge cases you find.
+
+</div>
+
+---
+
+# How should you approach Assignment 1?
+
+<div class="tip-box" data-title="Tips and tricks">
+
+1. First, make sure you fully understand the ELIZA algorithm we covered today. Review the slides and/or demo as needed.
+2. Use *vibe coding* to accelerate your development. Some strategies are in the [Assignment 1 instructions](https://context-lab.com/llm-course/assignments/assignment-1/).
+3. You **must** carefully test your implmentation. Write functions for each step of the pipeline, and test them one-at-a-time. Then integrate them.
+4. Consider edge cases and failure modes as you test. What happens if the user input is empty? Or very long? Or contains special characters? What if new rules were added&mdash; would your code still work?
+5. *Chat with your implementation* by setting up a simple conversation loop. Make sure it behaves as expected; look out for strange or nonsensical responses. Compare to responses generated by the demo implementation.
+
+</div>
 
 ---
 
@@ -486,91 +344,6 @@ A complete ELIZA implementation that:
 
 ---
 
-# Assignment structure
-<!-- _class: scale-70 -->
-
-| Part | Weight | Description |
-|------|--------|-------------|
-| Implementation | 40% | Working ELIZA chatbot |
-| Conversations | 20% | 5+ diverse test scenarios |
-| Analysis | 25% | ELIZA effect, pattern analysis |
-| Reflection | 10% | 500-1000 word essay |
-| Presentation | 5% | Clean, organized notebook |
-
-<div class="tip-box" data-title="Submission">
-
-Submit as a Google Colaboratory notebook. Make sure it runs without errors!
-
-</div>
-
----
-
-# Getting started
-
-<div class="note-box" data-title="Step 1: Read Weizenbaum">
-
-[ELIZA paper (1966)](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf)
-
-Focus on Section 3 for implementation details.
-
-</div>
-
-<div class="tip-box" data-title="Step 2: Try online ELIZA">
-
-[masswerk.at/elizabot](http://www.masswerk.at/elizabot/)
-
-See what responses you should expect.
-
-</div>
-
-<div class="note-box" data-title="Step 3: Practice regex">
-
-[regex101.com](https://regex101.com)
-
-Excellent visualization and testing tool.
-
-</div>
-
----
-
-# Common pitfalls
-
-<div class="warning-box" data-title="Watch out for">
-
-- **Pattern priority:** Higher rank numbers = higher priority
-- **Substitution order:** Pre-subs before matching, post-subs after
-- **Case sensitivity:** Normalize case for matching
-- **Word boundaries:** Use spaces to avoid partial matches
-- **Greedy matching:** `(.*)` vs `(.*?)`
-
-</div>
-
-<div class="tip-box" data-title="Verify your work">
-
-Test with the same inputs as online ELIZA to verify your output.
-
-</div>
-
----
-
-# Suggested timeline
-<!-- _class: scale-70 -->
-
-| Days | Focus |
-|------|-------|
-| 1-2 | Core implementation (pattern matching, substitutions) |
-| 3-4 | Conversation testing and analysis |
-| 5-6 | Modern chatbot comparison, write reflection |
-| 7 | Polish notebook, final testing |
-
-<div class="note-box" data-title="Pro tip">
-
-Start early! Pattern matching can be tricky to debug.
-
-</div>
-
----
-
 # Key takeaways
 
 1. **ELIZA is simple:** Just string manipulation and pattern matching
@@ -606,6 +379,6 @@ The magic isn't in the algorithm. It's in how humans interpret the output!
 
 <div class="tip-box" data-title="Get help">
 
-Start Assignment 1 early. Come to office hours if you get stuck!
+Start Assignment 1 early. Ask questions, talk to each other, and come to office hours if you get stuck!
 
 </div>
