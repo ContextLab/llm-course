@@ -52,7 +52,6 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - ELIZA implementation: decomposition, reassembly, substitutions
 - Vibe coding best practices for building chatbots
 - **Assignment 1 Released:** [Building the ELIZA Chatbot](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%201%3A%20ELIZA) (Due: Jan 16, 11:59 PM EST)
-- 📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week1/xhour_eliza_demo.html)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week1/lecture3.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture3.html)
 
 **Friday (Lecture 4):** Rules-Based Chatbots
