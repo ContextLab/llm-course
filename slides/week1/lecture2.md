@@ -20,7 +20,7 @@ Winter 2026
 <div class="note-box" data-title="Key ideas">
 
 - **Consciousness is complex:** multiple types, hard to define
-- **Language $\neq$ Thought:** but they interact in interesting ways
+- **Language $\neq$ thought:** but they interact in interesting ways
 - **Grounding matters:** meaning comes from experience
 
 </div>
@@ -34,7 +34,7 @@ Winter 2026
 
 <div class="tip-box" data-title="Today's focus">
 
-Pattern matching can create powerful *illusions* of understanding, even without any "real" comprehension.
+Pattern matching can create powerful *illusions* of experience and understanding, even without any *real* comprehension or grounding. We'll explore some foundational techniques for text processing that were used to build one of the first chatbots, ELIZA. (Next time, we'll dig into *how* ELIZA works under the hood!)
 
 </div>
 
@@ -97,7 +97,7 @@ How do we bridge this gap? Can we use symbol manipulation create the *appearance
 
 <div class="warning-box" data-title="Keep in mind">
 
-The illusion of understanding comes from the programmer's skill at designing clever pattern matching rules, not from any *actual* understanding on the part of the machine.
+The illusion of understanding comes from the programmer's skill at designing clever pattern matching rules, along with the *user* having understanding and experience (and a tendancy to anthropomorphize), not from any *actual* understanding on the part of the machine.
 
 </div>
 
@@ -546,7 +546,7 @@ The AI has no office. It cannot have your notes. But it responds as if this make
 2. **Regular expressions are powerful:** flexible pattern matching enables sophisticated text processing
 3. **ELIZA demonstrated the power of simplicity:** a few clever rules can create convincing illusions
 4. **The ELIZA effect is real:** we naturally anthropomorphize systems that use language
-5. **Seeming $\neq$ Being:** appearing intelligent does not require actual understanding
+5. **Seeming $\neq$ being:** appearing intelligent does not require actual understanding
 
 ---
 

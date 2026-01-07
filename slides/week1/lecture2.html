@@ -704,15 +704,18 @@ Winter 2026</p>
 <div class="note-box" data-title="Key ideas">
 <ul>
 <li><strong>Consciousness is complex:</strong> multiple types, hard to define</li>
-<li><strong>Language <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo mathvariant="normal">≠</mo></mrow><annotation encoding="application/x-tex">\neq</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mrel">=</span></span></span></span></span> Thought:</strong> but they interact in interesting ways</li>
+<li><strong>Language <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo mathvariant="normal">≠</mo></mrow><annotation encoding="application/x-tex">\neq</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mrel">=</span></span></span></span></span> thought:</strong> but they interact in interesting ways</li>
 <li><strong>Grounding matters:</strong> meaning comes from experience</li>
 </ul>
 </div>
-<div class="warning-box" data-title="However...">
-<p>Does the &quot;experience&quot; need to be first-hand? Can we &quot;share&quot; experience with another person? Or with a machine? What might that look like?</p>
+<div class="warning-box" data-title="For further reflection...">
+<ul>
+<li>Does the &quot;experience&quot; need to be first-hand? Can we &quot;share&quot; experience with another person? Or with a machine? What might that look like?</li>
+<li>Can we have understanding without consciousness (or vice versa)?</li>
+</ul>
 </div>
 <div class="tip-box" data-title="Today's focus">
-<p>Pattern matching can create powerful <em>illusions</em> of understanding, even without any &quot;real&quot; comprehension.</p>
+<p>Pattern matching can create powerful <em>illusions</em> of experience and understanding, even without any <em>real</em> comprehension or grounding. We'll explore some foundational techniques for text processing that were used to build one of the first chatbots, ELIZA. (Next time, we'll dig into <em>how</em> ELIZA works under the hood!)</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;flip&quot;,&quot;duration&quot;:&quot;0.5s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;flip&quot;,&quot;duration&quot;:&quot;0.5s&quot;,&quot;builtinFallback&quot;:true}">
@@ -730,7 +733,7 @@ Winter 2026</p>
 <p>Click &quot;New notebook&quot;</p>
 </li>
 <li>
-<p>Click to start new <code>text</code> or <code>code</code> cells</p>
+<p>Click to create new <code>text</code> or <code>code</code> cells</p>
 </li>
 <li>
 <p>Copy and paste code from slides</p>
@@ -769,7 +772,7 @@ Winter 2026</p>
 <p>How do we bridge this gap? Can we use symbol manipulation create the <em>appearance</em> of understanding?</p>
 </div>
 <div class="warning-box" data-title="Keep in mind">
-<p>The illusion of understanding comes from the programmer's skill at designing clever pattern matching rules, not from any <em>actual</em> understanding on the part of the machine.</p>
+<p>The illusion of understanding comes from the programmer's skill at designing clever pattern matching rules, along with the <em>user</em> having understanding and experience (and a tendancy to anthropomorphize), not from any <em>actual</em> understanding on the part of the machine.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -783,7 +786,6 @@ Winter 2026</p>
 <li><strong>Transforming:</strong> Convert text to different formats</li>
 </ul>
 </div>
-<div>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
 <span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-n">text</span> <span class="hl-o">=</span> <span class="hl-s2">&quot;Hello, how are you today?&quot;</span></span></span>
 <span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
@@ -831,7 +833,7 @@ Winter 2026</p>
 </div>
 <div class="diagram-caption">Basic conversational AI pipeline</div>
 <div class="note-box">
-<p>Every conversational AI system, from ELIZA to ChatGPT, fundamentally processes text through some form of pattern matching, though with vastly different levels of sophistication.</p>
+<p><em>Every</em> substantive conversational AI system, from ELIZA to ChatGPT, fundamentally processes text through some form of pattern matching and pattern completion, though with vastly different levels of sophistication.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-78" data-theme="cdl-theme" lang="en-US" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -954,7 +956,7 @@ Winter 2026</p>
 <span class="line"><span class="line-num">15</span><span class="line-code">  <span class="hl-k">elif</span> <span class="hl-n">you_are</span><span class="hl-p">:</span></span></span>
 <span class="line"><span class="line-num">16</span><span class="line-code">    <span class="hl-n">trait</span> <span class="hl-o">=</span> <span class="hl-n">you_are</span><span class="hl-o">.</span><span class="hl-n">group</span><span class="hl-p">(</span><span class="hl-mi">1</span><span class="hl-p">)</span></span></span>
 <span class="line"><span class="line-num">17</span><span class="line-code">    <span class="hl-k">return</span> <span class="hl-sa">f</span><span class="hl-s2">&quot;What makes you think I am </span><span class="hl-si">{</span><span class="hl-n">trait</span><span class="hl-si">}</span><span class="hl-s2">?&quot;</span></span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code">  <span class="hl-c1"># add your own additional patterns!</span></span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">  <span class="hl-c1"># add some more patterns!</span></span></span>
 <span class="line"><span class="line-num">19</span><span class="line-code">  <span class="hl-k">else</span><span class="hl-p">:</span>    </span></span>
 <span class="line"><span class="line-num">20</span><span class="line-code">    <span class="hl-k">return</span> <span class="hl-s2">&quot;Tell me more.&quot;</span></span></span>
 </code></pre>
@@ -964,14 +966,15 @@ Winter 2026</p>
 <h1 id="lets-build-our-first-very-simple-chatbot-1">Let's build our first (very simple) chatbot!</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="21">
 <span class="line"><span class="line-num">21</span><span class="line-code"><span class="hl-c1"># main loop: interact with user</span></span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code"><span class="hl-k">while</span> <span class="hl-kc">True</span><span class="hl-p">:</span></span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code">  <span class="hl-n">user_input</span> <span class="hl-o">=</span> <span class="hl-nb">input</span><span class="hl-p">(</span><span class="hl-s2">&quot;You: &quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code">  <span class="hl-k">if</span> <span class="hl-n">user_input</span><span class="hl-o">.</span><span class="hl-n">lower</span><span class="hl-p">()</span> <span class="hl-ow">in</span> <span class="hl-p">[</span><span class="hl-s2">&quot;exit&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;quit&quot;</span><span class="hl-p">]:</span></span></span>
-<span class="line"><span class="line-num">25</span><span class="line-code">    <span class="hl-k">break</span></span></span>
-<span class="line"><span class="line-num">26</span><span class="line-code">  <span class="hl-k">else</span><span class="hl-p">:</span> </span></span>
-<span class="line"><span class="line-num">27</span><span class="line-code">    <span class="hl-n">response</span> <span class="hl-o">=</span> <span class="hl-n">respond</span><span class="hl-p">(</span><span class="hl-n">user_input</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">28</span><span class="line-code">  <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-s2">&quot;Bot:&quot;</span><span class="hl-p">,</span> <span class="hl-n">response</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">29</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-s2">&quot;Bot: Goodbye!&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-s2">&quot;Bot: Hello! I&#39;m here to listen. Type &#39;exit&#39; to quit.&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code"><span class="hl-k">while</span> <span class="hl-kc">True</span><span class="hl-p">:</span></span></span>
+<span class="line"><span class="line-num">24</span><span class="line-code">  <span class="hl-n">user_input</span> <span class="hl-o">=</span> <span class="hl-nb">input</span><span class="hl-p">(</span><span class="hl-s2">&quot;You: &quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">25</span><span class="line-code">  <span class="hl-k">if</span> <span class="hl-n">user_input</span><span class="hl-o">.</span><span class="hl-n">lower</span><span class="hl-p">()</span> <span class="hl-ow">in</span> <span class="hl-p">[</span><span class="hl-s2">&quot;exit&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;quit&quot;</span><span class="hl-p">]:</span></span></span>
+<span class="line"><span class="line-num">26</span><span class="line-code">    <span class="hl-k">break</span></span></span>
+<span class="line"><span class="line-num">27</span><span class="line-code">  <span class="hl-k">else</span><span class="hl-p">:</span> </span></span>
+<span class="line"><span class="line-num">28</span><span class="line-code">    <span class="hl-n">response</span> <span class="hl-o">=</span> <span class="hl-n">respond</span><span class="hl-p">(</span><span class="hl-n">user_input</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">29</span><span class="line-code">  <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-s2">&quot;Bot:&quot;</span><span class="hl-p">,</span> <span class="hl-n">response</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">30</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-s2">&quot;Bot: Goodbye!&quot;</span><span class="hl-p">)</span></span></span>
 </code></pre>
 <div class="code-continued-indicator-last">...continued</div>
 </section>
@@ -1184,7 +1187,7 @@ Winter 2026</p>
 <li><strong>Regular expressions are powerful:</strong> flexible pattern matching enables sophisticated text processing</li>
 <li><strong>ELIZA demonstrated the power of simplicity:</strong> a few clever rules can create convincing illusions</li>
 <li><strong>The ELIZA effect is real:</strong> we naturally anthropomorphize systems that use language</li>
-<li><strong>Seeming <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo mathvariant="normal">≠</mo></mrow><annotation encoding="application/x-tex">\neq</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mrel">=</span></span></span></span></span> Being:</strong> appearing intelligent does not require actual understanding</li>
+<li><strong>Seeming <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo mathvariant="normal">≠</mo></mrow><annotation encoding="application/x-tex">\neq</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mrel">=</span></span></span></span></span> being:</strong> appearing intelligent does not require actual understanding</li>
 </ol>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
