@@ -58,7 +58,8 @@ class TimelineApp {
         this.currentEra = '2020s';
         
         this.elizaBreakdownRenderer = new ElizaBreakdownRenderer({
-            containerId: 'eliza-breakdown-steps'
+            containerId: 'eliza-breakdown-steps',
+            memoryDisplayId: 'eliza-memory-display'
         });
         
         this.rulesViewer = new RulesViewer('alice-rules-container');
@@ -268,6 +269,15 @@ class TimelineApp {
                 this.addMessage('gpt', 'Chat history cleared. Start a new conversation.', 'bot');
             });
         }
+
+        const elizaClearMemoryBtn = document.getElementById('eliza-clear-memory-btn');
+        if (elizaClearMemoryBtn) {
+            elizaClearMemoryBtn.addEventListener('click', async () => {
+                await this.bots.eliza.ensureInitialized();
+                this.bots.eliza.engine.clearMemory();
+                this.elizaBreakdownRenderer.renderMemoryStack();
+            });
+        }
     }
 
     switchChatbotTab(bot, tab) {
@@ -379,6 +389,12 @@ class TimelineApp {
         }
 
         this.elizaBreakdownRenderer.displayBreakdown(breakdown);
+
+        // Save to memory if this is a memory-save pattern (not a memory recall)
+        if (breakdown.shouldSave && !breakdown.usingMemory) {
+            this.bots.eliza.engine.saveToMemory(inputText);
+            this.elizaBreakdownRenderer.renderMemoryStack();
+        }
     }
 
     displayBreakdown(botName, breakdown) {

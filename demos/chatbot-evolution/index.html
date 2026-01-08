@@ -106,8 +106,25 @@
                                     <option value="Why do you ask that">Why do you ask that</option>
                                     <option value="Hello">Hello</option>
                                     <option value="I think computers are scary">I think computers are scary</option>
+                                    <option value="My dog is always happy">My dog is always happy (saves to memory)</option>
+                                    <option value="My job is stressful">My job is stressful (saves to memory)</option>
+                                    <option value="xyzzy gibberish">xyzzy gibberish (triggers xnone fallback)</option>
                                 </select>
                                 <button class="btn-analyze" onclick="analyzeEliza()">Analyze</button>
+                            </div>
+                            <div class="memory-display-section" id="eliza-memory-section">
+                                <div class="memory-display-header">
+                                    <div class="memory-display-title">
+                                        <span class="memory-badge-header" title="Patterns prefixed with $ save matching input to memory for later recall">mem</span> ELIZA's Memory
+                                    </div>
+                                    <button class="clear-memory-btn" id="eliza-clear-memory-btn">Clear Memory</button>
+                                </div>
+                                <div id="eliza-memory-display">
+                                    <div class="memory-empty">
+                                        <span class="memory-empty-icon">&#128173;</span>
+                                        <span>No memories stored</span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="breakdown-steps" id="eliza-breakdown-steps">
                                 <div class="empty-state">
