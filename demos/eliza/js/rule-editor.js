@@ -336,15 +336,25 @@ class RuleEditor {
     return card;
   }
 
-  /**
-   * Create pattern HTML
-   */
   createPatternHTML(pattern, pIndex) {
+    const patternStr = pattern.pattern || '*';
+    const savesToMemory = patternStr.startsWith('$') || pattern.save === true;
+    const displayPattern = patternStr.startsWith('$') ? patternStr.substring(1).trim() : patternStr;
+    
     const responsesHtml = (pattern.responses || []).map((response) =>
       '<div class="response-item"><input type="text" class="response-input" value="' + this.escapeHtml(response) + '" placeholder="Response template..."><button class="delete-btn" title="Delete response">X</button></div>'
     ).join('');
+    
     return '<div class="pattern-item" data-pattern-index="' + pIndex + '">' +
-      '<div class="pattern-header"><label>Pattern:</label><input type="text" class="pattern-input" value="' + this.escapeHtml(pattern.pattern || '*') + '" placeholder="* pattern *"><button class="delete-btn" title="Delete pattern">X</button></div>' +
+      '<div class="pattern-header">' +
+        '<label>Pattern:</label>' +
+        '<input type="text" class="pattern-input" value="' + this.escapeHtml(displayPattern) + '" placeholder="* pattern *">' +
+        '<label class="memory-checkbox-label" title="Patterns prefixed with $ save matching input to memory. When no keywords match a future input, ELIZA recalls from memory.">' +
+          '<input type="checkbox" class="memory-checkbox"' + (savesToMemory ? ' checked' : '') + '>' +
+          '<span class="memory-label">mem</span>' +
+        '</label>' +
+        '<button class="delete-btn" title="Delete pattern">X</button>' +
+      '</div>' +
       '<div class="responses-label">Responses:</div><div class="responses-list">' + responsesHtml + '</div><button class="add-response-btn">+ Add Response</button></div>';
   }
 
@@ -373,14 +383,19 @@ class RuleEditor {
     });
   }
 
-  /**
-   * Add a new pattern to a keyword card
-   */
   addPattern(card) {
     const patternList = card.querySelector('.pattern-list');
     const patternItem = document.createElement('div');
     patternItem.className = 'pattern-item';
-    patternItem.innerHTML = '<div class="pattern-header"><label>Pattern:</label><input type="text" class="pattern-input" value="*" placeholder="* pattern *"><button class="delete-btn" title="Delete pattern">X</button></div>' +
+    patternItem.innerHTML = '<div class="pattern-header">' +
+      '<label>Pattern:</label>' +
+      '<input type="text" class="pattern-input" value="*" placeholder="* pattern *">' +
+      '<label class="memory-checkbox-label" title="Patterns prefixed with $ save matching input to memory. When no keywords match a future input, ELIZA recalls from memory.">' +
+        '<input type="checkbox" class="memory-checkbox">' +
+        '<span class="memory-label">mem</span>' +
+      '</label>' +
+      '<button class="delete-btn" title="Delete pattern">X</button>' +
+    '</div>' +
       '<div class="responses-label">Responses:</div><div class="responses-list"><div class="response-item"><input type="text" class="response-input" value="" placeholder="Response template..."><button class="delete-btn" title="Delete response">X</button></div></div><button class="add-response-btn">+ Add Response</button>';
     patternList.appendChild(patternItem);
     this.setupPatternDeleteButtons(card);
@@ -515,7 +530,14 @@ class RuleEditor {
       const rank = parseInt(card.querySelector('.keyword-rank-input').value) || 0;
       const patterns = [];
       card.querySelectorAll('.pattern-item').forEach(patternItem => {
-        const pattern = patternItem.querySelector('.pattern-input').value.trim();
+        let pattern = patternItem.querySelector('.pattern-input').value.trim();
+        const memoryCheckbox = patternItem.querySelector('.memory-checkbox');
+        const savesToMemory = memoryCheckbox ? memoryCheckbox.checked : false;
+        
+        if (savesToMemory && !pattern.startsWith('$')) {
+          pattern = '$ ' + pattern;
+        }
+        
         const responses = [];
         patternItem.querySelectorAll('.response-input').forEach(respInput => {
           const resp = respInput.value.trim();

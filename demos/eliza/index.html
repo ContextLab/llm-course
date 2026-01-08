@@ -79,8 +79,25 @@
             <option value="Everyone hates me">Everyone hates me</option>
             <option value="I want to be happy">I want to be happy</option>
             <option value="My mother always criticizes me">My mother always criticizes me</option>
+            <option value="My dog is always happy">My dog is always happy (saves to memory)</option>
+            <option value="My job is stressful">My job is stressful (saves to memory)</option>
+            <option value="xyzzy gibberish">xyzzy gibberish (triggers xnone fallback)</option>
           </select>
           <button class="btn btn-primary" id="analyze-btn">Analyze</button>
+        </div>
+        <div class="memory-display-section">
+          <div class="memory-display-header">
+            <div class="memory-display-title">
+              <span class="memory-badge-header" title="Patterns prefixed with $ save matching input to memory for later recall">mem</span> ELIZA's Memory
+            </div>
+            <button class="clear-memory-btn" id="clear-memory-btn">Clear Memory</button>
+          </div>
+          <div id="memory-display">
+            <div class="memory-empty">
+              <span class="memory-empty-icon">&#128173;</span>
+              <span>No memories stored</span>
+            </div>
+          </div>
         </div>
         <div class="breakdown-steps" id="breakdown-steps">
           <div class="empty-state">
@@ -328,7 +345,8 @@
 
         breakdownRenderer = new ElizaBreakdownRenderer({
           containerId: 'breakdown-steps',
-          engine: eliza
+          engine: eliza,
+          memoryDisplayId: 'memory-display'
         });
 
         displayGreeting();
@@ -394,9 +412,9 @@
       // Get ELIZA response
       const result = eliza.getResponse(message);
 
-      // Display bot response
       setTimeout(() => {
         addMessageToChat('bot', result.response, result.matchInfo);
+        breakdownRenderer.renderMemoryStack();
       }, 300);
 
       // Clear input
@@ -435,6 +453,12 @@
 
       const breakdown = eliza.getDetailedBreakdown(input);
       breakdownRenderer.displayBreakdown(breakdown);
+      
+      // If this pattern saves to memory and we're NOT using recalled memory, save input
+      if (breakdown.shouldSave && !breakdown.usingMemory) {
+        eliza.saveToMemory(input);
+        breakdownRenderer.renderMemoryStack();
+      }
     }
 
     // Editor Functions
@@ -500,6 +524,10 @@
         analyzeInput();
         e.target.value = '';
       }
+    });
+    document.getElementById('clear-memory-btn').addEventListener('click', () => {
+      eliza.clearMemory();
+      breakdownRenderer.renderMemoryStack();
     });
 
     document.getElementById('apply-rules-btn').addEventListener('click', applyRules);

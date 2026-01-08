@@ -46,7 +46,8 @@ export class ElizaEngine {
    * Get initial greeting
    */
   getGreeting() {
-    const greeting = this.initialGreetings[Math.floor(Math.random() * this.initialGreetings.length)];
+    let greeting = this.initialGreetings[Math.floor(Math.random() * this.initialGreetings.length)];
+    greeting = greeting.replace(/\s+([.!?,;:])/g, '$1');
     this.conversationHistory.push({
       type: 'bot',
       text: greeting,
@@ -74,9 +75,9 @@ export class ElizaEngine {
       timestamp: Date.now()
     });
 
-    // Check for quit
     if (this.isQuitWord(userInput)) {
-      const farewell = this.finalGreetings[Math.floor(Math.random() * this.finalGreetings.length)];
+      let farewell = this.finalGreetings[Math.floor(Math.random() * this.finalGreetings.length)];
+      farewell = farewell.replace(/\s+([.!?,;:])/g, '$1');
       this.conversationHistory.push({
         type: 'bot',
         text: farewell,
@@ -256,17 +257,13 @@ export class ElizaEngine {
    * Get detailed breakdown for visualization
    */
   getDetailedBreakdown(userInput) {
-    const { result: processedInput } = this.patternMatcher.applyPreSubstitutions(
-      userInput,
-      this.preSubstitutions
-    );
-
     return this.patternMatcher.getProcessingBreakdown(
       userInput,
       this.rules,
       this.preSubstitutions,
       this.postSubstitutions,
-      this.synonyms
+      this.synonyms,
+      this.memoryStack
     );
   }
 
@@ -284,6 +281,27 @@ export class ElizaEngine {
    */
   getHistory() {
     return this.conversationHistory;
+  }
+
+  /**
+   * Get current memory stack (for UI display)
+   */
+  getMemoryStack() {
+    return [...this.memoryStack];
+  }
+
+  /**
+   * Clear memory stack
+   */
+  clearMemory() {
+    this.memoryStack = [];
+  }
+
+  /**
+   * Save input to memory stack (for breakdown tab integration)
+   */
+  saveToMemory(input) {
+    this.memoryStack.push(input);
   }
 
   /**
