@@ -25,7 +25,6 @@ export class ElizaBreakdownRenderer {
     if (memory.length === 0) {
       memoryDisplay.innerHTML = `
         <div class="memory-empty">
-          <span class="memory-empty-icon">\u{1F4AD}</span>
           <span>No memories stored</span>
         </div>
       `;
