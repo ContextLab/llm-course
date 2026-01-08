@@ -214,7 +214,7 @@ export class ElizaBreakdownRenderer {
       memoryDiv.style.borderColor = 'var(--warning-color, #ffc107)';
       memoryDiv.innerHTML = `
         <div class="step-header">
-          <div class="step-number" style="background: var(--warning-color, #ffc107);">$</div>
+          <div class="step-number" style="background: var(--warning-color, #ffc107);">mem</div>
           <div class="step-title" style="color: var(--warning-color, #ffc107);">Memory Save</div>
         </div>
         <div class="step-description">This input will be saved to ELIZA's memory for later recall</div>
@@ -399,7 +399,7 @@ export class ElizaBreakdownRenderer {
       const test = patternTests[i];
       const testClass = test.matched ? 'matched' : 'not-matched';
       const memoryBadge = test.savesToMemory 
-        ? '<span class="memory-badge" title="Saves to memory">$</span>' 
+        ? '<span class="memory-badge" title="Saves matching input to memory for later recall when no keywords match">mem</span>' 
         : '';
       const capturesHtml = test.captures && test.captures.length > 0
         ? `<br>Captures: ${test.captures.map((c, j) => {

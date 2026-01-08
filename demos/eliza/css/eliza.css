@@ -1344,15 +1344,33 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  padding: 2px 6px;
   background: var(--warning-color, #ffc107);
   color: #000;
-  border-radius: 50%;
-  font-size: 0.7rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
   font-weight: bold;
   margin-right: 6px;
   flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Memory badge in header */
+.memory-badge-header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  background: var(--warning-color, #ffc107);
+  color: #000;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: bold;
+  margin-right: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: help;
 }
 
 /* Memory checkbox in pattern editor */

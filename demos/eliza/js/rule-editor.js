@@ -349,9 +349,9 @@ class RuleEditor {
       '<div class="pattern-header">' +
         '<label>Pattern:</label>' +
         '<input type="text" class="pattern-input" value="' + this.escapeHtml(displayPattern) + '" placeholder="* pattern *">' +
-        '<label class="memory-checkbox-label" title="Save matching input to memory for later recall">' +
+        '<label class="memory-checkbox-label" title="Patterns prefixed with $ save matching input to memory. When no keywords match a future input, ELIZA recalls from memory.">' +
           '<input type="checkbox" class="memory-checkbox"' + (savesToMemory ? ' checked' : '') + '>' +
-          '<span class="memory-label">$</span>' +
+          '<span class="memory-label">mem</span>' +
         '</label>' +
         '<button class="delete-btn" title="Delete pattern">X</button>' +
       '</div>' +
@@ -390,9 +390,9 @@ class RuleEditor {
     patternItem.innerHTML = '<div class="pattern-header">' +
       '<label>Pattern:</label>' +
       '<input type="text" class="pattern-input" value="*" placeholder="* pattern *">' +
-      '<label class="memory-checkbox-label" title="Save matching input to memory for later recall">' +
+      '<label class="memory-checkbox-label" title="Patterns prefixed with $ save matching input to memory. When no keywords match a future input, ELIZA recalls from memory.">' +
         '<input type="checkbox" class="memory-checkbox">' +
-        '<span class="memory-label">$</span>' +
+        '<span class="memory-label">mem</span>' +
       '</label>' +
       '<button class="delete-btn" title="Delete pattern">X</button>' +
     '</div>' +
