@@ -53,7 +53,7 @@ console.log(`\nUser: ${input3}`);
 const response3 = engine.getResponse(input3);
 console.log(`Bot: ${response3.response}`);
 
-if (!response3.matchInfo.fromMemory && response3.matchInfo.keyword === 'fallback') {
+if (!response3.matchInfo.fromMemory && (response3.matchInfo.keyword === 'fallback' || response3.matchInfo.keyword === 'xnone')) {
     console.log('✓ PASS: Standard fallback used when memory empty');
 } else {
     console.error('✗ FAIL: Standard fallback not used');

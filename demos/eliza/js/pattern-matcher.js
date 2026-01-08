@@ -261,6 +261,25 @@ export class PatternMatcher {
   }
 
   /**
+   * Check if a pattern should save to memory
+   * Supports both "$ pattern" syntax and { save: true } property
+   */
+  checkMemorySave(patternObj) {
+    // Check for save property on the pattern object
+    if (patternObj.save === true) {
+      return { shouldSave: true, patternStr: patternObj.pattern };
+    }
+    
+    // Check for $ prefix in pattern string
+    let patternStr = patternObj.pattern;
+    if (patternStr.startsWith("$")) {
+      return { shouldSave: true, patternStr: patternStr.substring(1).trim() };
+    }
+    
+    return { shouldSave: false, patternStr };
+  }
+
+  /**
    * Find best matching rule for input
    */
   findMatchingRule(input, rules, synonyms) {
@@ -302,14 +321,7 @@ export class PatternMatcher {
       for (const rule of matchedRules) {
         // First try specific patterns
         for (const patternObj of rule.patterns) {
-          let patternStr = patternObj.pattern;
-          let shouldSave = false;
-
-          // Check for memory save flag ($)
-          if (patternStr.startsWith("$")) {
-            shouldSave = true;
-            patternStr = patternStr.substring(1).trim();
-          }
+          const { shouldSave, patternStr } = this.checkMemorySave(patternObj);
 
           if (patternStr === "*") continue;
 
@@ -328,14 +340,7 @@ export class PatternMatcher {
 
         // Then try catch-all for this rule
         for (const patternObj of rule.patterns) {
-          let patternStr = patternObj.pattern;
-          let shouldSave = false;
-
-          // Check for memory save flag ($)
-          if (patternStr.startsWith("$")) {
-            shouldSave = true;
-            patternStr = patternStr.substring(1).trim();
-          }
+          const { shouldSave, patternStr } = this.checkMemorySave(patternObj);
 
           if (patternStr === "*") {
             const matchResult = this.matchPattern(clause, patternStr, synonyms);
@@ -456,43 +461,52 @@ export class PatternMatcher {
     let matchedRule = null;
     let matchedPattern = null;
     let matchResult = null;
+    let shouldSave = false;
 
     // First pass: try specific patterns (not catch-all '*')
     for (const { keyword, rule } of keywordsFound) {
       for (const patternObj of rule.patterns) {
-        if (patternObj.pattern === '*') continue;
+        const { shouldSave: savesMemory, patternStr } = this.checkMemorySave(patternObj);
+        if (patternStr === '*') continue;
 
-        const result = this.matchPattern(processedInput, patternObj.pattern, synonyms);
+        const result = this.matchPattern(processedInput, patternStr, synonyms);
         patternTests.push({
           keyword,
           pattern: patternObj.pattern,
+          patternStr,
           matched: result.matched,
-          captures: result.captures
+          captures: result.captures,
+          savesToMemory: savesMemory
         });
 
         if (result.matched && !matchedRule) {
           matchedRule = rule;
           matchedPattern = patternObj;
           matchResult = result;
+          shouldSave = savesMemory;
         }
       }
 
       // Then try catch-all for this keyword
       for (const patternObj of rule.patterns) {
-        if (patternObj.pattern !== '*') continue;
+        const { shouldSave: savesMemory, patternStr } = this.checkMemorySave(patternObj);
+        if (patternStr !== '*') continue;
 
-        const result = this.matchPattern(processedInput, patternObj.pattern, synonyms);
+        const result = this.matchPattern(processedInput, patternStr, synonyms);
         patternTests.push({
           keyword,
           pattern: patternObj.pattern,
+          patternStr,
           matched: result.matched,
-          captures: result.captures
+          captures: result.captures,
+          savesToMemory: savesMemory
         });
 
         if (result.matched && !matchedRule) {
           matchedRule = rule;
           matchedPattern = patternObj;
           matchResult = result;
+          shouldSave = savesMemory;
         }
       }
     }
@@ -501,19 +515,23 @@ export class PatternMatcher {
     if (!matchedRule) {
       for (const rule of rules) {
         for (const patternObj of rule.patterns) {
-          if (patternObj.pattern === '*') {
-            const result = this.matchPattern(processedInput, patternObj.pattern, synonyms);
+          const { shouldSave: savesMemory, patternStr } = this.checkMemorySave(patternObj);
+          if (patternStr === '*') {
+            const result = this.matchPattern(processedInput, patternStr, synonyms);
             patternTests.push({
               keyword: rule.keyword,
               pattern: patternObj.pattern,
+              patternStr,
               matched: result.matched,
-              captures: result.captures
+              captures: result.captures,
+              savesToMemory: savesMemory
             });
 
             if (result.matched && !matchedRule) {
               matchedRule = rule;
               matchedPattern = patternObj;
               matchResult = result;
+              shouldSave = savesMemory;
             }
           }
         }
@@ -526,7 +544,8 @@ export class PatternMatcher {
       input: processedInput,
       output: matchedPattern ? `Pattern: "${matchedPattern.pattern}"` : 'No pattern matched',
       details: `Tested ${patternTests.length} pattern(s)`,
-      patternTests
+      patternTests,
+      shouldSave
     });
 
     // Step 4: Decomposition (capture groups)
@@ -578,12 +597,11 @@ export class PatternMatcher {
       if (targetRule && targetRule.patterns && targetRule.patterns.length > 0) {
         gotoTargetRule = targetRule;
 
-        // Test all patterns against the input (like we do in Pattern Matching step)
         gotoPatternTests = [];
         let matchedTargetPattern = null;
 
         for (const pattern of targetRule.patterns) {
-          const testResult = this.matchPattern(normalizedInput, pattern.pattern, synonyms);
+          const testResult = this.matchPattern(processedInput, pattern.pattern, synonyms);
           gotoPatternTests.push({
             pattern: pattern.pattern,
             matched: testResult.matched,
@@ -687,6 +705,7 @@ export class PatternMatcher {
 
     breakdown.matchedRule = matchedRule;
     breakdown.matchedPattern = matchedPattern;
+    breakdown.shouldSave = shouldSave;
 
     return breakdown;
   }

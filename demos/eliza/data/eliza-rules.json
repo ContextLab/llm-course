@@ -609,17 +609,7 @@
           ]
         },
         {
-          "pattern": "* my *",
-          "responses": [
-            "Your (2) .",
-            "Let's discuss your (2) further .",
-            "What does your (2) mean to you ?",
-            "Tell me more about your (2) ."
-          ],
-          "save": true
-        },
-        {
-          "pattern": "* my *",
+          "pattern": "$ * my *",
           "responses": [
             "Your (2) ?",
             "Why do you mention your (2) ?",

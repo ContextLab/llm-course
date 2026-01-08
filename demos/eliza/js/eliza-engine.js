@@ -287,6 +287,20 @@ export class ElizaEngine {
   }
 
   /**
+   * Get current memory stack (for UI display)
+   */
+  getMemoryStack() {
+    return [...this.memoryStack];
+  }
+
+  /**
+   * Clear memory stack
+   */
+  clearMemory() {
+    this.memoryStack = [];
+  }
+
+  /**
    * Export conversation
    */
   exportConversation() {

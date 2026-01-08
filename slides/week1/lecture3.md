@@ -178,6 +178,26 @@ Some keywords have *synonyms*&mdash; alternative words with similar meanings. EL
 
 ---
 
+# **Pattern matching:** memory
+
+```flow
+[User input:gray] --> [Pre-subs:gray] --> [Pattern match:green] --> [Decompose:gray] --> [Reassemble:gray] --> [Post-subs:gray] --> [Response:gray]
+```
+
+<div class="definition-box" data-title="How does it work?">
+
+When patterns start with "$", ELIZA saves the matched input to a buffer for later use. When the `xnone` keyword is triggered, ELIZA can pull from this buffer to generate a response to a *previous* input.
+
+</div>
+
+<div class="example-box" data-title="Example patterns">
+
+In the original rule set, there is only one memory pattern: `$ * my *` (e.g., "I have been thinking a lot about my family"). If no other patterns match later, ELIZA can respond with "Did you come to me to talk about your family?" (or other `* my *` responses) using the saved input.
+
+</div>
+
+---
+
 # **Pattern matching:** rankings
 
 ```flow

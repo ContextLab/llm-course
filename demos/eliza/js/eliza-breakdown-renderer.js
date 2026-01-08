@@ -6,19 +6,43 @@
 
 export class ElizaBreakdownRenderer {
   constructor(options = {}) {
-    // Container element ID for breakdown steps
     this.containerId = options.containerId || 'breakdown-steps';
-    // Reference to ELIZA engine (for pattern matching and substitutions)
     this.engine = options.engine || null;
-    // Current breakdown data (stored for template selection changes)
     this.currentBreakdown = null;
+    this.memoryDisplayId = options.memoryDisplayId || 'memory-display';
   }
 
-  /**
-   * Set the ELIZA engine reference
-   */
   setEngine(engine) {
     this.engine = engine;
+  }
+
+  renderMemoryStack() {
+    const memoryDisplay = document.getElementById(this.memoryDisplayId);
+    if (!memoryDisplay || !this.engine) return;
+
+    const memory = this.engine.getMemoryStack();
+    
+    if (memory.length === 0) {
+      memoryDisplay.innerHTML = `
+        <div class="memory-empty">
+          <span class="memory-empty-icon">\u{1F4AD}</span>
+          <span>No memories stored</span>
+        </div>
+      `;
+      return;
+    }
+
+    let html = '<div class="memory-list">';
+    memory.forEach((item, index) => {
+      html += `
+        <div class="memory-item">
+          <span class="memory-index">${index + 1}</span>
+          <span class="memory-text">"${this.escapeHtml(item)}"</span>
+        </div>
+      `;
+    });
+    html += '</div>';
+    memoryDisplay.innerHTML = html;
   }
 
   /**
@@ -182,6 +206,30 @@ export class ElizaBreakdownRenderer {
       stepsDiv.appendChild(stepDiv);
     });
 
+    // Add memory save indicator if pattern saves to memory
+    if (breakdown.shouldSave) {
+      const memoryDiv = document.createElement('div');
+      memoryDiv.className = 'breakdown-step';
+      memoryDiv.id = 'memory-save-step';
+      memoryDiv.style.borderColor = 'var(--warning-color, #ffc107)';
+      memoryDiv.innerHTML = `
+        <div class="step-header">
+          <div class="step-number" style="background: var(--warning-color, #ffc107);">$</div>
+          <div class="step-title" style="color: var(--warning-color, #ffc107);">Memory Save</div>
+        </div>
+        <div class="step-description">This input will be saved to ELIZA's memory for later recall</div>
+        <div class="step-content">
+          <div class="io-box" style="background: rgba(255, 193, 7, 0.1); border-color: var(--warning-color, #ffc107);">
+            "${this.escapeHtml(breakdown.originalInput)}"
+          </div>
+          <div class="step-details" style="margin-top: 8px;">
+            When no keywords match a future input, ELIZA may recall this statement and generate a response based on it.
+          </div>
+        </div>
+      `;
+      stepsDiv.appendChild(memoryDiv);
+    }
+
     // Add final result with chat bubble styling
     if (breakdown.finalResponse) {
       const finalDiv = document.createElement('div');
@@ -330,16 +378,19 @@ export class ElizaBreakdownRenderer {
     return html;
   }
 
-  /**
-   * Render pattern tests section
-   */
   renderPatternTests(patternTests, index) {
     const stepId = `pattern-tests-${index}`;
     const totalPatterns = patternTests.length;
+    const memoryPatterns = patternTests.filter(t => t.savesToMemory).length;
+
+    let headerExtra = '';
+    if (memoryPatterns > 0) {
+      headerExtra = ` (${memoryPatterns} with memory)`;
+    }
 
     let html = `<div class="pattern-tests-header" onclick="togglePatternTests('${stepId}')" style="cursor: pointer; color: var(--primary-color); margin-bottom: 8px;">
       <span class="pattern-toggle-icon" id="${stepId}-icon">\u25B6</span>
-      Tested ${totalPatterns} pattern(s) - <em>click to ${totalPatterns > 5 ? 'show all' : 'toggle'}</em>
+      Tested ${totalPatterns} pattern(s)${headerExtra} - <em>click to ${totalPatterns > 5 ? 'show all' : 'toggle'}</em>
     </div>`;
 
     html += `<div class="step-content" id="${stepId}" style="display: none;">`;
@@ -347,6 +398,9 @@ export class ElizaBreakdownRenderer {
     for (let i = 0; i < patternTests.length; i++) {
       const test = patternTests[i];
       const testClass = test.matched ? 'matched' : 'not-matched';
+      const memoryBadge = test.savesToMemory 
+        ? '<span class="memory-badge" title="Saves to memory">$</span>' 
+        : '';
       const capturesHtml = test.captures && test.captures.length > 0
         ? `<br>Captures: ${test.captures.map((c, j) => {
             const captureText = Array.isArray(c) ? c.join(' ') : c;
@@ -356,7 +410,7 @@ export class ElizaBreakdownRenderer {
 
       html += `
         <div class="pattern-test ${testClass}">
-          <strong>${this.escapeHtml(test.keyword)}</strong>: "${this.escapeHtml(test.pattern)}"
+          ${memoryBadge}<strong>${this.escapeHtml(test.keyword)}</strong>: "${this.escapeHtml(test.pattern)}"
           ${test.matched ? ' <span class="highlight">MATCHED</span>' : ''}
           ${capturesHtml}
         </div>
