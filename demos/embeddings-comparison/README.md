@@ -349,5 +349,5 @@ This demo relates to:
 ---
 
 **Last Updated**: December 2025
-**Course**: PSYC 51.17 - Language Models from Scratch
+**Course**: PSYC 51.17 - Models of Language and Communication
 **Copyright**: Jeremy R. Manning

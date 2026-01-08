@@ -38,7 +38,7 @@ Transform the course website from a static collection of pages into an auto-gene
 ```html
 <footer>
     <p>&copy; 2026 <a href="https://www.context-lab.com">Contextual Dynamics Lab</a></p>
-    <p>PSYC 51.17: Language Models from Scratch</p>
+    <p>PSYC 51.17: Models of Language and Communication</p>
 </footer>
 ```
 

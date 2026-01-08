@@ -438,7 +438,7 @@ def get_page_template(title, nav_active, content, depth=1):
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title} - PSYC 51.17</title>
-    <meta name="description" content="{title} for PSYC 51.17: Language Models from Scratch">
+    <meta name="description" content="{title} for PSYC 51.17: Models of Language and Communication">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{prefix}demos/shared/css/demo-styles.css">
     <style>
@@ -663,7 +663,7 @@ def get_page_template(title, nav_active, content, depth=1):
 
     <footer>
         <p>&copy; 2026 <a href="https://www.context-lab.com" target="_blank">Contextual Dynamics Lab</a></p>
-        <p>PSYC 51.17: Language Models from Scratch</p>
+        <p>PSYC 51.17: Models of Language and Communication</p>
     </footer>
 
     <script>

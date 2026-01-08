@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-LLM/NLP educational course repository: 15 browser-based interactive demos + Marp/LaTeX lecture slides + Jupyter assignments. Dartmouth PSYC 51.17 "Language Models from Scratch".
+LLM/NLP educational course repository: 15 browser-based interactive demos + Marp/LaTeX lecture slides + Jupyter assignments. Dartmouth PSYC 51.17 "Models of Language and Communication".
 
 ## STRUCTURE
 

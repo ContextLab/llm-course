@@ -1,6 +1,6 @@
 # LLM Interactive Demos
 
-Welcome to the interactive demonstrations for the **Language Models from Scratch** course! This collection of web-based demos provides hands-on exploration of core concepts in natural language processing and large language models.
+Welcome to the interactive demonstrations for the **Models of Language and Communication** course! This collection of web-based demos provides hands-on exploration of core concepts in natural language processing and large language models.
 
 ## Overview
 
@@ -375,7 +375,7 @@ This project is part of the PSYC 51.17 course materials.
 ## Contact
 
 For questions or issues:
-- Course: PSYC 51.17 - Language Models from Scratch
+- Course: PSYC 51.17 - Models of Language and Communication
 - Instructor: [Course website](https://www.dartmouth.edu/~psyc50/)
 - Repository: [GitHub](https://github.com/ContextLab/llm-course)
 
