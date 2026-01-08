@@ -696,40 +696,17 @@
             }
         }
 
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                const currentTheme = html.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                html.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-                updateThemeIcon(newTheme);
-            });
-        }
+        const chartData = [
+            { year: 1966, name: 'ELIZA', label: 'A', params: 200 },
+            { year: 1995, name: 'ALICE', label: 'B', params: 41000 },
+            { year: 2020, name: 'BlenderBot', label: 'C', params: 90000000 },
+            { year: 2024, name: 'SmolLM2', label: 'D', params: 360000000 },
+            { year: 2025, name: 'Claude 4.5', label: 'E', params: 2000000000000 }
+        ];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.clickable-stat').forEach(el => {
-                el.addEventListener('click', () => {
-                    const era = el.dataset.era;
-                    if (era && window.timelineApp) {
-                        window.timelineApp.switchEra(era);
-                    }
-                });
-            });
-
-            document.querySelectorAll('.external-link').forEach(el => {
-                el.addEventListener('click', () => {
-                    const url = el.dataset.url;
-                    if (url) window.open(url, '_blank');
-                });
-            });
-
-            const chartData = [
-                { year: 1966, name: 'ELIZA', label: 'A', params: 200 },
-                { year: 1995, name: 'ALICE', label: 'B', params: 41000 },
-                { year: 2020, name: 'BlenderBot', label: 'C', params: 90000000 },
-                { year: 2024, name: 'SmolLM2', label: 'D', params: 360000000 },
-                { year: 2025, name: 'Claude 4.5', label: 'E', params: 2000000000000 }
-            ];
+        function renderEvolutionChart() {
+            const chartEl = document.getElementById('evolution-chart');
+            if (!chartEl) return;
 
             const isDark = html.getAttribute('data-theme') === 'dark';
             const plotConfig = {
@@ -764,8 +741,39 @@
                 showlegend: false
             };
 
+            Plotly.react('evolution-chart', [plotConfig], layout, { displayModeBar: false, responsive: true });
+        }
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+                renderEvolutionChart();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.clickable-stat').forEach(el => {
+                el.addEventListener('click', () => {
+                    const era = el.dataset.era;
+                    if (era && window.timelineApp) {
+                        window.timelineApp.switchEra(era);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.external-link').forEach(el => {
+                el.addEventListener('click', () => {
+                    const url = el.dataset.url;
+                    if (url) window.open(url, '_blank');
+                });
+            });
+
             if (document.getElementById('evolution-chart')) {
-                Plotly.newPlot('evolution-chart', [plotConfig], layout, { displayModeBar: false, responsive: true });
+                renderEvolutionChart();
                 
                 const keyHtml = chartData.map(d => 
                     `<span style="margin-right:10px;font-size:0.75em;"><strong>${d.label}</strong>=${d.name}</span>`
