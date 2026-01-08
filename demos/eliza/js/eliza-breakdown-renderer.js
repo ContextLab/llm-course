@@ -61,19 +61,101 @@ export class ElizaBreakdownRenderer {
     return div.innerHTML;
   }
 
-  /**
-   * Toggle pattern tests visibility
-   */
   togglePatternTests(stepId) {
     const content = document.getElementById(stepId);
     const icon = document.getElementById(stepId + '-icon');
     if (content && icon) {
       if (content.style.display === 'none') {
         content.style.display = 'block';
-        icon.textContent = '\u25BC'; // Down arrow
+        icon.textContent = '\u25BC';
       } else {
         content.style.display = 'none';
-        icon.textContent = '\u25B6'; // Right arrow
+        icon.textContent = '\u25B6';
+      }
+    }
+  }
+
+  selectMemoryOption(memoryIndex) {
+    if (!this.currentBreakdown || !this.engine) return;
+    
+    const memoryStep = this.currentBreakdown.steps.find(s => s.name === 'Memory Recall');
+    if (!memoryStep || !memoryStep.memoryRecall) return;
+    
+    const memories = memoryStep.memoryRecall.availableMemories;
+    if (memoryIndex < 0 || memoryIndex >= memories.length) return;
+    
+    const selectedMemory = memories[memoryIndex];
+    
+    document.querySelectorAll('.memory-option').forEach((el, i) => {
+      if (i === memoryIndex) {
+        el.classList.add('matched');
+        el.style.opacity = '1';
+        el.innerHTML = `<strong>${i + 1}.</strong> "${this.escapeHtml(memories[i])}" <span class="highlight">SELECTED</span>`;
+      } else {
+        el.classList.remove('matched');
+        el.style.opacity = '0.7';
+        el.innerHTML = `<strong>${i + 1}.</strong> "${this.escapeHtml(memories[i])}"`;
+      }
+    });
+    
+    const memoryDisplay = document.getElementById('selected-memory-display');
+    if (memoryDisplay) {
+      memoryDisplay.textContent = `"${selectedMemory}"`;
+    }
+    
+    const tempStack = [selectedMemory];
+    const newBreakdown = this.engine.patternMatcher.getProcessingBreakdown(
+      this.currentBreakdown.originalInput,
+      this.engine.rules,
+      this.engine.preSubstitutions,
+      this.engine.postSubstitutions,
+      this.engine.synonyms,
+      tempStack
+    );
+    
+    this.updateDownstreamSteps(newBreakdown);
+  }
+
+  updateDownstreamSteps(newBreakdown) {
+    const stepsDiv = this.getContainer();
+    if (!stepsDiv) return;
+    
+    const allSteps = stepsDiv.querySelectorAll('.breakdown-step');
+    allSteps.forEach(stepEl => {
+      const titleEl = stepEl.querySelector('.step-title');
+      if (!titleEl) return;
+      const title = titleEl.textContent;
+      
+      const newStep = newBreakdown.steps.find(s => s.name === title);
+      if (!newStep) return;
+      
+      const ioBoxes = stepEl.querySelectorAll('.step-io .io-box');
+      if (ioBoxes.length >= 1 && newStep.input !== undefined) {
+        ioBoxes[0].textContent = newStep.input;
+      }
+      if (ioBoxes.length >= 2 && newStep.output !== undefined) {
+        ioBoxes[1].textContent = newStep.output;
+      }
+      
+      if (title === 'Template Selection' && newStep.allTemplates) {
+        const dropdown = stepEl.querySelector('.template-dropdown');
+        if (dropdown) {
+          dropdown.innerHTML = newStep.allTemplates.map((t, i) => 
+            `<option value="${i}" ${i === newStep.selectedTemplateIndex ? 'selected' : ''}>${this.escapeHtml(t)}</option>`
+          ).join('');
+        }
+        const selectedDisplay = stepEl.querySelector('#selected-template-display');
+        if (selectedDisplay && newStep.allTemplates[newStep.selectedTemplateIndex]) {
+          selectedDisplay.textContent = `"${newStep.allTemplates[newStep.selectedTemplateIndex]}"`;
+        }
+      }
+    });
+    
+    const finalStep = document.getElementById('final-response-step');
+    if (finalStep && newBreakdown.finalResponse) {
+      const responseEl = finalStep.querySelector('#final-response-content');
+      if (responseEl) {
+        responseEl.textContent = newBreakdown.finalResponse;
       }
     }
   }
@@ -110,6 +192,7 @@ export class ElizaBreakdownRenderer {
 
     // Expose toggle function globally for onclick handlers
     window.togglePatternTests = (stepId) => this.togglePatternTests(stepId);
+    window.selectMemoryOption = (memoryIndex) => this.selectMemoryOption(memoryIndex);
 
     breakdown.steps.forEach((step, index) => {
       const stepDiv = document.createElement('div');
@@ -144,6 +227,9 @@ export class ElizaBreakdownRenderer {
       } else if (step.name === 'Goto Resolution' && step.targetTemplates && step.targetTemplates.length > 0) {
         // Special handling for Goto Resolution - recursive mini-breakdown
         stepHTML += this.renderGotoResolutionStep(step, index);
+      } else if (step.name === 'Memory Recall' && step.memoryRecall) {
+        // Special handling for Memory Recall - show available memories
+        stepHTML += this.renderMemoryRecallStep(step, index);
       } else if (step.input !== undefined && step.output !== undefined) {
         // Add input/output visualization for other steps
         stepHTML += `
@@ -206,15 +292,15 @@ export class ElizaBreakdownRenderer {
       stepsDiv.appendChild(stepDiv);
     });
 
-    // Add memory save indicator if pattern saves to memory
-    if (breakdown.shouldSave) {
+    // Add memory save indicator if pattern saves to memory (but not when using recalled memory)
+    if (breakdown.shouldSave && !breakdown.usingMemory) {
       const memoryDiv = document.createElement('div');
       memoryDiv.className = 'breakdown-step';
       memoryDiv.id = 'memory-save-step';
       memoryDiv.style.borderColor = 'var(--warning-color, #ffc107)';
       memoryDiv.innerHTML = `
         <div class="step-header">
-          <div class="step-number" style="background: var(--warning-color, #ffc107);">mem</div>
+          <div class="step-number" style="background: var(--warning-color, #ffc107); font-size: 0.6rem;">mem</div>
           <div class="step-title" style="color: var(--warning-color, #ffc107);">Memory Save</div>
         </div>
         <div class="step-description">This input will be saved to ELIZA's memory for later recall</div>
@@ -262,9 +348,63 @@ export class ElizaBreakdownRenderer {
     }
   }
 
-  /**
-   * Render goto resolution step content
-   */
+  renderMemoryRecallStep(step, index) {
+    const memoryRecall = step.memoryRecall;
+    const memories = memoryRecall.availableMemories || [];
+    const selectedIdx = memoryRecall.selectedIndex;
+    const memoryStepId = `memory-recall-${index}`;
+
+    let html = `
+      <div class="memory-recall-container" style="margin-top: 12px; padding: 16px; background: rgba(255, 193, 7, 0.08); border-radius: 8px; border-left: 3px solid var(--warning-color, #ffc107);">
+        <div style="font-weight: 600; margin-bottom: 12px; color: var(--warning-color, #ffc107);">
+          <span class="memory-badge-header" title="Recalling from memory">mem</span>
+          No keywords found - recalling from memory
+        </div>
+        <div class="step-io">
+          <div style="flex: 1;">
+            <div class="io-label">Original Input (no keywords)</div>
+            <div class="io-box" style="opacity: 0.6; text-decoration: line-through;">${this.escapeHtml(step.input)}</div>
+          </div>
+          <div class="arrow" style="color: var(--warning-color, #ffc107);">&rarr;</div>
+          <div style="flex: 1;">
+            <div class="io-label">Recalled Memory</div>
+            <div class="io-box" id="selected-memory-display" style="border-color: var(--warning-color, #ffc107); background: rgba(255, 193, 7, 0.1);">"${this.escapeHtml(memoryRecall.selectedMemory)}"</div>
+          </div>
+        </div>
+    `;
+
+    if (memories.length > 1) {
+      html += `
+        <div style="margin: 12px 0 8px 0;">
+          <div class="io-label">${memories.length} memories available - click to select:</div>
+          <div class="memory-selector-list" style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+      `;
+      memories.forEach((mem, i) => {
+        const isSelected = i === selectedIdx;
+        html += `
+          <div class="memory-option pattern-test ${isSelected ? 'matched' : ''}" 
+               data-memory-index="${i}"
+               onclick="window.selectMemoryOption(${i})"
+               style="cursor: pointer; opacity: ${isSelected ? '1' : '0.7'}; transition: all 0.2s ease;">
+            <strong>${i + 1}.</strong> "${this.escapeHtml(mem)}" ${isSelected ? '<span class="highlight">SELECTED</span>' : ''}
+          </div>
+        `;
+      });
+      html += '</div></div>';
+    } else {
+      html += `<div class="step-details" style="margin-top: 8px;">1 memory item available</div>`;
+    }
+
+    html += `
+        <div class="step-details" style="margin-top: 8px; font-style: italic;">
+          The recalled memory will be processed through the pattern matching pipeline instead of the original input.
+        </div>
+      </div>
+    `;
+
+    return html;
+  }
+
   renderGotoResolutionStep(step, index) {
     const gotoPatternId = `goto-patterns-${index}`;
     const patternTests = step.targetPatternTests || [];

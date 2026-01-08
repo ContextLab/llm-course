@@ -81,6 +81,7 @@
             <option value="My mother always criticizes me">My mother always criticizes me</option>
             <option value="My dog is always happy">My dog is always happy (saves to memory)</option>
             <option value="My job is stressful">My job is stressful (saves to memory)</option>
+            <option value="xyzzy gibberish">xyzzy gibberish (triggers xnone fallback)</option>
           </select>
           <button class="btn btn-primary" id="analyze-btn">Analyze</button>
         </div>
@@ -453,8 +454,8 @@
       const breakdown = eliza.getDetailedBreakdown(input);
       breakdownRenderer.displayBreakdown(breakdown);
       
-      // If this pattern saves to memory, actually save it to the engine
-      if (breakdown.shouldSave) {
+      // If this pattern saves to memory and we're NOT using recalled memory, save input
+      if (breakdown.shouldSave && !breakdown.usingMemory) {
         eliza.saveToMemory(input);
         breakdownRenderer.renderMemoryStack();
       }

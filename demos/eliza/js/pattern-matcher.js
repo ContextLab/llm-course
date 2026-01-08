@@ -396,10 +396,11 @@ export class PatternMatcher {
   /**
    * Get detailed processing breakdown for visualization
    */
-  getProcessingBreakdown(input, rules, preSubstitutions, postSubstitutions, synonyms) {
+  getProcessingBreakdown(input, rules, preSubstitutions, postSubstitutions, synonyms, memoryStack = []) {
     const breakdown = {
       originalInput: input,
-      steps: []
+      steps: [],
+      memoryStack: [...memoryStack]
     };
 
     // Step 1: Pre-substitutions
@@ -456,6 +457,56 @@ export class PatternMatcher {
       }))
     });
 
+    let usingMemory = false;
+    let selectedMemoryIndex = 0;
+    let memoryInput = null;
+    
+    if (keywordsFound.length === 0 && memoryStack.length > 0) {
+      usingMemory = true;
+      selectedMemoryIndex = memoryStack.length - 1;
+      memoryInput = memoryStack[selectedMemoryIndex];
+      
+      breakdown.steps.push({
+        name: 'Memory Recall',
+        description: 'No keywords found - recalling from memory',
+        input: input,
+        output: `Using memory: "${memoryInput}"`,
+        details: `${memoryStack.length} memory item(s) available`,
+        memoryRecall: {
+          availableMemories: [...memoryStack],
+          selectedIndex: selectedMemoryIndex,
+          selectedMemory: memoryInput
+        }
+      });
+      
+      const memoryPreSubResult = this.applyPreSubstitutions(memoryInput, preSubstitutions);
+      const memoryProcessedInput = memoryPreSubResult.result;
+      const memoryWords = memoryProcessedInput.toLowerCase()
+        .replace(/[.,!?;:]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length > 0);
+      
+      const rulesByKeyword = new Map();
+      for (const rule of rules) {
+        rulesByKeyword.set(rule.keyword.toLowerCase(), rule);
+      }
+      
+      keywordsFound.length = 0;
+      const seenKeywords = new Set();
+      for (const word of memoryWords) {
+        const rule = rulesByKeyword.get(word);
+        if (rule && !seenKeywords.has(word)) {
+          keywordsFound.push({ keyword: rule.keyword.toLowerCase(), rank: rule.rank || 0, rule });
+          seenKeywords.add(word);
+        }
+      }
+      keywordsFound.sort((a, b) => b.rank - a.rank);
+      
+      breakdown.memoryProcessedInput = memoryProcessedInput;
+    }
+    
+    const inputForMatching = usingMemory ? breakdown.memoryProcessedInput : processedInput;
+
     // Step 3: Pattern matching (specific patterns first, then catch-all)
     const patternTests = [];
     let matchedRule = null;
@@ -469,7 +520,7 @@ export class PatternMatcher {
         const { shouldSave: savesMemory, patternStr } = this.checkMemorySave(patternObj);
         if (patternStr === '*') continue;
 
-        const result = this.matchPattern(processedInput, patternStr, synonyms);
+        const result = this.matchPattern(inputForMatching, patternStr, synonyms);
         patternTests.push({
           keyword,
           pattern: patternObj.pattern,
@@ -487,12 +538,11 @@ export class PatternMatcher {
         }
       }
 
-      // Then try catch-all for this keyword
       for (const patternObj of rule.patterns) {
         const { shouldSave: savesMemory, patternStr } = this.checkMemorySave(patternObj);
         if (patternStr !== '*') continue;
 
-        const result = this.matchPattern(processedInput, patternStr, synonyms);
+        const result = this.matchPattern(inputForMatching, patternStr, synonyms);
         patternTests.push({
           keyword,
           pattern: patternObj.pattern,
@@ -511,49 +561,47 @@ export class PatternMatcher {
       }
     }
 
-    // If no keyword matched, try catch-all patterns from any rule
-    if (!matchedRule) {
-      for (const rule of rules) {
-        for (const patternObj of rule.patterns) {
+    if (!matchedRule && !usingMemory) {
+      const xnoneRule = rules.find(r => r.keyword === 'xnone');
+      if (xnoneRule) {
+        for (const patternObj of xnoneRule.patterns) {
           const { shouldSave: savesMemory, patternStr } = this.checkMemorySave(patternObj);
-          if (patternStr === '*') {
-            const result = this.matchPattern(processedInput, patternStr, synonyms);
-            patternTests.push({
-              keyword: rule.keyword,
-              pattern: patternObj.pattern,
-              patternStr,
-              matched: result.matched,
-              captures: result.captures,
-              savesToMemory: savesMemory
-            });
+          const result = this.matchPattern(inputForMatching, patternStr, synonyms);
+          patternTests.push({
+            keyword: 'xnone',
+            pattern: patternObj.pattern,
+            patternStr,
+            matched: result.matched,
+            captures: result.captures,
+            savesToMemory: savesMemory
+          });
 
-            if (result.matched && !matchedRule) {
-              matchedRule = rule;
-              matchedPattern = patternObj;
-              matchResult = result;
-              shouldSave = savesMemory;
-            }
+          if (result.matched && !matchedRule) {
+            matchedRule = xnoneRule;
+            matchedPattern = patternObj;
+            matchResult = result;
+            shouldSave = savesMemory;
           }
         }
       }
     }
 
+    breakdown.usingMemory = usingMemory;
     breakdown.steps.push({
       name: 'Pattern Matching',
-      description: 'Testing patterns until one matches',
-      input: processedInput,
+      description: usingMemory ? 'Testing patterns against recalled memory' : 'Testing patterns until one matches',
+      input: inputForMatching,
       output: matchedPattern ? `Pattern: "${matchedPattern.pattern}"` : 'No pattern matched',
       details: `Tested ${patternTests.length} pattern(s)`,
       patternTests,
       shouldSave
     });
 
-    // Step 4: Decomposition (capture groups)
     if (matchResult && matchResult.captures) {
       breakdown.steps.push({
         name: 'Decomposition',
         description: 'Extracting parts from input',
-        input: processedInput,
+        input: inputForMatching,
         output: matchResult.captures.length > 0
           ? matchResult.captures.map((c, i) => `(${i + 1}): "${Array.isArray(c) ? c.join(' ') : c}"`).join(', ')
           : 'No captures',
@@ -601,7 +649,7 @@ export class PatternMatcher {
         let matchedTargetPattern = null;
 
         for (const pattern of targetRule.patterns) {
-          const testResult = this.matchPattern(processedInput, pattern.pattern, synonyms);
+          const testResult = this.matchPattern(inputForMatching, pattern.pattern, synonyms);
           gotoPatternTests.push({
             pattern: pattern.pattern,
             matched: testResult.matched,
@@ -686,8 +734,9 @@ export class PatternMatcher {
         }
       }
 
-      // Convert to uppercase to match original ELIZA behavior
-      const uppercaseResponse = assembledResponse.toUpperCase();
+      // Convert to uppercase and clean punctuation spacing
+      let uppercaseResponse = assembledResponse.toUpperCase();
+      uppercaseResponse = uppercaseResponse.replace(/\s+([.!?,;:])/g, '$1');
 
       breakdown.steps.push({
         name: 'Post-substitutions & Assembly',
