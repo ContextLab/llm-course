@@ -301,6 +301,13 @@ export class ElizaEngine {
   }
 
   /**
+   * Save input to memory stack (for breakdown tab integration)
+   */
+  saveToMemory(input) {
+    this.memoryStack.push(input);
+  }
+
+  /**
    * Export conversation
    */
   exportConversation() {

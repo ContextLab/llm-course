@@ -79,7 +79,8 @@
             <option value="Everyone hates me">Everyone hates me</option>
             <option value="I want to be happy">I want to be happy</option>
             <option value="My mother always criticizes me">My mother always criticizes me</option>
-            <option value="My job is stressful">My job is stressful (memory pattern)</option>
+            <option value="My dog is always happy">My dog is always happy (saves to memory)</option>
+            <option value="My job is stressful">My job is stressful (saves to memory)</option>
           </select>
           <button class="btn btn-primary" id="analyze-btn">Analyze</button>
         </div>
@@ -451,6 +452,12 @@
 
       const breakdown = eliza.getDetailedBreakdown(input);
       breakdownRenderer.displayBreakdown(breakdown);
+      
+      // If this pattern saves to memory, actually save it to the engine
+      if (breakdown.shouldSave) {
+        eliza.saveToMemory(input);
+        breakdownRenderer.renderMemoryStack();
+      }
     }
 
     // Editor Functions
