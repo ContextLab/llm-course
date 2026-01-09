@@ -671,8 +671,6 @@ a.paper-item:hover {
     border-radius: 8px;
     padding: 15px;
     min-height: 200px;
-    max-height: 500px;
-    overflow-y: auto;
     border: 1px solid var(--border-color);
 }
 
@@ -1796,4 +1794,44 @@ a.paper-item:hover {
 .clear-memory-btn:hover {
     background: var(--warning-color, #ffc107);
     color: #000;
+}
+
+/* SRAI Redirect Display in AIML Breakdown */
+.srai-redirect-box {
+    background: var(--surface-hover);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.srai-redirect-header {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.srai-redirect-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.srai-redirect-row:last-child {
+    margin-bottom: 0;
+}
+
+.srai-redirect-label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.srai-redirect-value {
+    background: var(--bg-color);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
 }

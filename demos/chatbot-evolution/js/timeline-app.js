@@ -351,10 +351,7 @@ class TimelineApp {
             return;
         }
 
-        // Get breakdown using preview method to not affect chat state
-        const breakdown = this.bots.alice.getDetailedBreakdownPreview(inputText);
-
-        // Update context display
+        const breakdown = this.bots.alice.getDetailedBreakdown(inputText);
         this.updateAliceContextDisplay(breakdown.context);
 
         // Display breakdown steps
@@ -364,7 +361,7 @@ class TimelineApp {
     updateAliceContextDisplay(context) {
         document.getElementById('alice-topic-value').textContent = context.topic || 'general';
         document.getElementById('alice-that-value').textContent = context.that || '(none)';
-        document.getElementById('alice-username-value').textContent = context.userName || '(unknown)';
+        document.getElementById('alice-username-value').textContent = context.name || context.userName || '(unknown)';
     }
 
     async analyzeEliza(input) {
@@ -429,37 +426,41 @@ class TimelineApp {
 
             // Add input/output visualization
             if (step.input !== undefined && step.output !== undefined) {
-                const ioDiv = document.createElement('div');
-                ioDiv.className = 'step-io';
+                if (step.name === 'Template Processing' && step.templateInfo) {
+                    this.renderTemplateProcessingStep(stepDiv, step);
+                } else {
+                    const ioDiv = document.createElement('div');
+                    ioDiv.className = 'step-io';
 
-                const inputDiv = document.createElement('div');
-                const inputLabel = document.createElement('div');
-                inputLabel.className = 'io-label';
-                inputLabel.textContent = 'Input';
-                const inputBox = document.createElement('div');
-                inputBox.className = 'io-box';
-                inputBox.textContent = step.input;
-                inputDiv.appendChild(inputLabel);
-                inputDiv.appendChild(inputBox);
+                    const inputDiv = document.createElement('div');
+                    const inputLabel = document.createElement('div');
+                    inputLabel.className = 'io-label';
+                    inputLabel.textContent = 'Input';
+                    const inputBox = document.createElement('div');
+                    inputBox.className = 'io-box';
+                    inputBox.textContent = step.input;
+                    inputDiv.appendChild(inputLabel);
+                    inputDiv.appendChild(inputBox);
 
-                const arrowDiv = document.createElement('div');
-                arrowDiv.className = 'arrow';
-                arrowDiv.textContent = String.fromCharCode(8594); // Right arrow
+                    const arrowDiv = document.createElement('div');
+                    arrowDiv.className = 'arrow';
+                    arrowDiv.textContent = String.fromCharCode(8594);
 
-                const outputDiv = document.createElement('div');
-                const outputLabel = document.createElement('div');
-                outputLabel.className = 'io-label';
-                outputLabel.textContent = 'Output';
-                const outputBox = document.createElement('div');
-                outputBox.className = 'io-box';
-                outputBox.textContent = step.output;
-                outputDiv.appendChild(outputLabel);
-                outputDiv.appendChild(outputBox);
+                    const outputDiv = document.createElement('div');
+                    const outputLabel = document.createElement('div');
+                    outputLabel.className = 'io-label';
+                    outputLabel.textContent = 'Output';
+                    const outputBox = document.createElement('div');
+                    outputBox.className = 'io-box';
+                    outputBox.textContent = step.output;
+                    outputDiv.appendChild(outputLabel);
+                    outputDiv.appendChild(outputBox);
 
-                ioDiv.appendChild(inputDiv);
-                ioDiv.appendChild(arrowDiv);
-                ioDiv.appendChild(outputDiv);
-                stepDiv.appendChild(ioDiv);
+                    ioDiv.appendChild(inputDiv);
+                    ioDiv.appendChild(arrowDiv);
+                    ioDiv.appendChild(outputDiv);
+                    stepDiv.appendChild(ioDiv);
+                }
             }
 
             // Add emotional state display (PARRY)
@@ -663,6 +664,124 @@ class TimelineApp {
             finalDiv.appendChild(contentDiv);
             stepsDiv.appendChild(finalDiv);
         }
+    }
+
+    renderTemplateProcessingStep(stepDiv, step) {
+        const info = step.templateInfo;
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'step-content';
+
+        // Show raw template
+        const templateDiv = document.createElement('div');
+        templateDiv.className = 'template-display';
+        templateDiv.style.cssText = 'background: var(--surface-color); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-family: monospace; font-size: 0.9rem; border: 1px solid var(--border-color);';
+        templateDiv.innerHTML = '<div style="font-weight: 600; margin-bottom: 8px; color: var(--text-secondary);">Template:</div>' +
+            '<code style="word-break: break-all;">' + this.escapeHtml(info.rawTemplate) + '</code>';
+        contentDiv.appendChild(templateDiv);
+
+        // Show RANDOM options as dropdown if present
+        if (info.randomOptions && info.randomOptions.length > 0) {
+            const randomDiv = document.createElement('div');
+            randomDiv.style.cssText = 'background: #fef3c7; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #f59e0b;';
+            randomDiv.innerHTML = '<div style="font-weight: 600; color: #92400e; margin-bottom: 8px;">RANDOM Selection</div>';
+
+            const selectWrapper = document.createElement('div');
+            selectWrapper.style.cssText = 'display: flex; align-items: center; gap: 12px;';
+
+            const selectLabel = document.createElement('span');
+            selectLabel.textContent = 'Options:';
+            selectLabel.style.fontWeight = '500';
+
+            const select = document.createElement('select');
+            select.style.cssText = 'flex: 1; padding: 8px; border: 2px solid #f59e0b; border-radius: 6px; font-size: 0.9rem; background: white;';
+            info.randomOptions.forEach((opt, i) => {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = opt;
+                if (i === info.selectedRandomIndex) option.selected = true;
+                select.appendChild(option);
+            });
+
+            selectWrapper.appendChild(selectLabel);
+            selectWrapper.appendChild(select);
+            randomDiv.appendChild(selectWrapper);
+
+            const selectedDiv = document.createElement('div');
+            selectedDiv.style.cssText = 'margin-top: 8px; font-size: 0.85rem; color: #92400e;';
+            selectedDiv.textContent = 'Selected: "' + info.randomOptions[info.selectedRandomIndex] + '"';
+            randomDiv.appendChild(selectedDiv);
+
+            contentDiv.appendChild(randomDiv);
+        }
+
+        // Show SRAI chain if present
+        if (info.sraiChain && info.sraiChain.length > 0) {
+            info.sraiChain.forEach((srai, i) => {
+                const sraiDiv = document.createElement('div');
+                sraiDiv.className = 'srai-redirect-box';
+
+                const header = document.createElement('div');
+                header.className = 'srai-redirect-header';
+                header.innerHTML = '&#x2192; SRAI Redirect' + (info.sraiChain.length > 1 ? ' #' + (i + 1) : '');
+                sraiDiv.appendChild(header);
+
+                const targetDiv = document.createElement('div');
+                targetDiv.className = 'srai-redirect-row';
+                targetDiv.innerHTML = '<span class="srai-redirect-label">Target:</span><code class="srai-redirect-value">' + this.escapeHtml(srai.target) + '</code>';
+                sraiDiv.appendChild(targetDiv);
+
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'srai-redirect-row';
+                resultDiv.innerHTML = '<span class="srai-redirect-label">Result:</span><span class="srai-redirect-value">' + this.escapeHtml(srai.result) + '</span>';
+                sraiDiv.appendChild(resultDiv);
+
+                contentDiv.appendChild(sraiDiv);
+            });
+        }
+
+        // Show processed substitutions
+        if (info.processedSteps && info.processedSteps.length > 0) {
+            const subsDiv = document.createElement('div');
+            subsDiv.style.cssText = 'background: var(--surface-color); padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 1px solid var(--border-color);';
+            subsDiv.innerHTML = '<div style="font-weight: 600; margin-bottom: 8px; color: var(--text-secondary);">Substitutions:</div>';
+
+            info.processedSteps.forEach(procStep => {
+                if (procStep.type === 'RANDOM') return;
+                if (!procStep.substitutions || procStep.substitutions.length === 0) return;
+
+                procStep.substitutions.forEach(sub => {
+                    const subDiv = document.createElement('div');
+                    subDiv.style.cssText = 'font-size: 0.85rem; padding: 4px 0; font-family: monospace;';
+                    if (procStep.type === 'STAR') {
+                        subDiv.innerHTML = '<span style="color: #7c3aed;">{{STAR:' + sub.index + '}}</span> &#x2192; <span style="color: #059669;">"' + this.escapeHtml(sub.value) + '"</span>';
+                    } else if (procStep.type === 'BOT') {
+                        subDiv.innerHTML = '<span style="color: #7c3aed;">{{BOT:' + sub.property + '}}</span> &#x2192; <span style="color: #059669;">"' + this.escapeHtml(sub.value) + '"</span>';
+                    } else if (procStep.type === 'GET') {
+                        subDiv.innerHTML = '<span style="color: #7c3aed;">{{GET:' + sub.variable + '}}</span> &#x2192; <span style="color: #059669;">"' + this.escapeHtml(sub.value) + '"</span>';
+                    } else if (procStep.type === 'SET') {
+                        subDiv.innerHTML = '<span style="color: #dc2626;">{{SET:' + sub.variable + ':' + this.escapeHtml(sub.value) + '}}</span> &#x2192; <span style="color: #059669;">(stored)</span>';
+                    }
+                    subsDiv.appendChild(subDiv);
+                });
+            });
+
+            contentDiv.appendChild(subsDiv);
+        }
+
+        // Show final output
+        const outputDiv = document.createElement('div');
+        outputDiv.className = 'step-io';
+        outputDiv.innerHTML = '<div><div class="io-label">Final Output</div><div class="io-box" style="font-weight: 600;">' + this.escapeHtml(info.finalOutput) + '</div></div>';
+        contentDiv.appendChild(outputDiv);
+
+        stepDiv.appendChild(contentDiv);
+    }
+
+    escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     switchEra(eraId) {

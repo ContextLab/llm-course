@@ -135,8 +135,9 @@ export class Alice {
                 return this.context[varName] || "";
             });
 
-            // Process BOT properties
+            // Process BOT properties - {{BOT:name}} specifically refers to bot's name, not user's name
             result = result.replace(/\{\{BOT:([^{}]+)\}\}/g, (match, property) => {
+                if (property === 'name') return this.context.botName;
                 return this.context[property] || this.context.botName || "";
             });
 
@@ -193,8 +194,11 @@ export class Alice {
             });
 
             // Process SRAI (recursive pattern matching) - do last as it may produce new tags
-            result = result.replace(/\{\{SRAI:([^{}]+)\}\}/g, (match, srai) => {
-                return this.srai(srai);
+            // Empty SRAI like {{SRAI:}} means redirect to first wildcard (common AIML reduction pattern)
+            result = result.replace(/\{\{SRAI:([^{}]*)\}\}/g, (match, srai) => {
+                const target = srai || (wildcards[0] || "");
+                if (!target) return "";
+                return this.srai(target);
             });
 
             // Check if we made any progress
@@ -213,6 +217,9 @@ export class Alice {
         result = result.replace(/^\s*\}\}+\s*/g, '');  // Leading }}
         result = result.replace(/\s*\}\}+\s*$/g, '');  // Trailing }}
         result = result.replace(/\}\}+\s+/g, ' ');     // }} in middle of text
+
+        // Clean up leading punctuation left after SET/THINK tags process to empty
+        result = result.replace(/^[,;.:\s]+/, '');
 
         return result.trim();
     }
@@ -401,5 +408,328 @@ export class Alice {
             patternsLoaded: this.patternsLoaded,
             context: this.context
         };
+    }
+
+    /**
+     * Get detailed breakdown of response processing for visualization
+     */
+    getDetailedBreakdown(input) {
+        const steps = [];
+        const normalizedInput = this.normalize(input);
+
+        // Step 1: Input normalization
+        steps.push({
+            name: 'Input Normalization',
+            description: 'Convert input to uppercase and remove punctuation (AIML standard)',
+            input: input,
+            output: normalizedInput,
+            details: 'AIML patterns are case-insensitive and ignore punctuation'
+        });
+
+        // Step 2: Context check
+        steps.push({
+            name: 'Context Check',
+            description: 'Check current conversation context for topic and that matching',
+            details: `Topic: "${this.context.topic}", That: "${this.context.that || '(none)'}", User: "${this.context.name || '(unknown)'}"`
+        });
+
+        // Step 3: Pattern matching with priority tracking
+        let exactMatch = null;
+        let exactWildcards = [];
+        let wildcardMatch = null;
+        let wildcardWildcards = [];
+        let pureWildcardMatch = null;
+        let pureWildcardWildcards = [];
+        let patternsChecked = 0;
+        let skippedTopic = 0;
+        let skippedThat = 0;
+
+        for (const pattern of this.patterns) {
+            patternsChecked++;
+
+            if (pattern.topic && this.context.topic !== pattern.topic) {
+                skippedTopic++;
+                continue;
+            }
+
+            if (pattern.that) {
+                const normalizedThat = this.normalize(this.context.that);
+                const thatPattern = pattern.that
+                    .replace(/\*/g, '.*')
+                    .replace(/_/g, '.+');
+                const thatRegex = new RegExp('^' + thatPattern + '$', 'i');
+                if (!thatRegex.test(normalizedThat)) {
+                    skippedThat++;
+                    continue;
+                }
+            }
+
+            const regex = new RegExp('^' + pattern.regex + '$', 'i');
+            const match = normalizedInput.match(regex);
+
+            if (match) {
+                const wildcards = match.slice(1);
+                const hasWildcard = pattern.pattern.includes('*') || pattern.pattern.includes('_');
+                const isPureWildcard = pattern.pattern === '_' || pattern.pattern === '*';
+
+                if (isPureWildcard) {
+                    if (!pureWildcardMatch || pattern.priority > pureWildcardMatch.priority) {
+                        pureWildcardMatch = pattern;
+                        pureWildcardWildcards = wildcards;
+                    }
+                } else if (hasWildcard) {
+                    if (!wildcardMatch || pattern.priority > wildcardMatch.priority) {
+                        wildcardMatch = pattern;
+                        wildcardWildcards = wildcards;
+                    }
+                } else {
+                    if (!exactMatch || pattern.priority > exactMatch.priority) {
+                        exactMatch = pattern;
+                        exactWildcards = wildcards;
+                    }
+                }
+            }
+        }
+
+        const matchedPattern = exactMatch || wildcardMatch || pureWildcardMatch;
+        const matchedWildcards = exactMatch ? exactWildcards :
+                                 (wildcardMatch ? wildcardWildcards : pureWildcardWildcards);
+
+        // Determine match type for display
+        let matchType = 'none';
+        if (exactMatch) matchType = 'exact';
+        else if (wildcardMatch) matchType = 'wildcard';
+        else if (pureWildcardMatch) matchType = 'pure-wildcard';
+
+        steps.push({
+            name: 'Pattern Matching',
+            description: 'Search patterns by priority: exact > wildcard > pure wildcard (* or _)',
+            details: matchedPattern
+                ? `Matched "${matchedPattern.pattern}" (${matchType}, priority ${matchedPattern.priority})`
+                : 'No pattern matched, using default response',
+            patternInfo: {
+                patternsChecked,
+                skippedTopic,
+                skippedThat,
+                matchType,
+                matchedPattern: matchedPattern ? matchedPattern.pattern : null,
+                priority: matchedPattern ? matchedPattern.priority : null,
+                sourceFile: matchedPattern ? matchedPattern.source_file : null
+            }
+        });
+
+        // Step 4: Wildcard capture
+        if (matchedWildcards.length > 0) {
+            steps.push({
+                name: 'Wildcard Capture',
+                description: 'Extract text matched by wildcards (* or _) for use in response',
+                details: matchedWildcards.map((w, i) => `STAR:${i + 1} = "${w}"`).join(', '),
+                wildcards: matchedWildcards.map((w, i) => ({ index: i + 1, captured: w }))
+            });
+        }
+
+        // Step 5: Template processing
+        let response = '';
+        let templateInfo = null;
+        if (matchedPattern) {
+            const rawTemplate = matchedPattern.template;
+            templateInfo = this.processTemplateWithBreakdown(rawTemplate, matchedWildcards);
+            response = templateInfo.finalOutput;
+
+            steps.push({
+                name: 'Template Processing',
+                description: 'Process AIML template tags (BOT, STAR, SRAI, RANDOM, SET, GET, etc.)',
+                input: rawTemplate,
+                output: response,
+                details: this.describeTemplateTags(rawTemplate),
+                templateInfo: templateInfo
+            });
+        } else {
+            response = this.getDefaultResponse(input);
+            steps.push({
+                name: 'Default Response',
+                description: 'No pattern matched, selecting from default responses',
+                output: response
+            });
+        }
+
+        // Step 6: Context update
+        const oldThat = this.context.that;
+        this.context.that = response;
+
+        steps.push({
+            name: 'Context Update',
+            description: 'Update conversation context with new response',
+            details: `That: "${oldThat || '(none)'}" → "${response.substring(0, 50)}${response.length > 50 ? '...' : ''}"`,
+            contextUpdate: {
+                that: response,
+                topic: this.context.topic,
+                name: this.context.name
+            }
+        });
+
+        return {
+            steps,
+            finalResponse: response,
+            matchedPattern: matchedPattern ? matchedPattern.pattern : null,
+            matchType,
+            context: { ...this.context }
+        };
+    }
+
+    /**
+     * Process template and capture detailed info for breakdown visualization
+     */
+    processTemplateWithBreakdown(template, wildcards = []) {
+        const info = {
+            rawTemplate: template,
+            processedSteps: [],
+            randomOptions: null,
+            selectedRandomIndex: null,
+            sraiChain: [],
+            finalOutput: ''
+        };
+
+        if (!template) {
+            info.finalOutput = '';
+            return info;
+        }
+
+        let result = template;
+
+        // Extract RANDOM options before processing
+        const randomMatch = template.match(/\{\{RANDOM:\[([^\]]*)\]\}\}/);
+        if (randomMatch) {
+            try {
+                info.randomOptions = JSON.parse('[' + randomMatch[1] + ']');
+                info.selectedRandomIndex = Math.floor(Math.random() * info.randomOptions.length);
+            } catch (e) {
+                info.randomOptions = null;
+            }
+        }
+
+        // Process STAR substitutions
+        const starMatches = [];
+        result = result.replace(/\{\{STAR:(\d+)\}\}/g, (match, index) => {
+            const idx = parseInt(index) - 1;
+            const value = wildcards[idx] || '';
+            starMatches.push({ tag: match, index: parseInt(index), value });
+            return value;
+        });
+        if (starMatches.length > 0) {
+            info.processedSteps.push({ type: 'STAR', substitutions: starMatches });
+        }
+
+        // Process BOT properties
+        const botMatches = [];
+        result = result.replace(/\{\{BOT:([^{}]+)\}\}/g, (match, property) => {
+            const value = property === 'name' ? this.context.botName : (this.context[property] || this.context.botName || '');
+            botMatches.push({ tag: match, property, value });
+            return value;
+        });
+        if (botMatches.length > 0) {
+            info.processedSteps.push({ type: 'BOT', substitutions: botMatches });
+        }
+
+        // Process GET
+        const getMatches = [];
+        result = result.replace(/\{\{GET:([^{}]+)\}\}/g, (match, varName) => {
+            const value = this.context[varName] || '';
+            getMatches.push({ tag: match, variable: varName, value });
+            return value;
+        });
+        if (getMatches.length > 0) {
+            info.processedSteps.push({ type: 'GET', substitutions: getMatches });
+        }
+
+        // Process SET
+        const setMatches = [];
+        result = result.replace(/\{\{SET:([^:{}]+):([^{}]*)\}\}/g, (match, varName, value) => {
+            this.context[varName] = value;
+            setMatches.push({ tag: match, variable: varName, value });
+            return '';
+        });
+        if (setMatches.length > 0) {
+            info.processedSteps.push({ type: 'SET', substitutions: setMatches });
+        }
+
+        // Process THINK (silent execution - may contain nested SET/GET)
+        result = result.replace(/\{\{THINK:([^{}]*(?:\{\{[^{}]*\}\}[^{}]*)*)\}\}/g, (match, content) => {
+            this.processTemplate(content, wildcards);
+            return '';
+        });
+
+        // Process RANDOM - use pre-selected index for consistency
+        if (info.randomOptions && info.selectedRandomIndex !== null) {
+            result = result.replace(/\{\{RANDOM:\[[^\]]*\]\}\}/g, () => {
+                return info.randomOptions[info.selectedRandomIndex];
+            });
+            info.processedSteps.push({
+                type: 'RANDOM',
+                options: info.randomOptions,
+                selectedIndex: info.selectedRandomIndex,
+                selectedValue: info.randomOptions[info.selectedRandomIndex]
+            });
+        }
+
+        // Process SRAI - capture chain and replace in one pass to ensure consistency
+        const sraiResults = new Map();
+        result = result.replace(/\{\{SRAI:([^{}]*)\}\}/g, (match, srai) => {
+            const target = srai || (wildcards[0] || '');
+            if (!target) return '';
+            const sraiResult = this.srai(target);
+            sraiResults.set(target, sraiResult);
+            info.sraiChain.push({
+                target: target,
+                result: sraiResult
+            });
+            return sraiResult;
+        });
+
+        // Clean up
+        result = result.replace(/\{\{[^{}]*\}\}/g, '');
+        result = result.replace(/^\s*\}\}+\s*/g, '');
+        result = result.replace(/\s*\}\}+\s*$/g, '');
+        result = result.replace(/\}\}+\s+/g, ' ');
+        result = result.replace(/^[,;.:\s]+/, '');
+
+        info.finalOutput = result.trim();
+        return info;
+    }
+
+    /**
+     * Describe template tags used in a template string
+     */
+    describeTemplateTags(template) {
+        const tags = [];
+        if (template.includes('{{STAR:')) tags.push('STAR (wildcard capture)');
+        if (template.includes('{{BOT:')) tags.push('BOT (bot properties)');
+        if (template.includes('{{GET:')) tags.push('GET (context variable)');
+        if (template.includes('{{SET:')) tags.push('SET (store variable)');
+        if (template.includes('{{SRAI:')) tags.push('SRAI (recursive pattern)');
+        if (template.includes('{{RANDOM:')) tags.push('RANDOM (random selection)');
+        if (template.includes('{{THINK:')) tags.push('THINK (silent execution)');
+        if (template.includes('{{PERSON:')) tags.push('PERSON (pronoun swap)');
+        if (template.includes('{{FORMAL:')) tags.push('FORMAL (capitalize)');
+
+        return tags.length > 0 ? `Tags used: ${tags.join(', ')}` : 'Plain text response';
+    }
+
+    /**
+     * Get detailed breakdown without modifying state (for preview)
+     */
+    getDetailedBreakdownPreview(input) {
+        // Save current context
+        const savedContext = { ...this.context };
+        const savedSraiDepth = this.sraiDepth;
+
+        // Get breakdown (this will modify context.that)
+        const breakdown = this.getDetailedBreakdown(input);
+
+        // Restore context
+        this.context = savedContext;
+        this.sraiDepth = savedSraiDepth;
+
+        return breakdown;
     }
 }
