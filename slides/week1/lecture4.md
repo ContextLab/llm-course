@@ -15,7 +15,7 @@ Winter 2026
 
 ---
 
-# Assignment 1: Q&A
+# Assignment 1: Q & A
 
 <div class="note-box" data-title="Questions welcome">
 
@@ -29,49 +29,51 @@ Let's take some time to address any questions about Assignment 1:
 
 <div class="tip-box" data-title="Remember">
 
-There are no bad questions. If you're confused about something, others probably are too.
+There are no bad questions. If you're confused about something, others probably are too!
 
 </div>
 
 ---
-<!-- _class: scale-78 -->
 
 # Common issues and tips
 
-<div style="display: flex; gap: 1.5em;">
-<div class="note-box" data-title="Technical tips" style="flex: 1;">
+<div class="tip-box" data-title="Technical tips" style="flex: 1;">
 
-- Use raw strings for regex: `r"pattern"`
-- Test patterns on [regex101.com](https://regex101.com)
+- You can use raw strings for regular expressions: `r"pattern"`
+- Test patterns on [regex101.com](https://regex101.com) or [https://colab.research.google.com/](Colaboratory)
 - Handle edge cases (empty input, special chars)
 - Print intermediate results for debugging
 
 </div>
+
 <div class="warning-box" data-title="Common pitfalls" style="flex: 1;">
 
-- Forgetting pre-substitutions before matching
-- Case sensitivity issues
-- Greedy vs. non-greedy matching
-- Substitution order matters
+- Testing on only a few inputs and missing edge cases
+- Missing "special cases" like memory or goto statements
+- Handling whitespace and/or punctuation inconsistently
+- Matching keywords in the wrong order (instead of in descending order of rank)
+- Greedy vs. non-greedy pattern matching
 
-</div>
 </div>
 
 ---
 
-# Beyond ELIZA
+# Beyond ELIZA...
 
-<div class="note-box" data-title="A foundation for more">
+<div class="example-box" data-title="A foundation for more">
 
-ELIZA (1966) was just the beginning. Weizenbaum's ideas inspired other researchers to explore what rules-based systems could do.
+ELIZA (1966) was just the beginning! Weizenbaum's ideas inspired other researchers to test the limits of what rules-based systems could do.
 
 </div>
 
-Today we'll explore:
-- **PARRY** (1972): A different kind of simulation
-- **A.L.I.C.E.** (1995): Pattern matching at scale
-- **Formal grammars**: The theoretical foundations
-- The limits of rules-based approaches
+<div class="note-box" data-title="Today we'll explore...">
+
+- **PARRY** (1972): a different kind of simulation
+- **A.L.I.C.E.** (1995): pattern matching at scale
+- **Formal grammars**: theoretical foundations of pattern matching
+- **Fundamental limits** of rules-based approaches
+
+</div>
 
 ---
 
@@ -79,7 +81,7 @@ Today we'll explore:
 
 <div class="note-box" data-title="Further reading">
 
-[**Colby, Weber, & Hilf (1971, *Artificial Intelligence*):**](https://doi.org/10.1016/S0004-3702(71)80014-6) Artificial Paranoia
+[**Colby, Weber, & Hilf (1971, *Artificial Intelligence*):**](https://courses.cs.umbc.edu/graduate/671/fall20/resources/colby_71.pdf) Artificial Paranoia
 
 </div>
 
@@ -95,11 +97,11 @@ ELIZA *reflects*; PARRY *models*. ELIZA avoids commitment; PARRY has a coherent 
 </div>
 
 ---
-<!-- _class: scale-78 -->
+<!-- _class: scale-70 -->
 
-# PARRY vs ELIZA
+# ELIZA *versus* PARRY
 
-<div style="display: flex; gap: 2em;">
+<div style="display: flex; gap: 1em;">
 <div>
 
 **ELIZA (1966)**
@@ -113,18 +115,18 @@ ELIZA *reflects*; PARRY *models*. ELIZA avoids commitment; PARRY has a coherent 
 <div>
 
 **PARRY (1972)**
-- Simulates a patient
-- Has beliefs about the world
-- Tracks emotional "anger" level
+- Intended to simulate "beliefs" about the world
+- Tracks emotional "state" across three dimensions: anger, fear, and mistrust
+- Uses internal state to select responses
 - Makes paranoid claims
-- Goal: behave like a specific illness
+- Goal: behave like a paranoid schizophrenic patient
 
 </div>
 </div>
 
-<div class="warning-box" data-title="Important caveat">
+<div class="note-box" data-title="Historical note">
 
-Both are still rule-based systems with no real understanding. The "beliefs" in PARRY are just variables that affect pattern selection.
+In 1973, Vint Cerf (one of the "fathers of the Internet") used ARPANET (the precursor to the Internet) to connect ELIZA and PARRY in a text-based conversation! You can read the transcript [here](https://datatracker.ietf.org/doc/html/rfc439).
 
 </div>
 
@@ -139,22 +141,22 @@ Both are still rule-based systems with no real understanding. The "beliefs" in P
 
 <div class="note-box" data-title="Key difference from ELIZA">
 
-PARRY maintains **persistent emotional state** across turns. This state influences which responses are selected, creating coherent paranoid behavior over time.
+PARRY maintains a **persistent emotional state** across turns. This state influences which responses are selected, creating the illusion of coherent paranoid behavior over time.
 
 </div>
 
 ---
 <!-- _class: scale-70 -->
 
-# **Pattern matching:** detect triggers in user input
+# **Pattern matching:** detect trigger keywords in user input
 
 ```flow
-[User input:green] --> [Pattern match:green] --> [Update emotions:gray] --> [Select response:gray] --> [Output:gray]
+[User input:gray] --> [Pattern match:green] --> [Update emotions:gray] --> [Select response:gray] --> [Output:gray]
 ```
 
 <div class="definition-box" data-title="How does it work?">
 
-PARRY scans input for **trigger keywords** organized by topic. Each topic has associated emotional effects and response pools.
+PARRY first scans the input for **trigger keywords** organized by topic. Each topic has associated emotional effects and response pools. This is much simpler than ELIZA's decomposition/reassembly mechanisms!
 
 </div>
 
@@ -170,7 +172,7 @@ PARRY scans input for **trigger keywords** organized by topic. Each topic has as
 </div>
 
 ---
-<!-- _class: scale-80 -->
+<!-- _class: scale-70 -->
 
 # **Emotional update:** modify internal state
 
@@ -223,50 +225,9 @@ PARRY selects responses from different pools based on current emotional threshol
 
 </div>
 
----
-<!-- _class: scale-70 -->
+<div class="note-box" data-title="Try it out!">
 
-# Worked example: PARRY conversation
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Early in conversation (low emotions):**
-```
-anger=5, fear=8, mistrust=10
-
-Doctor: Tell me about yourself.
-PARRY:  I went to the races at Bay Meadows.
-        [Neutral topic, cooperative]
-
-Doctor: Did you win?
-PARRY:  I bet a little on the horses.
-        [Still calm, sharing]
-```
-
-</div>
-<div style="flex: 1;">
-
-**After triggering topics (high emotions):**
-```
-anger=15, fear=16, mistrust=14
-
-Doctor: What about the mafia?
-PARRY:  I know what you're up to!
-        [Defensive, suspicious]
-
-Doctor: I'm just trying to help.
-PARRY:  You're trying to get me to
-        say something I don't mean.
-        [Paranoid interpretation]
-```
-
-</div>
-</div>
-
-<div class="note-box" data-title="Key insight">
-
-PARRY's responses are shaped by accumulated emotional state, creating a coherent "personality" over time.
+Use the [Chatbot Evolution Demo](https://contextlab.github.io/llm-course/demos/chatbot-evolution/) to interact with PARRY. The "Rule Breakdown" tab illustrates the internal state changes and how they affect responses.
 
 </div>
 
@@ -274,15 +235,21 @@ PARRY's responses are shaped by accumulated emotional state, creating a coherent
 
 # The Turing Test, revisited
 
-<div class="note-box" data-title="A famous experiment">
+<div class="note-box" data-title="Further reading">
 
-In 1972, PARRY was tested via teletype against real patients and psychiatrists. Judges could not reliably distinguish PARRY from actual patients with paranoid schizophrenia.
+[**Colby, Hilf, Weber, & Kraemer (1972, *Artificial Intelligence*):**](https://www.sciencedirect.com/science/article/abs/pii/0004370272900495) Turing-like indistinguishability tests for the validation of a computer simulation of paranoid processes
 
 </div>
+
+<div class="example-box" data-title="PARRY's big test">
+
+In 1972, PARRY was tested via teletype against real patients and psychiatrists. Judges could not reliably distinguish PARRY from actual patients with paranoid schizophrenia.
 
 - This was one of the first informal "Turing tests"
 - Success? Or a comment on how we judge understanding?
 - Psychiatrists were looking for *symptoms*, not *understanding*
+
+</div>
 
 <div class="tip-box" data-title="Think about it">
 
@@ -294,32 +261,27 @@ Does passing a specialized test mean the system understands anything? What does 
 
 # A.L.I.C.E. (1995)
 
-<div class="note-box" data-title="The AIML era">
+<div class="note-box" data-title="Further reading">
 
 [**A.L.I.C.E.**](https://www.alicebot.org/) (Artificial Linguistic Internet Computer Entity) was created by Richard Wallace.
 
 </div>
 
-Key innovations:
 - **AIML** (Artificial Intelligence Markup Language)
 - Over **40,000 patterns** (vs ELIZA's ~200)
 - Won the [Loebner Prize](https://en.wikipedia.org/wiki/Loebner_Prize) three times (2000, 2001, 2004)
 - Open source, widely studied and extended
-
-<div class="warning-box">
-
-More patterns $\neq$ more understanding. A.L.I.C.E. is still fundamentally pattern matching.
-
-</div>
+- Very similar to ELIZA, but scaled up to a much larger rule set
+- Explores the limits of pattern matching at scale
 
 ---
 
-# The ALICE algorithm
+# The A.L.I.C.E. algorithm
 
 ```flow
 [User input:blue] --> [Normalize:teal] --> [Pattern search:green] --> [Extract wildcards:orange] --> [Process template:violet] --> [Response:blue]
 ```
-<!-- caption: ALICE's AIML processing pipeline -->
+<!-- caption: A.L.I.C.E.'s AIML processing pipeline -->
 
 <div class="note-box" data-title="Key innovation">
 
@@ -333,12 +295,12 @@ AIML supports **recursive processing** via `<srai>` (Symbolic Reduction AI), all
 # **Normalization:** prepare input for matching
 
 ```flow
-[User input:green] --> [Normalize:green] --> [Pattern search:gray] --> [Extract wildcards:gray] --> [Process template:gray] --> [Response:gray]
+[User input:gray] --> [Normalize:green] --> [Pattern search:gray] --> [Extract wildcards:gray] --> [Process template:gray] --> [Response:gray]
 ```
 
 <div class="definition-box" data-title="How does it work?">
 
-ALICE normalizes input to uppercase and removes punctuation before pattern matching. This reduces the number of patterns needed.
+First, A.L.I.C.E. normalizes input to uppercase and removes punctuation before pattern matching. This reduces the number of patterns needed.
 
 </div>
 
@@ -353,17 +315,17 @@ ALICE normalizes input to uppercase and removes punctuation before pattern match
 </div>
 
 ---
-<!-- _class: scale-78 -->
+<!-- _class: scale-70 -->
 
-# **Pattern search:** find matching AIML categories
+# **Pattern search** and **wildcard extraction:**
 
 ```flow
-[User input:gray] --> [Normalize:gray] --> [Pattern search:green] --> [Extract wildcards:gray] --> [Process template:gray] --> [Response:gray]
+[User input:gray] --> [Normalize:gray] --> [Pattern search:green] --> [Extract wildcards:green] --> [Process template:gray] --> [Response:gray]
 ```
 
 <div class="definition-box" data-title="How does it work?">
 
-ALICE searches through 40,000+ patterns to find the best match. Patterns use wildcards (`*` and `_`) to capture variable text.
+A.L.I.C.E. searches through 40,000+ patterns to find the best match. Patterns use wildcards (`*` and `_`) to capture variable text.
 
 </div>
 
@@ -381,7 +343,7 @@ ALICE searches through 40,000+ patterns to find the best match. Patterns use wil
 
 <div class="tip-box" data-title="Sound familiar?">
 
-This is the same decomposition/reassembly pattern as ELIZA, just in XML format with more extensive coverage.
+This is uses essentially the same decomposition/reassembly approach as ELIZA, just in XML format with more extensive coverage.
 
 </div>
 
@@ -396,7 +358,7 @@ This is the same decomposition/reassembly pattern as ELIZA, just in XML format w
 
 <div class="definition-box" data-title="How does it work?">
 
-The `<srai>` tag redirects processing to another pattern. This allows many input variations to map to a single response.
+The `<srai>` tag redirects processing to another pattern. This allows many input variations to map to a single response. It works like `goto` statements in ELIZA.
 
 </div>
 
@@ -419,74 +381,23 @@ The `<srai>` tag redirects processing to another pattern. This allows many input
 ```
 
 ---
-<!-- _class: scale-70 -->
-
-# Worked example: AIML recursive processing
-
-**Input:** "Do you know what my name is"
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Step 1: Direct pattern search**
-```xml
-<pattern>DO YOU KNOW WHAT MY NAME IS</pattern>
-→ No exact match found
-```
-
-**Step 2: Try wildcard patterns**
-```xml
-<pattern>DO YOU KNOW *</pattern>
-<template>
-  <srai>WHAT IS <star/></srai>
-</template>
-→ MATCH! Redirect to "WHAT IS my name"
-```
-
-</div>
-<div style="flex: 1;">
-
-**Step 3: Recursive processing**
-```xml
-<pattern>WHAT IS MY NAME</pattern>
-<template>
-  <condition name="name">
-    <li value="unknown">
-      I don't know. What is your name?
-    </li>
-    <li>Your name is <get name="name"/>.</li>
-  </condition>
-</template>
-```
-
-**Result:** "I don't know. What is your name?"
-
-</div>
-</div>
-
-<div class="tip-box" data-title="The power of SRAI">
-
-SRAI lets you handle many input variations without writing separate rules for each.
-
-</div>
-
----
 
 # Live demo
 
-<div class="note-box" data-title="Interactive exploration">
+<div class="note-box" data-title="Try it out!">
 
-Let's interact with these historical systems:
-
-[Chatbot Evolution Demo](https://contextlab.github.io/llm-course/demos/chatbot-evolution/)
+Use the [Chatbot Evolution Demo](https://contextlab.github.io/llm-course/demos/chatbot-evolution/) to interact with A.L.I.C.E.
 
 </div>
 
-**While exploring, consider:**
-- How do PARRY and A.L.I.C.E. differ from ELIZA?
-- What do they do surprisingly well?
+<div class="tip-box" data-title="Explore the rules (and some additional nuances)">
+
+- Use the AIML Breakdown tab to see some additional details, like tracking the current topic, remembering the most recent response, and remembering the user's name.
+- How do PARRY and A.L.I.C.E. differ from ELIZA? How are they similar?
+- What do they do well?
 - Where do they break down?
-- Can you find the edges of their rule sets?
+
+</div>
 
 ---
 
@@ -494,7 +405,7 @@ Let's interact with these historical systems:
 
 <div class="note-box" data-title="Further reading">
 
-[**Chomsky (1956):**](https://chomsky.info/articles/195609--/) "Three Models for the Description of Language," *IRE Transactions on Information Theory*
+[**Chomsky (1956, *IRE Transactions on Information Theory*):**](https://ieeexplore.ieee.org/abstract/document/1056813) Three Models for the Description of Language
 
 </div>
 
@@ -507,14 +418,10 @@ The Chomsky hierarchy tells us what kinds of patterns different computational sy
 </div>
 
 ---
-<!-- _class: scale-70 -->
+<!-- _class: scale-80 -->
 
 # The Chomsky hierarchy
 
-```flow
-[Type 3 (Regular):green] --> [Type 2 (Context-free):teal] --> [Type 1 (Context-sensitive):blue] --> [Type 0 (Unrestricted):violet]
-```
-<!-- caption: Each level can express everything below it, plus more -->
 
 | Type | Grammar | Recognizer | Example |
 |------|---------|------------|---------|
@@ -525,168 +432,95 @@ The Chomsky hierarchy tells us what kinds of patterns different computational sy
 
 <div class="tip-box" data-title="Key insight">
 
-Regular expressions (which ELIZA, PARRY, and ALICE use) are **Type 3**&mdash;the simplest class!
+Regular expressions (which ELIZA, PARRY, and A.L.I.C.E. use) are **Type 3**&mdash;the simplest class!
 
 </div>
 
----
+<div class="note-box" data-title="Remain calm...">
 
-# Regular expressions = Type 3 grammars
-
-<div class="definition-box" data-title="Mathematical equivalence">
-
-Regular expressions and Type 3 (regular) grammars are **provably equivalent**&mdash;they recognize exactly the same class of languages.
+This isn't a theory of computation course; you don't need to follow all of the details here. The key takeaways are that there are *different levels of complexity* in the kinds of patterns languages can have, and regular expressions are at the *simplest* level.
 
 </div>
-
-<div style="display: flex; gap: 2em;">
-<div>
-
-**Regular expression**
-```
-(ab)*c+
-```
-Matches: "c", "cc", "abc", "ababcc"
-
-</div>
-<div>
-
-**Equivalent Type 3 grammar**
-```
-S → A | C
-A → abA | abC
-C → c | cC
-```
-
-</div>
-</div>
-
-<div class="warning-box" data-title="Limitation">
-
-Regular languages **cannot** match nested structures like balanced parentheses or recursive syntax. This is why rule-based chatbots struggle with complex language.
-
-</div>
-
----
-<!-- _class: scale-78 -->
-
-# Chomsky's claims about human language
-
-<div class="note-box" data-title="Historical context">
-
-Chomsky argued that human languages require **at least** context-free (Type 2) grammars, and likely context-sensitive (Type 1) or beyond.
-
-</div>
-
-<div style="display: flex; gap: 2em;">
-<div>
-
-**What Chomsky showed:**
-- Human syntax has recursive, nested structure
-- Sentences like "The cat the dog chased ran" require tracking dependencies
-- Regular grammars (Type 3) are **insufficient** for natural language
-
-</div>
-<div>
-
-**The implication:**
-- Pattern matching with regex can only approximate language
-- No matter how many patterns (200 or 40,000), fundamental structures will be missed
-- We need more powerful computational models
-
-</div>
-</div>
-
-<div class="tip-box" data-title="Preview">
-
-This theoretical limitation foreshadows why rule-based chatbots ultimately fail&mdash;and why the field moved toward statistical and neural approaches.
-
-</div>
-
----
-
-# Discussion: The limits of rules
-
-<div class="note-box" data-title="Discussion questions">
-
-1. More rules $\neq$ understanding. Why not?
-2. What *can't* rules-based systems do?
-3. Where do they break down?
-4. Is there a fundamental limit, or just a practical one?
-
-</div>
-
-**Consider these failure modes:**
-- Novel situations not covered by rules
-- Context that spans multiple turns
-- Reasoning about cause and effect
-- Understanding sarcasm, irony, metaphor
 
 ---
 <!-- _class: scale-70 -->
 
-# Worked example: Where rules fail
+# Type 3 grammars
 
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
+<div class="definition-box" data-title="Formal definition">
 
-**Problem 1: Novel combinations**
-```
-User: My robot vacuum ate my homework
-ALICE: I have no response for that.
+A **Type 3 grammar** (regular grammar) has production rules of the form:
 
-# No pattern for this specific situation
-# Even though it understands "vacuum"
-# and "homework" separately
-```
+- $S \rightarrow aA~|~bB$
+- $A \rightarrow aB$
+- $B \rightarrow bA$
+- $A \rightarrow a$
+- $A \rightarrow \varepsilon$
 
-**Problem 2: Multi-turn reasoning**
-```
-User: I bought a red car yesterday
-ALICE: Nice! I like cars.
-
-User: What color is it?
-ALICE: What is what color?
-
-# ALICE forgot the car was red!
-```
+where $A$ and $B$ are non-terminal symbols, $a$ is a terminal symbol, and $\varepsilon$ is the empty string.
 
 </div>
-<div style="flex: 1;">
 
-**Problem 3: Implicit meaning**
-```
-User: Can you pass the salt?
-ALICE: Yes, I am capable of passing salt.
+<div class="example-box" data-title="Example Type 3 grammar: generate strings with even number of a's and b's">
 
-# Literal interpretation misses
-# the REQUEST implied by the question
-```
-
-**Problem 4: Sarcasm**
-```
-User: Oh great, another Monday.
-ALICE: What makes Mondays so great for you?
-
-# Misses the negative sentiment entirely
-```
-
-</div>
+- $S \rightarrow aA~|~bB$
+- $A \rightarrow aS~|~a$
+- $B \rightarrow bS~|~b$
 </div>
 
-<div class="warning-box" data-title="The fundamental issue">
+<div class="tip-box" data-title="Challenge!">
 
-Rules capture **syntax** (patterns of words), not **semantics** (meaning). No amount of rules can bridge this gap.
+Can you write down a Type 3 grammar that generates your first name, repeated 0 or more times?
 
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
-# The failure of rules: a paradigm shift
+
+# Regular expressions *are* Type 3 grammars
+
+<div class="definition-box" data-title="Mathematical equivalence">
+
+Regular expressions and Type 3 (regular) grammars are **provably equivalent**&mdash;they recognize exactly the same class of languages. In other words, for any regular expression, there exists a Type 3 grammar that generates the same language, and vice versa.
+
+</div>
+
+<div class="example-box" data-title="Example equivalence">
+
+| Regular Expression | Type 3 Grammar | Description |
+|--------------------|----------------|-------------|
+| `(ab)*c+` | `S → A \| C`<br>`A → abA \| abC`<br>`C → c \| cC` | Matches: "c", "cc", "abc", "ababcc" |
+| `a(b\|c)*` | `S → aA`<br>`A → bA \| cA \| ε` | Matches: "a", "ab", "ac", "abbc", "acbc" |
+
+</div>
+
+<div class="warning-box" data-title="Limitation">
+
+Regular languages **cannot** match nested structures like balanced parentheses or recursive syntax. This (among other reasons) is why rule-based chatbots struggle with complex language.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Stuff rule-based systems can't handle
+
+- Novel situations not covered by rules
+- Context that spans multiple turns
+- Contextually dependent patterns
+- Nested or recursive structure
+- Conceptual (semantic) similarity (beyond defining equivalent keywords)
+- Complex patterns (e.g., detecting whether something is a valid Python program)
+- ...and more!
+
+---
+
+# If rules can't fully capture human language, where do we go from here?
 
 <div class="warning-box" data-title="The harsh reality">
 
-Even with **40,000+ hand-crafted patterns**, ALICE cannot:
+Even with **40,000+ hand-crafted patterns**, A.L.I.C.E. cannot:
 - Handle novel combinations of known concepts
 - Maintain context across a conversation
 - Understand implicit meaning or subtext
@@ -694,127 +528,24 @@ Even with **40,000+ hand-crafted patterns**, ALICE cannot:
 
 </div>
 
-```flow
-[ELIZA (200 rules):green] --> [PARRY (state machine):teal] --> [ALICE (40,000 rules):blue] --> [Still fails:red]
-```
-<!-- caption: More rules don't solve the fundamental problem -->
-
-<div class="note-box" data-title="The insight that changed everything">
+<div class="note-box" data-title="The key insight">
 
 What if, instead of *writing* rules by hand, we could *learn* patterns automatically from massive amounts of text data?
 
 </div>
 
 ---
-
-# From rules to data
-
-<div style="display: flex; gap: 2em;">
-<div>
-
-**Rules-based approach**
-- Humans write patterns
-- Limited by human creativity
-- Brittle to variations
-- No generalization
-- Example: ELIZA, PARRY, ALICE
-
-</div>
-<div>
-
-**Data-driven approach**
-- Learn patterns from data
-- Scale with more data
-- Handle variations naturally
-- Generalize to new inputs
-- Example: Neural networks, LLMs
-
-</div>
-</div>
-
-<div class="tip-box" data-title="The key question">
-
-Can statistical patterns learned from data capture something that hand-written rules cannot? This question drives the next era of NLP.
-
-</div>
-
----
-
-# What rules-based systems teach us
-
-1. **Behavior $\neq$ understanding**
-   - A system can *seem* intelligent without understanding anything
-   - This is the lesson of the Chinese Room
-
-2. **Scale is not a solution**
-   - 40,000 patterns is not qualitatively different from 200
-   - More rules just mean more edge cases
-
-3. **Pattern matching can fool us**
-   - We project understanding onto systems that lack it
-   - The ELIZA effect applies to all of these systems
-
----
-<!-- _class: scale-78 -->
-
-# Weizenbaum's legacy
-
-<div class="note-box" data-title="Further reading">
-
-**Weizenbaum, J. (1976).** *Computer Power and Human Reason: From Judgment to Calculation.* W.H. Freeman.
-
-</div>
-
-After creating ELIZA, Weizenbaum became a critic of AI:
-- Warned against replacing human judgment with computation
-- Argued some tasks *should not* be automated
-- Foresaw many issues we face today with AI
-
-> "What I had not realized is that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people."
-
----
-<!-- _class: scale-78 -->
-
-# Weizenbaum's warnings
-
-<div style="display: flex; gap: 2em;">
-<div>
-
-**His concerns (1976)**
-- Mistaking simulation for understanding
-- Replacing human relationships
-- Trusting AI with decisions it cannot make
-- Questions about human identity
-
-</div>
-<div>
-
-**Still relevant today**
-- Chatbots as therapists
-- AI companions and relationships
-- Automated decision systems
-- Debates about AI consciousness
-
-</div>
-</div>
-
-<div class="warning-box" data-title="50 years later">
-
-Weizenbaum's warnings feel remarkably prescient. Are we heeding them?
-
-</div>
-
----
+<!-- _class: scale-80 -->
 
 # Up next...
 
 <div class="note-box" data-title="Week 2: Computational linguistics">
 
-We're leaving hand-crafted rules behind. Next week we explore how to **learn from data**:
+We're leaving hand-crafted rules behind! Next week we explore how to **learn from data**:
 
 - **Lecture 5:** Data cleaning and preprocessing
 - **Lecture 6:** Tokenization&mdash;breaking text into meaningful units
-- **Lecture 7:** Text classification workshop
+- **Lecture 7:** Text classification
 - **Lecture 8:** POS tagging and sentiment analysis
 
 </div>
@@ -836,11 +567,9 @@ Instead of writing rules, we'll learn to **extract patterns** from large text co
 # Key takeaways
 
 1. **PARRY adds emotional state:** Pattern matching + persistent variables = coherent personality
-2. **ALICE scales patterns:** 40,000 rules with AIML and recursive SRAI processing
+2. **A.L.I.C.E. scales patterns:** 40,000 rules with AIML and recursive SRAI processing
 3. **Chomsky hierarchy:** Regular expressions (Type 3) are the *weakest* class of grammars
-4. **Fundamental limits:** Rules capture syntax, not semantics&mdash;no amount of patterns can bridge this gap
-5. **The paradigm shift:** From hand-written rules to learning patterns from data
-6. **Weizenbaum's warnings:** The tendency to anthropomorphize remains relevant today
+4. **Fundamental limits:** Rules capture syntax, not meaning&mdash;no amount of patterns can bridge this gap
 
 ---
 
