@@ -53,7 +53,7 @@ Each step is simple string manipulation. The illusion of "intelligence" comes fr
 
 <div class="tip-box" data-title="Under the hood">
 
-ELIZA's complete [instruction set](https://github.com/ContextLab/eliza-llm-course/blob/a112d7f6a7004773fc9b20cf181fe2269bd3001c/instructions.txt) comprises ~200 simple rules.
+ELIZA's complete [instruction set](https://github.com/ContextLab/eliza-llm-course/blob/main/instructions.txt) comprises ~200 simple rules.
 
 </div>
 
@@ -171,7 +171,7 @@ Some keywords have *synonyms*&mdash; alternative words with similar meanings. EL
 |---------|---------------------|---------------|
 | *am* | \* am \*; \* | I am really excited to build a chatbot |
 | *are* | \* are you \*; \* are \* | Why are you asking me that? |
-| *i* | \* i @desire \*; \* i am \* @happy \*; ... | I am so glad to hear that! |
+| *i* | \* i @desire \*; \* i am \* @happy \*; ... | I am glad to hear that! |
 | *yes* | \* | Yes, I guess that's true but I never really thought about it before. |
 
 </div>
@@ -235,7 +235,7 @@ Once text is matched to a pattern, ELIZA breaks down the input into *capture gro
 
 | Pattern | Input | Captured groups |
 |---------|-------|-----------------|
-| \* i am \* @sad | "I am feeling unhappy today" | 1: "", 2: "feeling", 3: "unhappy", 4: "today" |
+| \* i am \* @sad \* | "I am feeling unhappy today" | 1: "", 2: "feeling", 3: "unhappy", 4: "today" |
 | \* my \* @family \* | "My mother and father are kind" | 1: "", 2: "", 3: "mother", 4: "and father are kind" |
 | \* | "I am worried about my dream" | 1: "I am worried about my dream" |
 
@@ -259,8 +259,8 @@ ELIZA's responses "reflect back" parts of the user's input using *reassembly tem
 
 | Input | Captured groups | Reassembly template | Result |
 |--------|-------------|-----------------|--------------------|
-| "I can't ever trust people" | 1: "", 2: "can't", 3: "ever trust people" | "Perhaps you could (3) now." | "Perhaps you could trust people now." |
-| "I don't remember why I said that" | 1: "", 2: "remember why I said that" | "Do you wish to be able to (2)?" | "Do you wish to be able to remember why you said that?" |
+| "I can't trust people" | 1: "", 2: "can't", 3: "trust people" | "Perhaps you could (3) now." | "Perhaps you could trust people now." |
+| "I don't remember why I said that" | 1: "", 2: "remember why I said that" | "Do you wish to be able to (2)?" | "Do you wish to be able to remember why I said that?" |
 | "I suppose it wasn't that long ago" | 1: "I suppose it wasn't that long ago" | "Do you say (1) for some special reason?" | "Do you say I suppose it wasn't that long ago for some special reason?" |
 
 </div>

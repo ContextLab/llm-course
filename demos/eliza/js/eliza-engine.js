@@ -119,33 +119,72 @@ export class ElizaEngine {
       this.responseIndices[patternKey] =
         (responseIndex + 1) % match.pattern.responses.length;
 
-      // Handle "goto" statements
-      if (template.startsWith('goto ')) {
+      let capturesForAssembly = match.matchResult.captures || [];
+      let gotoDepth = 0;
+      const maxGotoDepth = 10;
+      
+      while (template.startsWith('goto ') && gotoDepth < maxGotoDepth) {
+        gotoDepth++;
         const targetKeyword = template.substring(5).trim();
         const targetRule = this.rules.find(r => r.keyword === targetKeyword);
 
         if (targetRule && targetRule.patterns && targetRule.patterns.length > 0) {
-          // Use the first pattern's responses from the target rule
-          const targetPattern = targetRule.patterns[0];
-          const targetPatternKey = `${targetRule.keyword}:${targetPattern.pattern}`;
+          const { result: processedInput } = this.patternMatcher.applyPreSubstitutions(
+            userInput,
+            this.preSubstitutions
+          );
+          
+          let matchedTargetPattern = null;
+          let targetMatchResult = null;
+          
+          for (const pattern of targetRule.patterns) {
+            const testResult = this.patternMatcher.matchPattern(
+              processedInput,
+              pattern.pattern,
+              this.synonyms
+            );
+            if (testResult.matched) {
+              matchedTargetPattern = pattern;
+              targetMatchResult = testResult;
+              break;
+            }
+          }
+          
+          if (!matchedTargetPattern) {
+            matchedTargetPattern = targetRule.patterns[0];
+            const catchAllResult = this.patternMatcher.matchPattern(
+              processedInput,
+              matchedTargetPattern.pattern,
+              this.synonyms
+            );
+            if (catchAllResult.matched) {
+              targetMatchResult = catchAllResult;
+            }
+          }
+          
+          if (targetMatchResult && targetMatchResult.captures) {
+            capturesForAssembly = targetMatchResult.captures;
+          }
+          
+          const targetPatternKey = `${targetRule.keyword}:${matchedTargetPattern.pattern}`;
 
           if (!this.responseIndices[targetPatternKey]) {
             this.responseIndices[targetPatternKey] = 0;
           }
 
           const targetResponseIndex = this.responseIndices[targetPatternKey];
-          template = targetPattern.responses[targetResponseIndex];
+          template = matchedTargetPattern.responses[targetResponseIndex];
 
-          // Cycle the target's response index
           this.responseIndices[targetPatternKey] =
-            (targetResponseIndex + 1) % targetPattern.responses.length;
+            (targetResponseIndex + 1) % matchedTargetPattern.responses.length;
+        } else {
+          break;
         }
       }
 
-      // Assemble response
       const assembled = this.patternMatcher.assembleResponse(
         template,
-        match.matchResult.captures || [],
+        capturesForAssembly,
         this.postSubstitutions
       );
 
