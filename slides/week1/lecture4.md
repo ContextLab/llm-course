@@ -426,7 +426,7 @@ The Chomsky hierarchy tells us what kinds of patterns different computational sy
 | Type | Grammar | Recognizer | Example |
 |------|---------|------------|---------|
 | **Type 3** | Regular | Finite automaton | `a*b+` (any a's followed by b's) |
-| **Type 2** | Context-free | Pushdown automaton | Balanced parentheses: `(())` |
+| **Type 2** | Context-free | Pushdown automaton | Palindromes: `racecar` |
 | **Type 1** | Context-sensitive | Linear-bounded automaton | $a^n b^n c^n$ |
 | **Type 0** | Unrestricted | Turing machine | Any computable language |
 
@@ -497,7 +497,7 @@ Regular expressions and Type 3 (regular) grammars are **provably equivalent**&md
 
 <div class="warning-box" data-title="Limitation">
 
-Regular languages **cannot** match nested structures like balanced parentheses or recursive syntax. This (among other reasons) is why rule-based chatbots struggle with complex language.
+Regular languages **cannot** match nested structures like palindromes or recursive syntax. This (among other reasons) is why rule-based chatbots struggle with complex language.
 
 </div>
 
