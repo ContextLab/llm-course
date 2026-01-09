@@ -1210,7 +1210,7 @@ Winter 2026</p>
 </svg>
 </div>
 <div class="definition-box" data-title="How does it work?">
-<p>A.L.I.C.E. searches through 40,000+ patterns to find the best match. Patterns use wildcards (<code>*</code> and <code>_</code>) to capture variable text.</p>
+<p>A.L.I.C.E. matches inputs to 40,000+ ranked patterns. Patterns use wildcards (<code>*</code>) to capture variable text.</p>
 </div>
 <pre><code class="language-xml has-line-numbers" data-start-line="1">
 <span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-nt">&lt;category&gt;</span></span></span>
@@ -1222,12 +1222,13 @@ Winter 2026</p>
 <span class="line"><span class="line-num">7</span><span class="line-code"><span class="hl-w">  </span><span class="hl-nt">&lt;pattern&gt;</span>I<span class="hl-w"> </span>AM<span class="hl-w"> </span>FEELING<span class="hl-w"> </span>*<span class="hl-nt">&lt;/pattern&gt;</span></span></span>
 <span class="line"><span class="line-num">8</span><span class="line-code"><span class="hl-w">  </span><span class="hl-nt">&lt;template&gt;</span>Why<span class="hl-w"> </span>are<span class="hl-w"> </span>you<span class="hl-w"> </span>feeling<span class="hl-w"> </span><span class="hl-nt">&lt;star/&gt;</span>?<span class="hl-nt">&lt;/template&gt;</span></span></span>
 <span class="line"><span class="line-num">9</span><span class="line-code"><span class="hl-nt">&lt;/category&gt;</span></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">...</span></span>
 </code></pre>
 <div class="tip-box" data-title="Sound familiar?">
 <p>This is uses essentially the same decomposition/reassembly approach as ELIZA, just in XML format with more extensive coverage.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-78" data-theme="cdl-theme" lang="en-US" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-60" data-theme="cdl-theme" lang="en-US" class="scale-60" style="--class:scale-60;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="srai-recursive-pattern-matching"><strong>SRAI:</strong> recursive pattern matching</h1>
 <div class="diagram-container">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2261 120">
@@ -1286,6 +1287,7 @@ Winter 2026</p>
 <span class="line"><span class="line-num">13</span><span class="line-code"><span class="hl-w">  </span><span class="hl-nt">&lt;pattern&gt;</span>HELLO<span class="hl-nt">&lt;/pattern&gt;</span></span></span>
 <span class="line"><span class="line-num">14</span><span class="line-code"><span class="hl-w">  </span><span class="hl-nt">&lt;template&gt;</span>Hello!<span class="hl-w"> </span>How<span class="hl-w"> </span>can<span class="hl-w"> </span>I<span class="hl-w"> </span>help<span class="hl-w"> </span>you<span class="hl-w"> </span>today?<span class="hl-nt">&lt;/template&gt;</span></span></span>
 <span class="line"><span class="line-num">15</span><span class="line-code"><span class="hl-nt">&lt;/category&gt;</span></span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">...</span></span>
 </code></pre>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1303,7 +1305,7 @@ Winter 2026</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="formal-grammars-the-theory-behind-pattern-matching">Formal grammars: the theory behind pattern matching</h1>
+<h1 id="formal-grammars-theory-behind-pattern-matching">Formal grammars: theory behind pattern matching</h1>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://ieeexplore.ieee.org/abstract/document/1056813"><strong>Chomsky (1956, <em>IRE Transactions on Information Theory</em>):</strong></a> Three Models for the Description of Language</p>
 </div>
@@ -1328,13 +1330,13 @@ Winter 2026</p>
 <td><strong>Type 3</strong></td>
 <td>Regular</td>
 <td>Finite automaton</td>
-<td><code>a*b+</code> (any a's followed by b's)</td>
+<td><code>a*b+</code> (any number of a's followed by one or more b's)</td>
 </tr>
 <tr>
 <td><strong>Type 2</strong></td>
 <td>Context-free</td>
 <td>Pushdown automaton</td>
-<td>Palindromes: <code>racecar</code></td>
+<td>Palindromes: e.g., <code>racecar</code></td>
 </tr>
 <tr>
 <td><strong>Type 1</strong></td>
@@ -1346,7 +1348,7 @@ Winter 2026</p>
 <td><strong>Type 0</strong></td>
 <td>Unrestricted</td>
 <td>Turing machine</td>
-<td>Any computable language</td>
+<td>Any computable language: e.g., is this a valid Python program?</td>
 </tr>
 </tbody>
 </table>
@@ -1354,7 +1356,7 @@ Winter 2026</p>
 <p>Regular expressions (which ELIZA, PARRY, and A.L.I.C.E. use) are <strong>Type 3</strong>—the simplest class!</p>
 </div>
 <div class="note-box" data-title="Remain calm...">
-<p>This isn't a theory of computation course; you don't need to follow all of the details here. The key takeaways are that there are <em>different levels of complexity</em> in the kinds of patterns languages can have, and regular expressions are at the <em>simplest</em> level.</p>
+<p>This isn't a theory of computation course; you don't need to follow all of the details here. The key takeaways are that (a) there are <em>different levels of complexity</em> in the kinds of patterns languages can have, and that (b) regular expressions are at the <em>simplest</em> level.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-class="scale-70" data-theme="cdl-theme" lang="en-US" class="scale-70" style="--class:scale-70;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1368,7 +1370,7 @@ Winter 2026</p>
 <li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>→</mo><mi>a</mi></mrow><annotation encoding="application/x-tex">A \rightarrow a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span></li>
 <li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>→</mo><mi>ε</mi></mrow><annotation encoding="application/x-tex">A \rightarrow \varepsilon</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">ε</span></span></span></span></li>
 </ul>
-<p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi></mrow><annotation encoding="application/x-tex">B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> are non-terminal symbols, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span> is a terminal symbol, and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ε</mi></mrow><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">ε</span></span></span></span> is the empty string.</p>
+<p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi></mrow><annotation encoding="application/x-tex">B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> are non-terminal symbols, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> are terminal symbols, and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ε</mi></mrow><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">ε</span></span></span></span> is the empty string (also a terminal symbol). A <em>terminal symbol</em> appears in the final output string, whereas a <em>non-terminal symbol</em> is a placeholder that can be replaced by other symbols according to the production rules. <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span> is a special non-terminal symbol called the <em>start symbol</em>; it represents the entire string generated by the grammar.</p>
 </div>
 <div class="example-box" data-title="Example Type 3 grammar: generate strings with even number of a's and b's">
 <ul>
