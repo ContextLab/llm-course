@@ -824,6 +824,74 @@ CONTENT_WEIGHTS = {
 # Based on calibration: slide using 50% of height = ~10 units, so full height = ~20 units
 SLIDE_HEIGHT_BUDGET = 20.0
 
+# Scale class -> space multiplier (smaller font = more fits: 100/scale_percent)
+SCALE_FACTORS = {
+    "scale-50": 2.0,
+    "scale-55": 1.8,
+    "scale-60": 1.67,
+    "scale-65": 1.54,
+    "scale-70": 1.43,
+    "scale-75": 1.33,
+    "scale-78": 1.28,
+    "scale-80": 1.25,
+    "scale-85": 1.18,
+    "scale-90": 1.11,
+    "scale-95": 1.05,
+}
+
+
+def compute_available_code_lines(slide_content: str, default_max: int = 20) -> int:
+    """
+    Compute max code lines for a slide based on other content and scale class.
+    Returns a value between 8 and default_max * scale_factor.
+    """
+    metrics = analyze_slide_content(slide_content)
+
+    scale_factor = 1.0
+    if metrics["has_scale_class"] and metrics["existing_scale_class"]:
+        scale_factor = SCALE_FACTORS.get(metrics["existing_scale_class"], 1.0)
+    else:
+        auto_scale = determine_scale_class(metrics)
+        if auto_scale:
+            scale_factor = SCALE_FACTORS.get(auto_scale, 1.0)
+
+    effective_budget = SLIDE_HEIGHT_BUDGET * scale_factor
+
+    other_height = 0.0
+    if re.search(r"^#\s+", slide_content, re.MULTILINE):
+        other_height += CONTENT_WEIGHTS["h1"]
+
+    callout_height = metrics["callout_count"] * CONTENT_WEIGHTS["callout_box_base"]
+    list_height = metrics["list_items"] * CONTENT_WEIGHTS["list_item"]
+
+    if metrics["has_two_column"] and metrics["callout_count"] >= 2:
+        multiplier = 0.55 if metrics["callout_count"] == 2 else 0.45
+        callout_height *= multiplier
+        list_height *= multiplier
+        other_height += CONTENT_WEIGHTS["flex_container_overhead"]
+
+    other_height += callout_height + list_height
+
+    if metrics["has_table"]:
+        other_height += CONTENT_WEIGHTS["table_header"]
+        other_height += metrics["table_rows"] * CONTENT_WEIGHTS["table_row"]
+
+    other_height += (metrics["text_length"] / 50) * CONTENT_WEIGHTS[
+        "paragraph_per_50_chars"
+    ]
+
+    if metrics["has_emoji_figure"]:
+        other_height += CONTENT_WEIGHTS["emoji_figure"]
+    if metrics["has_flow_diagram"]:
+        other_height += CONTENT_WEIGHTS["flow_diagram"]
+
+    available_height = effective_budget - other_height
+    available_lines = int((available_height / CONTENT_WEIGHTS["code_block_line"]) * 0.9)
+
+    min_lines = 8
+    max_lines = int(default_max * scale_factor)
+    return max(min_lines, min(available_lines, max_lines))
+
 
 def analyze_slide_content(slide_content: str) -> dict:
     """
@@ -1206,6 +1274,7 @@ def process_markdown(
     code_block_start_idx = -1
     code_lines_buffer = []
     current_title = ""
+    current_slide_start = frontmatter_end_idx + 1 if frontmatter_end_idx >= 0 else 0
 
     # State tracking for table processing
     in_table = False
@@ -1243,6 +1312,10 @@ def process_markdown(
     while i < len(lines):
         line = lines[i]
 
+        # Track slide boundaries
+        if line.strip() == "---" and not in_code_block:
+            current_slide_start = i + 1
+
         # Track current slide title (for continuation slides)
         title_match = re.match(r"^(#{1,2})\s+(.+)$", line)
         if title_match and not in_code_block:
@@ -1265,22 +1338,30 @@ def process_markdown(
         if in_code_block and line.strip().startswith(code_block_fence[0] * 3):
             in_code_block = False
 
+            # Compute context-aware max lines for this slide
+            slide_content = "\n".join(lines[current_slide_start:i])
+            effective_max_lines = (
+                compute_available_code_lines(slide_content, max_lines)
+                if not no_split
+                else max_lines
+            )
+
             # Check if we need to split this code block
-            if not no_split and len(code_lines_buffer) > max_lines:
+            if not no_split and len(code_lines_buffer) > effective_max_lines:
                 # Remove the opening fence we already added
                 result_lines = result_lines[:code_block_start_idx]
 
                 # Split into chunks
                 chunks = []
-                for j in range(0, len(code_lines_buffer), max_lines):
-                    chunks.append(code_lines_buffer[j : j + max_lines])
+                for j in range(0, len(code_lines_buffer), effective_max_lines):
+                    chunks.append(code_lines_buffer[j : j + effective_max_lines])
 
                 stats["code_blocks_split"] += 1
                 stats["slides_added"] += len(chunks) - 1
 
                 # Generate slides for each chunk
                 for chunk_idx, chunk in enumerate(chunks):
-                    start_line_num = chunk_idx * max_lines + 1
+                    start_line_num = chunk_idx * effective_max_lines + 1
 
                     if chunk_idx > 0:
                         # Add slide separator and title for continuation

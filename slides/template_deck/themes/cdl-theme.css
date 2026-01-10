@@ -3486,221 +3486,158 @@ section:not(.lead):not(#\31) .instructor-container .logo-grid {
    instead of runtime (JavaScript), ensuring PDF/HTML parity.
    ============================================ */
 
+/* Scale classes from 50% to 100% in increments of 5%
+   Use: <!-- _class: scale-XX --> where XX is 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, or 100 */
+
+/* Scale 100% - no reduction, explicit full size */
+section.scale-100 { --content-scale: 1.0; }
+section.scale-100 > h1 { font-size: calc(1.72em * 1.0) !important; margin-top: 0 !important; margin-bottom: calc(15px * 1.0) !important; }
+section.scale-100 > *:not(h1) { font-size: calc(35px * 1.0) !important; }
+section.scale-100 > div[style*="flex"] { gap: calc(2em * 1.0) !important; }
+section.scale-100 .note-box, section.scale-100 .warning-box, section.scale-100 .tip-box,
+section.scale-100 .example-box, section.scale-100 .definition-box, section.scale-100 .important-box {
+    font-size: calc(35px * 0.65 * 1.0) !important; padding: calc(10px * 1.0) calc(16px * 1.0) calc(12px * 1.0) !important;
+}
+section.scale-100 pre { font-size: calc(22pt * 1.0) !important; }
+
+/* Scale 95% - very slight reduction */
+section.scale-95 { --content-scale: 0.95; }
+section.scale-95 > h1 { font-size: calc(1.72em * 0.95) !important; margin-top: 0 !important; margin-bottom: calc(15px * 0.95) !important; }
+section.scale-95 > *:not(h1) { font-size: calc(35px * 0.95) !important; }
+section.scale-95 > div[style*="flex"] { gap: calc(2em * 0.95) !important; }
+section.scale-95 .note-box, section.scale-95 .warning-box, section.scale-95 .tip-box,
+section.scale-95 .example-box, section.scale-95 .definition-box, section.scale-95 .important-box {
+    font-size: calc(35px * 0.65 * 0.95) !important; padding: calc(10px * 0.95) calc(16px * 0.95) calc(12px * 0.95) !important;
+}
+section.scale-95 pre { font-size: calc(22pt * 0.95) !important; }
+
 /* Scale 90% - slight reduction for content that almost fits */
-section.scale-90 {
-    --content-scale: 0.9;
+section.scale-90 { --content-scale: 0.9; }
+section.scale-90 > h1 { font-size: calc(1.72em * 0.9) !important; margin-top: 0 !important; margin-bottom: calc(15px * 0.9) !important; }
+section.scale-90 > *:not(h1) { font-size: calc(35px * 0.9) !important; }
+section.scale-90 > div[style*="flex"] { gap: calc(2em * 0.9) !important; }
+section.scale-90 .note-box, section.scale-90 .warning-box, section.scale-90 .tip-box,
+section.scale-90 .example-box, section.scale-90 .definition-box, section.scale-90 .important-box {
+    font-size: calc(35px * 0.65 * 0.9) !important; padding: calc(10px * 0.9) calc(16px * 0.9) calc(12px * 0.9) !important;
 }
+section.scale-90 pre { font-size: calc(22pt * 0.9) !important; }
 
-section.scale-90 > h1 {
-    font-size: calc(1.72em * 0.9) !important;
-    margin-top: 0 !important;
-    margin-bottom: calc(15px * 0.9) !important;
+/* Scale 85% - minor reduction */
+section.scale-85 { --content-scale: 0.85; }
+section.scale-85 > h1 { font-size: calc(1.72em * 0.85) !important; margin-top: 0 !important; margin-bottom: calc(15px * 0.85) !important; }
+section.scale-85 > *:not(h1) { font-size: calc(35px * 0.85) !important; }
+section.scale-85 > div[style*="flex"] { gap: calc(2em * 0.85) !important; }
+section.scale-85 .note-box, section.scale-85 .warning-box, section.scale-85 .tip-box,
+section.scale-85 .example-box, section.scale-85 .definition-box, section.scale-85 .important-box {
+    font-size: calc(35px * 0.65 * 0.85) !important; padding: calc(10px * 0.85) calc(16px * 0.85) calc(12px * 0.85) !important;
 }
-
-section.scale-90 > *:not(h1) {
-    font-size: calc(35px * 0.9) !important;
-}
-
-section.scale-90 > div[style*="flex"] {
-    gap: calc(2em * 0.9) !important;
-}
-
-section.scale-90 .note-box,
-section.scale-90 .warning-box,
-section.scale-90 .tip-box,
-section.scale-90 .example-box,
-section.scale-90 .definition-box,
-section.scale-90 .important-box {
-    font-size: calc(35px * 0.65 * 0.9) !important;
-    padding: calc(10px * 0.9) calc(16px * 0.9) calc(12px * 0.9) !important;
-}
-
-section.scale-90 pre {
-    font-size: calc(22pt * 0.9) !important;
-}
+section.scale-85 pre { font-size: calc(22pt * 0.85) !important; }
 
 /* Scale 80% - moderate reduction for dense content */
-section.scale-80 {
-    --content-scale: 0.8;
+section.scale-80 { --content-scale: 0.8; }
+section.scale-80 > h1 { font-size: calc(1.72em * 0.8) !important; margin-top: 0 !important; margin-bottom: calc(15px * 0.8) !important; }
+section.scale-80 > *:not(h1) { font-size: calc(35px * 0.8) !important; }
+section.scale-80 > div[style*="flex"] { gap: calc(2em * 0.8) !important; }
+section.scale-80 .note-box, section.scale-80 .warning-box, section.scale-80 .tip-box,
+section.scale-80 .example-box, section.scale-80 .definition-box, section.scale-80 .important-box {
+    font-size: calc(35px * 0.65 * 0.8) !important; padding: calc(10px * 0.8) calc(16px * 0.8) calc(12px * 0.8) !important;
 }
+section.scale-80 pre { font-size: calc(22pt * 0.8) !important; }
 
-section.scale-80 > h1 {
-    font-size: calc(1.72em * 0.8) !important;
-    margin-top: 0 !important;
-    margin-bottom: calc(15px * 0.8) !important;
+/* Scale 75% - noticeable reduction */
+section.scale-75 { --content-scale: 0.75; }
+section.scale-75 > h1 { font-size: calc(1.72em * 0.75) !important; margin-top: 0 !important; margin-bottom: calc(15px * 0.75) !important; }
+section.scale-75 > *:not(h1) { font-size: calc(35px * 0.75) !important; }
+section.scale-75 > div[style*="flex"] { gap: calc(2em * 0.75) !important; }
+section.scale-75 .note-box, section.scale-75 .warning-box, section.scale-75 .tip-box,
+section.scale-75 .example-box, section.scale-75 .definition-box, section.scale-75 .important-box {
+    font-size: calc(35px * 0.65 * 0.75) !important; padding: calc(10px * 0.75) calc(16px * 0.75) calc(12px * 0.75) !important;
 }
-
-section.scale-80 > *:not(h1) {
-    font-size: calc(35px * 0.8) !important;
-}
-
-section.scale-80 > div[style*="flex"] {
-    gap: calc(2em * 0.8) !important;
-}
-
-section.scale-80 .note-box,
-section.scale-80 .warning-box,
-section.scale-80 .tip-box,
-section.scale-80 .example-box,
-section.scale-80 .definition-box,
-section.scale-80 .important-box {
-    font-size: calc(35px * 0.65 * 0.8) !important;
-    padding: calc(10px * 0.8) calc(16px * 0.8) calc(12px * 0.8) !important;
-}
-
-section.scale-80 pre {
-    font-size: calc(22pt * 0.8) !important;
-}
-
-/* Scale 78% - matches autoscale.js typical scaling for two-column dense content */
-section.scale-78 {
-    --content-scale: 0.78;
-}
-
-section.scale-78 > h1 {
-    font-size: calc(1.72em * 0.78) !important;
-    margin-top: 0 !important;
-    margin-bottom: calc(15px * 0.78) !important;
-}
-
-section.scale-78 > *:not(h1) {
-    font-size: calc(35px * 0.78) !important;
-}
-
-section.scale-78 > div[style*="flex"] {
-    gap: calc(2em * 0.78) !important;
-}
-
-section.scale-78 .note-box,
-section.scale-78 .warning-box,
-section.scale-78 .tip-box,
-section.scale-78 .example-box,
-section.scale-78 .definition-box,
-section.scale-78 .important-box {
-    font-size: calc(35px * 0.65 * 0.78) !important;
-    padding: calc(10px * 0.78) calc(16px * 0.78) calc(12px * 0.78) !important;
-}
-
-section.scale-78 pre {
-    font-size: calc(22pt * 0.78) !important;
-}
+section.scale-75 pre { font-size: calc(22pt * 0.75) !important; }
 
 /* Scale 70% - significant reduction for very dense content */
-section.scale-70 {
-    --content-scale: 0.7;
+section.scale-70 { --content-scale: 0.7; }
+section.scale-70 > h1 { font-size: calc(1.72em * 0.7) !important; margin-top: 0 !important; margin-bottom: calc(15px * 0.7) !important; }
+section.scale-70 > *:not(h1) { font-size: calc(35px * 0.7) !important; }
+section.scale-70 > div[style*="flex"] { gap: calc(2em * 0.7) !important; }
+section.scale-70 .note-box, section.scale-70 .warning-box, section.scale-70 .tip-box,
+section.scale-70 .example-box, section.scale-70 .definition-box, section.scale-70 .important-box {
+    font-size: calc(35px * 0.65 * 0.7) !important; padding: calc(10px * 0.7) calc(16px * 0.7) calc(12px * 0.7) !important;
 }
+section.scale-70 pre { font-size: calc(22pt * 0.7) !important; }
 
-section.scale-70 > h1 {
-    font-size: calc(1.72em * 0.7) !important;
-    margin-top: 0 !important;
-    margin-bottom: calc(15px * 0.7) !important;
+/* Scale 65% - substantial reduction */
+section.scale-65 { --content-scale: 0.65; }
+section.scale-65 > h1 { font-size: calc(1.72em * 0.65) !important; margin-top: 0 !important; margin-bottom: calc(15px * 0.65) !important; }
+section.scale-65 > *:not(h1) { font-size: calc(35px * 0.65) !important; }
+section.scale-65 > div[style*="flex"] { gap: calc(2em * 0.65) !important; }
+section.scale-65 .note-box, section.scale-65 .warning-box, section.scale-65 .tip-box,
+section.scale-65 .example-box, section.scale-65 .definition-box, section.scale-65 .important-box {
+    font-size: calc(35px * 0.65 * 0.65) !important; padding: calc(10px * 0.65) calc(16px * 0.65) calc(12px * 0.65) !important;
 }
+section.scale-65 pre { font-size: calc(22pt * 0.65) !important; }
 
-section.scale-70 > *:not(h1) {
-    font-size: calc(35px * 0.7) !important;
+/* Scale 60% - major reduction for extreme content density */
+section.scale-60 { --content-scale: 0.6; }
+section.scale-60 > h1 { font-size: calc(1.72em * 0.6) !important; margin-top: 0 !important; margin-bottom: calc(15px * 0.6) !important; }
+section.scale-60 > *:not(h1) { font-size: calc(35px * 0.6) !important; }
+section.scale-60 > div[style*="flex"] { gap: calc(2em * 0.6) !important; }
+section.scale-60 .note-box, section.scale-60 .warning-box, section.scale-60 .tip-box,
+section.scale-60 .example-box, section.scale-60 .definition-box, section.scale-60 .important-box {
+    font-size: calc(35px * 0.65 * 0.6) !important; padding: calc(10px * 0.6) calc(16px * 0.6) calc(12px * 0.6) !important;
 }
+section.scale-60 pre { font-size: calc(22pt * 0.6) !important; }
 
-section.scale-70 > div[style*="flex"] {
-    gap: calc(2em * 0.7) !important;
+/* Scale 55% - heavy reduction */
+section.scale-55 { --content-scale: 0.55; }
+section.scale-55 > h1 { font-size: calc(1.72em * 0.55) !important; margin-top: 0 !important; margin-bottom: calc(15px * 0.55) !important; }
+section.scale-55 > *:not(h1) { font-size: calc(35px * 0.55) !important; }
+section.scale-55 > div[style*="flex"] { gap: calc(2em * 0.55) !important; }
+section.scale-55 .note-box, section.scale-55 .warning-box, section.scale-55 .tip-box,
+section.scale-55 .example-box, section.scale-55 .definition-box, section.scale-55 .important-box {
+    font-size: calc(35px * 0.65 * 0.55) !important; padding: calc(10px * 0.55) calc(16px * 0.55) calc(12px * 0.55) !important;
 }
+section.scale-55 pre { font-size: calc(22pt * 0.55) !important; }
 
-section.scale-70 .note-box,
-section.scale-70 .warning-box,
-section.scale-70 .tip-box,
-section.scale-70 .example-box,
-section.scale-70 .definition-box,
-section.scale-70 .important-box {
-    font-size: calc(35px * 0.65 * 0.7) !important;
-    padding: calc(10px * 0.7) calc(16px * 0.7) calc(12px * 0.7) !important;
+/* Scale 50% - extreme reduction, use sparingly */
+section.scale-50 { --content-scale: 0.5; }
+section.scale-50 > h1 { font-size: calc(1.72em * 0.5) !important; margin-top: 0 !important; margin-bottom: calc(15px * 0.5) !important; }
+section.scale-50 > *:not(h1) { font-size: calc(35px * 0.5) !important; }
+section.scale-50 > div[style*="flex"] { gap: calc(2em * 0.5) !important; }
+section.scale-50 .note-box, section.scale-50 .warning-box, section.scale-50 .tip-box,
+section.scale-50 .example-box, section.scale-50 .definition-box, section.scale-50 .important-box {
+    font-size: calc(35px * 0.65 * 0.5) !important; padding: calc(10px * 0.5) calc(16px * 0.5) calc(12px * 0.5) !important;
 }
+section.scale-50 pre { font-size: calc(22pt * 0.5) !important; }
 
-section.scale-70 pre {
-    font-size: calc(22pt * 0.7) !important;
+/* Legacy scale-78 for backward compatibility */
+section.scale-78 { --content-scale: 0.78; }
+section.scale-78 > h1 { font-size: calc(1.72em * 0.78) !important; margin-top: 0 !important; margin-bottom: calc(15px * 0.78) !important; }
+section.scale-78 > *:not(h1) { font-size: calc(35px * 0.78) !important; }
+section.scale-78 > div[style*="flex"] { gap: calc(2em * 0.78) !important; }
+section.scale-78 .note-box, section.scale-78 .warning-box, section.scale-78 .tip-box,
+section.scale-78 .example-box, section.scale-78 .definition-box, section.scale-78 .important-box {
+    font-size: calc(35px * 0.65 * 0.78) !important; padding: calc(10px * 0.78) calc(16px * 0.78) calc(12px * 0.78) !important;
 }
-
-/* Scale 60% - for extremely dense content */
-section.scale-60 {
-    --content-scale: 0.6;
-}
-
-section.scale-60 > h1 {
-    font-size: calc(1.72em * 0.6) !important;
-    margin-top: 0 !important;
-    margin-bottom: calc(15px * 0.6) !important;
-}
-
-section.scale-60 > *:not(h1) {
-    font-size: calc(35px * 0.6) !important;
-}
-
-section.scale-60 > div[style*="flex"] {
-    gap: calc(2em * 0.6) !important;
-}
-
-section.scale-60 .note-box,
-section.scale-60 .warning-box,
-section.scale-60 .tip-box,
-section.scale-60 .example-box,
-section.scale-60 .definition-box,
-section.scale-60 .important-box {
-    font-size: calc(35px * 0.65 * 0.6) !important;
-    padding: calc(10px * 0.6) calc(16px * 0.6) calc(12px * 0.6) !important;
-}
-
-section.scale-60 pre {
-    font-size: calc(22pt * 0.6) !important;
-}
-
-/* Scale 50% - minimum readable size for exceptional cases */
-section.scale-50 {
-    --content-scale: 0.5;
-}
-
-section.scale-50 > h1 {
-    font-size: calc(1.72em * 0.5) !important;
-    margin-top: 0 !important;
-    margin-bottom: calc(15px * 0.5) !important;
-}
-
-section.scale-50 > *:not(h1) {
-    font-size: calc(35px * 0.5) !important;
-}
-
-section.scale-50 > div[style*="flex"] {
-    gap: calc(2em * 0.5) !important;
-}
-
-section.scale-50 .note-box,
-section.scale-50 .warning-box,
-section.scale-50 .tip-box,
-section.scale-50 .example-box,
-section.scale-50 .definition-box,
-section.scale-50 .important-box {
-    font-size: calc(35px * 0.65 * 0.5) !important;
-    padding: calc(10px * 0.5) calc(16px * 0.5) calc(12px * 0.5) !important;
-}
-
-section.scale-50 pre {
-    font-size: calc(22pt * 0.5) !important;
-}
+section.scale-78 pre { font-size: calc(22pt * 0.78) !important; }
 
 /* ============================================
    DIAGRAM CONTAINER EXCEPTIONS FOR SCALE CLASSES
    Diagrams should NOT be scaled - they have fixed viewBox sizing
    ============================================ */
 
-section.scale-90 .diagram-container,
-section.scale-90 .chart-container,
-section.scale-80 .diagram-container,
-section.scale-80 .chart-container,
-section.scale-78 .diagram-container,
-section.scale-78 .chart-container,
-section.scale-70 .diagram-container,
-section.scale-70 .chart-container,
-section.scale-60 .diagram-container,
-section.scale-60 .chart-container,
-section.scale-50 .diagram-container,
-section.scale-50 .chart-container {
+section.scale-100 .diagram-container, section.scale-100 .chart-container,
+section.scale-95 .diagram-container, section.scale-95 .chart-container,
+section.scale-90 .diagram-container, section.scale-90 .chart-container,
+section.scale-85 .diagram-container, section.scale-85 .chart-container,
+section.scale-80 .diagram-container, section.scale-80 .chart-container,
+section.scale-78 .diagram-container, section.scale-78 .chart-container,
+section.scale-75 .diagram-container, section.scale-75 .chart-container,
+section.scale-70 .diagram-container, section.scale-70 .chart-container,
+section.scale-65 .diagram-container, section.scale-65 .chart-container,
+section.scale-60 .diagram-container, section.scale-60 .chart-container,
+section.scale-55 .diagram-container, section.scale-55 .chart-container,
+section.scale-50 .diagram-container, section.scale-50 .chart-container {
     /* Override any font-size scaling - diagrams use viewBox for sizing */
     font-size: 1em !important;
     /* No transform scaling - diagrams handle their own sizing */
@@ -3708,11 +3645,17 @@ section.scale-50 .chart-container {
 }
 
 /* Tables inside scale classes */
+section.scale-100 table { font-size: calc(35px * 0.7 * 1.0) !important; }
+section.scale-95 table { font-size: calc(35px * 0.7 * 0.95) !important; }
 section.scale-90 table { font-size: calc(35px * 0.7 * 0.9) !important; }
+section.scale-85 table { font-size: calc(35px * 0.7 * 0.85) !important; }
 section.scale-80 table { font-size: calc(35px * 0.7 * 0.8) !important; }
 section.scale-78 table { font-size: calc(35px * 0.7 * 0.78) !important; }
+section.scale-75 table { font-size: calc(35px * 0.7 * 0.75) !important; }
 section.scale-70 table { font-size: calc(35px * 0.7 * 0.7) !important; }
+section.scale-65 table { font-size: calc(35px * 0.7 * 0.65) !important; }
 section.scale-60 table { font-size: calc(35px * 0.7 * 0.6) !important; }
+section.scale-55 table { font-size: calc(35px * 0.7 * 0.55) !important; }
 section.scale-50 table { font-size: calc(35px * 0.7 * 0.5) !important; }
 
 /* Table-compact class for very dense tables */
@@ -3724,6 +3667,46 @@ section.table-compact th,
 section.table-compact td {
     padding: 0.2em 0.4em !important;
 }
+
+/* ============================================
+   ELEMENT-LEVEL SCALING (wrap individual elements)
+   Usage: <div class="sized-70">...</div>
+   Scales content inside the div without affecting the rest of the slide.
+   Can be combined with slide-level scale-XX classes.
+   ============================================ */
+
+.sized-100 { font-size: 100% !important; }
+.sized-100 pre { font-size: calc(22pt * 1.0) !important; }
+
+.sized-95 { font-size: 95% !important; }
+.sized-95 pre { font-size: calc(22pt * 0.95) !important; }
+
+.sized-90 { font-size: 90% !important; }
+.sized-90 pre { font-size: calc(22pt * 0.9) !important; }
+
+.sized-85 { font-size: 85% !important; }
+.sized-85 pre { font-size: calc(22pt * 0.85) !important; }
+
+.sized-80 { font-size: 80% !important; }
+.sized-80 pre { font-size: calc(22pt * 0.8) !important; }
+
+.sized-75 { font-size: 75% !important; }
+.sized-75 pre { font-size: calc(22pt * 0.75) !important; }
+
+.sized-70 { font-size: 70% !important; }
+.sized-70 pre { font-size: calc(22pt * 0.7) !important; }
+
+.sized-65 { font-size: 65% !important; }
+.sized-65 pre { font-size: calc(22pt * 0.65) !important; }
+
+.sized-60 { font-size: 60% !important; }
+.sized-60 pre { font-size: calc(22pt * 0.6) !important; }
+
+.sized-55 { font-size: 55% !important; }
+.sized-55 pre { font-size: calc(22pt * 0.55) !important; }
+
+.sized-50 { font-size: 50% !important; }
+.sized-50 pre { font-size: calc(22pt * 0.5) !important; }
 
 /* ============================================
    RUNTIME UNIFORM SCALING VIA CSS VARIABLE
@@ -3864,4 +3847,115 @@ section > .important-box {
     max-width: 90%;  /* Constrain standalone captions */
     margin-left: auto;
     margin-right: auto;
+}
+
+/* ============================================
+   CHECKLIST STYLES
+   For task lists with checkboxes
+   ============================================ */
+
+/* Checklist container - use with <div class="checklist"> */
+.checklist ul,
+ul.checklist {
+    list-style: none !important;
+    padding-left: 0.2em !important;
+    margin: 0.5em 0 !important;
+}
+
+.checklist ul li,
+ul.checklist li {
+    position: relative;
+    padding-left: 1.8em !important;
+    margin-bottom: 0.4em !important;
+    list-style: none !important;
+}
+
+.checklist ul li::before,
+ul.checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 1.1em;
+    color: var(--dartmouth-green);
+    font-weight: normal;
+}
+
+/* Checked items - add class="checked" to li or use [x] pattern */
+.checklist ul li.checked::before,
+ul.checklist li.checked::before {
+    content: "☑";
+    color: var(--dartmouth-green);
+}
+
+/* Alternative: green checkmark for completed items */
+.checklist ul li.done::before,
+ul.checklist li.done::before {
+    content: "✓";
+    color: var(--dartmouth-green);
+    font-weight: bold;
+}
+
+/* Red X for incorrect/avoid items */
+.checklist ul li.wrong::before,
+ul.checklist li.wrong::before {
+    content: "✗";
+    color: var(--dartmouth-secondary-red);
+    font-weight: bold;
+}
+
+/* Pending/in-progress items */
+.checklist ul li.pending::before,
+ul.checklist li.pending::before {
+    content: "◐";
+    color: var(--dartmouth-secondary-orange);
+}
+
+/* Inline checklist for horizontal layouts */
+.checklist-inline ul,
+ul.checklist-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em 2em;
+    list-style: none !important;
+    padding-left: 0 !important;
+}
+
+.checklist-inline ul li,
+ul.checklist-inline li {
+    position: relative;
+    padding-left: 1.5em !important;
+    list-style: none !important;
+}
+
+.checklist-inline ul li::before,
+ul.checklist-inline li::before {
+    content: "☐";
+    position: absolute;
+    left: 0;
+    color: var(--dartmouth-green);
+}
+
+/* Pro/Con list styles */
+.pros-cons ul li.pro::before {
+    content: "✓";
+    color: var(--dartmouth-green);
+    font-weight: bold;
+}
+
+.pros-cons ul li.con::before {
+    content: "✗";
+    color: var(--dartmouth-secondary-red);
+    font-weight: bold;
+}
+
+/* Decision/question list with ? markers */
+.decision-list ul li::before,
+ul.decision-list li::before {
+    content: "?";
+    position: absolute;
+    left: 0;
+    color: var(--dartmouth-secondary-blue);
+    font-weight: bold;
+    font-size: 1.1em;
 }

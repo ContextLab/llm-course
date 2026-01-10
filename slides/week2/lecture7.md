@@ -1,23 +1,23 @@
 ---
 marp: true
 theme: cdl-theme
-paginate: true
-header: 'PSYC 51.07: Models of Language and Communication'
-footer: ''
+math: katex
+transition: fade 0.25s
+author: Contextual Dynamics Lab
 ---
 
-<!-- _class: lead -->
+# Lecture 7: Text Classification Workshop
+### PSYC 51.07: Models of language and communication
 
-# Lecture 7: X-Hour Text Classification Workshop
-## Week 2: Hands-On Machine Learning for NLP
-
-**PSYC 51.07: Models of Language and Communication**
+Jeremy R. Manning
+Dartmouth College
+Winter 2026
 
 ---
 
 # Learning Objectives
 
-By the end of this session, you will:
+<div class="note-box" data-title="By the end of this session, you will">
 
 1. Build text classifiers from scratch using scikit-learn
 2. Understand different text representation methods (BoW, TF-IDF, embeddings)
@@ -25,13 +25,19 @@ By the end of this session, you will:
 4. Evaluate classifier performance using appropriate metrics
 5. Debug common issues in text classification pipelines
 
-**Workshop format:** Hands-on coding with the 20 Newsgroups dataset
+</div>
+
+<div class="tip-box" data-title="Workshop format">
+
+Hands-on coding with the 20 Newsgroups dataset
+
+</div>
 
 ---
 
 # Workshop Overview
 
-**Today's Agenda:**
+<div class="definition-box" data-title="Today's agenda">
 
 1. **Part 1:** Loading and exploring real data
 2. **Part 2:** Feature engineering for text (BoW, TF-IDF)
@@ -40,24 +46,40 @@ By the end of this session, you will:
 5. **Part 5:** Error analysis and improvements
 6. **Part 6:** Real-world considerations (class imbalance)
 
-**Companion notebook:** `xhour_classification_demo.ipynb`
+</div>
+
+<div class="note-box" data-title="Companion notebook">
+
+`xhour_classification_demo.ipynb`
+
+</div>
 
 ---
 
 # Part 1: The 20 Newsgroups Dataset
 
-**A classic text classification benchmark:**
+<div class="definition-box" data-title="A classic text classification benchmark">
+
 - Posts from 20 different newsgroups
 - ~20,000 documents total
 - Good for learning classification fundamentals
 
-**Today's subset (4 categories):**
-- `sci.space` - Science discussions about space
-- `rec.sport.hockey` - Sports discussions about hockey
-- `talk.politics.misc` - Political discussions
-- `comp.graphics` - Computer graphics
+</div>
 
-**Why these?** Relatively distinct topics for easier learning.
+<div class="example-box" data-title="Today's subset (4 categories)">
+
+- `sci.space` &mdash; Science discussions about space
+- `rec.sport.hockey` &mdash; Sports discussions about hockey
+- `talk.politics.misc` &mdash; Political discussions
+- `comp.graphics` &mdash; Computer graphics
+
+</div>
+
+<div class="tip-box" data-title="Why these?">
+
+Relatively distinct topics for easier learning.
+
+</div>
 
 ---
 
@@ -67,18 +89,18 @@ By the end of this session, you will:
 from sklearn.datasets import fetch_20newsgroups
 
 categories = [
- 'sci.space',
- 'rec.sport.hockey',
- 'talk.politics.misc',
- 'comp.graphics'
+    'sci.space',
+    'rec.sport.hockey',
+    'talk.politics.misc',
+    'comp.graphics'
 ]
 
 train_data = fetch_20newsgroups(
- subset='train',
- categories=categories,
- shuffle=True,
- random_state=42,
- remove=('headers', 'footers', 'quotes') # Remove metadata
+    subset='train',
+    categories=categories,
+    shuffle=True,
+    random_state=42,
+    remove=('headers', 'footers', 'quotes')  # Remove metadata
 )
 
 print(f"Loaded {len(train_data.data)} training documents")
@@ -86,22 +108,21 @@ print(f"Loaded {len(train_data.data)} training documents")
 
 ---
 
-# Exploring the Data
+# Always explore your data before building models
 
-**Key questions to ask:**
+<div class="note-box" data-title="Key questions to ask">
 
 1. How many documents per category?
 2. What do the documents look like?
 3. What words/phrases might be good indicators?
-4. Are there any categories that might be hard to distinguish?
+4. Are there categories that might be hard to distinguish?
 
-**Data exploration is critical before modeling!**
-
-Always look at your data before building models.
+</div>
 
 ---
+<!-- _class: scale-80 -->
 
-# Exploring the Data: Concrete Example 
+# Exploring the Data: Concrete Example
 
 ```python
 import pandas as pd
@@ -110,55 +131,46 @@ from collections import Counter
 # Check class distribution
 print("Documents per category:")
 for i, name in enumerate(train_data.target_names):
- count = (train_data.target == i).sum()
- print(f" {name}: {count}")
-
-# Output:
-# sci.space: 593
-# rec.sport.hockey: 600
-# talk.politics.misc: 465
-# comp.graphics: 584
+    count = (train_data.target == i).sum()
+    print(f"  {name}: {count}")
+# sci.space: 593, rec.sport.hockey: 600, talk.politics.misc: 465, comp.graphics: 584
 
 # Look at a sample document
-print("\n--- Sample document (sci.space) ---")
 idx = [i for i, t in enumerate(train_data.target) if t == 0][0]
 print(train_data.data[idx][:500])
-
-# Output might show:
-# "NASA announced today that the Mars rover has discovered
-# evidence of water ice beneath the surface..."
+# "NASA announced today that the Mars rover has discovered evidence of water..."
 ```
 
-**Notice:** Classes are roughly balanced (good!), but `talk.politics.misc` has fewer examples.
+<div class="tip-box" data-title="Notice">
+
+Classes are roughly balanced (good!), but `talk.politics.misc` has fewer examples.
+
+</div>
 
 ---
 
-# Part 2: Feature Engineering
+# Convert text to numbers for machine learning
 
-**The fundamental question:**
-
-How do we convert text to numbers for machine learning?
-
-**Three approaches today:**
+<div class="note-box" data-title="Three approaches today">
 
 1. **Bag of Words (BoW):** Count word frequencies
 2. **TF-IDF:** Weight by document frequency
 3. **Dense embeddings:** (Preview for future lectures)
 
+</div>
+
 ---
 
-# Method 1: Bag of Words (BoW)
-
-**The simplest approach:** Count how many times each word appears.
+# Bag of Words: count how many times each word appears
 
 ```python
 from sklearn.feature_extraction.text import CountVectorizer
 
 bow_vectorizer = CountVectorizer(
- max_features=5000, # Keep only top 5000 words
- min_df=2, # Word must appear in at least 2 docs
- max_df=0.8, # Word must appear in <80% of docs
- stop_words='english' # Remove common words
+    max_features=5000,   # Keep only top 5000 words
+    min_df=2,            # Word must appear in at least 2 docs
+    max_df=0.8,          # Word must appear in <80% of docs
+    stop_words='english' # Remove common words
 )
 
 X_train_bow = bow_vectorizer.fit_transform(train_data.data)
@@ -170,54 +182,72 @@ X_train_bow = bow_vectorizer.fit_transform(train_data.data)
 
 # Bag of Words: Limitations
 
-**What BoW captures:**
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+<div class="tip-box" data-title="What BoW captures">
+
 - Word presence/frequency
 - Vocabulary overlap between documents
 
-**What BoW ignores:**
+</div>
+
+</div>
+<div style="flex: 1;">
+
+<div class="warning-box" data-title="What BoW ignores">
+
 - Word order ("not good" vs "good not")
 - Semantics ("great" vs "excellent")
 - Context
 
-**Key insight:** Common words dominate but are often uninformative!
+</div>
+
+</div>
+</div>
+
+<div class="important-box" data-title="Key insight">
+
+Common words dominate but are often uninformative!
+
+</div>
 
 ---
+<!-- _class: scale-80 -->
 
-# BoW: Concrete Vector Example 
+# BoW vectors are sparse: mostly zeros
 
-**What does a BoW vector actually look like?**
+<div class="definition-box" data-title="Example">
 
 ```python
 from sklearn.feature_extraction.text import CountVectorizer
 
-docs = [
- "NASA launches rocket to Mars",
- "Hockey game ends in overtime",
- "NASA discovers water on Mars"
-]
+docs = ["NASA launches rocket to Mars", "Hockey game ends in overtime",
+        "NASA discovers water on Mars"]
 
 vectorizer = CountVectorizer()
 X = vectorizer.fit_transform(docs)
 
-# Vocabulary mapping
 print("Vocabulary:", vectorizer.vocabulary_)
-# {'nasa': 5, 'launches': 4, 'rocket': 7, 'to': 8, 'mars': 6,
-# 'hockey': 2, 'game': 1, 'ends': 0, 'in': 3, 'overtime': 9,
-# 'discovers': 10, 'water': 11, 'on': 12}
+# {'nasa': 5, 'launches': 4, 'rocket': 7, 'to': 8, 'mars': 6, ...}
 
-# Document vectors (sparse matrix)
 print("\nDocument 1:", X[0].toarray())
 # [0 0 0 0 1 1 1 1 1 0 0 0 0] <- counts for each word
-# "launches"=1, "nasa"=1, "mars"=1, "rocket"=1, "to"=1
 ```
 
-**Observation:** Most entries are 0 (sparse!). Documents share "mars" and "nasa".
+</div>
+
+<div class="tip-box" data-title="Observation">
+
+Most entries are 0 (sparse!). Documents share "mars" and "nasa".
+
+</div>
 
 ---
 
 # Method 2: TF-IDF
 
-**Term Frequency-Inverse Document Frequency**
+<div class="definition-box" data-title="Term Frequency-Inverse Document Frequency">
 
 $$\text{TF-IDF}(t, d) = \text{TF}(t, d) \times \text{IDF}(t)$$
 
@@ -225,7 +255,13 @@ where:
 - $\text{TF}(t, d)$ = frequency of term $t$ in document $d$
 - $\text{IDF}(t) = \log\frac{N}{\text{df}(t)}$ = inverse document frequency
 
-**Intuition:** Downweight common words, upweight rare informative words!
+</div>
+
+<div class="tip-box" data-title="Intuition">
+
+Downweight common words, upweight rare informative words!
+
+</div>
 
 ---
 
@@ -235,12 +271,12 @@ where:
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 tfidf_vectorizer = TfidfVectorizer(
- max_features=5000,
- min_df=2,
- max_df=0.8,
- stop_words='english',
- use_idf=True,
- sublinear_tf=True # Use log scaling for term frequency
+    max_features=5000,
+    min_df=2,
+    max_df=0.8,
+    stop_words='english',
+    use_idf=True,
+    sublinear_tf=True  # Use log scaling for term frequency
 )
 
 X_train_tfidf = tfidf_vectorizer.fit_transform(train_data.data)
@@ -252,39 +288,46 @@ X_train_tfidf = tfidf_vectorizer.fit_transform(train_data.data)
 
 # BoW vs TF-IDF Comparison
 
-**Same document, different representations:**
+<div class="example-box" data-title="Same document, different representations">
 
 | Word | BoW Count | TF-IDF Score |
 |------|-----------|--------------|
-| "the" | 15 | 0.02 (low - common everywhere) |
-| "nasa" | 3 | 0.45 (high - rare, informative) |
-| "space" | 5 | 0.38 (moderate - distinctive) |
+| "the" | 15 | 0.02 (low &mdash; common everywhere) |
+| "nasa" | 3 | 0.45 (high &mdash; rare, informative) |
+| "space" | 5 | 0.38 (moderate &mdash; distinctive) |
 
-**TF-IDF identifies the truly distinctive terms!**
+</div>
+
+<div class="tip-box" data-title="Key insight">
+
+TF-IDF identifies the truly distinctive terms!
+
+</div>
 
 ---
 
-# Part 3: Building Classifiers
+# Three classifier approaches to compare
 
-**Three approaches:**
+<div class="note-box" data-title="Today's candidates">
 
 1. **Naive Bayes:** Fast, probabilistic, good baseline
 2. **Logistic Regression:** Linear, interpretable, often best
 3. **Neural Network:** Flexible, can learn complex patterns
 
-**Which will win?** Let's find out!
+</div>
 
 ---
 
 # Classifier 1: Naive Bayes
 
-**Bayes' theorem with independence assumption:**
+<div class="definition-box" data-title="Bayes' theorem with independence assumption">
 
 $$P(y|x) \propto P(y) \prod_{i=1}^n P(x_i|y)$$
 
-**Why "naive"?** Assumes features are independent (they're not!)
+</div>
 
-**Why does it work?** Despite the wrong assumption, it often performs well for text.
+- **Why "naive"?** Assumes features are independent (they're not!)
+- **Why does it work?** Despite the wrong assumption, it often performs well for text.
 
 ```python
 from sklearn.naive_bayes import MultinomialNB
@@ -297,14 +340,19 @@ nb.fit(X_train_tfidf, train_data.target)
 
 # Classifier 2: Logistic Regression
 
-**Learns weights for each feature:**
+<div class="definition-box" data-title="Learns weights for each feature">
 
 $$P(y=k|x) = \frac{e^{w_k^T x}}{\sum_{j} e^{w_j^T x}}$$
 
-**Advantages:**
+</div>
+
+<div class="tip-box" data-title="Advantages">
+
 - Interpretable weights (which words matter?)
 - Often outperforms Naive Bayes
 - Fast training and prediction
+
+</div>
 
 ```python
 from sklearn.linear_model import LogisticRegression
@@ -315,9 +363,9 @@ lr.fit(X_train_tfidf, train_data.target)
 
 ---
 
-# Analyzing Feature Weights
+# Logistic regression weights reveal which words matter
 
-**Logistic Regression gives us interpretable weights!**
+<div class="example-box" data-title="Top positive features per category">
 
 | Category | Top Positive Features |
 |----------|----------------------|
@@ -326,34 +374,42 @@ lr.fit(X_train_tfidf, train_data.target)
 | talk.politics.misc | government, president, tax, policy |
 | comp.graphics | image, graphics, 3d, rendering |
 
-**The model learns what we'd expect!**
+</div>
+
+<div class="tip-box" data-title="Key insight">
+
+The model learns what we'd expect! Interpretability matters.
+
+</div>
 
 ---
+<!-- _class: scale-80 -->
 
 # Classifier 3: Simple Neural Network
 
-**Feedforward architecture:**
-
+```flow
+[Input (TF-IDF):blue] --> [Hidden Layer 1 (256):teal] --> [Hidden Layer 2 (128):green] --> [Output (4 classes):orange]
 ```
-Input (TF-IDF) -> Hidden Layer 1 (256) -> Hidden Layer 2 (128) -> Output (4 classes)
-```
+<!-- caption: Feedforward architecture -->
 
 ```python
 import torch.nn as nn
 
 class TextClassifier(nn.Module):
- def __init__(self, input_dim, hidden_dim, output_dim):
- super().__init__()
- self.fc1 = nn.Linear(input_dim, hidden_dim)
- self.fc2 = nn.Linear(hidden_dim, hidden_dim // 2)
- self.fc3 = nn.Linear(hidden_dim // 2, output_dim)
- self.dropout = nn.Dropout(0.3)
- self.relu = nn.ReLU()
+    def __init__(self, input_dim, hidden_dim, output_dim):
+        super().__init__()
+        self.fc1 = nn.Linear(input_dim, hidden_dim)
+        self.fc2 = nn.Linear(hidden_dim, hidden_dim // 2)
+        self.fc3 = nn.Linear(hidden_dim // 2, output_dim)
+        self.dropout = nn.Dropout(0.3)
+        self.relu = nn.ReLU()
 ```
 
 ---
 
-# Part 4: Model Comparison
+# Linear models are competitive with BoW features
+
+<div class="example-box" data-title="Results on 20 Newsgroups">
 
 | Model | Accuracy |
 |-------|----------|
@@ -362,31 +418,38 @@ class TextClassifier(nn.Module):
 | Logistic Regression | ~90% |
 | Neural Network | ~89% |
 
-**Key insight:** For bag-of-words features, linear models are competitive!
+</div>
 
-Neural networks shine with richer representations (embeddings).
+<div class="tip-box" data-title="Key insight">
+
+Neural networks shine with richer representations (embeddings), not BoW.
+
+</div>
 
 ---
 
-# Evaluation Metrics
+# Accuracy alone is not enough
 
-**Beyond accuracy:**
+<div class="definition-box" data-title="Better metrics">
 
 - **Precision:** Of predicted positives, how many are truly positive?
 - **Recall:** Of actual positives, how many did we catch?
-- **F1-Score:** Harmonic mean of precision and recall
+- **F1-Score:** Harmonic mean: $F1 = 2 \times \frac{Precision \times Recall}{Precision + Recall}$
 
-$$F1 = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}$$
+</div>
 
-**Why not just accuracy?**
-- Imbalanced datasets
-- Different costs for different errors
+<div class="warning-box" data-title="Use precision/recall/F1 when...">
+
+Datasets are imbalanced or different errors have different costs.
+
+</div>
 
 ---
+<!-- _class: scale-90 -->
 
 # Confusion Matrix
 
-**Visual representation of classifier errors:**
+<div class="example-box" data-title="Visual representation of classifier errors">
 
 | | Predicted A | Predicted B | Predicted C | Predicted D |
 |--|-------------|-------------|-------------|-------------|
@@ -395,95 +458,117 @@ $$F1 = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + 
 | **Actual C** | 4 | 3 | 88 | 5 |
 | **Actual D** | 0 | 8 | 2 | 90 |
 
-**Diagonal = correct predictions. Off-diagonal = errors.**
+</div>
+
+<div class="tip-box" data-title="Interpretation">
+
+Diagonal = correct predictions. Off-diagonal = errors.
+
+</div>
 
 ---
 
-# Part 5: Error Analysis
+# Error analysis: critical but often skipped
 
-**Critical step often skipped!**
+<div class="note-box" data-title="The process">
 
 1. Find misclassified examples
 2. Look for patterns
 3. Understand why the model failed
 4. Use insights to improve
 
-**Example errors to examine:**
-- Documents with mixed topics
-- Short documents with little signal
-- Unusual vocabulary
+</div>
+
+<div class="warning-box" data-title="Common culprits">
+
+Mixed topics, short documents, unusual vocabulary
+
+</div>
 
 ---
+<!-- _class: scale-75 -->
 
-# Error Analysis: Concrete Example 
+# Error Analysis: Concrete Example
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
 ```python
 # Find misclassified examples
 y_pred = lr.predict(X_test_tfidf)
 errors = np.where(y_pred != test_data.target)[0]
-
-print(f"Found {len(errors)} misclassifications out of {len(y_pred)}")
-
-# Examine a specific error
 idx = errors[0]
-print(f"\nMisclassified document:")
-print(f" True: {test_data.target_names[test_data.target[idx]]}")
-print(f" Predicted: {test_data.target_names[y_pred[idx]]}")
-print(f"\nText preview:")
+
+print(f"True: {test_data.target_names[test_data.target[idx]]}")
+print(f"Pred: {test_data.target_names[y_pred[idx]]}")
 print(test_data.data[idx][:300])
 ```
 
-**Example output:**
-```
-True: sci.space Predicted: comp.graphics
+</div>
+<div style="flex: 1;">
 
-Text preview:
-"I'm working on a 3D visualization of the solar system for
-my graphics project. Does anyone know how to render realistic
-planet textures? I've been using data from NASA..."
-```
+<div class="example-box" data-title="Example output">
 
-**Insight:** Document mentions both graphics AND space. Model reasonably confused!
+**True:** sci.space  **Predicted:** comp.graphics
+
+*"I'm working on a 3D visualization of the solar system for my graphics project..."*
+
+</div>
+
+<div class="tip-box" data-title="Insight">
+
+Document mentions both graphics AND space. Model reasonably confused!
+
+</div>
+
+</div>
+</div>
 
 ---
 
 # Common Error Patterns
 
-**Why do classifiers fail?**
+<div class="warning-box" data-title="Why do classifiers fail?">
 
 1. **Ambiguous content:** Document mentions multiple topics
 2. **Limited context:** Very short documents
 3. **Domain shift:** Test data differs from training
 4. **Rare vocabulary:** Important words not in training
 
-**Solution ideas:**
+</div>
+
+<div class="tip-box" data-title="Solution ideas">
+
 - Better preprocessing
 - More features (bigrams, trigrams)
 - Domain-specific fine-tuning
 
+</div>
+
 ---
 
-# Part 6: Class Imbalance
+# Class imbalance makes models predict the majority class
 
-**What if some classes have many more examples?**
+<div class="note-box" data-title="Solutions">
 
-**Problem:** Model learns to predict majority class
-
-**Solutions:**
-1. **Class weights:** Penalize errors on minority classes more
-2. **Oversampling:** Duplicate minority class examples
-3. **Undersampling:** Remove majority class examples
+1. **Class weights:** Penalize minority errors more
+2. **Oversampling:** Duplicate minority examples
+3. **Undersampling:** Remove majority examples
 4. **SMOTE:** Generate synthetic minority examples
+
+</div>
 
 ```python
 lr_balanced = LogisticRegression(
- class_weight='balanced' # Automatically adjust weights
+    class_weight='balanced'  # Automatically adjust weights
 )
 ```
 
 ---
 
 # Discussion Questions
+
+<div class="note-box" data-title="Think about these">
 
 1. **BoW vs TF-IDF:** When would you prefer one over the other?
 
@@ -495,9 +580,13 @@ lr_balanced = LogisticRegression(
 
 5. **Interpretability:** Which models are most interpretable? Why does it matter?
 
+</div>
+
 ---
 
 # Key Takeaways
+
+<div class="tip-box" data-title="Remember">
 
 1. **Good features matter more than complex models** (for many tasks)
 2. **TF-IDF usually beats raw BoW** for text classification
@@ -505,26 +594,37 @@ lr_balanced = LogisticRegression(
 4. **Always examine errors** to understand model behavior
 5. **Consider class imbalance** and adjust accordingly
 
+</div>
+
 ---
 
 # Connection to Course Themes
 
-**This week's pipeline:**
+<div class="note-box" data-title="This week's pipeline">
 
+```flow
+[Data Cleaning (Lecture 5):blue] --> [Tokenization (Lecture 6):teal] --> [Feature Extraction (Today):green] --> [Classification (Today):orange]
 ```
-Data Cleaning -> Tokenization -> Feature Extraction -> Classification
-(Lecture 5) (Lecture 6) (Today) (Today)
-```
 
-**Next lecture:** POS Tagging & Sentiment Analysis
+</div>
 
-How do these building blocks combine for real NLP applications?
+<div class="tip-box" data-title="Next lecture">
+
+**POS Tagging & Sentiment Analysis** &mdash; How do these building blocks combine for real NLP applications?
+
+</div>
 
 ---
 
 # Hands-On Exercise
 
-**Open the companion notebook: `xhour_classification_demo.ipynb`**
+<div class="note-box" data-title="Open the companion notebook">
+
+`xhour_classification_demo.ipynb`
+
+</div>
+
+<div class="example-box" data-title="Steps">
 
 1. Load the 20 Newsgroups dataset
 2. Experiment with different vectorizers
@@ -532,26 +632,69 @@ How do these building blocks combine for real NLP applications?
 4. Analyze errors and improve
 5. Try your own text examples!
 
-**Goal:** Build intuition for text classification
+</div>
+
+<div class="tip-box" data-title="Goal">
+
+Build intuition for text classification
+
+</div>
 
 ---
 
 # Additional Resources
 
-**Libraries:**
-- scikit-learn: https://scikit-learn.org/
-- PyTorch: https://pytorch.org/
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
-**Datasets:**
-- 20 Newsgroups: Classic benchmark
-- IMDb Reviews: Sentiment classification
-- AG News: News categorization
+<div class="note-box" data-title="Libraries">
 
-**HuggingFace:**
+- [scikit-learn](https://scikit-learn.org/)
+- [PyTorch](https://pytorch.org/)
+
+</div>
+
+<div class="note-box" data-title="HuggingFace">
+
 - [Chapter 1: Transformer Models](https://huggingface.co/learn/nlp-course/chapter1)
+
+</div>
+
+</div>
+<div style="flex: 1;">
+
+<div class="example-box" data-title="Datasets">
+
+- **20 Newsgroups:** Classic benchmark
+- **IMDb Reviews:** Sentiment classification
+- **AG News:** News categorization
+
+</div>
+
+</div>
+</div>
 
 ---
 
-Questions?
+# Questions? Want to chat more?
 
-Next: Lecture 8 - POS Tagging & Sentiment Analysis
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a> me</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
+    <span class="label">Join our <a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
+    <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
+  </div>
+</div>
+
+<div class="tip-box" data-title="Next up">
+
+Lecture 8 &mdash; POS Tagging & Sentiment Analysis
+
+</div>

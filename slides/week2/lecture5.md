@@ -1,127 +1,135 @@
 ---
 marp: true
 theme: cdl-theme
-paginate: true
-header: 'PSYC 51.07: Models of Language and Communication'
-footer: ''
+math: katex
+transition: fade 0.25s
+author: Contextual Dynamics Lab
 ---
 
-<!-- _class: lead -->
+# Lecture 5: Data Cleaning & Preprocessing
+### PSYC 51.07: Models of language and communication
 
-# Lecture 5: Data Cleaning \& Preprocessing
-## Week 2: Computational Linguistics
-
-**PSYC 51.07: Models of Language and Communication**
+Jeremy R. Manning
+Dartmouth College
+Winter 2026
 
 ---
 
-# Learning Objectives 
+# Learning objectives
 
+<div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
- By the end of this lecture, you will be able to:
-
- 1. Understand why data cleaning is critical for NLP tasks
+1. Understand why data cleaning is critical for NLP tasks
 2. Apply common preprocessing techniques to raw text
 3. Use web scraping to collect text data
 4. Implement lemmatization and stemming
 5. Make informed decisions about preprocessing strategies
 
- 
+</div>
 
- **Key theme:** Garbage in, garbage out! 
+<div class="tip-box" data-title="Key theme">
+
+Garbage in, garbage out!
+
+</div> 
 
 ---
 
-# Why Data Cleaning Matters 
+<!-- _class: scale-80 -->
 
+# Real-world text is messy
 
- **Real-world text is messy!**
-
- <div class="columns">
-<div class="column">
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
 **Common problems:**
- - HTML/XML tags: `<p>text</p>`
-- Special characters: &nbsp; &amp;
+- HTML/XML tags: `<p>text</p>`
+- Special characters: &amp;nbsp; &amp;amp;
 - Inconsistent formatting
 - Extra whitespace
 - Mixed encodings (UTF-8, ASCII...)
-- Typos and misspellings
-- Emoji and Unicode 
+- Emoji and Unicode characters
 
 </div>
-<div class="column">
+<div style="flex: 1;">
 
 **Consequences of dirty data:**
- - Models learn noise, not signal
-- Reduced accuracy
-- Inconsistent predictions
-- Poor generalization
-- Wasted computation
+- Models learn noise, not signal
+- Reduced accuracy and consistency
+- Poor generalization to new data
+- Wasted computation on junk
+- Unpredictable model behavior
+- Difficulty debugging issues
 
 </div>
 </div>
 
- 
+<div class="tip-box" data-title="Remember">
 
- 
- *"Quality of input = quality of output"*
+*"Quality of input = quality of output"*
+
+</div>
  
 
 ---
 
-# The Data Cleaning Pipeline 
+# The data cleaning pipeline
 
-
-
-
+```flow
+[Raw Text:blue] --> [Remove Tags:teal] --> [Normalize:green] --> [Tokenize:orange] --> [Lemmatize:violet] --> [Clean Text:teal]
 ```
-Raw Text -> Remove Tags -> Normalize -> Tokenize -> Lemmatize -> Clean Text 
-```
+<!-- caption: A typical data cleaning pipeline -->
 
+<div class="note-box" data-title="Important">
 
+Pipeline varies by task! Not all steps are always needed.
 
-
-
- **Note:** Pipeline varies by task! Not all steps are always needed.
+</div>
 
 ---
 
-# Worked Example: Cleaning Messy Text Step by Step 
+<!-- _class: scale-75 -->
 
-**Starting with raw text scraped from a webpage:**
+# Cleaning messy text step by step
 
-```python
-raw_text = """
-<p class="review">I LOVE this product!!! 
-Check it out at https://example.com/buy
-Contact: support@example.com</p>
-"""
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Raw input:**
+```
+<p>I LOVE this!!! 
+https://ex.com 
+a@b.com</p>
 ```
 
-**Step 1: Remove HTML tags**
+**Steps:**
+1. Remove HTML tags
+2. Remove URLs/emails
+3. Normalize whitespace
+
+</div>
+<div style="flex: 1;">
+
 ```python
 import re
-text = re.sub(r'<.*?>', '', raw_text)
-# Result: "I LOVE this product!!! \nCheck it out at https://..."
-```
+raw = "<p>I LOVE this!!! https://ex.com a@b.com</p>"
 
-**Step 2: Remove URLs and emails**
-```python
-text = re.sub(r'http\S+|www.\S+', '', text)
+text = re.sub(r'<.*?>', '', raw)       # Step 1
+text = re.sub(r'http\S+', '', text)    # Step 2
 text = re.sub(r'\S+@\S+', '', text)
-# Result: "I LOVE this product!!! \nCheck it out at Contact: "
+text = ' '.join(text.split())          # Step 3
+
+print(text)  # "I LOVE this!!!"
 ```
 
-**Step 3: Normalize whitespace**
-```python
-text = ' '.join(text.split())
-# Result: "I LOVE this product!!! Check it out at Contact:"
-```
+</div>
+</div>
 
 ---
 
-# Worked Example: Complete Pipeline 
+<!-- _class: scale-80 -->
+
+# Worked example: Complete pipeline
 
 **Full transformation:**
 
@@ -141,60 +149,65 @@ text = ' '.join(text.split())
 
 ---
 
-# Task-Specific Preprocessing 
+<!-- _class: scale-80 -->
 
+# Different tasks need different preprocessing
 
- **Different tasks need different preprocessing:**
+| Task | Keep | Remove |
+|------|------|--------|
+| Sentiment analysis | Emoji, punctuation (style matters) | Extra whitespace, special chars |
+| Named entity recognition | Case (proper nouns important) | Extra whitespace |
+| Topic modeling | Content words only | Punctuation, case (lowercase all) |
 
- 
- 
- 
- | | Emoji | Extra whitespace |
-| --- | --- | --- |
-| Recognition | Punctuation | Special chars |
-| | (preserve style) | (just corrupted text) |
-| | | Case (lowercase) |
+<div class="tip-box" data-title="Key principle">
 
- 
+Preserve information relevant to your task!
 
- 
-
- **Key principle:** Preserve information relevant to your task! 
+</div> 
 
 ---
 
-# Collecting Data: Web Scraping 
+<!-- _class: scale-80 -->
 
+# The web is a massive source of text data
 
- **Why web scraping?**
- - Web = massive source of text data
-- News articles, reviews, social media, forums...
-- Fresh, diverse, domain-specific content
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
- 
+**What you can collect:**
+- News articles and blog posts
+- Product reviews and ratings
+- Social media and forum discussions
+- Domain-specific technical content
 
- **Popular tools:**
- - **Beautiful Soup:** Parse HTML/XML, extract text
+</div>
+<div style="flex: 1;">
+
+**Popular tools:**
+- **Beautiful Soup:** Parse HTML/XML
 - **Requests:** Fetch web pages
-- **Scrapy:** Full-featured web scraping framework
-- **Selenium:** For JavaScript-heavy sites
+- **Scrapy:** Full scraping framework
+- **Selenium:** JavaScript-heavy sites
 
- 
+</div>
+</div>
 
- ** Important considerations:**
- - Check `robots.txt` and terms of service
-- Respect rate limits (don't overwhelm servers)
-- Be ethical: respect privacy and copyright
+<div class="warning-box" data-title="Be ethical">
+
+Check `robots.txt`, respect rate limits, and honor terms of service and copyright.
+
+</div>
 
 
 ---
 
-# Web Scraping with Beautiful Soup 
+<!-- _class: scale-70 -->
 
+# Web scraping with Beautiful Soup
 
- **Basic example:**
+**Basic example:**
 
- ```python
+```python
 from bs4 import BeautifulSoup
 import requests
 
@@ -209,21 +222,18 @@ soup = BeautifulSoup(html_content, 'html.parser')
 # Extract text from specific elements
 title = soup.find('h1').get_text()
 article = soup.find('article').get_text()
-
-# Remove extra whitespace
-clean_text = ' '.join(article.split())
-
-print(f"Title: {title}")
-print(f"Article: {clean_text[:200]}...")
+clean_text = ' '.join(article.split())  # Remove extra whitespace
+print(f"Title: {title}\nArticle: {clean_text[:200]}...")
 ```
 
 
 ---
 
-# Advanced Beautiful Soup Techniques 
+<!-- _class: scale-78 -->
 
+# Advanced Beautiful Soup techniques
 
- ```python
+```python
 from bs4 import BeautifulSoup
 
 html = """<div class="article">
@@ -235,15 +245,12 @@ html = """<div class="article">
 
 soup = BeautifulSoup(html, 'html.parser')
 
-# Find all paragraphs with class="content"
-paragraphs = soup.find_all('p', class_='content')
+paragraphs = soup.find_all('p', class_='content')  # Find content paragraphs
 text = ' '.join([p.get_text() for p in paragraphs])
 
-# Remove unwanted sections
-for ad in soup.find_all('div', class_='ads'):
- ad.decompose() # Delete from tree
+for ad in soup.find_all('div', class_='ads'):      # Remove unwanted sections
+    ad.decompose()
 
-# Get clean article text
 article_text = soup.get_text(separator=' ', strip=True)
 print(article_text)
 ```
@@ -251,163 +258,150 @@ print(article_text)
 
 ---
 
-# Handling Text Encodings 
+# Always use UTF-8 encoding
 
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
- **Common encoding issues:**
+**Common encoding issues:**
+- UTF-8 vs. ASCII vs. Latin-1
+- Special characters: é, ñ, ü
+- Emoji require Unicode support
+- Mixed encodings in scraped data
 
- - UTF-8 vs. ASCII vs. Latin-1
-- Special characters: é, ñ, 
-- Emoji: (requires Unicode support)
+</div>
+<div style="flex: 1;">
 
+**Best practices:**
+- Default to UTF-8 for all files
+- Detect unknown: `chardet` library
+- Normalize Unicode: NFKC form
+- Fix broken text: `ftfy` library
 
-
- **Best practices:**
- - Always use UTF-8 when possible
-- Detect encoding: `chardet` library
-- Normalize Unicode: NFKC vs. NFD forms
+</div>
+</div>
 
 ---
 
-# Encoding Issues: Concrete Example 
+<!-- _class: scale-78 -->
 
-**Common scenario: Web scraping with mixed encodings**
+# Web scraping often produces mixed encodings
 
 ```python
 import chardet
 
-# Byte string with unknown encoding
-raw_bytes = b'Caf\xe9 au lait \x96 delicious!'
+raw_bytes = b'Caf\xe9 au lait \x96 delicious!'  # Unknown encoding
 
-# Detect encoding
-result = chardet.detect(raw_bytes)
-print(f"Detected: {result}")
-# {'encoding': 'Windows-1252', 'confidence': 0.73}
+result = chardet.detect(raw_bytes)              # Detect encoding
+print(f"Detected: {result}")  # {'encoding': 'Windows-1252', 'confidence': 0.73}
 
-# Decode with detected encoding
-text = raw_bytes.decode(result['encoding'])
-print(text)
-# "Café au lait – delicious!"
+text = raw_bytes.decode(result['encoding'])     # Decode with detected encoding
+print(text)                   # "Café au lait – delicious!"
 
-# Alternative: Use 'ftfy' to fix broken Unicode
-import ftfy
+import ftfy                                     # Alternative: fix broken Unicode
 broken = "CafÃ au lait €" delicious!"
 fixed = ftfy.fix_text(broken)
-print(fixed)
-# "Café au lait – delicious!"
+print(fixed)                  # "Café au lait – delicious!"
 ```
 
 **Pro tip:** Save all files as UTF-8 to avoid these headaches!
 
 ---
 
-# Common Preprocessing Steps 
+<!-- _class: scale-80 -->
 
+# Five common preprocessing steps
 
- **1. HTML/XML Tag Removal**
- - Strip markup: `<p>Hello</p>` → `Hello`
-- Tools: Beautiful Soup, regex, html2text
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
- 
+**1. HTML/XML tag removal**
+- `<p>Hello</p>` &rarr; `Hello`
 
- **2. Whitespace Normalization**
- - Remove extra spaces, tabs, newlines
-- `"Hello\ \ \ world\textbackslash n"` → `"Hello world"`
+**2. Whitespace normalization**
+- `"Hello   world\n"` &rarr; `"Hello world"`
 
- 
-
- **3. Punctuation Handling**
- - Keep for sentiment: "Great!" vs. "Great"
+**3. Punctuation handling**
+- Keep for sentiment ("Great!" vs "Great")
 - Remove for topic modeling
 
- 
+</div>
+<div style="flex: 1;">
 
- **4. Case Normalization**
- - Lowercase: "Apple" and "apple" → same token
-- Preserve for NER: "Apple Inc." vs. "apple fruit"
+**4. Case normalization**
+- Lowercase: "Apple" = "apple"
+- Preserve for NER: "Apple Inc."
 
- 
+**5. Special character removal**
+- URLs, emails, numbers
+- Task-dependent decisions
 
- **5. Special Characters**
- - URLs, email addresses, numbers
-- Replace or remove based on task
+</div>
+</div>
 
 
 ---
 
-# Preprocessing Example 
+<!-- _class: scale-78 -->
 
+# Preprocessing example
 
- ```python
+```python
 import re
 
 def preprocess_text(text):
- # Remove URLs
- text = re.sub(r'http\S+|www.\S+', '', text)
+    text = re.sub(r'http\S+|www.\S+', '', text)  # Remove URLs
+    text = re.sub(r'\S+@\S+', '', text)          # Remove emails
+    text = re.sub(r'<.*?>', '', text)            # Remove HTML tags
+    text = ' '.join(text.split())                # Remove extra whitespace
+    text = text.lower()                          # Lowercase
+    return text
 
- # Remove email addresses
- text = re.sub(r'\S+@\S+', '', text)
-
- # Remove HTML tags
- text = re.sub(r'<.*?>', '', text)
-
- # Remove extra whitespace
- text = ' '.join(text.split())
-
- # Lowercase (optional)
- text = text.lower()
-
- return text
-
-# Example
 raw = "Check out https://example.com! <b>Amazing</b> deals!!"
-clean = preprocess_text(raw)
-print(clean) # "check out amazing deals!!"
+print(preprocess_text(raw))  # "check out amazing deals!!"
 ```
 
 
 ---
 
-# Reducing Words to Base Forms 
+<!-- _class: scale-80 -->
 
+# Stemming is fast but crude; lemmatization is accurate
 
- **Goal:** Reduce inflected/derived words to root form
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
- <div class="columns">
-<div class="column">
-
-**Stemming **
- - Rule-based, crude chopping
-- Fast, simple
+**Stemming**
+- Rule-based crude chopping
+- Fast and simple
 - May produce non-words
 - Porter Stemmer (1980)
-- Example: "running" → "run"
+- "running" &rarr; "run"
 
 </div>
-<div class="column">
+<div style="flex: 1;">
 
-**Lemmatization **
- - Uses vocabulary + morphology
-- Slower, more accurate
-- Produces real words
+**Lemmatization**
+- Uses vocabulary + morphology
+- Slower but more accurate
+- Always produces real words
 - Requires POS context
-- Example: "better" → "good"
+- "better" &rarr; "good"
 
 </div>
 </div>
 
- 
+<div class="tip-box" data-title="When to use which?">
 
- **When to use which?**
- - Stemming: Speed matters, approximate matching OK
-- Lemmatization: Need interpretable, real words
+- **Stemming:** Speed matters, approximate matching OK
+- **Lemmatization:** Need interpretable, real words
+
+</div>
 
 
 ---
 
-# Stemming vs. Lemmatization Examples 
-
-**Concrete comparison with the same words:**
+# Lemmatization produces real words; stemming produces fragments
 
 | Word | Porter Stemmer | Lemmatizer | Notes |
 |------|---------------|------------|-------|
@@ -425,9 +419,7 @@ print(clean) # "check out amazing deals!!"
 
 ---
 
-# When Stemming Goes Wrong 
-
-**Real-world example of stemming problems:**
+# Stemming can over-stem or under-stem
 
 ```python
 from nltk.stem import PorterStemmer
@@ -450,44 +442,39 @@ print(stems2) # ['absorb', 'absorpt']
 
 ---
 
-# Stemming with NLTK 
+<!-- _class: scale-78 -->
 
+# Stemming with NLTK
 
- ```python
+```python
 from nltk.stem import PorterStemmer, SnowballStemmer
-
 porter = PorterStemmer()
 snowball = SnowballStemmer('english')
 
 words = ['running', 'runs', 'runner', 'ran', 'easily', 'fairly']
 
-print("Word Porter Snowball")
-print("-" * 40)
+print("Word         Porter       Snowball")
 for word in words:
- p_stem = porter.stem(word)
- s_stem = snowball.stem(word)
- print(f"{word:12} {p_stem:12} {s_stem}")
+    print(f"{word:12} {porter.stem(word):12} {snowball.stem(word)}")
 
 # Output:
-# Word Porter Snowball
-# ----------------------------------------
-# running run run
-# runs run run
-# runner runner runner
-# ran ran ran
-# easily easili easili
-# fairly fairli fair
+# running      run          run
+# runs         run          run
+# runner       runner       runner
+# ran          ran          ran
+# easily       easili       easili
+# fairly       fairli       fair
 ```
 
 
 ---
 
-# Lemmatization with spaCy 
+<!-- _class: scale-78 -->
 
+# Lemmatization with spaCy
 
- ```python
+```python
 import spacy
-
 nlp = spacy.load("en_core_web_sm")
 
 text = "The cats are running faster than dogs ran yesterday"
@@ -496,326 +483,340 @@ doc = nlp(text)
 print(f"{'Word':<12} {'Lemma':<12} {'POS'}")
 print("-" * 36)
 for token in doc:
- print(f"{token.text:<12} {token.lemma_:<12} {token.pos_}")
+    print(f"{token.text:<12} {token.lemma_:<12} {token.pos_}")
 
 # Output:
-# Word Lemma POS
-# ------------------------------------
-# The the DET
-# cats cat NOUN
-# are be AUX
-# running run VERB
-# faster fast ADV
-# than than SCONJ
-# dogs dog NOUN
-# ran run VERB
-# yesterday yesterday NOUN
+# Word         Lemma        POS
+# cats         cat          NOUN
+# running      run          VERB
+# dogs         dog          NOUN
+# ran          run          VERB
 ```
 
 
 ---
 
-# spaCy vs. NLTK for Lemmatization 
+# spaCy vs. NLTK for lemmatization
 
-
- 
- 
- | Accuracy | High | Good |
-| --- | --- | --- |
+| Feature | spaCy | NLTK |
+|---------|-------|------|
+| Accuracy | High | Good |
 | Setup | Easy | Requires data download |
 | POS tagging | Built-in | Separate step |
 | Dependencies | Included | Manual WordNet |
 | Use case | Production | Research/Teaching |
 
- 
+<div class="tip-box" data-title="Recommendation">
 
- 
+Use spaCy for most tasks! It's faster, more accurate, and easier to use in production.
 
- **Recommendation:** Use spaCy for most tasks!
-
- It's faster, more accurate, and easier to use in production.
+</div>
 
 ---
 
-# Stop Words Removal 
+<!-- _class: scale-80 -->
 
+# Stop words: common words with little semantic value
 
- **What are stop words?**
- - Common words with little semantic value
-- Examples: "the", "a", "is", "in", "and", "or"
-- Language-specific
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
- 
+**When to remove:**
+- Topic modeling
+- Text classification
+- Search engines
+- Information retrieval
 
- **When to remove?**
- - Topic modeling, text classification
-- Search engines, information retrieval
-- Sentiment analysis ("not good" vs. "good")
+</div>
+<div style="flex: 1;">
+
+**When to keep:**
+- Sentiment ("not good" ≠ "good")
 - Machine translation
 - Text generation
+- Neural models (they learn!)
 
- 
+</div>
+</div>
 
- **Warning:** Modern neural models often don't need stop word removal!
+<div class="tip-box" data-title="Examples">
 
- They can learn to ignore them or use them for grammar.
+"the", "a", "is", "in", "and", "or" — language-specific lists available in NLTK and spaCy.
+
+</div>
 
 ---
 
-# Stop Words in Practice 
+# Stop words in practice
 
-
- ```python
+```python
 from nltk.corpus import stopwords
 import spacy
 
-# NLTK approach
-stop_words_nltk = set(stopwords.words('english'))
+stop_words_nltk = set(stopwords.words('english'))  # NLTK approach
 text = "This is an example showing stop word removal"
-tokens = text.lower().split()
-filtered_nltk = [w for w in tokens if w not in stop_words_nltk]
+filtered_nltk = [w for w in text.lower().split() if w not in stop_words_nltk]
+print("NLTK:", filtered_nltk)  # ['example', 'showing', 'stop', 'word', 'removal']
 
-print("NLTK:", filtered_nltk)
-# Output: ['example', 'showing', 'stop', 'word', 'removal']
-
-# spaCy approach
-nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_sm")  # spaCy approach
 doc = nlp(text)
-filtered_spacy = [token.text for token in doc
- if not token.is_stop]
-
-print("spaCy:", filtered_spacy)
-# Output: ['example', 'showing', 'stop', 'word', 'removal']
+filtered_spacy = [token.text for token in doc if not token.is_stop]
+print("spaCy:", filtered_spacy)  # ['example', 'showing', 'stop', 'word', 'removal']
 ```
 
 
 ---
 
-# Case Study: Preprocessing for Sentiment Analysis 
+# Sentiment analysis requires preserving emotional signals
 
+<div class="example-box" data-title="Amazon review">
 
- **Scenario:** Analyze customer reviews from Amazon
+*"I LOVE this product!!! Best purchase ever! See details at http://example.com"*
 
- 
+</div>
 
- **Raw review example:**
- 
- *"I LOVE this product!!! Best purchase ever! See details at http://example.com"*
- 
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
- 
+**Keep:**
+- Punctuation (! conveys emphasis)
+- Capitalization (LOVE = strong)
+- Emoji if present
 
- **Preprocessing decisions:**
- - Keep: Punctuation (!), emoji (), capitalization (emphasis)
-- Remove: URLs, HTML tags
-- Maybe: Extra repeated punctuation (!!!)
+</div>
+<div style="flex: 1;">
 
- 
+**Remove:**
+- URLs (no sentiment value)
+- HTML tags
+- Extra punctuation (!!! → !)
 
- **Result:**
- 
- *"I LOVE this product! Best purchase ever!"*
- 
+</div>
+</div>
 
- Preserves emotion and intensity!
+<div class="tip-box" data-title="Result">
+
+*"I LOVE this product! Best purchase ever!"* — emotion preserved!
+
+</div>
+
+</div>
+</div>
 
 ---
 
-# Discussion: Preprocessing Trade-offs 
+# Discussion: Preprocessing trade-offs
 
+<div class="note-box" data-title="Questions to consider">
 
- **Questions to consider:**
-
- 1. **Information loss:** What do we lose when we lowercase everything?
- - Think: "US" (United States) vs. "us" (pronoun)
+1. **Information loss:** What do we lose when we lowercase everything?
+   - Think: "US" (United States) vs. "us" (pronoun)
 2. **Task dependency:** Why does preprocessing differ by task?
- - Hint: What signals matter for sentiment vs. topic modeling?
+   - Hint: What signals matter for sentiment vs. topic modeling?
 3. **Modern models:** Do transformer models still need heavy preprocessing?
- - Consider: BERT handles subwords, capitalization, punctuation...
+   - Consider: BERT handles subwords, capitalization, punctuation...
 4. **Bias introduction:** Can preprocessing introduce bias?
- - Example: Removing slang might remove cultural markers
+   - Example: Removing slang might remove cultural markers
+
+</div>
 
 
 ---
 
-# Practical Tips for Data Cleaning 
+<!-- _class: scale-80 -->
 
+# Practical tips for data cleaning
 
- **Best practices:**
+<div class="tip-box" data-title="Best practices">
 
- 1. **Inspect your data first!** 
- - Look at samples before deciding on preprocessing
-2. **Keep raw data separate** 
- - Never overwrite originals—you might need them!
-3. **Document your pipeline** 
- - Track what preprocessing you applied and why
-4. **Experiment!** 
- - Try different approaches, measure impact on task
-5. **Validate incrementally** 
- - Check results after each preprocessing step
-6. **Consider automation** 
- - Use libraries: spaCy, NLTK, HuggingFace tokenizers
+1. **Inspect your data first!** &mdash; Look at samples before deciding on preprocessing
+2. **Keep raw data separate** &mdash; Never overwrite originals; you might need them!
+3. **Document your pipeline** &mdash; Track what preprocessing you applied and why
+4. **Experiment!** &mdash; Try different approaches, measure impact on task
+5. **Validate incrementally** &mdash; Check results after each preprocessing step
+6. **Consider automation** &mdash; Use libraries: spaCy, NLTK, HuggingFace tokenizers
+
+</div>
 
 
 ---
 
-# Complete Preprocessing Pipeline Example 
+<!-- _class: scale-78 -->
 
+# Complete preprocessing pipeline example
 
- ```python
-import spacy
-import re
+```python
+import spacy, re
 
 class TextPreprocessor:
- def __init__(self, remove_stopwords=False):
- self.nlp = spacy.load("en_core_web_sm")
- self.remove_stopwords = remove_stopwords
+    def __init__(self, remove_stopwords=False):
+        self.nlp = spacy.load("en_core_web_sm")
+        self.remove_stopwords = remove_stopwords
 
- def clean(self, text):
- # Remove URLs
- text = re.sub(r'http\S+', '', text)
- # Remove HTML tags
- text = re.sub(r'<.*?>', '', text)
- # Normalize whitespace
- text = ' '.join(text.split())
-
- # Process with spaCy
- doc = self.nlp(text)
-
- # Lemmatize and optionally remove stop words
- tokens = [token.lemma_ for token in doc
- if not (self.remove_stopwords and token.is_stop)]
-
- return ' '.join(tokens)
+    def clean(self, text):
+        text = re.sub(r'http\S+', '', text)   # Remove URLs
+        text = re.sub(r'<.*?>', '', text)     # Remove HTML
+        text = ' '.join(text.split())         # Normalize whitespace
+        doc = self.nlp(text)
+        tokens = [t.lemma_ for t in doc if not (self.remove_stopwords and t.is_stop)]
+        return ' '.join(tokens)
 ```
 
 
 ---
 
-# Preprocessing Checklist 
+<!-- _class: scale-78 -->
 
+# Preprocessing checklist
 
- Before starting your project, ask:
+<div class="note-box checklist" data-title="Before starting your project, ask...">
 
- - [$\square$] What is my task? (classification, generation, extraction...)
-- [$\square$] What signals are important? (sentiment, topics, entities...)
-- [$\square$] Should I lowercase? (preserve case for names?)
-- [$\square$] How to handle punctuation? (keep for emotion?)
-- [$\square$] Do I need lemmatization? (or will model handle it?)
-- [$\square$] Should I remove stop words? (or keep for grammar?)
-- [$\square$] How to handle special characters? (emoji, numbers, symbols)
-- [$\square$] What about rare/unknown words? (keep, remove, replace?)
-- [$\square$] Have I validated on sample data? (inspect before/after!)
+- What is my task? (classification, generation, extraction...)
+- What signals are important? (sentiment, topics, entities...)
+- Should I lowercase? (preserve case for names?)
+- How to handle punctuation? (keep for emotion?)
+- Do I need lemmatization? (or will model handle it?)
+- Should I remove stop words? (or keep for grammar?)
+- How to handle special characters? (emoji, numbers, symbols)
+- What about rare/unknown words? (keep, remove, replace?)
+- Have I validated on sample data? (inspect before/after!)
 
- 
+</div>
 
- **Remember:** There's no one-size-fits-all solution! 
+<div class="tip-box" data-title="Remember">
+
+There's no one-size-fits-all solution!
+
+</div> 
 
 ---
 
-# Tools and Libraries 
+<!-- _class: scale-78 -->
 
+# Tools and libraries
 
- **Web Scraping:**
- - Beautiful Soup: https://www.crummy.com/software/BeautifulSoup/
-- Scrapy: https://scrapy.org/
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
- 
+**Web Scraping:**
+- [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/)
+- [Scrapy](https://scrapy.org/)
 
- **Text Processing:**
- - spaCy: https://spacy.io/
-- NLTK: https://www.nltk.org/
-- TextBlob: https://textblob.readthedocs.io/
+**Text Processing:**
+- [spaCy](https://spacy.io/)
+- [NLTK](https://www.nltk.org/)
+- [TextBlob](https://textblob.readthedocs.io/)
 
- 
+</div>
+<div style="flex: 1;">
 
- **Encoding:**
- - chardet: Character encoding detection
+**Encoding:**
+- chardet: Character encoding detection
 - ftfy: Fixes broken Unicode
 
- 
-
- **HuggingFace Resources:**
- - [Chapter 3.2: Processing Data](https://huggingface.co/learn/nlp-course/chapter3/2)
+**HuggingFace Resources:**
+- [Chapter 3.2: Processing Data](https://huggingface.co/learn/nlp-course/chapter3/2)
 - [Chapter 2.4: Tokenizers](https://huggingface.co/learn/nlp-course/chapter2/4)
 
+</div>
+</div>
+
 
 ---
 
-# Primary References 
+<!-- _class: scale-78 -->
 
+# Primary references
 
- **Classic papers:**
- - Porter, M. F. (1980). An algorithm for suffix stripping. *Program*, 14(3), 130-137.
- 
-- The original Porter Stemmer algorithm
+<div class="note-box" data-title="Classic papers">
 
- \item Manning, C. D., Raghavan, P., & Schütze, H. (2008). *Introduction to Information Retrieval*. Cambridge University Press.
- - Chapter 2: Text preprocessing fundamentals
+- Porter, M. F. (1980). An algorithm for suffix stripping. *Program*, 14(3), 130-137. &mdash; The original Porter Stemmer algorithm
+- Manning, C. D., Raghavan, P., & Schutze, H. (2008). *Introduction to Information Retrieval*. Cambridge University Press. &mdash; Chapter 2: Text preprocessing fundamentals
 
- 
+</div>
 
- 
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
- **Modern resources:**
- - spaCy documentation: Industrial-strength NLP
+**Modern resources:**
+- spaCy documentation: Industrial-strength NLP
 - HuggingFace NLP Course: Modern preprocessing with transformers
 
- 
+</div>
+<div style="flex: 1;">
 
- **Ethical considerations:**
- - Liang et al. (2020). "Towards Debiasing Sentence Representations"
+**Ethical considerations:**
+- Liang et al. (2020). "Towards Debiasing Sentence Representations"
 - Consider how preprocessing choices affect fairness
 
+</div>
+</div>
+
 
 ---
 
-# Hands-On Exercise 
+# Hands-on exercise
 
+<div class="example-box" data-title="Try this yourself">
 
- **Try this yourself:**
-
- 1. Choose a website (news, blog, Reddit...)
+1. Choose a website (news, blog, Reddit...)
 2. Scrape 10-20 articles/posts
 3. Apply different preprocessing pipelines:
- - Minimal: Just remove HTML
-- Moderate: + normalize whitespace, lowercase
-- Heavy: + lemmatize, remove stop words
+   - **Minimal:** Just remove HTML
+   - **Moderate:** + normalize whitespace, lowercase
+   - **Heavy:** + lemmatize, remove stop words
 4. Compare the results:
- - How does vocabulary size change?
-- What information is lost/preserved?
-- Which would work best for sentiment analysis? Topic modeling?
+   - How does vocabulary size change?
+   - What information is lost/preserved?
+   - Which would work best for sentiment analysis? Topic modeling?
 
- 
+</div>
 
- **Bonus:** Share interesting findings with classmates! 
+<div class="tip-box" data-title="Bonus">
 
----
+Share interesting findings with classmates!
 
-# Key Takeaways 
-
-
- 1. **Preprocessing is crucial** but task-dependent
- - No universal pipeline—adapt to your needs!
-2. **Balance cleaning vs. information loss**
- - More preprocessing ≠ always better
-3. **Stemming vs. Lemmatization**
- - Stemming: fast, approximate
-- Lemmatization: slow, accurate
-4. **Modern models are robust**
- - Transformers can handle messy text better than older models
-5. **Always validate**
- - Inspect data before and after preprocessing
-
- 
-
- **Next lecture:** Tokenization deep dive! 
+</div> 
 
 ---
 
-Questions? 
+<!-- _class: scale-78 -->
 
- 
+# Key takeaways
 
- 
- Next: Lecture 6 - Tokenization
+1. **Preprocessing is crucial** but task-dependent &mdash; No universal pipeline; adapt to your needs!
+2. **Balance cleaning vs. information loss** &mdash; More preprocessing does not always mean better
+3. **Stemming vs. Lemmatization** &mdash; Stemming: fast, approximate; Lemmatization: slow, accurate
+4. **Modern models are robust** &mdash; Transformers can handle messy text better than older models
+5. **Always validate** &mdash; Inspect data before and after preprocessing
+
+<div class="note-box" data-title="Coming up">
+
+Tokenization deep dive!
+
+</div> 
+
+---
+
+# Questions? Want to chat more?
+
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a> me</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
+    <span class="label">Join our <a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
+    <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
+  </div>
+</div>
+
+<div class="tip-box" data-title="Next up">
+
+Lecture 6 &mdash; Tokenization deep dive!
+
+</div>
