@@ -81,7 +81,7 @@ jobs:
           
           cp index.html _site/
           cp -r demos/* _site/demos/
-          cp -r slides/* _site/slides/
+          cp -rL slides/* _site/slides/
           cp -r syllabus/* _site/syllabus/
           cp -r assignments/*.html _site/assignments/ 2>/dev/null || true
           cp -r assignments/*.md _site/assignments/ 2>/dev/null || true
