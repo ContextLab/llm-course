@@ -331,7 +331,7 @@ Use the [Tokenization Explorer Demo](https://contextlab.github.io/llm-course/dem
 
 <div class="note-box" data-title="Further reading">
 
-[**Wu et al. (2016, *arXiv*):**](https://arxiv.org/abs/1609.08144) Google's Neural Machine Translation System
+[**Wu et al. (2016, *arXiv*):**](https://arxiv.org/abs/1609.08144) Google's neural machine translation system
 
 </div>
 
@@ -379,6 +379,8 @@ print("Tokens:", tokens2)
 <div class="note-box" data-title="Further reading">
 
 [**Kudo & Richardson (2018, *EMNLP*):**](https://aclanthology.org/D18-2012/) SentencePiece: a simple and language independent subword tokenizer
+
+[**Provilkov, Emelianeko, & Voita (2019, *arXiv*):**](https://arxiv.org/abs/1910.13267) BPE-Dropout: simple and effective subword regularization
 
 </div>
 
@@ -612,7 +614,7 @@ print("Without special:", clean_decode)  # "hello world"
 <div class="tip-box" data-title="Prepare by...">
 
 - Playing more with the [Tokenization Explorer Demo](https://contextlab.github.io/llm-course/demos/tokenization/)
-- Experimenting with HuggingFace tokenizers
+- Experimenting with [HuggingFace tokenizers](https://github.com/huggingface/tokenizers)
 
 </div>
 
