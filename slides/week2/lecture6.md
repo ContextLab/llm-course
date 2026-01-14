@@ -29,11 +29,12 @@ Winter 2026
 
 <div class="tip-box" data-title="Central question">
 
-How do we break text into meaningful units for AI models?
+How do we break text into meaningful units (for analyzing text, AI models, etc.)?
 
 </div>
 
 ---
+<!-- _class: scale-80 -->
 
 # What is tokenization?
 
@@ -43,38 +44,43 @@ How do we break text into meaningful units for AI models?
 
 </div>
 
+<div class="tip-box" data-title="Key idea">
+
+The granularity of tokenization determines *what a model can learn*
+
+</div>
+
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1;">
 
 **Why tokenize?**
 - Neural networks process numbers, not text
 - Need discrete units to create vocabulary
-- First step in any NLP pipeline
+- Represent text efficiently (compression!)
+- Enable learning patterns at different levels
+- First step in (nearly) any NLP pipeline
 
 </div>
 <div style="flex: 1;">
 
 **What can tokens be?**
-- **Characters:** a, b, c, ... (very fine-grained)
-- **Words:** "hello", "world" (intuitive but limited)
-- **Subwords:** "un", "happiness" (sweet spot!)
 - **Bytes:** 0-255 (most fine-grained)
+- **Characters:** a, b, c, ... (very fine-grained)
+- **Subwords:** "un", "happiness" (sweet spot!)
+- **Words:** "hello", "world" (intuitive but limited)
 
 </div>
 </div>
 
-<div class="tip-box" data-title="Remember">
 
-*"The granularity of tokenization determines what a model can learn"*
-
-</div>
 
 ---
+<!-- _class: scale-80 -->
 
 # The tokenization spectrum
 
 ```flow
-[Character:blue] --> [Subword:green] --> [Word:orange]
+[Character:blue] --> [Subword:green] --> [Word:orange] --> [Multi-word:red]
 ```
 <!-- caption: Fine-grained to coarse-grained tokenization -->
 
@@ -83,32 +89,27 @@ How do we break text into meaningful units for AI models?
 | Character | ~100s | Very long |
 | Subword | 30k-50k | Medium |
 | Word | 100k+ | Short |
-
-<div class="tip-box" data-title="Key trade-off">
-
-Vocabulary size vs. sequence length
-
-</div>
+| Multi-word | Millions | Very short (rarely used in practice) |
 
 ---
 
 # Splitting on spaces fails for three reasons
 
-<div class="warning-box" data-title="1. Vocabulary explosion">
+<div class="note-box" data-title="1. Vocabulary explosion">
 
-English has ~170,000 words, each inflection counts separately ("run", "runs", "running", "ran"), and compounds vary ("ice cream", "icecream", "ice-cream")
+English has ~170,000 commonly used words, where each inflection counts separately ("run", "runs", "running", "ran"), and compounds vary ("ice cream", "icecream", "ice-cream")
 
 </div>
 
-<div class="warning-box" data-title="2. Unknown words">
+<div class="example-box" data-title="2. Unknown words">
 
-OOV for new terms ("COVID-19", "selfie"), rare words ("supercalifragilisticexpialidocious"), and typos ("teh")
+New terms ("COVID-19", "selfie"), rare words ("supercalifragilisticexpialidocious"), and typos ("teh") may be missing from training data, leading to out-of-vocabulary (OOV) issues.
 
 </div>
 
 <div class="warning-box" data-title="3. Languages without spaces">
 
-Chinese: 没有空格 | Japanese: 日本語も同様
+Chinese: 没有空格 | Japanese: 日本語も同様 | Thai: เหมือนกัน | Emojis: 😊🚀
 
 </div>
 
@@ -130,7 +131,7 @@ Chinese: 没有空格 | Japanese: 日本語も同様
 
 ---
 
-<!-- _class: scale-75 -->
+<!-- _class: scale-60 -->
 
 # The OOV problem in action
 
@@ -142,10 +143,10 @@ def tokenize_word_level(text, vocab):
  tokens = text.lower().split()
  result = []
  for token in tokens:
- if token in vocab:
- result.append(token)
- else:
- result.append("<UNK>") # Unknown token
+   if token in vocab:
+     result.append(token)
+   else:
+     result.append("<UNK>") # Unknown token
  return result
 
 # Example
@@ -156,15 +157,10 @@ print(tokens)
 # ^^^ "jumped" is unknown!
 ```
 
-<div class="warning-box" data-title="Problem">
-
-We lose information! "jumped" becomes meaningless `<UNK>`
-
-</div>
-
 ---
+<!-- _class: scale-75 -->
 
-# Most words are made of smaller meaningful pieces
+# Subword tokenization to the rescue: most words are made of smaller meaningful pieces
 
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1;">
@@ -173,14 +169,17 @@ We lose information! "jumped" becomes meaningless `<UNK>`
 - "unhappiness" = "un" + "happiness"
 - "preprocessing" = "pre" + "process" + "ing"
 - "antiestablishment" = "anti" + "establish" + "ment"
+- "running" = "run" + "ning"
+- "cats" = "cat" + "s"
 
 </div>
 <div style="flex: 1;">
 
 **Benefits:**
 - Fixed vocabulary (30k-50k tokens)
-- No OOV: break into known parts
+- No OOV: break into known parts (at the character level if needed)
 - Captures morphology (prefixes, suffixes)
+- Language-agnostic (works for many languages)
 
 </div>
 </div>
@@ -192,6 +191,7 @@ Learn common character sequences from data! Works for any language.
 </div>
 
 ---
+<!-- _class: scale-65 -->
 
 # Subword tokenization solves the OOV problem
 
@@ -201,13 +201,9 @@ vocab = {"the", "cat", "sat", "on", "mat", "dog", "ran"}
 
 # Trying to tokenize a new sentence:
 sentence = "The supercalifragilisticexpialidocious cat meowed"
-# Word-level result: ["<UNK>", "<UNK>", "cat", "<UNK>"]
-# We lost almost everything!
-```
+# Word-level result loses almost everything: ["<UNK>", "<UNK>", "cat", "<UNK>"]
 
-**The subword solution:**
-
-```python
+# The subword solution
 from transformers import AutoTokenizer
 tokenizer = AutoTokenizer.from_pretrained("gpt2")
 
@@ -219,12 +215,6 @@ print(tokens)
 # Every word can be tokenized! No information loss.
 # Model can learn that 'super-' often means "very/above"
 ```
-
-<div class="tip-box" data-title="Key insight">
-
-Subwords preserve meaning even for novel words!
-
-</div>
 
 ---
 
@@ -248,7 +238,7 @@ More tokens = longer sequences, but smaller vocabulary and no OOV!
 
 <div class="note-box" data-title="Further reading">
 
-[**Sennrich, Haddow, & Birch (2016, *ACL*):**](https://aclanthology.org/P16-1162/) Neural Machine Translation of Rare Words with Subword Units
+[**Sennrich, Haddow, & Birch (2016, *ACL*):**](https://aclanthology.org/P16-1162/) Neural machine translation of rare words with subword units
 
 </div>
 
@@ -273,7 +263,7 @@ Iteratively merge the most frequent pair of characters/subwords.
 
 ---
 
-<!-- _class: scale-80 -->
+<!-- _class: scale-70 -->
 
 # BPE example: Step by step
 
@@ -283,7 +273,7 @@ Iteratively merge the most frequent pair of characters/subwords.
 
 <div class="example-box" data-title="Iteration 1">
 
-Most frequent pair = `e, s` (appears 4 times)
+Most frequent pair = `e, s` (appears 5 times)
 - Merge &rarr; new token: `es`
 - Vocabulary: `l, o, w, e, r, n, s, t, i, d, es`
 
@@ -291,69 +281,24 @@ Most frequent pair = `e, s` (appears 4 times)
 
 <div class="example-box" data-title="Iteration 2">
 
-Most frequent = `es, t`
-- Merge &rarr; new token: `est`
-- Vocabulary: `l, o, w, e, r, n, s, t, i, d, es, est`
+Most frequent = `o, w` (appears 5 times)
+- Merge &rarr; new token: `ow`
+- Vocabulary: `l, o, w, e, r, n, s, t, i, d, es, ow`
 
 </div>
 
 <div class="example-box" data-title="Iteration 3">
 
-Most frequent = `l, o`
-- Merge &rarr; new token: `lo`
+Most frequent = `␣, n` (space + n; appears 4 times)
+- Merge &rarr; new token: `␣n`
+- Vocabulary: `l, o, w, e, r, n, s, t, i, d, es, ow, ␣n`
 
 </div>
 
-Continue until reaching target vocabulary size (e.g., 30,000)...
+...continue until we hit the target vocabulary size (e.g., 30,000) or run out of merges.
 
 ---
-
-<!-- _class: scale-80 -->
-
-# BPE learns to merge frequent character pairs
-
-```
-Training corpus: "low" (x3), "lower" (x2), "newest" (x4), "widest" (x1)
-
-After training, vocabulary includes:
-- Characters: l, o, w, e, r, n, s, t, i, d
-- Merges learned: es → est → lo → low → er → ...
-
-Tokenizing "lowest":
- Step 1: Split into characters → [l, o, w, e, s, t]
- Step 2: Apply merge rules in order learned:
- [l, o, w, e, s, t]
- → [lo, w, e, s, t] (merge l+o)
- → [low, e, s, t] (merge lo+w)
- → [low, es, t] (merge e+s)
- → [low, est] (merge es+t)
-
- Final tokens: ["low", "est"]
-```
-
-**Result:** "lowest" → `["low", "est"]` (2 tokens instead of 6 characters!)
-
----
-
-# BPE visualization
-
-```flow
-[l:blue] --> [o:blue] --> [w:blue] --> [e:blue] --> [s:blue] --> [t:blue]
-```
-<!-- caption: Step 0: Character-level -->
-
-```flow
-[lo:green] --> [w:blue] --> [est:green]
-```
-<!-- caption: After merges: "lowest" becomes 3 tokens -->
-
-<div class="tip-box" data-title="Result">
-
-"lowest" &rarr; `[lo, w, est]` &mdash; captures common patterns without explicit linguistic rules!
-
-</div>
-
----
+<!-- _class: scale-75 -->
 
 # BPE in practice with HuggingFace
 
@@ -393,14 +338,17 @@ Use the [Tokenization Explorer Demo](https://contextlab.github.io/llm-course/dem
 <div class="definition-box" data-title="Key difference from BPE">
 
 Instead of merging most *frequent* pair, merge pair that maximizes *likelihood*:
-$$\text{score}(x, y) = \frac{P(xy)}{P(x) \times P(y)}$$
+$$\text{score}(x, y) = \frac{P(xy)}{P(x) P(y)}$$
 
 </div>
 
 - **Used by:** BERT, DistilBERT, Electra
-- **Special tokens:** `##` prefix for continuation ("playing" → `["play", "##ing"]`)
+- **Special tokens:** `##` prefix for continuation
+
+"playing" → `["play", "##ing"]`
 
 ---
+<!-- _class: scale-60 -->
 
 # WordPiece example with BERT
 
@@ -415,7 +363,7 @@ text = "I'm learning about tokenization!"
 tokens = tokenizer.tokenize(text)
 print("Tokens:", tokens)
 # Output: ['i', "'", 'm', 'learning', 'about', 'token', '##ization', '!']
-# ^^^ Note the ##
+# ^^^ Note the ##. Also: BERT lowercases by default (unless using cased model)
 
 # Compare with longer word
 text2 = "unhappiness"
@@ -425,42 +373,34 @@ print("Tokens:", tokens2)
 # Breaks into morphological components!
 ```
 
-<div class="tip-box" data-title="Note">
-
-BERT lowercases by default (unless using cased model)
-
-</div>
-
 ---
-
 # SentencePiece works for languages without spaces
 
 <div class="note-box" data-title="Further reading">
 
-[**Kudo & Richardson (2018, *EMNLP*):**](https://aclanthology.org/D18-2012/) SentencePiece: A simple and language independent subword tokenizer
+[**Kudo & Richardson (2018, *EMNLP*):**](https://aclanthology.org/D18-2012/) SentencePiece: a simple and language independent subword tokenizer
 
 </div>
 
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
+<div class="warning-box" data-title="Problems with BPE/WordPiece">
 
-**Problem with BPE/WordPiece:**
-- Assume pre-tokenized text
-- Fail on Chinese, Japanese, Thai...
+- Assumes pre-tokenized text (spaces between words)
+- Fails on Chinese, Japanese, Thai...
 
 </div>
-<div style="flex: 1;">
 
-**SentencePiece solution:**
+<div class="example-box" data-title="SentencePiece solution">
+
 - Raw character stream input
-- Space = just another char (`▁`)
-
-</div>
-</div>
+- Spaces are just "another character" (`▁`)
 
 **Used by:** T5, ALBERT, XLNet, mT5 (multilingual models)
 
+</div>
+
+
 ---
+<!-- _class: scale-65 -->
 
 # SentencePiece in action
 
@@ -478,19 +418,15 @@ print("Tokens:", tokens)
 # ^^^ Note the for spaces
 
 # Works seamlessly with other languages!
-text_chinese = ""
+text_chinese = "这是中文"
 tokens_cn = tokenizer.tokenize(text_chinese)
 print("Chinese:", tokens_cn)
+# Output: ['这', '是', '中', '文']
 # Breaks into characters/subwords without needing pre-tokenization
 ```
 
-<div class="tip-box" data-title="Key advantage">
-
-No language-specific preprocessing required!
-
-</div>
-
 ---
+<!-- _class: scale-80 -->
 
 # Tokenization methods comparison
 
@@ -508,17 +444,26 @@ No language-specific preprocessing required!
 
 </div>
 
+<div class="example-box" data-title="Try it out!">
+
+Use the [Tokenization Explorer Demo](https://contextlab.github.io/llm-course/demos/tokenization/) to compare tokenizers interactively:
+
+- Explore how different tokenizers split the same text
+- Examine trade-offs between how different methods handle diffrent types of text (e.g., how efficiently they tokenize different passages)
+- Look at each tokenizer's vocabulary and special tokens
+
+</div>
+
 
 ---
 
-# Comparing tokenizers side-by-side
+# Comparing tokenizers side-by-side (in Python)
 
 ```python
 from transformers import AutoTokenizer
 text = "The unhappiest researchers couldn't preprocess data!"
 
-models = {"GPT-2 (BPE)": "gpt2", "BERT (WordPiece)": "bert-base-uncased",
-          "T5 (SentencePiece)": "t5-small"}
+models = {"GPT-2 (BPE)": "gpt2", "BERT (WordPiece)": "bert-base-uncased", "T5 (SentencePiece)": "t5-small"}
 
 for name, model_name in models.items():
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -528,31 +473,8 @@ for name, model_name in models.items():
 # Observe: Different handling of "unhappiest", spaces, and token counts!
 ```
 
-
 ---
-
 <!-- _class: scale-80 -->
-
-# Tokenizer comparison: Actual output
-
-**Input:** `"The unhappiest researchers couldn't preprocess data!"`
-
-| Tokenizer | Tokens | Count |
-|-----------|--------|-------|
-| **GPT-2 (BPE)** | `['The', 'Ġun', 'happ', 'iest', 'Ġresearchers', 'Ġcouldn', "'t", 'Ġpre', 'process', 'Ġdata', '!']` | 11 |
-| **BERT (WordPiece)** | `['the', 'un', '##hap', '##pie', '##st', 'researchers', 'couldn', "'", 't', 'pre', '##process', 'data', '!']` | 13 |
-| **T5 (SentencePiece)** | `['The', 'un', 'happiest', 'researchers', 'couldn', "'", 't', 'pre', 'process', 'data', '!']` | 11 |
-
-<div class="tip-box" data-title="Key observations">
-
-- `Ġ` (GPT-2) and `▁` (T5) mark word starts (spaces)
-- `##` (BERT) marks continuation subwords
-- "unhappiest" is split differently by each
-- BERT lowercases; GPT-2/T5 preserve case
-
-</div>
-
----
 
 # Tokenizers add special tokens for model-specific purposes
 
@@ -594,77 +516,20 @@ clean_decode = tokenizer.decode(encoded['input_ids'][0], skip_special_tokens=Tru
 print("Without special:", clean_decode)  # "hello world"
 ```
 
-
 ---
-
-# Vocabulary size trade-offs
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Smaller vocabulary (e.g., 10k tokens):**
-- Faster training (smaller embedding matrix)
-- Less memory
-- Longer sequences (more subwords per word)
-- May lose semantic information
-
-</div>
-<div style="flex: 1;">
-
-**Larger vocabulary (e.g., 100k tokens):**
-- Shorter sequences (closer to word-level)
-- Better semantic preservation
-- Slower training (larger embeddings)
-- More memory required
-
-</div>
-</div>
-
-<div class="tip-box" data-title="Sweet spot">
-
-30k-50k tokens for most models: **GPT-2:** 50k | **BERT:** 30k | **T5:** 32k
-
-</div>
-
----
-
 <!-- _class: scale-80 -->
 
 # Tokenization pitfalls and gotchas
 
-<div class="warning-box" data-title="Common issues to watch out for">
 
 1. **Tokenizer-model mismatch:** Always use the tokenizer that matches your model! GPT-2 tokenizer &ne; BERT tokenizer
 2. **Maximum sequence length:** BERT: 512 tokens | GPT-2: 1024 | GPT-3: 2048 &mdash; Text gets truncated if too long!
 3. **Case sensitivity:** `bert-base-uncased` lowercases everything; `bert-base-cased` preserves case
-4. **Rare words &rarr; many tokens:** "antidisestablishmentarianism" &rarr; 10+ tokens &mdash; Can hit sequence limit faster than expected!
+4. **Rare words &rarr; many tokens:** "antidisestablishmentarianism" &rarr; 10+ tokens; can hit sequence limit faster than expected!
 5. **Special characters:** Emoji, Unicode, accents may be split unexpectedly
 
-</div>
-
 ---
-
-# Debugging tokenization
-
-```python
-from transformers import AutoTokenizer
-tokenizer = AutoTokenizer.from_pretrained("gpt2")
-text = "The antidisestablishmentarianism debate continues!"
-
-tokens = tokenizer.tokenize(text)
-token_ids = tokenizer.encode(text)
-print(f"Tokens ({len(tokens)}): {tokens}\n")
-
-for i, (token, token_id) in enumerate(zip(tokens, token_ids)):
-    decoded = tokenizer.decode([token_id])
-    print(f"{i:2d}. ID {token_id:5d} | Token: {token:20s} | Decoded: {decoded}")
-
-print(f"\nVocabulary size: {tokenizer.vocab_size}")
-print(f"Special tokens: {tokenizer.all_special_tokens}")
-```
-
-
----
+<!-- _class: scale-80 -->
 
 # Connection to human language learning
 
@@ -678,93 +543,23 @@ print(f"Special tokens: {tokenizer.all_special_tokens}")
 <div style="flex: 1;">
 
 **Infant learning:**
+
 - Babies track statistical regularities in speech
 - Identify word boundaries from transitional probabilities
-- No explicit rules&mdash;just patterns from exposure!
+- No built-in rules, just patterns learned through experience!
+- Online, incremental, multimodal
 
 </div>
 <div style="flex: 1;">
 
-**Parallel with subword tokenization:**
-- BPE: Merge frequent character pairs &rarr; discover common morphemes
-- Infants: Track frequent syllable pairs &rarr; discover words
-- Both are *data-driven*, not rule-based!
+**BPE subword tokenization:**
+
+- Merge frequent character pairs, discover subwords
+- Tracks which sequences often co-occur in training data
+- No built-in rules, just patterns learned from data!
+- Offline batch processing, unimodal (text only)
 
 </div>
-</div>
-
-<div class="tip-box" data-title="Key difference">
-
-Infants: Online, real-time, multimodal (sound + context) | BPE: Batch, text-only, no grounding
-
-</div>
-
----
-
-# Statistical learning in action
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Infant Learning:**
-
-Input stream: `bidakupadotigolabu...`
-
-Learn high-probability sequences:
-- `bi-da-ku` (word)
-- `pa-do-ti` (word)
-
-Detect low-probability boundaries:
-- `ku | pa` (boundary)
-
-</div>
-<div style="flex: 1;">
-
-**BPE Learning:**
-
-Input corpus: `low low lower...`
-
-Merge high-frequency pairs:
-- `l+o` &rarr; `lo`
-- `lo+w` &rarr; `low`
-
-Build vocabulary:
-- `low, lower, lowest`
-
-</div>
-</div>
-
-<div class="tip-box" data-title="Connection">
-
-Both use distributional statistics to discover structure!
-
-</div>
-
----
-
-<!-- _class: scale-80 -->
-
-# Hands-on exercise
-
-<div class="example-box" data-title="Experiment with different tokenizers!">
-
-1. **Choose 3 models:** GPT-2, BERT, T5
-2. **Test on diverse texts:**
-   - Standard English: "The cat sat on the mat"
-   - Complex words: "antidisestablishmentarianism"
-   - Contractions: "I'm, you're, won't"
-   - Typos: "teh qiuck brown fox"
-   - Emoji: "I love this!"
-   - Other languages: "这是中文" (Chinese)
-3. **Compare results:** Number of tokens, how words are split, handling of unknown/rare words
-4. **Reflect:** Which tokenizer works best for your use case? What are the trade-offs?
-
-</div>
-
-<div class="tip-box" data-title="Try it out!">
-
-Use the [Tokenization Explorer Demo](https://contextlab.github.io/llm-course/demos/tokenization/) to compare tokenizers interactively!
-
 </div>
 
 ---
@@ -777,50 +572,29 @@ Use the [Tokenization Explorer Demo](https://contextlab.github.io/llm-course/dem
 
 1. **Linguistics vs. Statistics:** BPE discovers morphemes (un-, -ing, -ness) without linguistic rules. Is this "learning" morphology, or just pattern matching?
 
-2. **Cross-lingual tokenization:** Should we use the same tokenizer for all languages? What are the trade-offs?
+2. **Cross-lingual tokenization:** should we use the same tokenizer for all languages? What are the trade-offs?
 
-3. **Semantic preservation:** Does breaking "unhappy" into ["un", "happy"] preserve meaning? What about "butterfly"?
+3. **Semantic preservation:** does breaking "unhappy" into ["un", "happy"] preserve meaning? What about "butterfly"?
 
-4. **Human vs. machine:** Humans don't consciously tokenize words. Why do machines need to?
+4. **Human vs. machine:** humans don't consciously tokenize words. Why do machines need to?
 
-5. **Future directions:** Will we move toward character-level or byte-level models that don't need tokenization?
+5. **Future directions:** will we move toward character-level or byte-level models that don't need tokenization?
 
 </div>
 
 ---
-
-# Primary references
-
-<div class="note-box" data-title="Foundational papers">
-
-- **Sennrich, Haddow, & Birch (2016).** [Neural Machine Translation of Rare Words with Subword Units](https://aclanthology.org/P16-1162/). *ACL*. &mdash; Introduced BPE for NLP
-- **Kudo & Richardson (2018).** [SentencePiece: A simple and language independent approach](https://aclanthology.org/D18-2012/). *EMNLP*. &mdash; Language-agnostic tokenization
-- **Wu et al. (2016).** [Google's Neural Machine Translation System](https://arxiv.org/abs/1609.08144). *arXiv*. &mdash; WordPiece algorithm
-
-</div>
-
-<div class="tip-box" data-title="HuggingFace resources">
-
-- [Chapter 2.4: Tokenizers](https://huggingface.co/learn/nlp-course/chapter2/4)
-- [Chapter 6: Tokenizers (detailed)](https://huggingface.co/learn/nlp-course/chapter6)
-
-</div>
-
-
----
+<!-- _class: scale-80 -->
 
 # Key takeaways
 
-<div class="note-box" data-title="Summary">
 
-1. **Tokenization is fundamental:** Bridges raw text and neural networks
+1. **Tokenization is fundamental:** turns raw text into model-ready input
 2. **Word-level has major limitations:** OOV problem, vocabulary explosion, language-dependent
 3. **Subword tokenization is the sweet spot:** Balanced vocabulary size and sequence length
 4. **Different methods, similar principles:** BPE: frequency-based | WordPiece: likelihood | SentencePiece: language-agnostic
-5. **Statistical learning connects humans and machines:** Both discover structure from distributional patterns
-6. **Always match tokenizer to model!** Critical for correct predictions
+5. **Statistical learning connects humans and machines:** both discover structure from distributional patterns
+6. **Always match tokenizer to model!** critical for correct predictions
 
-</div>
 
 ---
 
@@ -837,9 +611,8 @@ Use the [Tokenization Explorer Demo](https://contextlab.github.io/llm-course/dem
 
 <div class="tip-box" data-title="Prepare by...">
 
+- Playing more with the [Tokenization Explorer Demo](https://contextlab.github.io/llm-course/demos/tokenization/)
 - Experimenting with HuggingFace tokenizers
-- Thinking about: How does token granularity affect downstream tasks?
-- Exploring: Tokenizer artifacts and their impact
 
 </div>
 
@@ -862,8 +635,8 @@ Use the [Tokenization Explorer Demo](https://contextlab.github.io/llm-course/dem
   </div>
 </div>
 
-<div class="tip-box" data-title="Next up">
+<div class="tip-box" data-title="Pro tip">
 
-Lecture 7 &mdash; X-Hour: Text Classification Workshop
+Remember that the ELIZA assignment is due on **Friday at 11:59 PM** &mdash; reach out if you have any questions or need help!
 
 </div>
