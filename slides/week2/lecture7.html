@@ -693,7 +693,7 @@
 
 </script>
 </head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="lecture-7-text-classification-workshop">Lecture 7: Text Classification Workshop</h1>
+<h1 id="lecture-7-text-classification-workshop">Lecture 7: Text classification workshop</h1>
 <h3 id="psyc-5107-models-of-language-and-communication">PSYC 51.07: Models of language and communication</h3>
 <p>Jeremy R. Manning<br />
 Dartmouth College<br />
@@ -705,7 +705,7 @@ Winter 2026</p>
 <ol>
 <li>Build text classifiers from scratch using scikit-learn</li>
 <li>Understand different text representation methods (BoW, TF-IDF, embeddings)</li>
-<li>Compare Naive Bayes, Logistic Regression, and Neural approaches</li>
+<li>Compare Naive Bayes, Logistic Regression, and Neural Network classifiers</li>
 <li>Evaluate classifier performance using appropriate metrics</li>
 <li>Debug common issues in text classification pipelines</li>
 </ol>
@@ -714,7 +714,7 @@ Winter 2026</p>
 <p>Hands-on coding with the 20 Newsgroups dataset</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="workshop-overview">Workshop Overview</h1>
 <div class="definition-box" data-title="Today's agenda">
 <ol>
@@ -723,15 +723,17 @@ Winter 2026</p>
 <li><strong>Part 3:</strong> Building classifiers (Naive Bayes, Logistic Regression, Neural Networks)</li>
 <li><strong>Part 4:</strong> Model comparison and analysis</li>
 <li><strong>Part 5:</strong> Error analysis and improvements</li>
-<li><strong>Part 6:</strong> Real-world considerations (class imbalance)</li>
 </ol>
 </div>
 <div class="note-box" data-title="Companion notebook">
-<p><code>xhour_classification_demo.ipynb</code></p>
+<p><a href="https://colab.research.google.com/github/contextlab/llm-course/blob/main/slides/week2/xhour_classification_demo.ipynb"><code>xhour_classification_demo.ipynb</code></a> (click to open in Colab!)</p>
+</div>
+<div class="tip-box" data-title="Let's get started!">
+<p>Let's dive in using the <em>notebook</em> instead of slides. After class, you can review these slides for reference.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="part-1-the-20-newsgroups-dataset">Part 1: The 20 Newsgroups Dataset</h1>
+<h1 id="the-20-newsgroups-dataset">The <code>20 Newsgroups</code> Dataset</h1>
 <div class="definition-box" data-title="A classic text classification benchmark">
 <ul>
 <li>Posts from 20 different newsgroups</li>
@@ -743,7 +745,7 @@ Winter 2026</p>
 <ul>
 <li><code>sci.space</code> — Science discussions about space</li>
 <li><code>rec.sport.hockey</code> — Sports discussions about hockey</li>
-<li><code>talk.politics.misc</code> — Political discussions</li>
+<li><code>misc.forsale</code> — Random items for sale</li>
 <li><code>comp.graphics</code> — Computer graphics</li>
 </ul>
 </div>
@@ -751,7 +753,7 @@ Winter 2026</p>
 <p>Relatively distinct topics for easier learning.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-60" data-theme="cdl-theme" lang="en-US" class="scale-60" style="--class:scale-60;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="loading-the-data">Loading the Data</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
 <span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">sklearn.datasets</span> <span class="hl-kn">import</span> <span class="hl-n">fetch_20newsgroups</span></span></span>
@@ -759,7 +761,7 @@ Winter 2026</p>
 <span class="line"><span class="line-num">3</span><span class="line-code"><span class="hl-n">categories</span> <span class="hl-o">=</span> <span class="hl-p">[</span></span></span>
 <span class="line"><span class="line-num">4</span><span class="line-code">    <span class="hl-s1">&#39;sci.space&#39;</span><span class="hl-p">,</span></span></span>
 <span class="line"><span class="line-num">5</span><span class="line-code">    <span class="hl-s1">&#39;rec.sport.hockey&#39;</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">    <span class="hl-s1">&#39;talk.politics.misc&#39;</span><span class="hl-p">,</span></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">    <span class="hl-s1">&#39;misc.forsale&#39;</span><span class="hl-p">,</span></span></span>
 <span class="line"><span class="line-num">7</span><span class="line-code">    <span class="hl-s1">&#39;comp.graphics&#39;</span></span></span>
 <span class="line"><span class="line-num">8</span><span class="line-code"><span class="hl-p">]</span></span></span>
 <span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
@@ -786,39 +788,37 @@ Winter 2026</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="exploring-the-data-concrete-example">Exploring the Data: Concrete Example</h1>
+<h1 id="exploring-the-data-document-counts-and-samples">Exploring the data: document counts and samples</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">import</span> <span class="hl-nn">pandas</span> <span class="hl-k">as</span> <span class="hl-nn">pd</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">collections</span> <span class="hl-kn">import</span> <span class="hl-n">Counter</span></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-c1"># Check class distribution</span></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-s2">&quot;Documents per category:&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"><span class="hl-k">for</span> <span class="hl-n">i</span><span class="hl-p">,</span> <span class="hl-n">name</span> <span class="hl-ow">in</span> <span class="hl-nb">enumerate</span><span class="hl-p">(</span><span class="hl-n">train_data</span><span class="hl-o">.</span><span class="hl-n">target_names</span><span class="hl-p">):</span></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">    <span class="hl-n">count</span> <span class="hl-o">=</span> <span class="hl-p">(</span><span class="hl-n">train_data</span><span class="hl-o">.</span><span class="hl-n">target</span> <span class="hl-o">==</span> <span class="hl-n">i</span><span class="hl-p">)</span><span class="hl-o">.</span><span class="hl-n">sum</span><span class="hl-p">()</span></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;  </span><span class="hl-si">{</span><span class="hl-n">name</span><span class="hl-si">}</span><span class="hl-s2">: </span><span class="hl-si">{</span><span class="hl-n">count</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"><span class="hl-c1"># sci.space: 593, rec.sport.hockey: 600, talk.politics.misc: 465, comp.graphics: 584</span></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"><span class="hl-c1"># Look at a sample document</span></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"><span class="hl-n">idx</span> <span class="hl-o">=</span> <span class="hl-p">[</span><span class="hl-n">i</span> <span class="hl-k">for</span> <span class="hl-n">i</span><span class="hl-p">,</span> <span class="hl-n">t</span> <span class="hl-ow">in</span> <span class="hl-nb">enumerate</span><span class="hl-p">(</span><span class="hl-n">train_data</span><span class="hl-o">.</span><span class="hl-n">target</span><span class="hl-p">)</span> <span class="hl-k">if</span> <span class="hl-n">t</span> <span class="hl-o">==</span> <span class="hl-mi">0</span><span class="hl-p">][</span><span class="hl-mi">0</span><span class="hl-p">]</span></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-n">train_data</span><span class="hl-o">.</span><span class="hl-n">data</span><span class="hl-p">[</span><span class="hl-n">idx</span><span class="hl-p">][:</span><span class="hl-mi">500</span><span class="hl-p">])</span></span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"><span class="hl-c1"># &quot;NASA announced today that the Mars rover has discovered evidence of water...&quot;</span></span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-c1"># Check class distribution</span></span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-s2">&quot;Documents per category:&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"><span class="hl-k">for</span> <span class="hl-n">i</span><span class="hl-p">,</span> <span class="hl-n">name</span> <span class="hl-ow">in</span> <span class="hl-nb">enumerate</span><span class="hl-p">(</span><span class="hl-n">train_data</span><span class="hl-o">.</span><span class="hl-n">target_names</span><span class="hl-p">):</span></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">    <span class="hl-n">count</span> <span class="hl-o">=</span> <span class="hl-p">(</span><span class="hl-n">train_data</span><span class="hl-o">.</span><span class="hl-n">target</span> <span class="hl-o">==</span> <span class="hl-n">i</span><span class="hl-p">)</span><span class="hl-o">.</span><span class="hl-n">sum</span><span class="hl-p">()</span></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;  </span><span class="hl-si">{</span><span class="hl-n">name</span><span class="hl-si">}</span><span class="hl-s2">: </span><span class="hl-si">{</span><span class="hl-n">count</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"><span class="hl-c1"># sci.space: 593, misc.forsale: 585, comp.graphics: 584, rec.sport.hockey: 600</span></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"><span class="hl-c1"># Look at a sample document</span></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-n">train_data</span><span class="hl-o">.</span><span class="hl-n">data</span><span class="hl-p">[</span><span class="hl-mi">1</span><span class="hl-p">]</span><span class="hl-o">.</span><span class="hl-n">strip</span><span class="hl-p">())</span></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"><span class="hl-c1"># Didn&#39;t one of the early jet fighters have these?...</span></span></span>
 </code></pre>
-<div class="tip-box" data-title="Notice">
-<p>Classes are roughly balanced (good!), but <code>talk.politics.misc</code> has fewer examples.</p>
+<div class="note-box" data-title="Think about it...">
+<p>In our example dataset, the classes are roughly balanced (~600 documents each). Why is this good for training classifiers?  What challenges might arise if one class had 10,000 documents and another only 100?</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="convert-text-to-numbers-for-machine-learning">Convert text to numbers for machine learning</h1>
-<div class="note-box" data-title="Three approaches today">
+<div class="note-box" data-title="Two approaches today">
 <ol>
 <li><strong>Bag of Words (BoW):</strong> Count word frequencies</li>
 <li><strong>TF-IDF:</strong> Weight by document frequency</li>
-<li><strong>Dense embeddings:</strong> (Preview for future lectures)</li>
 </ol>
+</div>
+<div class="tip-box" data-title="Think about it...">
+<p>Remember yesterday's lecture on tokenization? How might the choice of tokens (words, n-grams, subwords, characters) affect these representations?  For today, we'll use the word &quot;word&quot; to mean &quot;token&quot;. But keep in mind that other tokenization strategies could be used!</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="bag-of-words-count-how-many-times-each-word-appears">Bag of Words: count how many times each word appears</h1>
+<h1 id="bag-of-words-count-how-many-times-each-word-appears-in-each-document">Bag of Words: count how many times each word appears in each document</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
 <span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">sklearn.feature_extraction.text</span> <span class="hl-kn">import</span> <span class="hl-n">CountVectorizer</span></span></span>
 <span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
@@ -830,73 +830,39 @@ Winter 2026</p>
 <span class="line"><span class="line-num">8</span><span class="line-code"><span class="hl-p">)</span></span></span>
 <span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
 <span class="line"><span class="line-num">10</span><span class="line-code"><span class="hl-n">X_train_bow</span> <span class="hl-o">=</span> <span class="hl-n">bow_vectorizer</span><span class="hl-o">.</span><span class="hl-n">fit_transform</span><span class="hl-p">(</span><span class="hl-n">train_data</span><span class="hl-o">.</span><span class="hl-n">data</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"><span class="hl-c1"># Result: Sparse matrix of word counts</span></span></span>
 </code></pre>
-<p><strong>Result:</strong> Sparse matrix of word counts</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="bag-of-words-limitations">Bag of Words: Limitations</h1>
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-<div class="tip-box" data-title="What BoW captures">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="bag-of-words-observations-strengths-and-weaknesses">Bag of Words: observations, strengths, and weaknesses</h1>
 <ul>
-<li>Word presence/frequency</li>
-<li>Vocabulary overlap between documents</li>
+<li>Simple and effective for many tasks</li>
+<li>Captures word presence and frequency</li>
+<li>Ignores word order and context</li>
+<li>Not all words are equally informative</li>
+<li>Usually high-dimensional and sparse</li>
 </ul>
-</div>
-</div>
-<div style="flex: 1;">
-<div class="warning-box" data-title="What BoW ignores">
-<ul>
-<li>Word order (&quot;not good&quot; vs &quot;good not&quot;)</li>
-<li>Semantics (&quot;great&quot; vs &quot;excellent&quot;)</li>
-<li>Context</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="important-box" data-title="Key insight">
-<p>Common words dominate but are often uninformative!</p>
-</div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="bow-vectors-are-sparse-mostly-zeros">BoW vectors are sparse: mostly zeros</h1>
-<div class="definition-box" data-title="Example">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">sklearn.feature_extraction.text</span> <span class="hl-kn">import</span> <span class="hl-n">CountVectorizer</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"><span class="hl-n">docs</span> <span class="hl-o">=</span> <span class="hl-p">[</span><span class="hl-s2">&quot;NASA launches rocket to Mars&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;Hockey game ends in overtime&quot;</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">        <span class="hl-s2">&quot;NASA discovers water on Mars&quot;</span><span class="hl-p">]</span></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"><span class="hl-n">vectorizer</span> <span class="hl-o">=</span> <span class="hl-n">CountVectorizer</span><span class="hl-p">()</span></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"><span class="hl-n">X</span> <span class="hl-o">=</span> <span class="hl-n">vectorizer</span><span class="hl-o">.</span><span class="hl-n">fit_transform</span><span class="hl-p">(</span><span class="hl-n">docs</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-s2">&quot;Vocabulary:&quot;</span><span class="hl-p">,</span> <span class="hl-n">vectorizer</span><span class="hl-o">.</span><span class="hl-n">vocabulary_</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"><span class="hl-c1"># {&#39;nasa&#39;: 5, &#39;launches&#39;: 4, &#39;rocket&#39;: 7, &#39;to&#39;: 8, &#39;mars&#39;: 6, ...}</span></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-s2">&quot;</span><span class="hl-se">\n</span><span class="hl-s2">Document 1:&quot;</span><span class="hl-p">,</span> <span class="hl-n">X</span><span class="hl-p">[</span><span class="hl-mi">0</span><span class="hl-p">]</span><span class="hl-o">.</span><span class="hl-n">toarray</span><span class="hl-p">())</span></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"><span class="hl-c1"># [0 0 0 0 1 1 1 1 1 0 0 0 0] &lt;- counts for each word</span></span></span>
-</code></pre>
-</div>
-<div class="tip-box" data-title="Observation">
-<p>Most entries are 0 (sparse!). Documents share &quot;mars&quot; and &quot;nasa&quot;.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="method-2-tf-idf">Method 2: TF-IDF</h1>
-<div class="definition-box" data-title="Term Frequency-Inverse Document Frequency">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="term-frequency-inverse-document-frequency">Term Frequency-Inverse Document Frequency</h1>
+<div class="definition-box" data-title="TF-IDF definition">
 <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>TF-IDF</mtext><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><mi>d</mi><mo stretchy="false">)</mo><mo>=</mo><mtext>TF</mtext><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><mi>d</mi><mo stretchy="false">)</mo><mo>×</mo><mtext>IDF</mtext><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{TF-IDF}(t, d) = \text{TF}(t, d) \times \text{IDF}(t)
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">TF-IDF</span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">d</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">TF</span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">d</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">IDF</span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">)</span></span></span></span></span></p><p>where:</p>
 <ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> = term (word or token)</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> = document</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> = total number of documents</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>df</mtext><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{df}(t)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">df</span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">)</span></span></span></span> = number of documents containing term <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span></li>
 <li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>TF</mtext><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{TF}(t, d)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">TF</span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span> = frequency of term <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> in document <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span></li>
-<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>IDF</mtext><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><mi>log</mi><mo>⁡</mo><mfrac><mi>N</mi><mrow><mtext>df</mtext><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">\text{IDF}(t) = \log\frac{N}{\text{df}(t)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">IDF</span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.3923em;vertical-align:-0.52em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8723em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">df</span></span><span class="mopen mtight">(</span><span class="mord mathnormal mtight">t</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span> = inverse document frequency</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>IDF</mtext><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><mi>log</mi><mo>⁡</mo><mfrac><mi>N</mi><mrow><mtext>df</mtext><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">\text{IDF}(t) = \log\frac{N}{\text{df}(t)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">IDF</span></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.3923em;vertical-align:-0.52em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8723em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">df</span></span><span class="mopen mtight">(</span><span class="mord mathnormal mtight">t</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span> = (log) inverse document frequency</li>
 </ul>
 </div>
-<div class="tip-box" data-title="Intuition">
-<p>Downweight common words, upweight rare informative words!</p>
+<div class="note-box" data-title="The intuition">
+<p>Downweight common words, upweight rare and informative words!</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="tf-idf-in-practice">TF-IDF in Practice</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="tf-idf-in-practice">TF-IDF in practice</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
 <span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">sklearn.feature_extraction.text</span> <span class="hl-kn">import</span> <span class="hl-n">TfidfVectorizer</span></span></span>
 <span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
@@ -910,55 +876,24 @@ Winter 2026</p>
 <span class="line"><span class="line-num">10</span><span class="line-code"><span class="hl-p">)</span></span></span>
 <span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
 <span class="line"><span class="line-num">12</span><span class="line-code"><span class="hl-n">X_train_tfidf</span> <span class="hl-o">=</span> <span class="hl-n">tfidf_vectorizer</span><span class="hl-o">.</span><span class="hl-n">fit_transform</span><span class="hl-p">(</span><span class="hl-n">train_data</span><span class="hl-o">.</span><span class="hl-n">data</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"><span class="hl-c1"># Result: Sparse matrix of TF-IDF scores</span></span></span>
 </code></pre>
-<p><strong>Result:</strong> Sparse matrix of TF-IDF scores</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-78" data-theme="cdl-theme" lang="en-US" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="bow-vs-tf-idf-comparison">BoW vs TF-IDF Comparison</h1>
-<div class="example-box" data-title="Same document, different representations">
-<table>
-<thead>
-<tr>
-<th>Word</th>
-<th>BoW Count</th>
-<th>TF-IDF Score</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>&quot;the&quot;</td>
-<td>15</td>
-<td>0.02 (low — common everywhere)</td>
-</tr>
-<tr>
-<td>&quot;nasa&quot;</td>
-<td>3</td>
-<td>0.45 (high — rare, informative)</td>
-</tr>
-<tr>
-<td>&quot;space&quot;</td>
-<td>5</td>
-<td>0.38 (moderate — distinctive)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="tip-box" data-title="Key insight">
-<p>TF-IDF identifies the truly distinctive terms!</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="three-classifier-approaches-to-compare">Three classifier approaches to compare</h1>
 <div class="note-box" data-title="Today's candidates">
 <ol>
 <li><strong>Naive Bayes:</strong> Fast, probabilistic, good baseline</li>
-<li><strong>Logistic Regression:</strong> Linear, interpretable, often best</li>
-<li><strong>Neural Network:</strong> Flexible, can learn complex patterns</li>
+<li><strong>Logistic Regression:</strong> Linear, <em>interpretable</em>, performs well</li>
+<li><strong>Neural Network:</strong> Flexible, can learn complex patterns, can also overfit</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="classifier-1-naive-bayes">Classifier 1: Naive Bayes</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="naive-bayes-classifier">Naive Bayes classifier</h1>
+<div class="definition-box" data-title="Bayes' theorem">
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>y</mi><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo><mi>P</mi><mo stretchy="false">(</mo><mi>x</mi><mi mathvariant="normal">∣</mi><mi>y</mi><mo stretchy="false">)</mo></mrow><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">P(y|x) = \frac{P(y) P(x|y) }{P(x)}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mord">∣</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.363em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p></div>
 <div class="definition-box" data-title="Bayes' theorem with independence assumption">
 <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>y</mi><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo><mo>∝</mo><mi>P</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo><munderover><mo>∏</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mi mathvariant="normal">∣</mi><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(y|x) \propto P(y) \prod_{i=1}^n P(x_i|y)
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mord">∣</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.9291em;vertical-align:-1.2777em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6514em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∏</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span></span></p></div>
@@ -973,15 +908,19 @@ Winter 2026</p>
 <span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-n">nb</span><span class="hl-o">.</span><span class="hl-n">fit</span><span class="hl-p">(</span><span class="hl-n">X_train_tfidf</span><span class="hl-p">,</span> <span class="hl-n">train_data</span><span class="hl-o">.</span><span class="hl-n">target</span><span class="hl-p">)</span></span></span>
 </code></pre>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="classifier-2-logistic-regression">Classifier 2: Logistic Regression</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="logistic-regression-classifier">Logistic regression classifier</h1>
 <div class="definition-box" data-title="Learns weights for each feature">
 <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>y</mi><mo>=</mo><mi>k</mi><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><msup><mi>e</mi><mrow><msubsup><mi>w</mi><mi>k</mi><mi>T</mi></msubsup><mi>x</mi></mrow></msup><mrow><munder><mo>∑</mo><mi>j</mi></munder><msup><mi>e</mi><mrow><msubsup><mi>w</mi><mi>j</mi><mi>T</mi></msubsup><mi>x</mi></mrow></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">P(y=k|x) = \frac{e^{w_k^T x}}{\sum_{j} e^{w_j^T x}}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mord">∣</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.0228em;vertical-align:-1.3394em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6834em;"><span style="top:-2.11em;"><span class="pstrut" style="height:3.0136em;"></span><span class="mord"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.162em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4358em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.0136em;"><span style="top:-3.1306em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8329em;"><span style="top:-2.1777em;margin-left:-0.0269em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span><span style="top:-2.8448em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4612em;"><span></span></span></span></span></span></span><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.2436em;"><span class="pstrut" style="height:3.0136em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.6906em;"><span class="pstrut" style="height:3.0136em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.0064em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9191em;"><span style="top:-2.214em;margin-left:-0.0269em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-2.931em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286em;"><span></span></span></span></span></span></span><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.3394em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p></div>
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mord">∣</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.0228em;vertical-align:-1.3394em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6834em;"><span style="top:-2.11em;"><span class="pstrut" style="height:3.0136em;"></span><span class="mord"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.162em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4358em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.0136em;"><span style="top:-3.1306em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8329em;"><span style="top:-2.1777em;margin-left:-0.0269em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span><span style="top:-2.8448em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4612em;"><span></span></span></span></span></span></span><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.2436em;"><span class="pstrut" style="height:3.0136em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.6906em;"><span class="pstrut" style="height:3.0136em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.0064em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9191em;"><span style="top:-2.214em;margin-left:-0.0269em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-2.931em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286em;"><span></span></span></span></span></span></span><span class="mord mathnormal mtight">x</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.3394em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p><p>where</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">w_k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> = weight vector for class <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> = input feature vector (e.g., TF-IDF scores)</li>
+</ul>
+</div>
 <div class="tip-box" data-title="Advantages">
 <ul>
-<li>Interpretable weights (which words matter?)</li>
-<li>Often outperforms Naive Bayes</li>
+<li>Interpretable weights: which words matter?</li>
 <li>Fast training and prediction</li>
 </ul>
 </div>
@@ -992,42 +931,8 @@ Winter 2026</p>
 <span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-n">lr</span><span class="hl-o">.</span><span class="hl-n">fit</span><span class="hl-p">(</span><span class="hl-n">X_train_tfidf</span><span class="hl-p">,</span> <span class="hl-n">train_data</span><span class="hl-o">.</span><span class="hl-n">target</span><span class="hl-p">)</span></span></span>
 </code></pre>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-78" data-theme="cdl-theme" lang="en-US" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="logistic-regression-weights-reveal-which-words-matter">Logistic regression weights reveal which words matter</h1>
-<div class="example-box" data-title="Top positive features per category">
-<table>
-<thead>
-<tr>
-<th>Category</th>
-<th>Top Positive Features</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>sci.space</td>
-<td>nasa, orbit, shuttle, moon, launch</td>
-</tr>
-<tr>
-<td>rec.sport.hockey</td>
-<td>hockey, nhl, team, game, play</td>
-</tr>
-<tr>
-<td>talk.politics.misc</td>
-<td>government, president, tax, policy</td>
-</tr>
-<tr>
-<td>comp.graphics</td>
-<td>image, graphics, 3d, rendering</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="tip-box" data-title="Key insight">
-<p>The model learns what we'd expect! Interpretability matters.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="classifier-3-simple-neural-network">Classifier 3: Simple Neural Network</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-70" data-theme="cdl-theme" lang="en-US" class="scale-70" style="--class:scale-70;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="neural-network-classifier">Neural network classifier</h1>
 <div class="diagram-container">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1925 120">
   <defs>
@@ -1056,7 +961,7 @@ Winter 2026</p>
         font-weight="600" fill="#d94415" text-anchor="middle">Output (4 classes)</text>
 </svg>
 </div>
-<div class="diagram-caption">Feedforward architecture</div>
+<div class="diagram-caption">A (simple) feedforward architecture</div>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
 <span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">import</span> <span class="hl-nn">torch.nn</span> <span class="hl-k">as</span> <span class="hl-nn">nn</span></span></span>
 <span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
@@ -1068,57 +973,22 @@ Winter 2026</p>
 <span class="line"><span class="line-num">8</span><span class="line-code">        <span class="hl-bp">self</span><span class="hl-o">.</span><span class="hl-n">fc3</span> <span class="hl-o">=</span> <span class="hl-n">nn</span><span class="hl-o">.</span><span class="hl-n">Linear</span><span class="hl-p">(</span><span class="hl-n">hidden_dim</span> <span class="hl-o">//</span> <span class="hl-mi">2</span><span class="hl-p">,</span> <span class="hl-n">output_dim</span><span class="hl-p">)</span></span></span>
 <span class="line"><span class="line-num">9</span><span class="line-code">        <span class="hl-bp">self</span><span class="hl-o">.</span><span class="hl-n">dropout</span> <span class="hl-o">=</span> <span class="hl-n">nn</span><span class="hl-o">.</span><span class="hl-n">Dropout</span><span class="hl-p">(</span><span class="hl-mf">0.3</span><span class="hl-p">)</span></span></span>
 <span class="line"><span class="line-num">10</span><span class="line-code">        <span class="hl-bp">self</span><span class="hl-o">.</span><span class="hl-n">relu</span> <span class="hl-o">=</span> <span class="hl-n">nn</span><span class="hl-o">.</span><span class="hl-n">ReLU</span><span class="hl-p">()</span></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"><span class="hl-n">nn_model</span> <span class="hl-o">=</span> <span class="hl-n">TextClassifier</span><span class="hl-p">(</span><span class="hl-n">input_dim</span><span class="hl-o">=</span><span class="hl-n">X_train_tfidf</span><span class="hl-o">.</span><span class="hl-n">shape</span><span class="hl-p">[</span><span class="hl-mi">1</span><span class="hl-p">],</span> <span class="hl-n">hidden_dim</span><span class="hl-o">=</span><span class="hl-mi">256</span><span class="hl-p">,</span> <span class="hl-n">output_dim</span><span class="hl-o">=</span><span class="hl-mi">4</span><span class="hl-p">)</span></span></span>
 </code></pre>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-class="scale-78" data-theme="cdl-theme" lang="en-US" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="linear-models-are-competitive-with-bow-features">Linear models are competitive with BoW features</h1>
-<div class="example-box" data-title="Results on 20 Newsgroups">
-<table>
-<thead>
-<tr>
-<th>Model</th>
-<th>Accuracy</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Naive Bayes (BoW)</td>
-<td>~85%</td>
-</tr>
-<tr>
-<td>Naive Bayes (TF-IDF)</td>
-<td>~87%</td>
-</tr>
-<tr>
-<td>Logistic Regression</td>
-<td>~90%</td>
-</tr>
-<tr>
-<td>Neural Network</td>
-<td>~89%</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="tip-box" data-title="Key insight">
-<p>Neural networks shine with richer representations (embeddings), not BoW.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="accuracy-alone-is-not-enough">Accuracy alone is not enough</h1>
-<div class="definition-box" data-title="Better metrics">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="evaluating-classifier-performance">Evaluating classifier performance</h1>
 <ul>
-<li><strong>Precision:</strong> Of predicted positives, how many are truly positive?</li>
-<li><strong>Recall:</strong> Of actual positives, how many did we catch?</li>
-<li><strong>F1-Score:</strong> Harmonic mean: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mn>1</mn><mo>=</mo><mn>2</mn><mo>×</mo><mfrac><mrow><mi>P</mi><mi>r</mi><mi>e</mi><mi>c</mi><mi>i</mi><mi>s</mi><mi>i</mi><mi>o</mi><mi>n</mi><mo>×</mo><mi>R</mi><mi>e</mi><mi>c</mi><mi>a</mi><mi>l</mi><mi>l</mi></mrow><mrow><mi>P</mi><mi>r</mi><mi>e</mi><mi>c</mi><mi>i</mi><mi>s</mi><mi>i</mi><mi>o</mi><mi>n</mi><mo>+</mo><mi>R</mi><mi>e</mi><mi>c</mi><mi>a</mi><mi>l</mi><mi>l</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">F1 = 2 \times \frac{Precision \times Recall}{Precision + Recall}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.2834em;vertical-align:-0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8801em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight">rec</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">n</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">ec</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">ll</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight">rec</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">n</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">ec</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">ll</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></li>
+<li><strong>Accuracy:</strong> overall correctness: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>T</mi><mi>N</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>T</mi><mi>N</mi><mo>+</mo><mi>F</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\frac{TP + TN}{TP + TN + FP + FN}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2757em;vertical-align:-0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8723em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">TP</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">TN</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">FP</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">FN</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">TP</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">TN</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></li>
+<li><strong>Precision:</strong> of predicted positives, how many are truly positive?</li>
+<li><strong>Recall:</strong> of actual positives, how many did we catch?</li>
+<li><strong>F1-Score:</strong> harmonic mean: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mn>1</mn><mo>=</mo><mn>2</mn><mo>×</mo><mfrac><mrow><mi>P</mi><mi>r</mi><mi>e</mi><mi>c</mi><mi>i</mi><mi>s</mi><mi>i</mi><mi>o</mi><mi>n</mi><mo>×</mo><mi>R</mi><mi>e</mi><mi>c</mi><mi>a</mi><mi>l</mi><mi>l</mi></mrow><mrow><mi>P</mi><mi>r</mi><mi>e</mi><mi>c</mi><mi>i</mi><mi>s</mi><mi>i</mi><mi>o</mi><mi>n</mi><mo>+</mo><mi>R</mi><mi>e</mi><mi>c</mi><mi>a</mi><mi>l</mi><mi>l</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">F1 = 2 \times \frac{Precision \times Recall}{Precision + Recall}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.2834em;vertical-align:-0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8801em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight">rec</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">n</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">ec</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">ll</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight">rec</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">n</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span><span class="mord mathnormal mtight">ec</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">ll</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span> (Intuition: balances precision and recall)</li>
+<li><strong>Confusion Matrix:</strong> detailed breakdown of predicted versus actual labels</li>
 </ul>
-</div>
-<div class="warning-box" data-title="Use precision/recall/F1 when...">
-<p>Datasets are imbalanced or different errors have different costs.</p>
-</div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-class="scale-90" data-theme="cdl-theme" lang="en-US" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="confusion-matrix">Confusion Matrix</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-90" data-theme="cdl-theme" lang="en-US" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="confusion-matrix">Confusion matrix</h1>
 <div class="example-box" data-title="Visual representation of classifier errors">
 <table>
 <thead>
@@ -1166,154 +1036,42 @@ Winter 2026</p>
 <p>Diagonal = correct predictions. Off-diagonal = errors.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="error-analysis-critical-but-often-skipped">Error analysis: critical but often skipped</h1>
-<div class="note-box" data-title="The process">
 <ol>
 <li>Find misclassified examples</li>
 <li>Look for patterns</li>
 <li>Understand why the model failed</li>
 <li>Use insights to improve</li>
 </ol>
-</div>
-<div class="warning-box" data-title="Common culprits">
-<p>Mixed topics, short documents, unusual vocabulary</p>
-</div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-class="scale-75" data-theme="cdl-theme" lang="en-US" class="scale-75" style="--class:scale-75;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="error-analysis-concrete-example">Error Analysis: Concrete Example</h1>
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-c1"># Find misclassified examples</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-n">y_pred</span> <span class="hl-o">=</span> <span class="hl-n">lr</span><span class="hl-o">.</span><span class="hl-n">predict</span><span class="hl-p">(</span><span class="hl-n">X_test_tfidf</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"><span class="hl-n">errors</span> <span class="hl-o">=</span> <span class="hl-n">np</span><span class="hl-o">.</span><span class="hl-n">where</span><span class="hl-p">(</span><span class="hl-n">y_pred</span> <span class="hl-o">!=</span> <span class="hl-n">test_data</span><span class="hl-o">.</span><span class="hl-n">target</span><span class="hl-p">)[</span><span class="hl-mi">0</span><span class="hl-p">]</span></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-n">idx</span> <span class="hl-o">=</span> <span class="hl-n">errors</span><span class="hl-p">[</span><span class="hl-mi">0</span><span class="hl-p">]</span></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;True: </span><span class="hl-si">{</span><span class="hl-n">test_data</span><span class="hl-o">.</span><span class="hl-n">target_names</span><span class="hl-p">[</span><span class="hl-n">test_data</span><span class="hl-o">.</span><span class="hl-n">target</span><span class="hl-p">[</span><span class="hl-n">idx</span><span class="hl-p">]]</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;Pred: </span><span class="hl-si">{</span><span class="hl-n">test_data</span><span class="hl-o">.</span><span class="hl-n">target_names</span><span class="hl-p">[</span><span class="hl-n">y_pred</span><span class="hl-p">[</span><span class="hl-n">idx</span><span class="hl-p">]]</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-n">test_data</span><span class="hl-o">.</span><span class="hl-n">data</span><span class="hl-p">[</span><span class="hl-n">idx</span><span class="hl-p">][:</span><span class="hl-mi">300</span><span class="hl-p">])</span></span></span>
-</code></pre>
-</div>
-<div style="flex: 1;">
-<div class="example-box" data-title="Example output">
-<p><strong>True:</strong> sci.space  <strong>Predicted:</strong> comp.graphics</p>
-<p><em>&quot;I'm working on a 3D visualization of the solar system for my graphics project...&quot;</em></p>
-</div>
-<div class="tip-box" data-title="Insight">
-<p>Document mentions both graphics AND space. Model reasonably confused!</p>
-</div>
-</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="common-error-patterns">Common Error Patterns</h1>
-<div class="warning-box" data-title="Why do classifiers fail?">
-<ol>
-<li><strong>Ambiguous content:</strong> Document mentions multiple topics</li>
-<li><strong>Limited context:</strong> Very short documents</li>
-<li><strong>Domain shift:</strong> Test data differs from training</li>
-<li><strong>Rare vocabulary:</strong> Important words not in training</li>
-</ol>
-</div>
-<div class="tip-box" data-title="Solution ideas">
-<ul>
-<li>Better preprocessing</li>
-<li>More features (bigrams, trigrams)</li>
-<li>Domain-specific fine-tuning</li>
-</ul>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="class-imbalance-makes-models-predict-the-majority-class">Class imbalance makes models predict the majority class</h1>
-<div class="note-box" data-title="Solutions">
-<ol>
-<li><strong>Class weights:</strong> Penalize minority errors more</li>
-<li><strong>Oversampling:</strong> Duplicate minority examples</li>
-<li><strong>Undersampling:</strong> Remove majority examples</li>
-<li><strong>SMOTE:</strong> Generate synthetic minority examples</li>
-</ol>
-</div>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-n">lr_balanced</span> <span class="hl-o">=</span> <span class="hl-n">LogisticRegression</span><span class="hl-p">(</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">    <span class="hl-n">class_weight</span><span class="hl-o">=</span><span class="hl-s1">&#39;balanced&#39;</span>  <span class="hl-c1"># Automatically adjust weights</span></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"><span class="hl-p">)</span></span></span>
-</code></pre>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="discussion-questions">Discussion Questions</h1>
-<div class="note-box" data-title="Think about these">
-<ol>
-<li>
-<p><strong>BoW vs TF-IDF:</strong> When would you prefer one over the other?</p>
-</li>
-<li>
-<p><strong>Linear vs Neural:</strong> Why didn't the neural network significantly outperform logistic regression?</p>
-</li>
-<li>
-<p><strong>Feature Engineering:</strong> How important was feature engineering compared to model choice?</p>
-</li>
-<li>
-<p><strong>Scalability:</strong> Which approach scales best to millions of documents?</p>
-</li>
-<li>
-<p><strong>Interpretability:</strong> Which models are most interpretable? Why does it matter?</p>
-</li>
-</ol>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="key-takeaways">Key Takeaways</h1>
-<div class="tip-box" data-title="Remember">
 <ol>
 <li><strong>Good features matter more than complex models</strong> (for many tasks)</li>
 <li><strong>TF-IDF usually beats raw BoW</strong> for text classification</li>
 <li><strong>Linear models are competitive</strong> with neural networks on bag-of-words</li>
 <li><strong>Always examine errors</strong> to understand model behavior</li>
-<li><strong>Consider class imbalance</strong> and adjust accordingly</li>
+</ol>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="putting-this-weeks-lectures-into-context">Putting this week's lectures into context</h1>
+<div class="note-box" data-title="This week's pipeline so far">
+<ol>
+<li>Monday: Data cleaning (Lecture 5)</li>
+<li>Wednesday: Tokenization (Lecture 6)</li>
+<li><strong>Today:</strong> Classification (Lecture 7)</li>
+<li>Friday: POS Tagging &amp; Sentiment Analysis (Lecture 8)</li>
 </ol>
 </div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="connection-to-course-themes">Connection to Course Themes</h1>
-<div class="note-box" data-title="This week's pipeline">
-<div class="diagram-container">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2392 120">
-  <defs>
-    <symbol id="flow-arrow" viewBox="0 0 76.41 27.12">
-      <path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor" />
-    </symbol>
-  </defs>
-  <rect x="25" y="25" width="547" height="70" rx="12" ry="12"
-        fill="rgba(38, 122, 186, 0.15)" stroke="#267aba" stroke-width="3" />
-  <text x="298" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
-        font-weight="600" fill="#003c73" text-anchor="middle">Data Cleaning (Lecture 5)</text>
-  <use href="#flow-arrow" x="582" y="46" width="50" height="28" style="color: #0a2518" />
-  <rect x="642" y="25" width="528" height="70" rx="12" ry="12"
-        fill="rgba(0, 128, 128, 0.15)" stroke="#008080" stroke-width="3" />
-  <text x="906" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
-        font-weight="600" fill="#006666" text-anchor="middle">Tokenization (Lecture 6)</text>
-  <use href="#flow-arrow" x="1180" y="46" width="50" height="28" style="color: #0a2518" />
-  <rect x="1240" y="25" width="566" height="70" rx="12" ry="12"
-        fill="rgba(0, 105, 62, 0.15)" stroke="#00693e" stroke-width="3" />
-  <text x="1523" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
-        font-weight="600" fill="#00693e" text-anchor="middle">Feature Extraction (Today)</text>
-  <use href="#flow-arrow" x="1816" y="46" width="50" height="28" style="color: #0a2518" />
-  <rect x="1876" y="25" width="491" height="70" rx="12" ry="12"
-        fill="rgba(255, 160, 15, 0.15)" stroke="#ffa00f" stroke-width="3" />
-  <text x="2121" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
-        font-weight="600" fill="#d94415" text-anchor="middle">Classification (Today)</text>
-</svg>
-</div>
-</div>
-<div class="tip-box" data-title="Next lecture">
-<p><strong>POS Tagging &amp; Sentiment Analysis</strong> — How do these building blocks combine for real NLP applications?</p>
+<div class="tip-box" data-title="Up next...">
+<p><strong>Part-of-speech tagging and sentiment analysis:</strong> how do these building blocks combine for real NLP applications?</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="hands-on-exercise">Hands-On Exercise</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="hands-on-exercise">Hands-on exercise</h1>
 <div class="note-box" data-title="Open the companion notebook">
-<p><code>xhour_classification_demo.ipynb</code></p>
+<p><a href="https://colab.research.google.com/github/contextlab/llm-course/blob/main/slides/week2/xhour_classification_demo.ipynb"><code>xhour_classification_demo.ipynb</code></a></p>
 </div>
 <div class="example-box" data-title="Steps">
 <ol>
@@ -1328,34 +1086,7 @@ Winter 2026</p>
 <p>Build intuition for text classification</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="31" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="additional-resources">Additional Resources</h1>
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-<div class="note-box" data-title="Libraries">
-<ul>
-<li><a href="https://scikit-learn.org/">scikit-learn</a></li>
-<li><a href="https://pytorch.org/">PyTorch</a></li>
-</ul>
-</div>
-<div class="note-box" data-title="HuggingFace">
-<ul>
-<li><a href="https://huggingface.co/learn/nlp-course/chapter1">Chapter 1: Transformer Models</a></li>
-</ul>
-</div>
-</div>
-<div style="flex: 1;">
-<div class="example-box" data-title="Datasets">
-<ul>
-<li><strong>20 Newsgroups:</strong> Classic benchmark</li>
-<li><strong>IMDb Reviews:</strong> Sentiment classification</li>
-<li><strong>AG News:</strong> News categorization</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="32" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions-want-to-chat-more">Questions? Want to chat more?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
@@ -1371,8 +1102,8 @@ Winter 2026</p>
     <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
   </div>
 </div>
-<div class="tip-box" data-title="Next up">
-<p>Lecture 8 — POS Tagging &amp; Sentiment Analysis</p>
+<div class="tip-box" data-title="Reminder">
+<p>ELIZA assignment is due <em>tomorrow</em> at 11:59pm!</p>
 </div>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();
