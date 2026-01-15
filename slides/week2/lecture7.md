@@ -6,7 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 7: Text Classification Workshop
+# Lecture 7: Text classification workshop
 ### PSYC 51.07: Models of language and communication
 
 Jeremy R. Manning
