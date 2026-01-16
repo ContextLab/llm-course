@@ -612,6 +612,34 @@
         // into the courseData format for rendering
         // ============================================
 
+        // Course week start dates (Monday of each week) - Winter 2026
+        const COURSE_WEEK_STARTS = {
+            1: new Date('2026-01-05'),  // Week 1: Jan 5-9
+            2: new Date('2026-01-12'),  // Week 2: Jan 12-16
+            3: new Date('2026-01-19'),  // Week 3: Jan 19-23 (MLK Day Mon)
+            4: new Date('2026-01-26'),  // Week 4: Jan 26-30
+            5: new Date('2026-02-02'),  // Week 5: Feb 2-6
+            6: new Date('2026-02-09'),  // Week 6: Feb 9-13
+            7: new Date('2026-02-16'),  // Week 7: Feb 16-20
+            8: new Date('2026-02-23'),  // Week 8: Feb 23-27 (no classes)
+            9: new Date('2026-03-02'),  // Week 9: Mar 2-6
+            10: new Date('2026-03-09'), // Week 10: Mar 9
+        };
+        const COURSE_END = new Date('2026-03-14'); // Day after finals
+
+        function getCurrentWeek() {
+            const now = new Date();
+            // Before course starts, show week 1
+            if (now < COURSE_WEEK_STARTS[1]) return 1;
+            // After course ends, show week 10
+            if (now >= COURSE_END) return 10;
+            // Find the current week
+            for (let week = 10; week >= 1; week--) {
+                if (now >= COURSE_WEEK_STARTS[week]) return week;
+            }
+            return 1;
+        }
+
         function parseMarkdown(markdown) {
             const courseData = [];
             const lines = markdown.split('\n');
@@ -690,7 +718,7 @@
                         number: weekNumber,
                         title: weekTitle,
                         subtitle: '',
-                        expanded: weekNumber === 1,
+                        expanded: weekNumber === getCurrentWeek(),
                         lectures: []
                     };
                     continue;
