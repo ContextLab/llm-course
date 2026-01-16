@@ -423,9 +423,19 @@ Even modern models still struggle with sarcasm and complex negation!
 [Hugging Face Chapter 1.2: NLP Tasks with Pipeline](https://huggingface.co/learn/nlp-course/chapter1/2)
 
 </div>
+
 ---
 
-# Sentiment lexicons: words with predefined sentiment scores
+# There are essentially two types of sentiment analysis approaches
+
+- Lexicon-based methods: predefined word sentiment scores
+- Machine learning methods: statistical models (traditional or neural)
+
+---
+<!-- _class: scale-80 -->
+
+
+# Sentiment lexicons: sum up words with predefined sentiment scores
 
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1;">
@@ -453,27 +463,17 @@ Even modern models still struggle with sarcasm and complex negation!
 </div>
 </div>
 
----
+<div class="note-box" data-title="Why use lexicon-based methods?">
 
-# Lexicon-based sentiment analysis
+- Simple and interpretable
+- Fast!
+- No training data needed; "just works" out of the box
 
-```python
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-analyzer = SentimentIntensityAnalyzer()
-
-texts = ["I love this product! It's amazing!", "This is the worst experience ever.",
-         "It's okay, nothing special.", "Great food but terrible service!"]
-
-for text in texts:
-    scores = analyzer.polarity_scores(text)
-    print(f"{text}")
-    print(f"  Pos: {scores['pos']:.2f}, Neg: {scores['neg']:.2f}, Compound: {scores['compound']:.3f}\n")
-# VADER handles emoji and punctuation! "Great!!!" scores higher than "Great"
-```
+</div>
 
 ---
 
-# Modern approach: Pre-trained models
+# Neural network approaches for sentiment analysis
 
 <div class="note-box" data-title="Neural network advantages">
 
@@ -491,350 +491,15 @@ for text in texts:
 
 <div class="tip-box" data-title="Training">
 
-Fine-tune on labeled sentiment data (IMDb, Amazon reviews, etc.)
+The pre-trained model learns general language patterns, and the classification head is trained specifically for sentiment analysis using labeled sentiment data (IMDb reviews, Amazon reviews, restaurant reviews, etc.).
 
 </div>
 
----
-
-# VADER vs Neural: Head-to-head comparison
-
-<div class="note-box" data-title="Testing both approaches on the same examples">
-
-```python
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from transformers import pipeline
-
-vader = SentimentIntensityAnalyzer()
-neural = pipeline("sentiment-analysis")
-
-test_cases = [
-    "I absolutely love this product!",
-    "This is not what I expected, but in a good way",
-    "The movie was so bad it was actually hilarious",
-]
-
-for text in test_cases:
-    v_score = vader.polarity_scores(text)['compound']
-    n_result = neural(text)[0]
-    print(f"Text: {text}")
-    print(f"  VADER: {v_score:+.3f} ({'POS' if v_score > 0 else 'NEG'})")
-    print(f"  Neural: {n_result['label']} ({n_result['score']:.3f})\n")
-```
-
-</div>
-
-<div class="tip-box" data-title="Key finding">
-
-Neural models handle nuance better, but VADER is faster and interpretable.
-
-</div>
-
----
-
-# Sentiment analysis with HuggingFace
-
-```python
-from transformers import pipeline
-sentiment_analyzer = pipeline("sentiment-analysis")
-
-texts = ["I love this product! It's amazing!", "This is the worst experience ever.",
-         "It's okay, nothing special.", "I don't hate it, but I don't love it either."]
-
-for text in texts:
-    result = sentiment_analyzer(text)[0]
-    print(f"{text}")
-    print(f"  {result['label']}, Confidence: {result['score']:.3f}\n")
-# "I love this product!" → POSITIVE (0.999)
-```
-
-<div class="note-box" data-title="Further reading">
-
-[HuggingFace Chapter 1.2: NLP Tasks](https://huggingface.co/learn/nlp-course/chapter1/2)
-
-</div>
 
 ---
 <!-- _class: scale-80 -->
 
-# Domain-specific sentiment models
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="warning-box" data-title="Problem">
-
-General models miss domain-specific language
-
-</div>
-
-<div class="tip-box" data-title="Solution">
-
-Fine-tune on domain-specific data!
-
-</div>
-
-**Why it works:** Domain-specific vocabulary ("bullish" in finance = positive), different sentiment expressions, adapted conventions.
-
-</div>
-<div style="flex: 1;">
-
-| Domain | Model | Data |
-|--------|-------|------|
-| Medical | BioBERT | Patient feedback |
-| Twitter | TwitterBERT | Social posts |
-| Products | RoBERTa | Amazon reviews |
-| Movies | BERT | IMDb reviews |
-
-</div>
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Comparing general vs. domain-specific
-
-```python
-from transformers import pipeline
-general = pipeline("sentiment-analysis")
-financial = pipeline("sentiment-analysis", model="ProsusAI/finbert")
-
-texts = ["The company's earnings exceeded expectations",
-         "Revenue declined but margins improved", "Stock prices plummeted"]
-
-for text in texts:
-    gen = general(text)[0]
-    fin = financial(text)[0]
-    print(f"{text}")
-    print(f"  General: {gen['label']} ({gen['score']:.3f}) | "
-          f"Financial: {fin['label']} ({fin['score']:.3f})\n")
-# Financial model often more accurate for finance text!
-```
-
----
-<!-- _class: scale-80 -->
-
-# Fine-tuning for sentiment analysis
-
-<div class="definition-box" data-title="Process overview">
-
-1. **Start with pre-trained model** (BERT, RoBERTa) &mdash; already knows language
-2. **Prepare labeled dataset** &mdash; text + sentiment labels (pos/neg/neutral)
-3. **Add classification head** &mdash; dense layer outputting class probabilities
-4. **Fine-tune on sentiment data** &mdash; much faster than training from scratch!
-5. **Evaluate** &mdash; accuracy, precision, recall, F1-score
-
-</div>
-
-<div class="note-box" data-title="Further reading">
-
-[HuggingFace Chapter 3.2: Processing Data for Fine-tuning](https://huggingface.co/learn/nlp-course/chapter3/2)
-
-</div>
-
----
-
-# Fine-tuning example (simplified)
-
-```python
-from transformers import AutoModelForSequenceClassification, Trainer, TrainingArguments
-
-# 1. Load pre-trained model
-model = AutoModelForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=2)
-
-# 2. Define training arguments
-training_args = TrainingArguments(output_dir="./results", num_train_epochs=3,
-    per_device_train_batch_size=16, evaluation_strategy="epoch")
-
-# 3. Create Trainer and train (train_dataset, eval_dataset prepared separately)
-trainer = Trainer(model=model, args=training_args,
-    train_dataset=train_dataset, eval_dataset=eval_dataset)
-trainer.train()
-```
-
----
-<!-- _class: scale-80 -->
-
-# Evaluation metrics for sentiment analysis
-
-<div class="note-box" data-title="Beyond accuracy">
-
-- **Precision:** Of predicted positives, how many are truly positive?
-  $$\text{Precision} = \frac{TP}{TP + FP}$$
-- **Recall:** Of actual positives, how many did we catch?
-  $$\text{Recall} = \frac{TP}{TP + FN}$$
-- **F1-Score:** Harmonic mean of precision and recall
-  $$F1 = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}$$
-
-</div>
-
-<div class="tip-box" data-title="Why not just accuracy?">
-
-- Imbalanced datasets (e.g., 90% positive reviews)
-- Different costs for false positives vs. false negatives
-- F1 gives balanced view of model performance
-
-</div>
-
----
-
-# Confusion matrix example
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-|  | Predicted Positive | Predicted Negative |
-|--|-------------------|-------------------|
-| **Actual Positive** | TP = 90 | FN = 10 |
-| **Actual Negative** | FP = 5 | TN = 95 |
-
-</div>
-<div style="flex: 1;">
-
-<div class="example-box" data-title="Metrics">
-
-- **Accuracy** = (90 + 95) / 200 = 92%
-- **Precision** = 90 / 95 = 95%
-- **Recall** = 90 / 100 = 90%
-- **F1** = 2 × (0.95 × 0.90) / (0.95 + 0.90) = 92%
-
-</div>
-
-</div>
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Aspect-based sentiment analysis
-
-<div class="note-box" data-title="Problem">
-
-Reviews often mention multiple aspects with different sentiments
-
-</div>
-
-<div class="example-box" data-title="Example">
-
-"The **food was delicious** but the **service was terrible**. The **atmosphere was okay**."
-
-- Food: Positive
-- Service: Negative
-- Atmosphere: Neutral
-
-</div>
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Applications:**
-- Restaurant reviews: food, service, ambiance, price
-- Product reviews: quality, price, shipping, customer service
-- Hotel reviews: room, location, staff, cleanliness
-
-</div>
-<div style="flex: 1;">
-
-<div class="tip-box" data-title="Key insight">
-
-More nuanced than overall sentiment! Provides actionable insights.
-
-</div>
-
-</div>
-</div>
-
----
-<!-- _class: scale-75 -->
-
-# Aspect-based sentiment: Worked example
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1.2;">
-
-```python
-review = """The pasta was incredible - best I've had!
-However, we waited 45 min which was frustrating.
-Ambiance was nice but loud. Prices reasonable."""
-
-aspects = {
-    "food": ["pasta", "incredible"],    # POSITIVE
-    "service": ["waited", "frustrating"], # NEGATIVE
-    "ambiance": ["nice", "loud"],        # MIXED
-    "price": ["reasonable"]              # POSITIVE
-}
-```
-
-</div>
-<div style="flex: 0.8;">
-
-| Aspect | Sentiment |
-|--------|-----------|
-| Food | POSITIVE |
-| Service | NEGATIVE |
-| Ambiance | MIXED |
-| Price | POSITIVE |
-
-<div class="tip-box" data-title="Actionable">
-
-Focus on improving wait times!
-
-</div>
-
-</div>
-</div>
-
----
-
-# Real-world application: Product review analysis
-
-<div class="note-box" data-title="Business value">
-
-- Identify product strengths and weaknesses
-- Track sentiment trends over time
-- Compare against competitors
-- Prioritize product improvements
-
-</div>
-
-```flow
-[Collect Reviews:green] --> [Extract Aspects:blue] --> [Analyze Sentiment:orange] --> [Generate Insights:teal]
-```
-<!-- caption: Product review analysis pipeline -->
-
-<div class="example-box" data-title="Example insights">
-
-- **Product A:** Stable positive sentiment
-- **Product B:** Declining sentiment &rarr; investigate quality issues!
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Hands-on exercise
-
-<div class="tip-box" data-title="Try this yourself">
-
-1. **Collect data:**
-   - Scrape product reviews (Amazon, Yelp)
-   - Or use public dataset (IMDb, Twitter)
-2. **Compare approaches:**
-   - Lexicon-based (VADER)
-   - General pre-trained model (HuggingFace pipeline)
-   - Domain-specific model (if available)
-3. **Analyze results:**
-   - Where do models disagree?
-   - Which handles sarcasm better?
-   - Which is most accurate for your domain?
-4. **Bonus:** Fine-tune a model on your specific dataset!
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Discussion: Understanding emotion
+# Discussion: understanding emotion or "just" patterns?
 
 <div class="note-box" data-title="Philosophical questions">
 
@@ -854,57 +519,43 @@ Focus on improving wait times!
 </div>
 
 ---
+<!-- _class: scale-90 -->
 
-# Week 2: Each step builds on the previous one
+# Looking back on this week's material
 
 ```flow
 [Data Cleaning:green] --> [Tokenization:teal] --> [POS Tagging:blue] --> [Sentiment Analysis:orange]
 ```
-<!-- caption: The NLP pipeline -->
+<!-- caption: The NLP pipeline (so far!) -->
 
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-- **Data cleaning:** Remove noise
-- **Tokenization:** Break into units
-
-</div>
-<div style="flex: 1;">
-
-- **POS tagging:** Grammar structure
-- **Sentiment:** Emotional meaning
-
-</div>
-</div>
+- **Data cleaning:** reduces noise by removing unwanted elements
+- **Tokenization:** break text into units to enable more efficient processing
+- **POS tagging:** reveals grammatical structure
+- **Sentiment analysis:** extracts emotional valence and tone
 
 ---
-<!-- _class: scale-80 -->
+<!-- _class: scale-70 -->
 
 # Assignment 2: SPAM email classifier
 
-<div class="note-box" data-title="Your task">
-
-Build a classifier to detect spam emails
-
-</div>
-
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1;">
 
-**Apply this week's concepts:**
-- **Data cleaning:** Remove HTML tags, normalize text
-- **Tokenization:** Try different tokenizers (word, subword)
-- **Features:** Extract useful signals (POS patterns, sentiment?)
-- **Classification:** Train a model to identify spam
+**Apply this week's concepts**
+- **Data cleaning:** remove HTML tags and special characters, normalize text and formatting
+- **Tokenization:** try different tokenizers (word, subword)
+- **Features:** extract useful signals (POS patterns, sentiment, keywords, etc.)
+- **Classification:** train a model to identify spam vs. legitimate emails
 
 </div>
 <div style="flex: 1;">
 
-**Think about:**
-- What makes spam different from legitimate emails?
+**Think about**
+- Intuitively, what makes spam different from legitimate emails? Can you codify these differences?
 - How does preprocessing affect accuracy?
-- Can you use sentiment as a feature?
-- What about POS patterns? (e.g., spam has more imperatives?)
+- Can you create compute new features that improve performance?
+- Can you leverage POS patterns? (e.g., does spam tend to have more imperative verbs?)
+- Which model architectures work best for this task?
 
 </div>
 </div>
@@ -916,46 +567,16 @@ Build a classifier to detect spam emails
 </div>
 
 ---
-<!-- _class: scale-80 -->
+<!-- _class: scale-95 -->
 
 # Key takeaways
 
-<div class="note-box" data-title="What we learned">
-
-1. **POS tagging reveals grammatical structure** &mdash; Neural nets learn syntax, but do they "understand" it?
-2. **Sentiment analysis extracts emotional meaning** &mdash; Lexicons &rarr; neural networks; domain fine-tuning helps
-3. **Statistical learning powers modern NLP** &mdash; Models learn patterns without explicit rules
-4. **Context is crucial** &mdash; Words are ambiguous; Transformers excel at capturing context
-5. **Critical thinking matters** &mdash; Question what "understanding" means; be aware of biases
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Primary references
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**POS tagging and syntax:**
-- Linzen, Dupoux, & Goldberg (2016). Assessing the Ability of LSTMs to Learn Syntax-Sensitive Dependencies. *TACL*.
-- Warstadt et al. (2020). BLiMP: The Benchmark of Linguistic Minimal Pairs. *TACL*.
-
-**Sentiment analysis:**
-- Pang & Lee (2008). Opinion Mining and Sentiment Analysis. *Foundations and Trends in IR*.
-- Hutto & Gilbert (2014). VADER: A Parsimonious Rule-based Model for Sentiment Analysis. *ICWSM*.
-
-</div>
-<div style="flex: 1;">
-
-**HuggingFace resources:**
-- [Chapter 1.2: NLP Tasks with Pipeline](https://huggingface.co/learn/nlp-course/chapter1/2)
-- [Chapter 3.2: Processing Data for Fine-tuning](https://huggingface.co/learn/nlp-course/chapter3/2)
-- [Chapter 7.2: Token Classification](https://huggingface.co/learn/nlp-course/chapter7/2)
-
-</div>
-</div>
+- POS tagging assigns grammatical categories to words using context
+- Neural networks (RNNs, Transformers) excel at POS tagging
+- Sentiment analysis identifies emotional tone in text
+- Lexicon-based and neural network methods have different strengths
+- Challenges include sarcasm, negation, and context-dependence
+- Critical thinking about model "understanding" is essential
 
 ---
 
@@ -964,7 +585,6 @@ Build a classifier to detect spam emails
 <div class="note-box" data-title="Next topics">
 
 - Dimensionality reduction (PCA, UMAP)
-- Bag-of-words and TF-IDF
 - Word embeddings (Word2Vec, GloVe)
 - Distributional semantics
 
@@ -980,38 +600,9 @@ How can we represent word *meaning* computationally?
 
 <div class="tip-box" data-title="Prepare by">
 
-- Completing Assignment 2
-- Thinking about: What is "meaning"? How would you define it?
-- Exploring: Vector representations and semantic similarity
-
-</div>
-
----
-
-# Additional resources
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Tools and libraries:**
-- spaCy: https://spacy.io/
-- HuggingFace Transformers: https://huggingface.co/docs/transformers/
-- VADER Sentiment: https://github.com/cjhutto/vaderSentiment
-
-</div>
-<div style="flex: 1;">
-
-**Datasets:**
-- IMDb Movie Reviews: https://ai.stanford.edu/~amaas/data/sentiment/
-- Amazon Product Reviews: https://registry.opendata.aws/amazon-reviews/
-- Stanford Sentiment Treebank: https://nlp.stanford.edu/sentiment/
-
-</div>
-</div>
-
-<div class="tip-box" data-title="Interactive demos">
-
-HuggingFace Spaces: Try models in your browser! https://huggingface.co/spaces
+- Finishing Assignment 1 (due Monday!)
+- Starting Assignment 2
+- Thinking about what "meaning" is. How might you define it?
 
 </div>
 
@@ -1036,6 +627,6 @@ HuggingFace Spaces: Try models in your browser! https://huggingface.co/spaces
 
 <div class="tip-box" data-title="Congratulations!">
 
-Week 2 complete! See you in Week 3!
+Week 2 complete! Have a great weekend and see you next **Wednesday**! 🎉
 
 </div>
