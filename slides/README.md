@@ -97,7 +97,6 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Saffran et al. (1996)](https://www.science.org/doi/10.1126/science.274.5294.1926) - Statistical learning by infants
 - HuggingFace: [Chapter 7.2: Token Classification](https://huggingface.co/learn/nlp-course/chapter7/2)
 - **Assignment 2 Released:** [SPAM Classifier](https://contextlab.github.io/llm-course/assignments/assignment-2/) (Due: Jan 26, 11:59 PM EST)
-- **📝 Assignment 1 Due (Jan 19, 11:59 PM EST)**
 - 🎮 **Try it:** [POS Tagging](https://contextlab.github.io/llm-course/demos/pos-tagging/) | [Sentiment Analysis](https://contextlab.github.io/llm-course/demos/sentiment/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week2/lecture8.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture8.html)
 
@@ -106,6 +105,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ## Week 3: Text Embeddings I - Classical & Static Methods
 
 **Monday (MLK Day)**: NO CLASS - Martin Luther King Jr. Day
+- **📝 Assignment 1 Due (Jan 19, 11:59 PM EST)**
 
 **Wednesday (Lecture 9):** Classical Embeddings & Distributional Semantics
 - Latent Semantic Analysis (LSA)
@@ -133,7 +133,6 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Pennington et al. (2014)](https://aclanthology.org/D14-1162/) - GloVe
 - Reading: [Bojanowski et al. (2017)](https://arxiv.org/abs/1607.04606) - FastText
 - **Assignment 3 Released:** [Wikipedia Embeddings](https://contextlab.github.io/llm-course/assignments/assignment-3/) (Due: Feb 2, 11:59 PM EST)
-- **📝 Assignment 2 Due (Jan 26, 11:59 PM EST)**
 - 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/) | [Word Analogies](https://contextlab.github.io/llm-course/demos/analogies/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture11.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture11.html)
 
@@ -144,6 +143,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 **Monday (Lecture 12):** Contextual Embeddings
 - ELMo and contextual representations
 - Universal Sentence Encoder
+- **📝 Assignment 2 Due (Jan 26, 11:59 PM EST)**
 - Reading: [Peters et al. (2018)](https://aclanthology.org/N18-1202/) - ELMo
 - Reading: [Cer et al. (2018)](https://arxiv.org/abs/1803.11175) - USE
 - 🎮 **Try it:** [Semantic Search](https://contextlab.github.io/llm-course/demos/semantic-search/)
@@ -158,7 +158,6 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 **Friday (Lecture 14):** Cognitive Models of Semantic Representation
 - Reading: [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444)
 - **Assignment 4 Released:** [Customer Service Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-4/) (Due: Feb 9, 11:59 PM EST)
-- **📝 Assignment 3 Due (Feb 2, 11:59 PM EST)**
 - 🎮 **Try it:** [Embeddings Comparison](https://contextlab.github.io/llm-course/demos/embeddings-comparison/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture14.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture14.html)
 
@@ -169,6 +168,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 **Monday (Lecture 15):** Attention Mechanisms
 - The evolution from RNNs to attention
 - Attention mechanisms explained
+- **📝 Assignment 3 Due (Feb 2, 11:59 PM EST)**
 - Reading: [Bahdanau et al. (2015)](https://arxiv.org/abs/1409.0473) - Neural Machine Translation with Attention
 - Reading: [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) - Attention is All You Need
 - 🎮 **Try it:** [Attention Mechanism](https://contextlab.github.io/llm-course/demos/attention/)
@@ -184,7 +184,6 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 **Friday (Lecture 17):** Training Transformers
 - **Assignment 5 Released:** [Build GPT](https://contextlab.github.io/llm-course/assignments/assignment-5/) (Due: Feb 16, 11:59 PM EST)
-- **📝 Assignment 4 Due (Feb 9, 11:59 PM EST)**
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture17.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture17.html)
 ---
 
@@ -192,6 +191,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 **Monday (Lecture 18):** BERT Deep Dive
 - Bidirectional attention and masked language modeling
+- **📝 Assignment 4 Due (Feb 9, 11:59 PM EST)**
 - Reading: [Devlin et al. (2019)](https://aclanthology.org/N19-1423/) - BERT
 - HuggingFace: [Chapter 4](https://huggingface.co/learn/nlp-course/chapter4)
 - 🎮 **Try it:** [BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/bert-mlm/)
@@ -204,7 +204,6 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture19.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture19.html)
 
 **Friday (Lecture 20):** Applications of Encoder Models
-- **📝 Assignment 5 Due (Feb 16, 11:59 PM EST)**
 - **Final Project Released:** [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) (Due: Mar 9, 11:59 PM EST)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html)
 ---
@@ -213,6 +212,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 **Monday (Lecture 21):** GPT Architecture
 - Autoregressive generation
+- **📝 Assignment 5 Due (Feb 16, 11:59 PM EST)**
 - Reading: [Radford et al. (2018)](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf) - GPT-1
 - Reading: [Radford et al. (2019)](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) - GPT-2
 - 🎮 **Try it:** [GPT Playground](https://contextlab.github.io/llm-course/demos/gpt-playground/)
