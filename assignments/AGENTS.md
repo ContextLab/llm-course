@@ -33,6 +33,21 @@ assignments/
 | Web pages | `assignment-X/` | `index.html` | Detailed instructions rendered from markdown |
 | Submodules | `*-llm-course/` | Notebooks, data files | GitHub Classroom templates students fork |
 
+## GITHUB PAGES URLs
+
+Assignment instruction pages are served via GitHub Pages:
+
+| Assignment | URL |
+|------------|-----|
+| Assignment 1 | `https://contextlab.github.io/llm-course/assignments/assignment-1/` |
+| Assignment 2 | `https://contextlab.github.io/llm-course/assignments/assignment-2/` |
+| Assignment 3 | `https://contextlab.github.io/llm-course/assignments/assignment-3/` |
+| Assignment 4 | `https://contextlab.github.io/llm-course/assignments/assignment-4/` |
+| Assignment 5 | `https://contextlab.github.io/llm-course/assignments/assignment-5/` |
+| Final Project | `https://contextlab.github.io/llm-course/assignments/final-project/` |
+
+**IMPORTANT**: When linking to assignments in course materials (slides/README.md, etc.), use these GitHub Pages URLs, NOT GitHub tree URLs like `github.com/ContextLab/llm-course/tree/main/assignments/...`.
+
 ## SUBMODULE DETAILS
 
 Each submodule is a separate GitHub repo under `ContextLab/`:

@@ -41,6 +41,11 @@ Assignment template repositories are git submodules under `assignments/`:
 
 Each notebook has an "Open in Colab" badge. Students fork via GitHub Classroom, not direct clone.
 
+**Assignment instruction pages** (GitHub Pages):
+- Pattern: `https://contextlab.github.io/llm-course/assignments/assignment-X/`
+- Example: `https://contextlab.github.io/llm-course/assignments/assignment-1/`
+- Final project: `https://contextlab.github.io/llm-course/assignments/final-project/`
+
 **Submodule commands:**
 ```bash
 git submodule update --init --recursive  # Clone submodules after fresh clone
@@ -140,6 +145,6 @@ The chatbot evolution demo has multiple bot implementations:
 
 - **Demo 07 (RAG)** has known memory issues in CI. Uses `NODE_OPTIONS="--max-old-space-size=4096"`.
 - **No LSP** for JS/Python in this environment. Use explore agents for code navigation.
-- **GitHub Pages** auto-deploys on push to main. Live at `contextlab.github.io/llm-course/demos/`.
+- **GitHub Pages** auto-deploys on push to main. Live at `contextlab.github.io/llm-course/demos/` and `contextlab.github.io/llm-course/assignments/`.
 - **Fonts**: Duplicated in `/admin/` and `/fonts/`. Both needed for different build targets.
 - **notes/** is dev logs, not course notes. Don't expose to students.

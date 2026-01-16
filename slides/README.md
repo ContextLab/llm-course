@@ -157,7 +157,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 **Friday (Lecture 14):** Cognitive Models of Semantic Representation
 - Reading: [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444)
-- **Assignment 4 Released**, **Assignment 3 Due (Jan 30, 11:59 PM EST)**
+- **Assignment 4 Released:** [Customer Service Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-4/), **📝 Assignment 3 Due (Jan 30, 11:59 PM EST)**
 - 🎮 **Try it:** [Embeddings Comparison](https://contextlab.github.io/llm-course/demos/embeddings-comparison/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture14.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture14.html)
 
@@ -182,7 +182,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture16.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture16.html)
 
 **Thursday X-hour (Lecture 17):** Training Transformers
-- **Assignment 4 Due (Feb 6, 11:59 PM EST)**
+- **📝 Assignment 4 Due (Feb 6, 11:59 PM EST)**
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture17.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture17.html)
 ---
 
@@ -192,7 +192,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Bidirectional attention and masked language modeling
 - Reading: [Devlin et al. (2019)](https://aclanthology.org/N19-1423/) - BERT
 - HuggingFace: [Chapter 4](https://huggingface.co/learn/nlp-course/chapter4)
-- **Assignment 5 Released**
+- **Assignment 5 Released:** [Build GPT](https://contextlab.github.io/llm-course/assignments/assignment-5/)
 - 🎮 **Try it:** [BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/bert-mlm/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture18.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture18.html)
 
@@ -203,7 +203,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture19.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture19.html)
 
 **Thursday X-hour (Lecture 20):** Applications of Encoder Models
-- **Assignment 5 Due (Feb 13, 11:59 PM EST)**
+- **📝 Assignment 5 Due (Feb 13, 11:59 PM EST)**
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html)
 ---
 
@@ -258,7 +258,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - All teams present their work (videos + discussion)
 - Course wrap-up and reflections
 - Last day of classes
-- **📝 Final Projects Due: Mar 9, 11:59 PM EST** (all materials submitted before presentations)
+- **📝 [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) Due: Mar 9, 11:59 PM EST** (all materials submitted before presentations)
 
 ---
 
