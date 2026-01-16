@@ -97,7 +97,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Saffran et al. (1996)](https://www.science.org/doi/10.1126/science.274.5294.1926) - Statistical learning by infants
 - HuggingFace: [Chapter 7.2: Token Classification](https://huggingface.co/learn/nlp-course/chapter7/2)
 - **Assignment 2 Released:** [SPAM Classifier](https://contextlab.github.io/llm-course/assignments/assignment-2/) (Due: Jan 26, 11:59 PM EST)
-- **📝 Assignment 1 Due**
+- **📝 Assignment 1 Due (Jan 19, 11:59 PM EST)**
 - 🎮 **Try it:** [POS Tagging](https://contextlab.github.io/llm-course/demos/pos-tagging/) | [Sentiment Analysis](https://contextlab.github.io/llm-course/demos/sentiment/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week2/lecture8.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture8.html)
 
@@ -133,7 +133,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Pennington et al. (2014)](https://aclanthology.org/D14-1162/) - GloVe
 - Reading: [Bojanowski et al. (2017)](https://arxiv.org/abs/1607.04606) - FastText
 - **Assignment 3 Released:** [Wikipedia Embeddings](https://contextlab.github.io/llm-course/assignments/assignment-3/) (Due: Feb 2, 11:59 PM EST)
-- **📝 Assignment 2 Due**
+- **📝 Assignment 2 Due (Jan 26, 11:59 PM EST)**
 - 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/) | [Word Analogies](https://contextlab.github.io/llm-course/demos/analogies/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture11.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture11.html)
 
