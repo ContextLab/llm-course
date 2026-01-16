@@ -51,7 +51,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 **Thursday X-hour (Lecture 3):** ELIZA Implementation
 - ELIZA implementation: decomposition, reassembly, substitutions
 - Vibe coding best practices for building chatbots
-- **Assignment 1 Released:** [Building the ELIZA Chatbot](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%201%3A%20ELIZA) (Due: Jan 16, 11:59 PM EST)
+- **Assignment 1 Released:** [Building the ELIZA Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-1/) (Due: Jan 16, 11:59 PM EST)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week1/lecture3.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture3.html)
 
 **Friday (Lecture 4):** Rules-Based Chatbots
@@ -97,7 +97,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Warstadt et al. (2020)](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00321/96452/) - BLiMP
 - Reading: [Saffran et al. (1996)](https://www.science.org/doi/10.1126/science.274.5294.1926) - Statistical learning by infants
 - HuggingFace: [Chapter 7.2: Token Classification](https://huggingface.co/learn/nlp-course/chapter7/2)
-- **Assignment 2 Released:** [SPAM Classifier](https://github.com/ContextLab/llm-course/tree/main/assignments/Assignment%202%3A%20SPAM%20classifier) (Due: Jan 23, 11:59 PM EST)
+- **Assignment 2 Released:** [SPAM Classifier](https://contextlab.github.io/llm-course/assignments/assignment-2/) (Due: Jan 23, 11:59 PM EST)
 - **📝 Assignment 1 Due**
 - 🎮 **Try it:** [POS Tagging](https://contextlab.github.io/llm-course/demos/pos-tagging/) | [Sentiment Analysis](https://contextlab.github.io/llm-course/demos/sentiment/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week2/lecture8.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture8.html)
