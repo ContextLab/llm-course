@@ -345,11 +345,11 @@ git push
 
 | Assignment | Repository | Deadline |
 |------------|------------|----------|
-| 1: ELIZA | `ContextLab/eliza-llm-course` | Jan 16, 11:59 PM |
-| 2: SPAM Classifier | `ContextLab/spam-classifier-llm-course` | Jan 23, 11:59 PM |
-| 3: Wikipedia Embeddings | `ContextLab/embeddings-llm-course` | Jan 30, 11:59 PM |
-| 4: Customer Service Bot | `ContextLab/customer-service-bot-llm-course` | Feb 6, 11:59 PM |
-| 5: Build GPT | `ContextLab/gpt-llm-course` | Feb 13, 11:59 PM |
+| 1: ELIZA | `ContextLab/eliza-llm-course` | Jan 19, 11:59 PM |
+| 2: SPAM Classifier | `ContextLab/spam-classifier-llm-course` | Jan 26, 11:59 PM |
+| 3: Wikipedia Embeddings | `ContextLab/embeddings-llm-course` | Feb 2, 11:59 PM |
+| 4: Customer Service Bot | `ContextLab/customer-service-bot-llm-course` | Feb 9, 11:59 PM |
+| 5: Build GPT | `ContextLab/gpt-llm-course` | Feb 16, 11:59 PM |
 | Final Project | `ContextLab/final-project-llm-course` | Mar 9, 11:59 PM |
 
 All deadlines are Eastern Standard Time (EST).

@@ -51,7 +51,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 **Thursday X-hour (Lecture 3):** ELIZA Implementation
 - ELIZA implementation: decomposition, reassembly, substitutions
 - Vibe coding best practices for building chatbots
-- **Assignment 1 Released:** [Building the ELIZA Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-1/) (Due: Jan 16, 11:59 PM EST)
+- **Assignment 1 Released:** [Building the ELIZA Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-1/) (Due: Jan 19, 11:59 PM EST)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week1/lecture3.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture3.html)
 
 **Friday (Lecture 4):** Rules-Based Chatbots
@@ -97,7 +97,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Warstadt et al. (2020)](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00321/96452/) - BLiMP
 - Reading: [Saffran et al. (1996)](https://www.science.org/doi/10.1126/science.274.5294.1926) - Statistical learning by infants
 - HuggingFace: [Chapter 7.2: Token Classification](https://huggingface.co/learn/nlp-course/chapter7/2)
-- **Assignment 2 Released:** [SPAM Classifier](https://contextlab.github.io/llm-course/assignments/assignment-2/) (Due: Jan 23, 11:59 PM EST)
+- **Assignment 2 Released:** [SPAM Classifier](https://contextlab.github.io/llm-course/assignments/assignment-2/) (Due: Jan 26, 11:59 PM EST)
 - **📝 Assignment 1 Due**
 - 🎮 **Try it:** [POS Tagging](https://contextlab.github.io/llm-course/demos/pos-tagging/) | [Sentiment Analysis](https://contextlab.github.io/llm-course/demos/sentiment/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week2/lecture8.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture8.html)
@@ -157,7 +157,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 **Friday (Lecture 14):** Cognitive Models of Semantic Representation
 - Reading: [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444)
-- **Assignment 4 Released:** [Customer Service Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-4/), **📝 Assignment 3 Due (Jan 30, 11:59 PM EST)**
+- **Assignment 4 Released:** [Customer Service Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-4/), **📝 Assignment 3 Due (Feb 2, 11:59 PM EST)**
 - 🎮 **Try it:** [Embeddings Comparison](https://contextlab.github.io/llm-course/demos/embeddings-comparison/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture14.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture14.html)
 
@@ -182,7 +182,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture16.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture16.html)
 
 **Thursday X-hour (Lecture 17):** Training Transformers
-- **📝 Assignment 4 Due (Feb 6, 11:59 PM EST)**
+- **📝 Assignment 4 Due (Feb 9, 11:59 PM EST)**
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture17.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture17.html)
 ---
 
@@ -203,7 +203,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture19.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture19.html)
 
 **Thursday X-hour (Lecture 20):** Applications of Encoder Models
-- **📝 Assignment 5 Due (Feb 13, 11:59 PM EST)**
+- **📝 Assignment 5 Due (Feb 16, 11:59 PM EST)**
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html)
 ---
 

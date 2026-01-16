@@ -357,7 +357,7 @@ A complete ELIZA implementation that:
 
 <div class="warning-box" data-title="Due date">
 
-**Friday, January 16** (end of Week 2)
+**Monday, January 19** (end of Week 2)
 
 </div>
 

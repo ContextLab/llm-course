@@ -135,12 +135,12 @@ We strive to create an inclusive learning environment where all students feel su
 | Week | Dates | Topics | Assignments |
 |------|-------|--------|-------------|
 | 1 | Jan 5--9 | Introduction, Pattern Matching, ELIZA | [Assignment 1](../assignments/assignment-1/) released |
-| 2 | Jan 12--16 | Data Cleaning, Tokenization, POS Tagging | [Assignment 2](../assignments/assignment-2/) released, [Assignment 1](../assignments/assignment-1/) due (Jan 16, 11:59 PM EST) |
-| 3 | Jan 19--23 | Classic Embeddings (LSA, LDA), Word Embeddings | [Assignment 3](../assignments/assignment-3/) released, [Assignment 2](../assignments/assignment-2/) due (Jan 23, 11:59 PM EST) |
-| 4 | Jan 26--30 | Contextual Embeddings, Dimensionality Reduction | [Assignment 4](../assignments/assignment-4/) released, [Assignment 3](../assignments/assignment-3/) due (Jan 30, 11:59 PM EST) |
-| 5 | Feb 2--6 | Attention Mechanisms, Transformer Architecture | [Assignment 4](../assignments/assignment-4/) due (Feb 6, 11:59 PM EST) |
+| 2 | Jan 12--16 | Data Cleaning, Tokenization, POS Tagging | [Assignment 2](../assignments/assignment-2/) released, [Assignment 1](../assignments/assignment-1/) due (Jan 19, 11:59 PM EST) |
+| 3 | Jan 19--23 | Classic Embeddings (LSA, LDA), Word Embeddings | [Assignment 3](../assignments/assignment-3/) released, [Assignment 2](../assignments/assignment-2/) due (Jan 26, 11:59 PM EST) |
+| 4 | Jan 26--30 | Contextual Embeddings, Dimensionality Reduction | [Assignment 4](../assignments/assignment-4/) released, [Assignment 3](../assignments/assignment-3/) due (Feb 2, 11:59 PM EST) |
+| 5 | Feb 2--6 | Attention Mechanisms, Transformer Architecture | [Assignment 4](../assignments/assignment-4/) due (Feb 9, 11:59 PM EST) |
 | 6 | Feb 9--13 | BERT Deep Dive, Encoder Models | [Assignment 5](../assignments/assignment-5/) released |
-| 7 | Feb 16--20 | GPT Architecture, Scaling Up | [Assignment 5](../assignments/assignment-5/) due (Feb 13, 11:59 PM EST) |
+| 7 | Feb 16--20 | GPT Architecture, Scaling Up | [Assignment 5](../assignments/assignment-5/) due (Feb 16, 11:59 PM EST) |
 | 8 | Feb 23--27 | **No classes** (instructor away) | Work on [Final Project](../assignments/final-project/) |
 | 9 | Mar 2--6 | RAG, Mixture of Experts, Ethics | |
 | 10 | Mar 9 | Final Project Presentations | [Final Project](../assignments/final-project/) due (Mar 9, 11:59 PM EST) |
@@ -181,7 +181,7 @@ We strive to create an inclusive learning environment where all students feel su
 |-----|---------|--------|--------|-----------|
 | Mon Jan 26 | Lecture 12 | Contextual Embeddings | [HTML](../slides/week4/lecture12.html), [PDF](../slides/week4/lecture12.pdf) | [Peters et al. (2018)](https://aclanthology.org/N18-1202/), [Cer et al. (2018)](https://arxiv.org/abs/1803.11175) |
 | Wed Jan 28 | Lecture 13 | Dimensionality Reduction | [HTML](../slides/week4/lecture13.html), [PDF](../slides/week4/lecture13.pdf) | [McInnes et al. (2018)](https://arxiv.org/abs/1802.03426) |
-| Fri Jan 30 | Lecture 14 | Cognitive Models of Semantic Representation | [HTML](../slides/week4/lecture14.html), [PDF](../slides/week4/lecture14.pdf) | [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444), **[Assignment 4](../assignments/assignment-4/) Released**, **[Assignment 3](../assignments/assignment-3/) Due (Jan 30, 11:59 PM EST)** |
+| Fri Jan 30 | Lecture 14 | Cognitive Models of Semantic Representation | [HTML](../slides/week4/lecture14.html), [PDF](../slides/week4/lecture14.pdf) | [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444), **[Assignment 4](../assignments/assignment-4/) Released**, **[Assignment 3](../assignments/assignment-3/) Due (Feb 2, 11:59 PM EST)** |
 
 ### Week 5: Transformers & Attention (February 2--6)
 
@@ -189,7 +189,7 @@ We strive to create an inclusive learning environment where all students feel su
 |-----|---------|--------|--------|-----------|
 | Mon Feb 2 | Lecture 15 | Attention Mechanisms | [HTML](../slides/week5/lecture15.html), [PDF](../slides/week5/lecture15.pdf) | [Bahdanau et al. (2015)](https://arxiv.org/abs/1409.0473), [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) |
 | Wed Feb 4 | Lecture 16 | Transformer Architecture | [HTML](../slides/week5/lecture16.html), [PDF](../slides/week5/lecture16.pdf) | [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762), HuggingFace NLP Course Chapter 3 |
-| Thu Feb 6 | Lecture 17 | Training Transformers | [HTML](../slides/week5/lecture17.html), [PDF](../slides/week5/lecture17.pdf) | **[Assignment 4](../assignments/assignment-4/) Due (Feb 6, 11:59 PM EST)** |
+| Thu Feb 6 | Lecture 17 | Training Transformers | [HTML](../slides/week5/lecture17.html), [PDF](../slides/week5/lecture17.pdf) | **[Assignment 4](../assignments/assignment-4/) Due (Feb 9, 11:59 PM EST)** |
 
 ### Week 6: Encoder Models (February 9--13)
 
@@ -197,7 +197,7 @@ We strive to create an inclusive learning environment where all students feel su
 |-----|---------|--------|--------|-----------|
 | Mon Feb 9 | Lecture 18 | BERT Deep Dive | [HTML](../slides/week6/lecture18.html), [PDF](../slides/week6/lecture18.pdf) | [Devlin et al. (2019)](https://aclanthology.org/N19-1423/), HuggingFace NLP Course Chapter 4, **[Assignment 5](../assignments/assignment-5/) Released** |
 | Wed Feb 11 | Lecture 19 | BERT Variants | [HTML](../slides/week6/lecture19.html), [PDF](../slides/week6/lecture19.pdf) | [Liu et al. (2019)](https://arxiv.org/abs/1907.11692), [Sanh et al. (2019)](https://arxiv.org/abs/1910.01108) |
-| Thu Feb 13 | Lecture 20 | Applications of Encoder Models | [HTML](../slides/week6/lecture20.html), [PDF](../slides/week6/lecture20.pdf) | **[Assignment 5](../assignments/assignment-5/) Due (Feb 13, 11:59 PM EST)** |
+| Thu Feb 13 | Lecture 20 | Applications of Encoder Models | [HTML](../slides/week6/lecture20.html), [PDF](../slides/week6/lecture20.pdf) | **[Assignment 5](../assignments/assignment-5/) Due (Feb 16, 11:59 PM EST)** |
 
 ### Week 7: Decoder Models & GPT (February 16--20)
 

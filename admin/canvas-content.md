@@ -59,7 +59,7 @@ All assignments are submitted via GitHub Classroom. Each assignment page has an 
 
 ### Assignment 1: ELIZA Chatbot
 
-**Due: January 16, 11:59 PM EST | Weight: 15%**
+**Due: January 19, 11:59 PM EST | Weight: 15%**
 
 Build a pattern-matching chatbot based on Weizenbaum's classic ELIZA program (1966). You will implement string manipulation and regular expressions to create a conversational agent that simulates a Rogerian psychotherapist.
 
@@ -74,7 +74,7 @@ Build a pattern-matching chatbot based on Weizenbaum's classic ELIZA program (19
 
 ### Assignment 2: SPAM Classifier
 
-**Due: January 23, 11:59 PM EST | Weight: 15%**
+**Due: January 26, 11:59 PM EST | Weight: 15%**
 
 Develop a text classification system to identify spam messages. You will explore different feature engineering approaches, implement tokenization strategies, and evaluate classifier performance using standard metrics.
 
@@ -89,7 +89,7 @@ Develop a text classification system to identify spam messages. You will explore
 
 ### Assignment 3: Wikipedia Embeddings
 
-**Due: January 30, 11:59 PM EST | Weight: 15%**
+**Due: February 2, 11:59 PM EST | Weight: 15%**
 
 Compare different text embedding methods (LSA, Word2Vec, BERT) on Wikipedia articles. You will visualize semantic relationships in embedding space and evaluate how well different methods capture meaning.
 
@@ -104,7 +104,7 @@ Compare different text embedding methods (LSA, Word2Vec, BERT) on Wikipedia arti
 
 ### Assignment 4: Customer Service Chatbot
 
-**Due: February 6, 11:59 PM EST | Weight: 15%**
+**Due: February 9, 11:59 PM EST | Weight: 15%**
 
 Create a context-aware customer service chatbot using transformer-based models. You will implement retrieval-augmented generation to answer questions based on a knowledge base.
 
@@ -119,7 +119,7 @@ Create a context-aware customer service chatbot using transformer-based models. 
 
 ### Assignment 5: Build GPT
 
-**Due: February 13, 11:59 PM EST | Weight: 15%**
+**Due: February 16, 11:59 PM EST | Weight: 15%**
 
 Implement and train a small GPT model from scratch. You will build the transformer architecture piece by piece, including self-attention, positional encoding, and autoregressive text generation.
 
