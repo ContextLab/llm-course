@@ -1,6 +1,6 @@
 # Course Slides - Models of Language and Communication
 
-This directory contains lecture slides for all 10 weeks of the course. Each week includes **3 lectures** (Monday, Wednesday, Friday in the 10-hour slot), with slides provided in both PDF and web-viewable HTML formats.
+This directory contains lecture slides for all 10 weeks of the course. Weeks 1-2 have **4 lectures** (M/W/X-hour/F), weeks 3-7 and 9 have **3 lectures** (M/W/F, with X-hour in week 3), week 8 is off, and week 10 has final presentations. Slides are provided in both PDF and web-viewable HTML formats.
 
 **📅 Schedule:** MWF 10:10-11:15 | **📍 X-Hour:** Thursday 12:15-1:05 (first 3 weeks for makeup classes)
 
@@ -51,14 +51,13 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 **Thursday X-hour (Lecture 3):** ELIZA Implementation
 - ELIZA implementation: decomposition, reassembly, substitutions
 - Vibe coding best practices for building chatbots
-- **Assignment 1 Released:** [Building the ELIZA Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-1/) (Due: Jan 19, 11:59 PM EST)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week1/lecture3.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture3.html)
 
 **Friday (Lecture 4):** Rules-Based Chatbots
 - PARRY: simulating paranoid behavior with affect and intent modeling
 - A.L.I.C.E. and AIML: pattern-based conversation design
 - The evolution from ELIZA to modern rules-based systems
-- Assignment 1 Q&A
+- **Assignment 1 Released:** [Building the ELIZA Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-1/) (Due: Jan 19, 11:59 PM EST)
 - Reading: [Colby et al. (1971)](https://doi.org/10.1016/S0004-3702(71)80014-6) - Artificial Paranoia (PARRY)
 - Reference: [ALICE/AIML Foundation](https://www.alicebot.org/)
 - 🎮 **Try it:** [ELIZA Demo](https://contextlab.github.io/llm-course/demos/eliza/) | [Chatbot Evolution](https://contextlab.github.io/llm-course/demos/chatbot-evolution/)
@@ -106,7 +105,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 ## Week 3: Text Embeddings I - Classical & Static Methods
 
-**Monday (MLK Day):** NO CLASS - Martin Luther King Jr. Day
+**Monday (MLK Day)**: NO CLASS - Martin Luther King Jr. Day
 
 **Wednesday (Lecture 9):** Classical Embeddings & Distributional Semantics
 - Latent Semantic Analysis (LSA)
@@ -133,6 +132,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Mikolov et al. (2013b)](https://arxiv.org/abs/1310.4546) - Word2Vec (Distributed Representations)
 - Reading: [Pennington et al. (2014)](https://aclanthology.org/D14-1162/) - GloVe
 - Reading: [Bojanowski et al. (2017)](https://arxiv.org/abs/1607.04606) - FastText
+- **Assignment 3 Released:** [Wikipedia Embeddings](https://contextlab.github.io/llm-course/assignments/assignment-3/) (Due: Feb 2, 11:59 PM EST)
 - **📝 Assignment 2 Due**
 - 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/) | [Word Analogies](https://contextlab.github.io/llm-course/demos/analogies/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture11.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture11.html)
@@ -157,7 +157,8 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 **Friday (Lecture 14):** Cognitive Models of Semantic Representation
 - Reading: [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444)
-- **Assignment 4 Released:** [Customer Service Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-4/), **📝 Assignment 3 Due (Feb 2, 11:59 PM EST)**
+- **Assignment 4 Released:** [Customer Service Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-4/) (Due: Feb 9, 11:59 PM EST)
+- **📝 Assignment 3 Due (Feb 2, 11:59 PM EST)**
 - 🎮 **Try it:** [Embeddings Comparison](https://contextlab.github.io/llm-course/demos/embeddings-comparison/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture14.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture14.html)
 
@@ -181,7 +182,8 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 🎮 **Try it:** [Transformer Explorer](https://contextlab.github.io/llm-course/demos/transformer/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture16.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture16.html)
 
-**Thursday X-hour (Lecture 17):** Training Transformers
+**Friday (Lecture 17):** Training Transformers
+- **Assignment 5 Released:** [Build GPT](https://contextlab.github.io/llm-course/assignments/assignment-5/) (Due: Feb 16, 11:59 PM EST)
 - **📝 Assignment 4 Due (Feb 9, 11:59 PM EST)**
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture17.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture17.html)
 ---
@@ -192,7 +194,6 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Bidirectional attention and masked language modeling
 - Reading: [Devlin et al. (2019)](https://aclanthology.org/N19-1423/) - BERT
 - HuggingFace: [Chapter 4](https://huggingface.co/learn/nlp-course/chapter4)
-- **Assignment 5 Released:** [Build GPT](https://contextlab.github.io/llm-course/assignments/assignment-5/)
 - 🎮 **Try it:** [BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/bert-mlm/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture18.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture18.html)
 
@@ -202,8 +203,9 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Sanh et al. (2019)](https://arxiv.org/abs/1910.01108) - DistilBERT
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture19.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture19.html)
 
-**Thursday X-hour (Lecture 20):** Applications of Encoder Models
+**Friday (Lecture 20):** Applications of Encoder Models
 - **📝 Assignment 5 Due (Feb 16, 11:59 PM EST)**
+- **Final Project Released:** [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) (Due: Mar 9, 11:59 PM EST)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html)
 ---
 
@@ -258,7 +260,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - All teams present their work (videos + discussion)
 - Course wrap-up and reflections
 - Last day of classes
-- **📝 [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) Due: Mar 9, 11:59 PM EST** (all materials submitted before presentations)
+- **📝 Final Project Due (Mar 9, 11:59 PM EST)** - [Assignment Page](https://contextlab.github.io/llm-course/assignments/final-project/) (all materials submitted before presentations)
 
 ---
 
@@ -314,7 +316,7 @@ X-hours will be used in the first 3 weeks to make up for missed class time (Feb 
 - **Week 1 Thursday X-hour (Lecture 3):** ELIZA Implementation
   - ELIZA implementation: decomposition, reassembly, substitutions
   - Vibe coding best practices for building chatbots
-  - Assignment 1 kickoff
+  - Assignment 1 preview (released Friday)
   - 📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week1/xhour_eliza_demo.html)
   - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week1/lecture3.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture3.html)
 

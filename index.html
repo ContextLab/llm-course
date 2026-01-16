@@ -791,7 +791,7 @@
                 if (line.startsWith('- ') && !line.includes('Reading:') && !line.includes('\u{1F4CA}') &&
                     !line.includes('\u{1F3AE}') && !line.includes('\u{1F4D3}') && !line.includes('HuggingFace:') &&
                     !line.includes('Tutorial:') && !line.includes('Reference:') &&
-                    !line.includes('**Assignment') && !line.includes('\u{1F4DD}') && 
+                    !line.includes('**Assignment') && !line.includes('**Final Project') && !line.includes('\u{1F4DD}') && 
                     !line.includes('📊') && !line.includes('🎮') && !line.includes('📓') && !line.includes('📝')) {
                     const topic = line.substring(2).trim();
                     // Skip if it looks like a link-only line or special marker
@@ -891,6 +891,18 @@
                             due: dueMatch ? dueMatch[1] : ''
                         };
                     }
+                    continue;
+                }
+
+                // Final Project due (📝 marker with link)
+                if ((line.includes('📝') || line.includes('\u{1F4DD}')) && line.includes('Final Project Due')) {
+                    const link = parseLink(line);
+                    const dueMatch = line.match(/\(([^)]*\d{1,2}:\d{2}\s*(?:AM|PM)?\s*(?:EST|PST)?[^)]*)\)/i);
+                    currentLecture.finalProjectDue = {
+                        text: 'Final Project Due',
+                        url: link ? link.url : null,
+                        due: dueMatch ? dueMatch[1] : ''
+                    };
                     continue;
                 }
 
@@ -1020,6 +1032,19 @@
             // Assignment due
             if (lecture.assignmentDue) {
                 html += '<div class="assignment-badge due"><span class="icon"><i class="fa-regular fa-calendar-check"></i></span><span><strong>' + escapeHtml(lecture.assignmentDue) + '</strong></span></div>';
+            }
+
+            // Final Project due (with link)
+            if (lecture.finalProjectDue) {
+                html += '<div class="assignment-badge due"><span class="icon"><i class="fa-regular fa-calendar-check"></i></span><span><strong>' + escapeHtml(lecture.finalProjectDue.text);
+                if (lecture.finalProjectDue.due) {
+                    html += ' (' + escapeHtml(lecture.finalProjectDue.due) + ')';
+                }
+                html += '</strong>';
+                if (lecture.finalProjectDue.url) {
+                    html += ' - <a href="' + escapeHtml(lecture.finalProjectDue.url) + '">Assignment Page</a>';
+                }
+                html += '</span></div>';
             }
 
             html += '</div>';
