@@ -2,7 +2,7 @@
 marp: true
 theme: cdl-theme
 paginate: true
-header: 'PSYC 51.07: Models of Language and Communication'
+header: 'PSYC 51.17: Models of Language and Communication'
 footer: ''
 ---
 
@@ -11,7 +11,7 @@ footer: ''
 # Lecture 10: X-Hour Embeddings Workshop
 ## Week 3: Hands-On Dimensionality Reduction and Word Vectors
 
-**PSYC 51.07: Models of Language and Communication**
+**PSYC 51.17: Models of Language and Communication**
 
 ---
 

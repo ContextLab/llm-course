@@ -2,7 +2,7 @@
 marp: true
 theme: cdl-theme
 paginate: true
-header: 'PSYC 51.07: Models of Language and Communication'
+header: 'PSYC 51.17: Models of Language and Communication'
 footer: 'Winter 2026'
 ---
 
@@ -11,7 +11,7 @@ footer: 'Winter 2026'
 # Lecture 19: BERT Variants
 ## Week 6, Lecture 2 - Improvements and Optimizations
 
-**PSYC 51.07: Models of Language and Communication**
+**PSYC 51.17: Models of Language and Communication**
 
 Winter 2026
 

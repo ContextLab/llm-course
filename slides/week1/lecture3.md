@@ -7,7 +7,7 @@ author: Contextual Dynamics Lab
 ---
 
 # Lecture 3: ELIZA implementation
-### PSYC 51.07: Models of language and communication
+### PSYC 51.17: Models of language and communication
 
 Jeremy R. Manning
 Dartmouth College

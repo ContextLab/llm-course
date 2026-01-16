@@ -693,8 +693,8 @@
 
 </script>
 </head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="lecture-8-pos-tagging--sentiment-analysis">Lecture 8: POS Tagging &amp; Sentiment Analysis</h1>
-<h3 id="psyc-5107-models-of-language-and-communication">PSYC 51.07: Models of language and communication</h3>
+<h1 id="lecture-8-pos-tagging--sentiment-analysis">Lecture 8: POS tagging &amp; sentiment analysis</h1>
+<h3 id="psyc-5117-models-of-language-and-communication">PSYC 51.17: Models of language and communication</h3>
 <p>Jeremy R. Manning<br />
 Dartmouth College<br />
 Winter 2026</p>
@@ -822,29 +822,29 @@ Winter 2026</p>
 <h1 id="spacy-resolves-ambiguity-using-context">spaCy resolves ambiguity using context</h1>
 <div class="note-box" data-title="Code example">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">import</span> <span class="hl-nn">spacy</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-n">nlp</span> <span class="hl-o">=</span> <span class="hl-n">spacy</span><span class="hl-o">.</span><span class="hl-n">load</span><span class="hl-p">(</span><span class="hl-s2">&quot;en_core_web_sm&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">import spacy</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">nlp = spacy.load(&quot;en_core_web_sm&quot;)</span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-n">sentences</span> <span class="hl-o">=</span> <span class="hl-p">[</span></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">    <span class="hl-s2">&quot;I need to book a flight&quot;</span><span class="hl-p">,</span>      <span class="hl-c1"># book = VERB</span></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">    <span class="hl-s2">&quot;I&#39;m reading a great book&quot;</span><span class="hl-p">,</span>     <span class="hl-c1"># book = NOUN</span></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">    <span class="hl-s2">&quot;The record was broken&quot;</span><span class="hl-p">,</span>        <span class="hl-c1"># record = NOUN</span></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    <span class="hl-s2">&quot;Please record the meeting&quot;</span><span class="hl-p">,</span>    <span class="hl-c1"># record = VERB</span></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">sentences = [</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">    &quot;I need to book a flight&quot;,      # book = VERB</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">    &quot;I&#x27;m reading a great book&quot;,     # book = NOUN</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">    &quot;The record was broken&quot;,        # record = NOUN</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    &quot;Please record the meeting&quot;,    # record = VERB</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">]</span></span>
 <span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"><span class="hl-k">for</span> <span class="hl-n">sent</span> <span class="hl-ow">in</span> <span class="hl-n">sentences</span><span class="hl-p">:</span></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">    <span class="hl-n">doc</span> <span class="hl-o">=</span> <span class="hl-n">nlp</span><span class="hl-p">(</span><span class="hl-n">sent</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">    <span class="hl-k">for</span> <span class="hl-n">token</span> <span class="hl-ow">in</span> <span class="hl-n">doc</span><span class="hl-p">:</span></span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code">        <span class="hl-k">if</span> <span class="hl-n">token</span><span class="hl-o">.</span><span class="hl-n">text</span><span class="hl-o">.</span><span class="hl-n">lower</span><span class="hl-p">()</span> <span class="hl-ow">in</span> <span class="hl-p">[</span><span class="hl-s2">&quot;book&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;record&quot;</span><span class="hl-p">]:</span></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code">            <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s1">&#39;&quot;</span><span class="hl-si">{</span><span class="hl-n">sent</span><span class="hl-si">}</span><span class="hl-s1">&quot;&#39;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">            <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s1">&#39;  &quot;</span><span class="hl-si">{</span><span class="hl-n">token</span><span class="hl-o">.</span><span class="hl-n">text</span><span class="hl-si">}</span><span class="hl-s1">&quot; -&gt; </span><span class="hl-si">{</span><span class="hl-n">token</span><span class="hl-o">.</span><span class="hl-n">pos_</span><span class="hl-si">}</span><span class="hl-s1"> (</span><span class="hl-si">{</span><span class="hl-n">spacy</span><span class="hl-o">.</span><span class="hl-n">explain</span><span class="hl-p">(</span><span class="hl-n">token</span><span class="hl-o">.</span><span class="hl-n">pos_</span><span class="hl-p">)</span><span class="hl-si">}</span><span class="hl-s1">)&#39;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">for sent in sentences:</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">    doc = nlp(sent)</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">    for token in doc:</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">        if token.text.lower() in [&quot;book&quot;, &quot;record&quot;]:</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">            print(f&#x27;&quot;{sent}&quot;&#x27;)</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">            print(f&#x27;  &quot;{token.text}&quot; -&gt; {token.pos_} ({spacy.explain(token.pos_)})&#x27;)</span></span>
 </code></pre>
 <div class="code-continued-indicator">continued...</div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="spacy-resolves-ambiguity-using-context-1">spaCy resolves ambiguity using context</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="17">
-<span class="line"><span class="line-num">17</span><span class="line-code">            <span class="hl-nb">print</span><span class="hl-p">()</span></span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">            print()</span></span>
 </code></pre>
 <div class="code-continued-indicator-last">...continued</div>
 </div>
@@ -855,22 +855,22 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="pos-tagging-with-spacy">POS tagging with spaCy</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">import</span> <span class="hl-nn">spacy</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-n">nlp</span> <span class="hl-o">=</span> <span class="hl-n">spacy</span><span class="hl-o">.</span><span class="hl-n">load</span><span class="hl-p">(</span><span class="hl-s2">&quot;en_core_web_sm&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">import spacy</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">nlp = spacy.load(&quot;en_core_web_sm&quot;)</span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-n">sentence</span> <span class="hl-o">=</span> <span class="hl-s2">&quot;She will book the meeting room tomorrow&quot;</span></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"><span class="hl-n">doc</span> <span class="hl-o">=</span> <span class="hl-n">nlp</span><span class="hl-p">(</span><span class="hl-n">sentence</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">sentence = &quot;She will book the meeting room tomorrow&quot;</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">doc = nlp(sentence)</span></span>
 <span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;</span><span class="hl-si">{</span><span class="hl-s1">&#39;Word&#39;</span><span class="hl-si">:</span><span class="hl-s2">&lt;12</span><span class="hl-si">}</span><span class="hl-s2"> </span><span class="hl-si">{</span><span class="hl-s1">&#39;POS&#39;</span><span class="hl-si">:</span><span class="hl-s2">&lt;8</span><span class="hl-si">}</span><span class="hl-s2"> </span><span class="hl-si">{</span><span class="hl-s1">&#39;Tag&#39;</span><span class="hl-si">:</span><span class="hl-s2">&lt;8</span><span class="hl-si">}</span><span class="hl-s2"> </span><span class="hl-si">{</span><span class="hl-s1">&#39;Explanation&#39;</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"><span class="hl-k">for</span> <span class="hl-n">token</span> <span class="hl-ow">in</span> <span class="hl-n">doc</span><span class="hl-p">:</span></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;</span><span class="hl-si">{</span><span class="hl-n">token</span><span class="hl-o">.</span><span class="hl-n">text</span><span class="hl-si">:</span><span class="hl-s2">&lt;12</span><span class="hl-si">}</span><span class="hl-s2"> </span><span class="hl-si">{</span><span class="hl-n">token</span><span class="hl-o">.</span><span class="hl-n">pos_</span><span class="hl-si">:</span><span class="hl-s2">&lt;8</span><span class="hl-si">}</span><span class="hl-s2"> </span><span class="hl-si">{</span><span class="hl-n">token</span><span class="hl-o">.</span><span class="hl-n">tag_</span><span class="hl-si">:</span><span class="hl-s2">&lt;8</span><span class="hl-si">}</span><span class="hl-s2"> </span><span class="hl-si">{</span><span class="hl-n">spacy</span><span class="hl-o">.</span><span class="hl-n">explain</span><span class="hl-p">(</span><span class="hl-n">token</span><span class="hl-o">.</span><span class="hl-n">pos_</span><span class="hl-p">)</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">print(f&quot;{&#x27;Word&#x27;:&lt;12} {&#x27;POS&#x27;:&lt;8} {&#x27;Tag&#x27;:&lt;8} {&#x27;Explanation&#x27;}&quot;)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">for token in doc:</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    print(f&quot;{token.text:&lt;12} {token.pos_:&lt;8} {token.tag_:&lt;8} {spacy.explain(token.pos_)}&quot;)</span></span>
 <span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"><span class="hl-c1"># Output:</span></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"><span class="hl-c1"># She          PRON     PRP      pronoun, personal</span></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"><span class="hl-c1"># will         AUX      MD       verb, modal auxiliary</span></span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"><span class="hl-c1"># book         VERB     VB       verb, base form</span></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"><span class="hl-c1"># the          DET      DT       determiner</span></span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"><span class="hl-c1"># meeting      NOUN     NN       noun, singular or mass</span></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"># Output:</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"># She          PRON     PRP      pronoun, personal</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"># will         AUX      MD       verb, modal auxiliary</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"># book         VERB     VB       verb, base form</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code"># the          DET      DT       determiner</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"># meeting      NOUN     NN       noun, singular or mass</span></span>
 </code></pre>
 <div class="tip-box" data-title="Notice">
 <p>&quot;book&quot; correctly identified as VERB!</p>
@@ -992,20 +992,20 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="token-classification-with-huggingface">Token classification with HuggingFace</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">transformers</span> <span class="hl-kn">import</span> <span class="hl-n">pipeline</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-n">pos_tagger</span> <span class="hl-o">=</span> <span class="hl-n">pipeline</span><span class="hl-p">(</span><span class="hl-s2">&quot;token-classification&quot;</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">    <span class="hl-n">model</span><span class="hl-o">=</span><span class="hl-s2">&quot;vblagoje/bert-english-uncased-finetuned-pos&quot;</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">    <span class="hl-n">aggregation_strategy</span><span class="hl-o">=</span><span class="hl-s2">&quot;simple&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">pos_tagger = pipeline(&quot;token-classification&quot;,</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">    model=&quot;vblagoje/bert-english-uncased-finetuned-pos&quot;,</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">    aggregation_strategy=&quot;simple&quot;)</span></span>
 <span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"><span class="hl-n">sentence</span> <span class="hl-o">=</span> <span class="hl-s2">&quot;Apple Inc. is looking at buying a UK startup&quot;</span></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"><span class="hl-n">results</span> <span class="hl-o">=</span> <span class="hl-n">pos_tagger</span><span class="hl-p">(</span><span class="hl-n">sentence</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">sentence = &quot;Apple Inc. is looking at buying a UK startup&quot;</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">results = pos_tagger(sentence)</span></span>
 <span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"><span class="hl-k">for</span> <span class="hl-n">result</span> <span class="hl-ow">in</span> <span class="hl-n">results</span><span class="hl-p">:</span></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;</span><span class="hl-si">{</span><span class="hl-n">result</span><span class="hl-p">[</span><span class="hl-s1">&#39;word&#39;</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">&lt;15</span><span class="hl-si">}</span><span class="hl-s2"> </span><span class="hl-si">{</span><span class="hl-n">result</span><span class="hl-p">[</span><span class="hl-s1">&#39;entity_group&#39;</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">&lt;8</span><span class="hl-si">}</span><span class="hl-s2"> (</span><span class="hl-si">{</span><span class="hl-n">result</span><span class="hl-p">[</span><span class="hl-s1">&#39;score&#39;</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">.3f</span><span class="hl-si">}</span><span class="hl-s2">)&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"><span class="hl-c1"># Apple           PROPN    (0.998)</span></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"><span class="hl-c1"># Inc.            PROPN    (0.995)</span></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"><span class="hl-c1"># is              AUX      (0.999)</span></span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"><span class="hl-c1"># looking         VERB     (0.997)</span></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">for result in results:</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    print(f&quot;{result[&#x27;word&#x27;]:&lt;15} {result[&#x27;entity_group&#x27;]:&lt;8} ({result[&#x27;score&#x27;]:.3f})&quot;)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"># Apple           PROPN    (0.998)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"># Inc.            PROPN    (0.995)</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"># is              AUX      (0.999)</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"># looking         VERB     (0.997)</span></span>
 </code></pre>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://huggingface.co/learn/nlp-course/chapter7/2">HuggingFace Chapter 7.2: Token Classification</a></p>
@@ -1109,20 +1109,20 @@ Winter 2026</p>
 <h1 id="sentiment-challenges-code-examples">Sentiment challenges: Code examples</h1>
 <div class="note-box" data-title="Testing how models handle tricky cases">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">transformers</span> <span class="hl-kn">import</span> <span class="hl-n">pipeline</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-n">sentiment</span> <span class="hl-o">=</span> <span class="hl-n">pipeline</span><span class="hl-p">(</span><span class="hl-s2">&quot;sentiment-analysis&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">sentiment = pipeline(&quot;sentiment-analysis&quot;)</span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-n">tricky_cases</span> <span class="hl-o">=</span> <span class="hl-p">[</span></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">    <span class="hl-p">(</span><span class="hl-s2">&quot;Oh great, another Monday meeting&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;NEGATIVE&quot;</span><span class="hl-p">),</span>       <span class="hl-c1"># Sarcasm</span></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">    <span class="hl-p">(</span><span class="hl-s2">&quot;This movie is not bad at all&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;POSITIVE&quot;</span><span class="hl-p">),</span>           <span class="hl-c1"># Negation</span></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">    <span class="hl-p">(</span><span class="hl-s2">&quot;I don&#39;t dislike this product&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;POSITIVE&quot;</span><span class="hl-p">),</span>           <span class="hl-c1"># Double negative</span></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    <span class="hl-p">(</span><span class="hl-s2">&quot;Great camera but terrible battery life&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;MIXED&quot;</span><span class="hl-p">),</span>    <span class="hl-c1"># Mixed sentiment</span></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">tricky_cases = [</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">    (&quot;Oh great, another Monday meeting&quot;, &quot;NEGATIVE&quot;),       # Sarcasm</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">    (&quot;This movie is not bad at all&quot;, &quot;POSITIVE&quot;),           # Negation</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">    (&quot;I don&#x27;t dislike this product&quot;, &quot;POSITIVE&quot;),           # Double negative</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    (&quot;Great camera but terrible battery life&quot;, &quot;MIXED&quot;),    # Mixed sentiment</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">]</span></span>
 <span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"><span class="hl-k">for</span> <span class="hl-n">text</span><span class="hl-p">,</span> <span class="hl-n">expected</span> <span class="hl-ow">in</span> <span class="hl-n">tricky_cases</span><span class="hl-p">:</span></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">    <span class="hl-n">result</span> <span class="hl-o">=</span> <span class="hl-n">sentiment</span><span class="hl-p">(</span><span class="hl-n">text</span><span class="hl-p">)[</span><span class="hl-mi">0</span><span class="hl-p">]</span></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;</span><span class="hl-si">{</span><span class="hl-n">text</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;  Model: </span><span class="hl-si">{</span><span class="hl-n">result</span><span class="hl-p">[</span><span class="hl-s1">&#39;label&#39;</span><span class="hl-p">]</span><span class="hl-si">}</span><span class="hl-s2"> (</span><span class="hl-si">{</span><span class="hl-n">result</span><span class="hl-p">[</span><span class="hl-s1">&#39;score&#39;</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">.3f</span><span class="hl-si">}</span><span class="hl-s2">) | Expected: </span><span class="hl-si">{</span><span class="hl-n">expected</span><span class="hl-si">}</span><span class="hl-se">\n</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">for text, expected in tricky_cases:</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">    result = sentiment(text)[0]</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">    print(f&quot;{text}&quot;)</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    print(f&quot;  Model: {result[&#x27;label&#x27;]} ({result[&#x27;score&#x27;]:.3f}) | Expected: {expected}\n&quot;)</span></span>
 </code></pre>
 </div>
 <div class="tip-box" data-title="Key finding">
@@ -1179,17 +1179,17 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="lexicon-based-sentiment-analysis">Lexicon-based sentiment analysis</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">vaderSentiment.vaderSentiment</span> <span class="hl-kn">import</span> <span class="hl-n">SentimentIntensityAnalyzer</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-n">analyzer</span> <span class="hl-o">=</span> <span class="hl-n">SentimentIntensityAnalyzer</span><span class="hl-p">()</span></span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">analyzer = SentimentIntensityAnalyzer()</span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-n">texts</span> <span class="hl-o">=</span> <span class="hl-p">[</span><span class="hl-s2">&quot;I love this product! It&#39;s amazing!&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;This is the worst experience ever.&quot;</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">         <span class="hl-s2">&quot;It&#39;s okay, nothing special.&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;Great food but terrible service!&quot;</span><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">texts = [&quot;I love this product! It&#x27;s amazing!&quot;, &quot;This is the worst experience ever.&quot;,</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">         &quot;It&#x27;s okay, nothing special.&quot;, &quot;Great food but terrible service!&quot;]</span></span>
 <span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"><span class="hl-k">for</span> <span class="hl-n">text</span> <span class="hl-ow">in</span> <span class="hl-n">texts</span><span class="hl-p">:</span></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    <span class="hl-n">scores</span> <span class="hl-o">=</span> <span class="hl-n">analyzer</span><span class="hl-o">.</span><span class="hl-n">polarity_scores</span><span class="hl-p">(</span><span class="hl-n">text</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;</span><span class="hl-si">{</span><span class="hl-n">text</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;  Pos: </span><span class="hl-si">{</span><span class="hl-n">scores</span><span class="hl-p">[</span><span class="hl-s1">&#39;pos&#39;</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">.2f</span><span class="hl-si">}</span><span class="hl-s2">, Neg: </span><span class="hl-si">{</span><span class="hl-n">scores</span><span class="hl-p">[</span><span class="hl-s1">&#39;neg&#39;</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">.2f</span><span class="hl-si">}</span><span class="hl-s2">, Compound: </span><span class="hl-si">{</span><span class="hl-n">scores</span><span class="hl-p">[</span><span class="hl-s1">&#39;compound&#39;</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">.3f</span><span class="hl-si">}</span><span class="hl-se">\n</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"><span class="hl-c1"># VADER handles emoji and punctuation! &quot;Great!!!&quot; scores higher than &quot;Great&quot;</span></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">for text in texts:</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    scores = analyzer.polarity_scores(text)</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    print(f&quot;{text}&quot;)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    print(f&quot;  Pos: {scores[&#x27;pos&#x27;]:.2f}, Neg: {scores[&#x27;neg&#x27;]:.2f}, Compound: {scores[&#x27;compound&#x27;]:.3f}\n&quot;)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"># VADER handles emoji and punctuation! &quot;Great!!!&quot; scores higher than &quot;Great&quot;</span></span>
 </code></pre>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1239,30 +1239,30 @@ Winter 2026</p>
 <h1 id="vader-vs-neural-head-to-head-comparison">VADER vs Neural: Head-to-head comparison</h1>
 <div class="note-box" data-title="Testing both approaches on the same examples">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">vaderSentiment.vaderSentiment</span> <span class="hl-kn">import</span> <span class="hl-n">SentimentIntensityAnalyzer</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">transformers</span> <span class="hl-kn">import</span> <span class="hl-n">pipeline</span></span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">from transformers import pipeline</span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-n">vader</span> <span class="hl-o">=</span> <span class="hl-n">SentimentIntensityAnalyzer</span><span class="hl-p">()</span></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"><span class="hl-n">neural</span> <span class="hl-o">=</span> <span class="hl-n">pipeline</span><span class="hl-p">(</span><span class="hl-s2">&quot;sentiment-analysis&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">vader = SentimentIntensityAnalyzer()</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">neural = pipeline(&quot;sentiment-analysis&quot;)</span></span>
 <span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"><span class="hl-n">test_cases</span> <span class="hl-o">=</span> <span class="hl-p">[</span></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    <span class="hl-s2">&quot;I absolutely love this product!&quot;</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    <span class="hl-s2">&quot;This is not what I expected, but in a good way&quot;</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">    <span class="hl-s2">&quot;The movie was so bad it was actually hilarious&quot;</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">test_cases = [</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    &quot;I absolutely love this product!&quot;,</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    &quot;This is not what I expected, but in a good way&quot;,</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    &quot;The movie was so bad it was actually hilarious&quot;,</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">]</span></span>
 <span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"><span class="hl-k">for</span> <span class="hl-n">text</span> <span class="hl-ow">in</span> <span class="hl-n">test_cases</span><span class="hl-p">:</span></span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code">    <span class="hl-n">v_score</span> <span class="hl-o">=</span> <span class="hl-n">vader</span><span class="hl-o">.</span><span class="hl-n">polarity_scores</span><span class="hl-p">(</span><span class="hl-n">text</span><span class="hl-p">)[</span><span class="hl-s1">&#39;compound&#39;</span><span class="hl-p">]</span></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code">    <span class="hl-n">n_result</span> <span class="hl-o">=</span> <span class="hl-n">neural</span><span class="hl-p">(</span><span class="hl-n">text</span><span class="hl-p">)[</span><span class="hl-mi">0</span><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">for text in test_cases:</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    v_score = vader.polarity_scores(text)[&#x27;compound&#x27;]</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">    n_result = neural(text)[0]</span></span>
 </code></pre>
 <div class="code-continued-indicator">continued...</div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="vader-vs-neural-head-to-head-comparison-1">VADER vs Neural: Head-to-head comparison</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="16">
-<span class="line"><span class="line-num">16</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;Text: </span><span class="hl-si">{</span><span class="hl-n">text</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;  VADER: </span><span class="hl-si">{</span><span class="hl-n">v_score</span><span class="hl-si">:</span><span class="hl-s2">+.3f</span><span class="hl-si">}</span><span class="hl-s2"> (</span><span class="hl-si">{</span><span class="hl-s1">&#39;POS&#39;</span><span class="hl-w"> </span><span class="hl-k">if</span><span class="hl-w"> </span><span class="hl-n">v_score</span><span class="hl-w"> </span><span class="hl-o">&gt;</span><span class="hl-w"> </span><span class="hl-mi">0</span><span class="hl-w"> </span><span class="hl-k">else</span><span class="hl-w"> </span><span class="hl-s1">&#39;NEG&#39;</span><span class="hl-si">}</span><span class="hl-s2">)&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;  Neural: </span><span class="hl-si">{</span><span class="hl-n">n_result</span><span class="hl-p">[</span><span class="hl-s1">&#39;label&#39;</span><span class="hl-p">]</span><span class="hl-si">}</span><span class="hl-s2"> (</span><span class="hl-si">{</span><span class="hl-n">n_result</span><span class="hl-p">[</span><span class="hl-s1">&#39;score&#39;</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">.3f</span><span class="hl-si">}</span><span class="hl-s2">)</span><span class="hl-se">\n</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">    print(f&quot;Text: {text}&quot;)</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">    print(f&quot;  VADER: {v_score:+.3f} ({&#x27;POS&#x27; if v_score &gt; 0 else &#x27;NEG&#x27;})&quot;)</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">    print(f&quot;  Neural: {n_result[&#x27;label&#x27;]} ({n_result[&#x27;score&#x27;]:.3f})\n&quot;)</span></span>
 </code></pre>
 <div class="code-continued-indicator-last">...continued</div>
 </div>
@@ -1273,17 +1273,17 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="sentiment-analysis-with-huggingface">Sentiment analysis with HuggingFace</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">transformers</span> <span class="hl-kn">import</span> <span class="hl-n">pipeline</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-n">sentiment_analyzer</span> <span class="hl-o">=</span> <span class="hl-n">pipeline</span><span class="hl-p">(</span><span class="hl-s2">&quot;sentiment-analysis&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">sentiment_analyzer = pipeline(&quot;sentiment-analysis&quot;)</span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-n">texts</span> <span class="hl-o">=</span> <span class="hl-p">[</span><span class="hl-s2">&quot;I love this product! It&#39;s amazing!&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;This is the worst experience ever.&quot;</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">         <span class="hl-s2">&quot;It&#39;s okay, nothing special.&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;I don&#39;t hate it, but I don&#39;t love it either.&quot;</span><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">texts = [&quot;I love this product! It&#x27;s amazing!&quot;, &quot;This is the worst experience ever.&quot;,</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">         &quot;It&#x27;s okay, nothing special.&quot;, &quot;I don&#x27;t hate it, but I don&#x27;t love it either.&quot;]</span></span>
 <span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"><span class="hl-k">for</span> <span class="hl-n">text</span> <span class="hl-ow">in</span> <span class="hl-n">texts</span><span class="hl-p">:</span></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    <span class="hl-n">result</span> <span class="hl-o">=</span> <span class="hl-n">sentiment_analyzer</span><span class="hl-p">(</span><span class="hl-n">text</span><span class="hl-p">)[</span><span class="hl-mi">0</span><span class="hl-p">]</span></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;</span><span class="hl-si">{</span><span class="hl-n">text</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;  </span><span class="hl-si">{</span><span class="hl-n">result</span><span class="hl-p">[</span><span class="hl-s1">&#39;label&#39;</span><span class="hl-p">]</span><span class="hl-si">}</span><span class="hl-s2">, Confidence: </span><span class="hl-si">{</span><span class="hl-n">result</span><span class="hl-p">[</span><span class="hl-s1">&#39;score&#39;</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">.3f</span><span class="hl-si">}</span><span class="hl-se">\n</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"><span class="hl-c1"># &quot;I love this product!&quot; → POSITIVE (0.999)</span></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">for text in texts:</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    result = sentiment_analyzer(text)[0]</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    print(f&quot;{text}&quot;)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    print(f&quot;  {result[&#x27;label&#x27;]}, Confidence: {result[&#x27;score&#x27;]:.3f}\n&quot;)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"># &quot;I love this product!&quot; → POSITIVE (0.999)</span></span>
 </code></pre>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://huggingface.co/learn/nlp-course/chapter1/2">HuggingFace Chapter 1.2: NLP Tasks</a></p>
@@ -1339,20 +1339,20 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="comparing-general-vs-domain-specific">Comparing general vs. domain-specific</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">transformers</span> <span class="hl-kn">import</span> <span class="hl-n">pipeline</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-n">general</span> <span class="hl-o">=</span> <span class="hl-n">pipeline</span><span class="hl-p">(</span><span class="hl-s2">&quot;sentiment-analysis&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"><span class="hl-n">financial</span> <span class="hl-o">=</span> <span class="hl-n">pipeline</span><span class="hl-p">(</span><span class="hl-s2">&quot;sentiment-analysis&quot;</span><span class="hl-p">,</span> <span class="hl-n">model</span><span class="hl-o">=</span><span class="hl-s2">&quot;ProsusAI/finbert&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">general = pipeline(&quot;sentiment-analysis&quot;)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">financial = pipeline(&quot;sentiment-analysis&quot;, model=&quot;ProsusAI/finbert&quot;)</span></span>
 <span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"><span class="hl-n">texts</span> <span class="hl-o">=</span> <span class="hl-p">[</span><span class="hl-s2">&quot;The company&#39;s earnings exceeded expectations&quot;</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">         <span class="hl-s2">&quot;Revenue declined but margins improved&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;Stock prices plummeted&quot;</span><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">texts = [&quot;The company&#x27;s earnings exceeded expectations&quot;,</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">         &quot;Revenue declined but margins improved&quot;, &quot;Stock prices plummeted&quot;]</span></span>
 <span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"><span class="hl-k">for</span> <span class="hl-n">text</span> <span class="hl-ow">in</span> <span class="hl-n">texts</span><span class="hl-p">:</span></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    <span class="hl-n">gen</span> <span class="hl-o">=</span> <span class="hl-n">general</span><span class="hl-p">(</span><span class="hl-n">text</span><span class="hl-p">)[</span><span class="hl-mi">0</span><span class="hl-p">]</span></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">    <span class="hl-n">fin</span> <span class="hl-o">=</span> <span class="hl-n">financial</span><span class="hl-p">(</span><span class="hl-n">text</span><span class="hl-p">)[</span><span class="hl-mi">0</span><span class="hl-p">]</span></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;</span><span class="hl-si">{</span><span class="hl-n">text</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;  General: </span><span class="hl-si">{</span><span class="hl-n">gen</span><span class="hl-p">[</span><span class="hl-s1">&#39;label&#39;</span><span class="hl-p">]</span><span class="hl-si">}</span><span class="hl-s2"> (</span><span class="hl-si">{</span><span class="hl-n">gen</span><span class="hl-p">[</span><span class="hl-s1">&#39;score&#39;</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">.3f</span><span class="hl-si">}</span><span class="hl-s2">) | &quot;</span></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">          <span class="hl-sa">f</span><span class="hl-s2">&quot;Financial: </span><span class="hl-si">{</span><span class="hl-n">fin</span><span class="hl-p">[</span><span class="hl-s1">&#39;label&#39;</span><span class="hl-p">]</span><span class="hl-si">}</span><span class="hl-s2"> (</span><span class="hl-si">{</span><span class="hl-n">fin</span><span class="hl-p">[</span><span class="hl-s1">&#39;score&#39;</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">.3f</span><span class="hl-si">}</span><span class="hl-s2">)</span><span class="hl-se">\n</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"><span class="hl-c1"># Financial model often more accurate for finance text!</span></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">for text in texts:</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    gen = general(text)[0]</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    fin = financial(text)[0]</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">    print(f&quot;{text}&quot;)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">    print(f&quot;  General: {gen[&#x27;label&#x27;]} ({gen[&#x27;score&#x27;]:.3f}) | &quot;</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">          f&quot;Financial: {fin[&#x27;label&#x27;]} ({fin[&#x27;score&#x27;]:.3f})\n&quot;)</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"># Financial model often more accurate for finance text!</span></span>
 </code></pre>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1373,19 +1373,19 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="fine-tuning-example-simplified">Fine-tuning example (simplified)</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span> <span class="hl-nn">transformers</span> <span class="hl-kn">import</span> <span class="hl-n">AutoModelForSequenceClassification</span><span class="hl-p">,</span> <span class="hl-n">Trainer</span><span class="hl-p">,</span> <span class="hl-n">TrainingArguments</span></span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import AutoModelForSequenceClassification, Trainer, TrainingArguments</span></span>
 <span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"><span class="hl-c1"># 1. Load pre-trained model</span></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-n">model</span> <span class="hl-o">=</span> <span class="hl-n">AutoModelForSequenceClassification</span><span class="hl-o">.</span><span class="hl-n">from_pretrained</span><span class="hl-p">(</span><span class="hl-s2">&quot;bert-base-uncased&quot;</span><span class="hl-p">,</span> <span class="hl-n">num_labels</span><span class="hl-o">=</span><span class="hl-mi">2</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"># 1. Load pre-trained model</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">model = AutoModelForSequenceClassification.from_pretrained(&quot;bert-base-uncased&quot;, num_labels=2)</span></span>
 <span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"><span class="hl-c1"># 2. Define training arguments</span></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"><span class="hl-n">training_args</span> <span class="hl-o">=</span> <span class="hl-n">TrainingArguments</span><span class="hl-p">(</span><span class="hl-n">output_dir</span><span class="hl-o">=</span><span class="hl-s2">&quot;./results&quot;</span><span class="hl-p">,</span> <span class="hl-n">num_train_epochs</span><span class="hl-o">=</span><span class="hl-mi">3</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    <span class="hl-n">per_device_train_batch_size</span><span class="hl-o">=</span><span class="hl-mi">16</span><span class="hl-p">,</span> <span class="hl-n">evaluation_strategy</span><span class="hl-o">=</span><span class="hl-s2">&quot;epoch&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"># 2. Define training arguments</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">training_args = TrainingArguments(output_dir=&quot;./results&quot;, num_train_epochs=3,</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    per_device_train_batch_size=16, evaluation_strategy=&quot;epoch&quot;)</span></span>
 <span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"><span class="hl-c1"># 3. Create Trainer and train (train_dataset, eval_dataset prepared separately)</span></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"><span class="hl-n">trainer</span> <span class="hl-o">=</span> <span class="hl-n">Trainer</span><span class="hl-p">(</span><span class="hl-n">model</span><span class="hl-o">=</span><span class="hl-n">model</span><span class="hl-p">,</span> <span class="hl-n">args</span><span class="hl-o">=</span><span class="hl-n">training_args</span><span class="hl-p">,</span></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">    <span class="hl-n">train_dataset</span><span class="hl-o">=</span><span class="hl-n">train_dataset</span><span class="hl-p">,</span> <span class="hl-n">eval_dataset</span><span class="hl-o">=</span><span class="hl-n">eval_dataset</span><span class="hl-p">)</span></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"><span class="hl-n">trainer</span><span class="hl-o">.</span><span class="hl-n">train</span><span class="hl-p">()</span></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"># 3. Create Trainer and train (train_dataset, eval_dataset prepared separately)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">trainer = Trainer(model=model, args=training_args,</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">    train_dataset=train_dataset, eval_dataset=eval_dataset)</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">trainer.train()</span></span>
 </code></pre>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1480,16 +1480,16 @@ Winter 2026</p>
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1.2;">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-n">review</span> <span class="hl-o">=</span> <span class="hl-s2">&quot;&quot;&quot;The pasta was incredible - best I&#39;ve had!</span></span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-n">However</span><span class="hl-p">,</span> <span class="hl-n">we</span> <span class="hl-n">waited</span> <span class="hl-mi">45</span> <span class="hl-nb">min</span> <span class="hl-n">which</span> <span class="hl-n">was</span> <span class="hl-n">frustrating</span><span class="hl-o">.</span></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"><span class="hl-n">Ambiance</span> <span class="hl-n">was</span> <span class="hl-n">nice</span> <span class="hl-n">but</span> <span class="hl-n">loud</span><span class="hl-o">.</span> <span class="hl-n">Prices</span> <span class="hl-n">reasonable</span><span class="hl-o">.</span><span class="hl-s2">&quot;&quot;&quot;</span></span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">review = &quot;&quot;&quot;The pasta was incredible - best I&#x27;ve had!</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">However, we waited 45 min which was frustrating.</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">Ambiance was nice but loud. Prices reasonable.&quot;&quot;&quot;</span></span>
 <span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"><span class="hl-n">aspects</span> <span class="hl-o">=</span> <span class="hl-p">{</span></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">    <span class="hl-s2">&quot;food&quot;</span><span class="hl-p">:</span> <span class="hl-p">[</span><span class="hl-s2">&quot;pasta&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;incredible&quot;</span><span class="hl-p">],</span>    <span class="hl-c1"># POSITIVE</span></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">    <span class="hl-s2">&quot;service&quot;</span><span class="hl-p">:</span> <span class="hl-p">[</span><span class="hl-s2">&quot;waited&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;frustrating&quot;</span><span class="hl-p">],</span> <span class="hl-c1"># NEGATIVE</span></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    <span class="hl-s2">&quot;ambiance&quot;</span><span class="hl-p">:</span> <span class="hl-p">[</span><span class="hl-s2">&quot;nice&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;loud&quot;</span><span class="hl-p">],</span>        <span class="hl-c1"># MIXED</span></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    <span class="hl-s2">&quot;price&quot;</span><span class="hl-p">:</span> <span class="hl-p">[</span><span class="hl-s2">&quot;reasonable&quot;</span><span class="hl-p">]</span>              <span class="hl-c1"># POSITIVE</span></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"><span class="hl-p">}</span></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">aspects = {</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">    &quot;food&quot;: [&quot;pasta&quot;, &quot;incredible&quot;],    # POSITIVE</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">    &quot;service&quot;: [&quot;waited&quot;, &quot;frustrating&quot;], # NEGATIVE</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    &quot;ambiance&quot;: [&quot;nice&quot;, &quot;loud&quot;],        # MIXED</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    &quot;price&quot;: [&quot;reasonable&quot;]              # POSITIVE</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">}</span></span>
 </code></pre>
 </div>
 <div style="flex: 0.8;">

@@ -2,7 +2,7 @@
 marp: true
 theme: cdl-theme
 paginate: true
-header: 'PSYC 51.07: Models of Language and Communication - Week 3'
+header: 'PSYC 51.17: Models of Language and Communication - Week 3'
 footer: 'Winter 2026'
 ---
 
@@ -11,7 +11,7 @@ footer: 'Winter 2026'
 # Classic Embeddings: LSA \& LDA
 ## Lecture 9: The Foundations of Distributional Semantics
 
-**PSYC 51.07: Models of Language and Communication - Week 3**
+**PSYC 51.17: Models of Language and Communication - Week 3**
 
 Winter 2026
 

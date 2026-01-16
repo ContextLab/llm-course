@@ -7,7 +7,7 @@ author: Contextual Dynamics Lab
 ---
 
 # Theme showcase
-### PSYC 51.07: Models of language and conversation
+### PSYC 51.17: Models of language and conversation
 
 Jeremy R. Manning
 Dartmouth College
@@ -619,7 +619,7 @@ CDLChart.pie('pieChart',
   <div class="emoji-col tight-labels">
     <span class="emoji emoji-lg emoji-bg emoji-bg-green">📚</span>
     <span class="label"><strong>Resources</strong></span>
-    <span class="label"><a href="https://canvas.dartmouth.edu">Canvas</a> &bull; <a href="https://github.com/ContextLab/psyc51.07">GitHub</a></span>
+    <span class="label"><a href="https://canvas.dartmouth.edu">Canvas</a> &bull; <a href="https://github.com/ContextLab/psyc51.17">GitHub</a></span>
   </div>
   <div class="emoji-col tight-labels">
     <span class="emoji emoji-lg emoji-bg emoji-bg-teal">🕐</span>
@@ -639,6 +639,6 @@ CDLChart.pie('pieChart',
 
 **Due soon:** Problem Set 2 (next Friday) &bull; Project proposal (2 weeks)
 
-**Next lecture:** <a href="https://github.com/ContextLab/psyc51.07/lectures/lecture03">Thursday 2pm: Attention mechanisms</a>
+**Next lecture:** <a href="https://github.com/ContextLab/psyc51.17/lectures/lecture03">Thursday 2pm: Attention mechanisms</a>
 
 </div>

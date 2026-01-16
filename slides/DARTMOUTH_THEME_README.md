@@ -1,6 +1,6 @@
 # Dartmouth Beamer Theme
 
-This directory contains a custom Beamer theme for the PSYC 51.07: Models of Language and Communication course, following the official Dartmouth College Visual Identity Guidelines.
+This directory contains a custom Beamer theme for the PSYC 51.17: Models of Language and Communication course, following the official Dartmouth College Visual Identity Guidelines.
 
 ## Theme File
 
@@ -102,14 +102,14 @@ All lecture files have been updated to use the Dartmouth theme. The typical stru
 % Title information
 \title{Lecture Title}
 \subtitle{Subtitle}
-\author{PSYC 51.07: Models of Language and Communication}
+\author{PSYC 51.17: Models of Language and Communication}
 \institute{Dr. Jeremy R. Manning}
 \date{Week X - Day Y}
 ```
 
 ### Course Name
 The course name has been updated throughout all lecture files to:
-**PSYC 51.07: Models of Language and Communication**
+**PSYC 51.17: Models of Language and Communication**
 
 ## Compilation
 

@@ -2,7 +2,7 @@
 marp: true
 theme: cdl-theme
 paginate: true
-header: 'PSYC 51.07: Models of Language and Communication - Week 4'
+header: 'PSYC 51.17: Models of Language and Communication - Week 4'
 footer: 'Winter 2026'
 ---
 
@@ -11,7 +11,7 @@ footer: 'Winter 2026'
 # Contextual Embeddings: ELMo, USE, BERT
 ## Lecture 12: Beyond Static Word Representations
 
-**PSYC 51.07: Models of Language and Communication - Week 4**
+**PSYC 51.17: Models of Language and Communication - Week 4**
 
 Winter 2026
 

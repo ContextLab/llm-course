@@ -6,8 +6,8 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 8: POS Tagging & Sentiment Analysis
-### PSYC 51.07: Models of language and communication
+# Lecture 8: POS tagging & sentiment analysis
+### PSYC 51.17: Models of language and communication
 
 Jeremy R. Manning
 Dartmouth College

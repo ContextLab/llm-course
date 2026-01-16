@@ -2,7 +2,7 @@
 marp: true
 theme: cdl-theme
 paginate: true
-header: 'PSYC 51.07: Models of Language and Communication'
+header: 'PSYC 51.17: Models of Language and Communication'
 footer: 'Week 9'
 ---
 
@@ -11,7 +11,7 @@ footer: 'Week 9'
 # Lecture 25: Mixture of Experts \& Efficiency
 ## Scaling Efficiently with Sparse Models 
 
-**PSYC 51.07: Models of Language and Communication**
+**PSYC 51.17: Models of Language and Communication**
 
 Week 9
 
