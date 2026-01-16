@@ -784,6 +784,14 @@
                     continue;
                 }
 
+                // Assignment due on no-class day (e.g., MLK Day)
+                if (!currentLecture && (line.includes('📝') || line.includes('\u{1F4DD}')) && line.includes('Due')) {
+                    const dueText = line.replace(/^- /, '').replace(/\*\*/g, '').replace('📝', '').replace('\u{1F4DD}', '').trim();
+                    if (!currentWeek.noClassAssignmentDue) currentWeek.noClassAssignmentDue = [];
+                    currentWeek.noClassAssignmentDue.push(dueText);
+                    continue;
+                }
+
                 // Skip if no current lecture
                 if (!currentLecture) continue;
 
@@ -1070,6 +1078,12 @@
                 html += '<h4><i class="fa-regular fa-calendar-xmark"></i> ' + escapeHtml(week.noClassNotice) + '</h4>';
                 if (week.noClassDetails) {
                     html += '<p>' + escapeHtml(week.noClassDetails.trim()) + '</p>';
+                }
+                // Assignment due on no-class day
+                if (week.noClassAssignmentDue && week.noClassAssignmentDue.length > 0) {
+                    week.noClassAssignmentDue.forEach(function(dueText) {
+                        html += '<div class="assignment-badge due"><span class="icon"><i class="fa-regular fa-calendar-check"></i></span><span><strong>' + escapeHtml(dueText) + '</strong></span></div>';
+                    });
                 }
                 html += '</div>';
             }
