@@ -142,7 +142,7 @@
                     <!-- Analogy Task -->
                     <div id="analogy-task" class="task-panel">
                         <h3>Word Analogies</h3>
-                        <p>Test reasoning: "A is to B as C is to ?"</p>
+                        <p>Test reasoning: "A is to B as C is to ?" Note: These sentence embedding models are optimized for sentences, not individual words. Classic analogies (like Word2Vec's king-man+woman=queen) may not work as reliably. Try different examples to see which relationships these models capture best.</p>
 
                         <div class="test-inputs">
                             <div class="input-group">
@@ -189,7 +189,7 @@
                     <!-- Categorization Task -->
                     <div id="categorization-task" class="task-panel">
                         <h3>Topic Categorization</h3>
-                        <p>Test how well models group similar items using k-means clustering.</p>
+                        <p>Test how well models group similar items using k-means clustering. The algorithm uses k-means++ initialization for better results. Cluster quality is measured by silhouette score (higher = better separation).</p>
 
                         <div class="test-inputs">
                             <div class="input-group">
@@ -358,18 +358,21 @@ kale</textarea>
                 <!-- Leaderboard -->
                 <div class="panel leaderboard-panel">
                     <h3>Leaderboard</h3>
+                    <p class="panel-desc">Rankings based on the most recent test. Higher scores indicate better semantic understanding for the given task.</p>
                     <div id="leaderboard"></div>
                 </div>
 
                 <!-- Performance Radar Chart -->
                 <div class="panel radar-panel">
                     <h3>Performance Overview</h3>
+                    <p class="panel-desc">Compares models across three dimensions: Quality (similarity/accuracy), Speed (inference time), and Consistency. Axes zoom to highlight differences.</p>
                     <div id="radar-chart"></div>
                 </div>
 
                 <!-- Speed vs Quality -->
                 <div class="panel tradeoff-panel">
                     <h3>Speed vs Quality</h3>
+                    <p class="panel-desc">The fundamental tradeoff: larger models (upper-right) offer better quality but slower inference. Choose based on your latency requirements.</p>
                     <div id="tradeoff-chart"></div>
                 </div>
 

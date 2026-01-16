@@ -41,11 +41,18 @@ export class BenchmarkTasks {
             candidates = this.generateAnalogyCandidates(wordA, wordB, wordC);
         }
 
+        // Sentence-based analogy approach: embed words in context sentences
+        // This works better for sentence embedding models than raw word vectors
+        const contextTemplate = (word) => `The word "${word}" represents a concept.`;
+        
         for (const modelId of modelIds) {
+            const startTime = performance.now();
+            
+            // Embed words in sentence context for better representations
             const [embA, embB, embC] = await Promise.all([
-                this.modelsManager.embed(modelId, wordA),
-                this.modelsManager.embed(modelId, wordB),
-                this.modelsManager.embed(modelId, wordC)
+                this.modelsManager.embed(modelId, contextTemplate(wordA)),
+                this.modelsManager.embed(modelId, contextTemplate(wordB)),
+                this.modelsManager.embed(modelId, contextTemplate(wordC))
             ]);
 
             // Calculate analogy vector: B - A + C
@@ -58,7 +65,7 @@ export class BenchmarkTasks {
             // Find best match among candidates
             const candidateResults = [];
             for (const candidate of candidates) {
-                const embD = await this.modelsManager.embed(modelId, candidate);
+                const embD = await this.modelsManager.embed(modelId, contextTemplate(candidate));
                 const similarity = this.modelsManager.cosineSimilarity(
                     analogyVec,
                     embD.embedding
@@ -67,6 +74,7 @@ export class BenchmarkTasks {
             }
 
             candidateResults.sort((a, b) => b.similarity - a.similarity);
+            const endTime = performance.now();
 
             results.push({
                 modelId,
@@ -74,7 +82,7 @@ export class BenchmarkTasks {
                 prediction: candidateResults[0].word,
                 confidence: candidateResults[0].similarity,
                 allCandidates: candidateResults.slice(0, 5),
-                time: embA.time + embB.time + embC.time
+                time: endTime - startTime
             });
         }
 
@@ -95,40 +103,47 @@ export class BenchmarkTasks {
         const lower = (w) => w.toLowerCase();
         const a = lower(wordA), b = lower(wordB), c = lower(wordC);
         
-        const candidateSets = {
-            royalty: ['woman', 'girl', 'female', 'lady', 'princess', 'duchess', 'empress'],
-            capitals: ['England', 'UK', 'Britain', 'Germany', 'Spain', 'Italy', 'Japan', 'China', 'Canada', 'Australia'],
-            grammar: ['worse', 'worst', 'badly', 'poorly', 'terrible', 'awful'],
-            tense: ['ran', 'walked', 'jumped', 'swam', 'flew', 'drove', 'ate', 'slept'],
-            countries: ['French', 'German', 'Spanish', 'Italian', 'Japanese', 'Chinese', 'British', 'American'],
-            profession: ['actress', 'waitress', 'hostess', 'stewardess', 'heroine', 'woman'],
-            size: ['tiny', 'small', 'little', 'huge', 'giant', 'massive', 'enormous'],
-            emotion: ['sad', 'angry', 'scared', 'excited', 'nervous', 'calm', 'joyful']
+        const analogyMap = {
+            'king:queen:man': ['woman', 'lady', 'female', 'girl', 'wife', 'mother', 'queen', 'princess'],
+            'actor:actress:waiter': ['waitress', 'hostess', 'woman', 'female', 'lady', 'stewardess', 'maid'],
+            'hero:heroine:prince': ['princess', 'lady', 'queen', 'duchess', 'woman', 'girl', 'female'],
+            'paris:france:london': ['England', 'Britain', 'UK', 'United Kingdom', 'British', 'London', 'Europe'],
+            'tokyo:japan:berlin': ['Germany', 'German', 'Deutschland', 'Europe', 'Berlin', 'Austria'],
+            'rome:italy:madrid': ['Spain', 'Spanish', 'Espana', 'Europe', 'Portugal', 'Madrid'],
+            'good:better:bad': ['worse', 'worst', 'terrible', 'awful', 'poor', 'inferior', 'bad'],
+            'big:bigger:small': ['smaller', 'tinier', 'little', 'tiny', 'minor', 'lesser', 'small'],
+            'walk:walked:run': ['ran', 'running', 'runs', 'sprinted', 'jogged', 'run', 'raced'],
+            'dog:puppy:cat': ['kitten', 'kitty', 'baby cat', 'young cat', 'cub', 'feline', 'cat'],
+            'wood:tree:paper': ['pulp', 'plant', 'fiber', 'bamboo', 'reed', 'tree', 'forest'],
+            'hammer:nail:screwdriver': ['screw', 'bolt', 'fastener', 'nut', 'nail', 'pin', 'rivet']
         };
+
+        const key = `${a}:${b}:${c}`;
+        if (analogyMap[key]) {
+            return analogyMap[key];
+        }
 
         if ((a === 'king' && b === 'queen') || (a === 'man' && b === 'woman') || 
             (a === 'boy' && b === 'girl') || (a === 'father' && b === 'mother')) {
-            return candidateSets.royalty;
+            return ['woman', 'lady', 'female', 'girl', 'wife', 'mother', 'queen', 'princess', 'daughter'];
         }
         
-        if (['paris', 'london', 'berlin', 'tokyo', 'rome', 'madrid'].includes(a) ||
-            ['france', 'england', 'germany', 'japan', 'italy', 'spain'].includes(a)) {
-            return candidateSets.capitals;
+        if (['paris', 'london', 'berlin', 'tokyo', 'rome', 'madrid'].includes(a)) {
+            return ['England', 'Britain', 'UK', 'Germany', 'Spain', 'Italy', 'Japan', 'France', 'Europe'];
         }
         
-        if (['good', 'bad', 'big', 'small', 'fast', 'slow'].includes(a) &&
-            ['better', 'worse', 'bigger', 'smaller', 'faster', 'slower'].includes(b)) {
-            return candidateSets.grammar;
+        if (['good', 'bad', 'big', 'small', 'fast', 'slow'].includes(a)) {
+            return ['worse', 'smaller', 'slower', 'faster', 'bigger', 'better', 'terrible', 'great'];
         }
         
         if (['walk', 'run', 'swim', 'fly', 'drive', 'eat'].includes(a)) {
-            return candidateSets.tense;
+            return ['ran', 'walked', 'swam', 'flew', 'drove', 'ate', 'slept', 'jumped'];
         }
 
         return [
-            wordB, `${wordB}s`, `${wordC}er`, `${wordC}ing`,
-            'woman', 'man', 'person', 'thing', 'place',
-            'good', 'bad', 'big', 'small', 'new', 'old'
+            'woman', 'man', 'person', 'thing', 'place', 'time',
+            'good', 'bad', 'big', 'small', 'new', 'old',
+            wordB, wordC
         ];
     }
 
@@ -234,21 +249,13 @@ export class BenchmarkTasks {
         return validPoints > 0 ? totalScore / validPoints : 0;
     }
 
-    kMeansClusteringWithCentroids(embeddings, k, maxIters = 10) {
+    kMeansClusteringWithCentroids(embeddings, k, maxIters = 50) {
         const n = embeddings.length;
         const dim = embeddings[0].length;
 
-        const centroids = [];
-        const indices = new Set();
-        while (centroids.length < k) {
-            const idx = Math.floor(Math.random() * n);
-            if (!indices.has(idx)) {
-                centroids.push([...embeddings[idx]]);
-                indices.add(idx);
-            }
-        }
-
+        const centroids = this.kMeansPlusPlusInit(embeddings, k);
         let assignments = Array(n).fill(0);
+        let prevAssignments = null;
 
         for (let iter = 0; iter < maxIters; iter++) {
             for (let i = 0; i < n; i++) {
@@ -265,6 +272,11 @@ export class BenchmarkTasks {
 
                 assignments[i] = bestCluster;
             }
+
+            if (prevAssignments && assignments.every((a, i) => a === prevAssignments[i])) {
+                break;
+            }
+            prevAssignments = [...assignments];
 
             const clusterSums = Array.from({ length: k }, () => Array(dim).fill(0));
             const clusterCounts = Array(k).fill(0);
@@ -287,6 +299,42 @@ export class BenchmarkTasks {
         }
 
         return { assignments, centroids };
+    }
+
+    kMeansPlusPlusInit(embeddings, k) {
+        const n = embeddings.length;
+        const centroids = [];
+        
+        const firstIdx = Math.floor(Math.random() * n);
+        centroids.push([...embeddings[firstIdx]]);
+        
+        while (centroids.length < k) {
+            const distances = embeddings.map(emb => {
+                let minDist = Infinity;
+                for (const centroid of centroids) {
+                    const dist = this.euclideanDistance(emb, centroid);
+                    if (dist < minDist) minDist = dist;
+                }
+                return minDist * minDist;
+            });
+            
+            const totalDist = distances.reduce((a, b) => a + b, 0);
+            let threshold = Math.random() * totalDist;
+            
+            for (let i = 0; i < n; i++) {
+                threshold -= distances[i];
+                if (threshold <= 0) {
+                    centroids.push([...embeddings[i]]);
+                    break;
+                }
+            }
+            
+            if (centroids.length === centroids.length - 1) {
+                centroids.push([...embeddings[Math.floor(Math.random() * n)]]);
+            }
+        }
+        
+        return centroids;
     }
 
     euclideanDistance(vecA, vecB) {

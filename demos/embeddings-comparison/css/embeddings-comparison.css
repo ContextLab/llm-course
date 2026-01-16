@@ -491,9 +491,18 @@
 }
 
 .panel h3 {
-    margin: 0 0 15px 0;
+    margin: 0 0 8px 0;
     font-size: 1.1em;
     color: var(--primary-color);
+}
+
+.panel-desc {
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    margin: 0 0 15px 0;
+    line-height: 1.5;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 /* Leaderboard */

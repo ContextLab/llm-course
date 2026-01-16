@@ -122,32 +122,47 @@ export class Visualization {
         const theme = this.getPlotlyTheme();
         const colors = theme.colorway;
 
-        const traces = results.map((result, idx) => {
+        const allValues = [];
+        const traceData = results.map((result, idx) => {
             const quality = result.similarity || result.confidence || result.avgSimilarity || 0.5;
-            const speed = result.time ? Math.max(0, 1 - (result.time / 1000)) : 0.5;
+            const maxTime = Math.max(...results.map(r => r.time || 100));
+            const speed = result.time ? Math.max(0, 1 - (result.time / maxTime)) : 0.5;
             const consistency = quality;
-
-            return {
-                type: 'scatterpolar',
-                r: [quality, speed, consistency, quality],
-                theta: ['Quality', 'Speed', 'Consistency', 'Quality'],
-                fill: 'toself',
-                name: result.modelName,
-                opacity: 0.6,
-                line: { color: colors[idx % colors.length], width: 2 },
-                fillcolor: colors[idx % colors.length].replace(')', ', 0.3)').replace('rgb', 'rgba'),
-                marker: { color: colors[idx % colors.length] }
-            };
+            allValues.push(quality, speed, consistency);
+            return { quality, speed, consistency, result, idx };
         });
+
+        const minVal = Math.min(...allValues);
+        const maxVal = Math.max(...allValues);
+        const padding = (maxVal - minVal) * 0.15 || 0.1;
+        const rangeMin = Math.max(0, minVal - padding);
+        const rangeMax = Math.min(1, maxVal + padding);
+
+        const traces = traceData.map(({ quality, speed, consistency, result, idx }) => ({
+            type: 'scatterpolar',
+            r: [quality, speed, consistency, quality],
+            theta: ['Quality', 'Speed', 'Consistency', 'Quality'],
+            fill: 'toself',
+            name: result.modelName,
+            opacity: 0.6,
+            line: { color: colors[idx % colors.length], width: 2 },
+            fillcolor: colors[idx % colors.length].replace(')', ', 0.3)').replace('rgb', 'rgba'),
+            marker: { color: colors[idx % colors.length] }
+        }));
+
+        const tickCount = 4;
+        const tickStep = (rangeMax - rangeMin) / tickCount;
+        const tickvals = Array.from({ length: tickCount + 1 }, (_, i) => rangeMin + i * tickStep);
+        const ticktext = tickvals.map(v => v.toFixed(2));
 
         const layout = {
             polar: {
                 bgcolor: theme.polar.bgcolor,
                 radialaxis: {
                     visible: true,
-                    range: [0, 1],
-                    tickvals: [0.25, 0.5, 0.75, 1],
-                    ticktext: ['0.25', '0.50', '0.75', '1.00'],
+                    range: [rangeMin, rangeMax],
+                    tickvals: tickvals,
+                    ticktext: ticktext,
                     ...theme.polar.radialaxis
                 },
                 angularaxis: {
@@ -180,9 +195,16 @@ export class Visualization {
         const theme = this.getPlotlyTheme();
         const colors = theme.colorway;
 
+        const yValues = results.map(r => r.similarity || r.confidence || r.avgSimilarity || 0);
+        const minY = Math.min(...yValues);
+        const maxY = Math.max(...yValues);
+        const paddingY = (maxY - minY) * 0.2 || 0.05;
+        const yMin = Math.max(0, minY - paddingY);
+        const yMax = Math.min(1.05, maxY + paddingY);
+
         const trace = {
             x: results.map(r => r.time),
-            y: results.map(r => r.similarity || r.confidence || r.avgSimilarity || 0),
+            y: yValues,
             mode: 'markers+text',
             type: 'scatter',
             text: results.map(r => r.modelName.split('-')[0]),
@@ -208,7 +230,7 @@ export class Visualization {
             },
             yaxis: {
                 title: { text: 'Quality Score', font: theme.yaxis.titlefont },
-                range: [0, 1.1],
+                range: [yMin, yMax],
                 ...theme.yaxis,
                 automargin: true
             },
