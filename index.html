@@ -939,24 +939,23 @@
                 courseData.push(currentWeek);
             }
 
-            // Generate subtitles from lecture content
+            // Week descriptions from syllabus (Topics column)
+            const weekDescriptions = {
+                1: 'Introduction, Pattern Matching, ELIZA',
+                2: 'Data Cleaning, Tokenization, POS Tagging',
+                3: 'Classic Embeddings (LSA, LDA), Word Embeddings',
+                4: 'Contextual Embeddings, Dimensionality Reduction',
+                5: 'Attention Mechanisms, Transformer Architecture',
+                6: 'BERT Deep Dive, Encoder Models',
+                7: 'GPT Architecture, Scaling Up',
+                8: 'No classes (instructor away)',
+                9: 'RAG, Mixture of Experts, Ethics',
+                10: 'Final Project Presentations'
+            };
+
+            // Apply week descriptions from syllabus
             courseData.forEach(week => {
-                if (week.lectures.length > 0) {
-                    // Use first lecture title and first topic as subtitle
-                    const firstLecture = week.lectures[0];
-                    const topics = [];
-                    week.lectures.forEach(l => {
-                        if (l.topics) topics.push(...l.topics.slice(0, 1));
-                    });
-                    if (topics.length > 0) {
-                        week.subtitle = topics.slice(0, 2).join(', ');
-                        if (week.subtitle.length > 70) {
-                            week.subtitle = week.subtitle.substring(0, 67) + '...';
-                        }
-                    }
-                } else if (week.noClassNotice) {
-                    week.subtitle = 'Asynchronous week';
-                }
+                week.subtitle = weekDescriptions[week.number] || '';
             });
 
             return courseData;
