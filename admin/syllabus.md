@@ -155,7 +155,7 @@ We strive to create an inclusive learning environment where all students feel su
 | Mon Jan 5 | Lecture 1 | Course Introduction, Is ChatGPT Conscious? | [HTML](../slides/week1/lecture1.html), [PDF](../slides/week1/lecture1.pdf) | [Fedorenko et al. (2024)](https://www.nature.com/articles/s41586-024-07522-w), [Lupyan et al. (2020)](https://doi.org/10.1016/j.tics.2020.08.005) |
 | Wed Jan 7 | Lecture 2 | Pattern Matching & ELIZA | [HTML](../slides/week1/lecture2.html), [PDF](../slides/week1/lecture2.pdf) | [Weizenbaum (1966)](https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf) |
 | Thu Jan 8 | Lecture 3 | ELIZA Implementation | [HTML](../slides/week1/lecture3.html), [PDF](../slides/week1/lecture3.pdf) | |
-| Fri Jan 9 | Lecture 4 | Rules-Based Chatbots | [HTML](../slides/week1/lecture4.html), [PDF](../slides/week1/lecture4.pdf) | [Colby et al. (1971)](https://doi.org/10.1016/S0004-3702%2871%2980014-6), **[Assignment 1](../assignments/assignment-1/) Released** |
+| Fri Jan 9 | Lecture 4 | Rules-Based Chatbots | [HTML](../slides/week1/lecture4.html), [PDF](../slides/week1/lecture4.pdf) | [Colby et al. (1971)](https://doi.org/10.1016/0004-3702%2871%2990002-6), **[Assignment 1](../assignments/assignment-1/) Released** |
 
 ### Week 2: Computational Linguistics (January 12--16)
 

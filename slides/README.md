@@ -58,7 +58,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - A.L.I.C.E. and AIML: pattern-based conversation design
 - The evolution from ELIZA to modern rules-based systems
 - **Assignment 1 Released:** [Building the ELIZA Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-1/) (Due: Jan 19, 11:59 PM EST)
-- Reading: [Colby et al. (1971)](https://doi.org/10.1016/S0004-3702(71)80014-6) - Artificial Paranoia (PARRY)
+- Reading: [Colby et al. (1971)](https://doi.org/10.1016/0004-3702(71)90002-6) - Artificial Paranoia (PARRY)
 - Reference: [ALICE/AIML Foundation](https://www.alicebot.org/)
 - 🎮 **Try it:** [ELIZA Demo](https://contextlab.github.io/llm-course/demos/eliza/) | [Chatbot Evolution](https://contextlab.github.io/llm-course/demos/chatbot-evolution/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week1/lecture4.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture4.html)
