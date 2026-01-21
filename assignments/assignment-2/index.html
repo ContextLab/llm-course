@@ -570,67 +570,67 @@ The following code can be used to evaluate your classifiers during development:
 import zipfile
 import shutil
 from pathlib import Path
-from sklearn.metrics import roc<em>auc</em>score
-<p>def evaluate<em>classifier(zip</em>path: str, classify<em>email</em>fn) -&gt; float:
+from sklearn.metrics import roc_auc_score
+<p>def evaluate_classifier(zip_path: str, classify_email_fn) -&gt; float:
     """
     Evaluate a classifier's performance on a dataset contained in a zip archive.</p>
 <p>Parameters:
     zip_path (str): Path to the zip archive containing "spam" and "ham" folders.
-    classify<em>email</em>fn (function): A function handle to classify<em>email(email</em>text: str) -&gt; int.</p>
+    classify_email_fn (function): A function handle to classify_email(email_text: str) -&gt; int.</p>
 <p>Returns:
     float: The AUC (Area Under the Curve) score of the classifier.
     """
     # Step 1: Set up paths and directories
-    dataset<em>dir = Path(zip</em>path).with_suffix('')  # Create a directory name based on the zip name (without .zip)
+    dataset_dir = Path(zip_path).with_suffix('')  # Create a directory name based on the zip name (without .zip)
     temp_extracted = False  # Track if we extracted the zip (for cleanup)</p>
 <p># Step 2: Check if the dataset is already extracted
     if not dataset_dir.exists():
         print(f"Extracting {zip_path}...")
-        with zipfile.ZipFile(zip<em>path, 'r') as zip</em>ref:
-            zip<em>ref.extractall(dataset</em>dir)
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(dataset_dir)
         temp_extracted = True  # Mark that we extracted files</p>
 <p># Step 3: Prepare to collect the data
     emails = []
     labels = []</p>
 <p># Traverse the spam folder
-    spam<em>folder = dataset</em>dir / "spam"
-    for file<em>path in spam</em>folder.iterdir():
-        if file<em>path.is</em>file():
+    spam_folder = dataset_dir / "spam"
+    for file_path in spam_folder.iterdir():
+        if file_path.is_file():
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
                 email_text = file.read()
                 emails.append(email_text)
                 labels.append(1)  # Spam is labeled as 1</p>
 <p># Traverse the ham folder
-    ham<em>folder = dataset</em>dir / "ham"
-    for file<em>path in ham</em>folder.iterdir():
-        if file<em>path.is</em>file():
+    ham_folder = dataset_dir / "ham"
+    for file_path in ham_folder.iterdir():
+        if file_path.is_file():
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
                 email_text = file.read()
                 emails.append(email_text)
                 labels.append(0)  # Ham is labeled as 0</p>
 <p># Step 4: Classify all emails
-    predictions = [classify<em>email</em>fn(email) for email in emails]</p>
+    predictions = [classify_email_fn(email) for email in emails]</p>
 <p># Step 5: Calculate AUC score
-    auc<em>score = roc</em>auc_score(labels, predictions)</p>
+    auc_score = roc_auc_score(labels, predictions)</p>
 <p># Step 6: Clean up if necessary
     if temp_extracted:
         print(f"Cleaning up extracted files from {dataset_dir}...")
         shutil.rmtree(dataset_dir)</p>
 <p>return auc_score</code></pre></p>
 <p>You can call this function in your notebook to evaluate individual models during development:
-<pre><code class="language-python">auc<em>score = evaluate</em>classifier('training.zip', classify_email)
+<pre><code class="language-python">auc_score = evaluate_classifier('training.zip', classify_email)
 print(f"Model AUC Score: {auc_score:.4f}")</code></pre></p>
 <h2 id="tips-for-success">Tips for Success</h2>
 <h3 id="complete-within-1-week-suggested-daily-schedule">Complete Within 1 Week: Suggested Daily Schedule</h3>
 While this assignment is comprehensive in scope, it's designed to be completable in <strong>7 days</strong>. Here's a suggested timeline (students can use GenAI to accelerate implementation):
 <ul>
-<li><strong>Day 1: Setup  |  Data Exploration</strong> - Extract data, perform EDA, create train/val/test splits</li>
+<li><strong>Day 1: Setup & Data Exploration</strong> - Extract data, perform EDA, create train/val/test splits</li>
 <li><strong>Day 2: Traditional ML Models</strong> - Implement two traditional ML classifiers with feature engineering (use GenAI to accelerate TF-IDF/feature pipeline code)</li>
 <li><strong>Day 3: Neural Model</strong> - Fine-tune transformer (DistilBERT recommended for speed), monitor training</li>
-<li><strong>Day 4: Evaluation  |  Metrics</strong> - Compute all metrics, generate comparison tables and visualizations</li>
+<li><strong>Day 4: Evaluation & Metrics</strong> - Compute all metrics, generate comparison tables and visualizations</li>
 <li><strong>Day 5: Error Analysis</strong> - Identify and categorize 20+ failure cases, analyze patterns and feature importance</li>
-<li><strong>Day 6: Adversarial Testing  |  Real-World Considerations</strong> - Create adversarial examples, test robustness, discuss class imbalance and deployment scenarios</li>
-<li><strong>Day 7: Documentation  |  Polish</strong> - Write markdown sections, verify code runs cleanly, final review</li>
+<li><strong>Day 6: Adversarial Testing & Real-World Considerations</strong> - Create adversarial examples, test robustness, discuss class imbalance and deployment scenarios</li>
+<li><strong>Day 7: Documentation & Polish</strong> - Write markdown sections, verify code runs cleanly, final review</li>
 </ul>
 <strong>Key to Success:</strong> Use GenAI coding assistants to accelerate boilerplate code and feature engineering, but invest your time in understanding results, analyzing errors, and writing insightful analysis.
 <h3 id="use-version-control">Use Version Control</h3>
@@ -708,7 +708,7 @@ If your models aren't performing well:
 </ul>
 <h3 id="evaluation-and-metrics">Evaluation and Metrics</h3>
 <ul>
-<li><a href="https://en.wikipedia.org/wiki/Precision<em>and</em>recall" target="_blank">Precision and Recall</a> - Understanding the trade-off</li>
+<li><a href="https://en.wikipedia.org/wiki/Precision_and_recall" target="_blank">Precision and Recall</a> - Understanding the trade-off</li>
 <li><a href="https://developers.google.com/machine-learning/crash-course/classification/roc-and-auc" target="_blank">ROC Curves and AUC</a></li>
 <li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html#confusion-matrix" target="_blank">Confusion Matrix Guide</a></li>
 </ul>
@@ -845,8 +845,8 @@ Structure your notebook with clear sections:
 <li>Use <strong>tables</strong> for metric comparisons</li>
 </ul>
 <h3 id="file-naming">File Naming</h3>
-Name your file: <code>LastName<em>FirstName</em>Assignment2.ipynb</code>
-<p>Example: <code>Smith<em>Jane</em>Assignment2.ipynb</code></p>
+Name your file: <code>LastName_FirstName_Assignment2.ipynb</code>
+<p>Example: <code>Smith_Jane_Assignment2.ipynb</code></p>
 <h3 id="pre-submission-checklist">Pre-Submission Checklist</h3>
 Before submitting, verify:
 <ul>

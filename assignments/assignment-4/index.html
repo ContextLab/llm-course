@@ -287,20 +287,20 @@ This approach helps prevent hallucination and ensures responses are factually gr
 <h3 id="key-papers-and-concepts">Key Papers and Concepts</h3>
 <ul>
 <li><strong>BERT</strong> (Devlin et al., 2018): Bidirectional encoder representations from transformers</li>
-<li><strong>Sentence-BERT</strong> (Reimers  |  Gurevych, 2019): Modified BERT for efficient sentence embeddings</li>
+<li><strong>Sentence-BERT</strong> (Reimers & Gurevych, 2019): Modified BERT for efficient sentence embeddings</li>
 <li><strong>RAG</strong> (Lewis et al., 2020): Retrieval-augmented generation for knowledge-intensive tasks</li>
 <li><strong>Dense Passage Retrieval</strong> (Karpukhin et al., 2020): Using dense representations for passage retrieval</li>
 </ul>
 <h2 id="dataset">Dataset</h2>
 <p>You will use a customer service FAQ dataset. We recommend one of the following options:</p>
 <h3 id="option-1-huggingface-dataset-recommended">Option 1: HuggingFace Dataset (Recommended)</h3>
-<p>Use the <code>customer<em>support</em>twitter</code> dataset or similar customer service datasets from HuggingFace:</p>
+<p>Use the <code>customer_support_twitter</code> dataset or similar customer service datasets from HuggingFace:</p>
 <pre><code class="language-python">from datasets import load_dataset
 <h1 id="load-customer-support-conversations">Load customer support conversations</h1>
-dataset = load<em>dataset("salesken/customer</em>support_twitter")</code></pre>
+dataset = load_dataset("salesken/customer_support_twitter")</code></pre>
 Alternatively, explore these datasets:
 <ul>
-<li><code>salesken/customer<em>support</em>twitter</code>: Real customer support conversations</li>
+<li><code>salesken/customer_support_twitter</code>: Real customer support conversations</li>
 <li><code>banking77</code>: Banking customer service intents</li>
 <li><code>SetFit/customer_support</code>: Multi-domain customer support dataset</li>
 </ul>
@@ -409,7 +409,7 @@ b) <strong>LLM-Based Generation</strong> (Recommended):
 <li>Generate natural, conversational responses</li>
 </ul>
 <pre><code class="language-python"># Example prompt structure
-def generate<em>response(query, retrieved</em>contexts):
+def generate_response(query, retrieved_contexts):
     prompt = f"""You are a helpful customer service assistant.
 <p>Customer Question: {query}</p>
 <p>Relevant Information:
@@ -658,10 +658,10 @@ The entire assignment should run in <strong>Google Colaboratory</strong> with a 
 <h3 id="key-papers">Key Papers</h3>
 <ol>
 <li><strong>BERT</strong>: Devlin et al. (2018). "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding". <a href="https://arxiv.org/abs/1810.04805" target="_blank">arXiv:1810.04805</a></li>
-<li><strong>Sentence-BERT</strong>: Reimers  |  Gurevych (2019). "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks". <a href="https://arxiv.org/abs/1908.10084" target="_blank">arXiv:1908.10084</a></li>
+<li><strong>Sentence-BERT</strong>: Reimers & Gurevych (2019). "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks". <a href="https://arxiv.org/abs/1908.10084" target="_blank">arXiv:1908.10084</a></li>
 <li><strong>RAG</strong>: Lewis et al. (2020). "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks". <a href="https://arxiv.org/abs/2005.11401" target="_blank">arXiv:2005.11401</a></li>
 <li><strong>Dense Passage Retrieval</strong>: Karpukhin et al. (2020). "Dense Passage Retrieval for Open-Domain Question Answering". <a href="https://arxiv.org/abs/2004.04906" target="_blank">arXiv:2004.04906</a></li>
-<li><strong>ColBERT</strong>: Khattab  |  Zaharia (2020). "ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT". <a href="https://arxiv.org/abs/2004.12832" target="_blank">arXiv:2004.12832</a></li>
+<li><strong>ColBERT</strong>: Khattab & Zaharia (2020). "ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT". <a href="https://arxiv.org/abs/2004.12832" target="_blank">arXiv:2004.12832</a></li>
 </ol>
 <h3 id="documentation-and-tutorials">Documentation and Tutorials</h3>
 <ul>
@@ -674,7 +674,7 @@ The entire assignment should run in <strong>Google Colaboratory</strong> with a 
 <ul>
 <li><strong>Sentence Transformers Examples</strong>: <a href="https://www.sbert.net/examples/applications/semantic-search/README.html" target="_blank">https://www.sbert.net/examples/applications/semantic-search/README.html</a></li>
 <li><strong>FAISS Tutorial</strong>: <a href="https://github.com/facebookresearch/faiss/wiki/Getting-started" target="_blank">https://github.com/facebookresearch/faiss/wiki/Getting-started</a></li>
-<li><strong>RAG Tutorial</strong>: <a href="https://huggingface.co/docs/transformers/model</em>doc/rag" target="_blank">https://huggingface.co/docs/transformers/model<em>doc/rag</a></li>
+<li><strong>RAG Tutorial</strong>: <a href="https://huggingface.co/docs/transformers/model_doc/rag" target="_blank">https://huggingface.co/docs/transformers/model_doc/rag</a></li>
 </ul>
 <h3 id="datasets">Datasets</h3>
 <ul>
@@ -690,13 +690,13 @@ The entire assignment should run in <strong>Google Colaboratory</strong> with a 
 <ul>
 <li><strong>Gradio</strong> (for UI): <a href="https://gradio.app/" target="_blank">https://gradio.app/</a></li>
 <li><strong>Streamlit</strong> (for UI): <a href="https://streamlit.io/" target="_blank">https://streamlit.io/</a></li>
-<li><strong>Weights  |  Biases</strong> (for experiment tracking): <a href="https://wandb.ai/" target="_blank">https://wandb.ai/</a></li>
+<li><strong>Weights & Biases</strong> (for experiment tracking): <a href="https://wandb.ai/" target="_blank">https://wandb.ai/</a></li>
 </ul>
 <h3 id="additional-reading">Additional Reading</h3>
 <ul>
 <li>"Building Chatbots with Python" - Sumit Raj</li>
 <li>"Natural Language Processing with Transformers" - Lewis Tunstall et al.</li>
-<li>"Speech and Language Processing" (Chapter on Question Answering) - Jurafsky  |  Martin</li>
+<li>"Speech and Language Processing" (Chapter on Question Answering) - Jurafsky & Martin</li>
 </ul>
 <h3 id="related-techniques">Related Techniques</h3>
 <ul>

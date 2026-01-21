@@ -252,7 +252,7 @@ dataset_path = 'wikipedia.pkl'
 <h1 id="download-the-dataset-if-it-doesnt-exist">Download the dataset if it doesn't exist</h1>
 if not os.path.exists(dataset_path):
     print("Downloading dataset...")
-    urllib.request.urlretrieve(dataset<em>url, dataset</em>path)
+    urllib.request.urlretrieve(dataset_url, dataset_path)
     print("Download complete.")
 <h1 id="load-the-dataset">Load the dataset</h1>
 with open(dataset_path, 'rb') as f:
@@ -284,7 +284,7 @@ By completing this assignment, you will:
 <li>Use TF-IDF followed by truncated SVD (dimensionality reduction)</li>
 <li>Implementation: <code>sklearn.feature_extraction.text.TfidfVectorizer</code> + <code>sklearn.decomposition.TruncatedSVD</code></li>
 <li>Reduce to 300 dimensions</li>
-<li>Resources: <a href="https://www.cs.bham.ac.uk/~pxt/IDA/lsa<em>ind</em>ar_02.pdf" target="_blank">Original LSA paper (Deerwester et al., 1990)</a></li>
+<li>Resources: <a href="https://www.cs.bham.ac.uk/~pxt/IDA/lsa_ind_ar_02.pdf" target="_blank">Original LSA paper (Deerwester et al., 1990)</a></li>
 </ul>
 <strong>Latent Dirichlet Allocation (LDA)</strong>
 <ul>
@@ -339,7 +339,7 @@ By completing this assignment, you will:
 <li>Use <code>gpt2</code> from Hugging Face Transformers</li>
 <li>Extract embeddings from final token or mean pool</li>
 <li>Compare different pooling strategies</li>
-<li>Resources: <a href="https://d4mucfpksywv.cloudfront.net/better-language-models/language<em>models</em>are<em>unsupervised</em>multitask_learners.pdf" target="_blank">Language Models are Unsupervised Multitask Learners (Radford et al., 2019)</a></li>
+<li>Resources: <a href="https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank">Language Models are Unsupervised Multitask Learners (Radford et al., 2019)</a></li>
 </ul>
 <strong>Key questions:</strong>
 <ul>
@@ -353,7 +353,7 @@ By completing this assignment, you will:
 <ul>
 <li>Use <code>all-MiniLM-L6-v2</code> or <code>all-mpnet-base-v2</code> from <code>sentence-transformers</code></li>
 <li>These are fine-tuned specifically for semantic similarity</li>
-<li>Resources: <a href="https://arxiv.org/abs/1908.10084" target="_blank">Sentence-BERT (Reimers  |  Gurevych, 2019)</a></li>
+<li>Resources: <a href="https://arxiv.org/abs/1908.10084" target="_blank">Sentence-BERT (Reimers & Gurevych, 2019)</a></li>
 </ul>
 <strong>Llama 3 Embeddings</strong>
 <ul>
@@ -442,7 +442,7 @@ By completing this assignment, you will:
 </ul>
 <strong>Semantic Coherence Metrics</strong>
 <ul>
-<li>Topic coherence (for topic models): PMI, C<em>v, U</em>mass coherence scores</li>
+<li>Topic coherence (for topic models): PMI, C_v, U_mass coherence scores</li>
 <li>Within-cluster semantic similarity: average cosine similarity within clusters</li>
 <li>Between-cluster semantic distance: separation of cluster centroids</li>
 </ul>
@@ -979,17 +979,17 @@ By completing this assignment, you will:
 <h3 id="key-papers-from-syllabus-weeks-3-4">Key Papers (from Syllabus Weeks 3-4)</h3>
 <strong>Foundational Papers:</strong>
 <ul>
-<li>Deerwester et al. (1990). <a href="https://www.cs.bham.ac.uk/~pxt/IDA/lsa<em>ind</em>ar_02.pdf" target="_blank">Indexing by Latent Semantic Analysis</a></li>
-<li>Blei, Ng,  |  Jordan (2003). <a href="https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf" target="_blank">Latent Dirichlet Allocation</a></li>
+<li>Deerwester et al. (1990). <a href="https://www.cs.bham.ac.uk/~pxt/IDA/lsa_ind_ar_02.pdf" target="_blank">Indexing by Latent Semantic Analysis</a></li>
+<li>Blei, Ng, & Jordan (2003). <a href="https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf" target="_blank">Latent Dirichlet Allocation</a></li>
 <li>Mikolov et al. (2013). <a href="https://arxiv.org/abs/1301.3781" target="_blank">Efficient Estimation of Word Representations in Vector Space</a></li>
-<li>Pennington, Socher,  |  Manning (2014). <a href="https://nlp.stanford.edu/pubs/glove.pdf" target="_blank">GloVe: Global Vectors for Word Representation</a></li>
+<li>Pennington, Socher, & Manning (2014). <a href="https://nlp.stanford.edu/pubs/glove.pdf" target="_blank">GloVe: Global Vectors for Word Representation</a></li>
 </ul>
 <strong>Neural Methods:</strong>
 <ul>
 <li>Bojanowski et al. (2017). <a href="https://arxiv.org/abs/1607.04606" target="_blank">Enriching Word Vectors with Subword Information</a></li>
 <li>Devlin et al. (2019). <a href="https://arxiv.org/abs/1810.04805" target="_blank">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></li>
-<li>Radford et al. (2019). <a href="https://d4mucfpksywv.cloudfront.net/better-language-models/language<em>models</em>are<em>unsupervised</em>multitask_learners.pdf" target="_blank">Language Models are Unsupervised Multitask Learners</a></li>
-<li>Reimers  |  Gurevych (2019). <a href="https://arxiv.org/abs/1908.10084" target="_blank">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</a></li>
+<li>Radford et al. (2019). <a href="https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank">Language Models are Unsupervised Multitask Learners</a></li>
+<li>Reimers & Gurevych (2019). <a href="https://arxiv.org/abs/1908.10084" target="_blank">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</a></li>
 </ul>
 <strong>Modern Topic Models:</strong>
 <ul>
@@ -998,13 +998,13 @@ By completing this assignment, you will:
 </ul>
 <strong>Evaluation and Analysis:</strong>
 <ul>
-<li>van der Maaten  |  Hinton (2008). <a href="https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf" target="_blank">Visualizing Data using t-SNE</a></li>
-<li>McInnes, Healy,  |  Melville (2018). <a href="https://arxiv.org/abs/1802.03426" target="_blank">UMAP: Uniform Manifold Approximation and Projection</a></li>
+<li>van der Maaten & Hinton (2008). <a href="https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf" target="_blank">Visualizing Data using t-SNE</a></li>
+<li>McInnes, Healy, & Melville (2018). <a href="https://arxiv.org/abs/1802.03426" target="_blank">UMAP: Uniform Manifold Approximation and Projection</a></li>
 </ul>
 <strong>Cognitive Science Connection:</strong>
 <ul>
-<li>Lenci (2008). <a href="https://www.academia.edu/download/43947219/Distributional<em>semantics</em>in<em>linguistic</em>a20160320-31230-nwvv7i.pdf" target="_blank">Distributional semantics in linguistic and cognitive research</a></li>
-<li>Landauer  |  Dumais (1997). <a href="https://psycnet.apa.org/record/1997-03887-001" target="_blank">A Solution to Plato's Problem: The Latent Semantic Analysis Theory of Acquisition</a></li>
+<li>Lenci (2008). <a href="https://www.academia.edu/download/43947219/Distributional_semantics_in_linguistic_a20160320-31230-nwvv7i.pdf" target="_blank">Distributional semantics in linguistic and cognitive research</a></li>
+<li>Landauer & Dumais (1997). <a href="https://psycnet.apa.org/record/1997-03887-001" target="_blank">A Solution to Plato's Problem: The Latent Semantic Analysis Theory of Acquisition</a></li>
 </ul>
 <h3 id="tutorials-and-documentation">Tutorials and Documentation</h3>
 <strong>Libraries:</strong>
@@ -1077,7 +1077,7 @@ By completing this assignment, you will:
 <strong>Choosing Hyperparameters:</strong>
 <ul>
 <li>For clustering: use elbow method, silhouette scores</li>
-<li>For UMAP: <code>n<em>neighbors=15</code>, <code>min</em>dist=0.1</code> are good defaults</li>
+<li>For UMAP: <code>n_neighbors=15</code>, <code>min_dist=0.1</code> are good defaults</li>
 <li>For t-SNE: <code>perplexity=30-50</code> for large datasets</li>
 <li>Document your choices and justify them</li>
 </ul>

@@ -33,8 +33,22 @@ def convert_latex_href(text):
 
 
 def convert_latex_table(text):
-    """Remove inline LaTeX table blocks."""
-    # Remove LaTeX table environments
+    """Remove inline LaTeX table blocks.
+
+    Only converts & to | within actual LaTeX tabular environments,
+    not in regular markdown content.
+    """
+    # Check if there's a LaTeX tabular environment
+    if "\\begin{tabular}" not in text:
+        # No LaTeX tables - just remove other LaTeX commands but preserve &
+        text = re.sub(r"\\setlength\{[^}]+\}\{[^}]+\}", "", text)
+        text = re.sub(r"\\vspace\{[^}]+\}", "", text)
+        text = re.sub(r"\\begin\{center\}", "", text)
+        text = re.sub(r"\\end\{center\}", "", text)
+        text = re.sub(r"\\textbf\{([^}]+)\}", r"**\1**", text)
+        return text
+
+    # Process LaTeX table environments
     text = re.sub(r"\\setlength\{[^}]+\}\{[^}]+\}", "", text)
     text = re.sub(r"\\vspace\{[^}]+\}", "", text)
     text = re.sub(r"\\begin\{center\}", "", text)
@@ -44,6 +58,8 @@ def convert_latex_table(text):
     text = re.sub(r"\\hline", "", text)
     text = re.sub(r"\\textbf\{([^}]+)\}", r"**\1**", text)
     text = re.sub(r"\\\\", "", text)
+    # Only convert & to | in LaTeX table rows (lines that had \\)
+    # This is a simplified approach - convert & only in the preamble area
     text = re.sub(r"&", " | ", text)
     return text
 
@@ -84,7 +100,9 @@ def convert_inline_formatting(html):
     """Convert bold and italic markdown to HTML."""
     html = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", html)
     html = re.sub(r"\*(.+?)\*", r"<em>\1</em>", html)
-    html = re.sub(r"(?<![\\])_(.+?)_", r"<em>\1</em>", html)
+    # Only convert _text_ to italics when underscores are surrounded by whitespace or punctuation
+    # This prevents matching underscores in URLs like tacl_a_00115.pdf
+    html = re.sub(r"(?<![\\a-zA-Z0-9])_([^_]+)_(?![a-zA-Z0-9])", r"<em>\1</em>", html)
     return html
 
 
