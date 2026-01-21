@@ -163,49 +163,49 @@ We strive to create an inclusive learning environment where all students feel su
 |-----|---------|--------|--------|-----------|
 | Mon Jan 12 | Lecture 5 | Data Cleaning & Preprocessing | [HTML](../slides/week2/lecture5.html), [PDF](../slides/week2/lecture5.pdf) | HuggingFace NLP Course Chapter 2 |
 | Wed Jan 14 | Lecture 6 | Tokenization | [HTML](../slides/week2/lecture6.html), [PDF](../slides/week2/lecture6.pdf) | [Sennrich et al. (2016)](https://aclanthology.org/P16-1162/), [Kudo & Richardson (2018)](https://aclanthology.org/D18-2012/) |
-| Thu Jan 15 | Lecture 7 | Text Classification Workshop | [HTML](../slides/week2/lecture7.html), [PDF](../slides/week2/lecture7.pdf) | |
-| Fri Jan 16 | Lecture 8 | POS Tagging & Sentiment Analysis | [HTML](../slides/week2/lecture8.html), [PDF](../slides/week2/lecture8.pdf) | **[Assignment 2](../assignments/assignment-2/) Released**, **[Assignment 1](../assignments/assignment-1/) Due** |
+| Thu Jan 15 | Lecture 7 (X-hour) | Text Classification Workshop | [HTML](../slides/week2/lecture7.html), [PDF](../slides/week2/lecture7.pdf) | |
+| Fri Jan 16 | Lecture 7 (continued) | Text Classification Workshop | [HTML](../slides/week2/lecture7.html), [PDF](../slides/week2/lecture7.pdf) | **[Assignment 2](../assignments/assignment-2/) Released**, **[Assignment 1](../assignments/assignment-1/) Due** |
 
 ### Week 3: Text Embeddings I (January 19--23)
 
 | Day | Lecture | Topics | Slides | Materials |
 |-----|---------|--------|--------|-----------|
 | Mon Jan 19 | -- | Martin Luther King Jr. Day (No Class) | -- | |
-| Wed Jan 21 | Lecture 9 | Classic Embeddings (LSA, LDA) | [HTML](../slides/week3/lecture9.html), [PDF](../slides/week3/lecture9.pdf) | [Landauer & Dumais (1997)](https://psycnet.apa.org/record/1997-02478-006), [Blei et al. (2003)](https://www.jmlr.org/papers/v3/blei03a) |
-| Thu Jan 22 | Lecture 10 | Embeddings Workshop | [HTML](../slides/week3/lecture10.html), [PDF](../slides/week3/lecture10.pdf) | |
-| Fri Jan 23 | Lecture 11 | Word Embeddings (Word2Vec, GloVe) | [HTML](../slides/week3/lecture11.html), [PDF](../slides/week3/lecture11.pdf) | [Mikolov et al. (2013)](https://arxiv.org/abs/1301.3781), [Pennington et al. (2014)](https://aclanthology.org/D14-1162/), **[Assignment 3](../assignments/assignment-3/) Released**, **[Assignment 2](../assignments/assignment-2/) Due** |
+| Wed Jan 21 | Lecture 8 | POS Tagging & Sentiment Analysis | [HTML](../slides/week3/lecture8.html), [PDF](../slides/week3/lecture8.pdf) | [Linzen et al. (2016)](https://direct.mit.edu/tacl/article-pdf/doi/10.1162/tacl_a_00115/1567418/tacl_a_00115.pdf) |
+| Thu Jan 22 | Lecture 9 (X-hour) | Classic Embeddings (LSA, LDA) | [HTML](../slides/week3/lecture9.html), [PDF](../slides/week3/lecture9.pdf) | [Deerwester et al. (1990)](http://wordvec.colorado.edu/papers/Deerwester_1990.pdf), [Blei et al. (2003)](https://www.jmlr.org/papers/v3/blei03a) |
+| Fri Jan 23 | Lecture 10 | Word Embeddings (Word2Vec, GloVe, FastText) | [HTML](../slides/week3/lecture10.html), [PDF](../slides/week3/lecture10.pdf) | [Mikolov et al. (2013)](https://arxiv.org/abs/1301.3781), [Pennington et al. (2014)](https://aclanthology.org/D14-1162/), **[Assignment 3](../assignments/assignment-3/) Released**, **[Assignment 2](../assignments/assignment-2/) Due** |
 
 ### Week 4: Text Embeddings II (January 26--30)
 
 | Day | Lecture | Topics | Slides | Materials |
 |-----|---------|--------|--------|-----------|
-| Mon Jan 26 | Lecture 12 | Contextual Embeddings | [HTML](../slides/week4/lecture12.html), [PDF](../slides/week4/lecture12.pdf) | [Peters et al. (2018)](https://aclanthology.org/N18-1202/), [Cer et al. (2018)](https://arxiv.org/abs/1803.11175) |
-| Wed Jan 28 | Lecture 13 | Dimensionality Reduction | [HTML](../slides/week4/lecture13.html), [PDF](../slides/week4/lecture13.pdf) | [McInnes et al. (2018)](https://arxiv.org/abs/1802.03426) |
-| Fri Jan 30 | Lecture 14 | Cognitive Models of Semantic Representation | [HTML](../slides/week4/lecture14.html), [PDF](../slides/week4/lecture14.pdf) | [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444), **[Assignment 4](../assignments/assignment-4/) Released**, **[Assignment 3](../assignments/assignment-3/) Due (Feb 2, 11:59 PM EST)** |
+| Mon Jan 26 | Lecture 11 | Contextual Embeddings | [HTML](../slides/week4/lecture11.html), [PDF](../slides/week4/lecture11.pdf) | [Peters et al. (2018)](https://aclanthology.org/N18-1202/), [Cer et al. (2018)](https://arxiv.org/abs/1803.11175) |
+| Wed Jan 28 | Lecture 12 | Dimensionality Reduction | [HTML](../slides/week4/lecture12.html), [PDF](../slides/week4/lecture12.pdf) | [McInnes et al. (2018)](https://arxiv.org/abs/1802.03426) |
+| Fri Jan 30 | Lecture 13 | Cognitive Models of Semantic Representation | [HTML](../slides/week4/lecture13.html), [PDF](../slides/week4/lecture13.pdf) | [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444), **[Assignment 4](../assignments/assignment-4/) Released**, **[Assignment 3](../assignments/assignment-3/) Due (Feb 2, 11:59 PM EST)** |
 
 ### Week 5: Transformers & Attention (February 2--6)
 
 | Day | Lecture | Topics | Slides | Materials |
 |-----|---------|--------|--------|-----------|
-| Mon Feb 2 | Lecture 15 | Attention Mechanisms | [HTML](../slides/week5/lecture15.html), [PDF](../slides/week5/lecture15.pdf) | [Bahdanau et al. (2015)](https://arxiv.org/abs/1409.0473), [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) |
-| Wed Feb 4 | Lecture 16 | Transformer Architecture | [HTML](../slides/week5/lecture16.html), [PDF](../slides/week5/lecture16.pdf) | [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762), HuggingFace NLP Course Chapter 3 |
-| Thu Feb 6 | Lecture 17 | Training Transformers | [HTML](../slides/week5/lecture17.html), [PDF](../slides/week5/lecture17.pdf) | **[Assignment 4](../assignments/assignment-4/) Due (Feb 9, 11:59 PM EST)** |
+| Mon Feb 2 | Lecture 14 | Attention Mechanisms | [HTML](../slides/week5/lecture14.html), [PDF](../slides/week5/lecture14.pdf) | [Bahdanau et al. (2015)](https://arxiv.org/abs/1409.0473), [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) |
+| Wed Feb 4 | Lecture 15 | Transformer Architecture | [HTML](../slides/week5/lecture15.html), [PDF](../slides/week5/lecture15.pdf) | [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762), HuggingFace NLP Course Chapter 3 |
+| Fri Feb 6 | Lecture 16 | Training Transformers | [HTML](../slides/week5/lecture16.html), [PDF](../slides/week5/lecture16.pdf) | **[Assignment 4](../assignments/assignment-4/) Due (Feb 9, 11:59 PM EST)** |
 
 ### Week 6: Encoder Models (February 9--13)
 
 | Day | Lecture | Topics | Slides | Materials |
 |-----|---------|--------|--------|-----------|
-| Mon Feb 9 | Lecture 18 | BERT Deep Dive | [HTML](../slides/week6/lecture18.html), [PDF](../slides/week6/lecture18.pdf) | [Devlin et al. (2019)](https://aclanthology.org/N19-1423/), HuggingFace NLP Course Chapter 4, **[Assignment 5](../assignments/assignment-5/) Released** |
-| Wed Feb 11 | Lecture 19 | BERT Variants | [HTML](../slides/week6/lecture19.html), [PDF](../slides/week6/lecture19.pdf) | [Liu et al. (2019)](https://arxiv.org/abs/1907.11692), [Sanh et al. (2019)](https://arxiv.org/abs/1910.01108) |
-| Thu Feb 13 | Lecture 20 | Applications of Encoder Models | [HTML](../slides/week6/lecture20.html), [PDF](../slides/week6/lecture20.pdf) | **[Assignment 5](../assignments/assignment-5/) Due (Feb 16, 11:59 PM EST)** |
+| Mon Feb 9 | Lecture 17 | BERT Deep Dive | [HTML](../slides/week6/lecture17.html), [PDF](../slides/week6/lecture17.pdf) | [Devlin et al. (2019)](https://aclanthology.org/N19-1423/), HuggingFace NLP Course Chapter 4, **[Assignment 5](../assignments/assignment-5/) Released** |
+| Wed Feb 11 | Lecture 18 | BERT Variants | [HTML](../slides/week6/lecture18.html), [PDF](../slides/week6/lecture18.pdf) | [Liu et al. (2019)](https://arxiv.org/abs/1907.11692), [Sanh et al. (2019)](https://arxiv.org/abs/1910.01108) |
+| Fri Feb 13 | Lecture 19 | Applications of Encoder Models | [HTML](../slides/week6/lecture19.html), [PDF](../slides/week6/lecture19.pdf) | **[Assignment 5](../assignments/assignment-5/) Due (Feb 16, 11:59 PM EST)** |
 
 ### Week 7: Decoder Models & GPT (February 16--20)
 
 | Day | Lecture | Topics | Slides | Materials |
 |-----|---------|--------|--------|-----------|
-| Mon Feb 16 | Lecture 21 | GPT Architecture | [HTML](../slides/week7/lecture21.html), [PDF](../slides/week7/lecture21.pdf) | [Radford et al. (2018)](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf), [Radford et al. (2019)](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) |
-| Wed Feb 18 | Lecture 22 | Scaling Up to GPT-3 and Beyond | [HTML](../slides/week7/lecture22.html), [PDF](../slides/week7/lecture22.pdf) | [Brown et al. (2020)](https://arxiv.org/abs/2005.14165), [OpenAI (2023)](https://arxiv.org/abs/2303.08774) |
-| Fri Feb 20 | Lecture 23 | Implementing GPT from Scratch | [HTML](../slides/week7/lecture23.html), [PDF](../slides/week7/lecture23.pdf) | |
+| Mon Feb 16 | Lecture 20 | GPT Architecture | [HTML](../slides/week7/lecture20.html), [PDF](../slides/week7/lecture20.pdf) | [Radford et al. (2018)](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf), [Radford et al. (2019)](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) |
+| Wed Feb 18 | Lecture 21 | Scaling Up to GPT-3 and Beyond | [HTML](../slides/week7/lecture21.html), [PDF](../slides/week7/lecture21.pdf) | [Brown et al. (2020)](https://arxiv.org/abs/2005.14165), [OpenAI (2023)](https://arxiv.org/abs/2303.08774) |
+| Fri Feb 20 | Lecture 22 | Implementing GPT from Scratch | [HTML](../slides/week7/lecture22.html), [PDF](../slides/week7/lecture22.pdf) | |
 
 ### Week 8: No Classes (February 23--27)
 
@@ -215,15 +215,15 @@ Instructor away February 23--27. No classes this week. Use this time to work on 
 
 | Day | Lecture | Topics | Slides | Materials |
 |-----|---------|--------|--------|-----------|
-| Mon Mar 2 | Lecture 24 | Retrieval Augmented Generation (RAG) | [HTML](../slides/week9/lecture24.html), [PDF](../slides/week9/lecture24.pdf) | [Lewis et al. (2020)](https://arxiv.org/abs/2005.11401) |
-| Wed Mar 4 | Lecture 25 | Mixture of Experts & Efficiency | [HTML](../slides/week9/lecture25.html), [PDF](../slides/week9/lecture25.pdf) | [Fedus et al. (2022)](https://arxiv.org/abs/2101.03961), [Jiang et al. (2024)](https://arxiv.org/abs/2401.04088) |
-| Fri Mar 6 | Lecture 26 | Ethics, Bias, and Safety | [HTML](../slides/week9/lecture26.html), [PDF](../slides/week9/lecture26.pdf) | [Bender et al. (2021)](https://dl.acm.org/doi/10.1145/3442188.3445922) |
+| Mon Mar 2 | Lecture 23 | Retrieval Augmented Generation (RAG) | [HTML](../slides/week9/lecture23.html), [PDF](../slides/week9/lecture23.pdf) | [Lewis et al. (2020)](https://arxiv.org/abs/2005.11401) |
+| Wed Mar 4 | Lecture 24 | Mixture of Experts & Efficiency | [HTML](../slides/week9/lecture24.html), [PDF](../slides/week9/lecture24.pdf) | [Fedus et al. (2022)](https://arxiv.org/abs/2101.03961), [Jiang et al. (2024)](https://arxiv.org/abs/2401.04088) |
+| Fri Mar 6 | Lecture 25 | Ethics, Bias, and Safety | [HTML](../slides/week9/lecture25.html), [PDF](../slides/week9/lecture25.pdf) | [Bender et al. (2021)](https://dl.acm.org/doi/10.1145/3442188.3445922) |
 
 ### Week 10: Final Projects (March 9)
 
 | Day | Lecture | Topics | Slides | Materials |
 |-----|---------|--------|--------|-----------|
-| Mon Mar 9 | Lecture 27 | Final Project Presentations & Wrap-up | -- | Last day of classes, **[Final Project](../assignments/final-project/) Due (Mar 9, 11:59 PM EST)** |
+| Mon Mar 9 | Lecture 26 | Final Project Presentations & Wrap-up | -- | Last day of classes, **[Final Project](../assignments/final-project/) Due (Mar 9, 11:59 PM EST)** |
 
 ### Final Exam Period (March 13--17)
 

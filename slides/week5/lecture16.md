@@ -8,8 +8,8 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Lecture 16: Transformer Architecture
-## Week 5, Lecture 2 - Attention Is All You Need
+# Lecture 16: Training Transformers
+## Week 5, Lecture 3 - From Architecture to Implementation
 
 **PSYC 51.17: Models of Language and Communication**
 
@@ -21,542 +21,604 @@ Winter 2026
 
 
 
-1. **The Transformer Revolution**: Why it changed everything
-2. **Architecture Overview**: Encoder, Decoder, and components
-3. **Self-Attention**: The core mechanism (Q, K, V)
-4. **Self-Attention Example**: Understanding pronoun resolution
-5. **Multi-Head Attention**: Learning diverse relationships
-6. **Three Types of Attention**: Self, Masked, Cross
+1. **Positional Encoding**: Injecting sequence order
+2. **Feed-Forward Networks**: The other key component
+3. **Layer Norm & Residuals**: Training deep networks
+4. **FlashAttention**: Making transformers faster
+5. **Three Architectures**: Encoder, Decoder, Both
+6. **Practical Implementation**: Using HuggingFace
 
-*Goal: Understand the Transformer architecture and self-attention*
+*Goal: Complete understanding of transformer training and implementation*
 
 ---
 
-# The Transformer Revolution 
+# Positional Encoding 
 
 
+**Problem: Self-attention is permutation-invariant!**
 
-**"Attention Is All You Need"**
+Without position information:
+- "The cat sat" = "sat cat the" = "cat the sat"
+- Order matters in language!
+
+**Solution: Add positional encodings to input embeddings**
 
 <div class="columns">
 <div class="column">
 
-**Before Transformers (2017):**
-- RNNs/LSTMs with attention
-- Sequential processing
-- Hard to parallelize
-- Limited context window
-- Slow training
+**Original Transformer (Sinusoidal):**
+```python
+# PE(pos, 2i) = sin(pos / 10000^(2i/d))
+# PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
 
-</div>
-<div class="column">
+# Position 0, dim 0: sin(0/10000^0) = 0
+# Position 1, dim 0: sin(1/10000^0) = 0.84
+# Position 2, dim 0: sin(2/10000^0) = 0.91
+```
 
-**After Transformers:**
-- Parallel processing
-- Scales to GPUs/TPUs
-- Long-range dependencies
-- Fast & effective
-
-</div>
-</div>
-
-<div class="callout tip">
-<div class="callout-title">Speed Comparison</div>
-
-Processing "The cat sat on the mat" (6 tokens):
-- **RNN:** 6 sequential steps (must wait for each)
-- **Transformer:** 1 parallel step (all tokens at once!)
-
-Training speedup: **10-100x faster** on modern hardware
-
-</div>
-
-*Reference: Vaswani et al. (2017) - "Attention Is All You Need"*
-
----
-
-# Why Get Rid of RNNs? 
-
-
-**Limitations of Recurrent Architectures:**
-
-<div class="columns">
-<div class="column">
-
-**1. Sequential Bottleneck**
-- Must process token t before t+1
-- Cannot parallelize across sequence
-
-**2. Long-Range Dependencies**
-- Info flows through many steps
-- Gradient vanishing problems
-
-**3. Memory Constraints**
-- Hidden state must remember all
+**Properties:**
+- Deterministic, unique per position
+- Generalizes to unseen lengths
 
 </div>
 <div class="column">
 
 **Concrete Example:**
 ```
-Sentence: "The cat that I saw
-yesterday at the park sat down"
+Token embeddings:
+"The" = [0.2, 0.5, 0.1, 0.8]
+"cat" = [0.9, 0.3, 0.7, 0.2]
 
-Token 1 ("The") to token 11 ("sat"):
-- RNN: Info passes through 10 steps
-- Gradients shrink: 0.9^10 = 0.35
-- By token 11, "The" is almost gone!
+Positional encodings:
+pos_0 = [0.0, 1.0, 0.0, 1.0]
+pos_1 = [0.84, 0.54, 0.01, 1.0]
 
-Transformer: Direct connection!
-- "sat" attends directly to "cat"
-- No information degradation
+Final input (add them):
+"The" = [0.2, 1.5, 0.1, 1.8]
+"cat" = [1.74, 0.84, 0.71, 1.2]
 ```
 
 </div>
 </div>
 
-**Transformer Solution:** Every token can attend to every other token directly!
+*References: Vaswani et al. (2017), Su et al. (2021)*
 
 ---
 
-# Transformer Architecture Overview 
+# Why Sinusoidal Positional Encoding? 
+
+
+**Advantages of sine/cosine functions:**
+
+<div class="columns">
+<div class="column">
+
+**1. Unique Patterns**
+- Each position gets unique vector
+- Different frequencies per dimension
+
+**2. Relative Position Info**
+- PE(pos+k) = linear function of PE(pos)
+- Model learns relative positions
+
+**3. Extrapolation**
+- Works for sequences longer than training
+- No need to retrain
+
+**4. No Parameters**
+- Deterministic, saves memory
+
+</div>
+<div class="column">
+
+**Visualization:**
+```
+Dim 0 (high freq): ~~~~~ (fast oscillation)
+Dim 1 (mid freq): ~~~ (medium)
+Dim 2 (low freq): ~ (slow)
+
+Position 0: [0.0, 0.0, 0.0, ...]
+Position 1: [0.84, 0.01, 0.0001, ...]
+Position 2: [0.91, 0.02, 0.0002, ...]
+...
+Position 100: [0.51, 0.86, 0.01, ...]
+
+Each position has a unique "barcode"!
+```
+
+</div>
+</div>
+
+
+---
+
+# Visualizing Positional Encodings 
+
+
+**Each position gets a unique pattern across dimensions**
+
+```
+Pos 0 -> Pos 5 -> Pos 9 -> Dim 0 -> Dim 4 -> Dim 7
+```
+
+**Key Insight:**
+- Lower dimensions: Rapid oscillation (high frequency)
+- Higher dimensions: Slow oscillation (low frequency)
+- Creates a unique "barcode" for each position
+- Model learns to use these patterns for positional awareness
+
+
+---
+
+# Feed-Forward Networks 
+
+
+**After attention, apply position-wise feed-forward network**
+
+**Architecture:** Two linear layers with ReLU/GELU activation
+
+```python
+class FeedForward(nn.Module):
+ def __init__(self, d_model=768, d_ff=3072): # 4x expansion
+ super().__init__()
+ self.linear1 = nn.Linear(d_model, d_ff) # 768 → 3072
+ self.linear2 = nn.Linear(d_ff, d_model) # 3072 → 768
+ self.relu = nn.ReLU()
+
+ def forward(self, x):
+ # x: [batch, seq_len, 768]
+ x = self.linear1(x) # [batch, seq_len, 3072]
+ x = self.relu(x) # Non-linearity!
+ x = self.linear2(x) # [batch, seq_len, 768]
+ return x
+
+# Applied to each position independently
+# Same weights for all positions
+```
+
+**Purpose:** Add non-linearity and increase model capacity
+- Attention is mostly linear (weighted sums)
+- FFN adds expressiveness through ReLU/GELU
+
+---
+
+# Why Feed-Forward Networks? 
+
+
+**Role in the Transformer:**
+
+1. **Add Non-linearity**
+ - Attention is mostly linear operations (weighted sums)
+- FFN introduces non-linear transformations
+- ReLU/GELU activation adds expressiveness
+
+ 
+
+2. **Position-wise Processing**
+ - Attention mixes information across positions
+- FFN processes each position independently
+- Allows position-specific feature transformations
+
+ 
+
+3. **Increase Model Capacity**
+ - Expansion (4x) provides more parameters
+- Can learn complex feature combinations
+- Most parameters in transformer are in FFN layers!
+
+ 
+
+4. **Feature Refinement**
+ - Attention gathers context
+- FFN refines and transforms the representation
+- Two complementary operations
+
+
+---
+
+# Layer Normalization & Residual Connections 
+
+
+**Critical for training deep transformers!**
+
+<div class="columns">
+<div class="column">
+
+**Residual Connections:**
+```python
+# output = sublayer(x) + x
+x = x + self.attention(x)
+x = x + self.feedforward(x)
+```
+- Gradients flow directly through
+- Prevents vanishing gradients
+- Enables 96-layer models (GPT-3)!
+
+</div>
+<div class="column">
+
+**Layer Normalization:**
+```python
+# Normalize across features (not batch)
+def layer_norm(x, gamma, beta):
+ mean = x.mean(dim=-1)
+ std = x.std(dim=-1)
+ return gamma * (x - mean) / std + beta
+
+# Example: x = [0.2, 0.8, 0.5]
+# mean=0.5, std=0.25
+# normalized = [-1.2, 1.2, 0.0]
+```
+
+</div>
+</div>
+
+**Standard Pattern (Post-Norm):**
+```python
+x = LayerNorm(x + Attention(x))
+x = LayerNorm(x + FeedForward(x))
+```
+
+
+---
+
+# Pre-Norm vs Post-Norm 
+
+
+
+**Two ways to arrange LayerNorm and residual connections**
+
+<div class="columns">
+<div class="column">
+
+**Post-Norm (Original):**
+```python
+# Normalize AFTER residual
+x = LayerNorm(x + Attention(x))
+x = LayerNorm(x + FFN(x))
+```
+- Used in original Transformer, BERT
+- Can be unstable for deep models
+- Requires careful initialization
+
+</div>
+<div class="column">
+
+**Pre-Norm (Modern):**
+```python
+# Normalize BEFORE sublayer
+x = x + Attention(LayerNorm(x))
+x = x + FFN(LayerNorm(x))
+```
+- Used in GPT-2, GPT-3, LLaMA
+- More stable gradients
+- Easier to train 96+ layer models
+
+</div>
+</div>
+
+<div class="callout info">
+<div class="callout-title">Recommendation</div>
+
+For deep transformers (24+ layers), Pre-Norm is preferred due to better training stability. Post-Norm can achieve slightly better final performance with careful tuning.
+
+</div>
+
+
+---
+
+# Complete Transformer Block 
+
+
+**Putting it all together:**
+
+```python
+class TransformerBlock(nn.Module):
+ def __init__(self, d_model=768, n_heads=12, d_ff=3072):
+ super().__init__()
+ self.attention = MultiHeadAttention(d_model, n_heads)
+ self.ffn = FeedForward(d_model, d_ff)
+ self.norm1 = nn.LayerNorm(d_model)
+ self.norm2 = nn.LayerNorm(d_model)
+
+ def forward(self, x):
+ # Self-attention with residual
+ x = x + self.attention(self.norm1(x))
+ # Feed-forward with residual
+ x = x + self.ffn(self.norm2(x))
+ return x
+
+# Stack N blocks!
+encoder = nn.Sequential(*[TransformerBlock() for _ in range(12)])
+```
+
+**Model sizes:**
+- BERT-base: 12 blocks, 110M params | BERT-large: 24 blocks, 340M params
+- GPT-3: 96 blocks, 175B params!
+
+
+---
+
+# FlashAttention: Making Transformers Faster 
+
+
+**Problem: Standard attention is slow and memory-hungry!**
+
+<div class="callout warning">
+<div class="callout-title">Standard Attention Complexity</div>
+
+- Time: O(n^2) where n = sequence length
+- Memory: O(n^2) to store attention matrix
+- Bottleneck: Reading/writing to GPU memory (HBM)
+
+</div>
+
+<div class="columns">
+<div class="column">
+
+**FlashAttention Innovation:**
+- Tile-based computation
+- Uses fast SRAM instead of slow HBM
+- Fused operations (fewer memory reads)
+- Recomputation in backward pass
+
+```python
+# Standard: materialize full n×n matrix
+attn = softmax(Q @ K.T / sqrt(d))
+out = attn @ V # O(n^2) memory
+
+# FlashAttention: compute in tiles
+for tile in tiles:
+ # Only load small tile to SRAM
+ # Never materialize full matrix!
+```
+
+</div>
+<div class="column">
+
+**Concrete Speedup:**
+
+| Method | Speed | Memory |
+| --- | --- | --- |
+| Standard | 1x | 1x |
+| FlashAttention | 3x faster | 0.5x |
+
+**Real Impact:**
+- Sequence 1024→4096 on same GPU
+- Training 2-4x faster
+- Used in: LLaMA, GPT-4, Mistral
+
+</div>
+</div>
+
+*Reference: Dao et al. (2022) - "FlashAttention"*
+
+---
+
+# Other Attention Optimizations 
+
+
+**Addressing the $O(n^2)$ problem:**
+
+1. **Sparse Attention**
+ - Only attend to subset of positions
+- Local windows + global tokens
+- Used in: Longformer, BigBird
+
+ 
+
+2. **Linear Attention**
+ - Approximate attention with linear complexity
+- Kernel trick to avoid materializing attention matrix
+- Used in: Performer, Linear Transformer
+
+ 
+
+3. **Low-Rank Approximation**
+ - Factorize attention matrix
+- Reduce memory footprint
+- Used in: Linformer
+
+ 
+
+4. **Sliding Window**
+ - Fixed-size local attention window
+- Constant memory usage
+- Used in: Mistral 7B
+
+**Trade-off:** Efficiency vs. expressiveness. Full attention often still best for quality.
+
+---
+
+# Three Transformer Architectures 
+
+
+
+| p{4cm}p{4cm}} Architecture | How it works | **Examples \ | Uses** |
+| --- | --- | --- | --- |
+| Best for: Classification, NER, QA |
+| Best for: Generation, completion |
+| Decoder: masked + cross-attention | T5, BART, mT5 |
+| Best for: Translation, summarization |
+
+<div class="callout info">
+<div class="callout-title">Key Difference: Attention Masking</div>
+
+- **Encoder:** Full self-attention (bidirectional)
+- **Decoder:** Causal/masked attention (unidirectional)
+
+</div>
+
+
+---
+
+# Visual Comparison: Encoder vs Decoder vs Both
 
 
 
 ```
-**Encoder -> Feed Forward -> Multi-Head Attention -> Feed Forward -> Multi-Head Attention -> Input -> \textbf{Decoder -> Feed Forward
+**Encoder-Only (BERT) -> Self-Attention -> bidirectional -> \textbf{Decoder-Only (GPT) -> Masked Attn -> causal
 ```
 
 \end{center**
 
-**Key Components:**
-- **Multi-Head Self-Attention**: Relate all positions to each other
-- **Feed-Forward Networks**: Transform representations
-- **Residual Connections & Layer Norm**: Training stability (not shown)
-- **Positional Encoding**: Inject position information
+**Choosing the Right Architecture:**
+- Need to understand full context? → **Encoder** (BERT)
+- Need to generate text? → **Decoder** (GPT)
+- Need both (translate, summarize)? → **Encoder-Decoder** (T5)
 
 
 ---
 
-# Self-Attention: The Core Mechanism 
+# Using Transformers in Practice 
 
 
-**Key idea: Each word attends to all other words in the sequence**
-
-**Three learned projections:**
-- **Query (Q)**: What am I looking for?
-- **Key (K)**: What do I contain?
-- **Value (V)**: What information do I have?
-
-**Computation:**
-```
-Q = X @ W_Q # Transform input to queries
-K = X @ W_K # Transform input to keys
-V = X @ W_V # Transform input to values
-
-Attention(Q, K, V) = softmax(Q @ K.T / sqrt(d)) @ V
-```
-
-<div class="callout tip">
-<div class="callout-title">Intuition</div>
-
-Each token asks: "Which other tokens are relevant to me?" (Q vs K)
-Then collects information from relevant tokens (weighted sum of V)
-
-</div>
-
-
----
-
-# Understanding Query, Key, Value 
-
-
-
-**Analogy: Database lookup or information retrieval**
-
-<div class="columns">
-<div class="column">
-
-**Information Retrieval:**
-- **Query**: Your search query
-- **Key**: Document titles/keywords
-- **Value**: Document contents
-
-**Process:**
-1. Compare query to all keys
-2. Get similarity scores
-3. Weight values by scores
-4. Return weighted combination
-
-</div>
-<div class="column">
-
-**Self-Attention:**
-- **Query**: What token $i$ is looking for
-- **Key**: What token $j$ offers
-- **Value**: Information from token $j$
-
-**Process:**
-1. Compare $Q_i$ to all $K_j$
-2. Get attention scores
-3. Weight all $V_j$ by scores
-4. Return new representation for $i$
-
-</div>
-</div>
-
-<div class="callout info">
-<div class="callout-title">Key Insight</div>
-
-Each token simultaneously acts as:
-- A query (what it needs from other tokens)
-- A key (how it should be retrieved)
-- A value (what information it provides)
-
-</div>
-
-
----
-
-# Scaled Dot-Product Attention 
-
-
-**Step-by-step computation with concrete example:**
-
-**Input:** 3 tokens, embedding dim = 4
+**HuggingFace makes it easy!**
 
 ```python
-# Input embeddings (3 tokens x 4 dims)
-X = [[0.1, 0.2, 0.3, 0.4], # "The"
- [0.5, 0.6, 0.7, 0.8], # "cat"
- [0.2, 0.3, 0.4, 0.5]] # "sat"
+from transformers import AutoModel, AutoTokenizer
 
-# Step 1: Compute Q, K, V (using learned weights W_q, W_k, W_v)
-Q = X @ W_q # [3 x 4]
-K = X @ W_k # [3 x 4]
-V = X @ W_v # [3 x 4]
+# Load pre-trained model (downloads ~440MB first time)
+model_name = "bert-base-uncased"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModel.from_pretrained(model_name)
 
-# Step 2: Compute attention scores
-scores = Q @ K.T # [3 x 3] - each token vs each token
+# Tokenize input
+text = "The animal didn't cross the street because it was too tired"
+inputs = tokenizer(text, return_tensors="pt")
+print(inputs['input_ids'])
+# tensor([[ 101, 1996, 4111, 2134, 1005, 1056, 2892, 1996,
+# 2395, 2138, 2009, 2001, 2205, 5458, 102]])
+# [CLS] The animal didn ' t cross the ...
 
-# Step 3: Scale by sqrt(d_k) to prevent large values
-scores = scores / sqrt(4) # divide by 2
+# Get contextualized embeddings
+outputs = model(**inputs)
+hidden_states = outputs.last_hidden_state # [1, 15, 768]
 
-# Step 4: Softmax to get attention weights
-weights = softmax(scores) # rows sum to 1
-
-# Step 5: Weighted sum of values
-output = weights @ V # [3 x 4] - new contextual embeddings
+# "it" is at position 10 - its embedding knows it refers to "animal"!
+it_embedding = hidden_states[0, 10, :] # 768-dim context-aware vector
 ```
 
+*Reference: HuggingFace Course - Chapter 1.4*
 
 ---
 
-# Self-Attention Example: Pronoun Resolution 
+# Comparing Architectures: Code Examples 
 
 
-**Sentence: "The animal didn't cross the street because it was too tired"**
+**Different architectures for different tasks**
 
-**Question: What does "it" refer to?**
-
-```
-Attention weights when processing "it":
-
- The animal didn't cross the street because it was too tired
-"it" → 0.02 [0.45] 0.03 0.05 0.02 0.08 0.05 0.15 0.05 0.02 0.08
- ↑
- High attention to "animal" - model learns coreference!
-```
-
-**Self-attention allows the model to:**
-- Resolve pronouns ("it" → "animal", not "street")
-- Understand long-range dependencies (8 tokens apart!)
-- Capture syntactic and semantic relationships
-- Do this in parallel for all positions!
-
-
----
-
-# Visualizing the Attention Matrix 
-
-
-**For sentence: "The cat sat on the mat"**
-
-| To $\rightarrow$ | The | cat | sat | on | the | mat |
-| --- | --- | --- | --- | --- | --- | --- |
-| From $\downarrow$ | | | | | | |
-| cat | 0.1 | 0.5 | 0.2 | 0.1 | 0.05 | 0.05 |
-| sat | 0.05 | 0.3 | 0.4 | 0.15 | 0.05 | 0.05 |
-| on | 0.05 | 0.1 | 0.2 | 0.3 | 0.1 | 0.25 |
-| the | 0.05 | 0.05 | 0.05 | 0.1 | 0.3 | 0.45 |
-| mat | 0.05 | 0.05 | 0.1 | 0.2 | 0.2 | 0.4 |
-
-**Observations:**
-- Each row sums to 1.0 (probability distribution)
-- Diagonal elements often high (self-attention)
-- "cat" attends to itself and "The" (determiner-noun relationship)
-- "mat" attends to "the" (determiner) and "on" (preposition)
-- Captures syntactic and semantic structure automatically!
-
-
----
-
-# Multi-Head Attention 
-
-
-**Why use multiple attention heads?**
-
-<div class="columns">
-<div class="column">
-
-**Intuition:**
-- Different heads learn different relationships
-- Head 1: Syntactic relationships
-- Head 2: Semantic relationships
-- Head 3: Positional patterns
-
-**Formula:**
 ```python
-# Each head has its own W_Q, W_K, W_V
-head_1 = Attention(Q @ W1_Q, K @ W1_K, V @ W1_V)
-head_2 = Attention(Q @ W2_Q, K @ W2_K, V @ W2_V)
-# ... more heads ...
+from transformers import AutoModelForSequenceClassification, \
+ AutoModelForCausalLM, \
+ AutoModelForSeq2SeqLM
 
-# Concatenate and project
-output = concat(head_1, head_2, ...) @ W_O
+# 1. ENCODER-ONLY (BERT): Classification
+encoder_model = AutoModelForSequenceClassification.from_pretrained(
+ "bert-base-uncased", num_labels=2
+)
+# Use for: Sentiment analysis, NER, classification
+
+# 2. DECODER-ONLY (GPT): Text generation
+decoder_model = AutoModelForCausalLM.from_pretrained("gpt2")
+# Use for: Text completion, creative writing, few-shot learning
+
+# 3. ENCODER-DECODER (T5): Seq2Seq tasks
+seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
+# Use for: Translation, summarization, question answering
+
+# All use transformer architecture, different attention patterns!
 ```
 
-</div>
-<div class="column">
-
-**Concrete Example:**
-```
-Sentence: "The cat sat on the mat"
-
-Head 1 (syntax):
- "sat" → "cat" (subject-verb)
- "mat" → "the" (determiner)
-
-Head 2 (semantics):
- "sat" → "mat" (action-location)
- "cat" → "sat" (agent-action)
-
-Head 3 (position):
- Each word → neighbors
-```
-
-</div>
-</div>
-
-*BERT-base: 12 heads, BERT-large: 16 heads, GPT-3: 96 heads!*
+**Key Takeaway:** Choose architecture based on your task!
 
 ---
 
-# Why Multiple Heads? 
+# Practical Tips for Training Transformers 
 
-
-
-**Example: Different heads learn different patterns**
-
-**Sentence: "The cat sat on the mat"**
 
 <div class="columns">
 <div class="column">
 
-**Head 1: Syntactic Dependencies**
-- "cat" → "The" (noun-determiner)
-- "sat" → "cat" (verb-subject)
-- "mat" → "the" (noun-determiner)
-- Learns grammar structure
+**1. Learning Rate & Warmup**
+```python
+# Warmup: gradually increase LR
+# Then decay (linear or cosine)
+scheduler = get_linear_schedule_with_warmup(
+ optimizer,
+ num_warmup_steps=1000, # ~10% of training
+ num_training_steps=10000
+)
+# Fine-tuning: lr=2e-5, From scratch: lr=1e-4
+```
 
-**Head 2: Semantic Relations**
-- "sat" → "mat" (action-location)
-- "cat" → "mat" (agent-location)
-- Learns meaning relationships
+**2. Optimizer**
+```python
+optimizer = AdamW(
+ model.parameters(),
+ lr=2e-5,
+ weight_decay=0.01 # L2 regularization
+)
+```
 
 </div>
 <div class="column">
 
-**Head 3: Local Context**
-- Each word → neighbors
-- Short-range dependencies
-- N-gram like patterns
+**3. Regularization**
+```python
+# Dropout after attention and FFN
+self.dropout = nn.Dropout(0.1)
 
-**Head 4: Long-Range**
-- Distant word relationships
-- Document-level context
-- Coreference resolution
+# Gradient clipping
+torch.nn.utils.clip_grad_norm_(
+ model.parameters(), max_norm=1.0
+)
+```
+
+**4. Mixed Precision (FP16)**
+```python
+from torch.cuda.amp import autocast
+
+with autocast(): # Use FP16
+ outputs = model(inputs)
+ loss = criterion(outputs, labels)
+# 2x faster, 2x less memory!
+```
 
 </div>
-</div>
-
-<div class="callout info">
-<div class="callout-title">Ensemble Effect</div>
-
-Multiple heads provide a richer, more diverse representation by attending to different aspects of the input simultaneously!
-
 </div>
 
 
 ---
 
-# Three Types of Attention 
+# Computational Efficiency Tips 
 
 
-1. **Self-Attention (Encoder)**
- - Each position attends to all positions in same sequence
-- Bidirectional: can see past and future
-- Used in: BERT, encoder-only models
+1. **Batch Size**
+ - Larger batches = better GPU utilization
+- Use gradient accumulation if GPU memory limited
+- Typical: effective batch size 256-2048 tokens
 
  
 
-2. **Masked Self-Attention (Decoder)**
- - Each position attends only to previous positions
-- Prevents "looking into the future"
-- Used in: GPT, decoder-only models
+2. **Sequence Length**
+ - Shorter sequences train faster (quadratic complexity!)
+- Consider truncation or sliding windows
+- Pack multiple examples to maximize GPU usage
 
  
 
-3. **Cross-Attention (Encoder-Decoder)**
- - Decoder attends to encoder outputs
-- Queries from decoder, Keys/Values from encoder
-- Used in: T5, BART, machine translation
+3. **Model Size**
+ - Start small, scale up if needed
+- DistilBERT: 40% smaller, 60% faster, 97% performance
+- Consider model distillation for deployment
 
-| Masked Self-Attention | Sequence | Same sequence (past only) |
-| --- | --- | --- |
-| Cross-Attention | Decoder | Encoder |
+ 
 
-
----
-
-# Masked Self-Attention 
-
-
-**Preventing the model from "cheating" during generation**
-
-**Problem:** During training, we have the full target sequence. Without masking, the model could "peek" at future tokens!
-
-**Solution:** Mask out future positions by setting attention scores to -infinity before softmax.
-
-```python
-# Example: Generating "The cat sat"
-# When predicting "sat", model should only see "The cat"
-
-scores = [[0.5, 0.3, 0.2], # "The" can see: The
- [0.4, 0.5, 0.1], # "cat" can see: The, cat
- [0.2, 0.4, 0.4]] # "sat" can see: The, cat, sat
-
-# Apply causal mask (upper triangle = -infinity)
-mask = [[ 0, -inf, -inf],
- [ 0, 0, -inf],
- [ 0, 0, 0 ]]
-
-masked_scores = scores + mask
-# After softmax: future positions get weight 0!
-```
-
-**Result:** Token at position t can only attend to positions <= t
-- Maintains autoregressive property
-- Enables parallel training while preserving causality
-
-
----
-
-# Cross-Attention 
-
-
-**Connecting encoder and decoder in seq2seq models**
-
-```
-Encoder Outputs -> (Keys & Values) -> Decoder State -> (Queries) -> Cross-Attention -> Context-Aware Decoder
-```
-
-**Key Properties:**
-- **Q** comes from decoder (what decoder needs)
-- **K, V** come from encoder (what input provides)
-- Allows decoder to "look at" relevant parts of input
-- Similar to the original attention mechanism from Lecture 12!
-
-**Used in:** Machine translation, summarization, any encoder-decoder task
-
----
-
-# Implementing Self-Attention in PyTorch 
-
-
-**Scaled dot-product attention**
-
-```python
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import math
-
-class SelfAttention(nn.Module):
- def __init__(self, embed_dim):
- super().__init__()
- self.embed_dim = embed_dim
- self.W_q = nn.Linear(embed_dim, embed_dim)
- self.W_k = nn.Linear(embed_dim, embed_dim)
- self.W_v = nn.Linear(embed_dim, embed_dim)
-
- def forward(self, x, mask=None):
- Q = self.W_q(x) # Queries: what am I looking for?
- K = self.W_k(x) # Keys: what do I contain?
- V = self.W_v(x) # Values: what info do I provide?
-
- # Attention scores: how similar are Q and K?
- scores = torch.matmul(Q, K.transpose(-2, -1))
- scores = scores / math.sqrt(self.embed_dim) # Scale!
-
- if mask is not None: # For causal/decoder attention
- scores = scores.masked_fill(mask == 0, -1e9)
-
- attn_weights = F.softmax(scores, dim=-1) # Normalize
- output = torch.matmul(attn_weights, V) # Weighted sum
-
- return output, attn_weights
-
-# Usage example:
-attn = SelfAttention(embed_dim=64)
-x = torch.randn(1, 5, 64) # 5 tokens, 64-dim embeddings
-out, weights = attn(x)
-# out: [1, 5, 64] - contextualized embeddings
-# weights: [1, 5, 5] - attention matrix
-```
-
-
----
-
-# Computational Complexity 
-
-
-**Understanding the cost of self-attention**
-
-| Component | Time Complexity | Memory |
-| --- | --- | --- |
-| Self-Attention | O(n^2 * d) | O(n^2) |
-| Feed-Forward | O(n * d^2) | O(d) |
-
-where n = sequence length, d = embedding dimension
-
-<div class="callout tip">
-<div class="callout-title">Concrete Example: Memory Usage</div>
-
-**Sequence length n = 1000 tokens, d = 768 (BERT-base)**
-
-Attention matrix size: n x n = 1000 x 1000 = **1 million entries**
-At fp32 (4 bytes): **4 MB** per layer, per head
-
-BERT-base: 12 layers x 12 heads = 144 attention matrices
-Total: **576 MB** just for attention weights!
-
-**If n = 10,000:** 100x more = **57.6 GB** (won't fit on most GPUs!)
-
-</div>
-
-**Typical context limits:**
-- BERT: 512 | GPT-2: 1024 | GPT-3: 2048 | GPT-4: 128k (with optimizations)
+4. **Hardware**
+ - GPUs with high memory bandwidth (A100, H100)
+- Multi-GPU training with data parallelism
+- Use FlashAttention when available
 
 
 ---
@@ -564,55 +626,58 @@ Total: **576 MB** just for attention weights!
 # Discussion Questions 
 
 
-1. **Self-Attention vs RNN Attention:**
- - What's the key difference?
-- Why is self-attention more powerful?
-- When might RNNs still be useful?
+1. **Positional Encoding:**
+ - Why add instead of concatenate?
+- What happens without positional encoding?
+- Learned vs. fixed: which is better?
 
  
 
-2. **Query, Key, Value Framework:**
- - Why three separate projections instead of one?
-- What if we used $Q = K = V = X$?
-- How does this relate to information retrieval?
+2. **Architecture Choice:**
+ - When would you use encoder-only vs decoder-only?
+- Can GPT do classification? Can BERT generate?
+- Why has decoder-only become more popular recently?
 
  
 
-3. **Multi-Head Attention:**
- - Why not just use one big attention head?
-- How many heads is optimal?
-- Can we interpret what each head learns?
+3. **Scaling:**
+ - Is bigger always better?
+- What are the limits to scaling transformers?
+- How do we make them more efficient?
 
  
 
-4. **Scalability:**
- - $O(n^2)$ is problematic for long documents. Solutions?
-- Sparse attention? Local attention? Other ideas?
+4. **Training Stability:**
+ - Why are residual connections so important?
+- Pre-norm vs post-norm: trade-offs?
 
 
 ---
 
-# Looking Ahead 
+# Looking Ahead to Week 6 
 
 
-**What's Next?**
+**This week (Week 5) we learned:**
+- Attention mechanisms (Lecture 12)
+- Self-attention and transformer architecture (Lecture 13)
+- Training transformers: all the components (Lecture 14)
 
-**Today we learned:**
-- Why transformers replaced RNNs
-- Self-attention mechanism (Q, K, V)
-- Multi-head attention
-- Three types of attention (self, masked, cross)
+**Next week (Week 6):**
 
-**Next lecture (Lecture 14 - Training Transformers):**
-- : How to inject position information
-- : The other key component
-- : Training stability
-- : Making transformers faster
-- : Encoder, Decoder, Encoder-Decoder
-- : Training and using transformers
+- Masked Language Modeling
+- Pre-training and fine-tuning
+- Contextual embeddings in action
 
-**We're building up to BERT and GPT! **
+ \item 
+ - RoBERTa, ALBERT, DistilBERT
+- Improvements and optimizations
 
+ \item 
+ - Real-world BERT applications
+- Cognitive neuroscience connections
+- Understanding vs. pattern matching
+
+**Assignment 4:** Building context-aware systems (check syllabus for details)
 
 ---
 
@@ -621,22 +686,23 @@ Total: **576 MB** just for attention weights!
 
 **Key Takeaways:**
 
-1. **Transformer Revolution**
- - Pure attention, no recurrence
-- Parallel processing, faster training
-2. **Self-Attention Mechanism**
- - Query, Key, Value framework
-- Each token attends to all others
-- Scaled dot-product: $(QK^T/)V$
-3. **Multi-Head Attention**
- - Multiple heads learn diverse relationships
-- Concatenate and project back
-- Richer representations
-4. **Three Attention Types**
- - Self (encoder), Masked (decoder), Cross (encoder-decoder)
-- Different uses for different architectures
+1. **Positional Encoding**
+ - Sine/cosine functions inject position information
+- Enables model to understand order
+2. **Feed-Forward Networks**
+ - Position-wise transformations
+- Add non-linearity and capacity
+3. **LayerNorm & Residuals**
+ - Critical for training deep networks
+- Stabilize gradients, enable deeper models
+4. **Three Architectures**
+ - Encoder (BERT), Decoder (GPT), Both (T5)
+- Choose based on task requirements
+5. **Practical Considerations**
+ - Use HuggingFace for easy implementation
+- FlashAttention for efficiency
+- Careful hyperparameter tuning
 
-**Self-attention is the foundation of modern NLP!**
 
 ---
 
@@ -648,30 +714,17 @@ Total: **576 MB** just for attention weights!
 - **Vaswani et al. (2017)** - "Attention Is All You Need"
  
 - The original Transformer paper
-- Introduced self-attention, multi-head attention
-- Foundation of modern NLP
 
- 
+ \item **Su et al. (2021)** - "RoFormer: Enhanced Transformer with Rotary Position Embedding"
+ - Modern positional encoding approach
 
- \item **Bahdanau et al. (2015)** - "Neural Machine Translation by Jointly Learning to Align and Translate"
- - Original attention mechanism (for comparison)
+ \item **Dao et al. (2022)** - "FlashAttention: Fast and Memory-Efficient Exact Attention"
+ - Making transformers faster
 
-**Tutorials and Resources:**
-- **The Illustrated Transformer** by Jay Alammar
- 
-- https://jalammar.github.io/illustrated-transformer/
-- Visual step-by-step explanation
-
- 
-
- \item **Annotated Transformer** by Harvard NLP
- - https://nlp.seas.harvard.edu/annotated-transformer/
-- Line-by-line implementation
-
- 
-
- \item **HuggingFace Course** - Chapter 1.4
- - How Transformers work
+**Tutorials:**
+- HuggingFace Course: Chapters 1.4, 1.5
+- The Illustrated Transformer: https://jalammar.github.io/illustrated-transformer/
+- Annotated Transformer: https://nlp.seas.harvard.edu/annotated-transformer/
 
 
 ---
@@ -683,13 +736,13 @@ Total: **576 MB** just for attention weights!
 **Discussion Time**
 
 **Topics for discussion:**
-- Self-attention mechanism
-- Query, Key, Value intuition
-- Multi-head attention
-- Masked vs. unmasked attention
+- Positional encoding approaches
+- Architecture choices
+- Training tips and tricks
 - Implementation questions
+- Assignment 4 preparation
 
 Thank you! 
 
-Next: Training Transformers!
+See you next week for BERT!
 

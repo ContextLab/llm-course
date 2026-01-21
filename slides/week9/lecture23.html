@@ -692,808 +692,1201 @@
 })();
 
 </script>
-</head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="lead" data-theme="cdl-theme" lang="C" class="lead" data-marpit-pagination="1" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:lead;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="lead" data-theme="cdl-theme" lang="C" class="lead" data-marpit-pagination="1" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:lead;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
 
-<h1 id="lecture-19-bert-variants">Lecture 19: BERT Variants</h1>
-<h2 id="week-6-lecture-2---improvements-and-optimizations">Week 6, Lecture 2 - Improvements and Optimizations</h2>
+<h1 id="lecture-24-retrieval-augmented-generation">Lecture 24: Retrieval Augmented Generation</h1>
+<h2 id="grounding-llms-in-external-knowledge">Grounding LLMs in External Knowledge</h2>
 <p><strong>PSYC 51.17: Models of Language and Communication</strong></p>
-<p>Winter 2026</p>
-<footer>Winter 2026</footer>
+<p>Week 9</p>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="2" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="2" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="todays-agenda">Today's Agenda</h1>
-<ol>
-<li><strong>RoBERTa</strong>: Robustly Optimized BERT</li>
-<li><strong>ALBERT</strong>: A Lite BERT with parameter sharing</li>
-<li><strong>DistilBERT</strong>: Knowledge distillation for efficiency</li>
-<li><strong>ELECTRA</strong>: Replace Token Detection</li>
-<li><strong>Comparative Analysis</strong>: When to use which variant</li>
-<li><strong>Practical Considerations</strong>: Model selection guide</li>
-</ol>
-<p><em>Goal: Understand improvements to BERT and choose the right model</em></p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="3" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="berts-limitations">BERT's Limitations</h1>
-<p><strong>What could be improved?</strong></p>
-<ol>
-<li><strong>Training Procedure</strong></li>
-</ol>
-<ul>
-<li>Some choices seemed arbitrary</li>
-<li>NSP task might not be useful</li>
-<li>Static masking (same masks every epoch)</li>
-</ul>
-<ol start="2">
-<li><strong>Model Size</strong></li>
-</ol>
-<ul>
-<li>110M (Base) or 340M (Large) parameters</li>
-<li>Large memory footprint</li>
-<li>Slow inference</li>
-</ul>
-<ol start="3">
-<li><strong>Training Efficiency</strong></li>
-</ol>
-<ul>
-<li>Only 15% of tokens are predicted</li>
-<li>85% of computation &quot;wasted&quot;?</li>
-<li>Could we learn more efficiently?</li>
-</ul>
-<ol start="4">
-<li><strong>Data and Compute</strong></li>
-</ol>
-<ul>
-<li>Trained on limited data (3.3B words)</li>
-<li>Modern datasets much larger</li>
-<li>Could benefit from more training</li>
-</ul>
-<p><strong>Many variants address these issues!</strong></p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="4" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="roberta-robustly-optimized-bert">RoBERTa: Robustly Optimized BERT</h1>
-<p><strong>Key idea: Better training = Better performance</strong></p>
-<p><strong>RoBERTa's Improvements (Liu et al. 2019):</strong></p>
-<ol>
-<li><strong>Remove NSP Task</strong></li>
-</ol>
-<ul>
-<li>Next Sentence Prediction hurt performance</li>
-<li>Use only Masked Language Modeling</li>
-<li>Full sentences (don't need sentence pairs)</li>
-</ul>
-<ol start="2">
-<li><strong>Dynamic Masking</strong></li>
-</ol>
-<ul>
-<li>Generate masking pattern every time</li>
-<li>BERT: static masks (same for every epoch)</li>
-<li>More diverse training signal</li>
-</ul>
-<ol start="3">
-<li><strong>Larger Batches, More Data</strong></li>
-</ol>
-<ul>
-<li>Batch size: 8K sequences (vs BERT's 256)</li>
-<li>160GB text (vs BERT's 16GB)</li>
-<li>Longer training (500K steps vs 100K)</li>
-</ul>
-<ol start="4">
-<li><strong>Longer Sequences</strong></li>
-</ol>
-<ul>
-<li>Train with longer sequences</li>
-<li>Better for downstream tasks</li>
-</ul>
-<p><em>Reference: Liu et al. (2019) - &quot;RoBERTa: A Robustly Optimized BERT Pretraining Approach&quot;</em></p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="5" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="roberta-results">RoBERTa Results</h1>
-<p><strong>Consistent improvements over BERT</strong></p>
-<table>
-<thead>
-<tr>
-<th>SQuAD 2.0</th>
-<th>83.1</th>
-<th>89.4</th>
-<th>+6.3</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>MNLI</td>
-<td>86.7</td>
-<td>90.2</td>
-<td>+3.5</td>
-</tr>
-<tr>
-<td>SST-2</td>
-<td>94.9</td>
-<td>96.4</td>
-<td>+1.5</td>
-</tr>
-<tr>
-<td>RACE</td>
-<td>72.0</td>
-<td>83.2</td>
-<td>+11.2</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Key Findings:</strong></p>
-<ul>
-<li>Dynamic masking better than static</li>
-<li>More data + longer training = better results</li>
-<li>RoBERTa-Large matches or beats BERT-Large on all tasks</li>
-<li>Sometimes huge gains (RACE: +11.2 points!)</li>
-</ul>
+<h1 id="todays-journey">Today's Journey</h1>
 <div class="callout info">
-<div class="callout-title">Takeaway</div>
-<p>Training procedure matters as much as architecture! RoBERTa shows that BERT was undertrained.</p>
+<div class="callout-title">What we'll cover</div>
+<ol>
+<li><strong>The Problem</strong>: Why parametric memory isn't enough</li>
+<li><strong>RAG Basics</strong>: Retrieve, Augment, Generate</li>
+<li><strong>Implementation</strong>: Building RAG systems step-by-step</li>
+<li><strong>Advanced Techniques</strong>: Self-RAG, Corrective RAG, HyDE</li>
+<li><strong>Production Challenges</strong>: Making RAG work in the real world</li>
+</ol>
 </div>
-<footer>Winter 2026</footer>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="6" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="3" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="dynamic-vs-static-masking">Dynamic vs Static Masking</h1>
-<p><strong>How masking patterns are generated</strong></p>
-<div class="columns">
-<div class="column">
-<p><strong>Static Masking (BERT):</strong></p>
-<p><strong>Preprocessing:</strong></p>
+<h1 id="the-limits-of-parametric-memory">The Limits of Parametric Memory</h1>
+<p>What are the fundamental limitations of storing knowledge in model parameters?</p>
+<p><strong>Problems with purely parametric models:</strong></p>
 <ul>
-<li>Mask tokens once</li>
-<li>Save masked dataset</li>
-<li>Same masks every epoch</li>
+<li><strong>Knowledge cutoff</strong>: No information after training date</li>
+<li><strong>Hallucinations</strong>: Models confidently generate false information</li>
+<li><strong>No source attribution</strong>: Can't cite where information comes from</li>
+<li><strong>Expensive updates</strong>: Retraining for new information costs millions</li>
+<li><strong>Privacy concerns</strong>: Sensitive data baked into parameters</li>
+<li><strong>Domain specificity</strong>: Limited knowledge of specialized domains</li>
+<li><strong>Outdated facts</strong>: World changes but model weights don't</li>
 </ul>
-<p><strong>Epoch 1:</strong> &quot;My [MASK] is cute&quot;</p>
-<p><strong>Epoch 2:</strong> &quot;My [MASK] is cute&quot;</p>
-<p><strong>Epoch 3:</strong> &quot;My [MASK] is cute&quot;</p>
-<p><strong>Problem:</strong></p>
-<ul>
-<li>Model sees same masks repeatedly</li>
-<li>Less diverse training signal</li>
-<li>Potential overfitting to mask patterns</li>
-</ul>
-</div>
-<div class="column">
-<p><strong>Dynamic Masking (RoBERTa):</strong></p>
-<p><strong>On-the-fly:</strong></p>
-<ul>
-<li>Generate masks during training</li>
-<li>Different masks each time</li>
-<li>More variety</li>
-</ul>
-<p><strong>Epoch 1:</strong> &quot;My [MASK] is cute&quot;</p>
-<p><strong>Epoch 2:</strong> &quot;My dog [MASK] cute&quot;</p>
-<p><strong>Epoch 3:</strong> &quot;My dog is [MASK]&quot;</p>
-<p><strong>Benefits:</strong></p>
-<ul>
-<li>More diverse training examples</li>
-<li>Better generalization</li>
-<li>Prevents memorization</li>
-</ul>
-</div>
-</div>
-<p><strong>Cost:</strong> Slight computational overhead, but worth it!</p>
-<footer>Winter 2026</footer>
+<p><strong>Solution:</strong> Combine parametric knowledge with non-parametric retrieval!</p>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="7" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="albert-a-lite-bert">ALBERT: A Lite BERT</h1>
-<p><strong>Key idea: Parameter sharing for efficiency</strong></p>
-<p><strong>ALBERT's Innovations (Lan et al. 2019):</strong></p>
-<div class="columns">
-<div class="column">
-<p><strong>1. Factorized Embedding</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># BERT: Direct embedding</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"># 30K vocab × 768 hidden = 23M params</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">bert_embed = nn.Embedding(30000, 768)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># ALBERT: Two-step embedding</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># 30K × 128 + 128 × 768 = 3.8M + 0.1M</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">albert_embed = nn.Embedding(30000, 128)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">albert_project = nn.Linear(128, 768)</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"># Savings: 83% fewer embedding params!</span></span>
-</code></pre>
-</div>
-<div class="column">
-<p><strong>2. Cross-Layer Sharing</strong></p>
-<ul>
-<li>All 12 layers share same weights</li>
-<li>89% parameter reduction</li>
-</ul>
-<p><strong>3. Sentence Order Prediction</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># NSP (BERT): Is B after A? (too easy)</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"># SOP (ALBERT): Are A,B in order?</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"># - Positive: [A, B] (correct order)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># - Negative: [B, A] (swapped order)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># Harder task → better representations</span></span>
-</code></pre>
-</div>
-</div>
-<p><em>Reference: Lan et al. (2019) - &quot;ALBERT: A Lite BERT for Self-supervised Learning&quot;</em></p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="8" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="4" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
 
-<h1 id="albert-parameter-efficiency">ALBERT Parameter Efficiency</h1>
-<p><strong>Dramatic parameter reduction!</strong></p>
+<h1 id="example-knowledge-cutoff-problem">Example: Knowledge Cutoff Problem</h1>
+<div class="callout info">
+<div class="callout-title">User Query (Dec 2024)</div>
+<p>&quot;Who won the 2024 US Presidential election?&quot;</p>
+</div>
+<div class="columns">
+<div class="column">
+<p><strong>Parametric-only LLM:</strong></p>
+<p>{} &quot;I apologize, but my knowledge was last updated in April 2023, so I cannot tell you about the 2024 election results.&quot;</p>
+<p>Or worse: Hallucinates an answer!</p>
+</div>
+<div class="column">
+<p><strong>RAG-enhanced LLM:</strong></p>
+<p>{} &quot;According to CNN (retrieved Nov 6, 2024), [actual winner] won the 2024 US Presidential election with [details].&quot;</p>
+<p>Provides: Fresh info + source!</p>
+</div>
+</div>
+<div class="callout warning">
+<div class="callout-title">Key Insight</div>
+<p>Retrieval provides a <strong>dynamic, updatable</strong> knowledge base without retraining!</p>
+</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="5" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="retrieval-augmented-generation-definition">Retrieval Augmented Generation: Definition</h1>
+<div class="callout info">
+<div class="callout-title">RAG (Lewis et al., 2020)</div>
+<p>A technique that enhances LLMs by retrieving relevant documents from an external knowledge base and using them to inform generation.</p>
+</div>
+<p><strong>Core Idea:</strong> Instead of relying only on learned parameters, the model can &quot;look things up&quot;!</p>
+<div class="columns">
+<div class="column">
+<p><strong>Traditional LLM:</strong></p>
+<ul>
+<li>Question → Model → Answer</li>
+<li>Only parametric knowledge</li>
+<li>Fixed at training time</li>
+<li>No sources</li>
+</ul>
+</div>
+<div class="column">
+<p><strong>RAG Pipeline:</strong></p>
+<ul>
+<li>Question → Retrieve Docs</li>
+<li>Docs + Question → Model</li>
+<li>Grounded Answer + Citations</li>
+<li>Updateable knowledge</li>
+</ul>
+</div>
+</div>
+<p><em>Reference: Lewis et al. (2020) - &quot;Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks&quot;</em></p>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="6" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="rag-architecture">RAG Architecture</h1>
+<div class="diagram-container">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2542 120">
+  <defs>
+    <symbol id="flow-arrow" viewBox="0 0 76.41 27.12">
+      <path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor" />
+    </symbol>
+  </defs>
+  <rect x="25" y="25" width="267" height="70" rx="12" ry="12"
+        fill="rgba(0, 105, 62, 0.15)" stroke="#00693e" stroke-width="3" />
+  <text x="158" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#00693e" text-anchor="middle">User Query</text>
+  <use href="#flow-arrow" x="302" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="362" y="25" width="285" height="70" rx="12" ry="12"
+        fill="rgba(0, 128, 128, 0.15)" stroke="#008080" stroke-width="3" />
+  <text x="504" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#006666" text-anchor="middle">Embed Query</text>
+  <use href="#flow-arrow" x="657" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="717" y="25" width="323" height="70" rx="12" ry="12"
+        fill="rgba(38, 122, 186, 0.15)" stroke="#267aba" stroke-width="3" />
+  <text x="878" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#003c73" text-anchor="middle">Vector Search</text>
+  <use href="#flow-arrow" x="1050" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="1110" y="25" width="323" height="70" rx="12" ry="12"
+        fill="rgba(255, 160, 15, 0.15)" stroke="#ffa00f" stroke-width="3" />
+  <text x="1271" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#d94415" text-anchor="middle">Retrieve Docs</text>
+  <use href="#flow-arrow" x="1443" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="1503" y="25" width="341" height="70" rx="12" ry="12"
+        fill="rgba(66, 65, 65, 0.15)" stroke="#424141" stroke-width="3" />
+  <text x="1673" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#424141" text-anchor="middle">Augment Prompt</text>
+  <use href="#flow-arrow" x="1854" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="1914" y="25" width="304" height="70" rx="12" ry="12"
+        fill="rgba(0, 105, 62, 0.15)" stroke="#00693e" stroke-width="3" />
+  <text x="2066" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#00693e" text-anchor="middle">LLM Generate</text>
+  <use href="#flow-arrow" x="2228" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="2288" y="25" width="229" height="70" rx="12" ry="12"
+        fill="rgba(0, 128, 128, 0.15)" stroke="#008080" stroke-width="3" />
+  <text x="2402" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#006666" text-anchor="middle">Response</text>
+</svg>
+</div>
+<p><strong>Worked Example: &quot;What causes the Northern Lights?&quot;</strong></p>
 <table>
 <thead>
 <tr>
-<th>ALBERT-base</th>
-<th>12</th>
-<th>768</th>
-<th>12M</th>
+<th>Step</th>
+<th>Action</th>
+<th>Result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>ALBERT-large</td>
-<td>24</td>
-<td>1024</td>
-<td>18M</td>
+<td>1. Embed</td>
+<td>Convert query to vector</td>
+<td><code>[0.12, -0.45, 0.78, ...]</code> (384 dims)</td>
 </tr>
 <tr>
-<td>ALBERT-xlarge</td>
-<td>24</td>
-<td>2048</td>
-<td>60M</td>
+<td>2. Search</td>
+<td>Find similar vectors in DB</td>
+<td>Top-3 docs: scores 0.92, 0.87, 0.85</td>
 </tr>
 <tr>
-<td>ALBERT-xxlarge</td>
-<td>12</td>
-<td>4096</td>
-<td>235M</td>
+<td>3. Retrieve</td>
+<td>Get actual text chunks</td>
+<td>&quot;Aurora borealis occurs when...&quot;</td>
+</tr>
+<tr>
+<td>4. Augment</td>
+<td>Add context to prompt</td>
+<td>System + Context + Query</td>
+</tr>
+<tr>
+<td>5. Generate</td>
+<td>LLM produces answer</td>
+<td>Grounded response with citations</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Key Observations:</strong></p>
-<ul>
-<li>ALBERT-base: than BERT-base</li>
-<li>Can train much larger hidden sizes with same memory</li>
-<li>ALBERT-xxlarge: 4096 hidden dim, still only 235M params</li>
-<li>Trade-off: fewer params but similar computation (layer sharing)</li>
-</ul>
-<div class="callout info">
-<div class="callout-title">Benefits</div>
-<ul>
-<li>Lower memory footprint</li>
-<li>Easier to deploy</li>
-<li>Can scale to larger hidden dimensions</li>
-</ul>
-</div>
-<footer>Winter 2026</footer>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="9" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="7" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="cross-layer-parameter-sharing">Cross-Layer Parameter Sharing</h1>
-<p><strong>How ALBERT achieves parameter efficiency</strong></p>
-<div class="columns">
-<div class="column">
-<p><strong>BERT (No Sharing):</strong></p>
+<h1 id="rag-step-by-step-walkthrough">RAG: Step-by-Step Walkthrough</h1>
+<p><strong>Query:</strong> &quot;What is the capital of Kazakhstan?&quot;</p>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">class BERT:</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"> def __init__(self):</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> # Each layer has unique parameters</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> self.layers = [</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> TransformerLayer() for _ in range(12)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> ]</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> # 12 × 7M params = 85M params</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> def forward(self, x):</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> for layer in self.layers:</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"> x = layer(x) # Different weights</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"> return x</span></span>
-</code></pre>
-</div>
-<div class="column">
-<p><strong>ALBERT (Full Sharing):</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">class ALBERT:</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"> def __init__(self):</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> # Single shared layer!</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> self.shared_layer = TransformerLayer()</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> # 1 × 7M params = 7M params</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> def forward(self, x):</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> for _ in range(12):</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> x = self.shared_layer(x) # Same weights!</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> return x</span></span>
-</code></pre>
-</div>
-</div>
-<p><strong>Intuition:</strong> Each layer refines the representation. Like a &quot;residual network unrolled&quot; - iterative refinement with shared weights.</p>
-<p><strong>Trade-off:</strong> 89% fewer parameters, same compute (still 12 forward passes)</p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="10" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="distilbert-knowledge-distillation">DistilBERT: Knowledge Distillation</h1>
-<p><strong>Key idea: Train small model to mimic large model</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Knowledge Distillation Training Loop</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">teacher = BertModel.from_pretrained(&quot;bert-base&quot;) # 12 layers, frozen</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">student = DistilBertModel(num_layers=6) # 6 layers, trainable</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">for batch in training_data:</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> # Teacher provides &quot;soft targets&quot; (probability distributions)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> with torch.no_grad():</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> teacher_logits = teacher(batch) # e.g., [0.7, 0.2, 0.1, ...]</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> # Student tries to match teacher&#x27;s distribution</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"> student_logits = student(batch)</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"> # Distillation loss: KL divergence between distributions</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"> # Temperature T=2 softens the distribution (more informative)</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"> loss_distill = KL_divergence(</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"> softmax(student_logits / T),</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code"># Step 1: Embed the query</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">query = &quot;What is the capital of Kazakhstan?&quot;</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">query_embedding = embedding_model.encode(query)</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Result: numpy array of shape (384,)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"># Step 2: Search vector database</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">results = vector_db.search(query_embedding, top_k=3)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># Returns: [</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"># {&quot;text&quot;: &quot;Astana is the capital of Kazakhstan...&quot;, &quot;score&quot;: 0.94},</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"># {&quot;text&quot;: &quot;Kazakhstan&#x27;s capital moved from Almaty...&quot;, &quot;score&quot;: 0.89},</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"># {&quot;text&quot;: &quot;The city was renamed Nur-Sultan in 2019...&quot;, &quot;score&quot;: 0.85}</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"># ]</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"># Step 3: Build augmented prompt</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">context = &quot;\n&quot;.join([r[&quot;text&quot;] for r in results])</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">prompt = f&quot;&quot;&quot;Answer based on the context below.</span></span>
 </code></pre>
 <div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="11" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="8" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="distilbert-knowledge-distillation-1">DistilBERT: Knowledge Distillation</h1>
+<h1 id="rag-step-by-step-walkthrough-1">RAG: Step-by-Step Walkthrough</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="17">
-<span class="line"><span class="line-num">17</span><span class="line-code"> softmax(teacher_logits / T)</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code"> )</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code"> # Also include MLM loss for language modeling</span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code"> loss_mlm = masked_lm_loss(student_logits, labels)</span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code"> # Combined loss</span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code"> loss = 0.5 * loss_distill + 0.5 * loss_mlm</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">Context: {context}</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">Question: {query}</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">Answer:&quot;&quot;&quot;</span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code"># Step 4: Generate with LLM</span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code">response = llm.generate(prompt)</span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code"># &quot;Astana (previously known as Nur-Sultan) is the capital of Kazakhstan.&quot;</span></span>
 </code></pre>
 <div class="code-continued-indicator-last">...continued</div>
-<p><strong>Why soft targets work:</strong> Teacher's &quot;wrong&quot; predictions contain information (e.g., &quot;dog&quot; → &quot;cat&quot; more likely than &quot;car&quot;)</p>
-<p><em>Reference: Sanh et al. (2019) - &quot;DistilBERT, a distilled version of BERT&quot;</em></p>
-<footer>Winter 2026</footer>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="12" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="distilbert-results">DistilBERT Results</h1>
-<p><strong>Significant efficiency gains!</strong></p>
-<table>
-<thead>
-<tr>
-<th>Inference Speed</th>
-<th>1x</th>
-<th>1.6x</th>
-<th>60% faster</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GLUE Score</td>
-<td>79.6</td>
-<td>77.0</td>
-<td>97% retained</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Performance on Specific Tasks:</strong></p>
-<table>
-<thead>
-<tr>
-<th>SST-2 (Acc)</th>
-<th>94.9</th>
-<th>92.7</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>MNLI (Acc)</td>
-<td>86.7</td>
-<td>82.2</td>
-</tr>
-</tbody>
-</table>
-<p><strong>When to Use DistilBERT:</strong></p>
-<ul>
-<li>Production deployment (latency-critical)</li>
-<li>Edge devices (limited memory)</li>
-<li>High-throughput scenarios</li>
-<li>When 2-3% performance drop is acceptable</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="13" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="9" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
 
-<h1 id="electra-efficient-learning">ELECTRA: Efficient Learning</h1>
-<p><strong>Key idea: Learn from all tokens, not just 15%</strong></p>
+<h1 id="rag-components-deep-dive">RAG Components Deep Dive</h1>
+<div class="columns">
+<div class="column">
+<p><strong>1. Document Processing</strong></p>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># ELECTRA Training: Generator + Discriminator setup</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">sentence = &quot;The chef cooked a delicious meal&quot;</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">masked = &quot;The chef [MASK] a delicious meal&quot;</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># Small generator (like BERT) fills in masks</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">generator_output = generator(masked)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"># Generator predicts: &quot;ate&quot; (plausible but wrong)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">corrupted = &quot;The chef ate a delicious meal&quot;</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"># Discriminator classifies EACH token: original or replaced?</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">discriminator_output = discriminator(corrupted)</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"># Output per token: [orig, orig, REPLACED, orig, orig, orig]</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># Loss computed on ALL tokens (not just 15%!)</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">labels = [0, 0, 1, 0, 0, 0] # 1 = replaced</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code">loss = binary_cross_entropy(discriminator_output, labels)</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code"># Chunking example</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">from langchain.text_splitter import RecursiveCharacterTextSplitter</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">splitter = RecursiveCharacterTextSplitter(</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"> chunk_size=500, # Target size</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"> chunk_overlap=50, # Overlap between chunks</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"> separators=[&quot;\n\n&quot;, &quot;\n&quot;, &quot;. &quot;, &quot; &quot;]</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">chunks = splitter.split_text(long_document)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"># [&quot;First chunk about topic A...&quot;,</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"># &quot;Second chunk continues topic A...&quot;,</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"># &quot;Third chunk about topic B...&quot;]</span></span>
 </code></pre>
-<div class="callout tip">
-<div class="callout-title">Efficiency Gain</div>
-<p><strong>BERT:</strong> Learns from 15% of tokens (masked ones only)<br />
-<strong>ELECTRA:</strong> Learns from 100% of tokens (all get labeled)</p>
-<p>Result: Same quality with 4x less compute!</p>
 </div>
-<p><em>Reference: Clark et al. (2020) - &quot;ELECTRA: Pre-training Text Encoders as Discriminators&quot;</em></p>
-<footer>Winter 2026</footer>
+<div class="column">
+<p><strong>2. Embedding &amp; Storage</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from sentence_transformers import SentenceTransformer</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">import chromadb</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Create embeddings</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">model = SentenceTransformer(&#x27;all-MiniLM-L6-v2&#x27;)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">embeddings = model.encode(chunks)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># Store in vector database</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">client = chromadb.Client()</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">collection = client.create_collection(&quot;docs&quot;)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">collection.add(</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"> embeddings=embeddings.tolist(),</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"> documents=chunks,</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"> ids=[f&quot;chunk_{i}&quot; for i in range(len(chunks))]</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">)</span></span>
+</code></pre>
+</div>
+</div>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="14" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="10" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
 
-<h1 id="electra-benefits">ELECTRA Benefits</h1>
-<p><strong>More efficient pre-training</strong></p>
-<p><strong>Advantages:</strong></p>
-<ol>
-<li><strong>Sample Efficiency</strong></li>
-</ol>
+<h1 id="rag-implementation-example">RAG Implementation Example</h1>
+<p><strong>Basic RAG with LangChain:</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from langchain.vectorstores import Chroma</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">from langchain.embeddings import HuggingFaceEmbeddings</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">from langchain.llms import HuggingFacePipeline</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">from langchain.chains import RetrievalQA</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">from langchain.document_loaders import TextLoader</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">from langchain.text_splitter import RecursiveCharacterTextSplitter</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># 1. Load and chunk documents</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">loader = TextLoader(&#x27;knowledge_base.txt&#x27;)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">documents = loader.load()</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">text_splitter = RecursiveCharacterTextSplitter(</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"> chunk_size=512,</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"> chunk_overlap=50</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">)</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="11" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="rag-implementation-example-1">RAG Implementation Example</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="16">
+<span class="line"><span class="line-num">16</span><span class="line-code">chunks = text_splitter.split_documents(documents)</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code"># 2. Create embeddings and vector store</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">embeddings = HuggingFaceEmbeddings(</span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code"> model_name=&quot;sentence-transformers/all-MiniLM-L6-v2&quot;</span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code">vectordb = Chroma.from_documents(</span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code"> documents=chunks,</span></span>
+<span class="line"><span class="line-num">24</span><span class="line-code"> embedding=embeddings,</span></span>
+<span class="line"><span class="line-num">25</span><span class="line-code"> persist_directory=&quot;./chroma_db&quot;</span></span>
+<span class="line"><span class="line-num">26</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">27</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">28</span><span class="line-code"># 3. Set up retriever</span></span>
+<span class="line"><span class="line-num">29</span><span class="line-code">retriever = vectordb.as_retriever(</span></span>
+<span class="line"><span class="line-num">30</span><span class="line-code"> search_type=&quot;similarity&quot;,</span></span>
+</code></pre>
+<div class="code-continued-indicator">...continued...</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="12" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="rag-implementation-example-2">RAG Implementation Example</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="31">
+<span class="line"><span class="line-num">31</span><span class="line-code"> search_kwargs={&quot;k&quot;: 3} # Retrieve top 3 chunks</span></span>
+<span class="line"><span class="line-num">32</span><span class="line-code">)</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="13" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="rag-implementation-cont">RAG Implementation (cont.)</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># 4. Create LLM</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">llm = HuggingFacePipeline.from_model_id(</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"> model_id=&quot;meta-llama/Llama-2-7b-chat-hf&quot;,</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"> task=&quot;text-generation&quot;,</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"> model_kwargs={&quot;temperature&quot;: 0.7, &quot;max_length&quot;: 512}</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># 5. Create RAG chain</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">qa_chain = RetrievalQA.from_chain_type(</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"> llm=llm,</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"> retriever=retriever,</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"> return_source_documents=True,</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"> chain_type=&quot;stuff&quot; # How to combine documents</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"># 6. Query the system</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">query = &quot;What is retrieval augmented generation?&quot;</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">result = qa_chain({&quot;query&quot;: query})</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="14" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="rag-implementation-cont-1">RAG Implementation (cont.)</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="19">
+<span class="line"><span class="line-num">19</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code">print(&quot;Answer:&quot;, result[&#x27;result&#x27;])</span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code">print(&quot;\nSources:&quot;)</span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code">for doc in result[&#x27;source_documents&#x27;]:</span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code"> print(f&quot;- {doc.metadata[&#x27;source&#x27;]}: {doc.page_content[:100]}...&quot;)</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+<p><em>Tutorial: HuggingFace Advanced RAG - <a href="https://huggingface.co/learn/cookbook/advanced_rag">https://huggingface.co/learn/cookbook/advanced_rag</a></em></p>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="15" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+
+<h1 id="evolution-of-rag-approaches">Evolution of RAG Approaches</h1>
+<div class="diagram-container">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1363 120">
+  <defs>
+    <symbol id="flow-arrow" viewBox="0 0 76.41 27.12">
+      <path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor" />
+    </symbol>
+  </defs>
+  <rect x="25" y="25" width="248" height="70" rx="12" ry="12"
+        fill="rgba(38, 122, 186, 0.15)" stroke="#267aba" stroke-width="3" />
+  <text x="149" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#003c73" text-anchor="middle">Naive RAG</text>
+  <use href="#flow-arrow" x="283" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="343" y="25" width="229" height="70" rx="12" ry="12"
+        fill="rgba(0, 105, 62, 0.15)" stroke="#00693e" stroke-width="3" />
+  <text x="457" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#00693e" text-anchor="middle">Self-RAG</text>
+  <use href="#flow-arrow" x="582" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="642" y="25" width="341" height="70" rx="12" ry="12"
+        fill="rgba(255, 160, 15, 0.15)" stroke="#ffa00f" stroke-width="3" />
+  <text x="812" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#d94415" text-anchor="middle">Corrective RAG</text>
+  <use href="#flow-arrow" x="993" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="1053" y="25" width="285" height="70" rx="12" ry="12"
+        fill="rgba(138, 105, 150, 0.15)" stroke="#8a6996" stroke-width="3" />
+  <text x="1195" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#6a4d7a" text-anchor="middle">Agentic RAG</text>
+</svg>
+</div>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Key Innovation</th>
+<th>When to Retrieve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Naive RAG</strong></td>
+<td>Always retrieve</td>
+<td>Every query</td>
+</tr>
+<tr>
+<td><strong>Self-RAG</strong></td>
+<td>Model decides</td>
+<td>Only when needed</td>
+</tr>
+<tr>
+<td><strong>Corrective RAG</strong></td>
+<td>Verify relevance</td>
+<td>Always, but filter</td>
+</tr>
+<tr>
+<td><strong>Agentic RAG</strong></td>
+<td>Multi-step reasoning</td>
+<td>Tool-based decisions</td>
+</tr>
+</tbody>
+</table>
+<div class="callout warning">
+<div class="callout-title">Trend</div>
+<p>Moving from always-retrieve to <strong>adaptive</strong>, <strong>self-correcting</strong> retrieval systems!</p>
+</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="16" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+
+<h1 id="self-rag-adaptive-retrieval">Self-RAG: Adaptive Retrieval</h1>
+<div class="columns">
+<div class="column">
+<p><strong>Key Innovation:</strong> Model decides when to retrieve</p>
+<p><strong>Special Tokens Learned:</strong></p>
 <ul>
-<li>Learn from all tokens (100%) vs only masked (15%)</li>
-<li>Reaches same performance with less data</li>
-<li>Faster convergence</li>
+<li><code>[Retrieve]</code> - Need external info?</li>
+<li><code>[Relevant]</code> - Is retrieved doc useful?</li>
+<li><code>[Support]</code> - Does doc support answer?</li>
+<li><code>[Useful]</code> - Is answer helpful?</li>
 </ul>
-<ol start="2">
-<li><strong>Better Performance</strong></li>
-</ol>
-<ul>
-<li>ELECTRA-Small outperforms BERT-Small</li>
-<li>ELECTRA-Base competitive with BERT-Large</li>
-<li>With same compute, ELECTRA is better</li>
-</ul>
-<ol start="3">
-<li><strong>Computational Efficiency</strong></li>
-</ol>
-<ul>
-<li>Smaller generator (1/4 to 1/2 size of discriminator)</li>
-<li>Faster to train than BERT</li>
-<li>Lower computational cost for same quality</li>
-</ul>
+</div>
+<div class="column">
+<p><strong>Worked Example:</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Q: What&#x27;s 2+2?</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">[Retrieve: No] # No retrieval needed</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">A: 4</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">Q: Who won the 2024 Olympics?</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">[Retrieve: Yes] # Need current info</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">[Retrieved: &quot;Paris 2024 Olympic Games...&quot;]</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">[Relevant: Yes] # Doc is on topic</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">A: The 2024 Olympics were held in Paris...</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">[Support: Fully] # Answer matches doc</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">[Useful: Yes] # Response is helpful</span></span>
+</code></pre>
+</div>
+</div>
 <div class="callout info">
 <div class="callout-title">Key Insight</div>
-<p>Replace Token Detection is more sample-efficient than Masked LM because it provides a learning signal for every token!</p>
+<p>The model learns these tokens during training, enabling <strong>adaptive</strong> retrieval without manual rules!</p>
 </div>
-<footer>Winter 2026</footer>
+<p><em>Reference: Asai et al. (2023) - &quot;Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection&quot;</em></p>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="15" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="17" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="bert-variants-comparison">BERT Variants Comparison</h1>
-<p><strong>Summary of key variants</strong></p>
+
+<h1 id="corrective-rag-crag">Corrective RAG (CRAG)</h1>
+<p><strong>Problem:</strong> Sometimes retrieved documents are irrelevant or misleading!</p>
+<div class="diagram-container">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1377 300">
+  <defs>
+    <symbol id="flow-arrow" viewBox="0 0 76.41 27.12">
+      <path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor" />
+    </symbol>
+  </defs>
+  <rect x="25" y="25" width="173" height="70" rx="12" ry="12"
+        fill="rgba(0, 105, 62, 0.15)" stroke="#00693e" stroke-width="3" />
+  <text x="111" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#00693e" text-anchor="middle">Query</text>
+  <use href="#flow-arrow" x="208" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="268" y="25" width="229" height="70" rx="12" ry="12"
+        fill="rgba(0, 128, 128, 0.15)" stroke="#008080" stroke-width="3" />
+  <text x="382" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#006666" text-anchor="middle">Retrieve</text>
+  <use href="#flow-arrow" x="507" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="567" y="25" width="416" height="70" rx="12" ry="12"
+        fill="rgba(38, 122, 186, 0.15)" stroke="#267aba" stroke-width="3" />
+  <text x="775" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#003c73" text-anchor="middle">Evaluate Relevance</text>
+  <use href="#flow-arrow" x="993" y="46" width="50" height="28" style="color: #0a2518" />
+  <use href="#flow-arrow" x="1053" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="1113" y="25" width="229" height="70" rx="12" ry="12"
+        fill="rgba(255, 160, 15, 0.15)" stroke="#ffa00f" stroke-width="3" />
+  <text x="1227" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#d94415" text-anchor="middle">Generate</text>
+  <use href="#flow-arrow" x="289" y="136" width="50" height="28" style="color: #0a2518" />
+  <use href="#flow-arrow" x="349" y="136" width="50" height="28" style="color: #0a2518" />
+  <rect x="409" y="115" width="360" height="70" rx="12" ry="12"
+        fill="rgba(66, 65, 65, 0.15)" stroke="#424141" stroke-width="3" />
+  <text x="589" y="157" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#424141" text-anchor="middle">Filter &amp; Refine</text>
+  <use href="#flow-arrow" x="779" y="136" width="50" height="28" style="color: #0a2518" />
+  <rect x="839" y="115" width="229" height="70" rx="12" ry="12"
+        fill="rgba(0, 105, 62, 0.15)" stroke="#00693e" stroke-width="3" />
+  <text x="953" y="157" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#00693e" text-anchor="middle">Generate</text>
+  <use href="#flow-arrow" x="335" y="226" width="50" height="28" style="color: #0a2518" />
+  <use href="#flow-arrow" x="395" y="226" width="50" height="28" style="color: #0a2518" />
+  <rect x="455" y="205" width="267" height="70" rx="12" ry="12"
+        fill="rgba(0, 128, 128, 0.15)" stroke="#008080" stroke-width="3" />
+  <text x="588" y="247" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#006666" text-anchor="middle">Web Search</text>
+  <use href="#flow-arrow" x="732" y="226" width="50" height="28" style="color: #0a2518" />
+  <rect x="792" y="205" width="229" height="70" rx="12" ry="12"
+        fill="rgba(38, 122, 186, 0.15)" stroke="#267aba" stroke-width="3" />
+  <text x="906" y="247" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#003c73" text-anchor="middle">Generate</text>
+</svg>
+</div>
+<p><strong>Worked Example:</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Query: &quot;Latest COVID vaccine recommendations&quot;</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">retrieved_docs = retriever.search(query) # Returns old 2021 docs</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Evaluator scores relevance</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">scores = evaluator.score(query, retrieved_docs)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"># [0.3, 0.4, 0.35] # All low - docs are outdated!</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">if max(scores) &lt; 0.5: # Threshold not met</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"> # Fallback to web search for current info</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"> fresh_docs = web_search(query)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"> # Now returns CDC guidelines from 2024</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">response = generate(query, fresh_docs)</span></span>
+</code></pre>
+<div class="callout warning">
+<div class="callout-title">Key Idea</div>
+<p>Don't blindly trust retrieval! Verify relevance and have fallback strategies.</p>
+</div>
+<p><em>Reference: Yan et al. (2024) - &quot;Corrective Retrieval Augmented Generation&quot;</em></p>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="18" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+
+<h1 id="comparing-rag-approaches">Comparing RAG Approaches</h1>
 <table>
 <thead>
 <tr>
-<th>p{3cm}p{3cm}} Model</th>
-<th>Key Innovation</th>
-<th>Advantages</th>
+<th>Approach</th>
+<th>When Retrieve</th>
+<th>Filtering</th>
+<th>Latency</th>
 <th>Best For</th>
 </tr>
 </thead>
+<tbody>
+<tr>
+<td><strong>Naive RAG</strong></td>
+<td>Always</td>
+<td>None</td>
+<td>Low</td>
+<td>Simple Q&amp;A</td>
+</tr>
+<tr>
+<td><strong>Self-RAG</strong></td>
+<td>Model decides</td>
+<td>Self-reflection</td>
+<td>Medium</td>
+<td>Adaptive needs</td>
+</tr>
+<tr>
+<td><strong>Corrective RAG</strong></td>
+<td>Always + verify</td>
+<td>Relevance scoring</td>
+<td>High</td>
+<td>High precision</td>
+</tr>
+<tr>
+<td><strong>HyDE</strong></td>
+<td>Via hypothesis</td>
+<td>Similarity</td>
+<td>Medium</td>
+<td>Complex queries</td>
+</tr>
+<tr>
+<td><strong>Agentic RAG</strong></td>
+<td>Tool-based</td>
+<td>Multi-step</td>
+<td>Highest</td>
+<td>Complex workflows</td>
+</tr>
+</tbody>
 </table>
-<p><strong>General Guidelines:</strong></p>
-<ul>
-<li><strong>Best quality:</strong> RoBERTa-Large</li>
-<li><strong>Best efficiency:</strong> DistilBERT</li>
-<li><strong>Limited memory:</strong> ALBERT</li>
-<li><strong>Limited training budget:</strong> ELECTRA</li>
-<li><strong>Good default:</strong> RoBERTa-Base or BERT-Base</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="16" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="other-notable-bert-variants">Other Notable BERT Variants</h1>
-<p><strong>The BERT family keeps growing!</strong></p>
-<ol>
-<li><strong>DeBERTa (Microsoft, 2020)</strong></li>
-</ol>
-<ul>
-<li>Disentangled attention (separate content and position)</li>
-<li>Enhanced mask decoder</li>
-<li>State-of-the-art on SuperGLUE</li>
-</ul>
-<ol start="2">
-<li><strong>ERNIE (Baidu, 2019)</strong></li>
-</ol>
-<ul>
-<li>Entity-level and phrase-level masking</li>
-<li>Knowledge enhancement</li>
-<li>Strong on Chinese NLP tasks</li>
-</ul>
-<ol start="3">
-<li><strong>SpanBERT (Facebook, 2019)</strong></li>
-</ol>
-<ul>
-<li>Mask random spans instead of random tokens</li>
-<li>Span boundary objective</li>
-<li>Better for span-based tasks (QA, coreference)</li>
-</ul>
-<ol start="4">
-<li><strong>BART (Facebook, 2019)</strong></li>
-</ol>
-<ul>
-<li>Encoder-decoder (not encoder-only)</li>
-<li>Denoising autoencoder with various corruptions</li>
-<li>Excellent for generation tasks</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="17" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="model-selection-guide">Model Selection Guide</h1>
-<p><strong>How to choose the right model for your task</strong></p>
+<p><strong>Trade-offs Example:</strong></p>
 <pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Start -&gt; Quality or Speed? -&gt; RoBERTa-Large -&gt; Memory? -&gt; DistilBERT -&gt; ALBERT -&gt; \begin{tabular</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">Simple FAQ bot → Naive RAG (fast, cheap)</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">Medical diagnosis assistant → Corrective RAG (accuracy critical)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">Research assistant → Agentic RAG (multi-step reasoning needed)</span></span>
 </code></pre>
-<p><strong>Additional Considerations:</strong></p>
-<ul>
-<li><strong>Domain:</strong> Consider domain-specific pre-trained models (BioBERT, SciBERT, etc.)</li>
-<li><strong>Language:</strong> Multilingual? Use mBERT, XLM-R</li>
-<li><strong>Task type:</strong> Generation? Consider BART/T5 instead</li>
-</ul>
-<footer>Winter 2026</footer>
+<div class="callout info">
+<div class="callout-title">Rule of Thumb</div>
+<p>Start with Naive RAG. Add complexity only when you measure specific failures.</p>
+</div>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="18" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="using-different-bert-variants">Using Different BERT Variants</h1>
-<p><strong>Easy switching with HuggingFace</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import AutoModel, AutoTokenizer</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"># BERT</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">bert_model = AutoModel.from_pretrained(&quot;bert-base-uncased&quot;)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">bert_tokenizer = AutoTokenizer.from_pretrained(&quot;bert-base-uncased&quot;)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"># RoBERTa</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">roberta_model = AutoModel.from_pretrained(&quot;roberta-base&quot;)</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">roberta_tokenizer = AutoTokenizer.from_pretrained(&quot;roberta-base&quot;)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"># ALBERT</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">albert_model = AutoModel.from_pretrained(&quot;albert-base-v2&quot;)</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">albert_tokenizer = AutoTokenizer.from_pretrained(&quot;albert-base-v2&quot;)</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># DistilBERT</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="19" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="using-different-bert-variants-1">Using Different BERT Variants</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="16">
-<span class="line"><span class="line-num">16</span><span class="line-code">distilbert_model = AutoModel.from_pretrained(&quot;distilbert-base-uncased&quot;)</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code">distilbert_tokenizer = AutoTokenizer.from_pretrained(&quot;distilbert-base-uncased&quot;)</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code"># ELECTRA</span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code">electra_model = AutoModel.from_pretrained(&quot;google/electra-base-discriminator&quot;)</span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code">electra_tokenizer = AutoTokenizer.from_pretrained(&quot;google/electra-base-discriminator&quot;)</span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code"># All have the same API!</span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code">inputs = tokenizer(&quot;Hello, my dog is cute&quot;, return_tensors=&quot;pt&quot;)</span></span>
-<span class="line"><span class="line-num">25</span><span class="line-code">outputs = model(**inputs)</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="20" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="19" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
 
-<h1 id="benchmarking-bert-variants-worked-example">Benchmarking BERT Variants: Worked Example</h1>
-<p><strong>Practical comparison on sentiment analysis</strong></p>
+<h1 id="chunking-strategies">Chunking Strategies</h1>
+<p><strong>How you split documents dramatically affects retrieval quality!</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>Fixed-size (Simple)</strong></p>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">import time</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">from transformers import pipeline</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code"># Split every 500 chars</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">chunks = [text[i:i+500]</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"> for i in range(0, len(text), 500)]</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Problem: &quot;The mitochondria is the power-&quot;</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># &quot;house of the cell.&quot; &lt;- split mid-sentence!</span></span>
+</code></pre>
+<p><strong>Recursive (Better)</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">splitter = RecursiveCharacterTextSplitter(</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> separators=[&quot;\n\n&quot;, &quot;\n&quot;, &quot;. &quot;, &quot; &quot;],</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"> chunk_size=500</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># Tries paragraph breaks first, then sentences</span></span>
+</code></pre>
+</div>
+<div class="column">
+<p><strong>Semantic (Best Quality)</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Find natural breakpoints using embeddings</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">from langchain.text_splitter import SemanticChunker</span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Load different models for sentiment analysis</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">models = {</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> &quot;bert-base&quot;: &quot;textattack/bert-base-uncased-SST-2&quot;,</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> &quot;distilbert&quot;: &quot;distilbert-base-uncased-finetuned-sst-2-english&quot;,</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> &quot;albert&quot;: &quot;textattack/albert-base-v2-SST-2&quot;,</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">}</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">test_texts = [&quot;This movie was fantastic!&quot;, &quot;I hated every minute of it.&quot;] * 100</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">for name, model_id in models.items():</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"> pipe = pipeline(&quot;sentiment-analysis&quot;, model=model_id)</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"> start = time.time()</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code"> results = pipe(test_texts)</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code"> elapsed = time.time() - start</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">chunker = SemanticChunker(embeddings)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># Groups sentences with similar meaning</span></span>
 </code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
+<p><strong>Example Comparison:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Chunk</th>
+<th>Quality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fixed</td>
+<td>&quot;...power-&quot; / &quot;house...&quot;</td>
+<td>Poor</td>
+</tr>
+<tr>
+<td>Recursive</td>
+<td>&quot;...powerhouse.&quot;</td>
+<td>Good</td>
+</tr>
+<tr>
+<td>Semantic</td>
+<td>Full paragraph on topic</td>
+<td>Best</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="21" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="20" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="benchmarking-bert-variants-worked-example-1">Benchmarking BERT Variants: Worked Example</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="19">
-<span class="line"><span class="line-num">19</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code"> print(f&quot;{name}: {elapsed:.2f}s for 200 samples ({200/elapsed:.1f} samples/sec)&quot;)</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<p><strong>Typical Results:</strong></p>
+<h1 id="embedding-models-for-retrieval">Embedding Models for Retrieval</h1>
+<p><strong>Choosing the Right Embedding Model:</strong></p>
 <table>
 <thead>
 <tr>
 <th>Model</th>
-<th>Accuracy</th>
-<th>Speed (samples/sec)</th>
-<th>Memory</th>
+<th>Dims</th>
+<th>Size</th>
+<th>Speed</th>
+<th>Quality</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>bert-base</td>
-<td>93.2%</td>
-<td>45</td>
-<td>420MB</td>
+<td>all-MiniLM-L6-v2</td>
+<td>384</td>
+<td>90MB</td>
+<td>Fast</td>
+<td>Good</td>
 </tr>
 <tr>
-<td>distilbert</td>
-<td>91.3%</td>
-<td>85</td>
-<td>250MB</td>
+<td>BGE-large-en</td>
+<td>1024</td>
+<td>1.3GB</td>
+<td>Medium</td>
+<td>Excellent</td>
 </tr>
 <tr>
-<td>albert</td>
-<td>92.7%</td>
-<td>38</td>
-<td>45MB</td>
+<td>OpenAI text-embedding-3-small</td>
+<td>1536</td>
+<td>API</td>
+<td>Fast</td>
+<td>Excellent</td>
 </tr>
 </tbody>
 </table>
-<footer>Winter 2026</footer>
+<p><strong>Code Example: Dense vs Hybrid Retrieval</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Dense retrieval (semantic similarity)</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">from sentence_transformers import SentenceTransformer</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">model = SentenceTransformer(&#x27;all-MiniLM-L6-v2&#x27;)</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">query_vec = model.encode(&quot;What causes headaches?&quot;)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># Finds: &quot;Migraines are often triggered by...&quot; (semantically similar)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"># Sparse retrieval (keyword matching with BM25)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">from rank_bm25 import BM25Okapi</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">bm25 = BM25Okapi(tokenized_corpus)</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="22" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="21" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="discussion-questions">Discussion Questions</h1>
+<h1 id="embedding-models-for-retrieval-1">Embedding Models for Retrieval</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="10">
+<span class="line"><span class="line-num">10</span><span class="line-code">scores = bm25.get_scores(query.split())</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"># Finds: &quot;Headaches can be caused by...&quot; (exact keyword match)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"># Hybrid: Combine both for best results!</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">final_score = 0.7 * dense_score + 0.3 * sparse_score</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="22" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+
+<h1 id="vector-databases">Vector Databases</h1>
+<p><strong>Purpose:</strong> Fast similarity search over millions of embeddings</p>
+<div class="columns">
+<div class="column">
+<p><strong>Quick Start with ChromaDB:</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">import chromadb</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"># Create client and collection</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">client = chromadb.Client()</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">collection = client.create_collection(&quot;my_docs&quot;)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"># Add documents (auto-embeds!)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">collection.add(</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"> documents=[&quot;Paris is in France&quot;,</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"> &quot;Berlin is in Germany&quot;],</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"> ids=[&quot;doc1&quot;, &quot;doc2&quot;]</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"># Query</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">results = collection.query(</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"> query_texts=[&quot;European capitals&quot;],</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code"> n_results=2</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code"># Returns both docs, ranked by relevance</span></span>
+</code></pre>
+</div>
+<div class="column">
+<p><strong>Choosing a Vector DB:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Best Choice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prototyping</td>
+<td>ChromaDB</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>Pinecone, Qdrant</td>
+</tr>
+<tr>
+<td>Self-hosted</td>
+<td>FAISS, Milvus</td>
+</tr>
+<tr>
+<td>Graph + Vector</td>
+<td>Weaviate</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>Query latency (&lt;50ms for 1M docs)</li>
+<li>Metadata filtering</li>
+<li>Persistence &amp; backups</li>
+<li>Scalability</li>
+</ul>
+</div>
+</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="23" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+
+<h1 id="prompt-engineering-for-rag">Prompt Engineering for RAG</h1>
+<p><strong>Template for Grounded Generation:</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">RAG_PROMPT = &quot;&quot;&quot;You are a helpful assistant. Answer the question based ONLY on</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">the context provided below. If the answer is not in the context, say</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">&quot;I don&#x27;t have that information.&quot;</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">Context:</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">{context}</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">Question: {question}</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">Instructions:</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">- Use only information from the context above</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">- Cite sources using [1], [2], etc.</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">- Be concise and accurate</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="24" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="prompt-engineering-for-rag-1">Prompt Engineering for RAG</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="14">
+<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">Answer:&quot;&quot;&quot;</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code"># Example usage</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">context = &quot;&quot;&quot;[1] The Eiffel Tower was completed in 1889 for the World&#x27;s Fair.</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">[2] It stands 330 meters tall and was the world&#x27;s tallest structure until 1930.</span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code">[3] Gustave Eiffel&#x27;s company designed and built the tower.&quot;&quot;&quot;</span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code">question = &quot;When was the Eiffel Tower built?&quot;</span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">24</span><span class="line-code">response = llm.generate(RAG_PROMPT.format(context=context, question=question))</span></span>
+<span class="line"><span class="line-num">25</span><span class="line-code"># &quot;The Eiffel Tower was completed in 1889 for the World&#x27;s Fair [1].&quot;</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+<div class="callout tip">
+<div class="callout-title">Key Elements</div>
 <ol>
-<li><strong>Training vs Architecture:</strong></li>
+<li>Explicit grounding instruction, 2. Source citation format, 3. Fallback for missing info</li>
+</ol>
+</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="25" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="production-challenges">Production Challenges</h1>
+<div class="columns">
+<div class="column">
+<p><strong>Performance Challenges:</strong></p>
+<ul>
+<li><strong>Cost</strong>: Embedding generation + storage + inference</li>
+<li><strong>Latency</strong>: Retrieval adds 50-200ms</li>
+<li><strong>Context limits</strong>: LLM window size</li>
+<li><strong>Quality</strong>: Retrieval accuracy</li>
+<li><strong>Freshness</strong>: Keeping index up-to-date</li>
+</ul>
+</div>
+<div class="column">
+<p><strong>Solutions:</strong></p>
+<ul>
+<li>Cache embeddings</li>
+<li>Semantic caching (similar queries)</li>
+<li>Incremental indexing</li>
+<li>Re-ranking pipelines</li>
+<li>Efficient embedding models</li>
+<li>Hybrid search</li>
+<li>Streaming responses</li>
+</ul>
+</div>
+</div>
+<div class="callout warning">
+<div class="callout-title">Production Tip</div>
+<p>Start simple (Naive RAG), measure performance, iterate based on real bottlenecks!</p>
+</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="26" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="evaluation-metrics-for-rag">Evaluation Metrics for RAG</h1>
+<p><strong>How to measure RAG quality:</strong></p>
+<p><strong>Retrieval Quality:</strong></p>
+<ul>
+<li><strong>Recall@k</strong>: Are relevant docs in top-k?</li>
+<li><strong>MRR (Mean Reciprocal Rank)</strong>: Where is first relevant doc?</li>
+<li><strong>NDCG (Normalized Discounted Cumulative Gain)</strong>: Ranked quality</li>
+</ul>
+<p><strong>Generation Quality:</strong></p>
+<ul>
+<li><strong>Factual accuracy</strong>: Are answers correct?</li>
+<li><strong>Faithfulness</strong>: Does answer match retrieved docs?</li>
+<li><strong>Relevance</strong>: Does answer address the question?</li>
+<li><strong>Citation quality</strong>: Are sources correctly attributed?</li>
+</ul>
+<p><strong>End-to-End:</strong></p>
+<ul>
+<li><strong>Answer correctness</strong>: Human evaluation or LLM-as-judge</li>
+<li><strong>Groundedness</strong>: Verifiable in retrieved docs</li>
+<li><strong>User satisfaction</strong>: Thumbs up/down, A/B testing</li>
+</ul>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="27" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="common-rag-failure-modes">Common RAG Failure Modes</h1>
+<ol>
+<li><strong>Retrieval Failures</strong></li>
 </ol>
 <ul>
-<li>RoBERTa shows training matters. Is architecture overrated?</li>
-<li>How much can we improve with just better training?</li>
-<li>What's the right balance?</li>
+<li>Wrong documents retrieved</li>
+<li>Relevant docs not in knowledge base</li>
+<li>Poor query formulation</li>
 </ul>
 <ol start="2">
-<li><strong>Parameter Efficiency:</strong></li>
+<li><strong>Context Problems</strong></li>
 </ol>
 <ul>
-<li>ALBERT shares all layers. Why does this work?</li>
-<li>What are the limits of parameter sharing?</li>
-<li>Is there a &quot;sweet spot&quot;?</li>
+<li>Too much irrelevant context</li>
+<li>Context too long for LLM</li>
+<li>Important info not in retrieved chunks</li>
 </ul>
 <ol start="3">
-<li><strong>Knowledge Distillation:</strong></li>
+<li><strong>Generation Issues</strong></li>
 </ol>
 <ul>
-<li>Why does student learn better from teacher than from labels?</li>
-<li>What information is in the soft probabilities?</li>
-<li>Can we distill even further?</li>
+<li>Ignores retrieved context</li>
+<li>Hallucinates despite good context</li>
+<li>Incorrect citations</li>
+<li>Overly dependent on parametric knowledge</li>
 </ul>
 <ol start="4">
-<li><strong>Model Selection:</strong></li>
+<li><strong>System Issues</strong></li>
 </ol>
 <ul>
-<li>How do you decide which model to use?</li>
-<li>Is it worth fine-tuning multiple variants?</li>
-<li>What about model ensembles?</li>
+<li>High latency</li>
+<li>Embedding drift</li>
+<li>Stale index</li>
 </ul>
-<footer>Winter 2026</footer>
+<p><strong>Mitigation:</strong> Monitoring, A/B testing, human-in-the-loop validation</p>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="23" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="28" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="looking-ahead">Looking Ahead</h1>
-<p><strong>Today we learned:</strong></p>
+<h1 id="multimodal-rag">Multimodal RAG</h1>
+<p><strong>Beyond text: Retrieving images, tables, code, etc.</strong></p>
 <ul>
-<li>RoBERTa: Better training matters</li>
-<li>ALBERT: Parameter sharing for efficiency</li>
-<li>DistilBERT: Knowledge distillation</li>
-<li>ELECTRA: Replace token detection</li>
-<li>How to choose the right variant</li>
+<li>
+<p><strong>Vision + Text</strong></p>
+</li>
+<li>
+<p>Use CLIP embeddings for images</p>
+</li>
+<li>
+<p>Retrieve relevant diagrams, charts</p>
+</li>
+<li>
+<p>Generate answers referencing visual content</p>
+</li>
 </ul>
-<p><strong>Next lecture (Lecture 17 - Applications of Encoder Models):</strong></p>
-<p>**From theory to practice! **</p>
-<footer>Winter 2026</footer>
+<p>\item <strong>Code Retrieval</strong></p>
+<ul>
+<li>Embed code snippets</li>
+<li>Retrieve relevant functions/examples</li>
+<li>Code completion and debugging</li>
+</ul>
+<p>\item <strong>Structured Data</strong></p>
+<ul>
+<li>Tables, databases</li>
+<li>Knowledge graphs</li>
+<li>SQL generation from natural language</li>
+</ul>
+<p>\item <strong>Audio/Video</strong></p>
+<ul>
+<li>Transcribe and embed</li>
+<li>Retrieve relevant segments</li>
+<li>Timestamp-aware responses</li>
+</ul>
+<p>Future RAG systems will seamlessly integrate multiple modalities!</p>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="24" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="29" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="summary">Summary</h1>
-<p><strong>Key Takeaways:</strong></p>
+<h1 id="graph-based-rag">Graph-Based RAG</h1>
+<p><strong>Combining knowledge graphs with RAG:</strong></p>
+<p><strong>Traditional RAG:</strong> Flat document chunks</p>
+<p><strong>Graph RAG:</strong> Documents + relationships</p>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li>Capture entity relationships</li>
+<li>Multi-hop reasoning (A → B → C)</li>
+<li>Better for complex queries</li>
+<li>Explicit knowledge structure</li>
+</ul>
+<p><strong>Implementation:</strong></p>
 <ol>
-<li><strong>RoBERTa</strong></li>
+<li>Extract entities and relations from documents</li>
+<li>Build knowledge graph</li>
+<li>Traverse graph during retrieval</li>
+<li>Combine graph paths with document chunks</li>
+</ol>
+<p><strong>Tools:</strong> Neo4j, Amazon Neptune, LangChain Graph QA</p>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="30" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+
+<h1 id="hyde-hypothetical-document-embeddings">HyDE: Hypothetical Document Embeddings</h1>
+<p><strong>Clever trick: Generate a hypothetical answer first, then retrieve!</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Standard RAG: Query -&gt; Retrieve -&gt; Generate</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">query = &quot;What causes the aurora borealis?&quot;</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"># Direct embedding may not match scientific docs well</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># HyDE: Query -&gt; Generate Hypothesis -&gt; Embed Hypothesis -&gt; Retrieve -&gt; Generate</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">hypothesis = llm.generate(f&quot;Write a short explanation: {query}&quot;)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"># &quot;The aurora borealis occurs when charged particles from the sun</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># interact with gases in Earth&#x27;s atmosphere, causing them to glow.&quot;</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"># Now embed the HYPOTHESIS (an answer-like text)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">hypo_embedding = embed(hypothesis)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">docs = vector_db.search(hypo_embedding) # Better match to scientific docs!</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"># Finally generate with real retrieved docs</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">final_answer = llm.generate(query, context=docs)</span></span>
+</code></pre>
+<div class="callout info">
+<div class="callout-title">Why It Works</div>
+<p><strong>Question:</strong> &quot;aurora borealis causes&quot; (query-like)<br />
+<strong>Hypothesis:</strong> &quot;charged particles from sun interact with atmosphere&quot; (document-like)</p>
+<p>Answers are more similar to documents than questions are!</p>
+</div>
+<p><em>Reference: Gao et al. (2022) - &quot;Precise Zero-Shot Dense Retrieval without Relevance Labels&quot;</em></p>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="31" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="31" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+
+<h1 id="rag-vs-fine-tuning">RAG vs Fine-Tuning</h1>
+<p>When should you use RAG vs fine-tuning your model?</p>
+<div class="columns">
+<div class="column">
+<p><strong>Use RAG when:</strong></p>
+<ul>
+<li>Knowledge changes frequently</li>
+<li>Need citations/provenance</li>
+<li>Privacy concerns (data in DB, not weights)</li>
+<li>Large knowledge base</li>
+<li>Multi-domain applications</li>
+<li>Want to update without retraining</li>
+</ul>
+</div>
+<div class="column">
+<p><strong>Use Fine-Tuning when:</strong></p>
+<ul>
+<li>Need specific style/behavior</li>
+<li>Low latency critical</li>
+<li>Small, stable knowledge domain</li>
+<li>Specialized reasoning</li>
+<li>Domain-specific language</li>
+<li>Want fully self-contained model</li>
+</ul>
+</div>
+</div>
+<div class="callout warning">
+<div class="callout-title">Best Practice</div>
+<p>Often the answer is <strong>both</strong>: Fine-tune for style/domain, RAG for knowledge!</p>
+</div>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="32" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="32" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="future-of-rag">Future of RAG</h1>
+<p><strong>Emerging trends and research directions:</strong></p>
+<ol>
+<li><strong>Agentic RAG</strong></li>
 </ol>
 <ul>
-<li>Training procedure matters as much as architecture</li>
-<li>Remove NSP, dynamic masking, more data = better results</li>
+<li>LLM decides retrieval strategy</li>
+<li>Multi-step reasoning with retrieval</li>
+<li>Tool use (web search, APIs, databases)</li>
 </ul>
 <ol start="2">
-<li><strong>ALBERT</strong></li>
+<li><strong>Long-context RAG</strong></li>
 </ol>
 <ul>
-<li>Parameter sharing dramatically reduces model size</li>
-<li>Factorized embeddings for efficiency</li>
-<li>89% fewer parameters than BERT</li>
+<li>Models with 1M+ token windows</li>
+<li>Entire books as context</li>
+<li>Retrieval still useful for efficiency</li>
 </ul>
 <ol start="3">
-<li><strong>DistilBERT</strong></li>
+<li><strong>Personalized RAG</strong></li>
 </ol>
 <ul>
-<li>Knowledge distillation for deployment</li>
-<li>40% smaller, 60% faster, 97% performance</li>
+<li>User-specific knowledge bases</li>
+<li>Privacy-preserving retrieval</li>
+<li>Federated learning</li>
 </ul>
 <ol start="4">
-<li><strong>ELECTRA</strong></li>
+<li><strong>Real-time RAG</strong></li>
 </ol>
 <ul>
-<li>Replace token detection more sample-efficient</li>
-<li>Learn from all tokens, not just 15%</li>
+<li>Live web scraping</li>
+<li>Streaming document updates</li>
+<li>Event-driven retrieval</li>
+</ul>
+<footer>Week 9</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="33" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="33" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="key-takeaways">Key Takeaways</h1>
+<ol>
+<li><strong>RAG solves fundamental LLM limitations</strong></li>
+</ol>
+<ul>
+<li>Knowledge cutoff, hallucination, no citations</li>
+</ul>
+<ol start="2">
+<li><strong>Core pipeline: Retrieve → Augment → Generate</strong></li>
+</ol>
+<ul>
+<li>Vector search for relevant documents</li>
+<li>Incorporate into prompt</li>
+</ul>
+<ol start="3">
+<li><strong>Many variants exist</strong></li>
+</ol>
+<ul>
+<li>Naive RAG → Self-RAG → Corrective RAG → Agentic RAG</li>
+</ul>
+<ol start="4">
+<li><strong>Key components matter</strong></li>
+</ol>
+<ul>
+<li>Chunking strategy, embedding model, vector DB</li>
 </ul>
 <ol start="5">
-<li><strong>Model Selection</strong></li>
+<li><strong>Production requires careful engineering</strong></li>
 </ol>
 <ul>
-<li>Choose based on constraints (quality, speed, memory)</li>
-<li>HuggingFace makes it easy to experiment</li>
+<li>Latency, cost, quality evaluation</li>
 </ul>
-<footer>Winter 2026</footer>
+<ol start="6">
+<li><strong>RAG + Fine-tuning is powerful combo</strong></li>
+</ol>
+<ul>
+<li>Fine-tune for style, RAG for knowledge</li>
+</ul>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="25" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="34" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="34" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="references">References</h1>
-<p><strong>Essential Papers:</strong></p>
+<h1 id="readings">Readings</h1>
+<p><strong>Required:</strong></p>
+<ol>
+<li><strong>Lewis et al. (2020)</strong>: Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks<br />
+<a href="https://arxiv.org/abs/2005.11401">[arXiv]</a></li>
+<li><strong>Asai et al. (2023)</strong>: Self-RAG: Learning to Retrieve, Generate, and Critique<br />
+<a href="https://arxiv.org/abs/2310.11511">[arXiv]</a></li>
+</ol>
+<p><strong>Recommended:</strong></p>
 <ul>
-<li><strong>Liu et al. (2019)</strong> - &quot;RoBERTa: A Robustly Optimized BERT Pretraining Approach&quot;</li>
-<li><strong>Lan et al. (2019)</strong> - &quot;ALBERT: A Lite BERT for Self-supervised Learning&quot;</li>
-<li><strong>Sanh et al. (2019)</strong> - &quot;DistilBERT, a distilled version of BERT&quot;</li>
-<li><strong>Clark et al. (2020)</strong> - &quot;ELECTRA: Pre-training Text Encoders as Discriminators&quot;</li>
-<li><strong>He et al. (2020)</strong> - &quot;DeBERTa: Decoding-enhanced BERT with Disentangled Attention&quot;</li>
+<li>Yan et al. (2024): Corrective RAG <a href="https://arxiv.org/abs/2401.15884">[arXiv]</a></li>
+<li>Gao et al. (2022): Precise Zero-Shot Dense Retrieval (HyDE) <a href="https://arxiv.org/abs/2212.10496">[arXiv]</a></li>
+<li>HuggingFace RAG Tutorial <a href="https://huggingface.co/learn/cookbook/advanced_rag">[Tutorial]</a></li>
+<li>LangChain RAG Docs <a href="https://python.langchain.com/docs/use_cases/question_answering/">[Docs]</a></li>
 </ul>
-<p><strong>Resources:</strong></p>
-<ul>
-<li>HuggingFace Model Hub: <a href="https://huggingface.co/models">https://huggingface.co/models</a></li>
-<li>Papers With Code: BERT variants leaderboard</li>
-<li>Model Cards: Detailed documentation for each variant</li>
-</ul>
-<footer>Winter 2026</footer>
+<footer>Week 9</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="26" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="35" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Week 9" data-theme="cdl-theme" lang="C" data-marpit-pagination="35" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Week 9;--theme:cdl-theme;" data-marpit-pagination-total="35">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="questions">Questions?</h1>
-<p><strong>Discussion Time</strong></p>
-<p><strong>Topics for discussion:</strong></p>
-<ul>
-<li>BERT variants and improvements</li>
-<li>Model selection strategies</li>
-<li>Knowledge distillation</li>
-<li>Parameter efficiency</li>
-<li>Implementation questions</li>
-</ul>
-<p>Thank you!</p>
-<p>Next: Applications and Real-World Use Cases!</p>
-<footer>Winter 2026</footer>
+<p>Questions?</p>
+<p>Next: Mixture of Experts!</p>
+<footer>Week 9</footer>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();
 </script></foreignObject></svg></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@4.1.2/lib/bespoke.js.LICENSE.txt */

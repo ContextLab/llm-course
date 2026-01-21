@@ -521,7 +521,7 @@ The pre-trained model learns general language patterns, and the classification h
 ---
 <!-- _class: scale-90 -->
 
-# Looking back on this week's material
+# Looking back: week 2
 
 ```flow
 [Data Cleaning:green] --> [Tokenization:teal] --> [POS Tagging:blue] --> [Sentiment Analysis:orange]
@@ -541,7 +541,7 @@ The pre-trained model learns general language patterns, and the classification h
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1;">
 
-**Apply this week's concepts**
+**Apply last week's concepts**
 - **Data cleaning:** remove HTML tags and special characters, normalize text and formatting
 - **Tokenization:** try different tokenizers (word, subword)
 - **Features:** extract useful signals (POS patterns, sentiment, keywords, etc.)
@@ -580,13 +580,13 @@ The pre-trained model learns general language patterns, and the classification h
 
 ---
 
-# Looking ahead: Weeks 3-4
+# Looking ahead: the rest of this week
 
-<div class="note-box" data-title="Next topics">
+<div class="note-box" data-title="Coming up Thursday & Friday">
 
-- Dimensionality reduction (PCA, UMAP)
-- Word embeddings (Word2Vec, GloVe)
-- Distributional semantics
+- Classic embeddings: LSA, LDA, topic modeling
+- Word embeddings: Word2Vec, GloVe, FastText
+- Distributional semantics and dimensionality reduction
 
 </div>
 
@@ -600,8 +600,7 @@ How can we represent word *meaning* computationally?
 
 <div class="tip-box" data-title="Prepare by">
 
-- Finishing Assignment 1 (due Monday!)
-- Starting Assignment 2
+- Finishing Assignment 2 (due Monday!)
 - Thinking about what "meaning" is. How might you define it?
 
 </div>
@@ -625,8 +624,8 @@ How can we represent word *meaning* computationally?
   </div>
 </div>
 
-<div class="tip-box" data-title="Congratulations!">
+<div class="tip-box" data-title="See you tomorrow!">
 
-Week 2 complete! Have a great weekend and see you next **Wednesday**! 🎉
+We'll diving into embeddings during our X-hour!
 
 </div>

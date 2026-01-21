@@ -692,804 +692,1088 @@
 })();
 
 </script>
-</head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="lead" data-theme="cdl-theme" lang="C" class="lead" data-marpit-pagination="1" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:lead;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
+</head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="lead" data-theme="cdl-theme" lang="C" class="lead" data-marpit-pagination="1" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:lead;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 
-<h1 id="lecture-17-training-transformers">Lecture 17: Training Transformers</h1>
-<h2 id="week-5-lecture-3---from-architecture-to-implementation">Week 5, Lecture 3 - From Architecture to Implementation</h2>
-<p><strong>PSYC 51.17: Models of Language and Communication</strong></p>
+<h1 id="contextual-embeddings-elmo-use-bert">Contextual Embeddings: ELMo, USE, BERT</h1>
+<h2 id="lecture-12-beyond-static-word-representations">Lecture 12: Beyond Static Word Representations</h2>
+<p><strong>PSYC 51.17: Models of Language and Communication - Week 4</strong></p>
 <p>Winter 2026</p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="2" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="todays-agenda">Today's Agenda</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="2" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="todays-lecture">Today's Lecture</h1>
 <ol>
-<li><strong>Positional Encoding</strong>: Injecting sequence order</li>
-<li><strong>Feed-Forward Networks</strong>: The other key component</li>
-<li><strong>Layer Norm &amp; Residuals</strong>: Training deep networks</li>
-<li><strong>FlashAttention</strong>: Making transformers faster</li>
-<li><strong>Three Architectures</strong>: Encoder, Decoder, Both</li>
-<li><strong>Practical Implementation</strong>: Using HuggingFace</li>
+<li><strong>From Static to Contextual</strong></li>
+<li><strong>Language Models as Feature Extractors</strong></li>
+<li><strong>ELMo: Embeddings from Language Models</strong></li>
+<li><strong>Universal Sentence Encoder</strong></li>
+<li><strong>BERT: Bidirectional Transformers</strong></li>
+<li><strong>Comparison &amp; Applications</strong></li>
 </ol>
-<p><em>Goal: Complete understanding of transformer training and implementation</em></p>
+<p><em>Goal: Understand how context transforms word representation</em></p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="3" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="positional-encoding">Positional Encoding</h1>
-<p><strong>Problem: Self-attention is permutation-invariant!</strong></p>
-<p>Without position information:</p>
-<ul>
-<li>&quot;The cat sat&quot; = &quot;sat cat the&quot; = &quot;cat the sat&quot;</li>
-<li>Order matters in language!</li>
-</ul>
-<p><strong>Solution: Add positional encodings to input embeddings</strong></p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="3" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="the-polysemy-problem-revisited">The Polysemy Problem Revisited</h1>
+<p><strong>Recall: Static embeddings assign ONE vector per word</strong></p>
 <div class="columns">
 <div class="column">
-<p><strong>Original Transformer (Sinusoidal):</strong></p>
+<p><strong>Example: &quot;bank&quot;</strong></p>
+<ol>
+<li>&quot;I deposited money at the <strong>bank</strong>&quot;<br />
+(financial institution)</li>
+<li>&quot;We sat by the river <strong>bank</strong>&quot;<br />
+(riverside)</li>
+<li>&quot;The plane will <strong>bank</strong> left&quot;<br />
+(tilt/turn)</li>
+</ol>
+<p><strong>Word2Vec/GloVe:</strong> All three get the SAME vector!</p>
+<p><strong>Contextual embeddings:</strong> Each gets a DIFFERENT vector based on context</p>
+</div>
+<div class="column">
+<p><strong>Cosine Similarity Demo:</strong></p>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># PE(pos, 2i) = sin(pos / 10000^(2i/d))</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"># PE(pos, 2i+1) = cos(pos / 10000^(2i/d))</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code"># Static embeddings (Word2Vec)</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">sim(bank_sent1, bank_sent2) = 1.0 # Same!</span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Position 0, dim 0: sin(0/10000^0) = 0</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># Position 1, dim 0: sin(1/10000^0) = 0.84</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># Position 2, dim 0: sin(2/10000^0) = 0.91</span></span>
-</code></pre>
-<p><strong>Properties:</strong></p>
-<ul>
-<li>Deterministic, unique per position</li>
-<li>Generalizes to unseen lengths</li>
-</ul>
-</div>
-<div class="column">
-<p><strong>Concrete Example:</strong></p>
-<pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Token embeddings:</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">&quot;The&quot; = [0.2, 0.5, 0.1, 0.8]</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">&quot;cat&quot; = [0.9, 0.3, 0.7, 0.2]</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">Positional encodings:</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">pos_0 = [0.0, 1.0, 0.0, 1.0]</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">pos_1 = [0.84, 0.54, 0.01, 1.0]</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Contextual embeddings (BERT)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">sim(bank_sent1, bank_sent2) = 0.45</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">sim(bank_sent1, bank_sent3) = 0.32</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">sim(bank_sent2, bank_sent3) = 0.28</span></span>
 <span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">Final input (add them):</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">&quot;The&quot; = [0.2, 1.5, 0.1, 1.8]</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">&quot;cat&quot; = [1.74, 0.84, 0.71, 1.2]</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"># &quot;bank&quot; (financial) is closer to</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"># &quot;bank&quot; (river) than to &quot;bank&quot; (tilt)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"># because nouns are more similar!</span></span>
 </code></pre>
 </div>
 </div>
-<p><em>References: Vaswani et al. (2017), Su et al. (2021)</em></p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="4" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="why-sinusoidal-positional-encoding">Why Sinusoidal Positional Encoding?</h1>
-<p><strong>Advantages of sine/cosine functions:</strong></p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="4" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="static-vs-contextual-embeddings">Static vs. Contextual Embeddings</h1>
 <div class="columns">
 <div class="column">
-<p><strong>1. Unique Patterns</strong></p>
+<p><strong>Static (Word2Vec, GloVe, FastText):</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Same vector every time</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">model = Word2Vec(...)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">vec1 = model[&#x27;bank&#x27;]</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">vec2 = model[&#x27;bank&#x27;]</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">assert vec1 == vec2 # True!</span></span>
+</code></pre>
+<p><strong>Characteristics:</strong></p>
 <ul>
-<li>Each position gets unique vector</li>
-<li>Different frequencies per dimension</li>
-</ul>
-<p><strong>2. Relative Position Info</strong></p>
-<ul>
-<li>PE(pos+k) = linear function of PE(pos)</li>
-<li>Model learns relative positions</li>
-</ul>
-<p><strong>3. Extrapolation</strong></p>
-<ul>
-<li>Works for sequences longer than training</li>
-<li>No need to retrain</li>
-</ul>
-<p><strong>4. No Parameters</strong></p>
-<ul>
-<li>Deterministic, saves memory</li>
+<li>One vector per word type</li>
+<li>Context-independent</li>
+<li>Fast lookup (dictionary)</li>
+<li>Fixed after training</li>
+<li>Polysemy conflation</li>
 </ul>
 </div>
 <div class="column">
-<p><strong>Visualization:</strong></p>
-<pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Dim 0 (high freq): ~~~~~ (fast oscillation)</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">Dim 1 (mid freq): ~~~ (medium)</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">Dim 2 (low freq): ~ (slow)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">Position 0: [0.0, 0.0, 0.0, ...]</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">Position 1: [0.84, 0.01, 0.0001, ...]</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">Position 2: [0.91, 0.02, 0.0002, ...]</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">...</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">Position 100: [0.51, 0.86, 0.01, ...]</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="5" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="why-sinusoidal-positional-encoding-1">Why Sinusoidal Positional Encoding?</h1>
-<pre><code class="has-line-numbers" data-start-line="11">
-<span class="line"><span class="line-num">11</span><span class="line-code">Each position has a unique &quot;barcode&quot;!</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-</div>
-</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="6" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="visualizing-positional-encodings">Visualizing Positional Encodings</h1>
-<p><strong>Each position gets a unique pattern across dimensions</strong></p>
-<pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Pos 0 -&gt; Pos 5 -&gt; Pos 9 -&gt; Dim 0 -&gt; Dim 4 -&gt; Dim 7</span></span>
-</code></pre>
-<p><strong>Key Insight:</strong></p>
-<ul>
-<li>Lower dimensions: Rapid oscillation (high frequency)</li>
-<li>Higher dimensions: Slow oscillation (low frequency)</li>
-<li>Creates a unique &quot;barcode&quot; for each position</li>
-<li>Model learns to use these patterns for positional awareness</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="7" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="feed-forward-networks">Feed-Forward Networks</h1>
-<p><strong>After attention, apply position-wise feed-forward network</strong></p>
-<p><strong>Architecture:</strong> Two linear layers with ReLU/GELU activation</p>
+<p><strong>Contextual (ELMo, BERT):</strong></p>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">class FeedForward(nn.Module):</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"> def __init__(self, d_model=768, d_ff=3072): # 4x expansion</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> super().__init__()</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> self.linear1 = nn.Linear(d_model, d_ff) # 768 → 3072</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> self.linear2 = nn.Linear(d_ff, d_model) # 3072 → 768</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> self.relu = nn.ReLU()</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> def forward(self, x):</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> # x: [batch, seq_len, 768]</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> x = self.linear1(x) # [batch, seq_len, 3072]</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"> x = self.relu(x) # Non-linearity!</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"> x = self.linear2(x) # [batch, seq_len, 768]</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"> return x</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># Applied to each position independently</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"># Same weights for all positions</span></span>
-</code></pre>
-<p><strong>Purpose:</strong> Add non-linearity and increase model capacity</p>
-<ul>
-<li>Attention is mostly linear (weighted sums)</li>
-<li>FFN adds expressiveness through ReLU/GELU</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="8" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="why-feed-forward-networks">Why Feed-Forward Networks?</h1>
-<p><strong>Role in the Transformer:</strong></p>
-<ol>
-<li><strong>Add Non-linearity</strong></li>
-</ol>
-<ul>
-<li>Attention is mostly linear operations (weighted sums)</li>
-<li>FFN introduces non-linear transformations</li>
-<li>ReLU/GELU activation adds expressiveness</li>
-</ul>
-<ol start="2">
-<li><strong>Position-wise Processing</strong></li>
-</ol>
-<ul>
-<li>Attention mixes information across positions</li>
-<li>FFN processes each position independently</li>
-<li>Allows position-specific feature transformations</li>
-</ul>
-<ol start="3">
-<li><strong>Increase Model Capacity</strong></li>
-</ol>
-<ul>
-<li>Expansion (4x) provides more parameters</li>
-<li>Can learn complex feature combinations</li>
-<li>Most parameters in transformer are in FFN layers!</li>
-</ul>
-<ol start="4">
-<li><strong>Feature Refinement</strong></li>
-</ol>
-<ul>
-<li>Attention gathers context</li>
-<li>FFN refines and transforms the representation</li>
-<li>Two complementary operations</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="9" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="layer-normalization--residual-connections">Layer Normalization &amp; Residual Connections</h1>
-<p><strong>Critical for training deep transformers!</strong></p>
-<div class="columns">
-<div class="column">
-<p><strong>Residual Connections:</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># output = sublayer(x) + x</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">x = x + self.attention(x)</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">x = x + self.feedforward(x)</span></span>
-</code></pre>
-<ul>
-<li>Gradients flow directly through</li>
-<li>Prevents vanishing gradients</li>
-<li>Enables 96-layer models (GPT-3)!</li>
-</ul>
-</div>
-<div class="column">
-<p><strong>Layer Normalization:</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Normalize across features (not batch)</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">def layer_norm(x, gamma, beta):</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> mean = x.mean(dim=-1)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> std = x.std(dim=-1)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> return gamma * (x - mean) / std + beta</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code"># Different vector per occurrence</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">model = BertModel.from_pretrained(&#x27;bert-base&#x27;)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">sent1 = &quot;river bank&quot;</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">sent2 = &quot;money bank&quot;</span></span>
 <span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"># Example: x = [0.2, 0.8, 0.5]</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"># mean=0.5, std=0.25</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"># normalized = [-1.2, 1.2, 0.0]</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">vec1 = get_embedding(model, sent1, &#x27;bank&#x27;)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">vec2 = get_embedding(model, sent2, &#x27;bank&#x27;)</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">assert vec1 != vec2 # True!</span></span>
 </code></pre>
-</div>
-</div>
-<p><strong>Standard Pattern (Post-Norm):</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">x = LayerNorm(x + Attention(x))</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">x = LayerNorm(x + FeedForward(x))</span></span>
-</code></pre>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="10" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-
-<h1 id="pre-norm-vs-post-norm">Pre-Norm vs Post-Norm</h1>
-<p><strong>Two ways to arrange LayerNorm and residual connections</strong></p>
-<div class="columns">
-<div class="column">
-<p><strong>Post-Norm (Original):</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Normalize AFTER residual</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">x = LayerNorm(x + Attention(x))</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">x = LayerNorm(x + FFN(x))</span></span>
-</code></pre>
+<p><strong>Characteristics:</strong></p>
 <ul>
-<li>Used in original Transformer, BERT</li>
-<li>Can be unstable for deep models</li>
-<li>Requires careful initialization</li>
+<li>Different vector per occurrence</li>
+<li>Context-dependent</li>
+<li>Requires forward pass</li>
+<li>Dynamic representations</li>
+<li>Handles polysemy naturally</li>
 </ul>
 </div>
-<div class="column">
-<p><strong>Pre-Norm (Modern):</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Normalize BEFORE sublayer</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">x = x + Attention(LayerNorm(x))</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">x = x + FFN(LayerNorm(x))</span></span>
-</code></pre>
-<ul>
-<li>Used in GPT-2, GPT-3, LLaMA</li>
-<li>More stable gradients</li>
-<li>Easier to train 96+ layer models</li>
-</ul>
-</div>
-</div>
-<div class="callout info">
-<div class="callout-title">Recommendation</div>
-<p>For deep transformers (24+ layers), Pre-Norm is preferred due to better training stability. Post-Norm can achieve slightly better final performance with careful tuning.</p>
 </div>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="11" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="complete-transformer-block">Complete Transformer Block</h1>
-<p><strong>Putting it all together:</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">class TransformerBlock(nn.Module):</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"> def __init__(self, d_model=768, n_heads=12, d_ff=3072):</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> super().__init__()</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> self.attention = MultiHeadAttention(d_model, n_heads)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> self.ffn = FeedForward(d_model, d_ff)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> self.norm1 = nn.LayerNorm(d_model)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> self.norm2 = nn.LayerNorm(d_model)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> def forward(self, x):</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> # Self-attention with residual</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"> x = x + self.attention(self.norm1(x))</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"> # Feed-forward with residual</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"> x = x + self.ffn(self.norm2(x))</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"> return x</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"># Stack N blocks!</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code">encoder = nn.Sequential(*[TransformerBlock() for _ in range(12)])</span></span>
-</code></pre>
-<p><strong>Model sizes:</strong></p>
-<ul>
-<li>BERT-base: 12 blocks, 110M params | BERT-large: 24 blocks, 340M params</li>
-<li>GPT-3: 96 blocks, 175B params!</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-70" data-theme="cdl-theme" lang="C" class="scale-70" data-marpit-pagination="12" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-70;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-
-<h1 id="flashattention-making-transformers-faster">FlashAttention: Making Transformers Faster</h1>
-<p><strong>Problem: Standard attention is slow and memory-hungry!</strong></p>
-<div class="callout warning">
-<div class="callout-title">Standard Attention Complexity</div>
-<ul>
-<li>Time: O(n^2) where n = sequence length</li>
-<li>Memory: O(n^2) to store attention matrix</li>
-<li>Bottleneck: Reading/writing to GPU memory (HBM)</li>
-</ul>
-</div>
-<div class="columns">
-<div class="column">
-<p><strong>FlashAttention Innovation:</strong></p>
-<ul>
-<li>Tile-based computation</li>
-<li>Uses fast SRAM instead of slow HBM</li>
-<li>Fused operations (fewer memory reads)</li>
-<li>Recomputation in backward pass</li>
-</ul>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Standard: materialize full n×n matrix</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">attn = softmax(Q @ K.T / sqrt(d))</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">out = attn @ V # O(n^2) memory</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># FlashAttention: compute in tiles</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">for tile in tiles:</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> # Only load small tile to SRAM</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> # Never materialize full matrix!</span></span>
-</code></pre>
-</div>
-<div class="column">
-<p><strong>Concrete Speedup:</strong></p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="5" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="language-models-as-feature-extractors">Language Models as Feature Extractors</h1>
+<p><strong>Key Insight:</strong> Train a language model, use its internal states as embeddings</p>
+<p><strong>Language Modeling Task:</strong></p>
+<p>Predict the next word given previous words: <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="22.155ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 9792.3 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path></g><g data-mml-node="mo" transform="translate(751,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="msub" transform="translate(1140,0)"><g data-mml-node="mi"><path data-c="1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path></g><g data-mml-node="mi" transform="translate(749,-150) scale(0.707)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path></g></g><g data-mml-node="mo" transform="translate(2194.3,0) translate(0 -0.5)"><path data-c="7C" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z"></path></g><g data-mml-node="msub" transform="translate(2472.3,0)"><g data-mml-node="mi"><path data-c="1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path></g><g data-mml-node="mn" transform="translate(749,-150) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g><g data-mml-node="mo" transform="translate(3624.8,0)"><path data-c="2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path></g><g data-mml-node="msub" transform="translate(4069.5,0)"><g data-mml-node="mi"><path data-c="1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path></g><g data-mml-node="mn" transform="translate(749,-150) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="mo" transform="translate(5222,0)"><path data-c="2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path></g><g data-mml-node="mo" transform="translate(5666.7,0)"><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path></g><g data-mml-node="mo" transform="translate(6111.4,0)"><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path></g><g data-mml-node="mo" transform="translate(6556,0)"><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path></g><g data-mml-node="mo" transform="translate(7000.7,0)"><path data-c="2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path></g><g data-mml-node="msub" transform="translate(7445.4,0)"><g data-mml-node="mi"><path data-c="1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path></g><g data-mml-node="TeXAtom" transform="translate(749,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path></g><g data-mml-node="mo" transform="translate(361,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mn" transform="translate(1139,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g><g data-mml-node="mo" transform="translate(9403.3,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container></p>
+<div class="callout tip">
+<div class="callout-title">Worked Example</div>
+<p>Input: &quot;The cat sat on the ___&quot;</p>
 <table>
 <thead>
 <tr>
-<th>Method</th>
-<th>Speed</th>
-<th>Memory</th>
+<th>Model predicts probabilities:</th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Standard</td>
-<td>1x</td>
-<td>1x</td>
+<td>&quot;mat&quot;</td>
+<td>0.25</td>
 </tr>
 <tr>
-<td>FlashAttention</td>
-<td>3x faster</td>
-<td>0.5x</td>
+<td>&quot;floor&quot;</td>
+<td>0.18</td>
+</tr>
+<tr>
+<td>&quot;couch&quot;</td>
+<td>0.12</td>
+</tr>
+<tr>
+<td>&quot;dog&quot;</td>
+<td>0.001</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Real Impact:</strong></p>
+<p>To predict well, the model learns: &quot;sat on the&quot; suggests a surface!</p>
+</div>
+<p><strong>Why This Works:</strong></p>
 <ul>
-<li>Sequence 1024→4096 on same GPU</li>
-<li>Training 2-4x faster</li>
-<li>Used in: LLaMA, GPT-4, Mistral</li>
+<li>To predict &quot;mat&quot;, model must encode that &quot;sat on&quot; precedes surfaces</li>
+<li>Hidden states capture this contextual understanding</li>
+<li>We extract these rich hidden states as embeddings!</li>
 </ul>
-</div>
-</div>
-<p><em>Reference: Dao et al. (2022) - &quot;FlashAttention&quot;</em></p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="13" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="other-attention-optimizations">Other Attention Optimizations</h1>
-<p><strong>Addressing the <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="5.832ex" height="2.452ex" role="img" focusable="false" viewBox="0 -833.9 2577.6 1083.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path></g><g data-mml-node="mo" transform="translate(763,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="msup" transform="translate(1152,0)"><g data-mml-node="mi"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mn" transform="translate(633,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="mo" transform="translate(2188.6,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container> problem:</strong></p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="6" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="elmo-embeddings-from-language-models">ELMo: Embeddings from Language Models</h1>
+<p><strong>The first widely-adopted contextual embedding (2018)</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>Key Ideas:</strong></p>
 <ol>
-<li><strong>Sparse Attention</strong></li>
+<li>Train deep bidirectional language model</li>
+<li>Use all layer activations</li>
+<li>Weighted combination per task</li>
+<li>Pre-train on large corpus</li>
 </ol>
+<p><strong>Architecture:</strong></p>
 <ul>
-<li>Only attend to subset of positions</li>
-<li>Local windows + global tokens</li>
-<li>Used in: Longformer, BigBird</li>
-</ul>
-<ol start="2">
-<li><strong>Linear Attention</strong></li>
-</ol>
-<ul>
-<li>Approximate attention with linear complexity</li>
-<li>Kernel trick to avoid materializing attention matrix</li>
-<li>Used in: Performer, Linear Transformer</li>
-</ul>
-<ol start="3">
-<li><strong>Low-Rank Approximation</strong></li>
-</ol>
-<ul>
-<li>Factorize attention matrix</li>
-<li>Reduce memory footprint</li>
-<li>Used in: Linformer</li>
-</ul>
-<ol start="4">
-<li><strong>Sliding Window</strong></li>
-</ol>
-<ul>
-<li>Fixed-size local attention window</li>
-<li>Constant memory usage</li>
-<li>Used in: Mistral 7B</li>
-</ul>
-<p><strong>Trade-off:</strong> Efficiency vs. expressiveness. Full attention often still best for quality.</p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="14" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="three-transformer-architectures">Three Transformer Architectures</h1>
-<table>
-<thead>
-<tr>
-<th>p{4cm}p{4cm}} Architecture</th>
-<th>How it works</th>
-<th>**Examples \</th>
-<th>Uses**</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Best for: Classification, NER, QA</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Best for: Generation, completion</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Decoder: masked + cross-attention</td>
-<td>T5, BART, mT5</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Best for: Translation, summarization</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<div class="callout info">
-<div class="callout-title">Key Difference: Attention Masking</div>
-<ul>
-<li><strong>Encoder:</strong> Full self-attention (bidirectional)</li>
-<li><strong>Decoder:</strong> Causal/masked attention (unidirectional)</li>
+<li>2-layer biLSTM</li>
+<li>Forward LM: <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="16.529ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 7305.8 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path></g><g data-mml-node="mo" transform="translate(751,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="msub" transform="translate(1140,0)"><g data-mml-node="mi"><path data-c="1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path></g><g data-mml-node="mi" transform="translate(749,-150) scale(0.707)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path></g></g><g data-mml-node="mo" transform="translate(2194.3,0) translate(0 -0.5)"><path data-c="7C" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z"></path></g><g data-mml-node="msub" transform="translate(2472.3,0)"><g data-mml-node="mi"><path data-c="1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path></g><g data-mml-node="mn" transform="translate(749,-150) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g><g data-mml-node="mo" transform="translate(3624.8,0)"><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path></g><g data-mml-node="mo" transform="translate(4069.5,0)"><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path></g><g data-mml-node="mo" transform="translate(4514.2,0)"><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path></g><g data-mml-node="msub" transform="translate(4958.8,0)"><g data-mml-node="mi"><path data-c="1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path></g><g data-mml-node="TeXAtom" transform="translate(749,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path></g><g data-mml-node="mo" transform="translate(361,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mn" transform="translate(1139,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g><g data-mml-node="mo" transform="translate(6916.8,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container></li>
+<li>Backward LM: <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="16.689ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 7376.5 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path></g><g data-mml-node="mo" transform="translate(751,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="msub" transform="translate(1140,0)"><g data-mml-node="mi"><path data-c="1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path></g><g data-mml-node="mi" transform="translate(749,-150) scale(0.707)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path></g></g><g data-mml-node="mo" transform="translate(2194.3,0) translate(0 -0.5)"><path data-c="7C" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z"></path></g><g data-mml-node="msub" transform="translate(2472.3,0)"><g data-mml-node="mi"><path data-c="1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path></g><g data-mml-node="TeXAtom" transform="translate(749,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path></g><g data-mml-node="mo" transform="translate(361,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mn" transform="translate(1139,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g><g data-mml-node="mo" transform="translate(4430.2,0)"><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path></g><g data-mml-node="mo" transform="translate(4874.9,0)"><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path></g><g data-mml-node="mo" transform="translate(5319.5,0)"><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path></g><g data-mml-node="msub" transform="translate(5764.2,0)"><g data-mml-node="mi"><path data-c="1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path></g><g data-mml-node="mi" transform="translate(749,-150) scale(0.707)"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g></g><g data-mml-node="mo" transform="translate(6987.5,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container></li>
+<li>Character-based input (handles OOV!)</li>
 </ul>
 </div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="15" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="visual-comparison-encoder-vs-decoder-vs-both">Visual Comparison: Encoder vs Decoder vs Both</h1>
+<div class="column">
+<p><strong>Bidirectional Processing:</strong></p>
 <pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">**Encoder-Only (BERT) -&gt; Self-Attention -&gt; bidirectional -&gt; \textbf{Decoder-Only (GPT) -&gt; Masked Attn -&gt; causal</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">Forward: The → cat → sat → ...</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">Backward: ... ← sat ← cat ← The</span></span>
 </code></pre>
-<p>\end{center**</p>
-<p><strong>Choosing the Right Architecture:</strong></p>
+<p>Each word gets info from BOTH directions!</p>
+<p><strong>Layer Weighting Example:</strong></p>
+<p>For sentiment task, ELMo might learn:</p>
 <ul>
-<li>Need to understand full context? → <strong>Encoder</strong> (BERT)</li>
-<li>Need to generate text? → <strong>Decoder</strong> (GPT)</li>
-<li>Need both (translate, summarize)? → <strong>Encoder-Decoder</strong> (T5)</li>
+<li>Layer 0 (characters): weight = 0.1</li>
+<li>Layer 1 (syntax): weight = 0.3</li>
+<li>Layer 2 (semantics): weight = 0.6</li>
 </ul>
+<p>Higher layers matter more for meaning!</p>
+</div>
+</div>
+<p><em>Reference: Peters et al. (2018). &quot;Deep contextualized word representations&quot;</em></p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="16" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="using-transformers-in-practice">Using Transformers in Practice</h1>
-<p><strong>HuggingFace makes it easy!</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import AutoModel, AutoTokenizer</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"># Load pre-trained model (downloads ~440MB first time)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">model_name = &quot;bert-base-uncased&quot;</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">tokenizer = AutoTokenizer.from_pretrained(model_name)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">model = AutoModel.from_pretrained(model_name)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"># Tokenize input</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">text = &quot;The animal didn&#x27;t cross the street because it was too tired&quot;</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">inputs = tokenizer(text, return_tensors=&quot;pt&quot;)</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">print(inputs[&#x27;input_ids&#x27;])</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"># tensor([[ 101, 1996, 4111, 2134, 1005, 1056, 2892, 1996,</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"># 2395, 2138, 2009, 2001, 2205, 5458, 102]])</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"># [CLS] The animal didn &#x27; t cross the ...</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"># Get contextualized embeddings</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="7" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="elmo-how-it-works">ELMo: How It Works</h1>
+<p><strong>Training:</strong></p>
+<ol>
+<li>Pre-train on large corpus (1B Word Benchmark)</li>
+<li>Each position gets representation from all layers</li>
+</ol>
+<p><strong>Usage (downstream tasks):</strong></p>
+<ol>
+<li>Freeze ELMo weights</li>
+<li>For each token, extract representations from all layers</li>
+<li>Learn task-specific weighted combination</li>
+<li>Concatenate with task model</li>
+</ol>
+<div class="callout tip">
+<div class="callout-title">Concrete Example: Sentiment Analysis</div>
+<p><strong>Input:</strong> &quot;The movie was absolutely terrible&quot;</p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Char Emb</th>
+<th>Layer 1</th>
+<th>Layer 2</th>
+<th>Weighted Sum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>terrible</td>
+<td>[0.1, ...]</td>
+<td>[0.3, ...]</td>
+<td>[-0.8, ...]</td>
+<td>[-0.5, ...]</td>
+</tr>
+</tbody>
+</table>
+<p>The final representation captures that &quot;terrible&quot; is strongly negative in this context!</p>
+</div>
+<p><strong>Impact:</strong> Improved state-of-the-art on 6 NLP tasks!</p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="17" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="using-transformers-in-practice-1">Using Transformers in Practice</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="17">
-<span class="line"><span class="line-num">17</span><span class="line-code">outputs = model(**inputs)</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code">hidden_states = outputs.last_hidden_state # [1, 15, 768]</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code"># &quot;it&quot; is at position 10 - its embedding knows it refers to &quot;animal&quot;!</span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code">it_embedding = hidden_states[0, 10, :] # 768-dim context-aware vector</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<p><em>Reference: HuggingFace Course - Chapter 1.4</em></p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="18" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="comparing-architectures-code-examples">Comparing Architectures: Code Examples</h1>
-<p><strong>Different architectures for different tasks</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import AutoModelForSequenceClassification, \</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"> AutoModelForCausalLM, \</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> AutoModelForSeq2SeqLM</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># 1. ENCODER-ONLY (BERT): Classification</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">encoder_model = AutoModelForSequenceClassification.from_pretrained(</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> &quot;bert-base-uncased&quot;, num_labels=2</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">)</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"># Use for: Sentiment analysis, NER, classification</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"># 2. DECODER-ONLY (GPT): Text generation</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">decoder_model = AutoModelForCausalLM.from_pretrained(&quot;gpt2&quot;)</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"># Use for: Text completion, creative writing, few-shot learning</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># 3. ENCODER-DECODER (T5): Seq2Seq tasks</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained(&quot;t5-base&quot;)</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code"># Use for: Translation, summarization, question answering</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="19" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="comparing-architectures-code-examples-1">Comparing Architectures: Code Examples</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="18">
-<span class="line"><span class="line-num">18</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code"># All use transformer architecture, different attention patterns!</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<p><strong>Key Takeaway:</strong> Choose architecture based on your task!</p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="20" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="8" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 
-<h1 id="practical-tips-for-training-transformers">Practical Tips for Training Transformers</h1>
+<h1 id="elmo-in-practice">ELMo in Practice</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from allennlp.modules.elmo import Elmo, batch_to_ids</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"># Initialize ELMo</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">options_file = &quot;https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_options.json&quot;</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">weight_file = &quot;https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5&quot;</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">elmo = Elmo(options_file, weight_file, 2, dropout=0)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"># Prepare sentences</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">sentences = [</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"> [&#x27;I&#x27;, &#x27;deposited&#x27;, &#x27;money&#x27;, &#x27;at&#x27;, &#x27;the&#x27;, &#x27;bank&#x27;],</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"> [&#x27;We&#x27;, &#x27;sat&#x27;, &#x27;by&#x27;, &#x27;the&#x27;, &#x27;river&#x27;, &#x27;bank&#x27;]</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">]</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="9" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="elmo-in-practice-1">ELMo in Practice</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="15">
+<span class="line"><span class="line-num">15</span><span class="line-code"># Convert to character ids</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">character_ids = batch_to_ids(sentences)</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code"># Get embeddings</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">embeddings = elmo(character_ids)</span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code"># embeddings[&#x27;elmo_representations&#x27;] contains:</span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code"># - List of 2 tensors (one per layer)</span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code"># - Shape: [batch_size, seq_len, 1024]</span></span>
+<span class="line"><span class="line-num">24</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">25</span><span class="line-code"># Different vectors for &quot;bank&quot;!</span></span>
+<span class="line"><span class="line-num">26</span><span class="line-code">bank1 = embeddings[&#x27;elmo_representations&#x27;][0][0, 5, :] # first sentence</span></span>
+<span class="line"><span class="line-num">27</span><span class="line-code">bank2 = embeddings[&#x27;elmo_representations&#x27;][0][1, 5, :] # second sentence</span></span>
+<span class="line"><span class="line-num">28</span><span class="line-code"></span></span>
+</code></pre>
+<div class="code-continued-indicator">...continued...</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="10" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="elmo-in-practice-2">ELMo in Practice</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="29">
+<span class="line"><span class="line-num">29</span><span class="line-code"># Cosine similarity will be lower than for static embeddings</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="11" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="universal-sentence-encoder-use">Universal Sentence Encoder (USE)</h1>
+<p><strong>Sentence-level embeddings for semantic similarity</strong></p>
 <div class="columns">
 <div class="column">
-<p><strong>1. Learning Rate &amp; Warmup</strong></p>
+<p><strong>Motivation:</strong></p>
+<ul>
+<li>Word embeddings: good for words</li>
+<li>But what about sentences?</li>
+<li>Average of word vectors? Too simple!</li>
+<li>Need compositionality</li>
+</ul>
+<p><strong>Two Variants:</strong></p>
+<p><strong>1. Transformer-based:</strong></p>
+<ul>
+<li>Higher accuracy</li>
+<li>Slower (compute intensive)</li>
+<li>Better for quality</li>
+</ul>
+<p><strong>2. Deep Averaging Network (DAN):</strong></p>
+<ul>
+<li>Lower accuracy</li>
+<li>Much faster</li>
+<li>Better for scale</li>
+</ul>
+</div>
+<div class="column">
+<p><strong>Training Objectives:</strong></p>
+<ol>
+<li>Unsupervised: Skip-thought</li>
+<li>Supervised: SNLI (entailment)</li>
+<li>Multi-task learning</li>
+</ol>
+<p><strong>Output:</strong></p>
+<ul>
+<li>512-dimensional vector</li>
+<li>Fixed-length (any sentence length)</li>
+<li>Optimized for similarity tasks</li>
+</ul>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Semantic search</li>
+<li>Question answering</li>
+<li>Text classification</li>
+<li>Clustering</li>
+<li>Duplicate detection</li>
+</ul>
+</div>
+</div>
+<p><em>Reference: Cer et al. (2018). &quot;Universal Sentence Encoder&quot;</em></p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="12" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="universal-sentence-encoder-in-practice">Universal Sentence Encoder in Practice</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Warmup: gradually increase LR</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"># Then decay (linear or cosine)</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">scheduler = get_linear_schedule_with_warmup(</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> optimizer,</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> num_warmup_steps=1000, # ~10% of training</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> num_training_steps=10000</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"># Fine-tuning: lr=2e-5, From scratch: lr=1e-4</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">import tensorflow_hub as hub</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">import numpy as np</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Load model</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">embed = hub.load(&quot;https://tfhub.dev/google/universal-sentence-encoder/4&quot;)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"># Example sentences</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">sentences = [</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"> &quot;The cat sat on the mat.&quot;,</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"> &quot;A feline rested on the rug.&quot;,</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"> &quot;The dog ran in the park.&quot;,</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"> &quot;I love machine learning.&quot;</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">]</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code"># Generate embeddings</span></span>
 </code></pre>
-<p><strong>2. Optimizer</strong></p>
+<div class="code-continued-indicator">continued...</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="13" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="universal-sentence-encoder-in-practice-1">Universal Sentence Encoder in Practice</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="16">
+<span class="line"><span class="line-num">16</span><span class="line-code">embeddings = embed(sentences)</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code"># Shape: [4, 512]</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">print(embeddings.shape)</span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code"># Compute similarity</span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code">from sklearn.metrics.pairwise import cosine_similarity</span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">24</span><span class="line-code">sim_matrix = cosine_similarity(embeddings)</span></span>
+<span class="line"><span class="line-num">25</span><span class="line-code">print(sim_matrix)</span></span>
+<span class="line"><span class="line-num">26</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">27</span><span class="line-code"># Sentences 1 and 2 should be very similar (paraphrases)</span></span>
+<span class="line"><span class="line-num">28</span><span class="line-code"># Sentence 3 somewhat similar (animals)</span></span>
+<span class="line"><span class="line-num">29</span><span class="line-code"># Sentence 4 dissimilar</span></span>
+<span class="line"><span class="line-num">30</span><span class="line-code"></span></span>
+</code></pre>
+<div class="code-continued-indicator">...continued...</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="14" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="universal-sentence-encoder-in-practice-2">Universal Sentence Encoder in Practice</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="31">
+<span class="line"><span class="line-num">31</span><span class="line-code"># Use for semantic search</span></span>
+<span class="line"><span class="line-num">32</span><span class="line-code">query = &quot;cat on mat&quot;</span></span>
+<span class="line"><span class="line-num">33</span><span class="line-code">query_embedding = embed([query])</span></span>
+<span class="line"><span class="line-num">34</span><span class="line-code">similarities = cosine_similarity(query_embedding, embeddings)[0]</span></span>
+<span class="line"><span class="line-num">35</span><span class="line-code">most_similar_idx = np.argmax(similarities)</span></span>
+<span class="line"><span class="line-num">36</span><span class="line-code">print(f&quot;Most similar: {sentences[most_similar_idx]}&quot;)</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="15" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="bert-bidirectional-encoder-representations">BERT: Bidirectional Encoder Representations</h1>
+<p><strong>The model that changed everything (2018)</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>Key Innovations:</strong></p>
+<ol>
+<li>
+<p>context (not just left-to-right)</p>
+</li>
+<li>
+<p>architecture (attention)</p>
+</li>
+<li>
+<p>pre-training</p>
+</li>
+<li>
+<p>Deeply bidirectional</p>
+</li>
+</ol>
+<p><strong>Impact:</strong></p>
+<ul>
+<li>SOTA on 11 NLP tasks</li>
+<li>Sparked the &quot;BERT-era&quot;</li>
+<li>1000+ variants (RoBERTa, ALBERT, DistilBERT, ...)</li>
+<li>Foundation for modern LLMs</li>
+</ul>
+</div>
+<div class="column">
+<p><strong>Architecture Sizes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>BERT-Large</th>
+<th>24</th>
+<th>1024</th>
+</tr>
+</thead>
+</table>
+<p><strong>Training Data:</strong></p>
+<ul>
+<li>BooksCorpus (800M words)</li>
+<li>English Wikipedia (2.5B words)</li>
+<li>Total: 3.3B words</li>
+</ul>
+<p><strong>Training Time:</strong></p>
+<ul>
+<li>4 days on 64 TPU chips</li>
+<li>Or 4 weeks on 8 GPUs</li>
+</ul>
+</div>
+</div>
+<p><em>Reference: Devlin et al. (2018). &quot;BERT: Pre-training of Deep Bidirectional Transformers&quot;</em></p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="16" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="masked-language-modeling-mlm">Masked Language Modeling (MLM)</h1>
+<p><strong>BERT's key training innovation</strong></p>
+<p><strong>The Problem with Traditional LM:</strong></p>
+<ul>
+<li>Left-to-right: Only sees previous words</li>
+<li>Right-to-left: Only sees next words</li>
+<li>Want: See both directions simultaneously</li>
+<li>But: Can't just show the answer during training!</li>
+</ul>
+<p><strong>Solution: Mask some words, predict them</strong></p>
+<div class="callout tip">
+<div class="callout-title">Worked Example: MLM Training</div>
+<p><strong>Original:</strong> &quot;The cat sat on the mat&quot;</p>
+<p><strong>Step 1:</strong> Randomly select 15% of tokens → &quot;cat&quot; selected</p>
+<p><strong>Step 2:</strong> Apply masking strategy (80/10/10 rule):</p>
+<ul>
+<li>80% chance: &quot;The <strong>[MASK]</strong> sat on the mat&quot;</li>
+<li>10% chance: &quot;The <strong>dog</strong> sat on the mat&quot; (random word)</li>
+<li>10% chance: &quot;The <strong>cat</strong> sat on the mat&quot; (unchanged)</li>
+</ul>
+<p><strong>Step 3:</strong> Model sees full context both ways to predict &quot;cat&quot;:</p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">← The [MASK] sat on the mat →</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> ↑</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"> predict &quot;cat&quot;</span></span>
+</code></pre>
+</div>
+<p><strong>Training Procedure:</strong></p>
+<ol>
+<li>Randomly select 15% of tokens</li>
+<li>Replace 80% with [MASK], 10% with random word, 10% unchanged</li>
+<li>Predict original tokens</li>
+<li>Bidirectional context!</li>
+</ol>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="17" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="next-sentence-prediction-nsp">Next Sentence Prediction (NSP)</h1>
+<p><strong>Second pre-training task: Understand sentence relationships</strong></p>
+<p><strong>Task:</strong> Given two sentences A and B, predict if B follows A in the text</p>
+<div class="callout tip">
+<div class="callout-title">Positive Example (IsNext)</div>
+<p><strong>Sentence A:</strong> &quot;The cat sat on the mat.&quot;</p>
+<p><strong>Sentence B:</strong> &quot;It was sleeping peacefully.&quot;</p>
+<p><strong>Label:</strong> IsNext</p>
+</div>
+<div class="callout tip">
+<div class="callout-title">Negative Example (NotNext)</div>
+<p><strong>Sentence A:</strong> &quot;The cat sat on the mat.&quot;</p>
+<p><strong>Sentence B:</strong> &quot;Machine learning is fascinating.&quot;</p>
+<p><strong>Label:</strong> NotNext</p>
+</div>
+<p><strong>Why This Helps:</strong></p>
+<ul>
+<li>Captures discourse relationships</li>
+<li>Useful for QA, NLI, etc.</li>
+<li>Models sentence-level coherence</li>
+<li>Note: Later research (RoBERTa) found NSP less important than MLM</li>
+</ul>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="18" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="bert-architecture">BERT Architecture</h1>
+<p><strong>Three types of embeddings are summed for each token:</strong></p>
+<div class="callout tip">
+<div class="callout-title">Worked Example: Input Representation</div>
+<p><strong>Input:</strong> &quot;[CLS] I love NLP [SEP] It is fun [SEP]&quot;</p>
+<table class="split-table">
+<thead>
+<tr>
+<th style="text-align: center">Token</th>
+<th style="text-align: center">Token ID</th>
+<th style="text-align: center">Segment</th>
+<th style="text-align: center">Position</th>
+<th style="text-align: center">Final Embedding</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center">[CLS]</td>
+<td style="text-align: center">E_CLS</td>
+<td style="text-align: center">A</td>
+<td style="text-align: center">0</td>
+<td style="text-align: center">E_CLS + E_A + E_0</td>
+</tr>
+<tr>
+<td style="text-align: center">I</td>
+<td style="text-align: center">E_I</td>
+<td style="text-align: center">A</td>
+<td style="text-align: center">1</td>
+<td style="text-align: center">E_I + E_A + E_1</td>
+</tr>
+<tr>
+<td style="text-align: center">love</td>
+<td style="text-align: center">E_love</td>
+<td style="text-align: center">A</td>
+<td style="text-align: center">2</td>
+<td style="text-align: center">E_love + E_A + E_2</td>
+</tr>
+<tr>
+<td style="text-align: center">NLP</td>
+<td style="text-align: center">E_NLP</td>
+<td style="text-align: center">A</td>
+<td style="text-align: center">3</td>
+<td style="text-align: center">E_NLP + E_A + E_3</td>
+</tr>
+<tr>
+<td style="text-align: center">[SEP]</td>
+<td style="text-align: center">E_SEP</td>
+<td style="text-align: center">A</td>
+<td style="text-align: center">4</td>
+<td style="text-align: center">E_SEP + E_A + E_4</td>
+</tr>
+<tr>
+<td style="text-align: center">It</td>
+<td style="text-align: center">E_It</td>
+<td style="text-align: center">B</td>
+<td style="text-align: center">5</td>
+<td style="text-align: center">E_It + E_B + E_5</td>
+</tr>
+<tr>
+<td style="text-align: center">is</td>
+<td style="text-align: center">E_is</td>
+<td style="text-align: center">B</td>
+<td style="text-align: center">6</td>
+<td style="text-align: center">E_is + E_B + E_6</td>
+</tr>
+<tr>
+<td style="text-align: center">fun</td>
+<td style="text-align: center">E_fun</td>
+<td style="text-align: center">B</td>
+<td style="text-align: center">7</td>
+<td style="text-align: center">E_fun + E_B + E_7</td>
+</tr>
+</tbody>
+</table>
+<div class="table-continued-indicator">continued...</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="19" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="bert-architecture-1">BERT Architecture</h1>
+<table class="split-table table-continuation">
+<thead>
+<tr>
+<th style="text-align: center">Token</th>
+<th style="text-align: center">Token ID</th>
+<th style="text-align: center">Segment</th>
+<th style="text-align: center">Position</th>
+<th style="text-align: center">Final Embedding</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center">[SEP]</td>
+<td style="text-align: center">E_SEP</td>
+<td style="text-align: center">B</td>
+<td style="text-align: center">8</td>
+<td style="text-align: center">E_SEP + E_B + E_8</td>
+</tr>
+</tbody>
+</table>
+<div class="table-continued-indicator-last">...continued</div>
+<ul>
+<li><strong>Token Embedding:</strong> What word is this?</li>
+<li><strong>Segment Embedding:</strong> Which sentence (A or B)?</li>
+<li><strong>Position Embedding:</strong> Where in the sequence?</li>
+</ul>
+</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="20" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="bert-in-practice">BERT in Practice</h1>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">optimizer = AdamW(</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"> model.parameters(),</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> lr=2e-5,</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> weight_decay=0.01 # L2 regularization</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import BertTokenizer, BertModel</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">import torch</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Load pre-trained BERT</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">tokenizer = BertTokenizer.from_pretrained(&#x27;bert-base-uncased&#x27;)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">model = BertModel.from_pretrained(&#x27;bert-base-uncased&#x27;)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># Example sentences with &quot;bank&quot;</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">sent1 = &quot;I deposited money at the bank&quot;</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">sent2 = &quot;We sat by the river bank&quot;</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"># Tokenize</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">tokens1 = tokenizer(sent1, return_tensors=&#x27;pt&#x27;)</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="21" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="bert-in-practice-1">BERT in Practice</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="14">
+<span class="line"><span class="line-num">14</span><span class="line-code">tokens2 = tokenizer(sent2, return_tensors=&#x27;pt&#x27;)</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"># Get embeddings</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">with torch.no_grad():</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code"> output1 = model(**tokens1)</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code"> output2 = model(**tokens2)</span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code"># Last hidden state: [batch_size, seq_len, hidden_size]</span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code">embeddings1 = output1.last_hidden_state</span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code">embeddings2 = output2.last_hidden_state</span></span>
+<span class="line"><span class="line-num">24</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">25</span><span class="line-code"># Extract &quot;bank&quot; embedding (position varies)</span></span>
+<span class="line"><span class="line-num">26</span><span class="line-code"># tokens1: [CLS] i deposited money at the bank [SEP]</span></span>
+</code></pre>
+<div class="code-continued-indicator">...continued...</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="22" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="bert-in-practice-2">BERT in Practice</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="27">
+<span class="line"><span class="line-num">27</span><span class="line-code">bank1_embedding = embeddings1[0, 6, :] # 768-dim vector</span></span>
+<span class="line"><span class="line-num">28</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">29</span><span class="line-code"># tokens2: [CLS] we sat by the river bank [SEP]</span></span>
+<span class="line"><span class="line-num">30</span><span class="line-code">bank2_embedding = embeddings2[0, 6, :] # 768-dim vector</span></span>
+<span class="line"><span class="line-num">31</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">32</span><span class="line-code"># Different vectors for &quot;bank&quot;!</span></span>
+<span class="line"><span class="line-num">33</span><span class="line-code">from torch.nn.functional import cosine_similarity</span></span>
+<span class="line"><span class="line-num">34</span><span class="line-code">sim = cosine_similarity(bank1_embedding, bank2_embedding, dim=0)</span></span>
+<span class="line"><span class="line-num">35</span><span class="line-code">print(f&quot;Similarity: {sim:.3f}&quot;) # Lower than with static embeddings</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="23" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="fine-tuning-bert">Fine-tuning BERT</h1>
+<p><strong>Two ways to use BERT:</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>1. Feature Extraction:</strong></p>
+<ul>
+<li>Freeze BERT weights</li>
+<li>Use embeddings as features</li>
+<li>Train classifier on top</li>
+<li>Faster, less data needed</li>
+</ul>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Freeze BERT</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">for param in bert_model.parameters():</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"> param.requires_grad = False</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># Add classifier</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">classifier = nn.Linear(768, num_classes)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># Train only classifier</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">optimizer = Adam(classifier.parameters())</span></span>
 </code></pre>
 </div>
 <div class="column">
-<p><strong>3. Regularization</strong></p>
+<p><strong>2. Fine-tuning:</strong></p>
+<ul>
+<li>Update BERT weights</li>
+<li>Add task-specific head</li>
+<li>Train end-to-end</li>
+<li>Better performance, more data needed</li>
+</ul>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Dropout after attention and FFN</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">self.dropout = nn.Dropout(0.1)</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code"># Keep BERT trainable</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">bert_model = BertModel.from_pretrained(</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"> &#x27;bert-base-uncased&#x27;</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"># Add classifier</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">classifier = nn.Linear(768, num_classes)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"># Train everything</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">optimizer = Adam(</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"> list(bert_model.parameters()) +</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="24" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="fine-tuning-bert-1">Fine-tuning BERT</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="12">
+<span class="line"><span class="line-num">12</span><span class="line-code"> list(classifier.parameters()),</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"> lr=2e-5 # Small learning rate!</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">)</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+</div>
+</div>
+<p><strong>Best Practice:</strong> Fine-tune with small learning rate (1e-5 to 5e-5) for few epochs (2-4)</p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="25" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="contextual-embeddings-comparison">Contextual Embeddings Comparison</h1>
+<table>
+<thead>
+<tr>
+<th>Pre-training</th>
+<th>LM (forward+backward)</th>
+<th>Multi-task</th>
+<th>MLM + NSP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bidirectional</td>
+<td>Shallow</td>
+<td>Yes</td>
+<td>Deep</td>
+</tr>
+<tr>
+<td>Granularity</td>
+<td>Token</td>
+<td>Sentence</td>
+<td>Token</td>
+</tr>
+<tr>
+<td>Hidden size</td>
+<td>1024</td>
+<td>512</td>
+<td>768/1024</td>
+</tr>
+<tr>
+<td>Parameters</td>
+<td>93M</td>
+<td>256M</td>
+<td>110M/340M</td>
+</tr>
+<tr>
+<td>Speed</td>
+<td>Medium</td>
+<td>Fast</td>
+<td>Slow</td>
+</tr>
+<tr>
+<td>OOV handling</td>
+<td>Characters</td>
+<td>Subwords</td>
+<td>WordPiece</td>
+</tr>
+<tr>
+<td>Year</td>
+<td>2018</td>
+<td>2018</td>
+<td>2018</td>
+</tr>
+</tbody>
+</table>
+<div class="callout info">
+<div class="callout-title">Recommendations</div>
+<ul>
+<li><strong>ELMo:</strong> Legacy systems, character-aware needs</li>
+<li><strong>USE:</strong> Sentence similarity, semantic search, fast inference</li>
+<li><strong>BERT:</strong> State-of-the-art quality, most NLP tasks (now superseded by larger models)</li>
+</ul>
+</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="26" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="impact-on-nlp">Impact on NLP</h1>
+<p><strong>BERT revolutionized NLP:</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>Before BERT (pre-2018):</strong></p>
+<ul>
+<li>Task-specific architectures</li>
+<li>Train from scratch</li>
+<li>Static embeddings (Word2Vec, GloVe)</li>
+<li>Limited transfer learning</li>
+<li>Moderate performance</li>
+</ul>
+<p><strong>Tasks that improved:</strong></p>
+<ul>
+<li>Question Answering (+1.5 F1 on SQuAD)</li>
+<li>NER (+0.3 F1)</li>
+<li>Sentiment Analysis (+2% accuracy)</li>
+<li>NLI (+4% accuracy)</li>
+<li>Many others!</li>
+</ul>
+</div>
+<div class="column">
+<p><strong>After BERT (post-2018):</strong></p>
+<ul>
+<li>Pre-train, then fine-tune</li>
+<li>Transfer learning standard</li>
+<li>Contextual embeddings</li>
+<li>Massive pre-trained models</li>
+<li>State-of-the-art results</li>
+</ul>
+<p><strong>BERT Variants:</strong></p>
+<ul>
+<li>RoBERTa: Better training</li>
+<li>ALBERT: Parameter sharing</li>
+<li>DistilBERT: Smaller, faster</li>
+<li>ELECTRA: Different pre-training</li>
+<li>DeBERTa: Disentangled attention</li>
+<li>And 100+ more!</li>
+</ul>
+</div>
+</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="27" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="real-world-applications">Real-World Applications</h1>
+<div class="columns">
+<div class="column">
+<p><strong>1. Google Search:</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Query: &quot;can you get medicine for</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> someone pharmacy&quot;</span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Gradient clipping</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">torch.nn.utils.clip_grad_norm_(</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> model.parameters(), max_norm=1.0</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">BERT understands: picking up a</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">prescription FOR someone else</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">Before BERT: matched &quot;medicine&quot;</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">and &quot;pharmacy&quot; keywords only</span></span>
 </code></pre>
-<p><strong>4. Mixed Precision (FP16)</strong></p>
+<p><strong>2. Question Answering:</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Context: &quot;The Eiffel Tower was</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">built in 1889 by Gustave Eiffel.&quot;</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">Q: &quot;When was the Eiffel Tower built?&quot;</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">A: &quot;1889&quot; ← BERT extracts this span</span></span>
+</code></pre>
+</div>
+<div class="column">
+<p><strong>3. Sentiment Analysis:</strong></p>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from torch.cuda.amp import autocast</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code"># Fine-tuned BERT</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">text = &quot;Not bad at all!&quot;</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">prediction = model(text)</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># → Positive (understands negation!)</span></span>
+</code></pre>
+<p><strong>4. Named Entity Recognition:</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Input: &quot;Apple CEO Tim Cook announced...&quot;</span></span>
 <span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">with autocast(): # Use FP16</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> outputs = model(inputs)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> loss = criterion(outputs, labels)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># 2x faster, 2x less memory!</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">Output:</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"> Apple → ORG</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"> Tim Cook → PERSON</span></span>
+</code></pre>
+<p><strong>5. Semantic Search:</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Query: &quot;affordable laptop for students&quot;</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">Matches: &quot;budget-friendly notebook</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"> for college&quot; ← synonyms!</span></span>
 </code></pre>
 </div>
 </div>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="21" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="computational-efficiency-tips">Computational Efficiency Tips</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="28" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="discussion-question">Discussion Question</h1>
+<p><strong>Do contextual embeddings truly &quot;understand&quot; language?</strong></p>
+<p><strong>Consider:</strong></p>
+<ul>
+<li>BERT can distinguish &quot;bank&quot; (financial) from &quot;bank&quot; (riverside)</li>
+<li>It achieves human-level performance on many benchmarks</li>
+<li>But it's trained only on text co-occurrence patterns</li>
+</ul>
+<div class="columns">
+<div class="column">
+<p><strong>Arguments For:</strong></p>
+<ul>
+<li>Captures complex semantic relationships</li>
+<li>Generalizes to new contexts</li>
+<li>Emergent linguistic capabilities</li>
+<li>Handles compositional meaning</li>
+</ul>
+</div>
+<div class="column">
+<p><strong>Arguments Against:</strong></p>
+<ul>
+<li>No grounding in physical world</li>
+<li>No common sense reasoning</li>
+<li>Exploits statistical shortcuts</li>
+<li>Brittle to adversarial examples</li>
+<li>&quot;Stochastic parrots&quot;?</li>
+</ul>
+</div>
+</div>
+<div class="callout warning">
+<div class="callout-title">The Grounding Problem Persists</div>
+<p>Even with contextual embeddings, we still lack true grounding in experience, perception, and embodied cognition.</p>
+</div>
+<p><em>Reference: Bender &amp; Koller (2020). &quot;Climbing towards NLU: On Meaning, Form, and Understanding&quot;</em></p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="29" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="practical-tips">Practical Tips</h1>
 <ol>
-<li><strong>Batch Size</strong></li>
+<li><strong>Choosing a Model:</strong></li>
 </ol>
 <ul>
-<li>Larger batches = better GPU utilization</li>
-<li>Use gradient accumulation if GPU memory limited</li>
-<li>Typical: effective batch size 256-2048 tokens</li>
-</ul>
-<ol start="2">
-<li><strong>Sequence Length</strong></li>
-</ol>
-<ul>
-<li>Shorter sequences train faster (quadratic complexity!)</li>
-<li>Consider truncation or sliding windows</li>
-<li>Pack multiple examples to maximize GPU usage</li>
-</ul>
-<ol start="3">
-<li><strong>Model Size</strong></li>
-</ol>
-<ul>
-<li>Start small, scale up if needed</li>
+<li>BERT-base: Good balance, 110M params</li>
 <li>DistilBERT: 40% smaller, 60% faster, 97% performance</li>
-<li>Consider model distillation for deployment</li>
-</ul>
-<ol start="4">
-<li><strong>Hardware</strong></li>
-</ol>
-<ul>
-<li>GPUs with high memory bandwidth (A100, H100)</li>
-<li>Multi-GPU training with data parallelism</li>
-<li>Use FlashAttention when available</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="22" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="discussion-questions">Discussion Questions</h1>
-<ol>
-<li><strong>Positional Encoding:</strong></li>
-</ol>
-<ul>
-<li>Why add instead of concatenate?</li>
-<li>What happens without positional encoding?</li>
-<li>Learned vs. fixed: which is better?</li>
+<li>RoBERTa: Better than BERT, longer training</li>
+<li>Domain-specific: BioBERT, SciBERT, FinBERT, etc.</li>
 </ul>
 <ol start="2">
-<li><strong>Architecture Choice:</strong></li>
+<li><strong>Fine-tuning Best Practices:</strong></li>
 </ol>
 <ul>
-<li>When would you use encoder-only vs decoder-only?</li>
-<li>Can GPT do classification? Can BERT generate?</li>
-<li>Why has decoder-only become more popular recently?</li>
+<li>Small learning rate (2e-5 typical)</li>
+<li>Few epochs (2-4)</li>
+<li>Batch size: 16 or 32</li>
+<li>Warm-up steps</li>
+<li>Gradient clipping</li>
 </ul>
 <ol start="3">
-<li><strong>Scaling:</strong></li>
+<li><strong>Computational Considerations:</strong></li>
 </ol>
 <ul>
-<li>Is bigger always better?</li>
-<li>What are the limits to scaling transformers?</li>
-<li>How do we make them more efficient?</li>
+<li>BERT-base: ~110M params, 512 max tokens</li>
+<li>Needs GPU (1-4 GB VRAM minimum)</li>
+<li>Batching for efficiency</li>
+<li>Consider DistilBERT for production</li>
 </ul>
 <ol start="4">
-<li><strong>Training Stability:</strong></li>
+<li><strong>Using HuggingFace:</strong></li>
 </ol>
 <ul>
-<li>Why are residual connections so important?</li>
-<li>Pre-norm vs post-norm: trade-offs?</li>
+<li>Easy access to 1000+ pre-trained models</li>
+<li>Standardized API</li>
+<li>Good documentation and community</li>
 </ul>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="23" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="looking-ahead-to-week-6">Looking Ahead to Week 6</h1>
-<p><strong>This week (Week 5) we learned:</strong></p>
-<ul>
-<li>Attention mechanisms (Lecture 12)</li>
-<li>Self-attention and transformer architecture (Lecture 13)</li>
-<li>Training transformers: all the components (Lecture 14)</li>
-</ul>
-<p><strong>Next week (Week 6):</strong></p>
-<ul>
-<li>Masked Language Modeling</li>
-<li>Pre-training and fine-tuning</li>
-<li>Contextual embeddings in action</li>
-</ul>
-<p>\item</p>
-<ul>
-<li>RoBERTa, ALBERT, DistilBERT</li>
-<li>Improvements and optimizations</li>
-</ul>
-<p>\item</p>
-<ul>
-<li>Real-world BERT applications</li>
-<li>Cognitive neuroscience connections</li>
-<li>Understanding vs. pattern matching</li>
-</ul>
-<p><strong>Assignment 4:</strong> Building context-aware systems (check syllabus for details)</p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="24" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="30" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 <h1 id="summary">Summary</h1>
-<p><strong>Key Takeaways:</strong></p>
+<p><strong>What we learned today:</strong></p>
 <ol>
-<li><strong>Positional Encoding</strong></li>
+<li><strong>Contextual vs. Static:</strong> Different vectors per occurrence</li>
+<li><strong>ELMo (2018):</strong></li>
 </ol>
 <ul>
-<li>Sine/cosine functions inject position information</li>
-<li>Enables model to understand order</li>
-</ul>
-<ol start="2">
-<li><strong>Feed-Forward Networks</strong></li>
-</ol>
-<ul>
-<li>Position-wise transformations</li>
-<li>Add non-linearity and capacity</li>
+<li>BiLSTM language models</li>
+<li>Character-based, handles OOV</li>
+<li>Task-specific weighting</li>
 </ul>
 <ol start="3">
-<li><strong>LayerNorm &amp; Residuals</strong></li>
+<li><strong>Universal Sentence Encoder (2018):</strong></li>
 </ol>
 <ul>
-<li>Critical for training deep networks</li>
-<li>Stabilize gradients, enable deeper models</li>
+<li>Sentence-level embeddings</li>
+<li>Two variants: Transformer &amp; DAN</li>
+<li>Optimized for semantic similarity</li>
 </ul>
 <ol start="4">
-<li><strong>Three Architectures</strong></li>
+<li><strong>BERT (2018):</strong></li>
 </ol>
 <ul>
-<li>Encoder (BERT), Decoder (GPT), Both (T5)</li>
-<li>Choose based on task requirements</li>
+<li>Masked language modeling</li>
+<li>Deep bidirectional transformers</li>
+<li>Pre-train + fine-tune paradigm</li>
+<li>Revolutionized NLP</li>
 </ul>
 <ol start="5">
-<li><strong>Practical Considerations</strong></li>
+<li><strong>Impact:</strong> Established modern transfer learning in NLP</li>
+<li><strong>Next:</strong> Dimensionality reduction techniques for visualization</li>
 </ol>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="31" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="31" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="key-references">Key References</h1>
+<p><strong>Foundational Papers:</strong></p>
 <ul>
-<li>Use HuggingFace for easy implementation</li>
-<li>FlashAttention for efficiency</li>
-<li>Careful hyperparameter tuning</li>
+<li>Peters et al. (2018). &quot;Deep contextualized word representations&quot; (ELMo)</li>
+<li>Cer et al. (2018). &quot;Universal Sentence Encoder&quot;</li>
+<li>Devlin et al. (2018). &quot;BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding&quot;</li>
+</ul>
+<p><strong>BERT Variants:</strong></p>
+<ul>
+<li>Liu et al. (2019). &quot;RoBERTa: A Robustly Optimized BERT Pretraining Approach&quot;</li>
+<li>Sanh et al. (2019). &quot;DistilBERT, a distilled version of BERT&quot;</li>
+<li>Lan et al. (2019). &quot;ALBERT: A Lite BERT for Self-supervised Learning&quot;</li>
+</ul>
+<p><strong>Critical Perspectives:</strong></p>
+<ul>
+<li>Bender &amp; Koller (2020). &quot;Climbing towards NLU: On Meaning, Form, and Understanding&quot;</li>
+<li>Bender et al. (2021). &quot;On the Dangers of Stochastic Parrots&quot;</li>
+</ul>
+<p><strong>Resources:</strong></p>
+<ul>
+<li>HuggingFace Transformers: <a href="https://huggingface.co/transformers/">https://huggingface.co/transformers/</a></li>
+<li>BERT Paper: <a href="https://arxiv.org/abs/1810.04805">https://arxiv.org/abs/1810.04805</a></li>
 </ul>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="25" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="references">References</h1>
-<p><strong>Essential Papers:</strong></p>
-<ul>
-<li>
-<p><strong>Vaswani et al. (2017)</strong> - &quot;Attention Is All You Need&quot;</p>
-</li>
-<li>
-<p>The original Transformer paper</p>
-</li>
-</ul>
-<p>\item <strong>Su et al. (2021)</strong> - &quot;RoFormer: Enhanced Transformer with Rotary Position Embedding&quot;</p>
-<ul>
-<li>Modern positional encoding approach</li>
-</ul>
-<p>\item <strong>Dao et al. (2022)</strong> - &quot;FlashAttention: Fast and Memory-Efficient Exact Attention&quot;</p>
-<ul>
-<li>Making transformers faster</li>
-</ul>
-<p><strong>Tutorials:</strong></p>
-<ul>
-<li>HuggingFace Course: Chapters 1.4, 1.5</li>
-<li>The Illustrated Transformer: <a href="https://jalammar.github.io/illustrated-transformer/">https://jalammar.github.io/illustrated-transformer/</a></li>
-<li>Annotated Transformer: <a href="https://nlp.seas.harvard.edu/annotated-transformer/">https://nlp.seas.harvard.edu/annotated-transformer/</a></li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="26" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="32" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="32" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="32">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 <h1 id="questions">Questions?</h1>
-<p><strong>Discussion Time</strong></p>
-<p><strong>Topics for discussion:</strong></p>
-<ul>
-<li>Positional encoding approaches</li>
-<li>Architecture choices</li>
-<li>Training tips and tricks</li>
-<li>Implementation questions</li>
-<li>Assignment 4 preparation</li>
-</ul>
-<p>Thank you!</p>
-<p>See you next week for BERT!</p>
+<p><strong>Next Lecture:</strong></p>
+<p>Dimensionality Reduction: PCA, t-SNE, UMAP</p>
+<p><em>Visualizing high-dimensional embeddings!</em></p>
 <footer>Winter 2026</footer>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();

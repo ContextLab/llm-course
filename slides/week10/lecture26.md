@@ -8,7 +8,7 @@ footer: ''
 
 <!-- _class: lead -->
 
-# Lecture 27: Final Project Work Session
+# Lecture 26: Final Project Work Session
 ## Models of Language and Conversation 
 
 **PSYC 51.17: Models of Language and Communication**

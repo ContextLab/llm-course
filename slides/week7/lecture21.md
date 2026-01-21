@@ -8,8 +8,8 @@ footer: 'Week 7'
 
 <!-- _class: lead -->
 
-# Lecture 21: GPT Architecture
-## Generative Pre-Training for Language
+# Lecture 21: Scaling Up to GPT-3 and Beyond
+## The Era of Few-Shot Learning
 
 **Models of Language and Conversation**
 
@@ -19,741 +19,919 @@ Week 7
 
 # Today's Journey
 
-1. **The GPT Revolution** - Pre-training + fine-tuning paradigm
-2. **Transformer Decoder** - Architecture walkthrough
-3. **Masked Self-Attention** - The core innovation
-4. **Two-Stage Training** - Pre-training and fine-tuning
-5. **Hands-on Code** - Building GPT blocks in PyTorch
-6. **Key Results** - What made GPT successful
+1. **GPT-2** - 10x scale-up, zero-shot multitask learning
+2. **GPT-3** - 100x scale-up, few-shot learning emerges
+3. **Scaling Laws** - Why bigger is (predictably) better
+4. **RLHF & ChatGPT** - Aligning LLMs with human preferences
+5. **Modern Landscape** - Open vs closed models
+6. **Hands-on Examples** - Prompting techniques in practice
 
 ---
 
-# The GPT Revolution
+# GPT-2: The Unexpected Leap
 
 <div class="callout info">
 <div class="callout-title">Discussion</div>
 
-What made GPT different from previous language models?
+What happens when we scale up GPT by 10x?
 
 </div>
-
-**Key Innovation: Pre-training + Fine-tuning**
-- **Pre-train** on massive unlabeled text (unsupervised)
-- **Fine-tune** on specific tasks (supervised)
-- Transfer learning for NLP
-- One model, many tasks
-
-<div class="callout warning">
-<div class="callout-title">Paradigm Shift</div>
-
-Before GPT: Task-specific models trained from scratch
-
-After GPT: General-purpose models adapted to tasks
-
-</div>
-
-*Reference: Radford et al. (2018) - "Improving Language Understanding by Generative Pre-Training"*
-
----
-
-# From BERT to GPT: Different Approaches
 
 <div class="columns">
-<div class="column">
-
-**BERT (2018):**
-- **Masked Language Model**
-- Bidirectional context
-- Fill in the blank
-- Great for understanding
-- Not designed for generation
-
-*Example:*
-"The [MASK] sat on the mat"
-
-</div>
 <div class="column">
 
 **GPT (2018):**
-- **Autoregressive Model**
-- Left-to-right (causal)
-- Predict next token
-- Natural for generation
-- Can also understand
-
-*Example:*
-"The cat sat" -> predict "on"
-
-</div>
-</div>
-
-<div class="callout tip">
-<div class="callout-title">Think about it!</div>
-
-Why is autoregressive modeling more natural for text generation?
-
-</div>
-
----
-
-# The Transformer Decoder
-
-**GPT uses the Transformer *decoder* architecture**
-
-<div class="columns">
-<div class="column">
-
-**Data Flow:**
-1. Input tokens
-2. Token + Position embeddings
-3. N x Transformer blocks:
- - Masked self-attention
- - Feed-forward network
-4. Output logits
+- 117M parameters
+- 5B tokens training
+- BooksCorpus
+- Requires fine-tuning
 
 </div>
 <div class="column">
 
-**Key Components:**
-- **Embeddings**: Map tokens to vectors
-- **Masked Attention**: Only see past tokens
-- **Feed-Forward**: Process each position
-- **Layer Norm**: Stabilize training
+**GPT-2 (2019):**
+- 1.5B parameters (13x larger)
+- 40GB text (8x more data)
+- WebText dataset
+- **No fine-tuning needed!**
 
 </div>
 </div>
 
 <div class="callout warning">
-<div class="callout-title">Key Insight</div>
+<div class="callout-title">Key Claim</div>
 
-Masked attention prevents "peeking" at future tokens - essential for autoregressive generation!
+"Language models are unsupervised multitask learners"
 
 </div>
 
----
-
-# Transformer Decoder: Worked Example
-
-**Example: Processing "The cat sat"**
-
-```
-Step 1: Token Embeddings
-"The" -> [0.2, -0.1, 0.8, ...] (768-dim vector)
-"cat" -> [0.5, 0.3, -0.2, ...]
-"sat" -> [-0.1, 0.7, 0.4, ...]
-
-Step 2: Add Position Embeddings
-Position 0 embedding + "The" embedding
-Position 1 embedding + "cat" embedding
-Position 2 embedding + "sat" embedding
-
-Step 3: Masked Self-Attention (for each layer)
-"The" attends to: [The]
-"cat" attends to: [The, cat]
-"sat" attends to: [The, cat, sat]
-
-Step 4: Predict Next Token
-Output logits -> softmax -> "on" (highest probability)
-```
+*Reference: Radford et al. (2019) - "Language Models are Unsupervised Multitask Learners"*
 
 ---
 
-# Masked Self-Attention
+# The WebText Dataset
 
-**The Core Innovation: Causal Masking**
-
-**Attention Matrix for "The cat sat on":**
-
-| | The | cat | sat | on |
-|---------|------|------|------|------|
-| **The** | 1.0 | -inf | -inf | -inf |
-| **cat** | 0.3 | 0.7 | -inf | -inf |
-| **sat** | 0.2 | 0.3 | 0.5 | -inf |
-| **on** | 0.1 | 0.2 | 0.3 | 0.4 |
-
-*Values show attention weights after softmax (masking sets values to -inf)*
-
-**Each token can only attend to itself and previous tokens**
-- Ensures autoregressive property
-- No information leakage from future
-- Allows parallel training
-
----
-
-# Causal Mask: Code Implementation
-
-```python
-import torch
-
-def create_causal_mask(seq_len):
- """Create lower-triangular mask for causal attention."""
- # Create a matrix of ones
- mask = torch.ones(seq_len, seq_len)
- # Keep only lower triangle (including diagonal)
- mask = torch.tril(mask)
- return mask
-
-# Example for sequence length 4
-mask = create_causal_mask(4)
-print(mask)
-# tensor([[1., 0., 0., 0.],
-# [1., 1., 0., 0.],
-# [1., 1., 1., 0.],
-# [1., 1., 1., 1.]])
-
-# In attention: scores.masked_fill(mask == 0, float('-inf'))
-```
-
-**This mask is applied before softmax to prevent attending to future tokens!**
-
----
-
-# Position Encoding in GPT
-
-**Why we need position information:**
+**How GPT-2 was trained:**
 
 <div class="callout info">
-<div class="callout-title">The Problem</div>
+<div class="callout-title">WebText Creation</div>
 
-Self-attention is *permutation invariant* - it doesn't inherently know word order!
+1. Scrape all outbound links from Reddit with >=3 karma
+2. Filter for quality and diversity
+3. Remove Wikipedia (to avoid test set contamination)
+4. Result: 40GB of text, 8 million documents
 
 </div>
 
-**GPT's Solution: Learned Position Embeddings**
-- Each position gets a learnable embedding
-- Added to token embeddings: `embedding = token_emb + pos_emb`
-- Model learns position patterns during training
-- Maximum sequence length: 512 tokens (GPT-1)
+**Why Reddit links?**
+- Community curation (karma = quality signal)
+- Diverse topics and writing styles
+- Web-scale variety
+- Human-filtered content
+
+<div class="callout tip">
+<div class="callout-title">Think about it!</div>
+
+This introduced a new paradigm: curated web scraping as training data!
+
+</div>
+
+---
+
+# WebText: Concrete Examples
+
+**What kinds of documents were included:**
+
+```
+Reddit post (3+ karma): "Check out this great article about climate science"
+ -> Linked article scraped and included in training
+
+Reddit post (3+ karma): "Here's an amazing tutorial on machine learning"
+ -> Tutorial content included in training
+
+Reddit post (2 karma): "Random blog post"
+ -> EXCLUDED (below karma threshold)
+```
+
+**Sample document types in WebText:**
+
+| Source Type | Example | Why Included |
+|-------------|---------|--------------|
+| News articles | NYT, BBC | High quality journalism |
+| Educational | Medium posts, tutorials | Clear explanations |
+| Forums | Stack Overflow answers | Technical knowledge |
+| Blogs | Personal essays | Diverse writing styles |
+
+---
+
+# GPT-2 Model Sizes
+
+**Four model sizes released progressively:**
+
+| Model | Parameters | Layers | Hidden Size |
+|-------|------------|--------|-------------|
+| Small | 117M | 12 | 768 |
+| Medium | 345M | 24 | 1024 |
+| Large | 762M | 36 | 1280 |
+| XL | 1.5B | 48 | 1600 |
+
+**Staged release strategy:**
+- Feb 2019: Released small model (117M)
+- May 2019: Medium model (345M)
+- Aug 2019: Large model (762M)
+- Nov 2019: Full model (1.5B)
+- Concerns about misuse led to gradual release
+
+---
+
+# Zero-Shot Task Transfer
+
+**The surprising finding: GPT-2 can perform tasks without fine-tuning!**
+
+<div class="callout info">
+<div class="callout-title">Zero-Shot Prompting Examples</div>
+
+**Translation:**
+```
+English: I love machine learning
+French:
+```
+GPT-2 completes: "J'aime l'apprentissage automatique"
+
+**Question Answering:**
+```
+Answer the question:
+Q: What is the capital of France?
+A:
+```
+GPT-2 completes: "Paris"
+
+**Summarization:**
+```
+[Long article text here]
+
+TL;DR:
+```
+GPT-2 completes with a summary
+
+</div>
+
+---
+
+# Zero-Shot: How It Works
+
+**GPT-2 saw similar patterns during pre-training:**
+
+```
+Example from training data (hypothetical):
+
+"...The meeting was held in Berlin. The German chancellor...
+Later that day in Tokyo, Japanese officials...
+
+Quick Summary: Leaders from Germany and Japan met to discuss..."
+```
+
+**At inference time:**
+```
+User prompt: "[Article about climate conference]
+
+TL;DR:"
+
+GPT-2 thinks: "I've seen 'TL;DR:' followed by summaries thousands
+of times in my training. I should output a summary here."
+```
+
+**Key insight:** Zero-shot works because the model learned task formats implicitly from diverse web text!
+
+---
+
+# GPT-2 Performance
+
+**Zero-shot results on various benchmarks:**
+
+| Task | Metric | Fine-tuned SOTA | GPT-2 Zero-shot |
+|------|--------|-----------------|-----------------|
+| Translation (En->Fr) | BLEU | 45.6 | 11.5 |
+| Summarization | ROUGE | 40.2 | 29.3 |
+| Question Answering | Accuracy | 89.4 | 63.1 |
+| Reading Comprehension | F1 | 91.8 | 55.0 |
 
 <div class="columns">
 <div class="column">
 
-**Alternative: Sinusoidal**
-(Used in original Transformer)
-- Fixed function
-- Generalizes to longer sequences
+**Promising:**
+- Works without fine-tuning
+- Generalizes across tasks
+- Improves with scale
 
 </div>
 <div class="column">
 
-**GPT: Learned**
-(More flexible)
-- Learned from data
-- Task-specific patterns
+**Limitations:**
+- Still behind fine-tuned models
+- Inconsistent quality
+- Hard to control
 
 </div>
 </div>
 
 ---
 
-# Position Embedding: Code Example
+# Text Generation Quality
 
-```python
-import torch
-import torch.nn as nn
+<div class="callout info">
+<div class="callout-title">GPT-2 Generated Text Sample</div>
 
-class GPTEmbedding(nn.Module):
- def __init__(self, vocab_size, d_model, max_seq_len):
- super().__init__()
- # Token embeddings: word -> vector
- self.token_embed = nn.Embedding(vocab_size, d_model)
- # Position embeddings: position -> vector
- self.pos_embed = nn.Embedding(max_seq_len, d_model)
+**Prompt:** "In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains."
 
- def forward(self, x):
- seq_len = x.size(1)
- # Create position indices [0, 1, 2, ..., seq_len-1]
- positions = torch.arange(seq_len, device=x.device)
- # Combine: token embedding + position embedding
- return self.token_embed(x) + self.pos_embed(positions)
+**GPT-2 continues:**
 
-# Example usage
-embed = GPTEmbedding(vocab_size=50000, d_model=768, max_seq_len=512)
-tokens = torch.tensor([[101, 2054, 2003]]) # "The cat sat"
-embeddings = embed(tokens) # Shape: (1, 3, 768)
-```
+"Even more surprising to the researchers was the fact that the unicorns spoke perfect English. The scientist named the population, after their distinctive horn, Ovid's Unicorn. These four-horned, silver-white unicorns were previously unknown to science..."
+
+</div>
+
+**Observations:**
+- Coherent and fluent
+- Maintains context and style
+- Completely fabricated "facts"
+- No grounding in reality
 
 ---
 
-# GPT-1 Model Specifications
+# GPT-3: The 175B Parameter Model
+
+<div class="callout info">
+<div class="callout-title">Discussion</div>
+
+What happens when we scale up another 100x?
+
+</div>
+
+**Model size comparison:**
+
+| Model | Parameters | Relative Size |
+|-------|------------|---------------|
+| GPT-1 | 117M | 1x |
+| GPT-2 | 1.5B | 13x |
+| GPT-3 | 175B | 1,500x |
+
+**Key insight:** GPT-3 is so large that new capabilities *emerge* that weren't present in smaller models!
+
+*Reference: Brown et al. (2020) - "Language Models are Few-Shot Learners"*
+
+---
+
+# GPT-3 Model Specifications
 
 | Component | Value |
 |-----------|-------|
-| Layers | 12 |
-| Hidden size | 768 |
-| Attention heads | 12 |
-| Max sequence length | 512 tokens |
-| Vocabulary size | 40,000 (BPE) |
-| Training data | BooksCorpus (7,000 books) |
-| Training tokens | ~5 billion |
-| Total parameters | ~117 million |
+| Layers | 96 |
+| Hidden size (d_model) | 12,288 |
+| Attention heads | 96 |
+| Context window | 2048 tokens |
+| Training tokens | 300 billion |
+| Training data | 570GB (filtered) |
+| Training compute | ~3,640 petaflop-days |
+| Estimated training cost | ~$4.6M |
 
-**Training objective:**
+<div class="callout warning">
+<div class="callout-title">Scale</div>
 
-$$\mathcal{L} = \sum_{i} \log P(t_i | t_{<i}; \Theta)$$
+GPT-3 is so large it has never been fully fine-tuned - only used via API!
 
-Maximize likelihood of next token given previous context.
+</div>
 
 ---
 
-# GPT Architecture in Code
+# GPT-3 Training Data
 
-```python
-import torch.nn as nn
+**Training corpus composition:**
 
-class GPTBlock(nn.Module):
- def __init__(self, d_model, n_heads):
- super().__init__()
- self.attention = MaskedMultiHeadAttention(d_model, n_heads)
- self.norm1 = nn.LayerNorm(d_model)
- self.ffn = nn.Sequential(
- nn.Linear(d_model, 4 * d_model),
- nn.GELU(), # GPT uses GELU, not ReLU
- nn.Linear(4 * d_model, d_model)
- )
- self.norm2 = nn.LayerNorm(d_model)
+| Dataset | Tokens | Weight in Training |
+|---------|--------|-------------------|
+| Common Crawl (filtered) | 410B | 60% |
+| WebText2 | 19B | 22% |
+| Books1 | 12B | 8% |
+| Books2 | 55B | 8% |
+| Wikipedia | 3B | 3% |
 
- def forward(self, x):
- # Pre-norm architecture (LayerNorm before sublayer)
- # Self-attention with residual connection
- x = x + self.attention(self.norm1(x))
- # Feed-forward with residual connection
- x = x + self.ffn(self.norm2(x))
- return x
+**Key differences from GPT-2:**
+- Much larger and more diverse
+- Includes Common Crawl (with quality filtering)
+- Multiple passes over high-quality data
+- Carefully balanced mixture
+
+---
+
+# Few-Shot Learning
+
+**GPT-3's key capability: In-context learning**
+
+<div class="callout info">
+<div class="callout-title">Learning Paradigms Compared</div>
+
+**1. Zero-shot:** Task description only
+```
+Translate to French: I love AI ->
 ```
 
----
-
-# Complete GPT Model Structure
-
-```python
-class GPT(nn.Module):
- def __init__(self, vocab_size, d_model, n_layers, n_heads, max_len):
- super().__init__()
- self.token_embed = nn.Embedding(vocab_size, d_model)
- self.pos_embed = nn.Embedding(max_len, d_model)
- self.blocks = nn.ModuleList([
- GPTBlock(d_model, n_heads) for _ in range(n_layers)
- ])
- self.norm = nn.LayerNorm(d_model)
- self.head = nn.Linear(d_model, vocab_size)
-
- def forward(self, x):
- seq_len = x.size(1)
- positions = torch.arange(seq_len, device=x.device)
- x = self.token_embed(x) + self.pos_embed(positions)
- for block in self.blocks:
- x = block(x)
- x = self.norm(x)
- logits = self.head(x) # (batch, seq_len, vocab_size)
- return logits
+**2. One-shot:** One example
+```
+sea otter -> loutre de mer
+I love AI ->
 ```
 
+**3. Few-shot:** Multiple examples (typically 10-100)
+```
+dog -> chien
+cat -> chat
+bird -> oiseau
+I love AI ->
+```
+
+</div>
+
+**No gradient updates! Just prompt engineering.**
+
 ---
 
-# Two-Stage Training
+# Few-Shot: Worked Example
 
-<div class="columns">
-<div class="column">
+**Sentiment Classification with 3 examples:**
 
-**Stage 1: Pre-training**
-- Dataset: BooksCorpus (5B tokens)
-- Objective: Next token prediction
-- Duration: Weeks of training
-- Result: General language model
+```python
+prompt = """
+Classify the sentiment of each review as Positive or Negative.
 
-</div>
-<div class="column">
+Review: "This movie was amazing, I loved every minute!"
+Sentiment: Positive
 
-**Stage 2: Fine-tuning**
-- Dataset: Task-specific (1K-100K examples)
-- Objective: Task loss + LM loss
-- Duration: Hours of training
-- Result: Task-specialized model
+Review: "Terrible film, complete waste of time."
+Sentiment: Negative
 
-</div>
-</div>
+Review: "A masterpiece of modern cinema."
+Sentiment: Positive
+
+Review: "The acting was wooden and the plot made no sense."
+Sentiment:"""
+
+# GPT-3 output: "Negative"
+```
 
 **Why this works:**
-- Pre-training learns general language understanding
-- Fine-tuning adapts to specific task format
-- Much less task data needed!
+- Model recognizes the pattern from examples
+- Applies same pattern to new input
+- No weight updates needed!
 
 ---
 
-# Pre-training: Language Modeling
+# In-Context Learning: How It Works
 
-**Objective: Predict next token**
-
-<div class="callout info">
-<div class="callout-title">Example Training Sequence</div>
-
-**Text:** "The quick brown fox jumps over the lazy dog"
-
-**Training examples (teacher forcing):**
-- Input: "The" -> Target: "quick"
-- Input: "The quick" -> Target: "brown"
-- Input: "The quick brown" -> Target: "fox"
-- Input: "The quick brown fox" -> Target: "jumps"
-- ...and so on
-
-</div>
-
-**Self-supervised learning:**
-- No manual labels needed!
-- Every text provides training signal
-- Can use web-scale data
-- Model learns: syntax, semantics, facts, reasoning
-
----
-
-# Pre-training: Worked Example
-
-**How loss is computed for one sequence:**
-
-```python
-# Input sequence: "The cat sat on the"
-tokens = [101, 2054, 2003, 2006, 1996] # Token IDs
-
-# Model predicts probability distribution for each position
-# Position 0: P(next | "The") = {"cat": 0.3, "dog": 0.2, ...}
-# Position 1: P(next | "The cat") = {"sat": 0.4, "ran": 0.1, ...}
-# etc.
-
-# Target tokens (shifted by 1)
-targets = [2054, 2003, 2006, 1996, 2282] # "cat sat on the mat"
-
-# Cross-entropy loss at each position
-loss_0 = -log(0.3) # P("cat" | "The")
-loss_1 = -log(0.4) # P("sat" | "The cat")
-loss_2 = -log(0.35) # P("on" | "The cat sat")
-# ...
-
-total_loss = mean(loss_0, loss_1, loss_2, ...)
-```
-
----
-
-# Fine-tuning for Downstream Tasks
-
-**Task Format: Input + Delimiter + Label**
-
-<div class="columns">
-<div class="column">
-
-**Text Classification:**
+**The mechanism behind few-shot learning:**
 
 ```
-[START] This movie is amazing! [DELIM]
+Prompt structure:
+[Example 1] [Example 2] [Example 3] [New Input]
+
+What GPT-3 "sees":
+1. Pattern: "Review: X" followed by "Sentiment: Y"
+2. Mapping: positive language -> "Positive"
+3. Mapping: negative language -> "Negative"
+4. Task: Apply this mapping to new input
 ```
-Model predicts: "Positive"
 
-**Entailment:**
-
-```
-[START] Premise [DELIM] Hypothesis [DELIM]
-```
-Model predicts: "Entailment" / "Contradiction"
-
-</div>
-<div class="column">
-
-**Question Answering:**
-
-```
-[START] Context [DELIM] Question [DELIM]
-```
-Model predicts answer span
-
-**Similarity:**
-
-```
-[START] Text1 [DELIM] Text2 [DELIM]
-```
-Model predicts similarity score
-
-</div>
-</div>
+**Key observations:**
+- Model recognizes pattern in examples
+- Continues the pattern for new input
+- No weight updates - pure inference!
+- "Learning" happens at inference time
 
 <div class="callout warning">
-<div class="callout-title">Key Insight</div>
+<div class="callout-title">Important</div>
 
-All tasks can be framed as text completion!
-
-</div>
-
----
-
-# Fine-tuning: Concrete Example
-
-**Sentiment Classification Example:**
-
-```python
-# Training example
-text = "This movie was absolutely fantastic!"
-label = "positive"
-
-# Format for GPT
-input_text = "[START] This movie was absolutely fantastic! [DELIM]"
-# Tokenize: [50256, 1212, 3807, 373, 5765, 12779, 0, 50257]
-
-# During fine-tuning:
-# 1. GPT processes the input
-# 2. Take the hidden state at [DELIM] position
-# 3. Pass through classification head
-logits = classification_head(hidden_state) # [pos_score, neg_score]
-# 4. Compute cross-entropy with label
-loss = cross_entropy(logits, label_id)
-
-# Fine-tuning hyperparameters
-learning_rate = 6.25e-5 # Much lower than pre-training!
-batch_size = 32
-epochs = 3
-```
-
----
-
-# Fine-tuning Implementation Details
-
-**What changes during fine-tuning?**
-
-1. **Add task-specific input transformations**
- - Format inputs with delimiters
- - Add special tokens
-
-2. **Add classification head (optional)**
- - Linear layer for classification
- - Or use language modeling head
-
-3. **Train with supervised objective**
- - Cross-entropy loss
- - Much lower learning rate
- - Few epochs (3-5)
-
-**Hyperparameters:**
-- Learning rate: 6.25e-5 (much lower than pre-training!)
-- Batch size: 32
-- Max epochs: 3
-- Linear learning rate decay to 0
-
----
-
-# GPT-1 Results
-
-**Performance on GLUE Benchmark:**
-
-| Task | Previous SOTA | GPT-1 |
-|------|---------------|-------|
-| Question Answering | 86.7 | 88.1 |
-| Semantic Similarity | 85.0 | 85.8 |
-| Text Classification | 93.0 | 94.2 |
-| Natural Language Inference | 80.6 | 82.1 |
-
-<div class="callout warning">
-<div class="callout-title">Key Findings</div>
-
-- GPT achieved SOTA on 9 out of 12 tasks studied
-- Large improvements on tasks with less training data
-- Transfer learning works for NLP!
+This is NOT the same as training! The model weights don't change.
 
 </div>
 
-*Reference: Radford et al. (2018) - "Improving Language Understanding by Generative Pre-Training"*
-
 ---
 
-# Zero-Shot and Few-Shot Learning
+# GPT-3's Emergent Abilities
 
 <div class="callout info">
 <div class="callout-title">Discussion</div>
 
-What if we could use the model *without* fine-tuning?
+What can GPT-3 do that smaller models can't?
 
 </div>
 
-**Definitions:**
-- **Zero-shot**: No task-specific training examples
-- **Few-shot**: A few examples (1-10) as context
-- **Fine-tuning**: Full supervised training
+**Emergent capabilities:**
+- **Arithmetic**: 2-3 digit addition/subtraction
+- **Reasoning**: Simple logical deduction
+- **Code generation**: Write simple programs
+- **Knowledge synthesis**: Combine facts
+- **Style transfer**: Mimic writing styles
+- **Task composition**: Multi-step procedures
 
-**GPT-1 observations:**
-- Fine-tuning works best
-- Zero-shot performance is weak
-- Model has learned a lot, but needs task formatting
+<div class="callout warning">
+<div class="callout-title">Scaling Hypothesis</div>
+
+These abilities weren't explicitly trained - they *emerged* from scale!
+
+</div>
+
+*Reference: Wei et al. (2022) - "Emergent Abilities of Large Language Models"*
+
+---
+
+# Emergent Abilities: Concrete Examples
+
+**Arithmetic (emerges around 10B parameters):**
+```
+Q: What is 47 + 58?
+A: 105
+```
+
+**Code Generation:**
+```
+# Write a function to check if a number is prime
+def is_prime(n):
+ if n < 2:
+ return False
+ for i in range(2, int(n**0.5) + 1):
+ if n % i == 0:
+ return False
+ return True
+```
+
+**Multi-step Reasoning:**
+```
+Q: If I have 3 apples and give 2 to my friend,
+ then buy 4 more, how many do I have?
+A: 3 - 2 + 4 = 5 apples
+```
+
+---
+
+# The Scaling Laws Hypothesis
+
+<div class="callout info">
+<div class="callout-title">Kaplan et al. (2020) - "Scaling Laws for Neural Language Models"</div>
+
+Model performance scales as a **power law** with:
+- Model size (parameters)
+- Dataset size (tokens)
+- Compute (FLOPs)
+
+</div>
+
+**Key findings:**
+1. Performance depends strongly on scale
+2. Very weak dependence on model shape (depth vs width)
+3. Smooth, predictable improvements
+4. Optimal compute allocation: Grow model and data together
 
 <div class="callout tip">
 <div class="callout-title">Think about it!</div>
 
-This limitation motivated GPT-2 and GPT-3: Can we make models that work zero-shot?
+If scaling laws hold, we can predict future model performance!
 
 </div>
 
 ---
 
-# Zero-Shot vs Fine-tuning: Example
+# The Scaling Law Formula
 
-**Task: Sentiment Classification**
+**Loss as a function of scale:**
+
+$$L(N) = \left(\frac{N_c}{N}\right)^{\alpha_N}$$
+
+where:
+- $L$ = Cross-entropy loss
+- $N$ = Number of parameters
+- $N_c$ = Scaling constant
+- $\alpha_N \approx 0.076$ (empirically determined)
+
+**In practice, this means:**
+
+| 10x more parameters | -> | ~15% lower loss |
+|---------------------|----|--------------------|
+| 100x more parameters | -> | ~30% lower loss |
+| 1000x more parameters | -> | ~45% lower loss |
+
+---
+
+# Scaling Laws: Visual Understanding
+
+**How loss decreases with scale:**
+
+```
+Loss
+ ^
+ |
+3.5| *
+ | *
+3.0| *
+ | *
+2.5| *
+ | *
+2.0| * * * * * (diminishing returns)
+ +------------------------------------------>
+ 10M 100M 1B 10B 100B 1T
+ Parameters
+```
+
+**Key observation:** Returns diminish but never stop - every 10x increase helps!
+
+---
+
+# Implications of Scaling Laws
 
 <div class="columns">
 <div class="column">
 
-**Zero-shot (GPT-1):**
-```
-Input: "Review: Great movie!
-Sentiment:"
-Output: ??? (unreliable)
-```
-GPT-1 might just continue the text randomly.
+**Good news:**
+- Predictable improvements
+- Clear path to better models
+- Can plan compute budgets
+- Smooth progress curve
 
 </div>
 <div class="column">
 
-**After Fine-tuning:**
-```
-Input: "[START] Great movie! [DELIM]"
-Output: "Positive" (reliable)
-```
-Model learned task format from examples.
+**Challenges:**
+- Diminishing returns
+- Exponential cost increase
+- Hardware limitations
+- Environmental impact
 
 </div>
 </div>
-
-**Why the difference?**
-- Pre-training teaches language, not task formats
-- Fine-tuning teaches: "when you see [DELIM], output a label"
-- GPT-2/3 would see enough examples in training to do this zero-shot
-
----
-
-# Visualizing What GPT Learns
-
-**Layer-by-layer analysis of GPT representations:**
-
-| Layer | What it learns | Example |
-|-------|----------------|---------|
-| 1-3 | Word order, grammar | "The cat" vs "cat The" |
-| 4-6 | Word meanings, syntax | Subject-verb agreement |
-| 7-9 | Semantic relationships | "bank" in different contexts |
-| 10-12 | World knowledge, task | "Paris is the capital of..." |
-
-**Layer analysis shows:**
-- Early layers: Syntactic patterns
-- Middle layers: Semantic understanding
-- Later layers: Task-specific reasoning
-- Progressive abstraction!
-
----
-
-# The Generative Pre-training Paradigm
-
-**Why "Generative Pre-Training" was revolutionary:**
-
-1. **Unified Architecture**
- - Same model for all tasks
- - vs. task-specific architectures
-
-2. **Transfer Learning**
- - Learn once, apply many times
- - vs. training from scratch
-
-3. **Scalability**
- - More data -> Better performance
- - Clear path to improvement
-
-4. **Simplicity**
- - Just predict next token
- - No complex objectives
 
 <div class="callout warning">
-<div class="callout-title">This paradigm enabled GPT-2, GPT-3, and beyond!</div>
+<div class="callout-title">The Cost of Scaling</div>
+
+To halve the loss:
+- Need ~10,000x more compute
+- GPT-3 cost ~$4.6M to train
+- GPT-4 estimated at $100M+
 
 </div>
 
 ---
 
-# Limitations of GPT-1
+# Chinchilla Scaling Laws
 
-**What GPT-1 couldn't do well:**
+<div class="callout info">
+<div class="callout-title">Hoffmann et al. (2022)</div>
 
-- **Zero-shot performance**: Needed fine-tuning for each task
-- **Model size**: 117M parameters (small by today's standards)
-- **Training data**: Limited to ~5B tokens
-- **Context length**: Only 512 tokens
-- **Generation quality**: Sometimes incoherent
-- **Factual accuracy**: Prone to hallucinations
+Previous models were **over-parameterized and under-trained!**
+
+</div>
+
+**Key insight:**
+- For a given compute budget, should balance model size and data
+- **Optimal ratio**: ~20 tokens per parameter
+
+**Comparison:**
+
+| Model | Parameters | Tokens | Tokens/Param |
+|-------|------------|--------|--------------|
+| GPT-3 | 175B | 300B | 1.7 (under-trained!) |
+| Chinchilla | 70B | 1.4T | 20 (optimal) |
+
+**Result:** Chinchilla (70B) outperforms GPT-3 (175B)!
+
+*This influenced Llama 2, GPT-4, and other modern models*
+
+---
+
+# The Path to ChatGPT
+
+**Evolution from GPT-3 to ChatGPT:**
+
+| Stage | Model | Key Innovation |
+|-------|-------|----------------|
+| 1 | GPT-3 | Predict next token |
+| 2 | InstructGPT | Follow instructions |
+| 3 | ChatGPT | Helpful & harmless chat |
+
+**Three key innovations:**
+1. **Instruction tuning**: Train to follow instructions
+2. **RLHF**: Reinforcement Learning from Human Feedback
+3. **Safety guardrails**: Reduce harmful outputs
+
+---
+
+# Instruction Tuning
+
+<div class="callout info">
+<div class="callout-title">What is Instruction Tuning?</div>
+
+Fine-tune the model on (instruction, response) pairs to make it better at following user commands.
+
+</div>
+
+**Training examples:**
+
+```
+Instruction: "Explain quantum computing to a 5-year-old"
+Response: "Imagine you have a magic coin that can be heads
+ AND tails at the same time until you look at it..."
+
+Instruction: "Write a Python function to sort a list"
+Response: "def sort_list(items):
+ return sorted(items)"
+
+Instruction: "Summarize this article in 3 sentences"
+Response: [concise 3-sentence summary]
+```
+
+---
+
+# Before vs After Instruction Tuning
+
+<div class="columns">
+<div class="column">
+
+**Before (GPT-3):**
+
+```
+User: "Write a haiku about AI"
+
+GPT-3: "Write a haiku about AI
+is a common creative writing
+exercise that many people
+enjoy. Here are some tips
+for writing haikus..."
+```
+*Continues describing rather than doing*
+
+</div>
+<div class="column">
+
+**After (InstructGPT):**
+
+```
+User: "Write a haiku about AI"
+
+InstructGPT: "Silicon neurons
+Learning patterns in the void
+Dreams in binary"
+```
+*Actually writes the haiku!*
+
+</div>
+</div>
+
+---
+
+# RLHF: Reinforcement Learning from Human Feedback
+
+**The 3-step RLHF process:**
+
+```
+Step 1: Supervised Fine-tuning (SFT)
+- Train on human-written examples of good responses
+- Model learns basic instruction-following
+
+Step 2: Reward Model Training
+- Generate multiple responses to same prompt
+- Humans rank responses from best to worst
+- Train a model to predict human preferences
+
+Step 3: RL Optimization (PPO)
+- Generate responses with policy model
+- Score with reward model
+- Update policy to maximize reward
+```
+
+---
+
+# RLHF: Worked Example
+
+**Training the reward model:**
+
+```
+Prompt: "How do I make a cake?"
+
+Response A (Rating: 4/5):
+"Here's a simple recipe: Preheat oven to 350F.
+Mix 2 cups flour, 1.5 cups sugar..."
+
+Response B (Rating: 2/5):
+"Cake is a type of dessert that originated in
+ancient civilizations..."
+
+Response C (Rating: 1/5):
+"I cannot help with that request."
+
+Reward model learns:
+- Helpful, direct answers get high scores
+- Off-topic or unhelpful responses get low scores
+```
+
+---
+
+# ChatGPT's Impact
+
+**Launched: November 30, 2022**
+
+**Growth:**
+- 1 million users in 5 days
+- 100 million users in 2 months
+- Fastest-growing consumer application ever
+
+**Why so successful?**
+- Easy to use (conversational interface)
+- Broadly capable (many tasks)
+- Accessible (free tier)
+- Impressive demos went viral
+- Timing (post-pandemic digital adoption)
+
+<div class="callout warning">
+<div class="callout-title">Cultural Impact</div>
+
+ChatGPT brought LLMs into mainstream consciousness and sparked an AI revolution.
+
+</div>
+
+---
+
+# The Modern LLM Landscape
+
+**Post-GPT-3 developments (2020-2024):**
+
+| Year | Milestone |
+|------|-----------|
+| 2021 | Anthropic founded (Claude) |
+| 2022 | ChatGPT launched |
+| 2023 | GPT-4 (multimodal, improved reasoning) |
+| 2023 | Llama 2 (open weights, 70B params) |
+| 2023 | Gemini (Google's multimodal LLM) |
+| 2024 | Claude 3, GPT-4o, Llama 3 |
+| 2024 | Smaller efficient models (Phi, Mistral) |
+
+**Key trends:**
+1. Multimodal capabilities (vision, audio)
+2. Longer context windows (100K+ tokens)
+3. Better reasoning and factuality
+4. Open-source alternatives
+5. Efficiency improvements
+
+---
+
+# Open Source LLMs
 
 <div class="callout info">
 <div class="callout-title">Discussion</div>
 
-How would you address these limitations?
+Should powerful AI models be open or closed?
 
-*(Spoiler: GPT-2 and GPT-3 tried to solve these!)*
+</div>
+
+<div class="columns">
+<div class="column">
+
+**Closed (GPT-4, Claude):**
+- Better safety control
+- Monetization easier
+- Protect IP
+- No transparency
+- Vendor lock-in
+- Limited customization
+
+</div>
+<div class="column">
+
+**Open (Llama, Mistral):**
+- Transparency
+- Community innovation
+- Full control
+- No API costs
+- Potential misuse
+- Compute requirements
+
+</div>
+</div>
+
+---
+
+# Practical Prompting Techniques
+
+**Effective prompting strategies for modern LLMs:**
+
+**1. Zero-shot with clear instructions:**
+```
+Classify the following text as spam or not spam.
+Only respond with "spam" or "not spam".
+
+Text: "Congratulations! You've won $1,000,000!"
+```
+
+**2. Few-shot with examples:**
+```
+Text: "Meeting at 3pm tomorrow" -> not spam
+Text: "URGENT: Send money now!" -> spam
+Text: "Can you review this document?" -> not spam
+Text: "You've been selected for a prize!" ->
+```
+
+---
+
+# Chain-of-Thought Prompting
+
+**For complex reasoning tasks:**
+
+```
+Q: Roger has 5 tennis balls. He buys 2 more cans of
+ tennis balls. Each can has 3 balls. How many
+ tennis balls does he have now?
+
+Let's think step by step:
+1. Roger starts with 5 tennis balls
+2. He buys 2 cans of tennis balls
+3. Each can has 3 balls, so 2 cans = 2 * 3 = 6 balls
+4. Total = 5 + 6 = 11 tennis balls
+
+A: 11 tennis balls
+```
+
+<div class="callout tip">
+<div class="callout-title">Key insight</div>
+
+Adding "Let's think step by step" dramatically improves reasoning accuracy!
 
 </div>
 
 ---
 
-# Comparison with BERT
+# Current Limitations
 
-| Aspect | BERT | GPT |
-|--------|------|-----|
-| Training objective | Masked LM | Autoregressive LM |
-| Context | Bidirectional | Left-to-right |
-| Best for | Understanding | Generation |
-| Fine-tuning | Task-specific heads | Unified format |
-| Parameters (base) | 110M | 117M |
+**What LLMs still struggle with:**
 
-<div class="callout tip">
-<div class="callout-title">Think about it!</div>
+1. **Factual accuracy**
+ - Hallucinations and confabulation
+ - No citations or sources
 
-BERT dominated understanding tasks (2018-2019), but GPT's approach proved more scalable and versatile. Why?
+2. **Reasoning**
+ - Multi-step logic
+ - Mathematical proofs
 
-</div>
+3. **Knowledge grounding**
+ - Knowledge cutoff date
+ - Can't access real-time info
 
-**Answer:** Autoregressive modeling naturally supports generation, which unlocks zero-shot and few-shot capabilities!
+4. **Personalization**
+ - No persistent memory
+ - Stateless conversations
+
+5. **Reliability**
+ - Inconsistent outputs
+ - Prompt sensitivity
 
 ---
 
 # Key Takeaways
 
-1. **GPT introduced generative pre-training**
- - Transformer decoder architecture
- - Autoregressive language modeling
+1. **Scaling works**
+ - GPT -> GPT-2 -> GPT-3 showed clear improvements
+ - Power law scaling continues to hold
 
-2. **Two-stage training paradigm**
- - Unsupervised pre-training on massive text
- - Supervised fine-tuning on task data
+2. **Few-shot learning emerged at scale**
+ - No fine-tuning needed for many tasks
+ - In-context learning is powerful
 
-3. **Masked self-attention is key**
- - Enables autoregressive generation
- - Prevents information leakage
+3. **Scaling laws provide predictability**
+ - But diminishing returns and compute costs are real
+ - Chinchilla scaling: balance model size and data
 
-4. **Transfer learning for NLP**
- - Learn general patterns once
- - Apply to many tasks
+4. **RLHF changed everything**
+ - ChatGPT = GPT-3.5 + instruction tuning + RLHF
+ - Alignment is crucial for deployment
 
-5. **Foundation for modern LLMs**
- - GPT-2, GPT-3, ChatGPT all build on this
+5. **The field is rapidly evolving**
+ - Open vs closed debate continues
+ - New capabilities emerging
 
 ---
 
 # Readings
 
 <div class="callout info">
-<div class="callout-title">Required Reading</div>
+<div class="callout-title">Required Readings</div>
 
-**Radford et al. (2018)** - "Improving Language Understanding by Generative Pre-Training"
-
-[[PDF]](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)
+1. **Radford et al. (2019)** - "Language Models are Unsupervised Multitask Learners" (GPT-2) [[PDF]](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
+2. **Brown et al. (2020)** - "Language Models are Few-Shot Learners" (GPT-3) [[ArXiv]](https://arxiv.org/abs/2005.14165)
+3. **Kaplan et al. (2020)** - "Scaling Laws for Neural Language Models" [[ArXiv]](https://arxiv.org/abs/2001.08361)
 
 </div>
 
 <div class="callout info">
 <div class="callout-title">Recommended Readings</div>
 
-- **Vaswani et al. (2017)** - "Attention is All You Need" [[ArXiv]](https://arxiv.org/abs/1706.03762)
-- **Devlin et al. (2018)** - "BERT: Pre-training of Deep Bidirectional Transformers" [[ArXiv]](https://arxiv.org/abs/1810.04805)
-- **The Illustrated GPT-2** by Jay Alammar [[Blog]](https://jalammar.github.io/illustrated-gpt2/)
+- **Wei et al. (2022)** - "Emergent Abilities of Large Language Models" [[ArXiv]](https://arxiv.org/abs/2206.07682)
+- **Ouyang et al. (2022)** - "Training language models to follow instructions" (InstructGPT) [[ArXiv]](https://arxiv.org/abs/2203.02155)
+- **Hoffmann et al. (2022)** - "Training Compute-Optimal Large Language Models" (Chinchilla) [[ArXiv]](https://arxiv.org/abs/2203.15556)
 
 </div>
 
@@ -762,13 +940,13 @@ BERT dominated understanding tasks (2018-2019), but GPT's approach proved more s
 # Next Lecture Preview
 
 <div class="callout info">
-<div class="callout-title">Lecture 22: Scaling Up to GPT-3 and Beyond</div>
+<div class="callout-title">Lecture 23: Implementing GPT from Scratch</div>
 
-- GPT-2: Language models as unsupervised multitask learners
-- GPT-3: Few-shot learning at scale
-- Scaling laws: Why bigger is better
-- Emergent abilities of large language models
-- From GPT-3 to ChatGPT
+- Building a mini-GPT in PyTorch
+- Tokenization with BPE
+- Training loop and optimization
+- Sampling strategies (greedy, top-k, nucleus)
+- Hands-on coding session
 
 </div>
 

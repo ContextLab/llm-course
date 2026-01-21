@@ -692,1194 +692,796 @@
 })();
 
 </script>
-</head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="lead" data-theme="cdl-theme" lang="C" class="lead" data-marpit-pagination="1" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:lead;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="lead" data-theme="cdl-theme" lang="C" class="lead" data-marpit-pagination="1" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:lead;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 
-<h1 id="dimensionality-reduction-for-nlp">Dimensionality Reduction for NLP</h1>
-<h2 id="lecture-13-pca-t-sne-and-umap">Lecture 13: PCA, t-SNE, and UMAP</h2>
+<h1 id="cognitive-models-of-semantic-representation">Cognitive Models of Semantic Representation</h1>
+<h2 id="lecture-14-how-humans-represent-meaning">Lecture 14: How Humans Represent Meaning</h2>
 <p><strong>PSYC 51.17: Models of Language and Communication - Week 4</strong></p>
 <p>Winter 2026</p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="2" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="2" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 <h1 id="todays-lecture">Today's Lecture</h1>
 <ol>
-<li><strong>The Curse of Dimensionality</strong></li>
-<li><strong>Principal Component Analysis (PCA)</strong></li>
-<li><strong>t-SNE: Stochastic Neighbor Embedding</strong></li>
-<li><strong>UMAP: Uniform Manifold Approximation</strong></li>
-<li><strong>Comparison &amp; Best Practices</strong></li>
-<li><strong>Visualization Techniques</strong></li>
+<li><strong>Human vs. Computational Semantics</strong></li>
+<li><strong>Cognitive Theories of Meaning</strong></li>
+<li><strong>Embodied &amp; Grounded Cognition</strong></li>
+<li><strong>Semantic Similarity: What Does It Mean?</strong></li>
+<li><strong>Empirical Evidence from Cognitive Science</strong></li>
+<li><strong>Bridging the Gap: Models Meet Minds</strong></li>
 </ol>
-<p><em>Goal: Learn to visualize and explore high-dimensional embeddings</em></p>
+<p><em>Goal: Understand what computational models are really learning</em></p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="3" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="3" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="the-curse-of-dimensionality">The Curse of Dimensionality</h1>
-<p><strong>The Problem:</strong></p>
+<h1 id="the-fundamental-question">The Fundamental Question</h1>
+<p><strong>What does &quot;meaning&quot; actually mean?</strong></p>
 <div class="columns">
 <div class="column">
-<p><strong>Word Embeddings:</strong></p>
+<p><strong>Computational View:</strong></p>
 <ul>
-<li>Word2Vec: 300 dimensions</li>
-<li>GloVe: 300 dimensions</li>
-<li>FastText: 300 dimensions</li>
-<li>BERT: 768 dimensions</li>
-<li>GPT-3: 12,288 dimensions!</li>
-</ul>
-<p><strong>Challenges:</strong></p>
-<ul>
-<li>Can't visualize 300D space</li>
-<li>Distances behave strangely</li>
-<li>Computation expensive</li>
-<li>Storage requirements</li>
-<li>Interpretation difficult</li>
+<li>Vectors in high-dimensional space</li>
+<li>Learned from text co-occurrence</li>
+<li>Distributional patterns</li>
+<li>Statistical relationships</li>
+<li>&quot;You shall know a word by the company it keeps&quot;</li>
 </ul>
 </div>
 <div class="column">
-<p><strong>Concrete Example: Distance Concentration</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">import numpy as np</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"># Sample 1000 random points in different dims</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">for dim in [2, 10, 100, 300]:</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> points = np.random.randn(1000, dim)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> dists = np.linalg.norm(points, axis=1)</span></span>
+<p><strong>Human View:</strong></p>
+<ul>
+<li>Sensory experiences</li>
+<li>Emotional associations</li>
+<li>Physical grounding</li>
+<li>Social context</li>
+<li>Multimodal integration</li>
+<li>Embodied understanding</li>
+</ul>
+</div>
+</div>
+<p><em>This lecture explores the relationship between computational and cognitive semantics</em></p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="4" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="20">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="how-do-humans-represent-meaning">How Do Humans Represent Meaning?</h1>
+<p><strong>Example: The word &quot;coffee&quot;</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>What comes to YOUR mind?</strong></p>
+<ul>
+<li><strong>Visual:</strong> brown liquid, mug, steam, beans</li>
+<li><strong>Olfactory:</strong> aroma, roasted smell</li>
+<li><strong>Gustatory:</strong> bitter taste, smooth texture</li>
+<li><strong>Tactile:</strong> hot, warm cup, liquid</li>
+<li><strong>Auditory:</strong> brewing sounds, pouring</li>
+<li><strong>Motor:</strong> lifting cup, drinking motion</li>
+<li><strong>Contextual:</strong> morning routine, work, café</li>
+<li><strong>Emotional:</strong> comfort, alertness, pleasure</li>
+<li><strong>Social:</strong> conversations, meetings</li>
+<li><strong>Cultural:</strong> Starbucks, espresso, traditions</li>
+</ul>
+</div>
+<div class="column">
+<p><strong>Word2Vec representation:</strong></p>
+<p><code>coffee = [0.23, -0.45, 0.67, 0.12, -0.89, ...]</code></p>
+<p>(300 numbers learned from text)</p>
+<p><strong>What's missing?</strong></p>
+<ul>
+<li>No sensory grounding</li>
+<li>No embodied experience</li>
+<li>No emotional content</li>
+<li>No perceptual features</li>
+<li>No action affordances</li>
+<li>Purely linguistic</li>
+</ul>
+<div class="callout warning">
+<div class="callout-title">The Grounding Problem</div>
+<p>Computational models lack the rich, multimodal, embodied understanding that humans have.</p>
+</div>
+</div>
+</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="5" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="20">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="the-symbol-grounding-problem">The Symbol Grounding Problem</h1>
+<p><strong>Harnad (1990): Can symbols have intrinsic meaning?</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>The Chinese Room (Searle, 1980):</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Input: </span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> ↓</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">[Rule Book: If see </span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"> output ]</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"> ↓</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">Output: </span></span>
 <span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> print(f&quot;Dim={dim}: mean={dists.mean():.2f}, &quot;</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">Correct response! But no</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">understanding of Chinese.</span></span>
 </code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="4" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="the-curse-of-dimensionality-1">The Curse of Dimensionality</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="9">
-<span class="line"><span class="line-num">9</span><span class="line-code"> f&quot;std={dists.std():.2f}&quot;)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"># Output:</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"># Dim=2: mean=1.26, std=0.52</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"># Dim=10: mean=3.08, std=0.49</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"># Dim=100: mean=9.95, std=0.50</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># Dim=300: mean=17.3, std=0.50</span></span>
+<p><strong>Analogy to LLMs:</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Input: &quot;Is a penguin a bird?&quot;</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> ↓</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">[Pattern: &quot;X is a bird&quot; often</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"> follows penguins in text]</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"> ↓</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">Output: &quot;Yes, a penguin is a bird&quot;</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">Correct! But does it &quot;know&quot; birds?</span></span>
 </code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<p>All points cluster around the same distance from origin!</p>
+</div>
+<div class="column">
+<p><strong>Symbol Systems:</strong></p>
+<ul>
+<li>Symbols refer to other symbols</li>
+<li>Purely syntactic manipulation</li>
+<li>No connection to world</li>
+</ul>
+<p><strong>Grounded Systems:</strong></p>
+<ul>
+<li>Symbols connected to perception</li>
+<li>A child learns &quot;dog&quot; by:</li>
+<li>SEEING dogs</li>
+<li>PETTING dogs</li>
+<li>HEARING barking</li>
+<li>Being LICKED by dogs</li>
+</ul>
+<p>The word &quot;dog&quot; is grounded in experience!</p>
 </div>
 </div>
+<p><em>References: Searle (1980). &quot;Minds, Brains, and Programs&quot;; Harnad (1990). &quot;The Symbol Grounding Problem&quot;</em></p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="5" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="6" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 
-<h1 id="why-dimensionality-reduction">Why Dimensionality Reduction?</h1>
+<h1 id="embodied-cognition-theory">Embodied Cognition Theory</h1>
+<p><strong>Meaning arises from bodily experience and sensorimotor interaction</strong></p>
 <div class="columns">
 <div class="column">
-<p><strong>Visualization:</strong></p>
+<p><strong>Key Principles:</strong></p>
+<ol>
+<li><strong>Embodiment:</strong> Cognition shaped by body</li>
+<li><strong>Situatedness:</strong> Meaning context-dependent</li>
+<li><strong>Enactivism:</strong> Knowing through doing</li>
+<li><strong>Grounding:</strong> Concepts tied to perception/action</li>
+</ol>
+<p><strong>Neuroscience Evidence:</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Reading &quot;kick the ball&quot;:</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">→ Motor cortex activates</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">→ Leg area specifically!</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">Reading &quot;pick up the cup&quot;:</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">→ Hand area activates</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">→ Even without moving!</span></span>
+</code></pre>
+</div>
+<div class="column">
+<p><strong>Conceptual Metaphors (Lakoff &amp; Johnson):</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Physical → Abstract mapping:</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">&quot;WARM personality&quot; ← holding warm drink</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"> primes positive judgments!</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">&quot;HIGH status&quot; ← up = good, down = bad</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"> (heads held high)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">&quot;GRASPING an idea&quot; ← physical grasping</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"> simulated mentally</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">&quot;Heavy heart&quot; ← weight = emotional burden</span></span>
+</code></pre>
+<p><strong>These metaphors are NOT in Word2Vec!</strong><br />
+Models learn word patterns, not embodied experience.</p>
+</div>
+</div>
+<p><em>Reference: Barsalou (2008). &quot;Grounded Cognition&quot;</em></p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="7" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="20">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="the-distributional-hypothesis-revisited">The Distributional Hypothesis Revisited</h1>
+<p><em>&quot;You shall know a word by the company it keeps&quot;</em></p>
+<p>--- J.R. Firth (1957)</p>
+<p><strong>Strong version:</strong> Word meaning IS distributional patterns</p>
+<p><strong>Weak version:</strong> Distributional patterns REFLECT meaning</p>
+<div class="columns">
+<div class="column">
+<p><strong>Supports:</strong></p>
 <ul>
-<li>2D/3D plots</li>
-<li>Explore semantic structure</li>
-<li>Identify clusters</li>
-<li>Discover patterns</li>
-<li>Quality assurance</li>
-</ul>
-<p><strong>Computation:</strong></p>
-<ul>
-<li>Faster algorithms</li>
-<li>Less memory</li>
-<li>Enable real-time systems</li>
-<li>Scalability</li>
+<li>Works remarkably well in practice</li>
+<li>Captures semantic similarity</li>
+<li>Enables analogical reasoning</li>
+<li>Scales to huge vocabularies</li>
+<li>Unsupervised learning</li>
+<li>Aligned with usage-based linguistics</li>
 </ul>
 </div>
 <div class="column">
-<p><strong>Machine Learning:</strong></p>
+<p><strong>Limitations:</strong></p>
 <ul>
-<li>Reduce overfitting</li>
-<li>Feature selection</li>
-<li>Improve generalization</li>
-<li>Remove noise</li>
-<li>Combat curse of dimensionality</li>
+<li>Correlation <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.486ex;" xmlns="http://www.w3.org/2000/svg" width="1.76ex" height="2.106ex" role="img" focusable="false" viewBox="0 -716 778 931"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mo"><path data-c="2260" d="M166 -215T159 -215T147 -212T141 -204T139 -197Q139 -190 144 -183L306 133H70Q56 140 56 153Q56 168 72 173H327L406 327H72Q56 332 56 347Q56 360 70 367H426Q597 702 602 707Q605 716 618 716Q625 716 630 712T636 703T638 696Q638 692 471 367H707Q722 359 722 347Q722 336 708 328L451 327L371 173H708Q722 163 722 153Q722 140 707 133H351Q175 -210 170 -212Q166 -215 159 -215Z"></path></g></g></g></svg></mjx-container> causation</li>
+<li>Lacks perceptual grounding</li>
+<li>No embodied understanding</li>
+<li>Missing common sense</li>
+<li>Can't handle novel situations</li>
+<li>Reflects training data biases</li>
 </ul>
+</div>
+</div>
+<div class="callout warning">
+<div class="callout-title">Key Question</div>
+<p>Is distributional semantics sufficient for meaning, or just a useful approximation?</p>
+</div>
+<p><em>Reference: Boleda (2020). &quot;Distributional Semantics and Linguistic Theory&quot;</em></p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="8" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="20">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="what-does-semantic-similarity-really-mean">What Does &quot;Semantic Similarity&quot; Really Mean?</h1>
+<p><strong>Different types of similarity:</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>Taxonomic (IS-A):</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">dog cat: Both are animals</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> Similarity: HIGH</span></span>
+</code></pre>
+<p><strong>Thematic (GOES-WITH):</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">dog leash: Co-occur in events</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> Relatedness: HIGH</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"> Similarity: LOW!</span></span>
+</code></pre>
+<p><strong>Test Yourself:</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Which is more SIMILAR to &quot;coffee&quot;?</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">A) tea ← Same category (beverages)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">B) cup ← Co-occurs (thematic)</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">Answer: A (tea) is more SIMILAR</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"> B (cup) is more RELATED</span></span>
+</code></pre>
+</div>
+<div class="column">
+<p><strong>What Word2Vec Says:</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Word2Vec often gets this wrong!</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">model.similarity(&#x27;coffee&#x27;, &#x27;cup&#x27;) # 0.65</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">model.similarity(&#x27;coffee&#x27;, &#x27;tea&#x27;) # 0.62</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># Cup ranked higher due to co-occurrence!</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"># But tea is categorically more similar</span></span>
+</code></pre>
+<p><strong>SimLex-999 vs WordSim-353:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Pair</th>
+<th>SimLex</th>
+<th>WordSim</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>car-auto</td>
+<td>0.96</td>
+<td>0.92</td>
+</tr>
+<tr>
+<td>car-road</td>
+<td>0.23</td>
+<td>0.73</td>
+</tr>
+</tbody>
+</table>
+<p>SimLex measures true SIMILARITY.<br />
+WordSim measures RELATEDNESS.</p>
+<p>Models score better on WordSim!</p>
+</div>
+</div>
+<p><em>Reference: Hill et al. (2015). &quot;SimLex-999: Evaluating Semantic Models with Genuine Similarity Estimation&quot;</em></p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="9" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="20">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+<h1 id="semantic-projection-recovering-human-knowledge">Semantic Projection: Recovering Human Knowledge</h1>
+<p><strong>Grand et al. (2022): Can we extract human-like features from embeddings?</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>The Experiment:</strong></p>
+<ol>
+<li>Collect human ratings on perceptual features</li>
+</ol>
+<ul>
+<li>Is it edible?</li>
+<li>Is it heavy?</li>
+<li>Is it alive?</li>
+<li>Can you hold it?</li>
+</ul>
+<ol start="2">
+<li>Train linear projections from word embeddings</li>
+<li>Test if embeddings predict human ratings</li>
+</ol>
+<p><strong>Key Findings:</strong></p>
+<ul>
+<li>Embeddings encode surprisingly rich knowledge</li>
+<li>Can predict perceptual features</li>
+<li>Even vision and motor properties!</li>
+<li>Better with larger models</li>
+</ul>
+</div>
+<div class="column">
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">$[0.23, -0.45, ..., 0.12] -&gt; Perceptual Features -&gt; Size: 0.7 -&gt; Edible: 0.1 -&gt; Human -&gt; Ratings</span></span>
+</code></pre>
 <p><strong>Interpretation:</strong></p>
 <ul>
-<li>Understand relationships</li>
-<li>Identify important dimensions</li>
-<li>Communicate results</li>
-<li>Debug models</li>
+<li>Text co-occurrence captures real-world properties</li>
+<li>Indirect grounding through language</li>
+<li>But still not true perceptual grounding</li>
 </ul>
 </div>
 </div>
-<div class="callout info">
-<div class="callout-title">The Goal</div>
-<p>Reduce from <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.023ex;" xmlns="http://www.w3.org/2000/svg" width="1.176ex" height="1.593ex" role="img" focusable="false" viewBox="0 -694 520 704"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g></g></g></svg></mjx-container> dimensions (e.g., 300) to <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.179ex" height="1.595ex" role="img" focusable="false" viewBox="0 -694 521 705"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g></g></g></svg></mjx-container> dimensions (e.g., 2 or 3) while</p>
-</div>
+<p><em>Reference: Grand et al. (2022). &quot;Semantic projection recovers rich human knowledge of multiple object features from word embeddings&quot;</em></p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="6" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="10" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="principal-component-analysis-pca">Principal Component Analysis (PCA)</h1>
-<p><strong>The classic linear dimensionality reduction method</strong></p>
+<h1 id="multimodal-models-bridging-the-gap">Multimodal Models: Bridging the Gap</h1>
+<p><strong>Combining language with perception</strong></p>
 <div class="columns">
 <div class="column">
-<p><strong>Intuition:</strong></p>
+<p><strong>Vision-Language Models:</strong></p>
 <ul>
-<li>Find directions of maximum variance</li>
-<li>Project data onto these directions</li>
-<li>First PC: most variance</li>
-<li>Second PC: second most (orthogonal)</li>
-<li>And so on...</li>
+<li>CLIP (OpenAI)</li>
+<li>ALIGN (Google)</li>
+<li>Flamingo (DeepMind)</li>
+<li>GPT-4V (OpenAI)</li>
 </ul>
-<p><strong>Properties:</strong></p>
-<ul>
-<li>Linear transformation</li>
-<li>Preserves global structure</li>
-<li>Deterministic</li>
-<li>Fast computation</li>
-<li>Interpretable (sometimes)</li>
-</ul>
-</div>
-<div class="column">
-
-<p>PC1 captures most variation</p>
-<p>PC2 captures remaining variation (orthogonal to PC1)</p>
-</div>
-</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="7" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="pca-the-algorithm">PCA: The Algorithm</h1>
-<p><strong>Step-by-Step Worked Example:</strong></p>
-<div class="columns">
-<div class="column">
-<p><strong>Original Data (3D → 2D):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Word</th>
-<th>x1</th>
-<th>x2</th>
-<th>x3</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>king</td>
-<td>2.0</td>
-<td>1.5</td>
-<td>0.1</td>
-</tr>
-<tr>
-<td>queen</td>
-<td>1.8</td>
-<td>1.6</td>
-<td>0.2</td>
-</tr>
-<tr>
-<td>man</td>
-<td>1.0</td>
-<td>0.5</td>
-<td>0.1</td>
-</tr>
-<tr>
-<td>woman</td>
-<td>0.9</td>
-<td>0.6</td>
-<td>0.2</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Step 1:</strong> Center data (subtract mean)</p>
-<p><strong>Step 2:</strong> Compute covariance matrix C</p>
-<p><strong>Step 3:</strong> Find eigenvectors/eigenvalues</p>
-</div>
-<div class="column">
-<p><strong>Eigenvalues (variance captured):</strong></p>
-<ul>
-<li><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.339ex;" xmlns="http://www.w3.org/2000/svg" width="9.346ex" height="1.91ex" role="img" focusable="false" viewBox="0 -694 4131.1 844"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D706" d="M166 673Q166 685 183 694H202Q292 691 316 644Q322 629 373 486T474 207T524 67Q531 47 537 34T546 15T551 6T555 2T556 -2T550 -11H482Q457 3 450 18T399 152L354 277L340 262Q327 246 293 207T236 141Q211 112 174 69Q123 9 111 -1T83 -12Q47 -12 47 20Q47 37 61 52T199 187Q229 216 266 252T321 306L338 322Q338 323 288 462T234 612Q214 657 183 657Q166 657 166 673Z"></path></g><g data-mml-node="mn" transform="translate(616,-150) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g><g data-mml-node="mo" transform="translate(1297.3,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mn" transform="translate(2353.1,0)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z" transform="translate(500,0)"></path><path data-c="38" d="M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z" transform="translate(778,0)"></path><path data-c="35" d="M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z" transform="translate(1278,0)"></path></g></g></g></svg></mjx-container> (85% variance)</li>
-<li><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.339ex;" xmlns="http://www.w3.org/2000/svg" width="9.346ex" height="1.91ex" role="img" focusable="false" viewBox="0 -694 4131.1 844"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D706" d="M166 673Q166 685 183 694H202Q292 691 316 644Q322 629 373 486T474 207T524 67Q531 47 537 34T546 15T551 6T555 2T556 -2T550 -11H482Q457 3 450 18T399 152L354 277L340 262Q327 246 293 207T236 141Q211 112 174 69Q123 9 111 -1T83 -12Q47 -12 47 20Q47 37 61 52T199 187Q229 216 266 252T321 306L338 322Q338 323 288 462T234 612Q214 657 183 657Q166 657 166 673Z"></path></g><g data-mml-node="mn" transform="translate(616,-150) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="mo" transform="translate(1297.3,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mn" transform="translate(2353.1,0)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z" transform="translate(500,0)"></path><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z" transform="translate(778,0)"></path><path data-c="33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z" transform="translate(1278,0)"></path></g></g></g></svg></mjx-container> (13% variance)</li>
-<li><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.375ex;" xmlns="http://www.w3.org/2000/svg" width="9.346ex" height="1.945ex" role="img" focusable="false" viewBox="0 -694 4131.1 859.6"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D706" d="M166 673Q166 685 183 694H202Q292 691 316 644Q322 629 373 486T474 207T524 67Q531 47 537 34T546 15T551 6T555 2T556 -2T550 -11H482Q457 3 450 18T399 152L354 277L340 262Q327 246 293 207T236 141Q211 112 174 69Q123 9 111 -1T83 -12Q47 -12 47 20Q47 37 61 52T199 187Q229 216 266 252T321 306L338 322Q338 323 288 462T234 612Q214 657 183 657Q166 657 166 673Z"></path></g><g data-mml-node="mn" transform="translate(616,-150) scale(0.707)"><path data-c="33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z"></path></g></g><g data-mml-node="mo" transform="translate(1297.3,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mn" transform="translate(2353.1,0)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path data-c="2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z" transform="translate(500,0)"></path><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z" transform="translate(778,0)"></path><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z" transform="translate(1278,0)"></path></g></g></g></svg></mjx-container> (2% variance)</li>
-</ul>
-<p><strong>Keep top 2 PCs → 98% variance retained!</strong></p>
-<p><strong>Projected Data (2D):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Word</th>
-<th>PC1</th>
-<th>PC2</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>king</td>
-<td>1.9</td>
-<td>0.3</td>
-</tr>
-<tr>
-<td>queen</td>
-<td>1.7</td>
-<td>0.4</td>
-</tr>
-<tr>
-<td>man</td>
-<td>0.8</td>
-<td>-0.2</td>
-</tr>
-<tr>
-<td>woman</td>
-<td>0.7</td>
-<td>-0.1</td>
-</tr>
-</tbody>
-</table>
-<p>Gender still separable, royalty still clusters!</p>
-</div>
-</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="8" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="pca-in-practice">PCA in Practice</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from sklearn.decomposition import PCA</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">from sklearn.preprocessing import StandardScaler</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">import numpy as np</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">import matplotlib.pyplot as plt</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># Assume we have word embeddings: shape (vocab_size, 300)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"># For example, Word2Vec embeddings</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"># Standardize the data (optional but recommended)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">scaler = StandardScaler()</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">embeddings_scaled = scaler.fit_transform(embeddings)</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"># Apply PCA</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code">pca = PCA(n_components=2) # Reduce to 2D for visualization</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="9" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="pca-in-practice-1">PCA in Practice</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="15">
-<span class="line"><span class="line-num">15</span><span class="line-code">embeddings_2d = pca.fit_transform(embeddings_scaled)</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code"># Check variance explained</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code">print(f&quot;Variance explained: {pca.explained_variance_ratio_}&quot;)</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code">print(f&quot;Total: {sum(pca.explained_variance_ratio_):.2%}&quot;)</span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code"># Visualize</span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code">plt.figure(figsize=(10, 8))</span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code">plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], alpha=0.5)</span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">25</span><span class="line-code"># Annotate some words</span></span>
-<span class="line"><span class="line-num">26</span><span class="line-code">words = [&#x27;king&#x27;, &#x27;queen&#x27;, &#x27;man&#x27;, &#x27;woman&#x27;, &#x27;cat&#x27;, &#x27;dog&#x27;]</span></span>
-<span class="line"><span class="line-num">27</span><span class="line-code">for word in words:</span></span>
-<span class="line"><span class="line-num">28</span><span class="line-code"> idx = word_to_idx[word]</span></span>
-</code></pre>
-<div class="code-continued-indicator">...continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="10" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="pca-in-practice-2">PCA in Practice</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="29">
-<span class="line"><span class="line-num">29</span><span class="line-code"> plt.annotate(word, (embeddings_2d[idx, 0], embeddings_2d[idx, 1]))</span></span>
-<span class="line"><span class="line-num">30</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">31</span><span class="line-code">plt.xlabel(&#x27;PC1&#x27;)</span></span>
-<span class="line"><span class="line-num">32</span><span class="line-code">plt.ylabel(&#x27;PC2&#x27;)</span></span>
-<span class="line"><span class="line-num">33</span><span class="line-code">plt.title(&#x27;Word Embeddings - PCA Projection&#x27;)</span></span>
-<span class="line"><span class="line-num">34</span><span class="line-code">plt.show()</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="11" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="pca-limitations">PCA Limitations</h1>
-<div class="columns">
-<div class="column">
-<p><strong>Assumes Linearity:</strong></p>
-<ul>
-<li>Only captures linear relationships</li>
-<li>Word embeddings often have non-linear structure</li>
-<li>May miss important patterns</li>
-</ul>
-<pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Non-linear manifold -&gt; PCA struggles here!</span></span>
-</code></pre>
-</div>
-<div class="column">
-<p><strong>Other Issues:</strong></p>
-<ul>
-<li>
-<p><strong>Variance ≠ Importance:</strong></p>
-</li>
-<li>
-<p>Preserves variance, not semantic structure</p>
-</li>
-<li>
-<p>Noisy dimensions may have high variance</p>
-</li>
-</ul>
-<p>\item <strong>Global focus:</strong></p>
-<ul>
-<li>May lose local structure</li>
-<li>Clusters can become blurred</li>
-</ul>
-<p>\item <strong>Interpretability:</strong></p>
-<ul>
-<li>PCs are linear combinations</li>
-<li>Hard to interpret semantically</li>
-</ul>
-<div class="callout warning">
-<div class="callout-title">When to Use PCA</div>
-<ul>
-<li>Quick first exploration</li>
-<li>Preprocessing for other methods</li>
-<li>When speed is critical</li>
-<li>Linear structure expected</li>
-</ul>
-</div>
-</div>
-</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="12" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="t-sne-t-distributed-stochastic-neighbor-embedding">t-SNE: t-Distributed Stochastic Neighbor Embedding</h1>
-<p><strong>Non-linear dimensionality reduction for visualization</strong></p>
-<div class="columns">
-<div class="column">
 <p><strong>Key Idea:</strong></p>
 <ul>
-<li>Model similarity as probability</li>
-<li>High-D: Gaussian similarity</li>
-<li>Low-D: t-distribution similarity</li>
-<li>Minimize divergence between them</li>
-<li>Preserves</li>
+<li>Learn joint embedding space</li>
+<li>Text and images map to same space</li>
+<li>Enables cross-modal understanding</li>
+<li>Grounds language in vision</li>
 </ul>
-<p><strong>Advantages:</strong></p>
+<p><strong>Training:</strong></p>
 <ul>
-<li>Beautiful visualizations</li>
-<li>Reveals clusters</li>
-<li>Non-linear mappings</li>
-<li>Great for exploration</li>
-<li>Widely used in practice</li>
+<li>Image-caption pairs</li>
+<li>Contrastive learning</li>
+<li>Matching images to descriptions</li>
+<li>Large-scale (400M+ pairs)</li>
 </ul>
 </div>
 <div class="column">
-<p><strong>How it works:</strong></p>
-<ol>
-<li>Compute pairwise similarities in high-D:</li>
-</ol>
-<p>p_{j|i} = {\sum_{k ≠ i} \exp(-||x_i - x_k||^2 / 2\sigma_i^2)}</p>
-<ol start="2">
-<li>Compute similarities in low-D using t-distribution:</li>
-</ol>
-<p>q_{ij} = }{\sum_{k ≠ l}(1 + ||y_k - y_l||^2)^{-1}}</p>
-<ol start="3">
-<li>Minimize KL divergence:</li>
-</ol>
-<p>C = \sum_i KL(P_i || Q_i)</p>
-<ol start="4">
-<li>Use gradient descent to optimize <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.464ex;" xmlns="http://www.w3.org/2000/svg" width="1.848ex" height="1.464ex" role="img" focusable="false" viewBox="0 -442 817 647"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D466" d="M21 287Q21 301 36 335T84 406T158 442Q199 442 224 419T250 355Q248 336 247 334Q247 331 231 288T198 191T182 105Q182 62 196 45T238 27Q261 27 281 38T312 61T339 94Q339 95 344 114T358 173T377 247Q415 397 419 404Q432 431 462 431Q475 431 483 424T494 412T496 403Q496 390 447 193T391 -23Q363 -106 294 -155T156 -205Q111 -205 77 -183T43 -117Q43 -95 50 -80T69 -58T89 -48T106 -45Q150 -45 150 -87Q150 -107 138 -122T115 -142T102 -147L99 -148Q101 -153 118 -160T152 -167H160Q177 -167 186 -165Q219 -156 247 -127T290 -65T313 -9T321 21L315 17Q309 13 296 6T270 -6Q250 -11 231 -11Q185 -11 150 11T104 82Q103 89 103 113Q103 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mi" transform="translate(523,-150) scale(0.707)"><path data-c="1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path></g></g></g></g></svg></mjx-container></li>
-</ol>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Vision -&gt; Encoder -&gt; Text -&gt; Encoder -&gt; Similar!</span></span>
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Visual grounding</li>
+<li>Zero-shot classification</li>
+<li>Better generalization</li>
+<li>More &quot;human-like&quot;</li>
+</ul>
 </div>
 </div>
-<p><em>Reference: van der Maaten &amp; Hinton (2008). &quot;Visualizing Data using t-SNE&quot;</em></p>
+<p><em>Reference: Radford et al. (2021). &quot;Learning Transferable Visual Models From Natural Language Supervision&quot; (CLIP)</em></p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="13" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="11" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="t-sne-key-concepts">t-SNE: Key Concepts</h1>
-<p><strong>Why t-distribution in low-D?</strong></p>
+<h1 id="conceptual-spaces-theory">Conceptual Spaces Theory</h1>
+<p><strong>Gärdenfors (2000): Meaning as geometry</strong></p>
 <div class="columns">
 <div class="column">
-<p><strong>The Crowding Problem Illustrated:</strong></p>
-<pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">High-D: 10 points can each have</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"> 9 equidistant neighbors</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> * * *</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> * * *</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> * * *</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">Low-D (2D): Can&#x27;t fit 9 equidistant</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> neighbors around 1 point!</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">Solution: t-distribution has</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"> heavier tails → allows</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"> moderately-distant points</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"> to spread further apart</span></span>
-</code></pre>
+<p><strong>Key Ideas:</strong></p>
+<ul>
+<li>Concepts represented in quality dimensions</li>
+<li>Dimensions: color, size, temperature, etc.</li>
+<li>Each dimension has a metric</li>
+<li>Concepts are regions in space</li>
+<li>Similarity = geometric proximity</li>
+</ul>
+<p><strong>Example: Colors</strong></p>
+<ul>
+<li>Hue, saturation, brightness</li>
+<li>Natural categories (red, blue, green)</li>
+<li>Fuzzy boundaries</li>
+<li>Prototypes at centers</li>
+</ul>
 </div>
 <div class="column">
-<p><strong>Perplexity Effect (Same Data!):</strong></p>
-<pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Perplexity = 5:</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"> Tight, fragmented clusters</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> Good for fine structure</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">Perplexity = 30:</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> Balanced view</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> Standard choice</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">Perplexity = 100:</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> Merged clusters</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"> More global view</span></span>
-</code></pre>
-<p><strong>Rule of thumb:</strong> perplexity ~ sqrt(n)</p>
-<p>For 1000 words: try perplexity 30-50</p>
+
+<p><strong>Relation to Embeddings:</strong></p>
+<ul>
+<li>Similar geometric structure</li>
+<li>But learned dimensions</li>
+<li>Not interpretable qualities</li>
+<li>No grounding in perception</li>
+</ul>
 </div>
 </div>
+<p><em>Reference: Gärdenfors (2000). &quot;Conceptual Spaces: The Geometry of Thought&quot;</em></p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-70" data-theme="cdl-theme" lang="C" class="scale-70" data-marpit-pagination="14" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-70;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="12" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 
-<h1 id="t-sne-in-practice">t-SNE in Practice</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from sklearn.manifold import TSNE</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">import matplotlib.pyplot as plt</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Apply t-SNE (can be slow for large datasets)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">tsne = TSNE(</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> n_components=2, # 2D visualization</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> perplexity=30, # try 5-50</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> n_iter=2000, # iterations</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> random_state=42, # reproducibility</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> verbose=1 # show progress</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">)</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">embeddings_2d = tsne.fit_transform(embeddings)</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># Visualize with labels</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="15" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="t-sne-in-practice-1">t-SNE in Practice</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="16">
-<span class="line"><span class="line-num">16</span><span class="line-code">plt.figure(figsize=(12, 10))</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code"># Color by semantic category (if available)</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code">categories = [&#x27;animals&#x27;, &#x27;food&#x27;, &#x27;technology&#x27;, ...]</span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code">colors = [&#x27;red&#x27;, &#x27;blue&#x27;, &#x27;green&#x27;, ...]</span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code">for cat, color in zip(categories, colors):</span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code"> mask = labels == cat</span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code"> plt.scatter(</span></span>
-<span class="line"><span class="line-num">25</span><span class="line-code"> embeddings_2d[mask, 0],</span></span>
-<span class="line"><span class="line-num">26</span><span class="line-code"> embeddings_2d[mask, 1],</span></span>
-<span class="line"><span class="line-num">27</span><span class="line-code"> c=color,</span></span>
-<span class="line"><span class="line-num">28</span><span class="line-code"> label=cat,</span></span>
-<span class="line"><span class="line-num">29</span><span class="line-code"> alpha=0.6</span></span>
-<span class="line"><span class="line-num">30</span><span class="line-code"> )</span></span>
-</code></pre>
-<div class="code-continued-indicator">...continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="16" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="t-sne-in-practice-2">t-SNE in Practice</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="31">
-<span class="line"><span class="line-num">31</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">32</span><span class="line-code"># Annotate some words</span></span>
-<span class="line"><span class="line-num">33</span><span class="line-code">for word, idx in word_to_idx.items():</span></span>
-<span class="line"><span class="line-num">34</span><span class="line-code"> if word in important_words:</span></span>
-<span class="line"><span class="line-num">35</span><span class="line-code"> plt.annotate(</span></span>
-<span class="line"><span class="line-num">36</span><span class="line-code"> word,</span></span>
-<span class="line"><span class="line-num">37</span><span class="line-code"> (embeddings_2d[idx, 0], embeddings_2d[idx, 1])</span></span>
-<span class="line"><span class="line-num">38</span><span class="line-code"> )</span></span>
-<span class="line"><span class="line-num">39</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">40</span><span class="line-code">plt.legend()</span></span>
-<span class="line"><span class="line-num">41</span><span class="line-code">plt.title(&#x27;Word Embeddings - t-SNE Projection&#x27;)</span></span>
-<span class="line"><span class="line-num">42</span><span class="line-code">plt.show()</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="17" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="t-sne-limitations-and-caveats">t-SNE Limitations and Caveats</h1>
+<h1 id="lexical-semantic-theories">Lexical Semantic Theories</h1>
+<p><strong>How do linguists think about word meaning?</strong></p>
 <div class="columns">
 <div class="column">
-<p><strong>1. Slow:</strong> <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="5.832ex" height="2.452ex" role="img" focusable="false" viewBox="0 -833.9 2577.6 1083.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path></g><g data-mml-node="mo" transform="translate(763,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="msup" transform="translate(1152,0)"><g data-mml-node="mi"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mn" transform="translate(633,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="mo" transform="translate(2188.6,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container> complexity</p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Timing comparison</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">n=1000: ~10 seconds</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">n=5000: ~4 minutes</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">n=10000: ~15 minutes</span></span>
-</code></pre>
-<p><strong>2. Non-deterministic:</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">tsne1 = TSNE(random_state=42)</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">tsne2 = TSNE(random_state=123)</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"># Different layouts!</span></span>
-</code></pre>
-<p><strong>3. No out-of-sample:</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Can&#x27;t do this with t-SNE:</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">new_point_2d = tsne.transform(new_point)</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"># Error! Must refit entire dataset</span></span>
-</code></pre>
+<p><strong>1. Feature-Based:</strong></p>
+<ul>
+<li>Words = bundles of features</li>
+<li>bachelor = [+human, +male, +adult, -married]</li>
+<li>Compositional</li>
+<li>Logical</li>
+</ul>
+<p><strong>2. Prototype Theory:</strong></p>
+<ul>
+<li>Categories have best examples</li>
+<li>Robin is a prototypical bird</li>
+<li>Penguin is peripheral</li>
+<li>Graded membership</li>
+</ul>
+<p><strong>3. Frame Semantics:</strong></p>
+<ul>
+<li>Words evoke conceptual frames</li>
+<li>&quot;Buy&quot; activates commerce frame</li>
+<li>Buyer, seller, goods, money</li>
+<li>FrameNet resource</li>
+</ul>
 </div>
 <div class="column">
-<p><strong>4. Interpretation Pitfalls:</strong></p>
-<pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">WRONG interpretations:</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"> &quot;Cluster A is bigger than B&quot;</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> (sizes are arbitrary)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> &quot;A and B are far apart&quot;</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> (global distances not preserved)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> &quot;This dimension means X&quot;</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> (axes have no meaning)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">CORRECT interpretations:</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"> &quot;Points in cluster A are similar&quot;</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"> &quot;These words form a group&quot;</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"> &quot;There appear to be N clusters&quot;</span></span>
-</code></pre>
+<p><strong>4. Construction Grammar:</strong></p>
+<ul>
+<li>Meaning from form-function pairings</li>
+<li>Idioms, patterns</li>
+<li>Usage-based</li>
+</ul>
+<p><strong>5. Word Sense Disambiguation:</strong></p>
+<ul>
+<li>Words have multiple senses</li>
+<li>WordNet: hierarchical ontology</li>
+<li>Bank<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.339ex;" xmlns="http://www.w3.org/2000/svg" width="0.988ex" height="1.065ex" role="img" focusable="false" viewBox="0 -320.9 436.6 470.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"></g><g data-mml-node="mn" transform="translate(33,-150) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g></g></svg></mjx-container> (financial), Bank<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.339ex;" xmlns="http://www.w3.org/2000/svg" width="0.988ex" height="1.065ex" role="img" focusable="false" viewBox="0 -320.9 436.6 470.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"></g><g data-mml-node="mn" transform="translate(33,-150) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g></g></g></svg></mjx-container> (riverside)</li>
+</ul>
+<div class="callout warning">
+<div class="callout-title">Question</div>
+<p>Which theories align with distributional models?</p>
+<p>Answer: Mostly usage-based views (Construction Grammar, Prototype Theory)</p>
+<p>Struggle with: Feature analysis, Frame semantics</p>
 </div>
 </div>
-<p><strong>Solution:</strong> Use PCA first to reduce to 50D, then t-SNE to 2D</p>
+</div>
+<p><em>References: Fillmore (1982). &quot;Frame Semantics&quot;; Rosch (1975). &quot;Cognitive Representations of Semantic Categories&quot;</em></p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="18" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="13" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 
-<h1 id="umap-uniform-manifold-approximation--projection">UMAP: Uniform Manifold Approximation &amp; Projection</h1>
-<p><strong>Modern alternative to t-SNE (2018)</strong></p>
+<h1 id="empirical-evidence-from-neuroscience">Empirical Evidence from Neuroscience</h1>
+<p><strong>What does the brain tell us about semantic representation?</strong></p>
 <div class="columns">
 <div class="column">
-<p><strong>Key Advantages over t-SNE:</strong></p>
+<p><strong>fMRI Studies:</strong></p>
 <ul>
-<li>(<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="9.847ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 4352.3 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path></g><g data-mml-node="mo" transform="translate(763,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mi" transform="translate(1152,0)"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mi" transform="translate(1918.7,0)"><path data-c="6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z"></path><path data-c="6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z" transform="translate(278,0)"></path><path data-c="67" d="M329 409Q373 453 429 453Q459 453 472 434T485 396Q485 382 476 371T449 360Q416 360 412 390Q410 404 415 411Q415 412 416 414V415Q388 412 363 393Q355 388 355 386Q355 385 359 381T368 369T379 351T388 325T392 292Q392 230 343 187T222 143Q172 143 123 171Q112 153 112 133Q112 98 138 81Q147 75 155 75T227 73Q311 72 335 67Q396 58 431 26Q470 -13 470 -72Q470 -139 392 -175Q332 -206 250 -206Q167 -206 107 -175Q29 -140 29 -75Q29 -39 50 -15T92 18L103 24Q67 55 67 108Q67 155 96 193Q52 237 52 292Q52 355 102 398T223 442Q274 442 318 416L329 409ZM299 343Q294 371 273 387T221 404Q192 404 171 388T145 343Q142 326 142 292Q142 248 149 227T179 192Q196 182 222 182Q244 182 260 189T283 207T294 227T299 242Q302 258 302 292T299 343ZM403 -75Q403 -50 389 -34T348 -11T299 -2T245 0H218Q151 0 138 -6Q118 -15 107 -34T95 -74Q95 -84 101 -97T122 -127T170 -155T250 -167Q319 -167 361 -139T403 -75Z" transform="translate(778,0)"></path></g><g data-mml-node="mo" transform="translate(3196.7,0)"><path data-c="2061" d=""></path></g><g data-mml-node="mi" transform="translate(3363.3,0)"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mo" transform="translate(3963.3,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container> vs <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="5.832ex" height="2.452ex" role="img" focusable="false" viewBox="0 -833.9 2577.6 1083.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path></g><g data-mml-node="mo" transform="translate(763,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="msup" transform="translate(1152,0)"><g data-mml-node="mi"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mn" transform="translate(633,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="mo" transform="translate(2188.6,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container>)</li>
-<li>Preserves local and global structure</li>
-<li>Can transform new points</li>
-<li>Theoretically grounded (topology)</li>
-<li>Scales to millions of points</li>
-<li>More robust hyperparameters</li>
+<li>Can predict brain activity from word embeddings</li>
+<li>Semantic information distributed across cortex</li>
+<li>Different regions for different features</li>
+<li>Temporal lobe: objects</li>
+<li>Motor cortex: actions</li>
+<li>Visual cortex: visual features</li>
 </ul>
-<p><strong>When to Use:</strong></p>
+<p><strong>Findings:</strong></p>
 <ul>
-<li>Large datasets ($&gt;$10k points)</li>
-<li>Need global structure</li>
-<li>Production systems</li>
-<li>Consistent results important</li>
-<li>Most NLP visualization tasks!</li>
+<li>Word2Vec correlates with neural patterns</li>
+<li>But: imperfect match</li>
+<li>Human brain uses multimodal integration</li>
+<li>Language areas + sensory areas</li>
 </ul>
 </div>
 <div class="column">
-<p><strong>How it Works:</strong></p>
-<ol>
-<li>Construct fuzzy topological representation of high-D data</li>
-<li>Find low-D representation with similar topology</li>
-<li>Use Riemannian geometry</li>
-<li>Optimize cross-entropy loss</li>
-</ol>
-<p><strong>Main Hyperparameters:</strong></p>
-<p><strong>1. n_neighbors (15):</strong></p>
-<ul>
-<li>Local vs. global balance</li>
-<li>Small: local structure</li>
-<li>Large: global structure</li>
-</ul>
-<p><strong>2. min_dist (0.1):</strong></p>
-<ul>
-<li>How tightly to pack points</li>
-<li>Small: tight clusters</li>
-<li>Large: loose, spread out</li>
-</ul>
-</div>
-</div>
-<p><em>Reference: McInnes &amp; Healy (2018). &quot;UMAP: Uniform Manifold Approximation and Projection&quot;</em></p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="19" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="umap-in-practice">UMAP in Practice</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">import umap</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">import matplotlib.pyplot as plt</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Apply UMAP</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">reducer = umap.UMAP(</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> n_components=2, # 2D visualization</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> n_neighbors=15, # local/global balance (try 5-50)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> min_dist=0.1, # cluster tightness (try 0.0-0.99)</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> metric=&#x27;cosine&#x27;, # good for word embeddings</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> random_state=42</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">)</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">embeddings_2d = reducer.fit_transform(embeddings)</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># Can also transform new points! (unlike t-SNE)</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">new_embeddings_2d = reducer.transform(new_embeddings)</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="20" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="umap-in-practice-1">UMAP in Practice</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="17">
-<span class="line"><span class="line-num">17</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code"># Visualize</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code">plt.figure(figsize=(12, 10))</span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code">scatter = plt.scatter(</span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code"> embeddings_2d[:, 0],</span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code"> embeddings_2d[:, 1],</span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code"> c=cluster_labels, # color by cluster</span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code"> cmap=&#x27;Spectral&#x27;,</span></span>
-<span class="line"><span class="line-num">25</span><span class="line-code"> s=5,</span></span>
-<span class="line"><span class="line-num">26</span><span class="line-code"> alpha=0.6</span></span>
-<span class="line"><span class="line-num">27</span><span class="line-code">)</span></span>
-<span class="line"><span class="line-num">28</span><span class="line-code">plt.colorbar(scatter)</span></span>
-<span class="line"><span class="line-num">29</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">30</span><span class="line-code"># Annotate</span></span>
-<span class="line"><span class="line-num">31</span><span class="line-code">for word in important_words:</span></span>
-<span class="line"><span class="line-num">32</span><span class="line-code"> idx = word_to_idx[word]</span></span>
-</code></pre>
-<div class="code-continued-indicator">...continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="21" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="umap-in-practice-2">UMAP in Practice</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="33">
-<span class="line"><span class="line-num">33</span><span class="line-code"> plt.annotate(</span></span>
-<span class="line"><span class="line-num">34</span><span class="line-code"> word,</span></span>
-<span class="line"><span class="line-num">35</span><span class="line-code"> (embeddings_2d[idx, 0], embeddings_2d[idx, 1]),</span></span>
-<span class="line"><span class="line-num">36</span><span class="line-code"> fontsize=12</span></span>
-<span class="line"><span class="line-num">37</span><span class="line-code"> )</span></span>
-<span class="line"><span class="line-num">38</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">39</span><span class="line-code">plt.title(&#x27;Word Embeddings - UMAP Projection&#x27;)</span></span>
-<span class="line"><span class="line-num">40</span><span class="line-code">plt.show()</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="22" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="pca-vs-t-sne-vs-umap">PCA vs. t-SNE vs. UMAP</h1>
+<p><strong>Brain vs. Model Representations:</strong></p>
 <table>
 <thead>
 <tr>
-<th>Feature</th>
-<th>PCA</th>
-<th>t-SNE</th>
-<th>UMAP</th>
+<th>Distributed</th>
+<th></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Speed</td>
-<td>Very Fast</td>
-<td>Slow</td>
+<td>Hierarchical</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Context-sensitive</td>
+<td></td>
+<td>(BERT)</td>
+</tr>
+<tr>
+<td>Grounded</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>Fast</td>
-</tr>
-<tr>
-<td>Scalability</td>
-<td>Excellent</td>
-<td>Poor (&lt;10k)</td>
-<td>Excellent</td>
-</tr>
-<tr>
-<td>Global structure</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>Local structure</td>
-<td>Partial</td>
-<td>Yes</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>Deterministic</td>
-<td>Yes</td>
-<td>No</td>
-<td>Partial</td>
-</tr>
-<tr>
-<td>Out-of-sample</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Concrete Timing Comparison (10,000 word embeddings):</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># PCA: 0.3 seconds</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">pca = PCA(n_components=2).fit_transform(X)</span></span>
+<p><strong>Key Insight:</strong></p>
+<ul>
+<li>Models capture some aspects</li>
+<li>But miss crucial grounding</li>
+<li>Convergent representation learning?</li>
+<li>Or fundamentally different?</li>
+</ul>
+</div>
+</div>
+<p><em>References: Mitchell et al. (2008). &quot;Predicting Human Brain Activity Associated with the Meanings of Nouns&quot;; Huth et al. (2016). &quot;Natural speech reveals the semantic maps that tile human cerebral cortex&quot;</em></p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="14" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="20">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="the-stochastic-parrots-debate">The &quot;Stochastic Parrots&quot; Debate</h1>
+<p><strong>Bender et al. (2021): On the Dangers of Stochastic Parrots</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>The Argument:</strong></p>
+<ul>
+<li>LLMs learn form, not meaning</li>
+<li>&quot;Stochastic parrots&quot; - repeating patterns</li>
+<li>No understanding of world</li>
+<li>No communicative intent</li>
+<li>Risk: Mistaking fluency for understanding</li>
+</ul>
+<p><strong>Evidence:</strong></p>
+<ul>
+<li>Fail on simple reasoning</li>
+<li>Sensitive to phrasing</li>
+<li>Hallucinate facts</li>
+<li>No common sense</li>
+<li>Brittle to adversarial inputs</li>
+</ul>
+</div>
+<div class="column">
+<p><strong>Counter-Arguments:</strong></p>
+<ul>
+<li>Emergent capabilities at scale</li>
+<li>Performance on complex tasks</li>
+<li>Transfer to new domains</li>
+<li>Maybe understanding = prediction?</li>
+<li>Pragmatic success criterion</li>
+</ul>
+<div class="callout warning">
+<div class="callout-title">The Core Question</div>
+<p><strong>Can meaning arise from form alone?</strong></p>
+<p>Or do we need grounding in:</p>
+<ul>
+<li>Perception?</li>
+<li>Action?</li>
+<li>Social interaction?</li>
+<li>Physical embodiment?</li>
+</ul>
+</div>
+</div>
+</div>
+<p><em>References: Bender &amp; Koller (2020). &quot;Climbing towards NLU&quot;; Bender et al. (2021). &quot;On the Dangers of Stochastic Parrots&quot;</em></p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="15" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="20">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="common-sense-reasoning">Common Sense Reasoning</h1>
+<p><strong>What humans know but models don't</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>Physical Intuition Failures:</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Q: &quot;Can you fit an elephant</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> in a refrigerator?&quot;</span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># t-SNE: 180 seconds (3 minutes!)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">tsne = TSNE(n_components=2).fit_transform(X)</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">GPT-3: &quot;Yes, if you open the</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"> door wide enough...&quot;</span></span>
+</code></pre>
+<p><strong>Winograd Schema (reasoning):</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">&quot;The trophy doesn&#x27;t fit in the</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> brown suitcase because it is</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"> too [small/large].&quot;</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">What does &quot;it&quot; refer to?</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">- &quot;small&quot; → suitcase</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">- &quot;large&quot; → trophy</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">Requires world knowledge!</span></span>
+</code></pre>
+</div>
+<div class="column">
+<p><strong>Social Intuition Failures:</strong></p>
+<pre><code class="has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">Q: &quot;John told Mary he loved her.</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> How did Mary feel?&quot;</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">Depends on context:</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">- First date? → Surprised/happy</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">- After argument? → Relieved</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">- Unwanted? → Uncomfortable</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">Models miss social nuance!</span></span>
+</code></pre>
+<p><strong>Why Models Struggle:</strong></p>
+<ul>
+<li>Physical/social knowledge rarely stated</li>
+<li>Assumed as background knowledge</li>
+<li>Requires embodied experience</li>
+<li>Needs causal reasoning</li>
+</ul>
+</div>
+</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="16" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="20">
+<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
+
+<h1 id="compositionality-phrases-and-sentences">Compositionality: Phrases and Sentences</h1>
+<p><strong>How do we combine word meanings?</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>The Problem:</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Vector math doesn&#x27;t work!</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">vec(&quot;hot&quot;) + vec(&quot;dog&quot;) ≠ vec(&quot;hot dog&quot;)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># &quot;hot dog&quot; = food item</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># &quot;hot&quot; + &quot;dog&quot; = warm canine</span></span>
 <span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"># UMAP: 12 seconds</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">umap = UMAP(n_components=2).fit_transform(X)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"># Same issue:</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">vec(&quot;red&quot;) + vec(&quot;herring&quot;) ≠ vec(&quot;red herring&quot;)</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"># red herring = distraction, not a fish!</span></span>
 </code></pre>
-<div class="callout info">
-<div class="callout-title">Best Practice Workflow</div>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Step 1: PCA to 50D (fast, removes noise)</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">X_50d = PCA(n_components=50).fit_transform(X)</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Step 2: UMAP to 2D (preserves structure)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">X_2d = UMAP(n_components=2).fit_transform(X_50d)</span></span>
-</code></pre>
+<p><strong>Non-compositional Phrases:</strong></p>
+<ul>
+<li>Kick the bucket (= die)</li>
+<li>Spill the beans (= reveal secret)</li>
+<li>Break a leg (= good luck)</li>
+</ul>
 </div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="23" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="visualization-best-practices">Visualization Best Practices</h1>
-<ol>
-<li><strong>Preprocessing:</strong></li>
-</ol>
-<ul>
-<li>Standardize features (mean=0, std=1)</li>
-<li>Remove outliers (optional)</li>
-<li>For very large datasets: sample or use PCA first</li>
-</ul>
-<ol start="2">
-<li><strong>Try multiple hyperparameters:</strong></li>
-</ol>
-<ul>
-<li>t-SNE perplexity: 5, 10, 30, 50</li>
-<li>UMAP n_neighbors: 5, 15, 30, 50</li>
-<li>Different views reveal different structure</li>
-</ul>
-<ol start="3">
-<li><strong>Color intelligently:</strong></li>
-</ol>
-<ul>
-<li>By semantic category</li>
-<li>By cluster assignment</li>
-<li>By frequency (size)</li>
-<li>By POS tag, domain, etc.</li>
-</ul>
-<ol start="4">
-<li><strong>Interactive visualization:</strong></li>
-</ol>
-<ul>
-<li>Use plotly, bokeh for interactivity</li>
-<li>Hover tooltips with word info</li>
-<li>Zoom and pan</li>
-<li>Filter by category</li>
-</ul>
-<ol start="5">
-<li><strong>Annotate selectively:</strong></li>
-</ol>
-<ul>
-<li>Too many labels = clutter</li>
-<li>Show representative words</li>
-<li>Use repel/adjust_text to avoid overlap</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-70" data-theme="cdl-theme" lang="C" class="scale-70" data-marpit-pagination="24" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-70;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="interactive-visualization">Interactive Visualization</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">import plotly.express as px</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">import plotly.graph_objects as go</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">import pandas as pd</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># Prepare data</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">df = pd.DataFrame({</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> &#x27;x&#x27;: embeddings_2d[:, 0],</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> &#x27;y&#x27;: embeddings_2d[:, 1],</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> &#x27;word&#x27;: words,</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> &#x27;category&#x27;: categories,</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"> &#x27;frequency&#x27;: frequencies</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">})</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"># Create interactive plot with plotly</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code">fig = px.scatter(</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"> df,</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code"> x=&#x27;x&#x27;,</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="25" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="interactive-visualization-1">Interactive Visualization</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="18">
-<span class="line"><span class="line-num">18</span><span class="line-code"> y=&#x27;y&#x27;,</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code"> color=&#x27;category&#x27;,</span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code"> size=&#x27;frequency&#x27;,</span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code"> hover_data=[&#x27;word&#x27;, &#x27;frequency&#x27;],</span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code"> title=&#x27;Word Embeddings (UMAP)&#x27;,</span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code"> width=1000,</span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code"> height=800</span></span>
-<span class="line"><span class="line-num">25</span><span class="line-code">)</span></span>
-<span class="line"><span class="line-num">26</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">27</span><span class="line-code"># Add text annotations for important words</span></span>
-<span class="line"><span class="line-num">28</span><span class="line-code">for word in important_words:</span></span>
-<span class="line"><span class="line-num">29</span><span class="line-code"> row = df[df[&#x27;word&#x27;] == word].iloc[0]</span></span>
-<span class="line"><span class="line-num">30</span><span class="line-code"> fig.add_annotation(</span></span>
-<span class="line"><span class="line-num">31</span><span class="line-code"> x=row[&#x27;x&#x27;],</span></span>
-<span class="line"><span class="line-num">32</span><span class="line-code"> y=row[&#x27;y&#x27;],</span></span>
-<span class="line"><span class="line-num">33</span><span class="line-code"> text=word,</span></span>
-<span class="line"><span class="line-num">34</span><span class="line-code"> showarrow=False,</span></span>
-</code></pre>
-<div class="code-continued-indicator">...continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="26" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="interactive-visualization-2">Interactive Visualization</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="35">
-<span class="line"><span class="line-num">35</span><span class="line-code"> font=dict(size=12)</span></span>
-<span class="line"><span class="line-num">36</span><span class="line-code"> )</span></span>
-<span class="line"><span class="line-num">37</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">38</span><span class="line-code"># Show</span></span>
-<span class="line"><span class="line-num">39</span><span class="line-code">fig.show()</span></span>
-<span class="line"><span class="line-num">40</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">41</span><span class="line-code"># Can also save as HTML</span></span>
-<span class="line"><span class="line-num">42</span><span class="line-code">fig.write_html(&#x27;embeddings_viz.html&#x27;)</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="27" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="applications-in-nlp">Applications in NLP</h1>
-<div class="columns">
 <div class="column">
-<p><strong>1. Embedding Quality Check:</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Quick sanity check</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">words = [&#x27;dog&#x27;, &#x27;cat&#x27;, &#x27;fish&#x27;, # animals</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> &#x27;car&#x27;, &#x27;bus&#x27;, &#x27;train&#x27;] # vehicles</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># If good embeddings: two clusters!</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># If bad: random scatter</span></span>
-</code></pre>
-<p><strong>2. Finding Polysemous Words:</strong></p>
+<p><strong>What Transformers Learn:</strong></p>
 <pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">&quot;apple&quot; appears in TWO clusters:</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">- Near: orange, banana, fruit</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">- Near: microsoft, google, tech</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">Input: &quot;break a leg&quot;</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> ↓</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">Attention sees this phrase</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">often in &quot;good luck&quot; contexts</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"> ↓</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">Output: idiomatic meaning</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">But fails on novel combinations!</span></span>
+</code></pre>
+<p><strong>The Negation Problem:</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># BERT struggles with negation</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">sent1 = &quot;The movie was good&quot;</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">sent2 = &quot;The movie was not good&quot;</span></span>
 <span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">→ Word has multiple senses!</span></span>
-</code></pre>
-<p><strong>3. Domain Vocabulary Analysis:</strong></p>
-<pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Medical corpus visualization:</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">Cluster 1: symptoms (fever, cough...)</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">Cluster 2: treatments (aspirin, surgery...)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">Cluster 3: anatomy (heart, liver...)</span></span>
-</code></pre>
-</div>
-<div class="column">
-<p><strong>4. Model Layer Comparison:</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Extract embeddings from different layers</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">layer_1 = get_bert_layer(1) # Syntax</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">layer_6 = get_bert_layer(6) # Semantics</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">layer_12 = get_bert_layer(12) # Task-specific</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># Visualize each: different structure!</span></span>
-</code></pre>
-<p><strong>5. Document Clustering:</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Visualize document embeddings</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">doc_embeddings = model.encode(documents)</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">umap_2d = umap.UMAP().fit_transform(</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> doc_embeddings)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># Color by topic → see topic separation</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">plt.scatter(umap_2d[:, 0], umap_2d[:, 1],</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> c=topic_labels)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># Embeddings are very similar!</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"># &quot;not&quot; should flip the meaning</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">cosine_sim(sent1, sent2) ≈ 0.85</span></span>
 </code></pre>
 </div>
 </div>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-70" data-theme="cdl-theme" lang="C" class="scale-70" data-marpit-pagination="28" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-70;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="17" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 
-<h1 id="case-study-visualizing-bert-layers">Case Study: Visualizing BERT Layers</h1>
-<p><strong>Question:</strong> What do different BERT layers capture?</p>
+<h1 id="grand-discussion">Grand Discussion</h1>
+<p><strong>Do large language models &quot;understand&quot; language?</strong></p>
 <div class="columns">
 <div class="column">
-<p><strong>Approach:</strong></p>
-<ol>
-<li>Extract embeddings from each layer</li>
-<li>Apply UMAP to each layer separately</li>
-<li>Visualize and compare</li>
-</ol>
-<p><strong>Typical Findings:</strong></p>
+<p><strong>Arguments FOR:</strong></p>
 <ul>
-<li><strong>Layer 0-2:</strong> Syntactic (POS tags cluster)</li>
-<li><strong>Layer 3-8:</strong> Semantic (meaning clusters)</li>
-<li><strong>Layer 9-12:</strong> Task-specific</li>
+<li>Solve complex tasks</li>
+<li>Generalize to new domains</li>
+<li>Show emergent capabilities</li>
+<li>Capture linguistic structure</li>
+<li>Pragmatic criterion: if it works...</li>
+<li>Maybe understanding = prediction</li>
+<li>Human understanding also imperfect</li>
 </ul>
-<p><strong>Insights:</strong></p>
-<ul>
-<li>Lower layers: syntax</li>
-<li>Middle layers: semantics</li>
-<li>Upper layers: task adaptation</li>
-<li>Confirms linguistic hierarchy</li>
-</ul>
+<p><em>&quot;The question is not whether machines think, but whether they behave intelligently&quot; - Turing</em></p>
 </div>
 <div class="column">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import BertModel, BertTokenizer</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">model = BertModel.from_pretrained(&#x27;bert-base-uncased&#x27;, output_hidden_states=True)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">tokenizer = BertTokenizer.from_pretrained(&#x27;bert-base-uncased&#x27;)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># Get embeddings from all layers</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">tokens = tokenizer(sentences, return_tensors=&#x27;pt&#x27;, padding=True)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">outputs = model(**tokens)</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="29" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="case-study-visualizing-bert-layers-1">Case Study: Visualizing BERT Layers</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="9">
-<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"># outputs.hidden_states: tuple of 13 tensors</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"># (embedding layer + 12 transformer layers)</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">for layer_idx in range(13):</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"> layer_embeddings = outputs.hidden_states[layer_idx]</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"> # Average over sequence length</span></span>
-</code></pre>
-<div class="code-continued-indicator">...continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="30" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="case-study-visualizing-bert-layers-2">Case Study: Visualizing BERT Layers</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="17">
-<span class="line"><span class="line-num">17</span><span class="line-code"> avg_embeddings = layer_embeddings.mean(dim=1).numpy()</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code"> # Apply UMAP</span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code"> reducer = umap.UMAP(n_components=2)</span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code"> viz_2d = reducer.fit_transform(avg_embeddings)</span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code"> # Plot</span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code"> plt.figure()</span></span>
-</code></pre>
-<div class="code-continued-indicator">...continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="31" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="31" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-<h1 id="case-study-visualizing-bert-layers-3">Case Study: Visualizing BERT Layers</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="25">
-<span class="line"><span class="line-num">25</span><span class="line-code"> plt.scatter(viz_2d[:, 0], viz_2d[:, 1], c=pos_tags)</span></span>
-<span class="line"><span class="line-num">26</span><span class="line-code"> plt.title(f&#x27;Layer {layer_idx}&#x27;)</span></span>
-<span class="line"><span class="line-num">27</span><span class="line-code"> plt.show()</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-</div>
-</div>
-<p><em>Reference: Jawahar et al. (2019). &quot;What Does BERT Learn about the Structure of Language?&quot;</em></p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="32" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="32" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="discussion-question">Discussion Question</h1>
-<p><strong>What does a 2D visualization actually tell us about 300D space?</strong></p>
-<p><strong>Consider:</strong></p>
+<p><strong>Arguments AGAINST:</strong></p>
 <ul>
-<li>We compress 300 dimensions into 2</li>
-<li>Massive information loss (&gt;99%)</li>
-<li>Different methods show different views</li>
-<li>Hyperparameters change the story</li>
+<li>No grounding in reality</li>
+<li>No embodied experience</li>
+<li>No intentionality</li>
+<li>Brittle, exploit shortcuts</li>
+<li>Hallucinate confidently</li>
+<li>No causal reasoning</li>
+<li>Missing common sense</li>
+<li>Form without meaning</li>
 </ul>
-<div class="columns">
-<div class="column">
-<p><strong>What we CAN conclude:</strong></p>
-<ul>
-<li>Rough semantic groupings</li>
-<li>Relative proximities</li>
-<li>Cluster existence</li>
-<li>Outliers and anomalies</li>
-<li>Qualitative patterns</li>
-</ul>
-</div>
-<div class="column">
-<p><strong>What we CANNOT conclude:</strong></p>
-<ul>
-<li>Exact distances</li>
-<li>True high-D structure</li>
-<li>Cluster sizes (t-SNE)</li>
-<li>Between-cluster distances</li>
-<li>Quantitative relationships</li>
-</ul>
+<p><em>&quot;Understanding requires grounding in perception and action&quot; - Embodied cognition</em></p>
 </div>
 </div>
 <div class="callout warning">
-<div class="callout-title">Important</div>
-<p>Dimensionality reduction is a . Always combine visualization with quantitative evaluation!</p>
+<div class="callout-title">Perhaps the wrong question?</div>
+<p>Instead of &quot;Do they understand?&quot;, ask: What do they represent? How does it differ from humans? What are the limits?</p>
 </div>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="33" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" data-marpit-pagination="33" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--class:scale-78;--theme:cdl-theme;" data-marpit-pagination-total="36">
-<header>PSYC 51.17: Models of Language and Communication - Week 4</header>
-
-<h1 id="practical-tips">Practical Tips</h1>
-<ol>
-<li><strong>Choose the right tool:</strong></li>
-</ol>
-<ul>
-<li>Default: UMAP (fast, balanced)</li>
-<li>Need speed: PCA</li>
-<li>Small dataset, only local: t-SNE</li>
-</ul>
-<ol start="2">
-<li><strong>Preprocessing matters:</strong></li>
-</ol>
-<ul>
-<li>StandardScaler for PCA</li>
-<li>Consider normalization for UMAP/t-SNE</li>
-<li>Remove extreme outliers</li>
-</ul>
-<ol start="3">
-<li><strong>Try multiple settings:</strong></li>
-</ol>
-<ul>
-<li>Run with different hyperparameters</li>
-<li>Compare results</li>
-<li>Don't cherry-pick!</li>
-</ul>
-<ol start="4">
-<li><strong>Use color wisely:</strong></li>
-</ol>
-<ul>
-<li>Semantic categories</li>
-<li>Continuous values (frequency, sentiment)</li>
-<li>Consider colorblind-friendly palettes</li>
-</ul>
-<ol start="5">
-<li><strong>Save your random seeds:</strong></li>
-</ol>
-<ul>
-<li>Makes results reproducible</li>
-<li>Important for publications</li>
-<li>Helps debugging</li>
-</ul>
-<ol start="6">
-<li><strong>Computational tips:</strong></li>
-</ol>
-<ul>
-<li>For $&gt;$100k points: PCA first to 50D, then UMAP</li>
-<li>Use n_jobs=-1 for parallel computation</li>
-<li>Consider approximate nearest neighbors (Annoy, FAISS)</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="34" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="34" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="18" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 <h1 id="summary">Summary</h1>
 <p><strong>What we learned today:</strong></p>
 <ol>
-<li><strong>Curse of Dimensionality:</strong> High-D space is weird, need reduction</li>
-<li><strong>PCA:</strong></li>
+<li><strong>Symbol Grounding:</strong> Computational models lack perceptual grounding</li>
+<li><strong>Embodied Cognition:</strong> Human meaning tied to bodily experience</li>
+<li><strong>Distributional Semantics:</strong> Powerful but incomplete theory</li>
+<li><strong>Semantic Similarity:</strong> Multiple types, models capture some</li>
+<li><strong>Empirical Evidence:</strong> Models align with neural patterns but miss multimodality</li>
+<li><strong>Common Sense:</strong> Models struggle with physical and social reasoning</li>
+<li><strong>Compositionality:</strong> Non-literal language remains challenging</li>
 </ol>
-<ul>
-<li>Linear, fast, preserves global structure</li>
-<li>Good for preprocessing and quick exploration</li>
-</ul>
-<ol start="3">
-<li><strong>t-SNE:</strong></li>
-</ol>
-<ul>
-<li>Non-linear, preserves local structure</li>
-<li>Beautiful visualizations but slow</li>
-<li>Sensitive to hyperparameters</li>
-</ul>
-<ol start="4">
-<li><strong>UMAP:</strong></li>
-</ol>
-<ul>
-<li>Fast, scalable, balanced local+global</li>
-<li>Best default choice for NLP</li>
-<li>Can transform new points</li>
-</ul>
-<ol start="5">
-<li><strong>Best Practices:</strong></li>
-</ol>
-<ul>
-<li>Try multiple methods and parameters</li>
-<li>Use interactive visualizations</li>
-<li>Don't over-interpret 2D projections</li>
-</ul>
-<p><strong>Next: Cognitive models of semantic representation!</strong></p>
+<p><strong>The gap between computation and cognition remains, but we're making progress!</strong></p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="35" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="35" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="19" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 <h1 id="key-references">Key References</h1>
 <p><strong>Foundational Papers:</strong></p>
 <ul>
-<li>Pearson, K. (1901). &quot;On Lines and Planes of Closest Fit to Systems of Points in Space&quot; (PCA)</li>
-<li>van der Maaten &amp; Hinton (2008). &quot;Visualizing Data using t-SNE&quot;</li>
-<li>McInnes et al. (2018). &quot;UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction&quot;</li>
+<li>Searle, J. (1980). &quot;Minds, Brains, and Programs&quot;</li>
+<li>Harnad, S. (1990). &quot;The Symbol Grounding Problem&quot;</li>
+<li>Barsalou, L. (2008). &quot;Grounded Cognition&quot;</li>
+<li>Gärdenfors, P. (2000). &quot;Conceptual Spaces: The Geometry of Thought&quot;</li>
 </ul>
-<p><strong>Applications:</strong></p>
+<p><strong>Distributional Semantics:</strong></p>
 <ul>
-<li>Jawahar et al. (2019). &quot;What Does BERT Learn about the Structure of Language?&quot;</li>
-<li>Coenen et al. (2019). &quot;Visualizing and Measuring the Geometry of BERT&quot;</li>
+<li>Firth, J.R. (1957). &quot;A Synopsis of Linguistic Theory&quot;</li>
+<li>Boleda, G. (2020). &quot;Distributional Semantics and Linguistic Theory&quot;</li>
+<li>Hill et al. (2015). &quot;SimLex-999&quot;</li>
 </ul>
-<p><strong>Guides &amp; Tutorials:</strong></p>
+<p><strong>Critical Perspectives:</strong></p>
 <ul>
-<li>Wattenberg et al. (2016). &quot;How to Use t-SNE Effectively&quot; (Distill)</li>
-<li>UMAP documentation: <a href="https://umap-learn.readthedocs.io/">https://umap-learn.readthedocs.io/</a></li>
-<li>Scikit-learn User Guide: <a href="https://scikit-learn.org/stable/modules/manifold.html">https://scikit-learn.org/stable/modules/manifold.html</a></li>
-</ul>
-<p><strong>Tools:</strong></p>
-<ul>
-<li>Scikit-learn: PCA, t-SNE</li>
-<li>UMAP-learn: <code>pip install umap-learn</code></li>
-<li>Plotly: <code>pip install plotly</code></li>
+<li>Bender &amp; Koller (2020). &quot;Climbing towards NLU&quot;</li>
+<li>Bender et al. (2021). &quot;On the Dangers of Stochastic Parrots&quot;</li>
 </ul>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="36" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="36" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="36">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication - Week 4" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="20" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication - Week 4;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="20">
 <header>PSYC 51.17: Models of Language and Communication - Week 4</header>
 <h1 id="questions">Questions?</h1>
-<p><strong>Next Lecture:</strong></p>
-<p>Cognitive Models of Semantic Representation</p>
-<p><em>How do humans represent meaning?</em></p>
+<p><strong>Next Week:</strong></p>
+<p>Advanced Topics in Language Models</p>
+<p><em>Scaling, emergent abilities, and the future of NLP</em></p>
 <footer>Winter 2026</footer>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();
-</script></foreignObject></svg></div><div class="bespoke-marp-note" data-index="5" tabindex="0"><p>Timeline - see original for details</p></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@4.1.2/lib/bespoke.js.LICENSE.txt */
+</script></foreignObject></svg></div><div class="bespoke-marp-note" data-index="10" tabindex="0"><p>Flowchart - see original for structure</p></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@4.1.2/lib/bespoke.js.LICENSE.txt */
 !function(){"use strict";function e(e){return e&&e.__esModule&&Object.prototype.hasOwnProperty.call(e,"default")?e.default:e}var t,n,r=(n||(n=1,t={from:function(e,t){var n,r=1===(e.parent||e).nodeType?e.parent||e:document.querySelector(e.parent||e),o=[].filter.call("string"==typeof e.slides?r.querySelectorAll(e.slides):e.slides||r.children,(function(e){return"SCRIPT"!==e.nodeName})),a={},i=function(e,t){return(t=t||{}).index=o.indexOf(e),t.slide=e,t},s=function(e,t){a[e]=(a[e]||[]).filter((function(e){return e!==t}))},c=function(e,t){return(a[e]||[]).reduce((function(e,n){return e&&!1!==n(t)}),!0)},l=function(e,t){o[e]&&(n&&c("deactivate",i(n,t)),n=o[e],c("activate",i(n,t)))},d=function(e,t){var r=o.indexOf(n)+e;c(e>0?"next":"prev",i(n,t))&&l(r,t)},u={off:s,on:function(e,t){return(a[e]||(a[e]=[])).push(t),s.bind(null,e,t)},fire:c,slide:function(e,t){if(!arguments.length)return o.indexOf(n);c("slide",i(o[e],t))&&l(e,t)},next:d.bind(null,1),prev:d.bind(null,-1),parent:r,slides:o,destroy:function(e){c("destroy",i(n,e)),a={}}};return(t||[]).forEach((function(e){e(u)})),n||l(0),u}}),t),o=e(r);const a=document.body,i=(...e)=>history.replaceState(...e),s="",c="presenter",l="next",d=["",c,l],u="bespoke-marp-",f=`data-${u}`,m=(e,{protocol:t,host:n,pathname:r,hash:o}=location)=>{const a=e.toString();return`${t}//${n}${r}${a?"?":""}${a}${o}`},g=()=>a.dataset.bespokeView,p=e=>new URLSearchParams(location.search).get(e),v=(e,t={})=>{const n={location,setter:i,...t},r=new URLSearchParams(n.location.search);for(const t of Object.keys(e)){const n=e[t];"string"==typeof n?r.set(t,n):r.delete(t)}try{n.setter({...window.history.state??{}},"",m(r,n.location))}catch(e){console.error(e)}},h=(()=>{const e="bespoke-marp";try{return localStorage.setItem(e,e),localStorage.removeItem(e),!0}catch{return!1}})(),y=e=>{try{return localStorage.getItem(e)}catch{return null}},b=(e,t)=>{try{return localStorage.setItem(e,t),!0}catch{return!1}},w=e=>{try{return localStorage.removeItem(e),!0}catch{return!1}},x=(e,t)=>{const n="aria-hidden";t?e.setAttribute(n,"true"):e.removeAttribute(n)},k=e=>{e.parent.classList.add(`${u}parent`),e.slides.forEach((e=>e.classList.add(`${u}slide`))),e.on("activate",(t=>{const n=`${u}active`,r=t.slide,o=r.classList,a=!o.contains(n);if(e.slides.forEach((e=>{e.classList.remove(n),x(e,!0)})),o.add(n),x(r,!1),a){const e=`${n}-ready`;o.add(e),document.body.clientHeight,o.remove(e)}}))},$=e=>{let t=0,n=0;Object.defineProperty(e,"fragments",{enumerable:!0,value:e.slides.map((e=>[null,...e.querySelectorAll("[data-marpit-fragment]")]))});const r=r=>void 0!==e.fragments[t][n+r],o=(r,o)=>{t=r,n=o,e.fragments.forEach(((e,t)=>{e.forEach(((e,n)=>{if(null==e)return;const a=t<r||t===r&&n<=o;e.setAttribute(`${f}fragment`,(a?"":"in")+"active");const i=`${f}current-fragment`;t===r&&n===o?e.setAttribute(i,"current"):e.removeAttribute(i)}))})),e.fragmentIndex=o;const a={slide:e.slides[r],index:r,fragments:e.fragments[r],fragmentIndex:o};e.fire("fragment",a)};e.on("next",(({fragment:a=!0})=>{if(a){if(r(1))return o(t,n+1),!1;const a=t+1;e.fragments[a]&&o(a,0)}else{const r=e.fragments[t].length;if(n+1<r)return o(t,r-1),!1;const a=e.fragments[t+1];a&&o(t+1,a.length-1)}})),e.on("prev",(({fragment:a=!0})=>{if(r(-1)&&a)return o(t,n-1),!1;const i=t-1;e.fragments[i]&&o(i,e.fragments[i].length-1)})),e.on("slide",(({index:t,fragment:n})=>{let r=0;if(void 0!==n){const o=e.fragments[t];if(o){const{length:e}=o;r=-1===n?e-1:Math.min(Math.max(n,0),e-1)}}o(t,r)})),o(0,0)},E=document,L=()=>!(!E.fullscreenEnabled&&!E.webkitFullscreenEnabled),S=()=>!(!E.fullscreenElement&&!E.webkitFullscreenElement),P=e=>{e.fullscreen=()=>{L()&&(async()=>{S()?(E.exitFullscreen||E.webkitExitFullscreen)?.call(E):((e=E.body)=>{(e.requestFullscreen||e.webkitRequestFullscreen)?.call(e)})()})()},document.addEventListener("keydown",(t=>{"f"!==t.key&&"F11"!==t.key||t.altKey||t.ctrlKey||t.metaKey||!L()||(e.fullscreen(),t.preventDefault())}))},_=`${u}inactive`,T=(e=2e3)=>({parent:t,fire:n})=>{const r=t.classList,o=e=>n(`marp-${e?"":"in"}active`);let a;const i=()=>{a&&clearTimeout(a),a=setTimeout((()=>{r.add(_),o()}),e),r.contains(_)&&(r.remove(_),o(!0))};for(const e of["mousedown","mousemove","touchend"])document.addEventListener(e,i);setTimeout(i,0)},I=["AUDIO","BUTTON","INPUT","SELECT","TEXTAREA","VIDEO"],M=e=>{e.parent.addEventListener("keydown",(e=>{if(!e.target)return;const t=e.target;(I.includes(t.nodeName)||"true"===t.contentEditable)&&e.stopPropagation()}))},O=e=>{window.addEventListener("load",(()=>{for(const t of e.slides){const e=t.querySelector("marp-auto-scaling, [data-auto-scaling], [data-marp-fitting]");t.setAttribute(`${f}load`,e?"":"hideable")}}))},A=({interval:e=250}={})=>t=>{document.addEventListener("keydown",(e=>{if(" "===e.key&&e.shiftKey)t.prev();else if("ArrowLeft"===e.key||"ArrowUp"===e.key||"PageUp"===e.key)t.prev({fragment:!e.shiftKey});else if(" "!==e.key||e.shiftKey)if("ArrowRight"===e.key||"ArrowDown"===e.key||"PageDown"===e.key)t.next({fragment:!e.shiftKey});else if("End"===e.key)t.slide(t.slides.length-1,{fragment:-1});else{if("Home"!==e.key)return;t.slide(0)}else t.next();e.preventDefault()}));let n,r,o=0;t.parent.addEventListener("wheel",(a=>{let i=!1;const s=(e,t)=>{e&&(i=i||((e,t)=>((e,t)=>{const n="X"===t?"Width":"Height";return e[`client${n}`]<e[`scroll${n}`]})(e,t)&&((e,t)=>{const{overflow:n}=e,r=e[`overflow${t}`];return"auto"===n||"scroll"===n||"auto"===r||"scroll"===r})(getComputedStyle(e),t))(e,t)),e?.parentElement&&s(e.parentElement,t)};if(0!==a.deltaX&&s(a.target,"X"),0!==a.deltaY&&s(a.target,"Y"),i)return;a.preventDefault();const c=Math.sqrt(a.deltaX**2+a.deltaY**2);if(void 0!==a.wheelDelta){if(void 0===a.webkitForce&&Math.abs(a.wheelDelta)<40)return;if(a.deltaMode===a.DOM_DELTA_PIXEL&&c<4)return}else if(a.deltaMode===a.DOM_DELTA_PIXEL&&c<12)return;r&&clearTimeout(r),r=setTimeout((()=>{n=0}),e);const l=Date.now()-o<e,d=c<=n;if(n=c,l||d)return;let u;(a.deltaX>0||a.deltaY>0)&&(u="next"),(a.deltaX<0||a.deltaY<0)&&(u="prev"),u&&(t[u](),o=Date.now())}))},C=(e=`.${u}osc`)=>{const t=document.querySelector(e);if(!t)return()=>{};const n=(e,n)=>{t.querySelectorAll(`[${f}osc=${JSON.stringify(e)}]`).forEach(n)};return L()||n("fullscreen",(e=>e.style.display="none")),h||n("presenter",(e=>{e.disabled=!0,e.title="Presenter view is disabled due to restricted localStorage."})),e=>{t.addEventListener("click",(t=>{if(t.target instanceof HTMLElement){const{bespokeMarpOsc:n}=t.target.dataset;n&&t.target.blur();const r={fragment:!t.shiftKey};"next"===n?e.next(r):"prev"===n?e.prev(r):"fullscreen"===n?e?.fullscreen():"presenter"===n&&e.openPresenterView()}})),e.parent.appendChild(t),e.on("activate",(({index:t})=>{n("page",(n=>n.textContent=`Page ${t+1} of ${e.slides.length}`))})),e.on("fragment",(({index:t,fragments:r,fragmentIndex:o})=>{n("prev",(e=>e.disabled=0===t&&0===o)),n("next",(n=>n.disabled=t===e.slides.length-1&&o===r.length-1))})),e.on("marp-active",(()=>x(t,!1))),e.on("marp-inactive",(()=>x(t,!0))),L()&&(e=>{for(const t of["","webkit"])E.addEventListener(t+"fullscreenchange",e)})((()=>n("fullscreen",(e=>e.classList.toggle("exit",L()&&S())))))}},D=e=>{window.addEventListener("message",(t=>{if(t.origin!==window.origin)return;const[n,r]=t.data.split(":");if("navigate"===n){const[t,n]=r.split(",");let o=Number.parseInt(t,10),a=Number.parseInt(n,10)+1;a>=e.fragments[o].length&&(o+=1,a=0),e.slide(o,{fragment:a})}}))};var N,B,q,K,j,F,V,U={exports:{}},X=(N||(N=1,U.exports=(B=["area","base","br","col","command","embed","hr","img","input","keygen","link","meta","param","source","track","wbr"],q=function(e){return String(e).replace(/[&<>"']/g,(function(e){return"&"+K[e]+";"}))},K={"&":"amp","<":"lt",">":"gt",'"':"quot","'":"apos"},j="dangerouslySetInnerHTML",F={className:"class",htmlFor:"for"},V={},function(e,t){var n=[],r="";t=t||{};for(var o=arguments.length;o-- >2;)n.push(arguments[o]);if("function"==typeof e)return t.children=n.reverse(),e(t);if(e){if(r+="<"+e,t)for(var a in t)!1!==t[a]&&null!=t[a]&&a!==j&&(r+=" "+(F[a]?F[a]:q(a))+'="'+q(t[a])+'"');r+=">"}if(-1===B.indexOf(e)){if(t[j])r+=t[j].__html;else for(;n.length;){var i=n.pop();if(i)if(i.pop)for(var s=i.length;s--;)n.push(i[s]);else r+=!0===V[i]?i:q(i)}r+=e?"</"+e+">":""}return V[r]=!0,r})),U.exports),H=e(X);const R=({children:e})=>H(null,null,...e),W=`${u}presenter-`,J={container:`${W}container`,dragbar:`${W}dragbar-container`,next:`${W}next`,nextContainer:`${W}next-container`,noteContainer:`${W}note-container`,noteWrapper:`${W}note-wrapper`,noteButtons:`${W}note-buttons`,infoContainer:`${W}info-container`,infoPage:`${W}info-page`,infoPageText:`${W}info-page-text`,infoPagePrev:`${W}info-page-prev`,infoPageNext:`${W}info-page-next`,noteButtonsBigger:`${W}note-bigger`,noteButtonsSmaller:`${W}note-smaller`,infoTime:`${W}info-time`,infoTimer:`${W}info-timer`},Y=e=>{const{title:t}=document;document.title="[Presenter view]"+(t?` - ${t}`:"");const n={},r=e=>(n[e]=n[e]||document.querySelector(`.${e}`),n[e]);document.body.appendChild((e=>{const t=document.createElement("div");return t.className=J.container,t.appendChild(e),t.insertAdjacentHTML("beforeend",H(R,null,H("div",{class:J.nextContainer},H("iframe",{class:J.next,src:"?view=next"})),H("div",{class:J.dragbar}),H("div",{class:J.noteContainer},H("div",{class:J.noteWrapper}),H("div",{class:J.noteButtons},H("button",{class:J.noteButtonsSmaller,tabindex:"-1",title:"Smaller notes font size"},"Smaller notes font size"),H("button",{class:J.noteButtonsBigger,tabindex:"-1",title:"Bigger notes font size"},"Bigger notes font size"))),H("div",{class:J.infoContainer},H("div",{class:J.infoPage},H("button",{class:J.infoPagePrev,tabindex:"-1",title:"Previous"},"Previous"),H("span",{class:J.infoPageText}),H("button",{class:J.infoPageNext,tabindex:"-1",title:"Next"},"Next")),H("time",{class:J.infoTime,title:"Current time"}),H("time",{class:J.infoTimer,title:"Timer"})))),t})(e.parent)),(e=>{let t=!1;r(J.dragbar).addEventListener("mousedown",(()=>{t=!0,r(J.dragbar).classList.add("active")})),window.addEventListener("mouseup",(()=>{t=!1,r(J.dragbar).classList.remove("active")})),window.addEventListener("mousemove",(e=>{if(!t)return;const n=e.clientX/document.documentElement.clientWidth*100;r(J.container).style.setProperty("--bespoke-marp-presenter-split-ratio",`${Math.max(0,Math.min(100,n))}%`)})),r(J.nextContainer).addEventListener("click",(()=>e.next()));const n=r(J.next),o=(a=n,(e,t)=>a.contentWindow?.postMessage(`navigate:${e},${t}`,"null"===window.origin?"*":window.origin));var a;n.addEventListener("load",(()=>{r(J.nextContainer).classList.add("active"),o(e.slide(),e.fragmentIndex),e.on("fragment",(({index:e,fragmentIndex:t})=>o(e,t)))}));const i=document.querySelectorAll(".bespoke-marp-note");i.forEach((e=>{e.addEventListener("keydown",(e=>e.stopPropagation())),r(J.noteWrapper).appendChild(e)})),e.on("activate",(()=>i.forEach((t=>t.classList.toggle("active",t.dataset.index==e.slide())))));let s=0;const c=e=>{s=Math.max(-5,s+e),r(J.noteContainer).style.setProperty("--bespoke-marp-note-font-scale",(1.2**s).toFixed(4))},l=()=>c(1),d=()=>c(-1),u=r(J.noteButtonsBigger),f=r(J.noteButtonsSmaller);u.addEventListener("click",(()=>{u.blur(),l()})),f.addEventListener("click",(()=>{f.blur(),d()})),document.addEventListener("keydown",(e=>{"+"===e.key&&l(),"-"===e.key&&d()}),!0),e.on("activate",(({index:t})=>{r(J.infoPageText).textContent=`${t+1} / ${e.slides.length}`}));const m=r(J.infoPagePrev),g=r(J.infoPageNext);m.addEventListener("click",(t=>{m.blur(),e.prev({fragment:!t.shiftKey})})),g.addEventListener("click",(t=>{g.blur(),e.next({fragment:!t.shiftKey})})),e.on("fragment",(({index:t,fragments:n,fragmentIndex:r})=>{m.disabled=0===t&&0===r,g.disabled=t===e.slides.length-1&&r===n.length-1}));let p=new Date;const v=()=>{const e=new Date,t=e=>`${Math.floor(e)}`.padStart(2,"0"),n=e.getTime()-p.getTime(),o=t(n/1e3%60),a=t(n/1e3/60%60),i=t(n/36e5%24);r(J.infoTime).textContent=e.toLocaleTimeString(),r(J.infoTimer).textContent=`${i}:${a}:${o}`};v(),setInterval(v,250),r(J.infoTimer).addEventListener("click",(()=>{p=new Date}))})(e)},z=e=>{if(!(e=>e.syncKey&&"string"==typeof e.syncKey)(e))throw new Error("The current instance of Bespoke.js is invalid for Marp bespoke presenter plugin.");Object.defineProperties(e,{openPresenterView:{enumerable:!0,value:G},presenterUrl:{enumerable:!0,get:Q}}),h&&document.addEventListener("keydown",(t=>{"p"!==t.key||t.altKey||t.ctrlKey||t.metaKey||(t.preventDefault(),e.openPresenterView())}))};function G(){const{max:e,floor:t}=Math,n=e(t(.85*window.innerWidth),640),r=e(t(.85*window.innerHeight),360);return window.open(this.presenterUrl,W+this.syncKey,`width=${n},height=${r},menubar=no,toolbar=no`)}function Q(){const e=new URLSearchParams(location.search);return e.set("view","presenter"),e.set("sync",this.syncKey),m(e)}const Z=e=>{const t=g();return t===l&&e.appendChild(document.createElement("span")),{[s]:z,[c]:Y,[l]:D}[t]},ee=e=>{e.on("activate",(t=>{document.querySelectorAll(".bespoke-progress-parent > .bespoke-progress-bar").forEach((n=>{n.style.flexBasis=100*t.index/(e.slides.length-1)+"%"}))}))},te=e=>{const t=Number.parseInt(e,10);return Number.isNaN(t)?null:t},ne=(e={})=>{const t={history:!0,...e};return e=>{let n=!0;const r=e=>{const t=n;try{return n=!0,e()}finally{n=t}},o=(t={fragment:!0})=>{let n=t.fragment?te(p("f")||""):null;((t,n)=>{const{min:r,max:o}=Math,{fragments:a,slides:i}=e,s=o(0,r(t,i.length-1)),c=o(0,r(n||0,a[s].length-1));s===e.slide()&&c===e.fragmentIndex||e.slide(s,{fragment:c})})((()=>{if(location.hash){const[t]=location.hash.slice(1).split(":~:");if(/^\d+$/.test(t))return(te(t)??1)-1;const r=document.getElementById(t)||document.querySelector(`a[name="${CSS.escape(t)}"]`);if(r){const{length:t}=e.slides;for(let o=0;o<t;o+=1)if(e.slides[o].contains(r)){const t=e.fragments?.[o],a=r.closest("[data-marpit-fragment]");if(t&&a){const e=t.indexOf(a);e>=0&&(n=e)}return o}}}return 0})(),n)};e.on("fragment",(({index:e,fragmentIndex:r})=>{n||v({f:0===r||r.toString()},{location:{...location,hash:`#${e+1}`},setter:(...e)=>t.history?history.pushState(...e):history.replaceState(...e)})})),setTimeout((()=>{o(),window.addEventListener("hashchange",(()=>r((()=>{o({fragment:!1}),v({f:void 0})})))),window.addEventListener("popstate",(()=>{n||r((()=>o()))})),n=!1}),0)}},re=(e={})=>{const t=e.key||window.history.state?.marpBespokeSyncKey||Math.random().toString(36).slice(2),n=`bespoke-marp-sync-${t}`;var r;r={marpBespokeSyncKey:t},v({},{setter:(e,...t)=>i({...e,...r},...t)});const o=()=>{const e=y(n);return e?JSON.parse(e):Object.create(null)},a=e=>{const t=o(),r={...t,...e(t)};return b(n,JSON.stringify(r)),r},s=()=>{window.removeEventListener("pageshow",s),a((e=>({reference:(e.reference||0)+1})))};return e=>{s(),Object.defineProperty(e,"syncKey",{value:t,enumerable:!0});let r=!0;setTimeout((()=>{e.on("fragment",(e=>{r&&a((()=>({index:e.index,fragmentIndex:e.fragmentIndex})))}))}),0),window.addEventListener("storage",(t=>{if(t.key===n&&t.oldValue&&t.newValue){const n=JSON.parse(t.oldValue),o=JSON.parse(t.newValue);if(n.index!==o.index||n.fragmentIndex!==o.fragmentIndex)try{r=!1,e.slide(o.index,{fragment:o.fragmentIndex,forSync:!0})}finally{r=!0}}}));const i=()=>{const{reference:e}=o();void 0===e||e<=1?w(n):a((()=>({reference:e-1})))};window.addEventListener("pagehide",(e=>{e.persisted&&window.addEventListener("pageshow",s),i()})),e.on("destroy",i)}},{PI:oe,abs:ae,sqrt:ie,atan2:se}=Math,ce={passive:!0},le=({slope:e=-.7,swipeThreshold:t=30}={})=>n=>{let r;const o=n.parent,a=e=>{const t=o.getBoundingClientRect();return{x:e.pageX-(t.left+t.right)/2,y:e.pageY-(t.top+t.bottom)/2}};o.addEventListener("touchstart",(({touches:e})=>{r=1===e.length?a(e[0]):void 0}),ce),o.addEventListener("touchmove",(e=>{if(r)if(1===e.touches.length){e.preventDefault();const t=a(e.touches[0]),n=t.x-r.x,o=t.y-r.y;r.delta=ie(ae(n)**2+ae(o)**2),r.radian=se(n,o)}else r=void 0})),o.addEventListener("touchend",(o=>{if(r){if(r.delta&&r.delta>=t&&r.radian){const t=(r.radian-e+oe)%(2*oe)-oe;n[t<0?"next":"prev"](),o.stopPropagation()}r=void 0}}),ce)},de=new Map;de.clear(),de.set("none",{backward:{both:void 0,incoming:void 0,outgoing:void 0},forward:{both:void 0,incoming:void 0,outgoing:void 0}});const ue={both:"",outgoing:"outgoing-",incoming:"incoming-"},fe={forward:"",backward:"-backward"},me=e=>`--marp-bespoke-transition-animation-${e}`,ge=e=>`--marp-transition-${e}`,pe=me("name"),ve=me("duration"),he=e=>new Promise((t=>{const n={},r=document.createElement("div"),o=e=>{r.remove(),t(e)};r.addEventListener("animationstart",(()=>o(n))),Object.assign(r.style,{animationName:e,animationDuration:"1s",animationFillMode:"both",animationPlayState:"paused",position:"absolute",pointerEvents:"none"}),document.body.appendChild(r);const a=getComputedStyle(r).getPropertyValue(ge("duration"));a&&(n.defaultDuration=a),((e,t)=>{requestAnimationFrame((()=>{e.style.animationPlayState="running",requestAnimationFrame((()=>t(void 0)))}))})(r,o)})),ye=async e=>de.has(e)?de.get(e):(e=>{const t={},n=[];for(const[r,o]of Object.entries(ue))for(const[a,i]of Object.entries(fe)){const s=`marp-${o}transition${i}-${e}`;n.push(he(s).then((e=>{t[a]=t[a]||{},t[a][r]=e?{...e,name:s}:void 0})))}return Promise.all(n).then((()=>t))})(e).then((t=>(de.set(e,t),t))),be=e=>Object.values(e).flatMap(Object.values).every((e=>!e)),we=(e,{type:t,backward:n})=>{const r=e[n?"backward":"forward"],o=(()=>{const e=r[t],n=e=>({[pe]:e.name});if(e)return n(e);if(r.both){const e=n(r.both);return"incoming"===t&&(e[me("direction")]="reverse"),e}})();return!o&&n?we(e,{type:t,backward:!1}):o||{[pe]:"__bespoke_marp_transition_no_animation__"}},xe=e=>{if(e)try{const t=JSON.parse(e);if((e=>{if("object"!=typeof e)return!1;const t=e;return"string"==typeof t.name&&(void 0===t.duration||"string"==typeof t.duration)})(t))return t}catch{}},ke="_tSId",$e="_tA",Ee="bespoke-marp-transition-warming-up",Le=window.matchMedia("(prefers-reduced-motion: reduce)"),Se="__bespoke_marp_transition_reduced_outgoing__",Pe="__bespoke_marp_transition_reduced_incoming__",_e={forward:{both:void 0,incoming:{name:Pe},outgoing:{name:Se}},backward:{both:void 0,incoming:{name:Pe},outgoing:{name:Se}}},Te=e=>{if(!document.startViewTransition)return;const t=t=>(void 0!==t&&(e._tD=t),e._tD);let n;t(!1),((...e)=>{const t=[...new Set(e).values()];return Promise.all(t.map((e=>ye(e)))).then()})(...Array.from(document.querySelectorAll("section[data-transition], section[data-transition-back]")).flatMap((e=>[e.dataset.transition,e.dataset.transitionBack].flatMap((e=>{const t=xe(e);return[t?.name,t?.builtinFallback?`__builtin__${t.name}`:void 0]})).filter((e=>!!e))))).then((()=>{document.querySelectorAll("style").forEach((e=>{e.innerHTML=e.innerHTML.replace(/--marp-transition-duration:[^;}]*[;}]/g,(e=>e.slice(0,-1)+"!important"+e.slice(-1)))}))}));const r=(n,{back:r,cond:o})=>a=>{const i=t();if(i)return!!a[$e]||!("object"!=typeof i||(i.skipTransition(),!a.forSync));if(!o(a))return!0;const s=e.slides[e.slide()],c=()=>a.back??r,l="data-transition"+(c()?"-back":""),d=s.querySelector(`section[${l}]`);if(!d)return!0;const u=xe(d.getAttribute(l)??void 0);return!u||((async(e,{builtinFallback:t=!0}={})=>{let n=await ye(e);if(be(n)){if(!t)return;return n=await ye(`__builtin__${e}`),be(n)?void 0:n}return n})(u.name,{builtinFallback:u.builtinFallback}).then((e=>{if(!e){t(!0);try{n(a)}finally{t(!1)}return}let r=e;Le.matches&&(console.warn("Use a constant animation to transition because preferring reduced motion by viewer has detected."),r=_e);const o=document.getElementById(ke);o&&o.remove();const i=document.createElement("style");i.id=ke,document.head.appendChild(i),((e,t)=>{const n=[`:root{${ge("direction")}:${t.backward?-1:1};}`,":root:has(.bespoke-marp-inactive){cursor:none;}"],r=t=>{const n=e[t].both?.defaultDuration||e[t].outgoing?.defaultDuration||e[t].incoming?.defaultDuration;return"forward"===t?n:n||r("forward")},o=t.duration||r(t.backward?"backward":"forward");void 0!==o&&n.push(`::view-transition-group(*){${ve}:${o};}`);const a=e=>Object.entries(e).map((([e,t])=>`${e}:${t};`)).join("");return n.push(`::view-transition-old(root){${a(we(e,{...t,type:"outgoing"}))}}`,`::view-transition-new(root){${a(we(e,{...t,type:"incoming"}))}}`),n})(r,{backward:c(),duration:u.duration}).forEach((e=>i.sheet?.insertRule(e)));const s=document.documentElement.classList;s.add(Ee);let l=!1;const d=()=>{l||(n(a),l=!0,s.remove(Ee))},f=()=>{t(!1),i.remove(),s.remove(Ee)};try{t(!0);const e=document.startViewTransition(d);t(e),e.finished.finally(f)}catch(e){console.error(e),d(),f()}})),!1)};e.on("prev",r((t=>e.prev({...t,[$e]:!0})),{back:!0,cond:e=>e.index>0&&!((e.fragment??1)&&n.fragmentIndex>0)})),e.on("next",r((t=>e.next({...t,[$e]:!0})),{cond:t=>t.index+1<e.slides.length&&!(n.fragmentIndex+1<n.fragments.length)})),setTimeout((()=>{e.on("slide",r((t=>e.slide(t.index,{...t,[$e]:!0})),{cond:t=>{const n=e.slide();return t.index!==n&&(t.back=t.index<n,!0)}}))}),0),e.on("fragment",(e=>{n=e}))};let Ie;const Me=()=>(void 0===Ie&&(Ie="wakeLock"in navigator&&navigator.wakeLock),Ie),Oe=async()=>{const e=Me();if(e)try{return await e.request("screen")}catch(e){console.warn(e)}return null},Ae=async()=>{if(!Me())return;let e;const t=()=>{e&&"visible"===document.visibilityState&&Oe()};for(const e of["visibilitychange","fullscreenchange"])document.addEventListener(e,t);return e=await Oe(),e};((e=document.getElementById(":$p"))=>{(()=>{const e=p("view");a.dataset.bespokeView=e===l||e===c?e:""})();const t=(e=>{const t=p(e);return v({[e]:void 0}),t})("sync")||void 0;o.from(e,((...e)=>{const t=d.findIndex((e=>g()===e));return e.map((([e,n])=>e[t]&&n)).filter((e=>e))})([[1,1,0],re({key:t})],[[1,1,1],Z(e)],[[1,1,0],M],[[1,1,1],k],[[1,0,0],T()],[[1,1,1],O],[[1,1,1],ne({history:!1})],[[1,1,0],A()],[[1,1,0],P],[[1,0,0],ee],[[1,1,0],le()],[[1,0,0],C()],[[1,0,0],Te],[[1,1,1],$],[[1,1,0],Ae]))})()}();</script><script>
 // Chart animation replay and table column alignment for Marp presentations
 // Handles Chart.js animations on slide transitions and detects wrapped table columns

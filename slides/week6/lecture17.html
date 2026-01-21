@@ -695,8 +695,8 @@
 </head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="lead" data-theme="cdl-theme" lang="C" class="lead" data-marpit-pagination="1" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:lead;--theme:cdl-theme;" data-marpit-pagination-total="26">
 <header>PSYC 51.17: Models of Language and Communication</header>
 
-<h1 id="lecture-19-bert-variants">Lecture 19: BERT Variants</h1>
-<h2 id="week-6-lecture-2---improvements-and-optimizations">Week 6, Lecture 2 - Improvements and Optimizations</h2>
+<h1 id="lecture-18-bert-deep-dive">Lecture 18: BERT Deep Dive</h1>
+<h2 id="week-6-lecture-1---bidirectional-encoder-representations">Week 6, Lecture 1 - Bidirectional Encoder Representations</h2>
 <p><strong>PSYC 51.17: Models of Language and Communication</strong></p>
 <p>Winter 2026</p>
 <footer>Winter 2026</footer>
@@ -705,701 +705,678 @@
 <header>PSYC 51.17: Models of Language and Communication</header>
 <h1 id="todays-agenda">Today's Agenda</h1>
 <ol>
-<li><strong>RoBERTa</strong>: Robustly Optimized BERT</li>
-<li><strong>ALBERT</strong>: A Lite BERT with parameter sharing</li>
-<li><strong>DistilBERT</strong>: Knowledge distillation for efficiency</li>
-<li><strong>ELECTRA</strong>: Replace Token Detection</li>
-<li><strong>Comparative Analysis</strong>: When to use which variant</li>
-<li><strong>Practical Considerations</strong>: Model selection guide</li>
+<li><strong>BERT Introduction</strong>: What makes it special?</li>
+<li><strong>Masked Language Modeling</strong>: The key training objective</li>
+<li><strong>BERT Architecture</strong>: Model sizes and specifications</li>
+<li><strong>Pre-training &amp; Fine-tuning</strong>: The two-stage paradigm</li>
+<li><strong>Contextual Embeddings</strong>: Seeing polysemy in action</li>
+<li><strong>Using BERT</strong>: Practical code examples</li>
 </ol>
-<p><em>Goal: Understand improvements to BERT and choose the right model</em></p>
+<p><em>Goal: Deep understanding of BERT and how it revolutionized NLP</em></p>
 <footer>Winter 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="3" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="berts-limitations">BERT's Limitations</h1>
-<p><strong>What could be improved?</strong></p>
-<ol>
-<li><strong>Training Procedure</strong></li>
-</ol>
+<h1 id="bert-bidirectional-encoder-representations">BERT: Bidirectional Encoder Representations</h1>
+<p><strong>BERT = Encoder-only Transformer</strong></p>
+<p><strong>Key Innovation: Masked Language Modeling (MLM)</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>Traditional Language Models:</strong></p>
 <ul>
-<li>Some choices seemed arbitrary</li>
-<li>NSP task might not be useful</li>
-<li>Static masking (same masks every epoch)</li>
+<li>
+<p>Left-to-right (GPT)</p>
+</li>
+<li>
+<p>Or right-to-left</p>
+</li>
+<li>
+<p>Can't see full picture</p>
+</li>
 </ul>
-<ol start="2">
-<li><strong>Model Size</strong></li>
-</ol>
+<p><strong>Example:</strong></p>
 <ul>
-<li>110M (Base) or 340M (Large) parameters</li>
-<li>Large memory footprint</li>
-<li>Slow inference</li>
+<li>&quot;The cat sat on the ___&quot;</li>
+<li>Only sees left context</li>
 </ul>
-<ol start="3">
-<li><strong>Training Efficiency</strong></li>
-</ol>
+</div>
+<div class="column">
+<p><strong>BERT (MLM):</strong></p>
 <ul>
-<li>Only 15% of tokens are predicted</li>
-<li>85% of computation &quot;wasted&quot;?</li>
-<li>Could we learn more efficiently?</li>
+<li>Mask random tokens</li>
+<li>Predict from</li>
+<li>Sees both left &amp; right</li>
+<li>Deeper understanding</li>
 </ul>
-<ol start="4">
-<li><strong>Data and Compute</strong></li>
-</ol>
+<p><strong>Example:</strong></p>
 <ul>
-<li>Trained on limited data (3.3B words)</li>
-<li>Modern datasets much larger</li>
-<li>Could benefit from more training</li>
+<li>&quot;The cat [MASK] on the mat&quot;</li>
+<li>Sees: &quot;The cat&quot; AND &quot;on the mat&quot;</li>
+<li>Predicts: &quot;sat&quot;</li>
 </ul>
-<p><strong>Many variants address these issues!</strong></p>
+</div>
+</div>
+<p><em>Reference: Devlin et al. (2019) - &quot;BERT: Pre-training of Deep Bidirectional Transformers&quot;</em></p>
 <footer>Winter 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="4" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="roberta-robustly-optimized-bert">RoBERTa: Robustly Optimized BERT</h1>
-<p><strong>Key idea: Better training = Better performance</strong></p>
-<p><strong>RoBERTa's Improvements (Liu et al. 2019):</strong></p>
+<h1 id="why-bert-was-revolutionary">Why BERT Was Revolutionary</h1>
+<p><strong>Before BERT (2018):</strong></p>
+<ul>
+<li>Feature-based approaches (use Word2Vec/GloVe as features)</li>
+<li>Task-specific architectures</li>
+<li>Limited transfer learning</li>
+<li>Unidirectional or shallow bidirectional models</li>
+</ul>
+<p><strong>BERT's Contributions:</strong></p>
 <ol>
-<li><strong>Remove NSP Task</strong></li>
+<li><strong>Deep Bidirectionality</strong></li>
 </ol>
 <ul>
-<li>Next Sentence Prediction hurt performance</li>
-<li>Use only Masked Language Modeling</li>
-<li>Full sentences (don't need sentence pairs)</li>
+<li>True bidirectional context at every layer</li>
+<li>Not just concatenating left-to-right and right-to-left</li>
 </ul>
 <ol start="2">
-<li><strong>Dynamic Masking</strong></li>
+<li><strong>Pre-train + Fine-tune Paradigm</strong></li>
 </ol>
 <ul>
-<li>Generate masking pattern every time</li>
-<li>BERT: static masks (same for every epoch)</li>
-<li>More diverse training signal</li>
+<li>Single pre-trained model for all tasks</li>
+<li>Fine-tune with minimal architecture changes</li>
+<li>Democratized NLP (no need to train from scratch!)</li>
 </ul>
 <ol start="3">
-<li><strong>Larger Batches, More Data</strong></li>
+<li><strong>State-of-the-Art Results</strong></li>
 </ol>
 <ul>
-<li>Batch size: 8K sequences (vs BERT's 256)</li>
-<li>160GB text (vs BERT's 16GB)</li>
-<li>Longer training (500K steps vs 100K)</li>
+<li>Beat previous best on 11 NLP tasks</li>
+<li>Large performance gains (sometimes 10+ points!)</li>
+<li>Showed power of pre-training</li>
 </ul>
-<ol start="4">
-<li><strong>Longer Sequences</strong></li>
-</ol>
-<ul>
-<li>Train with longer sequences</li>
-<li>Better for downstream tasks</li>
-</ul>
-<p><em>Reference: Liu et al. (2019) - &quot;RoBERTa: A Robustly Optimized BERT Pretraining Approach&quot;</em></p>
 <footer>Winter 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="5" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="roberta-results">RoBERTa Results</h1>
-<p><strong>Consistent improvements over BERT</strong></p>
-<table>
-<thead>
-<tr>
-<th>SQuAD 2.0</th>
-<th>83.1</th>
-<th>89.4</th>
-<th>+6.3</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>MNLI</td>
-<td>86.7</td>
-<td>90.2</td>
-<td>+3.5</td>
-</tr>
-<tr>
-<td>SST-2</td>
-<td>94.9</td>
-<td>96.4</td>
-<td>+1.5</td>
-</tr>
-<tr>
-<td>RACE</td>
-<td>72.0</td>
-<td>83.2</td>
-<td>+11.2</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Key Findings:</strong></p>
+<h1 id="masked-language-modeling-mlm">Masked Language Modeling (MLM)</h1>
+<p><strong>BERT's Pre-training Objective</strong></p>
+<p><strong>Training Procedure:</strong></p>
+<ol>
+<li>Take a sentence</li>
+<li>Randomly mask 15% of tokens</li>
+<li>Of the masked tokens:</li>
+</ol>
 <ul>
-<li>Dynamic masking better than static</li>
-<li>More data + longer training = better results</li>
-<li>RoBERTa-Large matches or beats BERT-Large on all tasks</li>
-<li>Sometimes huge gains (RACE: +11.2 points!)</li>
+<li>80%: Replace with [MASK]</li>
+<li>10%: Replace with random word</li>
+<li>10%: Keep unchanged</li>
 </ul>
-<div class="callout info">
-<div class="callout-title">Takeaway</div>
-<p>Training procedure matters as much as architecture! RoBERTa shows that BERT was undertrained.</p>
+<ol start="4">
+<li>Predict the original tokens</li>
+</ol>
+<div class="callout tip">
+<div class="callout-title">Example</div>
+<p><strong>Original:</strong> &quot;My dog is hairy&quot;</p>
+<p><strong>Masked:</strong> &quot;My dog is [MASK]&quot;</p>
+<p><strong>Labels:</strong> [-, -, -, hairy]</p>
+<p><strong>Prediction:</strong> Model predicts &quot;hairy&quot; using bidirectional context</p>
 </div>
+<p><strong>Why the 80/10/10 split?</strong></p>
+<ul>
+<li>Prevents overfitting to [MASK] token</li>
+<li>Forces model to maintain representations for all tokens</li>
+</ul>
 <footer>Winter 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="6" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="dynamic-vs-static-masking">Dynamic vs Static Masking</h1>
-<p><strong>How masking patterns are generated</strong></p>
+<h1 id="mlm-example-step-by-step">MLM Example: Step by Step</h1>
+<p><strong>Sentence:</strong> &quot;The quick brown fox jumps over the lazy dog&quot;</p>
 <div class="columns">
 <div class="column">
-<p><strong>Static Masking (BERT):</strong></p>
-<p><strong>Preprocessing:</strong></p>
-<ul>
-<li>Mask tokens once</li>
-<li>Save masked dataset</li>
-<li>Same masks every epoch</li>
-</ul>
-<p><strong>Epoch 1:</strong> &quot;My [MASK] is cute&quot;</p>
-<p><strong>Epoch 2:</strong> &quot;My [MASK] is cute&quot;</p>
-<p><strong>Epoch 3:</strong> &quot;My [MASK] is cute&quot;</p>
-<p><strong>Problem:</strong></p>
-<ul>
-<li>Model sees same masks repeatedly</li>
-<li>Less diverse training signal</li>
-<li>Potential overfitting to mask patterns</li>
-</ul>
-</div>
-<div class="column">
-<p><strong>Dynamic Masking (RoBERTa):</strong></p>
-<p><strong>On-the-fly:</strong></p>
-<ul>
-<li>Generate masks during training</li>
-<li>Different masks each time</li>
-<li>More variety</li>
-</ul>
-<p><strong>Epoch 1:</strong> &quot;My [MASK] is cute&quot;</p>
-<p><strong>Epoch 2:</strong> &quot;My dog [MASK] cute&quot;</p>
-<p><strong>Epoch 3:</strong> &quot;My dog is [MASK]&quot;</p>
-<p><strong>Benefits:</strong></p>
-<ul>
-<li>More diverse training examples</li>
-<li>Better generalization</li>
-<li>Prevents memorization</li>
-</ul>
-</div>
-</div>
-<p><strong>Cost:</strong> Slight computational overhead, but worth it!</p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="7" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="albert-a-lite-bert">ALBERT: A Lite BERT</h1>
-<p><strong>Key idea: Parameter sharing for efficiency</strong></p>
-<p><strong>ALBERT's Innovations (Lan et al. 2019):</strong></p>
-<div class="columns">
-<div class="column">
-<p><strong>1. Factorized Embedding</strong></p>
+<p><strong>Step 1: Select Tokens (15%)</strong><br />
+9 tokens total, mask ~1-2</p>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># BERT: Direct embedding</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"># 30K vocab × 768 hidden = 23M params</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">bert_embed = nn.Embedding(30000, 768)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># ALBERT: Two-step embedding</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># 30K × 128 + 128 × 768 = 3.8M + 0.1M</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">albert_embed = nn.Embedding(30000, 128)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">albert_project = nn.Linear(128, 768)</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"># Savings: 83% fewer embedding params!</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">tokens = [&quot;The&quot;, &quot;quick&quot;, &quot;brown&quot;, &quot;fox&quot;,</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> &quot;jumps&quot;, &quot;over&quot;, &quot;the&quot;, &quot;lazy&quot;, &quot;dog&quot;]</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"># Randomly select: &quot;quick&quot; (idx 1), &quot;over&quot; (idx 5)</span></span>
+</code></pre>
+<p><strong>Step 2: Apply 80/10/10 Strategy</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">&quot;quick&quot; → 80% → [MASK]</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">&quot;over&quot; → 10% → &quot;under&quot; (random)</span></span>
 </code></pre>
 </div>
 <div class="column">
-<p><strong>2. Cross-Layer Sharing</strong></p>
-<ul>
-<li>All 12 layers share same weights</li>
-<li>89% parameter reduction</li>
-</ul>
-<p><strong>3. Sentence Order Prediction</strong></p>
+<p><strong>Step 3: Create Training Example</strong></p>
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># NSP (BERT): Is B after A? (too easy)</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"># SOP (ALBERT): Are A,B in order?</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"># - Positive: [A, B] (correct order)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># - Negative: [B, A] (swapped order)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># Harder task → better representations</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code">input: &quot;The [MASK] brown fox jumps</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"> under the lazy dog&quot;</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">labels: [-1, &quot;quick&quot;, -1, -1, -1,</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"> &quot;over&quot;, -1, -1, -1]</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># -1 = no loss computed</span></span>
+</code></pre>
+<p><strong>Step 4: Model Predicts</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">P(&quot;quick&quot; | context) → high (adjective slot)</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">P(&quot;over&quot; | context) → high (preposition slot)</span></span>
 </code></pre>
 </div>
 </div>
-<p><em>Reference: Lan et al. (2019) - &quot;ALBERT: A Lite BERT for Self-supervised Learning&quot;</em></p>
+<p><strong>Key insight:</strong> Model must understand syntax AND semantics to predict masked words!</p>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="8" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" data-marpit-pagination="7" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-80;--theme:cdl-theme;" data-marpit-pagination-total="26">
 <header>PSYC 51.17: Models of Language and Communication</header>
 
-<h1 id="albert-parameter-efficiency">ALBERT Parameter Efficiency</h1>
-<p><strong>Dramatic parameter reduction!</strong></p>
+<h1 id="next-sentence-prediction-nsp">Next Sentence Prediction (NSP)</h1>
+<p><strong>BERT's second pre-training objective (debated usefulness)</strong></p>
+<p><strong>Task:</strong> Given two sentences A and B, predict if B follows A</p>
+<div class="callout tip">
+<div class="callout-title">Positive Example (IsNext)</div>
+<p><strong>Sentence A:</strong> &quot;The man went to the store.&quot;</p>
+<p><strong>Sentence B:</strong> &quot;He bought a gallon of milk.&quot;</p>
+<p><strong>Label:</strong> IsNext</p>
+</div>
+<div class="callout warning">
+<div class="callout-title">Negative Example (NotNext)</div>
+<p><strong>Sentence A:</strong> &quot;The man went to the store.&quot;</p>
+<p><strong>Sentence B:</strong> &quot;Penguins are flightless birds.&quot;</p>
+<p><strong>Label:</strong> NotNext</p>
+</div>
+<p><strong>Implementation:</strong></p>
+<ul>
+<li>Use [CLS] token representation for classification</li>
+<li>50% real pairs, 50% random pairs</li>
+<li>Binary classification task</li>
+</ul>
+<p><em>Note: Later work (RoBERTa) showed NSP might not be necessary!</em></p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="8" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="bert-architecture-variants">BERT Architecture Variants</h1>
 <table>
 <thead>
 <tr>
-<th>ALBERT-base</th>
-<th>12</th>
-<th>768</th>
-<th>12M</th>
+<th>BERT-Large</th>
+<th>24</th>
+<th>1024</th>
+<th>16</th>
+<th>340M</th>
+</tr>
+</thead>
+</table>
+<p><strong>Architecture Details (BERT-Base):</strong></p>
+<ul>
+<li>12 transformer encoder layers</li>
+<li>768-dimensional hidden states</li>
+<li>12 attention heads per layer (64 dims each)</li>
+<li>3072-dimensional feed-forward intermediate size (4x expansion)</li>
+<li>Maximum sequence length: 512 tokens</li>
+<li>Vocabulary size: 30,000 WordPiece tokens</li>
+</ul>
+<p><strong>Special Tokens:</strong></p>
+<ul>
+<li><strong>[CLS]</strong>: Classification token (first token, used for sequence-level tasks)</li>
+<li><strong>[SEP]</strong>: Separator token (between sentences)</li>
+<li><strong>[MASK]</strong>: Mask token (for MLM)</li>
+<li><strong>[PAD]</strong>: Padding token (for variable-length sequences)</li>
+</ul>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="9" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="bert-input-representation">BERT Input Representation</h1>
+<p><strong>Three types of embeddings are summed:</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Example: Sentence pair for NSP</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">sentence_a = &quot;My dog is cute&quot;</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">sentence_b = &quot;He likes playing&quot;</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># Tokenization</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">tokens = [&quot;[CLS]&quot;, &quot;my&quot;, &quot;dog&quot;, &quot;is&quot;, &quot;cute&quot;, &quot;[SEP]&quot;, &quot;he&quot;, &quot;likes&quot;, &quot;playing&quot;, &quot;[SEP]&quot;]</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># Three embedding types (each is a 768-dim vector):</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">token_emb = [E_CLS, E_my, E_dog, E_is, E_cute, E_SEP, E_he, E_likes, E_playing, E_SEP]</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">segment_emb = [E_A, E_A, E_A, E_A, E_A, E_A, E_B, E_B, E_B, E_B ]</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">position_emb= [E_0, E_1, E_2, E_3, E_4, E_5, E_6, E_7, E_8, E_9 ]</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"># Final input = token + segment + position (element-wise sum)</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">input_embedding = token_emb + segment_emb + position_emb</span></span>
+</code></pre>
+<p><strong>Three embedding types:</strong></p>
+<ol>
+<li><strong>Token Embeddings</strong>: WordPiece vocabulary (30K learned vectors)</li>
+<li><strong>Segment Embeddings</strong>: Which sentence (A or B)? (2 learned vectors)</li>
+<li><strong>Position Embeddings</strong>: Learned position 0-511 (512 learned vectors)</li>
+</ol>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="10" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+
+<h1 id="wordpiece-tokenization-worked-example">WordPiece Tokenization: Worked Example</h1>
+<p><strong>How BERT handles unknown words</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import BertTokenizer</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">tokenizer = BertTokenizer.from_pretrained(&#x27;bert-base-uncased&#x27;)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Common words stay intact</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">tokenizer.tokenize(&quot;The cat sat on the mat&quot;)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"># → [&#x27;the&#x27;, &#x27;cat&#x27;, &#x27;sat&#x27;, &#x27;on&#x27;, &#x27;the&#x27;, &#x27;mat&#x27;]</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># Rare/unknown words get split into subwords</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">tokenizer.tokenize(&quot;unbelievably&quot;)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"># → [&#x27;un&#x27;, &#x27;##believable&#x27;, &#x27;##ly&#x27;] # &quot;##&quot; means continuation</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">tokenizer.tokenize(&quot;ChatGPT is transformative&quot;)</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"># → [&#x27;chat&#x27;, &#x27;##g&#x27;, &#x27;##pt&#x27;, &#x27;is&#x27;, &#x27;transform&#x27;, &#x27;##ative&#x27;]</span></span>
+</code></pre>
+<div class="callout info">
+<div class="callout-title">Why WordPiece?</div>
+<ul>
+<li><strong>No OOV problem</strong>: Any word can be represented as subwords</li>
+<li><strong>Morphology</strong>: Learns word parts (prefixes, suffixes, stems)</li>
+<li><strong>Compact vocabulary</strong>: 30K tokens cover most text</li>
+<li>Trade-off: Rare words take more tokens (longer sequences)</li>
+</ul>
+</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="11" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="bert-pre-training">BERT Pre-training</h1>
+<p><strong>Massive scale pre-training on unlabeled text</strong></p>
+<p><strong>Pre-training Data:</strong></p>
+<ul>
+<li><strong>BooksCorpus</strong>: 800M words (novels, fiction)</li>
+<li><strong>English Wikipedia</strong>: 2,500M words</li>
+<li>Total: 3.3 billion words</li>
+<li>Diverse, high-quality text</li>
+</ul>
+<p><strong>Training Details:</strong></p>
+<ul>
+<li>Batch size: 256 sequences (128,000 tokens)</li>
+<li>Training steps: 1M steps</li>
+<li>Optimization: Adam (lr=1e-4, warmup=10k steps)</li>
+<li>Hardware: 4-16 Cloud TPUs</li>
+<li>Training time: 4 days (BERT-Base), 4+ days (BERT-Large)</li>
+</ul>
+<div class="callout info">
+<div class="callout-title">Key Insight</div>
+<p>Pre-training learns general language understanding that transfers to many downstream tasks!</p>
+</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="12" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="fine-tuning-bert">Fine-tuning BERT</h1>
+<p><strong>Two-stage process: Pre-train then Fine-tune</strong></p>
+<div class="columns">
+<div class="column">
+<p><strong>Stage 1: Pre-training</strong> (done once)</p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Expensive: weeks on TPUs</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"># Data: 3.3B words (books + Wikipedia)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"># Task: MLM + NSP</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Result: General language understanding</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">model = pretrain_bert(</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"> data=[&quot;BooksCorpus&quot;, &quot;Wikipedia&quot;],</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"> steps=1_000_000,</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"> hardware=&quot;16 TPUs&quot;</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">)</span></span>
+</code></pre>
+</div>
+<div class="column">
+<p><strong>Stage 2: Fine-tuning</strong> (per task)</p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Cheap: hours on single GPU</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"># Data: 1K-100K labeled examples</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"># Task: Your specific task</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Result: Task-specific model</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">model = load_pretrained(&quot;bert-base&quot;)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">model.add_classifier(num_labels=2)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">model.train(</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"> task_data,</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"> epochs=3,</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"> lr=2e-5 # Small learning rate!</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">)</span></span>
+</code></pre>
+</div>
+</div>
+<p><strong>Benefits:</strong> Pre-training captures language; fine-tuning adapts to your task</p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="13" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="fine-tuning-for-different-tasks">Fine-tuning for Different Tasks</h1>
+<p><strong>Minimal architecture changes needed!</strong></p>
+<ol>
+<li><strong>Single Sentence Classification</strong></li>
+</ol>
+<ul>
+<li>Input: [CLS] sentence [SEP]</li>
+<li>Output: [CLS] representation → classifier</li>
+<li>Example: Sentiment analysis</li>
+</ul>
+<ol start="2">
+<li><strong>Sentence Pair Classification</strong></li>
+</ol>
+<ul>
+<li>Input: [CLS] sentence A [SEP] sentence B [SEP]</li>
+<li>Output: [CLS] representation → classifier</li>
+<li>Example: Natural Language Inference</li>
+</ul>
+<ol start="3">
+<li><strong>Question Answering</strong></li>
+</ol>
+<ul>
+<li>Input: [CLS] question [SEP] passage [SEP]</li>
+<li>Output: Token-level predictions for start/end positions</li>
+<li>Example: SQuAD</li>
+</ul>
+<ol start="4">
+<li><strong>Token Classification</strong></li>
+</ol>
+<ul>
+<li>Input: [CLS] sentence [SEP]</li>
+<li>Output: Each token representation → classifier</li>
+<li>Example: Named Entity Recognition</li>
+</ul>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="14" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="fine-tuning-bert-code-example">Fine-tuning BERT: Code Example</h1>
+<p><strong>Using HuggingFace Transformers</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import BertForSequenceClassification, Trainer, TrainingArguments</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"># Load pre-trained BERT with classification head</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">model = BertForSequenceClassification.from_pretrained(</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"> &#x27;bert-base-uncased&#x27;,</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"> num_labels=2 # Binary classification</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"># Define training arguments</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">training_args = TrainingArguments(</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"> output_dir=&#x27;./results&#x27;,</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"> num_train_epochs=3,</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"> per_device_train_batch_size=16,</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"> learning_rate=2e-5,</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code"> warmup_steps=500,</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code"># Train</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">trainer = Trainer(</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="15" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="fine-tuning-bert-code-example-1">Fine-tuning BERT: Code Example</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="20">
+<span class="line"><span class="line-num">20</span><span class="line-code"> model=model,</span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code"> args=training_args,</span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code"> train_dataset=train_dataset,</span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code"> eval_dataset=eval_dataset,</span></span>
+<span class="line"><span class="line-num">24</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">25</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">26</span><span class="line-code">trainer.train()</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+<p><em>Reference: HuggingFace Course - Chapters 1.5, 7.3</em></p>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="16" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="contextual-embeddings-in-action">Contextual Embeddings in Action</h1>
+<p><strong>Remember &quot;bank&quot;? Let's see BERT handle it!</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import BertTokenizer, BertModel</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">import torch</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">tokenizer = BertTokenizer.from_pretrained(&#x27;bert-base-uncased&#x27;)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">model = BertModel.from_pretrained(&#x27;bert-base-uncased&#x27;)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"># Two different contexts for &quot;bank&quot;</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">sent1 = &quot;I deposited money at the bank&quot;</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">sent2 = &quot;We sat by the river bank&quot;</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"># Get embeddings</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">def get_embedding(sentence, target_word):</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"> inputs = tokenizer(sentence, return_tensors=&#x27;pt&#x27;)</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"> outputs = model(**inputs)</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code"> # Find position of target word</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="17" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="contextual-embeddings-in-action-1">Contextual Embeddings in Action</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="16">
+<span class="line"><span class="line-num">16</span><span class="line-code"> tokens = tokenizer.tokenize(sentence)</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code"> idx = tokens.index(target_word) + 1 # +1 for [CLS]</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code"> return outputs.last_hidden_state[0, idx, :]</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code">emb1 = get_embedding(sent1, &quot;bank&quot;) # Financial bank</span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code">emb2 = get_embedding(sent2, &quot;bank&quot;) # River bank</span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code"># Compare similarity</span></span>
+<span class="line"><span class="line-num">24</span><span class="line-code">similarity = torch.cosine_similarity(emb1, emb2, dim=0)</span></span>
+<span class="line"><span class="line-num">25</span><span class="line-code">print(f&quot;Similarity: {similarity:.3f}&quot;) # Low! (~0.3-0.5)</span></span>
+<span class="line"><span class="line-num">26</span><span class="line-code"># Different contexts → Different embeddings!</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="18" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+
+<h1 id="visualizing-berts-contextual-embeddings">Visualizing BERT's Contextual Embeddings</h1>
+<p><strong>Same word, different meanings, different vectors</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Find nearest neighbors for &quot;bank&quot; in each context</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">from sklearn.neighbors import NearestNeighbors</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Financial &quot;bank&quot; context</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">neighbors_financial = find_nearest_words(emb1, vocabulary)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"># → [&quot;banks&quot;, &quot;financial&quot;, &quot;account&quot;, &quot;deposit&quot;, &quot;loan&quot;, &quot;credit&quot;]</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># River &quot;bank&quot; context</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">neighbors_river = find_nearest_words(emb2, vocabulary)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"># → [&quot;shore&quot;, &quot;riverside&quot;, &quot;banks&quot;, &quot;stream&quot;, &quot;water&quot;, &quot;edge&quot;]</span></span>
+</code></pre>
+<div class="callout tip">
+<div class="callout-title">Concrete Measurements</div>
+<table>
+<thead>
+<tr>
+<th>Word Pair</th>
+<th>Word2Vec Similarity</th>
+<th>BERT Similarity</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>ALBERT-large</td>
-<td>24</td>
-<td>1024</td>
-<td>18M</td>
+<td>bank (fin) vs bank (river)</td>
+<td>1.00 (same vector!)</td>
+<td>0.42</td>
 </tr>
 <tr>
-<td>ALBERT-xlarge</td>
-<td>24</td>
-<td>2048</td>
-<td>60M</td>
+<td>bank (fin) vs money</td>
+<td>0.65</td>
+<td>0.78</td>
 </tr>
 <tr>
-<td>ALBERT-xxlarge</td>
-<td>12</td>
-<td>4096</td>
-<td>235M</td>
+<td>bank (river) vs shore</td>
+<td>0.52</td>
+<td>0.81</td>
+</tr>
+</tbody>
+</table>
+<p>BERT captures meaning differences that static embeddings miss!</p>
+</div>
+<footer>Winter 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="19" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+<header>PSYC 51.17: Models of Language and Communication</header>
+<h1 id="berts-impressive-results">BERT's Impressive Results</h1>
+<p><strong>State-of-the-art on 11 NLP tasks when released (2018)</strong></p>
+<table>
+<thead>
+<tr>
+<th>SQuAD 2.0 (QA)</th>
+<th>F1</th>
+<th>66.3</th>
+<th>83.1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MNLI (NLI)</td>
+<td>Accuracy</td>
+<td>80.6</td>
+<td>86.7</td>
+</tr>
+<tr>
+<td>SST-2 (Sentiment)</td>
+<td>Accuracy</td>
+<td>93.2</td>
+<td>94.9</td>
+</tr>
+<tr>
+<td>CoNLL-2003 (NER)</td>
+<td>F1</td>
+<td>92.6</td>
+<td>92.8</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Key Observations:</strong></p>
 <ul>
-<li>ALBERT-base: than BERT-base</li>
-<li>Can train much larger hidden sizes with same memory</li>
-<li>ALBERT-xxlarge: 4096 hidden dim, still only 235M params</li>
-<li>Trade-off: fewer params but similar computation (layer sharing)</li>
+<li>Largest gains on tasks requiring understanding (QA, NLI)</li>
+<li>Improvements even on well-studied benchmarks</li>
+<li>BERT-Large generally better than BERT-Base</li>
+<li>Fine-tuning is simple but very effective</li>
 </ul>
 <div class="callout info">
-<div class="callout-title">Benefits</div>
-<ul>
-<li>Lower memory footprint</li>
-<li>Easier to deploy</li>
-<li>Can scale to larger hidden dimensions</li>
-</ul>
+<div class="callout-title">Impact</div>
+<p>BERT made pre-trained transformers the standard approach in NLP. Almost all subsequent models build on BERT's ideas!</p>
 </div>
 <footer>Winter 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="9" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="20" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="cross-layer-parameter-sharing">Cross-Layer Parameter Sharing</h1>
-<p><strong>How ALBERT achieves parameter efficiency</strong></p>
-<div class="columns">
-<div class="column">
-<p><strong>BERT (No Sharing):</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">class BERT:</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"> def __init__(self):</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> # Each layer has unique parameters</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> self.layers = [</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> TransformerLayer() for _ in range(12)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> ]</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> # 12 × 7M params = 85M params</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> def forward(self, x):</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> for layer in self.layers:</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"> x = layer(x) # Different weights</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"> return x</span></span>
-</code></pre>
-</div>
-<div class="column">
-<p><strong>ALBERT (Full Sharing):</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">class ALBERT:</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"> def __init__(self):</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"> # Single shared layer!</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"> self.shared_layer = TransformerLayer()</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> # 1 × 7M params = 7M params</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> def forward(self, x):</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> for _ in range(12):</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> x = self.shared_layer(x) # Same weights!</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> return x</span></span>
-</code></pre>
-</div>
-</div>
-<p><strong>Intuition:</strong> Each layer refines the representation. Like a &quot;residual network unrolled&quot; - iterative refinement with shared weights.</p>
-<p><strong>Trade-off:</strong> 89% fewer parameters, same compute (still 12 forward passes)</p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="10" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="distilbert-knowledge-distillation">DistilBERT: Knowledge Distillation</h1>
-<p><strong>Key idea: Train small model to mimic large model</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Knowledge Distillation Training Loop</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">teacher = BertModel.from_pretrained(&quot;bert-base&quot;) # 12 layers, frozen</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">student = DistilBertModel(num_layers=6) # 6 layers, trainable</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">for batch in training_data:</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> # Teacher provides &quot;soft targets&quot; (probability distributions)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> with torch.no_grad():</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> teacher_logits = teacher(batch) # e.g., [0.7, 0.2, 0.1, ...]</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"> # Student tries to match teacher&#x27;s distribution</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"> student_logits = student(batch)</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"> # Distillation loss: KL divergence between distributions</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"> # Temperature T=2 softens the distribution (more informative)</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"> loss_distill = KL_divergence(</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"> softmax(student_logits / T),</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="11" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="distilbert-knowledge-distillation-1">DistilBERT: Knowledge Distillation</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="17">
-<span class="line"><span class="line-num">17</span><span class="line-code"> softmax(teacher_logits / T)</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code"> )</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code"> # Also include MLM loss for language modeling</span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code"> loss_mlm = masked_lm_loss(student_logits, labels)</span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code"> # Combined loss</span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code"> loss = 0.5 * loss_distill + 0.5 * loss_mlm</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<p><strong>Why soft targets work:</strong> Teacher's &quot;wrong&quot; predictions contain information (e.g., &quot;dog&quot; → &quot;cat&quot; more likely than &quot;car&quot;)</p>
-<p><em>Reference: Sanh et al. (2019) - &quot;DistilBERT, a distilled version of BERT&quot;</em></p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="12" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="distilbert-results">DistilBERT Results</h1>
-<p><strong>Significant efficiency gains!</strong></p>
-<table>
-<thead>
-<tr>
-<th>Inference Speed</th>
-<th>1x</th>
-<th>1.6x</th>
-<th>60% faster</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GLUE Score</td>
-<td>79.6</td>
-<td>77.0</td>
-<td>97% retained</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Performance on Specific Tasks:</strong></p>
-<table>
-<thead>
-<tr>
-<th>SST-2 (Acc)</th>
-<th>94.9</th>
-<th>92.7</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>MNLI (Acc)</td>
-<td>86.7</td>
-<td>82.2</td>
-</tr>
-</tbody>
-</table>
-<p><strong>When to Use DistilBERT:</strong></p>
-<ul>
-<li>Production deployment (latency-critical)</li>
-<li>Edge devices (limited memory)</li>
-<li>High-throughput scenarios</li>
-<li>When 2-3% performance drop is acceptable</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="13" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-
-<h1 id="electra-efficient-learning">ELECTRA: Efficient Learning</h1>
-<p><strong>Key idea: Learn from all tokens, not just 15%</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># ELECTRA Training: Generator + Discriminator setup</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">sentence = &quot;The chef cooked a delicious meal&quot;</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">masked = &quot;The chef [MASK] a delicious meal&quot;</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># Small generator (like BERT) fills in masks</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">generator_output = generator(masked)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"># Generator predicts: &quot;ate&quot; (plausible but wrong)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">corrupted = &quot;The chef ate a delicious meal&quot;</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"># Discriminator classifies EACH token: original or replaced?</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">discriminator_output = discriminator(corrupted)</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"># Output per token: [orig, orig, REPLACED, orig, orig, orig]</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># Loss computed on ALL tokens (not just 15%!)</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">labels = [0, 0, 1, 0, 0, 0] # 1 = replaced</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code">loss = binary_cross_entropy(discriminator_output, labels)</span></span>
-</code></pre>
-<div class="callout tip">
-<div class="callout-title">Efficiency Gain</div>
-<p><strong>BERT:</strong> Learns from 15% of tokens (masked ones only)<br />
-<strong>ELECTRA:</strong> Learns from 100% of tokens (all get labeled)</p>
-<p>Result: Same quality with 4x less compute!</p>
-</div>
-<p><em>Reference: Clark et al. (2020) - &quot;ELECTRA: Pre-training Text Encoders as Discriminators&quot;</em></p>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="14" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-
-<h1 id="electra-benefits">ELECTRA Benefits</h1>
-<p><strong>More efficient pre-training</strong></p>
-<p><strong>Advantages:</strong></p>
+<h1 id="what-does-bert-learn">What Does BERT Learn?</h1>
+<p><strong>Probing BERT's internal representations</strong></p>
+<p><strong>Research has shown BERT captures:</strong></p>
 <ol>
-<li><strong>Sample Efficiency</strong></li>
+<li><strong>Syntactic Information</strong></li>
 </ol>
 <ul>
-<li>Learn from all tokens (100%) vs only masked (15%)</li>
-<li>Reaches same performance with less data</li>
-<li>Faster convergence</li>
+<li>Part-of-speech tags</li>
+<li>Constituent structure</li>
+<li>Dependency relations</li>
+<li>Lower layers encode more syntax</li>
 </ul>
 <ol start="2">
-<li><strong>Better Performance</strong></li>
+<li><strong>Semantic Information</strong></li>
 </ol>
 <ul>
-<li>ELECTRA-Small outperforms BERT-Small</li>
-<li>ELECTRA-Base competitive with BERT-Large</li>
-<li>With same compute, ELECTRA is better</li>
+<li>Word sense disambiguation</li>
+<li>Semantic roles</li>
+<li>Entity types</li>
+<li>Middle layers encode more semantics</li>
 </ul>
 <ol start="3">
-<li><strong>Computational Efficiency</strong></li>
+<li><strong>Pragmatic Information</strong></li>
 </ol>
 <ul>
-<li>Smaller generator (1/4 to 1/2 size of discriminator)</li>
-<li>Faster to train than BERT</li>
-<li>Lower computational cost for same quality</li>
-</ul>
-<div class="callout info">
-<div class="callout-title">Key Insight</div>
-<p>Replace Token Detection is more sample-efficient than Masked LM because it provides a learning signal for every token!</p>
-</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="15" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="bert-variants-comparison">BERT Variants Comparison</h1>
-<p><strong>Summary of key variants</strong></p>
-<table>
-<thead>
-<tr>
-<th>p{3cm}p{3cm}} Model</th>
-<th>Key Innovation</th>
-<th>Advantages</th>
-<th>Best For</th>
-</tr>
-</thead>
-</table>
-<p><strong>General Guidelines:</strong></p>
-<ul>
-<li><strong>Best quality:</strong> RoBERTa-Large</li>
-<li><strong>Best efficiency:</strong> DistilBERT</li>
-<li><strong>Limited memory:</strong> ALBERT</li>
-<li><strong>Limited training budget:</strong> ELECTRA</li>
-<li><strong>Good default:</strong> RoBERTa-Base or BERT-Base</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="16" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="other-notable-bert-variants">Other Notable BERT Variants</h1>
-<p><strong>The BERT family keeps growing!</strong></p>
-<ol>
-<li><strong>DeBERTa (Microsoft, 2020)</strong></li>
-</ol>
-<ul>
-<li>Disentangled attention (separate content and position)</li>
-<li>Enhanced mask decoder</li>
-<li>State-of-the-art on SuperGLUE</li>
-</ul>
-<ol start="2">
-<li><strong>ERNIE (Baidu, 2019)</strong></li>
-</ol>
-<ul>
-<li>Entity-level and phrase-level masking</li>
-<li>Knowledge enhancement</li>
-<li>Strong on Chinese NLP tasks</li>
-</ul>
-<ol start="3">
-<li><strong>SpanBERT (Facebook, 2019)</strong></li>
-</ol>
-<ul>
-<li>Mask random spans instead of random tokens</li>
-<li>Span boundary objective</li>
-<li>Better for span-based tasks (QA, coreference)</li>
+<li>Coreference resolution</li>
+<li>Discourse relations</li>
+<li>Higher layers encode more pragmatics</li>
 </ul>
 <ol start="4">
-<li><strong>BART (Facebook, 2019)</strong></li>
+<li><strong>World Knowledge</strong></li>
 </ol>
 <ul>
-<li>Encoder-decoder (not encoder-only)</li>
-<li>Denoising autoencoder with various corruptions</li>
-<li>Excellent for generation tasks</li>
+<li>Factual knowledge (to some extent)</li>
+<li>Common sense reasoning (limited)</li>
 </ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="17" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="model-selection-guide">Model Selection Guide</h1>
-<p><strong>How to choose the right model for your task</strong></p>
-<pre><code class="has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Start -&gt; Quality or Speed? -&gt; RoBERTa-Large -&gt; Memory? -&gt; DistilBERT -&gt; ALBERT -&gt; \begin{tabular</span></span>
-</code></pre>
-<p><strong>Additional Considerations:</strong></p>
-<ul>
-<li><strong>Domain:</strong> Consider domain-specific pre-trained models (BioBERT, SciBERT, etc.)</li>
-<li><strong>Language:</strong> Multilingual? Use mBERT, XLM-R</li>
-<li><strong>Task type:</strong> Generation? Consider BART/T5 instead</li>
-</ul>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="18" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="using-different-bert-variants">Using Different BERT Variants</h1>
-<p><strong>Easy switching with HuggingFace</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import AutoModel, AutoTokenizer</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"># BERT</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">bert_model = AutoModel.from_pretrained(&quot;bert-base-uncased&quot;)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">bert_tokenizer = AutoTokenizer.from_pretrained(&quot;bert-base-uncased&quot;)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"># RoBERTa</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">roberta_model = AutoModel.from_pretrained(&quot;roberta-base&quot;)</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">roberta_tokenizer = AutoTokenizer.from_pretrained(&quot;roberta-base&quot;)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"># ALBERT</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">albert_model = AutoModel.from_pretrained(&quot;albert-base-v2&quot;)</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">albert_tokenizer = AutoTokenizer.from_pretrained(&quot;albert-base-v2&quot;)</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># DistilBERT</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="19" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="using-different-bert-variants-1">Using Different BERT Variants</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="16">
-<span class="line"><span class="line-num">16</span><span class="line-code">distilbert_model = AutoModel.from_pretrained(&quot;distilbert-base-uncased&quot;)</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code">distilbert_tokenizer = AutoTokenizer.from_pretrained(&quot;distilbert-base-uncased&quot;)</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code"># ELECTRA</span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code">electra_model = AutoModel.from_pretrained(&quot;google/electra-base-discriminator&quot;)</span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code">electra_tokenizer = AutoTokenizer.from_pretrained(&quot;google/electra-base-discriminator&quot;)</span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code"># All have the same API!</span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code">inputs = tokenizer(&quot;Hello, my dog is cute&quot;, return_tensors=&quot;pt&quot;)</span></span>
-<span class="line"><span class="line-num">25</span><span class="line-code">outputs = model(**inputs)</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<footer>Winter 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" data-marpit-pagination="20" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--class:scale-90;--theme:cdl-theme;" data-marpit-pagination-total="26">
-<header>PSYC 51.17: Models of Language and Communication</header>
-
-<h1 id="benchmarking-bert-variants-worked-example">Benchmarking BERT Variants: Worked Example</h1>
-<p><strong>Practical comparison on sentiment analysis</strong></p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">import time</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">from transformers import pipeline</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Load different models for sentiment analysis</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">models = {</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"> &quot;bert-base&quot;: &quot;textattack/bert-base-uncased-SST-2&quot;,</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"> &quot;distilbert&quot;: &quot;distilbert-base-uncased-finetuned-sst-2-english&quot;,</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"> &quot;albert&quot;: &quot;textattack/albert-base-v2-SST-2&quot;,</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">}</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">test_texts = [&quot;This movie was fantastic!&quot;, &quot;I hated every minute of it.&quot;] * 100</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">for name, model_id in models.items():</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"> pipe = pipeline(&quot;sentiment-analysis&quot;, model=model_id)</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"> start = time.time()</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code"> results = pipe(test_texts)</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code"> elapsed = time.time() - start</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
+<p><em>Reference: Tenney et al. (2019) - &quot;BERT Rediscovers the Classical NLP Pipeline&quot;</em></p>
 <footer>Winter 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="21" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
 <header>PSYC 51.17: Models of Language and Communication</header>
-<h1 id="benchmarking-bert-variants-worked-example-1">Benchmarking BERT Variants: Worked Example</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="19">
-<span class="line"><span class="line-num">19</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code"> print(f&quot;{name}: {elapsed:.2f}s for 200 samples ({200/elapsed:.1f} samples/sec)&quot;)</span></span>
+<h1 id="bert-layer-analysis">BERT Layer Analysis</h1>
+<p><strong>Different layers capture different linguistic properties</strong></p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Probing experiment: Train linear classifiers on each layer&#x27;s representations</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">from transformers import BertModel</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">import numpy as np</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">model = BertModel.from_pretrained(&#x27;bert-base-uncased&#x27;, output_hidden_states=True)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"># Get hidden states for all 12 layers</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">outputs = model(**inputs)</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">hidden_states = outputs.hidden_states # (13 layers: embedding + 12 transformer)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"># Results from probing studies (Tenney et al., 2019):</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">layer_specialization = {</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"> &quot;Layers 0-2&quot;: [&quot;POS tagging&quot;, &quot;Word boundaries&quot;], # Surface</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code"> &quot;Layers 3-6&quot;: [&quot;Parse trees&quot;, &quot;Dependencies&quot;], # Syntax</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code"> &quot;Layers 7-9&quot;: [&quot;Semantic roles&quot;, &quot;Coreference&quot;], # Semantics</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"> &quot;Layers 10-12&quot;: [&quot;Task-specific representations&quot;] # Task</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">}</span></span>
 </code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-<p><strong>Typical Results:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Model</th>
-<th>Accuracy</th>
-<th>Speed (samples/sec)</th>
-<th>Memory</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>bert-base</td>
-<td>93.2%</td>
-<td>45</td>
-<td>420MB</td>
-</tr>
-<tr>
-<td>distilbert</td>
-<td>91.3%</td>
-<td>85</td>
-<td>250MB</td>
-</tr>
-<tr>
-<td>albert</td>
-<td>92.7%</td>
-<td>38</td>
-<td>45MB</td>
-</tr>
-</tbody>
-</table>
+<p><strong>Observations:</strong></p>
+<ul>
+<li>Lower layers: surface features (word forms, POS)</li>
+<li>Middle layers: syntax (phrase structure, dependencies)</li>
+<li>Higher layers: semantics and task-specific features</li>
+</ul>
+<p><em>Similar to CNNs: edges → shapes → objects</em></p>
 <footer>Winter 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="22" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
 <header>PSYC 51.17: Models of Language and Communication</header>
 <h1 id="discussion-questions">Discussion Questions</h1>
 <ol>
-<li><strong>Training vs Architecture:</strong></li>
+<li><strong>MLM vs. Autoregressive:</strong></li>
 </ol>
 <ul>
-<li>RoBERTa shows training matters. Is architecture overrated?</li>
-<li>How much can we improve with just better training?</li>
-<li>What's the right balance?</li>
+<li>Why is MLM better for understanding tasks?</li>
+<li>Can BERT generate text like GPT?</li>
+<li>What are the trade-offs?</li>
 </ul>
 <ol start="2">
-<li><strong>Parameter Efficiency:</strong></li>
+<li><strong>The 80/10/10 Masking Strategy:</strong></li>
 </ol>
 <ul>
-<li>ALBERT shares all layers. Why does this work?</li>
-<li>What are the limits of parameter sharing?</li>
-<li>Is there a &quot;sweet spot&quot;?</li>
+<li>Why not just use 100% [MASK]?</li>
+<li>What problem does the random replacement solve?</li>
+<li>Could we improve this strategy?</li>
 </ul>
 <ol start="3">
-<li><strong>Knowledge Distillation:</strong></li>
+<li><strong>Pre-training Data:</strong></li>
 </ol>
 <ul>
-<li>Why does student learn better from teacher than from labels?</li>
-<li>What information is in the soft probabilities?</li>
-<li>Can we distill even further?</li>
+<li>Why use books and Wikipedia?</li>
+<li>Would social media text work as well?</li>
+<li>How does data quality affect pre-training?</li>
 </ul>
 <ol start="4">
-<li><strong>Model Selection:</strong></li>
+<li><strong>Fine-tuning:</strong></li>
 </ol>
 <ul>
-<li>How do you decide which model to use?</li>
-<li>Is it worth fine-tuning multiple variants?</li>
-<li>What about model ensembles?</li>
+<li>Why does fine-tuning work so well?</li>
+<li>When might fine-tuning fail?</li>
+<li>How much labeled data do we need?</li>
 </ul>
 <footer>Winter 2026</footer>
 </section>
@@ -1408,14 +1385,21 @@
 <h1 id="looking-ahead">Looking Ahead</h1>
 <p><strong>Today we learned:</strong></p>
 <ul>
-<li>RoBERTa: Better training matters</li>
-<li>ALBERT: Parameter sharing for efficiency</li>
-<li>DistilBERT: Knowledge distillation</li>
-<li>ELECTRA: Replace token detection</li>
-<li>How to choose the right variant</li>
+<li>BERT architecture and innovations</li>
+<li>Masked Language Modeling</li>
+<li>Pre-training and fine-tuning</li>
+<li>Contextual embeddings</li>
+<li>What BERT learns</li>
 </ul>
-<p><strong>Next lecture (Lecture 17 - Applications of Encoder Models):</strong></p>
-<p>**From theory to practice! **</p>
+<p><strong>Next lecture (Lecture 16 - BERT Variants):</strong></p>
+<ul>
+<li>: Optimized BERT training</li>
+<li>: Parameter-efficient BERT</li>
+<li>: Smaller, faster BERT</li>
+<li>: ELECTRA, DeBERTa, and more</li>
+<li>Comparative analysis and when to use which</li>
+</ul>
+<p>**BERT started a revolution in NLP! **</p>
 <footer>Winter 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-header="PSYC 51.17: Models of Language and Communication" data-footer="Winter 2026" data-theme="cdl-theme" lang="C" data-marpit-pagination="24" style="--paginate:true;--header:PSYC 51.17: Models of Language and Communication;--footer:Winter 2026;--theme:cdl-theme;" data-marpit-pagination-total="26">
@@ -1423,40 +1407,41 @@
 <h1 id="summary">Summary</h1>
 <p><strong>Key Takeaways:</strong></p>
 <ol>
-<li><strong>RoBERTa</strong></li>
+<li><strong>BERT = Encoder-only Transformer</strong></li>
 </ol>
 <ul>
-<li>Training procedure matters as much as architecture</li>
-<li>Remove NSP, dynamic masking, more data = better results</li>
+<li>Bidirectional self-attention</li>
+<li>Trained with Masked Language Modeling</li>
 </ul>
 <ol start="2">
-<li><strong>ALBERT</strong></li>
+<li><strong>Pre-train + Fine-tune Paradigm</strong></li>
 </ol>
 <ul>
-<li>Parameter sharing dramatically reduces model size</li>
-<li>Factorized embeddings for efficiency</li>
-<li>89% fewer parameters than BERT</li>
+<li>Expensive pre-training on unlabeled data (once)</li>
+<li>Cheap fine-tuning on task-specific data (per task)</li>
 </ul>
 <ol start="3">
-<li><strong>DistilBERT</strong></li>
+<li><strong>Contextual Embeddings</strong></li>
 </ol>
 <ul>
-<li>Knowledge distillation for deployment</li>
-<li>40% smaller, 60% faster, 97% performance</li>
+<li>Different representations based on context</li>
+<li>Solves polysemy problem</li>
 </ul>
 <ol start="4">
-<li><strong>ELECTRA</strong></li>
+<li><strong>Hierarchical Learning</strong></li>
 </ol>
 <ul>
-<li>Replace token detection more sample-efficient</li>
-<li>Learn from all tokens, not just 15%</li>
+<li>Lower layers: syntax</li>
+<li>Higher layers: semantics</li>
+<li>Learns linguistic structure automatically</li>
 </ul>
 <ol start="5">
-<li><strong>Model Selection</strong></li>
+<li><strong>Revolutionary Impact</strong></li>
 </ol>
 <ul>
-<li>Choose based on constraints (quality, speed, memory)</li>
-<li>HuggingFace makes it easy to experiment</li>
+<li>Established pre-training as standard</li>
+<li>Democratized NLP research</li>
+<li>Foundation for modern LLMs</li>
 </ul>
 <footer>Winter 2026</footer>
 </section>
@@ -1465,17 +1450,30 @@
 <h1 id="references">References</h1>
 <p><strong>Essential Papers:</strong></p>
 <ul>
-<li><strong>Liu et al. (2019)</strong> - &quot;RoBERTa: A Robustly Optimized BERT Pretraining Approach&quot;</li>
-<li><strong>Lan et al. (2019)</strong> - &quot;ALBERT: A Lite BERT for Self-supervised Learning&quot;</li>
-<li><strong>Sanh et al. (2019)</strong> - &quot;DistilBERT, a distilled version of BERT&quot;</li>
-<li><strong>Clark et al. (2020)</strong> - &quot;ELECTRA: Pre-training Text Encoders as Discriminators&quot;</li>
-<li><strong>He et al. (2020)</strong> - &quot;DeBERTa: Decoding-enhanced BERT with Disentangled Attention&quot;</li>
+<li>
+<p><strong>Devlin et al. (2019)</strong> - &quot;BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding&quot;</p>
+</li>
+<li>
+<p>The original BERT paper</p>
+</li>
+<li>
+<p>Introduced MLM and NSP</p>
+</li>
 </ul>
-<p><strong>Resources:</strong></p>
+<p>\item <strong>Tenney et al. (2019)</strong> - &quot;BERT Rediscovers the Classical NLP Pipeline&quot;</p>
 <ul>
-<li>HuggingFace Model Hub: <a href="https://huggingface.co/models">https://huggingface.co/models</a></li>
-<li>Papers With Code: BERT variants leaderboard</li>
-<li>Model Cards: Detailed documentation for each variant</li>
+<li>Analysis of what BERT learns</li>
+<li>Layer-wise linguistic properties</li>
+</ul>
+<p>\item <strong>Clark et al. (2019)</strong> - &quot;What Does BERT Look At? An Analysis of BERT's Attention&quot;</p>
+<ul>
+<li>Understanding BERT's attention patterns</li>
+</ul>
+<p><strong>Tutorials:</strong></p>
+<ul>
+<li>HuggingFace Course: Chapter 1 (Transformer Models)</li>
+<li>Jay Alammar: &quot;The Illustrated BERT, ELMo, and co.&quot;</li>
+<li>BertViz: Interactive attention visualization</li>
 </ul>
 <footer>Winter 2026</footer>
 </section>
@@ -1485,14 +1483,14 @@
 <p><strong>Discussion Time</strong></p>
 <p><strong>Topics for discussion:</strong></p>
 <ul>
-<li>BERT variants and improvements</li>
-<li>Model selection strategies</li>
-<li>Knowledge distillation</li>
-<li>Parameter efficiency</li>
+<li>Masked Language Modeling</li>
+<li>Pre-training vs fine-tuning</li>
+<li>Contextual embeddings</li>
+<li>BERT architecture details</li>
 <li>Implementation questions</li>
 </ul>
 <p>Thank you!</p>
-<p>Next: Applications and Real-World Use Cases!</p>
+<p>Next: BERT Variants and Improvements!</p>
 <footer>Winter 2026</footer>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();

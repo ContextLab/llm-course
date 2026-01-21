@@ -88,17 +88,10 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Hands-on: Explore SPAM classification approaches for Assignment 2
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week2/lecture7.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture7.html)
 
-**Friday (Lecture 8):** POS Tagging & Sentiment Analysis
-- Part-of-speech tagging and token classification
-- Sentiment analysis techniques
-- Statistical learning in infants (connecting to modern NLP)
-- Reading: [Linzen et al. (2016)](https://aclanthology.org/Q16-1037/) - LSTMs and Syntax-Sensitive Dependencies
-- Reading: [Warstadt et al. (2020)](https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00321/96452/) - BLiMP
-- Reading: [Saffran et al. (1996)](https://www.science.org/doi/10.1126/science.274.5294.1926) - Statistical learning by infants
-- HuggingFace: [Chapter 7.2: Token Classification](https://huggingface.co/learn/nlp-course/chapter7/2)
+**Friday (Lecture 7 continued):** Text Classification Workshop (continued)
+- Lecture 7 extended to cover additional material
 - **Assignment 2 Released:** [SPAM Classifier](https://contextlab.github.io/llm-course/assignments/assignment-2/) (Due: Jan 26, 11:59 PM EST)
-- 🎮 **Try it:** [POS Tagging](https://contextlab.github.io/llm-course/demos/pos-tagging/) | [Sentiment Analysis](https://contextlab.github.io/llm-course/demos/sentiment/)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week2/lecture8.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture8.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week2/lecture7.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture7.html)
 
 ---
 
@@ -107,125 +100,125 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 **Monday (MLK Day)**: NO CLASS - Martin Luther King Jr. Day
 - **📝 Assignment 1 Due (Jan 19, 11:59 PM EST)**
 
-**Wednesday (Lecture 9):** Classical Embeddings & Distributional Semantics
-- Latent Semantic Analysis (LSA)
-- Latent Dirichlet Allocation (LDA)
-- "You shall know a word by the company it keeps"
+**Wednesday (Lecture 8):** POS Tagging & Sentiment Analysis
+- Part-of-speech tagging and token classification
+- Sentiment analysis techniques
+- Reading: [Linzen et al. (2016)](https://aclanthology.org/Q16-1037/) - LSTMs and Syntax-Sensitive Dependencies
+- HuggingFace: [Chapter 7.2: Token Classification](https://huggingface.co/learn/nlp-course/chapter7/2)
+- 🎮 **Try it:** [POS Tagging](https://contextlab.github.io/llm-course/demos/pos-tagging/) | [Sentiment Analysis](https://contextlab.github.io/llm-course/demos/sentiment/)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture8.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture8.html)
+
+**Thursday X-hour (Lecture 9):** Classical Embeddings (LSA, LDA)
+- The distributional hypothesis
+- Latent Semantic Analysis (LSA) with SVD
+- Latent Dirichlet Allocation (LDA) for topic modeling
 - Reading: [Deerwester et al. (1990)](http://wordvec.colorado.edu/papers/Deerwester_1990.pdf) - LSA
 - Reading: [Blei et al. (2003)](https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf) - LDA
-- Reading: [Boyd-Graber et al. (2014)](https://home.cs.colorado.edu/~jbg/docs/2014_book_chapter_care_and_feeding.pdf) - Care and Feeding of Topic Models
-- Reading: [Boleda (2020)](https://arxiv.org/pdf/1905.01896) - Distributional Semantics and Linguistic Theory
 - 🎮 **Try it:** [Topic Modeling](https://contextlab.github.io/llm-course/demos/topic-modeling/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture9.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture9.html)
 
-**Thursday X-hour (Lecture 10):** Embeddings Workshop
-- Hands-on: Implementing and exploring LSA/LDA (review of Wednesday)
-- Introduction: Word2Vec intuition and basic concepts
-- Compare: Classical vs. neural embedding approaches
-- Preview: Sets up Friday's formal treatment of Word2Vec/GloVe/FastText
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture10.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture10.html)
-
-**Friday (Lecture 11):** Word Embeddings (Word2Vec, GloVe, FastText)
-- Neural word embeddings
-- Semantic relationships and analogies
-- Reading: [Mikolov et al. (2013a)](https://arxiv.org/abs/1301.3781) - Word2Vec (Efficient Estimation)
-- Reading: [Mikolov et al. (2013b)](https://arxiv.org/abs/1310.4546) - Word2Vec (Distributed Representations)
+**Friday (Lecture 10):** Word Embeddings (Word2Vec, GloVe, FastText)
+- Neural word embeddings and the 2013 revolution
+- CBOW, Skip-gram, negative sampling
+- GloVe and FastText
+- Bias in embeddings
+- Reading: [Mikolov et al. (2013)](https://arxiv.org/abs/1301.3781) - Word2Vec
 - Reading: [Pennington et al. (2014)](https://aclanthology.org/D14-1162/) - GloVe
 - Reading: [Bojanowski et al. (2017)](https://arxiv.org/abs/1607.04606) - FastText
 - **Assignment 3 Released:** [Wikipedia Embeddings](https://contextlab.github.io/llm-course/assignments/assignment-3/) (Due: Feb 2, 11:59 PM EST)
+- **📝 Assignment 2 Due (Jan 26, 11:59 PM EST)**
 - 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/) | [Word Analogies](https://contextlab.github.io/llm-course/demos/analogies/)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture11.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture11.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture10.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture10.html)
 
 ---
 
 ## Week 4: Text Embeddings II - Modern Methods
 
-**Monday (Lecture 12):** Contextual Embeddings
+**Monday (Lecture 11):** Contextual Embeddings
 - ELMo and contextual representations
 - Universal Sentence Encoder
-- **📝 Assignment 2 Due (Jan 26, 11:59 PM EST)**
 - Reading: [Peters et al. (2018)](https://aclanthology.org/N18-1202/) - ELMo
 - Reading: [Cer et al. (2018)](https://arxiv.org/abs/1803.11175) - USE
 - 🎮 **Try it:** [Semantic Search](https://contextlab.github.io/llm-course/demos/semantic-search/)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture12.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture12.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture11.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture11.html)
 
-**Wednesday (Lecture 13):** Dimensionality Reduction
+**Wednesday (Lecture 12):** Dimensionality Reduction
 - PCA and UMAP for visualization
 - Reading: [McInnes & Healy (2018)](https://arxiv.org/pdf/1802.03426) - UMAP
 - 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture13.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture13.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture12.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture12.html)
 
-**Friday (Lecture 14):** Cognitive Models of Semantic Representation
+**Friday (Lecture 13):** Cognitive Models of Semantic Representation
 - Reading: [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444)
 - **Assignment 4 Released:** [Customer Service Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-4/) (Due: Feb 9, 11:59 PM EST)
+- **📝 Assignment 3 Due (Feb 2, 11:59 PM EST)**
 - 🎮 **Try it:** [Embeddings Comparison](https://contextlab.github.io/llm-course/demos/embeddings-comparison/)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture14.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture14.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture13.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture13.html)
 
 ---
 
 ## Week 5: Transformers & Attention Mechanisms
 
-**Monday (Lecture 15):** Attention Mechanisms
+**Monday (Lecture 14):** Attention Mechanisms
 - The evolution from RNNs to attention
 - Attention mechanisms explained
-- **📝 Assignment 3 Due (Feb 2, 11:59 PM EST)**
 - Reading: [Bahdanau et al. (2015)](https://arxiv.org/abs/1409.0473) - Neural Machine Translation with Attention
 - Reading: [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) - Attention is All You Need
 - 🎮 **Try it:** [Attention Mechanism](https://contextlab.github.io/llm-course/demos/attention/)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture15.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture15.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture14.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture14.html)
 
-**Wednesday (Lecture 16):** Transformer Architecture
+**Wednesday (Lecture 15):** Transformer Architecture
 - Self-attention, multi-head attention
 - Positional encodings
 - Reading: [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) - Attention is All You Need
 - HuggingFace: [Chapter 3](https://huggingface.co/learn/nlp-course/chapter3)
 - 🎮 **Try it:** [Transformer Explorer](https://contextlab.github.io/llm-course/demos/transformer/)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture16.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture16.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture15.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture15.html)
 
-**Friday (Lecture 17):** Training Transformers
+**Friday (Lecture 16):** Training Transformers
 - **Assignment 5 Released:** [Build GPT](https://contextlab.github.io/llm-course/assignments/assignment-5/) (Due: Feb 16, 11:59 PM EST)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture17.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture17.html)
+- **📝 Assignment 4 Due (Feb 9, 11:59 PM EST)**
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture16.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture16.html)
 ---
 
 ## Week 6: Encoder Models (BERT)
 
-**Monday (Lecture 18):** BERT Deep Dive
+**Monday (Lecture 17):** BERT Deep Dive
 - Bidirectional attention and masked language modeling
-- **📝 Assignment 4 Due (Feb 9, 11:59 PM EST)**
 - Reading: [Devlin et al. (2019)](https://aclanthology.org/N19-1423/) - BERT
 - HuggingFace: [Chapter 4](https://huggingface.co/learn/nlp-course/chapter4)
 - 🎮 **Try it:** [BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/bert-mlm/)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture18.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture18.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture17.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture17.html)
 
-**Wednesday (Lecture 19):** BERT Variants
+**Wednesday (Lecture 18):** BERT Variants
 - RoBERTa, DistilBERT, ALBERT
 - Reading: [Liu et al. (2019)](https://arxiv.org/abs/1907.11692) - RoBERTa
 - Reading: [Sanh et al. (2019)](https://arxiv.org/abs/1910.01108) - DistilBERT
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture19.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture19.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture18.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture18.html)
 
-**Friday (Lecture 20):** Applications of Encoder Models
+**Friday (Lecture 19):** Applications of Encoder Models
 - **Final Project Released:** [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) (Due: Mar 9, 11:59 PM EST)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html)
+- **📝 Assignment 5 Due (Feb 16, 11:59 PM EST)**
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture19.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture19.html)
 ---
 
 ## Week 7: Decoder Models & GPT
 
-**Monday (Lecture 21):** GPT Architecture
+**Monday (Lecture 20):** GPT Architecture
 - Autoregressive generation
-- **📝 Assignment 5 Due (Feb 16, 11:59 PM EST)**
 - Reading: [Radford et al. (2018)](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf) - GPT-1
 - Reading: [Radford et al. (2019)](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) - GPT-2
 - 🎮 **Try it:** [GPT Playground](https://contextlab.github.io/llm-course/demos/gpt-playground/)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture21.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture21.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture20.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture20.html)
 
-**Wednesday (Lecture 22):** Scaling Up to GPT-3 and Beyond
+**Wednesday (Lecture 21):** Scaling Up to GPT-3 and Beyond
 - Reading: [Brown et al. (2020)](https://arxiv.org/abs/2005.14165) - GPT-3
 - Reading: [OpenAI (2023)](https://arxiv.org/abs/2303.08774) - GPT-4 Technical Report
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture22.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture22.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture21.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture21.html)
 
-**Friday (Lecture 23):** Implementing GPT from Scratch
+**Friday (Lecture 22):** Implementing GPT from Scratch
 - Tutorial: [Let's build GPT (Karpathy)](https://www.youtube.com/watch?v=kCc8FmEb1nY)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture23.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture23.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture22.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture22.html)
 ---
 
 ## Week 8: No Classes
@@ -237,26 +230,26 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 ## Week 9: Advanced Topics
 
-**Monday (Lecture 24):** Retrieval Augmented Generation (RAG)
+**Monday (Lecture 23):** Retrieval Augmented Generation (RAG)
 - RAG architecture and applications
 - Reading: [Lewis et al. (2020)](https://arxiv.org/abs/2005.11401) - RAG
 - 🎮 **Try it:** [RAG System Demo](https://contextlab.github.io/llm-course/demos/rag/)
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture24.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture24.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture23.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture23.html)
 
-**Wednesday (Lecture 25):** Mixture of Experts & Efficiency
+**Wednesday (Lecture 24):** Mixture of Experts & Efficiency
 - MoE architecture, Mixtral
 - Reading: [Fedus et al. (2022)](https://arxiv.org/abs/2101.03961) - Switch Transformers
 - Reading: [Jiang et al. (2024)](https://arxiv.org/abs/2401.04088) - Mixtral
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture25.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture25.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture24.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture24.html)
 
-**Friday (Lecture 26):** Ethics, Bias, and Safety
+**Friday (Lecture 25):** Ethics, Bias, and Safety
 - Reading: [Bender et al. (2021)](https://dl.acm.org/doi/10.1145/3442188.3445922) - Stochastic Parrots
-- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture26.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture26.html)
+- 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture25.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture25.html)
 ---
 
 ## Week 10: Final Project Presentations
 
-**Monday, March 9 (Lecture 27):** Final Project Presentations & Wrap-up
+**Monday, March 9 (Lecture 26):** Final Project Presentations & Wrap-up
 - All teams present their work (videos + discussion)
 - Course wrap-up and reflections
 - Last day of classes
