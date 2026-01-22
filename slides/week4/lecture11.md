@@ -1,905 +1,479 @@
 ---
 marp: true
 theme: cdl-theme
-paginate: true
-header: 'PSYC 51.17: Models of Language and Communication - Week 4'
-footer: 'Winter 2026'
+math: katex
+transition: fade 0.25s
+author: Contextual Dynamics Lab
 ---
 
-<!-- _class: lead -->
+# Lecture 11: Word embeddings
+### PSYC 51.17: Models of language and communication
 
-# Contextual Embeddings: ELMo, USE, BERT
-## Lecture 11: Beyond Static Word Representations
-
-**PSYC 51.17: Models of Language and Communication - Week 4**
-
+Jeremy R. Manning
+Dartmouth College
 Winter 2026
 
 ---
 
-# Today's Lecture 
+# Learning objectives
 
+<div class="note-box" data-title="By the end of this lecture, you will">
 
+1. Understand Word2Vec architectures (CBOW and Skip-gram)
+2. Explain how negative sampling makes training efficient
+3. Compare Word2Vec, GloVe, and FastText
+4. Apply word embeddings for analogies and similarity
+5. Recognize biases in word embeddings
 
-1. **From Static to Contextual**
-2. **Language Models as Feature Extractors**
-3. **ELMo: Embeddings from Language Models**
-4. **Universal Sentence Encoder**
-5. **BERT: Bidirectional Transformers**
-6. **Comparison & Applications**
+</div>
 
-*Goal: Understand how context transforms word representation*
+<div class="definition-box" data-title="The 2013 revolution">
+
+Word2Vec showed that neural networks can learn powerful semantic representations from raw text alone.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# From count-based to prediction-based
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Count-Based (LSA, LDA):**
+- Build co-occurrence matrix
+- Apply matrix factorization
+- Global statistics
+- Linear relationships
+
+</div>
+<div style="flex: 1;">
+
+**Prediction-Based (Word2Vec):**
+- Predict context from word
+- Train neural network
+- Local context windows
+- Non-linear relationships
+
+</div>
+</div>
+
+<div class="tip-box" data-title="Key difference">
+
+Word2Vec learns by predicting — the embeddings are a byproduct!
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Word2Vec: Core intuition
+
+*Words that appear in similar contexts should have similar representations*
+
+<div class="example-box" data-title="Context window">
+
+"The quick brown **[TARGET]** jumped over the lazy dog"
+
+**Context:** [The, quick, brown, jumped, over, the, lazy, dog]
+**Target:** fox
+
+</div>
+
+**Key Idea:**
+- Train a model to predict target from context (or vice versa)
+- The learned **weights** become our word vectors!
+- We don't care about the prediction task — we want the embeddings!
 
 ---
 
-# The Polysemy Problem Revisited 
+# CBOW vs. Skip-gram
 
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
-**Recall: Static embeddings assign ONE vector per word**
-
-<div class="columns">
-<div class="column">
-
-**Example: "bank"**
-
-1. "I deposited money at the **bank**"
- (financial institution)
-2. "We sat by the river **bank**"
- (riverside)
-3. "The plane will **bank** left"
- (tilt/turn)
-
-**Word2Vec/GloVe:** All three get the SAME vector!
-
-**Contextual embeddings:** Each gets a DIFFERENT vector based on context
+**CBOW (Continuous Bag of Words):**
+- Given context → predict center word
+- "the, cat, on, the" → "sat"
+- Faster to train
+- Better for frequent words
 
 </div>
-<div class="column">
+<div style="flex: 1;">
 
-**Cosine Similarity Demo:**
+**Skip-gram:**
+- Given center word → predict context
+- "sat" → "the, cat, on, the"
+- Slower but better quality
+- Better for rare words
+- **Most commonly used**
+
+</div>
+</div>
+
+```
+Skip-gram objective: maximize P(context | center)
+```
+
+---
+<!-- _class: scale-80 -->
+
+# Context windows: worked example
+
+**Sentence:** "The cat sat on the mat" | **Window size = 2**
+
+```
+Position 0: "The" → Context: [cat, sat]
+Position 1: "cat" → Context: [The, sat, on]
+Position 2: "sat" → Context: [The, cat, on, the]
+Position 3: "on"  → Context: [cat, sat, the, mat]
+Position 4: "the" → Context: [sat, on, mat]
+Position 5: "mat" → Context: [on, the]
+```
+
+**Skip-gram training pairs** (target → context):
+```
+(The, cat), (The, sat), (cat, The), (cat, sat), (cat, on), ...
+```
+
+---
+<!-- _class: scale-85 -->
+
+# The efficiency problem
+
+**Challenge:** Softmax over entire vocabulary is expensive!
+
+$$P(w_{context}|w_{center}) = \frac{\exp(v_{context}^T v_{center})}{\sum_{w=1}^V \exp(v_w^T v_{center})}$$
+
+For 100k vocabulary: 100k exponentials per training example!
+
+<div class="warning-box" data-title="Solution: Negative Sampling">
+
+Instead of predicting across all words, create binary classification:
+- **Positive:** Actual context word (label = 1)
+- **Negative:** K random words (label = 0)
+
+Training becomes O(k) instead of O(V)!
+
+</div>
+
+---
+<!-- _class: scale-80 -->
+
+# Negative sampling example
+
+**Training pair:** ("cat", "sat") — cat is center, sat is context
 
 ```python
-# Static embeddings (Word2Vec)
-sim(bank_sent1, bank_sent2) = 1.0 # Same!
-
-# Contextual embeddings (BERT)
-sim(bank_sent1, bank_sent2) = 0.45
-sim(bank_sent1, bank_sent3) = 0.32
-sim(bank_sent2, bank_sent3) = 0.28
-
-# "bank" (financial) is closer to
-# "bank" (river) than to "bank" (tilt)
-# because nouns are more similar!
-```
-
-</div>
-</div>
-
-
----
-
-# Static vs. Contextual Embeddings 
-
-
-<div class="columns">
-<div class="column">
-
-**Static (Word2Vec, GloVe, FastText):**
-
-```python
-# Same vector every time
-model = Word2Vec(...)
-vec1 = model['bank']
-vec2 = model['bank']
-
-assert vec1 == vec2 # True!
-```
-
-**Characteristics:**
-- One vector per word type
-- Context-independent
-- Fast lookup (dictionary)
-- Fixed after training
-- Polysemy conflation
-
-</div>
-<div class="column">
-
-**Contextual (ELMo, BERT):**
-
-```python
-# Different vector per occurrence
-model = BertModel.from_pretrained('bert-base')
-
-sent1 = "river bank"
-sent2 = "money bank"
-
-vec1 = get_embedding(model, sent1, 'bank')
-vec2 = get_embedding(model, sent2, 'bank')
-
-assert vec1 != vec2 # True!
-```
-
-**Characteristics:**
-- Different vector per occurrence
-- Context-dependent
-- Requires forward pass
-- Dynamic representations
-- Handles polysemy naturally
-
-</div>
-</div>
-
-
----
-
-# Language Models as Feature Extractors 
-
-
-**Key Insight:** Train a language model, use its internal states as embeddings
-
-**Language Modeling Task:**
-
-Predict the next word given previous words: $P(w_t | w_1, w_2, ..., w_{t-1})$
-
-<div class="callout tip">
-<div class="callout-title">Worked Example</div>
-
-Input: "The cat sat on the ___"
-
-| Model predicts probabilities: | |
-|-------------------------------|-------|
-| "mat" | 0.25 |
-| "floor" | 0.18 |
-| "couch" | 0.12 |
-| "dog" | 0.001 |
-
-To predict well, the model learns: "sat on the" suggests a surface!
-</div>
-
-**Why This Works:**
-- To predict "mat", model must encode that "sat on" precedes surfaces
-- Hidden states capture this contextual understanding
-- We extract these rich hidden states as embeddings!
-
-
----
-
-# ELMo: Embeddings from Language Models 
-
-
-**The first widely-adopted contextual embedding (2018)**
-
-<div class="columns">
-<div class="column">
-
-**Key Ideas:**
-1. Train deep bidirectional language model
-2. Use all layer activations
-3. Weighted combination per task
-4. Pre-train on large corpus
-
-**Architecture:**
-- 2-layer biLSTM
-- Forward LM: $P(w_t | w_1...w_{t-1})$
-- Backward LM: $P(w_t | w_{t+1}...w_n)$
-- Character-based input (handles OOV!)
-
-</div>
-<div class="column">
-
-**Bidirectional Processing:**
-
-```
-Forward: The → cat → sat → ...
-Backward: ... ← sat ← cat ← The
-```
-
-Each word gets info from BOTH directions!
-
-**Layer Weighting Example:**
-
-For sentiment task, ELMo might learn:
-- Layer 0 (characters): weight = 0.1
-- Layer 1 (syntax): weight = 0.3
-- Layer 2 (semantics): weight = 0.6
-
-Higher layers matter more for meaning!
-
-</div>
-</div>
-
-*Reference: Peters et al. (2018). "Deep contextualized word representations"*
-
----
-
-# ELMo: How It Works 
-
-
-**Training:**
-
-1. Pre-train on large corpus (1B Word Benchmark)
-2. Each position gets representation from all layers
-
-**Usage (downstream tasks):**
-
-1. Freeze ELMo weights
-2. For each token, extract representations from all layers
-3. Learn task-specific weighted combination
-4. Concatenate with task model
-
-<div class="callout tip">
-<div class="callout-title">Concrete Example: Sentiment Analysis</div>
-
-**Input:** "The movie was absolutely terrible"
-
-| Token | Char Emb | Layer 1 | Layer 2 | Weighted Sum |
-|-------|----------|---------|---------|--------------|
-| terrible | [0.1, ...] | [0.3, ...] | [-0.8, ...] | [-0.5, ...] |
-
-The final representation captures that "terrible" is strongly negative in this context!
-
-</div>
-
-**Impact:** Improved state-of-the-art on 6 NLP tasks!
-
----
-
-# ELMo in Practice 
-
-
-```python
-from allennlp.modules.elmo import Elmo, batch_to_ids
-
-# Initialize ELMo
-options_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_options.json"
-weight_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5"
-
-elmo = Elmo(options_file, weight_file, 2, dropout=0)
-
-# Prepare sentences
-sentences = [
- ['I', 'deposited', 'money', 'at', 'the', 'bank'],
- ['We', 'sat', 'by', 'the', 'river', 'bank']
+# Positive sample: Does "sat" appear near "cat"? YES (label=1)
+positive_pair = ("cat", "sat", label=1)
+
+# Negative samples: Random words that DON'T appear near "cat"
+negative_pairs = [
+    ("cat", "algorithm", label=0),
+    ("cat", "president", label=0),
+    ("cat", "quantum", label=0),
 ]
 
-# Convert to character ids
-character_ids = batch_to_ids(sentences)
-
-# Get embeddings
-embeddings = elmo(character_ids)
-
-# embeddings['elmo_representations'] contains:
-# - List of 2 tensors (one per layer)
-# - Shape: [batch_size, seq_len, 1024]
-
-# Different vectors for "bank"!
-bank1 = embeddings['elmo_representations'][0][0, 5, :] # first sentence
-bank2 = embeddings['elmo_representations'][0][1, 5, :] # second sentence
-
-# Cosine similarity will be lower than for static embeddings
+# Train binary classifier: Is this a real context pair?
+# Instead of 100k-way softmax → just 4 binary predictions!
 ```
 
+**Typical k:** 5-20 negative samples per positive
 
 ---
 
-# Universal Sentence Encoder (USE) 
+# The famous result: vector arithmetic
 
+$$\vec{king} - \vec{man} + \vec{woman} \approx \vec{queen}$$
 
-**Sentence-level embeddings for semantic similarity**
+<div class="example-box" data-title="Other analogies">
 
-<div class="columns">
-<div class="column">
-
-**Motivation:**
-- Word embeddings: good for words
-- But what about sentences?
-- Average of word vectors? Too simple!
-- Need compositionality
-
-**Two Variants:**
-
-**1. Transformer-based:**
-- Higher accuracy
-- Slower (compute intensive)
-- Better for quality
-
-**2. Deep Averaging Network (DAN):**
-- Lower accuracy
-- Much faster
-- Better for scale
+- $\vec{Paris} - \vec{France} + \vec{Italy} \approx \vec{Rome}$
+- $\vec{walking} - \vec{walk} + \vec{swim} \approx \vec{swimming}$
+- $\vec{bigger} - \vec{big} + \vec{small} \approx \vec{smaller}$
 
 </div>
-<div class="column">
 
-**Training Objectives:**
-1. Unsupervised: Skip-thought
-2. Supervised: SNLI (entailment)
-3. Multi-task learning
+<div class="note-box" data-title="Why does this work?">
 
-**Output:**
-- 512-dimensional vector
-- Fixed-length (any sentence length)
-- Optimized for similarity tasks
-
-**Use Cases:**
-- Semantic search
-- Question answering
-- Text classification
-- Clustering
-- Duplicate detection
+Subtracting "man" removes the "male" component; adding "woman" adds the "female" component. Result: "female royal" = queen!
 
 </div>
-</div>
-
-*Reference: Cer et al. (2018). "Universal Sentence Encoder"*
 
 ---
+<!-- _class: scale-70 -->
 
-# Universal Sentence Encoder in Practice 
-
+# Word2Vec in Python
 
 ```python
-import tensorflow_hub as hub
-import numpy as np
+from gensim.models import Word2Vec
+import gensim.downloader as api
 
-# Load model
-embed = hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
+# Load pre-trained model (3B words, 300 dimensions)
+model = api.load('word2vec-google-news-300')
 
-# Example sentences
-sentences = [
- "The cat sat on the mat.",
- "A feline rested on the rug.",
- "The dog ran in the park.",
- "I love machine learning."
-]
+# Find similar words
+model.most_similar('computer', topn=5)
+# [('computers', 0.72), ('laptop', 0.69), ('PC', 0.68), ...]
 
-# Generate embeddings
-embeddings = embed(sentences)
+# Word analogies: king - man + woman = ?
+model.most_similar(positive=['king', 'woman'], negative=['man'], topn=1)
+# [('queen', 0.71)]
 
-# Shape: [4, 512]
-print(embeddings.shape)
-
-# Compute similarity
-from sklearn.metrics.pairwise import cosine_similarity
-
-sim_matrix = cosine_similarity(embeddings)
-print(sim_matrix)
-
-# Sentences 1 and 2 should be very similar (paraphrases)
-# Sentence 3 somewhat similar (animals)
-# Sentence 4 dissimilar
-
-# Use for semantic search
-query = "cat on mat"
-query_embedding = embed([query])
-similarities = cosine_similarity(query_embedding, embeddings)[0]
-most_similar_idx = np.argmax(similarities)
-print(f"Most similar: {sentences[most_similar_idx]}")
+# Train your own
+sentences = [['the', 'cat', 'sat'], ['the', 'dog', 'ran']]
+custom_model = Word2Vec(sentences, vector_size=100, window=5, min_count=1, sg=1)
 ```
 
+---
+<!-- _class: scale-75 -->
+
+# GloVe: Global Vectors
+
+**Combining count-based and prediction-based methods**
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Key Insight:**
+Ratios of co-occurrence probabilities encode meaning better than raw probabilities!
+
+| Probe | P(w\|ice) | P(w\|steam) | Ratio |
+|-------|-----------|-------------|-------|
+| solid | high | low | >> 1 |
+| gas | low | high | << 1 |
+| water | high | high | ~ 1 |
+
+</div>
+<div style="flex: 1;">
+
+**GloVe learns:**
+
+$$\vec{w}_i^T \vec{w}_j \approx \log P(i,j)$$
+
+Word vectors whose dot product relates to co-occurrence probability!
+
+</div>
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# GloVe vs. Word2Vec
+
+| Aspect | Word2Vec | GloVe |
+|--------|----------|-------|
+| Approach | Local context windows | Global co-occurrence |
+| Training | Online (stochastic) | Batch (matrix factorization) |
+| Speed | Medium | Fast for large corpora |
+| Quality | Excellent | Excellent |
+
+<div class="tip-box" data-title="In practice">
+
+Similar performance on most tasks! Choose based on:
+- Corpus size (GloVe better for very large)
+- Training infrastructure (GloVe needs memory for matrix)
+
+</div>
 
 ---
 
-# BERT: Bidirectional Encoder Representations 
+# FastText: Subword information
 
+**The Problem:** Word2Vec/GloVe give ONE vector per word
 
+<div class="warning-box" data-title="Out-of-Vocabulary (OOV) Problem">
 
-**The model that changed everything (2018)**
+- New word? Unknown!
+- Misspelling? Unknown!
+- Rare morphological form? Unknown!
 
-<div class="columns">
-<div class="column">
-
-**Key Innovations:**
-1. context (not just left-to-right)
-2. architecture (attention)
-3. pre-training
-
-5. Deeply bidirectional
-
-**Impact:**
-- SOTA on 11 NLP tasks
-- Sparked the "BERT-era"
-- 1000+ variants (RoBERTa, ALBERT, DistilBERT, ...)
-- Foundation for modern LLMs
+But "running", "runner", "runnable" share morphology!
 
 </div>
-<div class="column">
 
-**Architecture Sizes:**
-
-| BERT-Large | 24 | 1024 |
-| --- | --- | --- |
-
-**Training Data:**
-- BooksCorpus (800M words)
-- English Wikipedia (2.5B words)
-- Total: 3.3B words
-
-**Training Time:**
-- 4 days on 64 TPU chips
-- Or 4 weeks on 8 GPUs
-
-</div>
-</div>
-
-*Reference: Devlin et al. (2018). "BERT: Pre-training of Deep Bidirectional Transformers"*
+**FastText Solution:** Break words into character n-grams
 
 ---
+<!-- _class: scale-80 -->
 
-# Masked Language Modeling (MLM) 
+# FastText: Character n-grams
 
+**Example: "where" (with n=3)**
 
-**BERT's key training innovation**
+Character trigrams: `<wh, whe, her, ere, re>`
 
-**The Problem with Traditional LM:**
-- Left-to-right: Only sees previous words
-- Right-to-left: Only sees next words
-- Want: See both directions simultaneously
-- But: Can't just show the answer during training!
+Word vector = average of n-gram vectors:
 
-**Solution: Mask some words, predict them**
+$$\vec{w}_{where} = \frac{1}{6}(\vec{z}_{<wh} + \vec{z}_{whe} + \vec{z}_{her} + \vec{z}_{ere} + \vec{z}_{re>} + \vec{z}_{<where>})$$
 
-<div class="callout tip">
-<div class="callout-title">Worked Example: MLM Training</div>
+<div class="tip-box" data-title="Benefits">
 
-**Original:** "The cat sat on the mat"
-
-**Step 1:** Randomly select 15% of tokens → "cat" selected
-
-**Step 2:** Apply masking strategy (80/10/10 rule):
-- 80% chance: "The **[MASK]** sat on the mat"
-- 10% chance: "The **dog** sat on the mat" (random word)
-- 10% chance: "The **cat** sat on the mat" (unchanged)
-
-**Step 3:** Model sees full context both ways to predict "cat":
-```
-← The [MASK] sat on the mat →
- ↑
- predict "cat"
-```
+- Handles OOV words!
+- Captures morphology ("unhappiness" shares n-grams with "unhappy", "happiness")
+- Great for morphologically rich languages (German, Turkish, Finnish)
+- Robust to typos
 
 </div>
-
-**Training Procedure:**
-1. Randomly select 15% of tokens
-2. Replace 80% with [MASK], 10% with random word, 10% unchanged
-3. Predict original tokens
-4. Bidirectional context!
-
 
 ---
+<!-- _class: scale-85 -->
 
-# Next Sentence Prediction (NSP) 
+# Method comparison
 
+| Method | Year | OOV Handling | Best For |
+|--------|------|--------------|----------|
+| LSA | 1990 | No | Topic modeling |
+| LDA | 2003 | No | Interpretable topics |
+| Word2Vec | 2013 | No | General NLP |
+| GloVe | 2014 | No | Large corpora |
+| FastText | 2017 | Yes! | Morphology-rich languages |
 
-**Second pre-training task: Understand sentence relationships**
+<div class="note-box" data-title="Typical dimensions">
 
-**Task:** Given two sentences A and B, predict if B follows A in the text
-
-<div class="callout tip">
-<div class="callout-title">Positive Example (IsNext)</div>
-
-**Sentence A:** "The cat sat on the mat."
-
-**Sentence B:** "It was sleeping peacefully."
-
-**Label:** IsNext 
-
-</div>
-
-<div class="callout tip">
-<div class="callout-title">Negative Example (NotNext)</div>
-
-**Sentence A:** "The cat sat on the mat."
-
-**Sentence B:** "Machine learning is fascinating."
-
-**Label:** NotNext 
+50-300 dimensions (100-300 most common for best quality)
 
 </div>
-
-**Why This Helps:**
-- Captures discourse relationships
-- Useful for QA, NLI, etc.
-- Models sentence-level coherence
-- Note: Later research (RoBERTa) found NSP less important than MLM
-
 
 ---
+<!-- _class: scale-80 -->
 
-# BERT Architecture 
+# Bias in word embeddings
 
-**Three types of embeddings are summed for each token:**
+**Embeddings learn biases from training data**
 
-<div class="callout tip">
-<div class="callout-title">Worked Example: Input Representation</div>
+<div class="warning-box" data-title="Gender bias examples">
 
-**Input:** "[CLS] I love NLP [SEP] It is fun [SEP]"
-
-| Token | Token ID | Segment | Position | Final Embedding |
-|-------|----------|---------|----------|-----------------|
-| [CLS] | E_CLS | A | 0 | E_CLS + E_A + E_0 |
-| I | E_I | A | 1 | E_I + E_A + E_1 |
-| love | E_love | A | 2 | E_love + E_A + E_2 |
-| NLP | E_NLP | A | 3 | E_NLP + E_A + E_3 |
-| [SEP] | E_SEP | A | 4 | E_SEP + E_A + E_4 |
-| It | E_It | B | 5 | E_It + E_B + E_5 |
-| is | E_is | B | 6 | E_is + E_B + E_6 |
-| fun | E_fun | B | 7 | E_fun + E_B + E_7 |
-| [SEP] | E_SEP | B | 8 | E_SEP + E_B + E_8 |
-
-- **Token Embedding:** What word is this?
-- **Segment Embedding:** Which sentence (A or B)?
-- **Position Embedding:** Where in the sequence?
+- $\vec{man} : \vec{computer\ programmer} :: \vec{woman} : \vec{homemaker}$
+- $\vec{man} : \vec{doctor} :: \vec{woman} : \vec{nurse}$
 
 </div>
-
-
----
-
-# BERT in Practice 
-
 
 ```python
-from transformers import BertTokenizer, BertModel
-import torch
+def gender_bias_score(word):
+    return model.similarity(word, 'man') - model.similarity(word, 'woman')
 
-# Load pre-trained BERT
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertModel.from_pretrained('bert-base-uncased')
-
-# Example sentences with "bank"
-sent1 = "I deposited money at the bank"
-sent2 = "We sat by the river bank"
-
-# Tokenize
-tokens1 = tokenizer(sent1, return_tensors='pt')
-tokens2 = tokenizer(sent2, return_tensors='pt')
-
-# Get embeddings
-with torch.no_grad():
- output1 = model(**tokens1)
- output2 = model(**tokens2)
-
-# Last hidden state: [batch_size, seq_len, hidden_size]
-embeddings1 = output1.last_hidden_state
-embeddings2 = output2.last_hidden_state
-
-# Extract "bank" embedding (position varies)
-# tokens1: [CLS] i deposited money at the bank [SEP]
-bank1_embedding = embeddings1[0, 6, :] # 768-dim vector
-
-# tokens2: [CLS] we sat by the river bank [SEP]
-bank2_embedding = embeddings2[0, 6, :] # 768-dim vector
-
-# Different vectors for "bank"!
-from torch.nn.functional import cosine_similarity
-sim = cosine_similarity(bank1_embedding, bank2_embedding, dim=0)
-print(f"Similarity: {sim:.3f}") # Lower than with static embeddings
+# Results from Google News Word2Vec:
+# programmer: +0.091 (toward man)
+# nurse: -0.109 (toward woman)
 ```
 
+<div class="important-box" data-title="Why this matters">
+
+Embeddings used in hiring tools, search, recommendations can perpetuate bias!
+
+</div>
+
+---
+<!-- _class: scale-80 -->
+
+# Practical tips
+
+1. **Start with pre-trained models**
+   - Word2Vec: Google News (300d, 3B words)
+   - GloVe: Common Crawl (300d, 840B tokens)
+   - FastText: 157 languages available
+
+2. **Use cosine similarity** (not Euclidean distance)
+   $$\text{sim}(u,v) = \frac{u \cdot v}{||u|| \cdot ||v||}$$
+
+3. **Be aware of biases** — test for bias, consider debiasing techniques
+
+4. **Remember limitations** — static (one vector per word), no polysemy
 
 ---
 
-# Fine-tuning BERT 
+# Summary
 
+**What we learned:**
 
-**Two ways to use BERT:**
+1. **Word2Vec (2013):** Neural revolution — predict context from words
+   - Skip-gram most common, negative sampling for efficiency
+2. **GloVe (2014):** Global co-occurrence statistics
+3. **FastText (2017):** Character n-grams handle OOV
+4. **Bias:** Embeddings reflect training data biases
 
-<div class="columns">
-<div class="column">
+<div class="note-box" data-title="Key limitation">
 
-**1. Feature Extraction:**
-- Freeze BERT weights
-- Use embeddings as features
-- Train classifier on top
-- Faster, less data needed
+Static embeddings: one vector per word type
 
-```python
-# Freeze BERT
-for param in bert_model.parameters():
- param.requires_grad = False
-
-# Add classifier
-classifier = nn.Linear(768, num_classes)
-
-# Train only classifier
-optimizer = Adam(classifier.parameters())
-```
+**Next week:** Contextual embeddings (ELMo, BERT) solve polysemy!
 
 </div>
-<div class="column">
-
-**2. Fine-tuning:**
-- Update BERT weights
-- Add task-specific head
-- Train end-to-end
-- Better performance, more data needed
-
-```python
-# Keep BERT trainable
-bert_model = BertModel.from_pretrained(
- 'bert-base-uncased'
-)
-
-# Add classifier
-classifier = nn.Linear(768, num_classes)
-
-# Train everything
-optimizer = Adam(
- list(bert_model.parameters()) +
- list(classifier.parameters()),
- lr=2e-5 # Small learning rate!
-)
-```
-
-</div>
-</div>
-
-**Best Practice:** Fine-tune with small learning rate (1e-5 to 5e-5) for few epochs (2-4)
 
 ---
+<!-- _class: scale-75 -->
 
-# Contextual Embeddings Comparison 
-
-
-
-| Pre-training | LM (forward+backward) | Multi-task | MLM + NSP |
-| --- | --- | --- | --- |
-| Bidirectional | Shallow | Yes | Deep |
-| Granularity | Token | Sentence | Token |
-| Hidden size | 1024 | 512 | 768/1024 |
-| Parameters | 93M | 256M | 110M/340M |
-| Speed | Medium | Fast | Slow |
-| OOV handling | Characters | Subwords | WordPiece |
-| Year | 2018 | 2018 | 2018 |
-
-<div class="callout info">
-<div class="callout-title">Recommendations</div>
-
-- **ELMo:** Legacy systems, character-aware needs
-- **USE:** Sentence similarity, semantic search, fast inference
-- **BERT:** State-of-the-art quality, most NLP tasks (now superseded by larger models)
-
-</div>
-
-
----
-
-# Impact on NLP 
-
-
-**BERT revolutionized NLP:**
-
-<div class="columns">
-<div class="column">
-
-**Before BERT (pre-2018):**
-- Task-specific architectures
-- Train from scratch
-- Static embeddings (Word2Vec, GloVe)
-- Limited transfer learning
-- Moderate performance
-
-**Tasks that improved:**
-- Question Answering (+1.5 F1 on SQuAD)
-- NER (+0.3 F1)
-- Sentiment Analysis (+2% accuracy)
-- NLI (+4% accuracy)
-- Many others!
-
-</div>
-<div class="column">
-
-**After BERT (post-2018):**
-- Pre-train, then fine-tune
-- Transfer learning standard
-- Contextual embeddings
-- Massive pre-trained models
-- State-of-the-art results
-
-**BERT Variants:**
-- RoBERTa: Better training
-- ALBERT: Parameter sharing
-- DistilBERT: Smaller, faster
-- ELECTRA: Different pre-training
-- DeBERTa: Disentangled attention
-- And 100+ more!
-
-</div>
-</div>
-
-
----
-
-# Real-World Applications 
-
-<div class="columns">
-<div class="column">
-
-**1. Google Search:**
-```
-Query: "can you get medicine for
- someone pharmacy"
-
-BERT understands: picking up a
-prescription FOR someone else
-
-Before BERT: matched "medicine"
-and "pharmacy" keywords only
-```
-
-**2. Question Answering:**
-```
-Context: "The Eiffel Tower was
-built in 1889 by Gustave Eiffel."
-
-Q: "When was the Eiffel Tower built?"
-A: "1889" ← BERT extracts this span
-```
-
-</div>
-<div class="column">
-
-**3. Sentiment Analysis:**
-```python
-# Fine-tuned BERT
-text = "Not bad at all!"
-prediction = model(text)
-# → Positive (understands negation!)
-```
-
-**4. Named Entity Recognition:**
-```
-Input: "Apple CEO Tim Cook announced..."
-
-Output:
- Apple → ORG
- Tim Cook → PERSON
-```
-
-**5. Semantic Search:**
-```
-Query: "affordable laptop for students"
-Matches: "budget-friendly notebook
- for college" ← synonyms!
-```
-
-</div>
-</div>
-
-
----
-
-# Discussion Question 
-
-
-
-**Do contextual embeddings truly "understand" language?**
-
-**Consider:**
-- BERT can distinguish "bank" (financial) from "bank" (riverside)
-- It achieves human-level performance on many benchmarks
-- But it's trained only on text co-occurrence patterns
-
-<div class="columns">
-<div class="column">
-
-**Arguments For:**
-- Captures complex semantic relationships
-- Generalizes to new contexts
-- Emergent linguistic capabilities
-- Handles compositional meaning
-
-</div>
-<div class="column">
-
-**Arguments Against:**
-- No grounding in physical world
-- No common sense reasoning
-- Exploits statistical shortcuts
-- Brittle to adversarial examples
-- "Stochastic parrots"?
-
-</div>
-</div>
-
-<div class="callout warning">
-<div class="callout-title">The Grounding Problem Persists</div>
-
-Even with contextual embeddings, we still lack true grounding in experience, perception, and embodied cognition.
-
-</div>
-
-*Reference: Bender & Koller (2020). "Climbing towards NLU: On Meaning, Form, and Understanding"*
-
----
-
-# Practical Tips 
-
-
-1. **Choosing a Model:**
- - BERT-base: Good balance, 110M params
-- DistilBERT: 40% smaller, 60% faster, 97% performance
-- RoBERTa: Better than BERT, longer training
-- Domain-specific: BioBERT, SciBERT, FinBERT, etc.
-2. **Fine-tuning Best Practices:**
- - Small learning rate (2e-5 typical)
-- Few epochs (2-4)
-- Batch size: 16 or 32
-- Warm-up steps
-- Gradient clipping
-3. **Computational Considerations:**
- - BERT-base: ~110M params, 512 max tokens
-- Needs GPU (1-4 GB VRAM minimum)
-- Batching for efficiency
-- Consider DistilBERT for production
-4. **Using HuggingFace:**
- - Easy access to 1000+ pre-trained models
-- Standardized API
-- Good documentation and community
-
-
----
-
-# Summary 
-
-
-**What we learned today:**
-
-1. **Contextual vs. Static:** Different vectors per occurrence
-2. **ELMo (2018):**
- - BiLSTM language models
-- Character-based, handles OOV
-- Task-specific weighting
-3. **Universal Sentence Encoder (2018):**
- - Sentence-level embeddings
-- Two variants: Transformer & DAN
-- Optimized for semantic similarity
-4. **BERT (2018):**
- - Masked language modeling
-- Deep bidirectional transformers
-- Pre-train + fine-tune paradigm
-- Revolutionized NLP
-5. **Impact:** Established modern transfer learning in NLP
-6. **Next:** Dimensionality reduction techniques for visualization
-
-
----
-
-# Key References 
-
-
+# Key references
 
 **Foundational Papers:**
-- Peters et al. (2018). "Deep contextualized word representations" (ELMo)
-- Cer et al. (2018). "Universal Sentence Encoder"
-- Devlin et al. (2018). "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
+- Mikolov et al. (2013). "Efficient Estimation of Word Representations"
+- Pennington et al. (2014). "GloVe: Global Vectors for Word Representation"
+- Bojanowski et al. (2017). "Enriching Word Vectors with Subword Information"
 
-**BERT Variants:**
-- Liu et al. (2019). "RoBERTa: A Robustly Optimized BERT Pretraining Approach"
-- Sanh et al. (2019). "DistilBERT, a distilled version of BERT"
-- Lan et al. (2019). "ALBERT: A Lite BERT for Self-supervised Learning"
+**Tools:**
+- Gensim: `Word2Vec`, `FastText` | Pre-trained: `gensim.downloader`
 
-**Critical Perspectives:**
-- Bender & Koller (2020). "Climbing towards NLU: On Meaning, Form, and Understanding"
-- Bender et al. (2021). "On the Dangers of Stochastic Parrots"
+<div class="tip-box" data-title="Try it out!">
 
-**Resources:**
-- HuggingFace Transformers: https://huggingface.co/transformers/
-- BERT Paper: https://arxiv.org/abs/1810.04805
+[Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/) | [Word Analogies](https://contextlab.github.io/llm-course/demos/analogies/)
 
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Assignment 3: Wikipedia Embeddings
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Apply this week's concepts:**
+- Train embeddings on Wikipedia data
+- Compare LSA vs. Word2Vec
+- Explore semantic relationships
+- Visualize with UMAP
+
+</div>
+<div style="flex: 1;">
+
+**Think about:**
+- How does corpus size affect quality?
+- What analogies work? What fails?
+- Can you detect bias?
+
+</div>
+</div>
+
+<div class="tip-box" data-title="Link">
+
+[Assignment 3: Wikipedia Embeddings](https://contextlab.github.io/llm-course/assignments/assignment-3/)
+
+</div>
 
 ---
 
-# Questions? 
+# Questions?
 
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a> me</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
+    <span class="label">Join our <a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
+    <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
+  </div>
+</div>
 
+<div class="tip-box" data-title="Week 3 complete!">
 
-**Next Lecture:**
+Next week: Contextual embeddings and dimensionality reduction!
 
-Dimensionality Reduction: PCA, t-SNE, UMAP
-
-*Visualizing high-dimensional embeddings!*
-
+</div>

@@ -8,8 +8,8 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Dimensionality Reduction for NLP
-## Lecture 12: PCA, t-SNE, and UMAP
+# Contextual Embeddings: ELMo, USE, BERT
+## Lecture 12: Beyond Static Word Representations
 
 **PSYC 51.17: Models of Language and Communication - Week 4**
 
@@ -21,861 +21,754 @@ Winter 2026
 
 
 
-1. **The Curse of Dimensionality**
-2. **Principal Component Analysis (PCA)**
-3. **t-SNE: Stochastic Neighbor Embedding**
-4. **UMAP: Uniform Manifold Approximation**
-5. **Comparison & Best Practices**
-6. **Visualization Techniques**
+1. **From Static to Contextual**
+2. **Language Models as Feature Extractors**
+3. **ELMo: Embeddings from Language Models**
+4. **Universal Sentence Encoder**
+5. **BERT: Bidirectional Transformers**
+6. **Comparison & Applications**
 
-*Goal: Learn to visualize and explore high-dimensional embeddings*
+*Goal: Understand how context transforms word representation*
 
 ---
 
-# The Curse of Dimensionality 
+# The Polysemy Problem Revisited 
 
 
-**The Problem:**
+**Recall: Static embeddings assign ONE vector per word**
 
 <div class="columns">
 <div class="column">
 
-**Word Embeddings:**
-- Word2Vec: 300 dimensions
-- GloVe: 300 dimensions
-- FastText: 300 dimensions
-- BERT: 768 dimensions
-- GPT-3: 12,288 dimensions!
+**Example: "bank"**
 
-**Challenges:**
-- Can't visualize 300D space
-- Distances behave strangely
-- Computation expensive
-- Storage requirements
-- Interpretation difficult
+1. "I deposited money at the **bank**"
+ (financial institution)
+2. "We sat by the river **bank**"
+ (riverside)
+3. "The plane will **bank** left"
+ (tilt/turn)
+
+**Word2Vec/GloVe:** All three get the SAME vector!
+
+**Contextual embeddings:** Each gets a DIFFERENT vector based on context
 
 </div>
 <div class="column">
 
-**Concrete Example: Distance Concentration**
+**Cosine Similarity Demo:**
 
 ```python
+# Static embeddings (Word2Vec)
+sim(bank_sent1, bank_sent2) = 1.0 # Same!
+
+# Contextual embeddings (BERT)
+sim(bank_sent1, bank_sent2) = 0.45
+sim(bank_sent1, bank_sent3) = 0.32
+sim(bank_sent2, bank_sent3) = 0.28
+
+# "bank" (financial) is closer to
+# "bank" (river) than to "bank" (tilt)
+# because nouns are more similar!
+```
+
+</div>
+</div>
+
+
+---
+
+# Static vs. Contextual Embeddings 
+
+
+<div class="columns">
+<div class="column">
+
+**Static (Word2Vec, GloVe, FastText):**
+
+```python
+# Same vector every time
+model = Word2Vec(...)
+vec1 = model['bank']
+vec2 = model['bank']
+
+assert vec1 == vec2 # True!
+```
+
+**Characteristics:**
+- One vector per word type
+- Context-independent
+- Fast lookup (dictionary)
+- Fixed after training
+- Polysemy conflation
+
+</div>
+<div class="column">
+
+**Contextual (ELMo, BERT):**
+
+```python
+# Different vector per occurrence
+model = BertModel.from_pretrained('bert-base')
+
+sent1 = "river bank"
+sent2 = "money bank"
+
+vec1 = get_embedding(model, sent1, 'bank')
+vec2 = get_embedding(model, sent2, 'bank')
+
+assert vec1 != vec2 # True!
+```
+
+**Characteristics:**
+- Different vector per occurrence
+- Context-dependent
+- Requires forward pass
+- Dynamic representations
+- Handles polysemy naturally
+
+</div>
+</div>
+
+
+---
+
+# Language Models as Feature Extractors 
+
+
+**Key Insight:** Train a language model, use its internal states as embeddings
+
+**Language Modeling Task:**
+
+Predict the next word given previous words: $P(w_t | w_1, w_2, ..., w_{t-1})$
+
+<div class="callout tip">
+<div class="callout-title">Worked Example</div>
+
+Input: "The cat sat on the ___"
+
+| Model predicts probabilities: | |
+|-------------------------------|-------|
+| "mat" | 0.25 |
+| "floor" | 0.18 |
+| "couch" | 0.12 |
+| "dog" | 0.001 |
+
+To predict well, the model learns: "sat on the" suggests a surface!
+</div>
+
+**Why This Works:**
+- To predict "mat", model must encode that "sat on" precedes surfaces
+- Hidden states capture this contextual understanding
+- We extract these rich hidden states as embeddings!
+
+
+---
+
+# ELMo: Embeddings from Language Models 
+
+
+**The first widely-adopted contextual embedding (2018)**
+
+<div class="columns">
+<div class="column">
+
+**Key Ideas:**
+1. Train deep bidirectional language model
+2. Use all layer activations
+3. Weighted combination per task
+4. Pre-train on large corpus
+
+**Architecture:**
+- 2-layer biLSTM
+- Forward LM: $P(w_t | w_1...w_{t-1})$
+- Backward LM: $P(w_t | w_{t+1}...w_n)$
+- Character-based input (handles OOV!)
+
+</div>
+<div class="column">
+
+**Bidirectional Processing:**
+
+```
+Forward: The → cat → sat → ...
+Backward: ... ← sat ← cat ← The
+```
+
+Each word gets info from BOTH directions!
+
+**Layer Weighting Example:**
+
+For sentiment task, ELMo might learn:
+- Layer 0 (characters): weight = 0.1
+- Layer 1 (syntax): weight = 0.3
+- Layer 2 (semantics): weight = 0.6
+
+Higher layers matter more for meaning!
+
+</div>
+</div>
+
+*Reference: Peters et al. (2018). "Deep contextualized word representations"*
+
+---
+
+# ELMo: How It Works 
+
+
+**Training:**
+
+1. Pre-train on large corpus (1B Word Benchmark)
+2. Each position gets representation from all layers
+
+**Usage (downstream tasks):**
+
+1. Freeze ELMo weights
+2. For each token, extract representations from all layers
+3. Learn task-specific weighted combination
+4. Concatenate with task model
+
+<div class="callout tip">
+<div class="callout-title">Concrete Example: Sentiment Analysis</div>
+
+**Input:** "The movie was absolutely terrible"
+
+| Token | Char Emb | Layer 1 | Layer 2 | Weighted Sum |
+|-------|----------|---------|---------|--------------|
+| terrible | [0.1, ...] | [0.3, ...] | [-0.8, ...] | [-0.5, ...] |
+
+The final representation captures that "terrible" is strongly negative in this context!
+
+</div>
+
+**Impact:** Improved state-of-the-art on 6 NLP tasks!
+
+---
+
+# ELMo in Practice 
+
+
+```python
+from allennlp.modules.elmo import Elmo, batch_to_ids
+
+# Initialize ELMo
+options_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_options.json"
+weight_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5"
+
+elmo = Elmo(options_file, weight_file, 2, dropout=0)
+
+# Prepare sentences
+sentences = [
+ ['I', 'deposited', 'money', 'at', 'the', 'bank'],
+ ['We', 'sat', 'by', 'the', 'river', 'bank']
+]
+
+# Convert to character ids
+character_ids = batch_to_ids(sentences)
+
+# Get embeddings
+embeddings = elmo(character_ids)
+
+# embeddings['elmo_representations'] contains:
+# - List of 2 tensors (one per layer)
+# - Shape: [batch_size, seq_len, 1024]
+
+# Different vectors for "bank"!
+bank1 = embeddings['elmo_representations'][0][0, 5, :] # first sentence
+bank2 = embeddings['elmo_representations'][0][1, 5, :] # second sentence
+
+# Cosine similarity will be lower than for static embeddings
+```
+
+
+---
+
+# Universal Sentence Encoder (USE) 
+
+
+**Sentence-level embeddings for semantic similarity**
+
+<div class="columns">
+<div class="column">
+
+**Motivation:**
+- Word embeddings: good for words
+- But what about sentences?
+- Average of word vectors? Too simple!
+- Need compositionality
+
+**Two Variants:**
+
+**1. Transformer-based:**
+- Higher accuracy
+- Slower (compute intensive)
+- Better for quality
+
+**2. Deep Averaging Network (DAN):**
+- Lower accuracy
+- Much faster
+- Better for scale
+
+</div>
+<div class="column">
+
+**Training Objectives:**
+1. Unsupervised: Skip-thought
+2. Supervised: SNLI (entailment)
+3. Multi-task learning
+
+**Output:**
+- 512-dimensional vector
+- Fixed-length (any sentence length)
+- Optimized for similarity tasks
+
+**Use Cases:**
+- Semantic search
+- Question answering
+- Text classification
+- Clustering
+- Duplicate detection
+
+</div>
+</div>
+
+*Reference: Cer et al. (2018). "Universal Sentence Encoder"*
+
+---
+
+# Universal Sentence Encoder in Practice 
+
+
+```python
+import tensorflow_hub as hub
 import numpy as np
 
-# Sample 1000 random points in different dims
-for dim in [2, 10, 100, 300]:
- points = np.random.randn(1000, dim)
- dists = np.linalg.norm(points, axis=1)
+# Load model
+embed = hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
 
- print(f"Dim={dim}: mean={dists.mean():.2f}, "
- f"std={dists.std():.2f}")
+# Example sentences
+sentences = [
+ "The cat sat on the mat.",
+ "A feline rested on the rug.",
+ "The dog ran in the park.",
+ "I love machine learning."
+]
 
-# Output:
-# Dim=2: mean=1.26, std=0.52
-# Dim=10: mean=3.08, std=0.49
-# Dim=100: mean=9.95, std=0.50
-# Dim=300: mean=17.3, std=0.50
+# Generate embeddings
+embeddings = embed(sentences)
+
+# Shape: [4, 512]
+print(embeddings.shape)
+
+# Compute similarity
+from sklearn.metrics.pairwise import cosine_similarity
+
+sim_matrix = cosine_similarity(embeddings)
+print(sim_matrix)
+
+# Sentences 1 and 2 should be very similar (paraphrases)
+# Sentence 3 somewhat similar (animals)
+# Sentence 4 dissimilar
+
+# Use for semantic search
+query = "cat on mat"
+query_embedding = embed([query])
+similarities = cosine_similarity(query_embedding, embeddings)[0]
+most_similar_idx = np.argmax(similarities)
+print(f"Most similar: {sentences[most_similar_idx]}")
 ```
-
-All points cluster around the same distance from origin!
-
-</div>
-</div>
 
 
 ---
 
-# Why Dimensionality Reduction? 
+# BERT: Bidirectional Encoder Representations 
 
 
+
+**The model that changed everything (2018)**
 
 <div class="columns">
 <div class="column">
 
-**Visualization:**
-- 2D/3D plots
-- Explore semantic structure
-- Identify clusters
-- Discover patterns
-- Quality assurance
+**Key Innovations:**
+1. context (not just left-to-right)
+2. architecture (attention)
+3. pre-training
 
-**Computation:**
-- Faster algorithms
-- Less memory
-- Enable real-time systems
-- Scalability
+5. Deeply bidirectional
+
+**Impact:**
+- SOTA on 11 NLP tasks
+- Sparked the "BERT-era"
+- 1000+ variants (RoBERTa, ALBERT, DistilBERT, ...)
+- Foundation for modern LLMs
 
 </div>
 <div class="column">
 
-**Machine Learning:**
-- Reduce overfitting
-- Feature selection
-- Improve generalization
-- Remove noise
-- Combat curse of dimensionality
+**Architecture Sizes:**
 
-**Interpretation:**
-- Understand relationships
-- Identify important dimensions
-- Communicate results
-- Debug models
+| BERT-Large | 24 | 1024 |
+| --- | --- | --- |
+
+**Training Data:**
+- BooksCorpus (800M words)
+- English Wikipedia (2.5B words)
+- Total: 3.3B words
+
+**Training Time:**
+- 4 days on 64 TPU chips
+- Or 4 weeks on 8 GPUs
 
 </div>
 </div>
 
-<div class="callout info">
-<div class="callout-title">The Goal</div>
+*Reference: Devlin et al. (2018). "BERT: Pre-training of Deep Bidirectional Transformers"*
 
-Reduce from $d$ dimensions (e.g., 300) to $k$ dimensions (e.g., 2 or 3) while 
+---
+
+# Masked Language Modeling (MLM) 
+
+
+**BERT's key training innovation**
+
+**The Problem with Traditional LM:**
+- Left-to-right: Only sees previous words
+- Right-to-left: Only sees next words
+- Want: See both directions simultaneously
+- But: Can't just show the answer during training!
+
+**Solution: Mask some words, predict them**
+
+<div class="callout tip">
+<div class="callout-title">Worked Example: MLM Training</div>
+
+**Original:** "The cat sat on the mat"
+
+**Step 1:** Randomly select 15% of tokens → "cat" selected
+
+**Step 2:** Apply masking strategy (80/10/10 rule):
+- 80% chance: "The **[MASK]** sat on the mat"
+- 10% chance: "The **dog** sat on the mat" (random word)
+- 10% chance: "The **cat** sat on the mat" (unchanged)
+
+**Step 3:** Model sees full context both ways to predict "cat":
+```
+← The [MASK] sat on the mat →
+ ↑
+ predict "cat"
+```
+
+</div>
+
+**Training Procedure:**
+1. Randomly select 15% of tokens
+2. Replace 80% with [MASK], 10% with random word, 10% unchanged
+3. Predict original tokens
+4. Bidirectional context!
+
+
+---
+
+# Next Sentence Prediction (NSP) 
+
+
+**Second pre-training task: Understand sentence relationships**
+
+**Task:** Given two sentences A and B, predict if B follows A in the text
+
+<div class="callout tip">
+<div class="callout-title">Positive Example (IsNext)</div>
+
+**Sentence A:** "The cat sat on the mat."
+
+**Sentence B:** "It was sleeping peacefully."
+
+**Label:** IsNext 
+
+</div>
+
+<div class="callout tip">
+<div class="callout-title">Negative Example (NotNext)</div>
+
+**Sentence A:** "The cat sat on the mat."
+
+**Sentence B:** "Machine learning is fascinating."
+
+**Label:** NotNext 
+
+</div>
+
+**Why This Helps:**
+- Captures discourse relationships
+- Useful for QA, NLI, etc.
+- Models sentence-level coherence
+- Note: Later research (RoBERTa) found NSP less important than MLM
+
+
+---
+
+# BERT Architecture 
+
+**Three types of embeddings are summed for each token:**
+
+<div class="callout tip">
+<div class="callout-title">Worked Example: Input Representation</div>
+
+**Input:** "[CLS] I love NLP [SEP] It is fun [SEP]"
+
+| Token | Token ID | Segment | Position | Final Embedding |
+|-------|----------|---------|----------|-----------------|
+| [CLS] | E_CLS | A | 0 | E_CLS + E_A + E_0 |
+| I | E_I | A | 1 | E_I + E_A + E_1 |
+| love | E_love | A | 2 | E_love + E_A + E_2 |
+| NLP | E_NLP | A | 3 | E_NLP + E_A + E_3 |
+| [SEP] | E_SEP | A | 4 | E_SEP + E_A + E_4 |
+| It | E_It | B | 5 | E_It + E_B + E_5 |
+| is | E_is | B | 6 | E_is + E_B + E_6 |
+| fun | E_fun | B | 7 | E_fun + E_B + E_7 |
+| [SEP] | E_SEP | B | 8 | E_SEP + E_B + E_8 |
+
+- **Token Embedding:** What word is this?
+- **Segment Embedding:** Which sentence (A or B)?
+- **Position Embedding:** Where in the sequence?
 
 </div>
 
 
 ---
 
-# Principal Component Analysis (PCA) 
-
-
-**The classic linear dimensionality reduction method**
-
-<div class="columns">
-<div class="column">
-
-**Intuition:**
-- Find directions of maximum variance
-- Project data onto these directions
-- First PC: most variance
-- Second PC: second most (orthogonal)
-- And so on...
-
-**Properties:**
-- Linear transformation
-- Preserves global structure
-- Deterministic
-- Fast computation
-- Interpretable (sometimes)
-
-</div>
-<div class="column">
-
-<!-- Timeline - see original for details -->
-
-PC1 captures most variation
-
-PC2 captures remaining variation (orthogonal to PC1)
-
-</div>
-</div>
-
-
----
-
-# PCA: The Algorithm 
-
-
-**Step-by-Step Worked Example:**
-
-<div class="columns">
-<div class="column">
-
-**Original Data (3D → 2D):**
-
-| Word | x1 | x2 | x3 |
-|------|-----|-----|-----|
-| king | 2.0 | 1.5 | 0.1 |
-| queen | 1.8 | 1.6 | 0.2 |
-| man | 1.0 | 0.5 | 0.1 |
-| woman | 0.9 | 0.6 | 0.2 |
-
-**Step 1:** Center data (subtract mean)
-
-**Step 2:** Compute covariance matrix C
-
-**Step 3:** Find eigenvectors/eigenvalues
-
-</div>
-<div class="column">
-
-**Eigenvalues (variance captured):**
-- $\lambda_1 = 0.85$ (85% variance)
-- $\lambda_2 = 0.13$ (13% variance)
-- $\lambda_3 = 0.02$ (2% variance)
-
-**Keep top 2 PCs → 98% variance retained!**
-
-**Projected Data (2D):**
-
-| Word | PC1 | PC2 |
-|------|------|------|
-| king | 1.9 | 0.3 |
-| queen | 1.7 | 0.4 |
-| man | 0.8 | -0.2 |
-| woman | 0.7 | -0.1 |
-
-Gender still separable, royalty still clusters!
-
-</div>
-</div>
-
----
-
-# PCA in Practice 
+# BERT in Practice 
 
 
 ```python
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-import numpy as np
-import matplotlib.pyplot as plt
+from transformers import BertTokenizer, BertModel
+import torch
 
-# Assume we have word embeddings: shape (vocab_size, 300)
-# For example, Word2Vec embeddings
-
-# Standardize the data (optional but recommended)
-scaler = StandardScaler()
-embeddings_scaled = scaler.fit_transform(embeddings)
-
-# Apply PCA
-pca = PCA(n_components=2) # Reduce to 2D for visualization
-embeddings_2d = pca.fit_transform(embeddings_scaled)
-
-# Check variance explained
-print(f"Variance explained: {pca.explained_variance_ratio_}")
-print(f"Total: {sum(pca.explained_variance_ratio_):.2%}")
-
-# Visualize
-plt.figure(figsize=(10, 8))
-plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], alpha=0.5)
-
-# Annotate some words
-words = ['king', 'queen', 'man', 'woman', 'cat', 'dog']
-for word in words:
- idx = word_to_idx[word]
- plt.annotate(word, (embeddings_2d[idx, 0], embeddings_2d[idx, 1]))
-
-plt.xlabel('PC1')
-plt.ylabel('PC2')
-plt.title('Word Embeddings - PCA Projection')
-plt.show()
-```
-
-
----
-
-# PCA Limitations 
-
-
-<div class="columns">
-<div class="column">
-
-**Assumes Linearity:**
-- Only captures linear relationships
-- Word embeddings often have non-linear structure
-- May miss important patterns
-
-```
-Non-linear manifold -> PCA struggles here!
-```
-
-</div>
-<div class="column">
-
-**Other Issues:**
-- **Variance ≠ Importance:**
- 
-- Preserves variance, not semantic structure
-- Noisy dimensions may have high variance
-
- \item **Global focus:**
- - May lose local structure
-- Clusters can become blurred
-
- \item **Interpretability:**
- - PCs are linear combinations
-- Hard to interpret semantically
-
-<div class="callout warning">
-<div class="callout-title">When to Use PCA</div>
-
-- Quick first exploration
-- Preprocessing for other methods
-- When speed is critical
-- Linear structure expected
-
-</div>
-
-</div>
-</div>
-
-
----
-
-# t-SNE: t-Distributed Stochastic Neighbor Embedding 
-
-
-**Non-linear dimensionality reduction for visualization**
-
-<div class="columns">
-<div class="column">
-
-**Key Idea:**
-- Model similarity as probability
-- High-D: Gaussian similarity
-- Low-D: t-distribution similarity
-- Minimize divergence between them
-- Preserves 
-
-**Advantages:**
-- Beautiful visualizations
-- Reveals clusters
-- Non-linear mappings
-- Great for exploration
-- Widely used in practice
-
-</div>
-<div class="column">
-
-**How it works:**
-
-1. Compute pairwise similarities in high-D:
- 
- p_{j|i} = {\sum_{k ≠ i} \exp(-||x_i - x_k||^2 / 2\sigma_i^2)}
- 
-2. Compute similarities in low-D using t-distribution:
- 
- q_{ij} = }{\sum_{k ≠ l}(1 + ||y_k - y_l||^2)^{-1}}
- 
-3. Minimize KL divergence:
- 
- C = \sum_i KL(P_i || Q_i)
- 
-4. Use gradient descent to optimize $y_i$
-
-</div>
-</div>
-
-*Reference: van der Maaten & Hinton (2008). "Visualizing Data using t-SNE"*
-
----
-
-# t-SNE: Key Concepts 
-
-
-**Why t-distribution in low-D?**
-
-<div class="columns">
-<div class="column">
-
-**The Crowding Problem Illustrated:**
-
-```
-High-D: 10 points can each have
- 9 equidistant neighbors
-
- * * *
- * * *
- * * *
-
-Low-D (2D): Can't fit 9 equidistant
- neighbors around 1 point!
-
-Solution: t-distribution has
- heavier tails → allows
- moderately-distant points
- to spread further apart
-```
-
-</div>
-<div class="column">
-
-**Perplexity Effect (Same Data!):**
-
-```
-Perplexity = 5:
- Tight, fragmented clusters
- Good for fine structure
-
-Perplexity = 30:
- Balanced view
- Standard choice
-
-Perplexity = 100:
- Merged clusters
- More global view
-```
-
-**Rule of thumb:** perplexity ~ sqrt(n)
-
-For 1000 words: try perplexity 30-50
-
-</div>
-</div>
-
-
----
-
-# t-SNE in Practice 
-
-
-```python
-from sklearn.manifold import TSNE
-import matplotlib.pyplot as plt
-
-# Apply t-SNE (can be slow for large datasets)
-tsne = TSNE(
- n_components=2, # 2D visualization
- perplexity=30, # try 5-50
- n_iter=2000, # iterations
- random_state=42, # reproducibility
- verbose=1 # show progress
-)
-
-embeddings_2d = tsne.fit_transform(embeddings)
-
-# Visualize with labels
-plt.figure(figsize=(12, 10))
-
-# Color by semantic category (if available)
-categories = ['animals', 'food', 'technology', ...]
-colors = ['red', 'blue', 'green', ...]
-
-for cat, color in zip(categories, colors):
- mask = labels == cat
- plt.scatter(
- embeddings_2d[mask, 0],
- embeddings_2d[mask, 1],
- c=color,
- label=cat,
- alpha=0.6
- )
-
-# Annotate some words
-for word, idx in word_to_idx.items():
- if word in important_words:
- plt.annotate(
- word,
- (embeddings_2d[idx, 0], embeddings_2d[idx, 1])
- )
-
-plt.legend()
-plt.title('Word Embeddings - t-SNE Projection')
-plt.show()
-```
-
-
----
-
-# t-SNE Limitations and Caveats 
-
-<div class="columns">
-<div class="column">
-
-**1. Slow:** $O(n^2)$ complexity
-
-```python
-# Timing comparison
-n=1000: ~10 seconds
-n=5000: ~4 minutes
-n=10000: ~15 minutes
-```
-
-**2. Non-deterministic:**
-
-```python
-tsne1 = TSNE(random_state=42)
-tsne2 = TSNE(random_state=123)
-# Different layouts!
-```
-
-**3. No out-of-sample:**
-
-```python
-# Can't do this with t-SNE:
-new_point_2d = tsne.transform(new_point)
-# Error! Must refit entire dataset
-```
-
-</div>
-<div class="column">
-
-**4. Interpretation Pitfalls:**
-
-```
-WRONG interpretations:
- "Cluster A is bigger than B"
- (sizes are arbitrary)
-
- "A and B are far apart"
- (global distances not preserved)
-
- "This dimension means X"
- (axes have no meaning)
-
-CORRECT interpretations:
- "Points in cluster A are similar"
- "These words form a group"
- "There appear to be N clusters"
-```
-
-</div>
-</div>
-
-**Solution:** Use PCA first to reduce to 50D, then t-SNE to 2D
-
-
----
-
-# UMAP: Uniform Manifold Approximation \& Projection 
-
-
-**Modern alternative to t-SNE (2018)**
-
-<div class="columns">
-<div class="column">
-
-**Key Advantages over t-SNE:**
-- ($O(n \log n)$ vs $O(n^2)$)
-- Preserves local and global structure
-- Can transform new points
-- Theoretically grounded (topology)
-- Scales to millions of points
-- More robust hyperparameters
-
-**When to Use:**
-- Large datasets ($>$10k points)
-- Need global structure
-- Production systems
-- Consistent results important
-- Most NLP visualization tasks!
-
-</div>
-<div class="column">
-
-**How it Works:**
-
-1. Construct fuzzy topological representation of high-D data
-2. Find low-D representation with similar topology
-3. Use Riemannian geometry
-4. Optimize cross-entropy loss
-
-**Main Hyperparameters:**
-
-**1. n_neighbors (15):**
-- Local vs. global balance
-- Small: local structure
-- Large: global structure
-
-**2. min_dist (0.1):**
-- How tightly to pack points
-- Small: tight clusters
-- Large: loose, spread out
-
-</div>
-</div>
-
-*Reference: McInnes & Healy (2018). "UMAP: Uniform Manifold Approximation and Projection"*
-
----
-
-# UMAP in Practice 
-
-
-```python
-import umap
-import matplotlib.pyplot as plt
-
-# Apply UMAP
-reducer = umap.UMAP(
- n_components=2, # 2D visualization
- n_neighbors=15, # local/global balance (try 5-50)
- min_dist=0.1, # cluster tightness (try 0.0-0.99)
- metric='cosine', # good for word embeddings
- random_state=42
-)
-
-embeddings_2d = reducer.fit_transform(embeddings)
-
-# Can also transform new points! (unlike t-SNE)
-new_embeddings_2d = reducer.transform(new_embeddings)
-
-# Visualize
-plt.figure(figsize=(12, 10))
-scatter = plt.scatter(
- embeddings_2d[:, 0],
- embeddings_2d[:, 1],
- c=cluster_labels, # color by cluster
- cmap='Spectral',
- s=5,
- alpha=0.6
-)
-plt.colorbar(scatter)
-
-# Annotate
-for word in important_words:
- idx = word_to_idx[word]
- plt.annotate(
- word,
- (embeddings_2d[idx, 0], embeddings_2d[idx, 1]),
- fontsize=12
- )
-
-plt.title('Word Embeddings - UMAP Projection')
-plt.show()
-```
-
-
----
-
-# PCA vs. t-SNE vs. UMAP 
-
-
-| Feature | PCA | t-SNE | UMAP |
-| --- | --- | --- | --- |
-| Speed | Very Fast | Slow | Fast |
-| Scalability | Excellent | Poor (<10k) | Excellent |
-| Global structure | Yes | No | Yes |
-| Local structure | Partial | Yes | Yes |
-| Deterministic | Yes | No | Partial |
-| Out-of-sample | Yes | No | Yes |
-
-**Concrete Timing Comparison (10,000 word embeddings):**
-
-```python
-# PCA: 0.3 seconds
-pca = PCA(n_components=2).fit_transform(X)
-
-# t-SNE: 180 seconds (3 minutes!)
-tsne = TSNE(n_components=2).fit_transform(X)
-
-# UMAP: 12 seconds
-umap = UMAP(n_components=2).fit_transform(X)
-```
-
-<div class="callout info">
-<div class="callout-title">Best Practice Workflow</div>
-
-```python
-# Step 1: PCA to 50D (fast, removes noise)
-X_50d = PCA(n_components=50).fit_transform(X)
-
-# Step 2: UMAP to 2D (preserves structure)
-X_2d = UMAP(n_components=2).fit_transform(X_50d)
-```
-
-</div>
-
----
-
-# Visualization Best Practices 
-
-
-1. **Preprocessing:**
- - Standardize features (mean=0, std=1)
-- Remove outliers (optional)
-- For very large datasets: sample or use PCA first
-2. **Try multiple hyperparameters:**
- - t-SNE perplexity: 5, 10, 30, 50
-- UMAP n_neighbors: 5, 15, 30, 50
-- Different views reveal different structure
-3. **Color intelligently:**
- - By semantic category
-- By cluster assignment
-- By frequency (size)
-- By POS tag, domain, etc.
-4. **Interactive visualization:**
- - Use plotly, bokeh for interactivity
-- Hover tooltips with word info
-- Zoom and pan
-- Filter by category
-5. **Annotate selectively:**
- - Too many labels = clutter
-- Show representative words
-- Use repel/adjust_text to avoid overlap
-
-
----
-
-# Interactive Visualization 
-
-
-```python
-import plotly.express as px
-import plotly.graph_objects as go
-import pandas as pd
-
-# Prepare data
-df = pd.DataFrame({
- 'x': embeddings_2d[:, 0],
- 'y': embeddings_2d[:, 1],
- 'word': words,
- 'category': categories,
- 'frequency': frequencies
-})
-
-# Create interactive plot with plotly
-fig = px.scatter(
- df,
- x='x',
- y='y',
- color='category',
- size='frequency',
- hover_data=['word', 'frequency'],
- title='Word Embeddings (UMAP)',
- width=1000,
- height=800
-)
-
-# Add text annotations for important words
-for word in important_words:
- row = df[df['word'] == word].iloc[0]
- fig.add_annotation(
- x=row['x'],
- y=row['y'],
- text=word,
- showarrow=False,
- font=dict(size=12)
- )
-
-# Show
-fig.show()
-
-# Can also save as HTML
-fig.write_html('embeddings_viz.html')
-```
-
-
----
-
-# Applications in NLP 
-
-<div class="columns">
-<div class="column">
-
-**1. Embedding Quality Check:**
-
-```python
-# Quick sanity check
-words = ['dog', 'cat', 'fish', # animals
- 'car', 'bus', 'train'] # vehicles
-
-# If good embeddings: two clusters!
-# If bad: random scatter
-```
-
-**2. Finding Polysemous Words:**
-
-```
-"apple" appears in TWO clusters:
-- Near: orange, banana, fruit
-- Near: microsoft, google, tech
-
-→ Word has multiple senses!
-```
-
-**3. Domain Vocabulary Analysis:**
-
-```
-Medical corpus visualization:
-Cluster 1: symptoms (fever, cough...)
-Cluster 2: treatments (aspirin, surgery...)
-Cluster 3: anatomy (heart, liver...)
-```
-
-</div>
-<div class="column">
-
-**4. Model Layer Comparison:**
-
-```python
-# Extract embeddings from different layers
-layer_1 = get_bert_layer(1) # Syntax
-layer_6 = get_bert_layer(6) # Semantics
-layer_12 = get_bert_layer(12) # Task-specific
-
-# Visualize each: different structure!
-```
-
-**5. Document Clustering:**
-
-```python
-# Visualize document embeddings
-doc_embeddings = model.encode(documents)
-umap_2d = umap.UMAP().fit_transform(
- doc_embeddings)
-
-# Color by topic → see topic separation
-plt.scatter(umap_2d[:, 0], umap_2d[:, 1],
- c=topic_labels)
-```
-
-</div>
-</div>
-
-
----
-
-# Case Study: Visualizing BERT Layers 
-
-
-**Question:** What do different BERT layers capture?
-
-<div class="columns">
-<div class="column">
-
-**Approach:**
-1. Extract embeddings from each layer
-2. Apply UMAP to each layer separately
-3. Visualize and compare
-
-**Typical Findings:**
-- **Layer 0-2:** Syntactic (POS tags cluster)
-- **Layer 3-8:** Semantic (meaning clusters)
-- **Layer 9-12:** Task-specific
-
-**Insights:**
-- Lower layers: syntax
-- Middle layers: semantics
-- Upper layers: task adaptation
-- Confirms linguistic hierarchy
-
-</div>
-<div class="column">
-
-```python
-from transformers import BertModel, BertTokenizer
-
-model = BertModel.from_pretrained('bert-base-uncased', output_hidden_states=True)
+# Load pre-trained BERT
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+model = BertModel.from_pretrained('bert-base-uncased')
 
-# Get embeddings from all layers
-tokens = tokenizer(sentences, return_tensors='pt', padding=True)
-outputs = model(**tokens)
+# Example sentences with "bank"
+sent1 = "I deposited money at the bank"
+sent2 = "We sat by the river bank"
 
-# outputs.hidden_states: tuple of 13 tensors
-# (embedding layer + 12 transformer layers)
+# Tokenize
+tokens1 = tokenizer(sent1, return_tensors='pt')
+tokens2 = tokenizer(sent2, return_tensors='pt')
 
-for layer_idx in range(13):
- layer_embeddings = outputs.hidden_states[layer_idx]
+# Get embeddings
+with torch.no_grad():
+ output1 = model(**tokens1)
+ output2 = model(**tokens2)
 
- # Average over sequence length
- avg_embeddings = layer_embeddings.mean(dim=1).numpy()
+# Last hidden state: [batch_size, seq_len, hidden_size]
+embeddings1 = output1.last_hidden_state
+embeddings2 = output2.last_hidden_state
 
- # Apply UMAP
- reducer = umap.UMAP(n_components=2)
- viz_2d = reducer.fit_transform(avg_embeddings)
+# Extract "bank" embedding (position varies)
+# tokens1: [CLS] i deposited money at the bank [SEP]
+bank1_embedding = embeddings1[0, 6, :] # 768-dim vector
 
- # Plot
- plt.figure()
- plt.scatter(viz_2d[:, 0], viz_2d[:, 1], c=pos_tags)
- plt.title(f'Layer {layer_idx}')
- plt.show()
+# tokens2: [CLS] we sat by the river bank [SEP]
+bank2_embedding = embeddings2[0, 6, :] # 768-dim vector
+
+# Different vectors for "bank"!
+from torch.nn.functional import cosine_similarity
+sim = cosine_similarity(bank1_embedding, bank2_embedding, dim=0)
+print(f"Similarity: {sim:.3f}") # Lower than with static embeddings
+```
+
+
+---
+
+# Fine-tuning BERT 
+
+
+**Two ways to use BERT:**
+
+<div class="columns">
+<div class="column">
+
+**1. Feature Extraction:**
+- Freeze BERT weights
+- Use embeddings as features
+- Train classifier on top
+- Faster, less data needed
+
+```python
+# Freeze BERT
+for param in bert_model.parameters():
+ param.requires_grad = False
+
+# Add classifier
+classifier = nn.Linear(768, num_classes)
+
+# Train only classifier
+optimizer = Adam(classifier.parameters())
+```
+
+</div>
+<div class="column">
+
+**2. Fine-tuning:**
+- Update BERT weights
+- Add task-specific head
+- Train end-to-end
+- Better performance, more data needed
+
+```python
+# Keep BERT trainable
+bert_model = BertModel.from_pretrained(
+ 'bert-base-uncased'
+)
+
+# Add classifier
+classifier = nn.Linear(768, num_classes)
+
+# Train everything
+optimizer = Adam(
+ list(bert_model.parameters()) +
+ list(classifier.parameters()),
+ lr=2e-5 # Small learning rate!
+)
 ```
 
 </div>
 </div>
 
-*Reference: Jawahar et al. (2019). "What Does BERT Learn about the Structure of Language?"*
+**Best Practice:** Fine-tune with small learning rate (1e-5 to 5e-5) for few epochs (2-4)
+
+---
+
+# Contextual Embeddings Comparison 
+
+
+
+| Pre-training | LM (forward+backward) | Multi-task | MLM + NSP |
+| --- | --- | --- | --- |
+| Bidirectional | Shallow | Yes | Deep |
+| Granularity | Token | Sentence | Token |
+| Hidden size | 1024 | 512 | 768/1024 |
+| Parameters | 93M | 256M | 110M/340M |
+| Speed | Medium | Fast | Slow |
+| OOV handling | Characters | Subwords | WordPiece |
+| Year | 2018 | 2018 | 2018 |
+
+<div class="callout info">
+<div class="callout-title">Recommendations</div>
+
+- **ELMo:** Legacy systems, character-aware needs
+- **USE:** Sentence similarity, semantic search, fast inference
+- **BERT:** State-of-the-art quality, most NLP tasks (now superseded by larger models)
+
+</div>
+
+
+---
+
+# Impact on NLP 
+
+
+**BERT revolutionized NLP:**
+
+<div class="columns">
+<div class="column">
+
+**Before BERT (pre-2018):**
+- Task-specific architectures
+- Train from scratch
+- Static embeddings (Word2Vec, GloVe)
+- Limited transfer learning
+- Moderate performance
+
+**Tasks that improved:**
+- Question Answering (+1.5 F1 on SQuAD)
+- NER (+0.3 F1)
+- Sentiment Analysis (+2% accuracy)
+- NLI (+4% accuracy)
+- Many others!
+
+</div>
+<div class="column">
+
+**After BERT (post-2018):**
+- Pre-train, then fine-tune
+- Transfer learning standard
+- Contextual embeddings
+- Massive pre-trained models
+- State-of-the-art results
+
+**BERT Variants:**
+- RoBERTa: Better training
+- ALBERT: Parameter sharing
+- DistilBERT: Smaller, faster
+- ELECTRA: Different pre-training
+- DeBERTa: Disentangled attention
+- And 100+ more!
+
+</div>
+</div>
+
+
+---
+
+# Real-World Applications 
+
+<div class="columns">
+<div class="column">
+
+**1. Google Search:**
+```
+Query: "can you get medicine for
+ someone pharmacy"
+
+BERT understands: picking up a
+prescription FOR someone else
+
+Before BERT: matched "medicine"
+and "pharmacy" keywords only
+```
+
+**2. Question Answering:**
+```
+Context: "The Eiffel Tower was
+built in 1889 by Gustave Eiffel."
+
+Q: "When was the Eiffel Tower built?"
+A: "1889" ← BERT extracts this span
+```
+
+</div>
+<div class="column">
+
+**3. Sentiment Analysis:**
+```python
+# Fine-tuned BERT
+text = "Not bad at all!"
+prediction = model(text)
+# → Positive (understands negation!)
+```
+
+**4. Named Entity Recognition:**
+```
+Input: "Apple CEO Tim Cook announced..."
+
+Output:
+ Apple → ORG
+ Tim Cook → PERSON
+```
+
+**5. Semantic Search:**
+```
+Query: "affordable laptop for students"
+Matches: "budget-friendly notebook
+ for college" ← synonyms!
+```
+
+</div>
+</div>
+
 
 ---
 
@@ -883,74 +776,69 @@ for layer_idx in range(13):
 
 
 
-**What does a 2D visualization actually tell us about 300D space?**
+**Do contextual embeddings truly "understand" language?**
 
 **Consider:**
-- We compress 300 dimensions into 2
-- Massive information loss (>99%)
-- Different methods show different views
-- Hyperparameters change the story
+- BERT can distinguish "bank" (financial) from "bank" (riverside)
+- It achieves human-level performance on many benchmarks
+- But it's trained only on text co-occurrence patterns
 
 <div class="columns">
 <div class="column">
 
-**What we CAN conclude:**
-- Rough semantic groupings
-- Relative proximities
-- Cluster existence
-- Outliers and anomalies
-- Qualitative patterns
+**Arguments For:**
+- Captures complex semantic relationships
+- Generalizes to new contexts
+- Emergent linguistic capabilities
+- Handles compositional meaning
 
 </div>
 <div class="column">
 
-**What we CANNOT conclude:**
-- Exact distances
-- True high-D structure
-- Cluster sizes (t-SNE)
-- Between-cluster distances
-- Quantitative relationships
+**Arguments Against:**
+- No grounding in physical world
+- No common sense reasoning
+- Exploits statistical shortcuts
+- Brittle to adversarial examples
+- "Stochastic parrots"?
 
 </div>
 </div>
 
 <div class="callout warning">
-<div class="callout-title">Important</div>
+<div class="callout-title">The Grounding Problem Persists</div>
 
-Dimensionality reduction is a . Always combine visualization with quantitative evaluation!
+Even with contextual embeddings, we still lack true grounding in experience, perception, and embodied cognition.
 
 </div>
 
+*Reference: Bender & Koller (2020). "Climbing towards NLU: On Meaning, Form, and Understanding"*
 
 ---
 
 # Practical Tips 
 
 
-1. **Choose the right tool:**
- - Default: UMAP (fast, balanced)
-- Need speed: PCA
-- Small dataset, only local: t-SNE
-2. **Preprocessing matters:**
- - StandardScaler for PCA
-- Consider normalization for UMAP/t-SNE
-- Remove extreme outliers
-3. **Try multiple settings:**
- - Run with different hyperparameters
-- Compare results
-- Don't cherry-pick!
-4. **Use color wisely:**
- - Semantic categories
-- Continuous values (frequency, sentiment)
-- Consider colorblind-friendly palettes
-5. **Save your random seeds:**
- - Makes results reproducible
-- Important for publications
-- Helps debugging
-6. **Computational tips:**
- - For $>$100k points: PCA first to 50D, then UMAP
-- Use n_jobs=-1 for parallel computation
-- Consider approximate nearest neighbors (Annoy, FAISS)
+1. **Choosing a Model:**
+ - BERT-base: Good balance, 110M params
+- DistilBERT: 40% smaller, 60% faster, 97% performance
+- RoBERTa: Better than BERT, longer training
+- Domain-specific: BioBERT, SciBERT, FinBERT, etc.
+2. **Fine-tuning Best Practices:**
+ - Small learning rate (2e-5 typical)
+- Few epochs (2-4)
+- Batch size: 16 or 32
+- Warm-up steps
+- Gradient clipping
+3. **Computational Considerations:**
+ - BERT-base: ~110M params, 512 max tokens
+- Needs GPU (1-4 GB VRAM minimum)
+- Batching for efficiency
+- Consider DistilBERT for production
+4. **Using HuggingFace:**
+ - Easy access to 1000+ pre-trained models
+- Standardized API
+- Good documentation and community
 
 
 ---
@@ -960,24 +848,22 @@ Dimensionality reduction is a . Always combine visualization with quantitative e
 
 **What we learned today:**
 
-1. **Curse of Dimensionality:** High-D space is weird, need reduction
-2. **PCA:**
- - Linear, fast, preserves global structure
-- Good for preprocessing and quick exploration
-3. **t-SNE:**
- - Non-linear, preserves local structure
-- Beautiful visualizations but slow
-- Sensitive to hyperparameters
-4. **UMAP:**
- - Fast, scalable, balanced local+global
-- Best default choice for NLP
-- Can transform new points
-5. **Best Practices:**
- - Try multiple methods and parameters
-- Use interactive visualizations
-- Don't over-interpret 2D projections
-
-**Next: Cognitive models of semantic representation!**
+1. **Contextual vs. Static:** Different vectors per occurrence
+2. **ELMo (2018):**
+ - BiLSTM language models
+- Character-based, handles OOV
+- Task-specific weighting
+3. **Universal Sentence Encoder (2018):**
+ - Sentence-level embeddings
+- Two variants: Transformer & DAN
+- Optimized for semantic similarity
+4. **BERT (2018):**
+ - Masked language modeling
+- Deep bidirectional transformers
+- Pre-train + fine-tune paradigm
+- Revolutionized NLP
+5. **Impact:** Established modern transfer learning in NLP
+6. **Next:** Dimensionality reduction techniques for visualization
 
 
 ---
@@ -987,23 +873,22 @@ Dimensionality reduction is a . Always combine visualization with quantitative e
 
 
 **Foundational Papers:**
-- Pearson, K. (1901). "On Lines and Planes of Closest Fit to Systems of Points in Space" (PCA)
-- van der Maaten & Hinton (2008). "Visualizing Data using t-SNE"
-- McInnes et al. (2018). "UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction"
+- Peters et al. (2018). "Deep contextualized word representations" (ELMo)
+- Cer et al. (2018). "Universal Sentence Encoder"
+- Devlin et al. (2018). "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
 
-**Applications:**
-- Jawahar et al. (2019). "What Does BERT Learn about the Structure of Language?"
-- Coenen et al. (2019). "Visualizing and Measuring the Geometry of BERT"
+**BERT Variants:**
+- Liu et al. (2019). "RoBERTa: A Robustly Optimized BERT Pretraining Approach"
+- Sanh et al. (2019). "DistilBERT, a distilled version of BERT"
+- Lan et al. (2019). "ALBERT: A Lite BERT for Self-supervised Learning"
 
-**Guides & Tutorials:**
-- Wattenberg et al. (2016). "How to Use t-SNE Effectively" (Distill)
-- UMAP documentation: https://umap-learn.readthedocs.io/
-- Scikit-learn User Guide: https://scikit-learn.org/stable/modules/manifold.html
+**Critical Perspectives:**
+- Bender & Koller (2020). "Climbing towards NLU: On Meaning, Form, and Understanding"
+- Bender et al. (2021). "On the Dangers of Stochastic Parrots"
 
-**Tools:**
-- Scikit-learn: PCA, t-SNE
-- UMAP-learn: `pip install umap-learn`
-- Plotly: `pip install plotly`
+**Resources:**
+- HuggingFace Transformers: https://huggingface.co/transformers/
+- BERT Paper: https://arxiv.org/abs/1810.04805
 
 
 ---
@@ -1014,7 +899,7 @@ Dimensionality reduction is a . Always combine visualization with quantitative e
 
 **Next Lecture:**
 
-Cognitive Models of Semantic Representation
+Dimensionality Reduction: PCA, t-SNE, UMAP
 
-*How do humans represent meaning?*
+*Visualizing high-dimensional embeddings!*
 

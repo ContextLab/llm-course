@@ -8,8 +8,8 @@ footer: 'Week 7'
 
 <!-- _class: lead -->
 
-# Lecture 22: Implementing GPT from Scratch
-## Building a Language Model in PyTorch 
+# Lecture 22: Scaling Up to GPT-3 and Beyond
+## The Era of Few-Shot Learning
 
 **Models of Language and Conversation**
 
@@ -17,979 +17,937 @@ Week 7
 
 ---
 
-# Today's Journey 
+# Today's Journey
 
-<!-- TODO: Add manual table of contents or navigation -->
-
+1. **GPT-2** - 10x scale-up, zero-shot multitask learning
+2. **GPT-3** - 100x scale-up, few-shot learning emerges
+3. **Scaling Laws** - Why bigger is (predictably) better
+4. **RLHF & ChatGPT** - Aligning LLMs with human preferences
+5. **Modern Landscape** - Open vs closed models
+6. **Hands-on Examples** - Prompting techniques in practice
 
 ---
 
-# What We'll Build Today 
+# GPT-2: The Unexpected Leap
 
+<div class="callout info">
+<div class="callout-title">Discussion</div>
 
-
- <div class="callout warning">
-<div class="callout-title">Goal</div>
-
-Implement a simplified GPT model from scratch in PyTorch!
+What happens when we scale up GPT by 10x?
 
 </div>
 
- 
+<div class="columns">
+<div class="column">
 
- **Components we'll cover:**
- 1. Tokenization (Byte-Pair Encoding)
-2. Embeddings (token + position)
-3. Masked Multi-Head Attention
-4. Transformer Decoder Block
-5. Language Model Head
-6. Training Loop
-7. Text Generation
+**GPT (2018):**
+- 117M parameters
+- 5B tokens training
+- BooksCorpus
+- Requires fine-tuning
 
- 
+</div>
+<div class="column">
 
- <div class="callout tip">
+**GPT-2 (2019):**
+- 1.5B parameters (13x larger)
+- 40GB text (8x more data)
+- WebText dataset
+- **No fine-tuning needed!**
+
+</div>
+</div>
+
+<div class="callout warning">
+<div class="callout-title">Key Claim</div>
+
+"Language models are unsupervised multitask learners"
+
+</div>
+
+*Reference: Radford et al. (2019) - "Language Models are Unsupervised Multitask Learners"*
+
+---
+
+# The WebText Dataset
+
+**How GPT-2 was trained:**
+
+<div class="callout info">
+<div class="callout-title">WebText Creation</div>
+
+1. Scrape all outbound links from Reddit with >=3 karma
+2. Filter for quality and diversity
+3. Remove Wikipedia (to avoid test set contamination)
+4. Result: 40GB of text, 8 million documents
+
+</div>
+
+**Why Reddit links?**
+- Community curation (karma = quality signal)
+- Diverse topics and writing styles
+- Web-scale variety
+- Human-filtered content
+
+<div class="callout tip">
 <div class="callout-title">Think about it!</div>
 
-We'll build a "nano-GPT"—small enough to train on a laptop, but with the same architecture as the real thing!
+This introduced a new paradigm: curated web scraping as training data!
 
 </div>
 
-
 ---
 
-# Required Libraries 
+# WebText: Concrete Examples
 
+**What kinds of documents were included:**
 
-```python
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader
-import numpy as np
-import tiktoken # OpenAI's BPE tokenizer
+```
+Reddit post (3+ karma): "Check out this great article about climate science"
+ -> Linked article scraped and included in training
 
-# Check for GPU
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-print(f"Using device: {device}")
+Reddit post (3+ karma): "Here's an amazing tutorial on machine learning"
+ -> Tutorial content included in training
 
-# Hyperparameters
-config = {
- 'vocab_size': 50257, # GPT-2 vocabulary size
- 'd_model': 384, # Embedding dimension
- 'n_layers': 6, # Number of transformer blocks
- 'n_heads': 6, # Number of attention heads
- 'max_seq_len': 256, # Maximum sequence length
- 'dropout': 0.1,
- 'batch_size': 32,
- 'learning_rate': 3e-4,
- 'num_epochs': 10
-}
+Reddit post (2 karma): "Random blog post"
+ -> EXCLUDED (below karma threshold)
 ```
 
-*Install: pip install torch tiktoken*
+**Sample document types in WebText:**
+
+| Source Type | Example | Why Included |
+|-------------|---------|--------------|
+| News articles | NYT, BBC | High quality journalism |
+| Educational | Medium posts, tutorials | Clear explanations |
+| Forums | Stack Overflow answers | Technical knowledge |
+| Blogs | Personal essays | Diverse writing styles |
 
 ---
 
-# What is Tokenization? 
+# GPT-2 Model Sizes
 
+**Four model sizes released progressively:**
 
+| Model | Parameters | Layers | Hidden Size |
+|-------|------------|--------|-------------|
+| Small | 117M | 12 | 768 |
+| Medium | 345M | 24 | 1024 |
+| Large | 762M | 36 | 1280 |
+| XL | 1.5B | 48 | 1600 |
 
- <div class="callout info">
-<div class="callout-title">Tokenization</div>
+**Staged release strategy:**
+- Feb 2019: Released small model (117M)
+- May 2019: Medium model (345M)
+- Aug 2019: Large model (762M)
+- Nov 2019: Full model (1.5B)
+- Concerns about misuse led to gradual release
 
-Converting text into a sequence of integer IDs that the model can process.
+---
+
+# Zero-Shot Task Transfer
+
+**The surprising finding: GPT-2 can perform tasks without fine-tuning!**
+
+<div class="callout info">
+<div class="callout-title">Zero-Shot Prompting Examples</div>
+
+**Translation:**
+```
+English: I love machine learning
+French:
+```
+GPT-2 completes: "J'aime l'apprentissage automatique"
+
+**Question Answering:**
+```
+Answer the question:
+Q: What is the capital of France?
+A:
+```
+GPT-2 completes: "Paris"
+
+**Summarization:**
+```
+[Long article text here]
+
+TL;DR:
+```
+GPT-2 completes with a summary
 
 </div>
 
- 
+---
 
- **Common strategies:**
- 1. **Word-level**: Split on spaces
- - Huge vocabulary, can't handle unknown words
-2. **Character-level**: Individual characters
- - Very long sequences, loses word structure
-3. **Subword-level (BPE)**: Best of both worlds! 
- - Frequent words: one token
-- Rare words: multiple subword tokens
-- Can handle any word via character fallback
+# Zero-Shot: How It Works
 
+**GPT-2 saw similar patterns during pre-training:**
+
+```
+Example from training data (hypothetical):
+
+"...The meeting was held in Berlin. The German chancellor...
+Later that day in Tokyo, Japanese officials...
+
+Quick Summary: Leaders from Germany and Japan met to discuss..."
+```
+
+**At inference time:**
+```
+User prompt: "[Article about climate conference]
+
+TL;DR:"
+
+GPT-2 thinks: "I've seen 'TL;DR:' followed by summaries thousands
+of times in my training. I should output a summary here."
+```
+
+**Key insight:** Zero-shot works because the model learned task formats implicitly from diverse web text!
 
 ---
 
-# Byte-Pair Encoding (BPE) 
+# GPT-2 Performance
 
+**Zero-shot results on various benchmarks:**
 
- **How BPE works:**
+| Task | Metric | Fine-tuned SOTA | GPT-2 Zero-shot |
+|------|--------|-----------------|-----------------|
+| Translation (En->Fr) | BLEU | 45.6 | 11.5 |
+| Summarization | ROUGE | 40.2 | 29.3 |
+| Question Answering | Accuracy | 89.4 | 63.1 |
+| Reading Comprehension | F1 | 91.8 | 55.0 |
 
- 
+<div class="columns">
+<div class="column">
 
- 1. Start with characters as base vocabulary
-2. Find most frequent pair of adjacent tokens
-3. Merge this pair into a new token
-4. Repeat until desired vocabulary size
+**Promising:**
+- Works without fine-tuning
+- Generalizes across tasks
+- Improves with scale
 
- 
+</div>
+<div class="column">
 
- <div class="callout info">
-<div class="callout-title">Example</div>
+**Limitations:**
+- Still behind fine-tuned models
+- Inconsistent quality
+- Hard to control
 
- **Text:** "low low low lower lower newest newest"
+</div>
+</div>
 
- 
+---
 
- **Iterations:**
- 1. Merge "l" + "o" → "lo"
-2. Merge "lo" + "w" → "low"
-3. Merge "low" + "e" + "r" → "lower"
-4. Merge "n" + "e" + "w" + "e" + "s" + "t" → "newest"
+# Text Generation Quality
 
- 
+<div class="callout info">
+<div class="callout-title">GPT-2 Generated Text Sample</div>
 
- **Vocabulary:** [l, o, w, e, r, n, s, t, lo, low, lower, newest, ...]
+**Prompt:** "In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains."
+
+**GPT-2 continues:**
+
+"Even more surprising to the researchers was the fact that the unicorns spoke perfect English. The scientist named the population, after their distinctive horn, Ovid's Unicorn. These four-horned, silver-white unicorns were previously unknown to science..."
 
 </div>
 
+**Observations:**
+- Coherent and fluent
+- Maintains context and style
+- Completely fabricated "facts"
+- No grounding in reality
 
 ---
 
-# BPE Tokenization in Code 
+# GPT-3: The 175B Parameter Model
 
+<div class="callout info">
+<div class="callout-title">Discussion</div>
+
+What happens when we scale up another 100x?
+
+</div>
+
+**Model size comparison:**
+
+| Model | Parameters | Relative Size |
+|-------|------------|---------------|
+| GPT-1 | 117M | 1x |
+| GPT-2 | 1.5B | 13x |
+| GPT-3 | 175B | 1,500x |
+
+**Key insight:** GPT-3 is so large that new capabilities *emerge* that weren't present in smaller models!
+
+*Reference: Brown et al. (2020) - "Language Models are Few-Shot Learners"*
+
+---
+
+# GPT-3 Model Specifications
+
+| Component | Value |
+|-----------|-------|
+| Layers | 96 |
+| Hidden size (d_model) | 12,288 |
+| Attention heads | 96 |
+| Context window | 2048 tokens |
+| Training tokens | 300 billion |
+| Training data | 570GB (filtered) |
+| Training compute | ~3,640 petaflop-days |
+| Estimated training cost | ~$4.6M |
+
+<div class="callout warning">
+<div class="callout-title">Scale</div>
+
+GPT-3 is so large it has never been fully fine-tuned - only used via API!
+
+</div>
+
+---
+
+# GPT-3 Training Data
+
+**Training corpus composition:**
+
+| Dataset | Tokens | Weight in Training |
+|---------|--------|-------------------|
+| Common Crawl (filtered) | 410B | 60% |
+| WebText2 | 19B | 22% |
+| Books1 | 12B | 8% |
+| Books2 | 55B | 8% |
+| Wikipedia | 3B | 3% |
+
+**Key differences from GPT-2:**
+- Much larger and more diverse
+- Includes Common Crawl (with quality filtering)
+- Multiple passes over high-quality data
+- Carefully balanced mixture
+
+---
+
+# Few-Shot Learning
+
+**GPT-3's key capability: In-context learning**
+
+<div class="callout info">
+<div class="callout-title">Learning Paradigms Compared</div>
+
+**1. Zero-shot:** Task description only
+```
+Translate to French: I love AI ->
+```
+
+**2. One-shot:** One example
+```
+sea otter -> loutre de mer
+I love AI ->
+```
+
+**3. Few-shot:** Multiple examples (typically 10-100)
+```
+dog -> chien
+cat -> chat
+bird -> oiseau
+I love AI ->
+```
+
+</div>
+
+**No gradient updates! Just prompt engineering.**
+
+---
+
+# Few-Shot: Worked Example
+
+**Sentiment Classification with 3 examples:**
 
 ```python
-import tiktoken
+prompt = """
+Classify the sentiment of each review as Positive or Negative.
 
-# Load GPT-2 tokenizer (uses BPE)
-tokenizer = tiktoken.get_encoding("gpt2")
+Review: "This movie was amazing, I loved every minute!"
+Sentiment: Positive
 
-# Example text
-text = "Hello, how are you doing today?"
+Review: "Terrible film, complete waste of time."
+Sentiment: Negative
 
-# Encode: text -> token IDs
-tokens = tokenizer.encode(text)
-print("Tokens:", tokens)
-# Output: [15496, 11, 703, 389, 345, 1804, 1909, 30]
+Review: "A masterpiece of modern cinema."
+Sentiment: Positive
 
-# Decode: token IDs -> text
-decoded = tokenizer.decode(tokens)
-print("Decoded:", decoded)
-# Output: "Hello, how are you doing today?"
+Review: "The acting was wooden and the plot made no sense."
+Sentiment:"""
 
-# See individual token strings
-for token_id in tokens:
- token_str = tokenizer.decode([token_id])
- print(f"{token_id}: '{token_str}'")
-
-# Vocabulary size
-print(f"Vocab size: {tokenizer.n_vocab}") # 50257
+# GPT-3 output: "Negative"
 ```
 
+**Why this works:**
+- Model recognizes the pattern from examples
+- Applies same pattern to new input
+- No weight updates needed!
 
 ---
 
-# Creating a Text Dataset 
+# In-Context Learning: How It Works
 
+**The mechanism behind few-shot learning:**
 
-```python
-class TextDataset(Dataset):
- def __init__(self, text_file, tokenizer, max_seq_len):
- # Load text
- with open(text_file, 'r', encoding='utf-8') as f:
- text = f.read()
+```
+Prompt structure:
+[Example 1] [Example 2] [Example 3] [New Input]
 
- # Tokenize entire text
- self.tokens = tokenizer.encode(text)
- self.max_seq_len = max_seq_len
-
- def __len__(self):
- # Number of sequences we can extract
- return len(self.tokens) - self.max_seq_len
-
- def __getitem__(self, idx):
- # Get sequence of length max_seq_len + 1
- # (we need +1 for the target)
- chunk = self.tokens[idx:idx + self.max_seq_len + 1]
-
- # Input: all but last token
- x = torch.tensor(chunk[:-1], dtype=torch.long)
- # Target: all but first token
- y = torch.tensor(chunk[1:], dtype=torch.long)
-
- return x, y
-
-# Usage
-dataset = TextDataset('shakespeare.txt', tokenizer, config['max_seq_len'])
-dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True)
+What GPT-3 "sees":
+1. Pattern: "Review: X" followed by "Sentiment: Y"
+2. Mapping: positive language -> "Positive"
+3. Mapping: negative language -> "Negative"
+4. Task: Apply this mapping to new input
 ```
 
+**Key observations:**
+- Model recognizes pattern in examples
+- Continues the pattern for new input
+- No weight updates - pure inference!
+- "Learning" happens at inference time
+
+<div class="callout warning">
+<div class="callout-title">Important</div>
+
+This is NOT the same as training! The model weights don't change.
+
+</div>
 
 ---
 
-# Token and Position Embeddings 
+# GPT-3's Emergent Abilities
 
+<div class="callout info">
+<div class="callout-title">Discussion</div>
 
-```python
-class Embeddings(nn.Module):
- def __init__(self, vocab_size, d_model, max_seq_len, dropout):
- super().__init__()
- # Token embeddings: map token IDs to vectors
- self.token_embed = nn.Embedding(vocab_size, d_model)
+What can GPT-3 do that smaller models can't?
 
- # Position embeddings: encode position information
- self.pos_embed = nn.Embedding(max_seq_len, d_model)
+</div>
 
- self.dropout = nn.Dropout(dropout)
- self.d_model = d_model
+**Emergent capabilities:**
+- **Arithmetic**: 2-3 digit addition/subtraction
+- **Reasoning**: Simple logical deduction
+- **Code generation**: Write simple programs
+- **Knowledge synthesis**: Combine facts
+- **Style transfer**: Mimic writing styles
+- **Task composition**: Multi-step procedures
 
- def forward(self, x):
- # x shape: (batch_size, seq_len)
- seq_len = x.size(1)
+<div class="callout warning">
+<div class="callout-title">Scaling Hypothesis</div>
 
- # Token embeddings
- tok_emb = self.token_embed(x) # (batch, seq_len, d_model)
+These abilities weren't explicitly trained - they *emerged* from scale!
 
- # Position embeddings
- positions = torch.arange(0, seq_len, device=x.device)
- pos_emb = self.pos_embed(positions) # (seq_len, d_model)
+</div>
 
- # Combine (broadcasting handles batch dimension)
- embeddings = tok_emb + pos_emb
+*Reference: Wei et al. (2022) - "Emergent Abilities of Large Language Models"*
 
- return self.dropout(embeddings)
+---
+
+# Emergent Abilities: Concrete Examples
+
+**Arithmetic (emerges around 10B parameters):**
+```
+Q: What is 47 + 58?
+A: 105
 ```
 
-
----
-
-# Masked Multi-Head Attention 
-
-
-```python
-class MultiHeadAttention(nn.Module):
- def __init__(self, d_model, n_heads, dropout):
- super().__init__()
- assert d_model % n_heads == 0
-
- self.d_model = d_model
- self.n_heads = n_heads
- self.head_dim = d_model // n_heads
-
- # Linear layers for Q, K, V
- self.q_linear = nn.Linear(d_model, d_model)
- self.k_linear = nn.Linear(d_model, d_model)
- self.v_linear = nn.Linear(d_model, d_model)
-
- # Output projection
- self.out_linear = nn.Linear(d_model, d_model)
- self.dropout = nn.Dropout(dropout)
-
- def forward(self, x, mask=None):
- batch_size, seq_len, d_model = x.shape
-
- # Linear projections and split into heads
- Q = self.q_linear(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
- K = self.k_linear(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
- V = self.v_linear(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
-
- # Transpose for attention: (batch, n_heads, seq_len, head_dim)
- Q = Q.transpose(1, 2)
- K = K.transpose(1, 2)
- V = V.transpose(1, 2)
+**Code Generation:**
+```
+# Write a function to check if a number is prime
+def is_prime(n):
+ if n < 2:
+ return False
+ for i in range(2, int(n**0.5) + 1):
+ if n % i == 0:
+ return False
+ return True
 ```
 
-
----
-
-# Attention Computation (cont.) 
-
-
-```python
-# Scaled dot-product attention
- # Scores: (batch, n_heads, seq_len, seq_len)
- scores = torch.matmul(Q, K.transpose(-2, -1)) / np.sqrt(self.head_dim)
-
- # Apply causal mask (prevent attending to future tokens)
- if mask is not None:
- scores = scores.masked_fill(mask == 0, float('-inf'))
-
- # Softmax to get attention weights
- attn_weights = F.softmax(scores, dim=-1)
- attn_weights = self.dropout(attn_weights)
-
- # Apply attention to values
- # Output: (batch, n_heads, seq_len, head_dim)
- attn_output = torch.matmul(attn_weights, V)
-
- # Concatenate heads
- attn_output = attn_output.transpose(1, 2).contiguous()
- attn_output = attn_output.view(batch_size, seq_len, d_model)
-
- # Final linear projection
- output = self.out_linear(attn_output)
-
- return output
+**Multi-step Reasoning:**
+```
+Q: If I have 3 apples and give 2 to my friend,
+ then buy 4 more, how many do I have?
+A: 3 - 2 + 4 = 5 apples
 ```
 
-
 ---
 
-# Creating the Causal Mask 
+# The Scaling Laws Hypothesis
 
+<div class="callout info">
+<div class="callout-title">Kaplan et al. (2020) - "Scaling Laws for Neural Language Models"</div>
 
-```python
-def create_causal_mask(seq_len, device):
- """
- Create a causal (lower-triangular) mask for autoregressive generation.
+Model performance scales as a **power law** with:
+- Model size (parameters)
+- Dataset size (tokens)
+- Compute (FLOPs)
 
- Returns:
- mask: (seq_len, seq_len) with 1s on and below diagonal, 0s above
- """
- mask = torch.tril(torch.ones(seq_len, seq_len, device=device))
- return mask # Shape: (seq_len, seq_len)
+</div>
 
-# Example: 5x5 causal mask
-mask = create_causal_mask(5, 'cpu')
-print(mask)
-# tensor([[1., 0., 0., 0., 0.],
-# [1., 1., 0., 0., 0.],
-# [1., 1., 1., 0., 0.],
-# [1., 1., 1., 1., 0.],
-# [1., 1., 1., 1., 1.]])
-```
+**Key findings:**
+1. Performance depends strongly on scale
+2. Very weak dependence on model shape (depth vs width)
+3. Smooth, predictable improvements
+4. Optimal compute allocation: Grow model and data together
 
-**Key insight:** Each position can only attend to itself and previous positions!
-
----
-
-# Feed-Forward Network 
-
-
-```python
-class FeedForward(nn.Module):
- def __init__(self, d_model, dropout):
- super().__init__()
- # GPT uses 4 * d_model as the hidden dimension
- self.net = nn.Sequential(
- nn.Linear(d_model, 4 * d_model),
- nn.GELU(), # GPT uses GELU activation
- nn.Linear(4 * d_model, d_model),
- nn.Dropout(dropout)
- )
-
- def forward(self, x):
- return self.net(x)
-```
-
-**Why GELU (Gaussian Error Linear Unit)?**
-- Smooth, non-monotonic activation
-- Used in BERT and GPT
-- Slight improvement over ReLU for language models
-
-$$(x) = x \cdot \Phi(x) = x \cdot {2}\left[1 + \left({}\right)\right]$$
-
----
-
-# Transformer Decoder Block 
-
-
-```python
-class TransformerBlock(nn.Module):
- def __init__(self, d_model, n_heads, dropout):
- super().__init__()
- self.attention = MultiHeadAttention(d_model, n_heads, dropout)
- self.feed_forward = FeedForward(d_model, dropout)
-
- # Layer normalization (applied before sub-layers in GPT)
- self.ln1 = nn.LayerNorm(d_model)
- self.ln2 = nn.LayerNorm(d_model)
-
- def forward(self, x, mask):
- # Pre-norm architecture (used in GPT)
- # Attention with residual connection
- x = x + self.attention(self.ln1(x), mask)
-
- # Feed-forward with residual connection
- x = x + self.feed_forward(self.ln2(x))
-
- return x
-```
-
-**Note:** GPT uses *pre-norm* (LayerNorm before sub-layers), while original Transformer used *post-norm*.
-
----
-
-# Complete GPT Model 
-
-
-```python
-class GPT(nn.Module):
- def __init__(self, vocab_size, d_model, n_layers, n_heads, max_seq_len, dropout):
- super().__init__()
- self.max_seq_len = max_seq_len
-
- # Embeddings
- self.embeddings = Embeddings(vocab_size, d_model, max_seq_len, dropout)
-
- # Transformer blocks
- self.blocks = nn.ModuleList([
- TransformerBlock(d_model, n_heads, dropout)
- for _ in range(n_layers)
- ])
-
- # Final layer norm
- self.ln_f = nn.LayerNorm(d_model)
-
- # Language model head (projects to vocabulary)
- self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
-
- # Initialize weights
- self.apply(self._init_weights)
-
- def _init_weights(self, module):
- if isinstance(module, nn.Linear):
- torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
- if module.bias is not None:
- torch.nn.init.zeros_(module.bias)
- elif isinstance(module, nn.Embedding):
- torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
-```
-
-
----
-
-# GPT Forward Pass 
-
-
-```python
-def forward(self, x, targets=None):
- # x shape: (batch_size, seq_len)
- seq_len = x.size(1)
-
- # Create causal mask
- mask = create_causal_mask(seq_len, x.device)
-
- # Embeddings
- x = self.embeddings(x) # (batch, seq_len, d_model)
-
- # Apply transformer blocks
- for block in self.blocks:
- x = block(x, mask)
-
- # Final layer norm
- x = self.ln_f(x)
-
- # Project to vocabulary
- logits = self.lm_head(x) # (batch, seq_len, vocab_size)
-
- # Compute loss if targets provided
- loss = None
- if targets is not None:
- # Flatten for cross-entropy
- loss = F.cross_entropy(
- logits.view(-1, logits.size(-1)),
- targets.view(-1)
- )
-
- return logits, loss
-```
-
-
----
-
-# Training Loop 
-
-
-```python
-# Initialize model
-model = GPT(
- vocab_size=config['vocab_size'],
- d_model=config['d_model'],
- n_layers=config['n_layers'],
- n_heads=config['n_heads'],
- max_seq_len=config['max_seq_len'],
- dropout=config['dropout']
-).to(device)
-
-# Optimizer (AdamW is used for GPT)
-optimizer = torch.optim.AdamW(
- model.parameters(),
- lr=config['learning_rate'],
- betas=(0.9, 0.95),
- weight_decay=0.1
-)
-
-# Training loop
-model.train()
-for epoch in range(config['num_epochs']):
- total_loss = 0
- for batch_idx, (x, y) in enumerate(dataloader):
- x, y = x.to(device), y.to(device)
-
- # Forward pass
- logits, loss = model(x, targets=y)
-
- # Backward pass
- optimizer.zero_grad()
- loss.backward()
- torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
- optimizer.step()
-
- total_loss += loss.item()
-
- avg_loss = total_loss / len(dataloader)
- print(f"Epoch {epoch+1}/{config['num_epochs']}, Loss: {avg_loss:.4f}")
-```
-
-
----
-
-# Training Tips 
-
-
- **Best practices for training GPT:**
-
- 
-
- 1. **Gradient clipping**
- - Prevents exploding gradients
-- Clip to max norm of 1.0
-2. **Learning rate schedule**
- - Warmup for first few thousand steps
-- Cosine decay afterwards
-3. **AdamW optimizer**
- - Adam with decoupled weight decay
-- Better than standard Adam for transformers
-4. **Batch size**
- - Larger is better (up to memory limits)
-- Use gradient accumulation if needed
-5. **Mixed precision training**
- - Use float16 for speed
-- 2-3x faster on modern GPUs
-
-
----
-
-# Greedy Decoding 
-
-
-```python
-@torch.no_grad()
-def generate_greedy(model, tokenizer, prompt, max_new_tokens=50):
- model.eval()
-
- # Encode prompt
- tokens = tokenizer.encode(prompt)
- x = torch.tensor([tokens], dtype=torch.long, device=device)
-
- for _ in range(max_new_tokens):
- # Get predictions (crop to max_seq_len if needed)
- x_crop = x[:, -model.max_seq_len:]
- logits, _ = model(x_crop)
-
- # Focus on last token's predictions
- logits = logits[:, -1, :] # (batch, vocab_size)
-
- # Get token with highest probability
- next_token = torch.argmax(logits, dim=-1, keepdim=True)
-
- # Append to sequence
- x = torch.cat([x, next_token], dim=1)
-
- # Stop if we generate end-of-sequence token
- if next_token.item() == tokenizer.eot_token:
- break
-
- # Decode and return
- generated_text = tokenizer.decode(x[0].tolist())
- return generated_text
-
-# Example usage
-prompt = "Once upon a time"
-generated = generate_greedy(model, tokenizer, prompt, max_new_tokens=100)
-print(generated)
-```
-
-
----
-
-# Sampling Strategies 
-
-
- **Different ways to sample next token:**
-
- 
-
- 1. **Greedy Decoding**
- - Always pick most likely token
-- Deterministic, fast
-- Repetitive, boring
-2. **Temperature Sampling**
- - Scale logits by temperature $T$
-- $T < 1$: More conservative (peaked distribution)
-- $T > 1$: More random (flat distribution)
-3. **Top-k Sampling**
- - Sample from top $k$ most likely tokens
-- Typical: $k = 40$
-4. **Nucleus (Top-p) Sampling**
- - Sample from smallest set with cumulative probability $\geq p$
-- Typical: $p = 0.9$ or $p = 0.95$
-- Best for creative generation
-
-
----
-
-# Top-k and Nucleus Sampling 
-
-
-```python
-def sample_next_token(logits, temperature=1.0, top_k=None, top_p=None):
- """
- Sample next token from logits with various strategies.
-
- Args:
- logits: (vocab_size,) unnormalized log probabilities
- temperature: Temperature for sampling
- top_k: If set, only sample from top k tokens
- top_p: If set, only sample from nucleus (top-p)
- """
- # Apply temperature
- logits = logits / temperature
-
- # Top-k filtering
- if top_k is not None:
- top_k = min(top_k, logits.size(-1))
- indices_to_remove = logits < torch.topk(logits, top_k)[0][..., -1, None]
- logits[indices_to_remove] = float('-inf')
-
- # Nucleus (top-p) filtering
- if top_p is not None:
- sorted_logits, sorted_indices = torch.sort(logits, descending=True)
- cumulative_probs = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
-
- # Remove tokens with cumulative probability above threshold
- sorted_indices_to_remove = cumulative_probs > top_p
- sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
- sorted_indices_to_remove[..., 0] = 0
-
- indices_to_remove = sorted_indices[sorted_indices_to_remove]
- logits[indices_to_remove] = float('-inf')
-
- # Sample from distribution
- probs = F.softmax(logits, dim=-1)
- next_token = torch.multinomial(probs, num_samples=1)
-
- return next_token
-```
-
-
----
-
-# Complete Generation Function 
-
-
-```python
-@torch.no_grad()
-def generate(model, tokenizer, prompt, max_new_tokens=100,
- temperature=1.0, top_k=40, top_p=0.9):
- model.eval()
-
- tokens = tokenizer.encode(prompt)
- x = torch.tensor([tokens], dtype=torch.long, device=device)
-
- for _ in range(max_new_tokens):
- x_crop = x[:, -model.max_seq_len:]
- logits, _ = model(x_crop)
- logits = logits[:, -1, :] # Last token
-
- # Sample next token
- next_token = sample_next_token(
- logits[0],
- temperature=temperature,
- top_k=top_k,
- top_p=top_p
- )
-
- x = torch.cat([x, next_token.unsqueeze(0)], dim=1)
-
- if next_token.item() == tokenizer.eot_token:
- break
-
- return tokenizer.decode(x[0].tolist())
-
-# Creative generation
-text = generate(model, tokenizer, "The AI revolution",
- temperature=0.8, top_p=0.9)
-print(text)
-```
-
-
----
-
-# Model Size vs. Performance 
-
-
- 
- 
-```
- 10M -> 100M -> 1B -> 10B -> 100B+
-```
-
- 
-
- 
-
- **Practical model sizes for different use cases:**
- - **10M-100M**: Learning/experimentation, simple tasks
-- **100M-1B**: Specialized domains, resource-constrained
-- **1B-10B**: General-purpose, good quality
-- **10B-100B+**: State-of-the-art performance
-
-
----
-
-# Computational Requirements 
-
-
-
- **Training a 125M parameter GPT:**
-
- 
-
- 
- | Training Time | 1-2 days (single GPU) |
-| --- | --- |
-| Training Data | $\sim$10-100 GB text |
-| Total Compute | $\sim$100 GPU-hours |
-
- 
-
- 
-
- **Scaling up to GPT-3 (175B):**
- - 1000x more parameters
-- ~10,000x more compute needed
-- Requires distributed training across many GPUs
-- Estimated $4.6M in compute costs
-
- 
-
- <div class="callout tip">
+<div class="callout tip">
 <div class="callout-title">Think about it!</div>
 
-This is why pre-trained models are so valuable—you don't have to train from scratch!
+If scaling laws hold, we can predict future model performance!
 
 </div>
 
+---
+
+# The Scaling Law Formula
+
+**Loss as a function of scale:**
+
+$$L(N) = \left(\frac{N_c}{N}\right)^{\alpha_N}$$
+
+where:
+- $L$ = Cross-entropy loss
+- $N$ = Number of parameters
+- $N_c$ = Scaling constant
+- $\alpha_N \approx 0.076$ (empirically determined)
+
+**In practice, this means:**
+
+| 10x more parameters | -> | ~15% lower loss |
+|---------------------|----|--------------------|
+| 100x more parameters | -> | ~30% lower loss |
+| 1000x more parameters | -> | ~45% lower loss |
 
 ---
 
-# Common Issues and Debugging 
+# Scaling Laws: Visual Understanding
 
+**How loss decreases with scale:**
 
- **Problems you might encounter:**
+```
+Loss
+ ^
+ |
+3.5| *
+ | *
+3.0| *
+ | *
+2.5| *
+ | *
+2.0| * * * * * (diminishing returns)
+ +------------------------------------------>
+ 10M 100M 1B 10B 100B 1T
+ Parameters
+```
 
- 
-
- 1. **Loss not decreasing**
- - Check learning rate (try 1e-4 to 3e-4)
-- Verify data pipeline
-- Check for NaN/Inf values
-2. **Out of memory**
- - Reduce batch size
-- Reduce sequence length
-- Use gradient accumulation
-- Enable mixed precision
-3. **Poor generation quality**
- - Train longer
-- Use larger model
-- Improve data quality
-- Tune sampling parameters
-4. **Repetitive text**
- - Increase temperature
-- Use nucleus sampling
-- Add repetition penalty
-
+**Key observation:** Returns diminish but never stop - every 10x increase helps!
 
 ---
 
-# Extensions and Improvements 
+# Implications of Scaling Laws
 
+<div class="columns">
+<div class="column">
 
- **Ways to enhance your GPT implementation:**
+**Good news:**
+- Predictable improvements
+- Clear path to better models
+- Can plan compute budgets
+- Smooth progress curve
 
- 
+</div>
+<div class="column">
 
- 1. **Architectural improvements**
- - Rotary Position Embeddings (RoPE)
-- Flash Attention (faster attention)
-- Grouped-Query Attention
-2. **Training techniques**
- - Learning rate warmup and decay
-- Gradient accumulation
-- Mixed precision training (FP16/BF16)
-3. **Data improvements**
- - Data deduplication
-- Quality filtering
-- Curriculum learning
-4. **Inference optimizations**
- - KV-cache for faster generation
-- Model quantization (int8)
-- Speculative decoding
+**Challenges:**
+- Diminishing returns
+- Exponential cost increase
+- Hardware limitations
+- Environmental impact
 
+</div>
+</div>
 
----
+<div class="callout warning">
+<div class="callout-title">The Cost of Scaling</div>
 
-# Resources for Further Learning 
-
-
- **Recommended resources:**
-
- 
-
- - **Andrej Karpathy's nanoGPT**
- 
-- Clean, minimal GPT implementation
-- [github.com/karpathy/nanoGPT](https://github.com/karpathy/nanoGPT)
-
- \item **Andrej Karpathy's "Let's build GPT" video**
- - Excellent step-by-step tutorial
-- [YouTube](https://www.youtube.com/watch?v=kCc8FmEb1nY)
-
- \item **HuggingFace Transformers**
- - Production-ready implementations
-- [huggingface.co/transformers](https://huggingface.co/transformers)
-
- \item **PyTorch Documentation**
- - Official tutorials and guides
-- [pytorch.org/tutorials](https://pytorch.org/tutorials)
-
- 
-
----
-
-# Hands-On Exercise 
-
-
- <div class="callout warning">
-<div class="callout-title">Your Task</div>
-
-Implement and train a small GPT model on your own text corpus!
+To halve the loss:
+- Need ~10,000x more compute
+- GPT-3 cost ~$4.6M to train
+- GPT-4 estimated at $100M+
 
 </div>
 
- 
+---
 
- **Steps:**
- 1. Choose a dataset (Shakespeare, Wikipedia, your own text)
-2. Set up the data pipeline
-3. Initialize the model (start small: 6 layers, 384 d_model)
-4. Train for 10-20 epochs
-5. Experiment with generation
-6. Try different sampling strategies
+# Chinchilla Scaling Laws
 
- 
+<div class="callout info">
+<div class="callout-title">Hoffmann et al. (2022)</div>
 
- **Starter code available:**
- - Course GitHub repository
-- Google Colab notebook
-- Estimated time: 2-3 hours
+Previous models were **over-parameterized and under-trained!**
 
+</div>
+
+**Key insight:**
+- For a given compute budget, should balance model size and data
+- **Optimal ratio**: ~20 tokens per parameter
+
+**Comparison:**
+
+| Model | Parameters | Tokens | Tokens/Param |
+|-------|------------|--------|--------------|
+| GPT-3 | 175B | 300B | 1.7 (under-trained!) |
+| Chinchilla | 70B | 1.4T | 20 (optimal) |
+
+**Result:** Chinchilla (70B) outperforms GPT-3 (175B)!
+
+*This influenced Llama 2, GPT-4, and other modern models*
 
 ---
 
-# Key Takeaways 
+# The Path to ChatGPT
 
+**Evolution from GPT-3 to ChatGPT:**
 
- 1. **GPT is conceptually simple**
- - Stack of transformer decoder blocks
-- Predict next token
+| Stage | Model | Key Innovation |
+|-------|-------|----------------|
+| 1 | GPT-3 | Predict next token |
+| 2 | InstructGPT | Follow instructions |
+| 3 | ChatGPT | Helpful & harmless chat |
 
- 
-
-2. **Key components**
- - BPE tokenization
-- Token + position embeddings
-- Masked multi-head attention
-- Feed-forward networks
-
- 
-
-3. **Training requires care**
- - Good data, proper hyperparameters
-- Gradient clipping, learning rate schedules
-
- 
-
-4. **Generation is an art**
- - Balance creativity and coherence
-- Temperature, top-k, top-p sampling
-
- 
-
-5. **Implementation teaches you how LLMs work**
- - Understanding through building!
-
+**Three key innovations:**
+1. **Instruction tuning**: Train to follow instructions
+2. **RLHF**: Reinforcement Learning from Human Feedback
+3. **Safety guardrails**: Reduce harmful outputs
 
 ---
 
-# Readings 
+# Instruction Tuning
 
+<div class="callout info">
+<div class="callout-title">What is Instruction Tuning?</div>
 
+Fine-tune the model on (instruction, response) pairs to make it better at following user commands.
 
- <div class="callout info">
+</div>
+
+**Training examples:**
+
+```
+Instruction: "Explain quantum computing to a 5-year-old"
+Response: "Imagine you have a magic coin that can be heads
+ AND tails at the same time until you look at it..."
+
+Instruction: "Write a Python function to sort a list"
+Response: "def sort_list(items):
+ return sorted(items)"
+
+Instruction: "Summarize this article in 3 sentences"
+Response: [concise 3-sentence summary]
+```
+
+---
+
+# Before vs After Instruction Tuning
+
+<div class="columns">
+<div class="column">
+
+**Before (GPT-3):**
+
+```
+User: "Write a haiku about AI"
+
+GPT-3: "Write a haiku about AI
+is a common creative writing
+exercise that many people
+enjoy. Here are some tips
+for writing haikus..."
+```
+*Continues describing rather than doing*
+
+</div>
+<div class="column">
+
+**After (InstructGPT):**
+
+```
+User: "Write a haiku about AI"
+
+InstructGPT: "Silicon neurons
+Learning patterns in the void
+Dreams in binary"
+```
+*Actually writes the haiku!*
+
+</div>
+</div>
+
+---
+
+# RLHF: Reinforcement Learning from Human Feedback
+
+**The 3-step RLHF process:**
+
+```
+Step 1: Supervised Fine-tuning (SFT)
+- Train on human-written examples of good responses
+- Model learns basic instruction-following
+
+Step 2: Reward Model Training
+- Generate multiple responses to same prompt
+- Humans rank responses from best to worst
+- Train a model to predict human preferences
+
+Step 3: RL Optimization (PPO)
+- Generate responses with policy model
+- Score with reward model
+- Update policy to maximize reward
+```
+
+---
+
+# RLHF: Worked Example
+
+**Training the reward model:**
+
+```
+Prompt: "How do I make a cake?"
+
+Response A (Rating: 4/5):
+"Here's a simple recipe: Preheat oven to 350F.
+Mix 2 cups flour, 1.5 cups sugar..."
+
+Response B (Rating: 2/5):
+"Cake is a type of dessert that originated in
+ancient civilizations..."
+
+Response C (Rating: 1/5):
+"I cannot help with that request."
+
+Reward model learns:
+- Helpful, direct answers get high scores
+- Off-topic or unhelpful responses get low scores
+```
+
+---
+
+# ChatGPT's Impact
+
+**Launched: November 30, 2022**
+
+**Growth:**
+- 1 million users in 5 days
+- 100 million users in 2 months
+- Fastest-growing consumer application ever
+
+**Why so successful?**
+- Easy to use (conversational interface)
+- Broadly capable (many tasks)
+- Accessible (free tier)
+- Impressive demos went viral
+- Timing (post-pandemic digital adoption)
+
+<div class="callout warning">
+<div class="callout-title">Cultural Impact</div>
+
+ChatGPT brought LLMs into mainstream consciousness and sparked an AI revolution.
+
+</div>
+
+---
+
+# The Modern LLM Landscape
+
+**Post-GPT-3 developments (2020-2024):**
+
+| Year | Milestone |
+|------|-----------|
+| 2021 | Anthropic founded (Claude) |
+| 2022 | ChatGPT launched |
+| 2023 | GPT-4 (multimodal, improved reasoning) |
+| 2023 | Llama 2 (open weights, 70B params) |
+| 2023 | Gemini (Google's multimodal LLM) |
+| 2024 | Claude 3, GPT-4o, Llama 3 |
+| 2024 | Smaller efficient models (Phi, Mistral) |
+
+**Key trends:**
+1. Multimodal capabilities (vision, audio)
+2. Longer context windows (100K+ tokens)
+3. Better reasoning and factuality
+4. Open-source alternatives
+5. Efficiency improvements
+
+---
+
+# Open Source LLMs
+
+<div class="callout info">
+<div class="callout-title">Discussion</div>
+
+Should powerful AI models be open or closed?
+
+</div>
+
+<div class="columns">
+<div class="column">
+
+**Closed (GPT-4, Claude):**
+- Better safety control
+- Monetization easier
+- Protect IP
+- No transparency
+- Vendor lock-in
+- Limited customization
+
+</div>
+<div class="column">
+
+**Open (Llama, Mistral):**
+- Transparency
+- Community innovation
+- Full control
+- No API costs
+- Potential misuse
+- Compute requirements
+
+</div>
+</div>
+
+---
+
+# Practical Prompting Techniques
+
+**Effective prompting strategies for modern LLMs:**
+
+**1. Zero-shot with clear instructions:**
+```
+Classify the following text as spam or not spam.
+Only respond with "spam" or "not spam".
+
+Text: "Congratulations! You've won $1,000,000!"
+```
+
+**2. Few-shot with examples:**
+```
+Text: "Meeting at 3pm tomorrow" -> not spam
+Text: "URGENT: Send money now!" -> spam
+Text: "Can you review this document?" -> not spam
+Text: "You've been selected for a prize!" ->
+```
+
+---
+
+# Chain-of-Thought Prompting
+
+**For complex reasoning tasks:**
+
+```
+Q: Roger has 5 tennis balls. He buys 2 more cans of
+ tennis balls. Each can has 3 balls. How many
+ tennis balls does he have now?
+
+Let's think step by step:
+1. Roger starts with 5 tennis balls
+2. He buys 2 cans of tennis balls
+3. Each can has 3 balls, so 2 cans = 2 * 3 = 6 balls
+4. Total = 5 + 6 = 11 tennis balls
+
+A: 11 tennis balls
+```
+
+<div class="callout tip">
+<div class="callout-title">Key insight</div>
+
+Adding "Let's think step by step" dramatically improves reasoning accuracy!
+
+</div>
+
+---
+
+# Current Limitations
+
+**What LLMs still struggle with:**
+
+1. **Factual accuracy**
+ - Hallucinations and confabulation
+ - No citations or sources
+
+2. **Reasoning**
+ - Multi-step logic
+ - Mathematical proofs
+
+3. **Knowledge grounding**
+ - Knowledge cutoff date
+ - Can't access real-time info
+
+4. **Personalization**
+ - No persistent memory
+ - Stateless conversations
+
+5. **Reliability**
+ - Inconsistent outputs
+ - Prompt sensitivity
+
+---
+
+# Key Takeaways
+
+1. **Scaling works**
+ - GPT -> GPT-2 -> GPT-3 showed clear improvements
+ - Power law scaling continues to hold
+
+2. **Few-shot learning emerged at scale**
+ - No fine-tuning needed for many tasks
+ - In-context learning is powerful
+
+3. **Scaling laws provide predictability**
+ - But diminishing returns and compute costs are real
+ - Chinchilla scaling: balance model size and data
+
+4. **RLHF changed everything**
+ - ChatGPT = GPT-3.5 + instruction tuning + RLHF
+ - Alignment is crucial for deployment
+
+5. **The field is rapidly evolving**
+ - Open vs closed debate continues
+ - New capabilities emerging
+
+---
+
+# Readings
+
+<div class="callout info">
 <div class="callout-title">Required Readings</div>
 
-1. **Vaswani et al. (2017)** - "Attention is All You Need" \\
- [[ArXiv]](https://arxiv.org/abs/1706.03762)
-2. **Radford et al. (2018)** - "Improving Language Understanding by Generative Pre-Training" \\
- [[PDF]](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)
+1. **Radford et al. (2019)** - "Language Models are Unsupervised Multitask Learners" (GPT-2) [[PDF]](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
+2. **Brown et al. (2020)** - "Language Models are Few-Shot Learners" (GPT-3) [[ArXiv]](https://arxiv.org/abs/2005.14165)
+3. **Kaplan et al. (2020)** - "Scaling Laws for Neural Language Models" [[ArXiv]](https://arxiv.org/abs/2001.08361)
 
 </div>
 
- 
+<div class="callout info">
+<div class="callout-title">Recommended Readings</div>
 
- <div class="callout info">
-<div class="callout-title">Code Resources</div>
-
-- **nanoGPT** by Andrej Karpathy \\
- [github.com/karpathy/nanoGPT](https://github.com/karpathy/nanoGPT)
-- **The Annotated Transformer** \\
- [Harvard NLP](https://nlp.seas.harvard.edu/2018/04/03/attention.html)
-- **PyTorch Transformer Tutorial** \\
- [pytorch.org](https://pytorch.org/tutorials/beginner/transformer_tutorial.html)
+- **Wei et al. (2022)** - "Emergent Abilities of Large Language Models" [[ArXiv]](https://arxiv.org/abs/2206.07682)
+- **Ouyang et al. (2022)** - "Training language models to follow instructions" (InstructGPT) [[ArXiv]](https://arxiv.org/abs/2203.02155)
+- **Hoffmann et al. (2022)** - "Training Compute-Optimal Large Language Models" (Chinchilla) [[ArXiv]](https://arxiv.org/abs/2203.15556)
 
 </div>
 
-
 ---
 
-# Next Week 
+# Next Lecture Preview
 
+<div class="callout info">
+<div class="callout-title">Lecture 23: Implementing GPT from Scratch</div>
 
- **Week 8: No Classes - Instructor Away**
+- Building a mini-GPT in PyTorch
+- Tokenization with BPE
+- Training loop and optimization
+- Sampling strategies (greedy, top-k, nucleus)
+- Hands-on coding session
 
- 
+</div>
 
- **Use this week to:**
- - Complete the GPT implementation exercise
-- Catch up on readings
-- Work on assignments
-- Experiment with different architectures
-
- 
-
- **Week 9: RAG & Mixture of Experts**
- - Retrieval Augmented Generation
-- Mixture of Experts architectures
-- Ethics, Bias, and Safety in LLMs
-
-
----
-
-
- Questions? 
-
- 
-
- Happy Coding! 
- 
+Questions?

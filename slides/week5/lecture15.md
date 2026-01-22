@@ -8,8 +8,8 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Lecture 15: Transformer Architecture
-## Week 5, Lecture 2 - Attention Is All You Need
+# Lecture 15: Attention Mechanisms
+## Week 5, Lecture 1 - From Seq2Seq to Attention
 
 **PSYC 51.17: Models of Language and Communication**
 
@@ -21,542 +21,425 @@ Winter 2026
 
 
 
-1. **The Transformer Revolution**: Why it changed everything
-2. **Architecture Overview**: Encoder, Decoder, and components
-3. **Self-Attention**: The core mechanism (Q, K, V)
-4. **Self-Attention Example**: Understanding pronoun resolution
-5. **Multi-Head Attention**: Learning diverse relationships
-6. **Three Types of Attention**: Self, Masked, Cross
+1. **The Context Problem**: Why static embeddings aren't enough
+2. **Sequence-to-Sequence Models**: The foundation
+3. **The Bottleneck Problem**: Why vanilla Seq2Seq struggles
+4. **Attention Mechanisms**: The breakthrough innovation
+5. **How Attention Works**: Step-by-step computation
+6. **Visualizing Attention**: Interpreting the weights
 
-*Goal: Understand the Transformer architecture and self-attention*
+*Goal: Understand why and how attention revolutionized NLP*
 
 ---
 
-# The Transformer Revolution 
+# The Context Problem 
 
 
 
-**"Attention Is All You Need"**
+**Why do we need context-aware models?**
+
+<div class="callout tip">
+<div class="callout-title">Example: The word "bank"</div>
+
+1. "I deposited money at the **bank**" (financial institution)
+2. "We sat by the river **bank**" (riverside)
+3. "The plane started to **bank** left" (tilt/turn)
+
+</div>
 
 <div class="columns">
 <div class="column">
 
-**Before Transformers (2017):**
-- RNNs/LSTMs with attention
-- Sequential processing
-- Hard to parallelize
-- Limited context window
-- Slow training
+**Static Embeddings (Word2Vec):**
+- One vector per word
+- Context-independent
+- "bank" = [0.2, -0.5, 0.8, ...] always
 
 </div>
 <div class="column">
 
-**After Transformers:**
-- Parallel processing
-- Scales to GPUs/TPUs
-- Long-range dependencies
-- Fast & effective
+**Context-Aware Models:**
+- Different representation per occurrence
+- Uses surrounding context
+- Handles polysemy naturally
 
 </div>
+</div>
+
+
+---
+
+# Sequence-to-Sequence Models 
+
+
+**The breakthrough for variable-length input/output problems**
+
+**Applications:**
+- Machine Translation: English → French
+- Summarization: Long text → Short summary
+- Question Answering: Question + Context → Answer
+- Dialogue Systems: User input → System response
+
+<div class="callout tip">
+<div class="callout-title">Concrete Example: Machine Translation</div>
+
+**Input:** "The cat sat on the mat" (6 tokens)
+**Output:** "Le chat s'est assis sur le tapis" (7 tokens)
+
+Different input/output lengths require flexible architecture!
+
+</div>
+
+*Reference: Sutskever et al. (2014) - "Sequence to Sequence Learning with Neural Networks"*
+
+---
+
+# Encoder-Decoder Architecture 
+
+
+**Two-part architecture: Encode then Decode**
+
+<div class="columns">
+<div class="column">
+
+**Encoder:**
+- Reads input sequence
+- Compresses to fixed-size vector
+- Captures semantic meaning
+
+**Decoder:**
+- Starts from context vector
+- Generates output sequence
+- One token at a time
+
+</div>
+<div class="column">
+
+**Worked Example:**
+```
+Input: "The" → "cat" → "sat"
+ ↓ ↓ ↓
+ h₁ → h₂ → h₃ = context
+ ↓
+Output: "Le" ← "chat" ← [START]
+```
+
+The final hidden state h₃ summarizes the entire input!
+
+</div>
+</div>
+
+
+---
+
+# The Seq2Seq Bottleneck Problem 
+
+
+**Challenge: All information compressed into single vector!**
+
+<div class="callout warning">
+<div class="callout-title">The Problem</div>
+
+- Long sequences → information loss
+- Fixed-size context vector is a bottleneck
+- Early tokens forgotten by the time we reach the end
+- Performance degrades with sequence length
+
 </div>
 
 <div class="callout tip">
-<div class="callout-title">Speed Comparison</div>
+<div class="callout-title">Concrete Example: Long Sentence Translation</div>
 
-Processing "The cat sat on the mat" (6 tokens):
-- **RNN:** 6 sequential steps (must wait for each)
-- **Transformer:** 1 parallel step (all tokens at once!)
+**Input (20 words):** "The quick brown fox jumps over the lazy dog while the cat watches from the warm sunny windowsill nearby"
 
-Training speedup: **10-100x faster** on modern hardware
+**Problem:** All 20 words must fit into one 256-dim vector!
+- Early words ("The quick brown") get overwritten
+- By the time we translate, we've "forgotten" the beginning
 
 </div>
 
-*Reference: Vaswani et al. (2017) - "Attention Is All You Need"*
+**Solution: Attention! **
+
 
 ---
 
-# Why Get Rid of RNNs? 
+# Attention Mechanism: The Big Idea 
 
 
-**Limitations of Recurrent Architectures:**
+**Instead of compressing everything into one vector...**
+
+**Let the decoder look at all encoder hidden states!**
+
+```
+$h_1$ -> $h_2$ -> $h_3$ -> $h_4$ -> Encoder: -> $s_t$ -> Decoder: -> Input: "The cat sat down"
+```
+
+**Key Insight:** When generating "chat" (cat), pay more attention to "cat" in the input!
+
+*Reference: Bahdanau et al. (2015) - "Neural Machine Translation by Jointly Learning to Align and Translate"*
+
+---
+
+# How Attention Works: Step by Step 
+
+
+**Computing attention weights:**
+
+1. **Score**: How relevant is each encoder state to current decoder state?
+ - e_{t,i} = score(s_t, h_i) = s_t^T W_a h_i
+
+2. **Normalize**: Convert scores to probabilities (softmax)
+ - alpha_{t,i} = exp(e_{t,i}) / sum_j exp(e_{t,j})
+
+3. **Context**: Weighted sum of encoder states
+ - c_t = sum_i alpha_{t,i} * h_i
+
+4. **Decode**: Use context vector along with decoder state
+ - s_{t+1} = f(s_t, c_t, y_t)
+
+**Result:** Decoder dynamically focuses on different parts of input!
+
+---
+
+# Worked Example: Attention Computation 
+
+
+**Translating "I love cats" → "J'aime les chats"**
+
+**Step 1: Encoder produces hidden states**
+```
+h₁ = [0.2, 0.8] ("I")
+h₂ = [0.9, 0.3] ("love")
+h₃ = [0.4, 0.7] ("cats")
+```
+
+**Step 2: When generating "chats", compute scores**
+- Decoder state s = [0.5, 0.6]
+- Score with h₁: s · h₁ = 0.5×0.2 + 0.6×0.8 = **0.58**
+- Score with h₂: s · h₂ = 0.5×0.9 + 0.6×0.3 = **0.63**
+- Score with h₃: s · h₃ = 0.5×0.4 + 0.6×0.7 = **0.62**
+
+**Step 3: Softmax to get attention weights**
+- alpha = softmax([0.58, 0.63, 0.62]) = **[0.31, 0.35, 0.34]**
+
+**Step 4: Context = weighted sum**
+- c = 0.31×h₁ + 0.35×h₂ + 0.34×h₃ = **[0.51, 0.58]**
+
+Model focuses most on "love" and "cats" when generating "chats"!
+
+---
+
+# Attention Score Functions 
+
+
+**Different ways to compute the score**
 
 <div class="columns">
 <div class="column">
 
-**1. Sequential Bottleneck**
-- Must process token t before t+1
-- Cannot parallelize across sequence
-
-**2. Long-Range Dependencies**
-- Info flows through many steps
-- Gradient vanishing problems
-
-**3. Memory Constraints**
-- Hidden state must remember all
-
-</div>
-<div class="column">
-
-**Concrete Example:**
-```
-Sentence: "The cat that I saw
-yesterday at the park sat down"
-
-Token 1 ("The") to token 11 ("sat"):
-- RNN: Info passes through 10 steps
-- Gradients shrink: 0.9^10 = 0.35
-- By token 11, "The" is almost gone!
-
-Transformer: Direct connection!
-- "sat" attends directly to "cat"
-- No information degradation
-```
-
-</div>
-</div>
-
-**Transformer Solution:** Every token can attend to every other token directly!
-
----
-
-# Transformer Architecture Overview 
-
-
-
-```
-**Encoder -> Feed Forward -> Multi-Head Attention -> Feed Forward -> Multi-Head Attention -> Input -> \textbf{Decoder -> Feed Forward
-```
-
-\end{center**
-
-**Key Components:**
-- **Multi-Head Self-Attention**: Relate all positions to each other
-- **Feed-Forward Networks**: Transform representations
-- **Residual Connections & Layer Norm**: Training stability (not shown)
-- **Positional Encoding**: Inject position information
-
-
----
-
-# Self-Attention: The Core Mechanism 
-
-
-**Key idea: Each word attends to all other words in the sequence**
-
-**Three learned projections:**
-- **Query (Q)**: What am I looking for?
-- **Key (K)**: What do I contain?
-- **Value (V)**: What information do I have?
-
-**Computation:**
-```
-Q = X @ W_Q # Transform input to queries
-K = X @ W_K # Transform input to keys
-V = X @ W_V # Transform input to values
-
-Attention(Q, K, V) = softmax(Q @ K.T / sqrt(d)) @ V
-```
-
-<div class="callout tip">
-<div class="callout-title">Intuition</div>
-
-Each token asks: "Which other tokens are relevant to me?" (Q vs K)
-Then collects information from relevant tokens (weighted sum of V)
-
-</div>
-
-
----
-
-# Understanding Query, Key, Value 
-
-
-
-**Analogy: Database lookup or information retrieval**
-
-<div class="columns">
-<div class="column">
-
-**Information Retrieval:**
-- **Query**: Your search query
-- **Key**: Document titles/keywords
-- **Value**: Document contents
-
-**Process:**
-1. Compare query to all keys
-2. Get similarity scores
-3. Weight values by scores
-4. Return weighted combination
-
-</div>
-<div class="column">
-
-**Self-Attention:**
-- **Query**: What token $i$ is looking for
-- **Key**: What token $j$ offers
-- **Value**: Information from token $j$
-
-**Process:**
-1. Compare $Q_i$ to all $K_j$
-2. Get attention scores
-3. Weight all $V_j$ by scores
-4. Return new representation for $i$
-
-</div>
-</div>
-
-<div class="callout info">
-<div class="callout-title">Key Insight</div>
-
-Each token simultaneously acts as:
-- A query (what it needs from other tokens)
-- A key (how it should be retrieved)
-- A value (what information it provides)
-
-</div>
-
-
----
-
-# Scaled Dot-Product Attention 
-
-
-**Step-by-step computation with concrete example:**
-
-**Input:** 3 tokens, embedding dim = 4
-
+**1. Additive (Bahdanau):**
 ```python
-# Input embeddings (3 tokens x 4 dims)
-X = [[0.1, 0.2, 0.3, 0.4], # "The"
- [0.5, 0.6, 0.7, 0.8], # "cat"
- [0.2, 0.3, 0.4, 0.5]] # "sat"
-
-# Step 1: Compute Q, K, V (using learned weights W_q, W_k, W_v)
-Q = X @ W_q # [3 x 4]
-K = X @ W_k # [3 x 4]
-V = X @ W_v # [3 x 4]
-
-# Step 2: Compute attention scores
-scores = Q @ K.T # [3 x 3] - each token vs each token
-
-# Step 3: Scale by sqrt(d_k) to prevent large values
-scores = scores / sqrt(4) # divide by 2
-
-# Step 4: Softmax to get attention weights
-weights = softmax(scores) # rows sum to 1
-
-# Step 5: Weighted sum of values
-output = weights @ V # [3 x 4] - new contextual embeddings
+# score = v^T * tanh(W1*s + W2*h)
+score = v @ tanh(W1 @ s + W2 @ h)
 ```
+- More parameters, flexible
 
+**2. Multiplicative (Luong):**
+```python
+# score = s^T * W * h
+score = s @ W @ h
+```
+- Simpler, faster
+
+</div>
+<div class="column">
+
+**3. Dot-Product:**
+```python
+# score = s^T * h
+score = s @ h
+```
+- No parameters!
+
+**4. Scaled Dot-Product (Transformers):**
+```python
+# score = (s^T * h) / sqrt(d)
+score = (s @ h) / sqrt(dim)
+```
+- Prevents gradient issues
+
+</div>
+</div>
+
+*Reference: Luong et al. (2015) - "Effective Approaches to Attention-based Neural Machine Translation"*
 
 ---
 
-# Self-Attention Example: Pronoun Resolution 
+# Attention Visualization 
 
 
-**Sentence: "The animal didn't cross the street because it was too tired"**
+**Example: English → French translation with attention weights**
 
-**Question: What does "it" refer to?**
+**Input:** "The European Economic Area"
+**Output:** "La zone economique europeenne"
 
 ```
-Attention weights when processing "it":
-
- The animal didn't cross the street because it was too tired
-"it" → 0.02 [0.45] 0.03 0.05 0.02 0.08 0.05 0.15 0.05 0.02 0.08
- ↑
- High attention to "animal" - model learns coreference!
+ The European Economic Area
+La [0.8] 0.1 0.05 0.05
+zone 0.05 [0.1] 0.1 [0.75] ← "zone" = "Area"
+economique 0.05 0.1 [0.8] 0.05
+europeenne 0.05 [0.8] 0.1 0.05 ← reordering!
 ```
-
-**Self-attention allows the model to:**
-- Resolve pronouns ("it" → "animal", not "street")
-- Understand long-range dependencies (8 tokens apart!)
-- Capture syntactic and semantic relationships
-- Do this in parallel for all positions!
-
-
----
-
-# Visualizing the Attention Matrix 
-
-
-**For sentence: "The cat sat on the mat"**
-
-| To $\rightarrow$ | The | cat | sat | on | the | mat |
-| --- | --- | --- | --- | --- | --- | --- |
-| From $\downarrow$ | | | | | | |
-| cat | 0.1 | 0.5 | 0.2 | 0.1 | 0.05 | 0.05 |
-| sat | 0.05 | 0.3 | 0.4 | 0.15 | 0.05 | 0.05 |
-| on | 0.05 | 0.1 | 0.2 | 0.3 | 0.1 | 0.25 |
-| the | 0.05 | 0.05 | 0.05 | 0.1 | 0.3 | 0.45 |
-| mat | 0.05 | 0.05 | 0.1 | 0.2 | 0.2 | 0.4 |
 
 **Observations:**
-- Each row sums to 1.0 (probability distribution)
-- Diagonal elements often high (self-attention)
-- "cat" attends to itself and "The" (determiner-noun relationship)
-- "mat" attends to "the" (determiner) and "on" (preposition)
-- Captures syntactic and semantic structure automatically!
+- Diagonal pattern for similar word order
+- Model learns alignment automatically!
+- "europeenne" attends to "European" (reordering handled!)
+- No need for explicit word alignment annotations
 
+*Attention provides interpretability: we can see what the model is "looking at"*
 
 ---
 
-# Multi-Head Attention 
+# Benefits of Attention Mechanisms 
 
 
-**Why use multiple attention heads?**
+1. **Solves the Bottleneck Problem**
+ - Decoder has access to all encoder states
+- No information compression into single vector
+- Works well for long sequences
+
+ 
+
+2. **Improves Performance**
+ - Better BLEU scores on translation tasks
+- Handles long-range dependencies
+- More robust to sequence length
+
+ 
+
+3. **Provides Interpretability**
+ - Can visualize what the model focuses on
+- Helps debug and understand model behavior
+- Builds trust in model predictions
+
+ 
+
+4. **Enables Better Alignment**
+ - Learns source-target correspondences
+- No need for external alignment tools
+- Works across different language pairs
+
+**Attention became the foundation for modern NLP!**
+
+---
+
+# Real-World Impact of Attention 
+
+
+
+**Attention mechanisms revolutionized multiple domains:**
 
 <div class="columns">
 <div class="column">
 
-**Intuition:**
-- Different heads learn different relationships
-- Head 1: Syntactic relationships
-- Head 2: Semantic relationships
-- Head 3: Positional patterns
+**Machine Translation:**
+- Google Translate (2016)
+- DeepL
+- Facebook translations
+- Dramatic quality improvements
 
-**Formula:**
-```python
-# Each head has its own W_Q, W_K, W_V
-head_1 = Attention(Q @ W1_Q, K @ W1_K, V @ W1_V)
-head_2 = Attention(Q @ W2_Q, K @ W2_K, V @ W2_V)
-# ... more heads ...
-
-# Concatenate and project
-output = concat(head_1, head_2, ...) @ W_O
-```
+**Text Summarization:**
+- News article summarization
+- Document understanding
+- Email auto-responses
 
 </div>
 <div class="column">
 
-**Concrete Example:**
-```
-Sentence: "The cat sat on the mat"
+**Question Answering:**
+- Reading comprehension
+- Search engines
+- Virtual assistants
 
-Head 1 (syntax):
- "sat" → "cat" (subject-verb)
- "mat" → "the" (determiner)
-
-Head 2 (semantics):
- "sat" → "mat" (action-location)
- "cat" → "sat" (agent-action)
-
-Head 3 (position):
- Each word → neighbors
-```
-
-</div>
-</div>
-
-*BERT-base: 12 heads, BERT-large: 16 heads, GPT-3: 96 heads!*
-
----
-
-# Why Multiple Heads? 
-
-
-
-**Example: Different heads learn different patterns**
-
-**Sentence: "The cat sat on the mat"**
-
-<div class="columns">
-<div class="column">
-
-**Head 1: Syntactic Dependencies**
-- "cat" → "The" (noun-determiner)
-- "sat" → "cat" (verb-subject)
-- "mat" → "the" (noun-determiner)
-- Learns grammar structure
-
-**Head 2: Semantic Relations**
-- "sat" → "mat" (action-location)
-- "cat" → "mat" (agent-location)
-- Learns meaning relationships
-
-</div>
-<div class="column">
-
-**Head 3: Local Context**
-- Each word → neighbors
-- Short-range dependencies
-- N-gram like patterns
-
-**Head 4: Long-Range**
-- Distant word relationships
-- Document-level context
-- Coreference resolution
+**Speech Recognition:**
+- Attend to acoustic features
+- Better transcription accuracy
+- Listen, Attend and Spell models
 
 </div>
 </div>
 
 <div class="callout info">
-<div class="callout-title">Ensemble Effect</div>
+<div class="callout-title">Key Milestone</div>
 
-Multiple heads provide a richer, more diverse representation by attending to different aspects of the input simultaneously!
+By 2016, attention-based models became the standard for sequence-to-sequence tasks, paving the way for the Transformer revolution in 2017.
 
 </div>
 
 
 ---
 
-# Three Types of Attention 
+# Implementing Attention in PyTorch 
 
 
-1. **Self-Attention (Encoder)**
- - Each position attends to all positions in same sequence
-- Bidirectional: can see past and future
-- Used in: BERT, encoder-only models
-
- 
-
-2. **Masked Self-Attention (Decoder)**
- - Each position attends only to previous positions
-- Prevents "looking into the future"
-- Used in: GPT, decoder-only models
-
- 
-
-3. **Cross-Attention (Encoder-Decoder)**
- - Decoder attends to encoder outputs
-- Queries from decoder, Keys/Values from encoder
-- Used in: T5, BART, machine translation
-
-| Masked Self-Attention | Sequence | Same sequence (past only) |
-| --- | --- | --- |
-| Cross-Attention | Decoder | Encoder |
-
-
----
-
-# Masked Self-Attention 
-
-
-**Preventing the model from "cheating" during generation**
-
-**Problem:** During training, we have the full target sequence. Without masking, the model could "peek" at future tokens!
-
-**Solution:** Mask out future positions by setting attention scores to -infinity before softmax.
-
-```python
-# Example: Generating "The cat sat"
-# When predicting "sat", model should only see "The cat"
-
-scores = [[0.5, 0.3, 0.2], # "The" can see: The
- [0.4, 0.5, 0.1], # "cat" can see: The, cat
- [0.2, 0.4, 0.4]] # "sat" can see: The, cat, sat
-
-# Apply causal mask (upper triangle = -infinity)
-mask = [[ 0, -inf, -inf],
- [ 0, 0, -inf],
- [ 0, 0, 0 ]]
-
-masked_scores = scores + mask
-# After softmax: future positions get weight 0!
-```
-
-**Result:** Token at position t can only attend to positions <= t
-- Maintains autoregressive property
-- Enables parallel training while preserving causality
-
-
----
-
-# Cross-Attention 
-
-
-**Connecting encoder and decoder in seq2seq models**
-
-```
-Encoder Outputs -> (Keys & Values) -> Decoder State -> (Queries) -> Cross-Attention -> Context-Aware Decoder
-```
-
-**Key Properties:**
-- **Q** comes from decoder (what decoder needs)
-- **K, V** come from encoder (what input provides)
-- Allows decoder to "look at" relevant parts of input
-- Similar to the original attention mechanism from Lecture 12!
-
-**Used in:** Machine translation, summarization, any encoder-decoder task
-
----
-
-# Implementing Self-Attention in PyTorch 
-
-
-**Scaled dot-product attention**
+**Simple attention mechanism implementation**
 
 ```python
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import math
 
-class SelfAttention(nn.Module):
- def __init__(self, embed_dim):
+class BahdanauAttention(nn.Module):
+ def __init__(self, hidden_dim):
  super().__init__()
- self.embed_dim = embed_dim
- self.W_q = nn.Linear(embed_dim, embed_dim)
- self.W_k = nn.Linear(embed_dim, embed_dim)
- self.W_v = nn.Linear(embed_dim, embed_dim)
+ self.W_dec = nn.Linear(hidden_dim, hidden_dim)
+ self.W_enc = nn.Linear(hidden_dim, hidden_dim)
+ self.v = nn.Linear(hidden_dim, 1)
 
- def forward(self, x, mask=None):
- Q = self.W_q(x) # Queries: what am I looking for?
- K = self.W_k(x) # Keys: what do I contain?
- V = self.W_v(x) # Values: what info do I provide?
+ def forward(self, decoder_hidden, encoder_outputs):
+ # Compute scores: how relevant is each encoder state?
+ dec = self.W_dec(decoder_hidden).unsqueeze(1) # [batch, 1, hidden]
+ enc = self.W_enc(encoder_outputs) # [batch, seq_len, hidden]
+ scores = self.v(torch.tanh(dec + enc)) # [batch, seq_len, 1]
 
- # Attention scores: how similar are Q and K?
- scores = torch.matmul(Q, K.transpose(-2, -1))
- scores = scores / math.sqrt(self.embed_dim) # Scale!
+ # Normalize to get attention weights (sum to 1)
+ attn_weights = F.softmax(scores, dim=1) # [batch, seq_len, 1]
 
- if mask is not None: # For causal/decoder attention
- scores = scores.masked_fill(mask == 0, -1e9)
+ # Weighted sum of encoder outputs
+ context = torch.sum(attn_weights * encoder_outputs, dim=1)
 
- attn_weights = F.softmax(scores, dim=-1) # Normalize
- output = torch.matmul(attn_weights, V) # Weighted sum
-
- return output, attn_weights
-
-# Usage example:
-attn = SelfAttention(embed_dim=64)
-x = torch.randn(1, 5, 64) # 5 tokens, 64-dim embeddings
-out, weights = attn(x)
-# out: [1, 5, 64] - contextualized embeddings
-# weights: [1, 5, 5] - attention matrix
+ return context, attn_weights.squeeze(-1)
 ```
-
 
 ---
 
-# Computational Complexity 
+# Using the Attention Module 
 
 
-**Understanding the cost of self-attention**
+**Complete example with sample data**
 
-| Component | Time Complexity | Memory |
-| --- | --- | --- |
-| Self-Attention | O(n^2 * d) | O(n^2) |
-| Feed-Forward | O(n * d^2) | O(d) |
+```python
+# Initialize attention module
+attn = BahdanauAttention(hidden_dim=64)
 
-where n = sequence length, d = embedding dimension
+# Sample encoder outputs (3 words, 64-dim hidden state)
+encoder_outputs = torch.randn(1, 3, 64) # [batch=1, seq_len=3, hidden=64]
 
-<div class="callout tip">
-<div class="callout-title">Concrete Example: Memory Usage</div>
+# Current decoder hidden state
+decoder_hidden = torch.randn(1, 64) # [batch=1, hidden=64]
 
-**Sequence length n = 1000 tokens, d = 768 (BERT-base)**
+# Compute attention
+context, weights = attn(decoder_hidden, encoder_outputs)
 
-Attention matrix size: n x n = 1000 x 1000 = **1 million entries**
-At fp32 (4 bytes): **4 MB** per layer, per head
+print(f"Context shape: {context.shape}") # [1, 64]
+print(f"Attention weights: {weights}") # [1, 3] - sums to 1.0!
 
-BERT-base: 12 layers x 12 heads = 144 attention matrices
-Total: **576 MB** just for attention weights!
-
-**If n = 10,000:** 100x more = **57.6 GB** (won't fit on most GPUs!)
-
-</div>
-
-**Typical context limits:**
-- BERT: 512 | GPT-2: 1024 | GPT-3: 2048 | GPT-4: 128k (with optimizations)
+# Example output:
+# Attention weights: tensor([[0.28, 0.45, 0.27]])
+# "The" "cat" "sat"
+# Model focuses most on "cat" when generating next output word!
+```
 
 
 ---
@@ -564,30 +447,29 @@ Total: **576 MB** just for attention weights!
 # Discussion Questions 
 
 
-1. **Self-Attention vs RNN Attention:**
- - What's the key difference?
-- Why is self-attention more powerful?
-- When might RNNs still be useful?
+1. **Why is attention called "soft alignment"?**
+ - How is it different from hard alignment?
+- What are the advantages of soft vs. hard?
 
  
 
-2. **Query, Key, Value Framework:**
- - Why three separate projections instead of one?
-- What if we used $Q = K = V = X$?
-- How does this relate to information retrieval?
+2. **Computational Cost:**
+ - What is the time complexity of attention?
+- How does it scale with sequence length?
+- When might this be a problem?
 
  
 
-3. **Multi-Head Attention:**
- - Why not just use one big attention head?
-- How many heads is optimal?
-- Can we interpret what each head learns?
+3. **Interpretability:**
+ - Can we always trust attention weights as explanations?
+- What about when attention is uniform across all inputs?
 
  
 
-4. **Scalability:**
- - $O(n^2)$ is problematic for long documents. Solutions?
-- Sparse attention? Local attention? Other ideas?
+4. **Beyond Seq2Seq:**
+ - Where else might attention be useful?
+- Can we apply it within a single sequence?
+- (Spoiler: Yes! That's self-attention → next lecture!)
 
 
 ---
@@ -598,20 +480,20 @@ Total: **576 MB** just for attention weights!
 **What's Next?**
 
 **Today we learned:**
-- Why transformers replaced RNNs
-- Self-attention mechanism (Q, K, V)
-- Multi-head attention
-- Three types of attention (self, masked, cross)
+- The context problem in NLP
+- Sequence-to-sequence architecture
+- The bottleneck problem
+- How attention mechanisms work
+- Attention as alignment and interpretation
 
-**Next lecture (Lecture 14 - Training Transformers):**
-- : How to inject position information
-- : The other key component
-- : Training stability
-- : Making transformers faster
-- : Encoder, Decoder, Encoder-Decoder
-- : Training and using transformers
+**Next lecture (Lecture 13):**
+- : Attention within a sequence
+- : "Attention is All You Need"
+- : The new framework
+- : Learning diverse relationships
+- : Injecting order information
 
-**We're building up to BERT and GPT! **
+**Get ready for the Transformer revolution! **
 
 
 ---
@@ -621,57 +503,56 @@ Total: **576 MB** just for attention weights!
 
 **Key Takeaways:**
 
-1. **Transformer Revolution**
- - Pure attention, no recurrence
-- Parallel processing, faster training
-2. **Self-Attention Mechanism**
- - Query, Key, Value framework
-- Each token attends to all others
-- Scaled dot-product: $(QK^T/)V$
-3. **Multi-Head Attention**
- - Multiple heads learn diverse relationships
-- Concatenate and project back
-- Richer representations
-4. **Three Attention Types**
- - Self (encoder), Masked (decoder), Cross (encoder-decoder)
-- Different uses for different architectures
+1. **Context Matters**
+ - Static embeddings can't capture context-dependent meanings
+- Need dynamic representations based on context
+2. **Seq2Seq Bottleneck**
+ - Fixed-size context vector limits performance
+- Information loss for long sequences
+3. **Attention is the Solution**
+ - Dynamic access to all encoder states
+- Weighted combination based on relevance
+- Attention weights sum to 1.0 (probability distribution)
+4. **Benefits**
+ - Better performance on long sequences
+- Automatic alignment learning
+- Model interpretability
 
-**Self-attention is the foundation of modern NLP!**
+**Attention mechanisms laid the foundation for modern transformer-based models!**
 
 ---
 
 # References 
 
 
-**Essential Papers:**
+**Key Papers:**
 
-- **Vaswani et al. (2017)** - "Attention Is All You Need"
+- **Sutskever et al. (2014)** - "Sequence to Sequence Learning with Neural Networks"
  
-- The original Transformer paper
-- Introduced self-attention, multi-head attention
-- Foundation of modern NLP
+- Introduced encoder-decoder architecture
+- Foundation for seq2seq models
 
  
 
  \item **Bahdanau et al. (2015)** - "Neural Machine Translation by Jointly Learning to Align and Translate"
- - Original attention mechanism (for comparison)
-
-**Tutorials and Resources:**
-- **The Illustrated Transformer** by Jay Alammar
- 
-- https://jalammar.github.io/illustrated-transformer/
-- Visual step-by-step explanation
+ - Introduced additive attention mechanism
+- Solved the bottleneck problem
 
  
 
- \item **Annotated Transformer** by Harvard NLP
- - https://nlp.seas.harvard.edu/annotated-transformer/
-- Line-by-line implementation
+ \item **Luong et al. (2015)** - "Effective Approaches to Attention-based Neural Machine Translation"
+ - Multiplicative attention variants
+- Global vs. local attention
 
  
 
- \item **HuggingFace Course** - Chapter 1.4
- - How Transformers work
+ \item **Vaswani et al. (2017)** - "Attention Is All You Need"
+ - The Transformer architecture (next lecture!)
+- Scaled dot-product attention
+
+**Additional Resources:**
+- Jay Alammar's blog: "Visualizing A Neural Machine Translation Model"
+- Distill.pub: "Attention and Augmented Recurrent Neural Networks"
 
 
 ---
@@ -682,14 +563,13 @@ Total: **576 MB** just for attention weights!
 
 **Discussion Time**
 
-**Topics for discussion:**
-- Self-attention mechanism
-- Query, Key, Value intuition
-- Multi-head attention
-- Masked vs. unmasked attention
-- Implementation questions
+**Office Hours Topics:**
+- Implementing attention from scratch
+- Different attention mechanisms
+- Debugging attention-based models
+- Assignment 4 preparation
 
 Thank you! 
 
-Next: Training Transformers!
+See you next lecture for Transformers!
 

@@ -6,7 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 10: Word embeddings
+# Lecture 10: Classic embeddings
 ### PSYC 51.17: Models of language and communication
 
 Jeremy R. Manning
@@ -19,437 +19,412 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will">
 
-1. Understand Word2Vec architectures (CBOW and Skip-gram)
-2. Explain how negative sampling makes training efficient
-3. Compare Word2Vec, GloVe, and FastText
-4. Apply word embeddings for analogies and similarity
-5. Recognize biases in word embeddings
+1. Understand the distributional hypothesis and why it matters
+2. Implement Latent Semantic Analysis (LSA) with SVD
+3. Apply Latent Dirichlet Allocation (LDA) for topic modeling
+4. Compare classic embedding methods and their trade-offs
+5. Visualize and interpret semantic relationships
 
 </div>
 
-<div class="definition-box" data-title="The 2013 revolution">
+<div class="tip-box" data-title="Central question">
 
-Word2Vec showed that neural networks can learn powerful semantic representations from raw text alone.
-
-</div>
-
----
-<!-- _class: scale-90 -->
-
-# From count-based to prediction-based
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Count-Based (LSA, LDA):**
-- Build co-occurrence matrix
-- Apply matrix factorization
-- Global statistics
-- Linear relationships
-
-</div>
-<div style="flex: 1;">
-
-**Prediction-Based (Word2Vec):**
-- Predict context from word
-- Train neural network
-- Local context windows
-- Non-linear relationships
-
-</div>
-</div>
-
-<div class="tip-box" data-title="Key difference">
-
-Word2Vec learns by predicting — the embeddings are a byproduct!
+*"You shall know a word by the company it keeps"* — J.R. Firth (1957)
 
 </div>
 
 ---
 <!-- _class: scale-90 -->
 
-# Word2Vec: Core intuition
+# The fundamental question
 
-*Words that appear in similar contexts should have similar representations*
-
-<div class="example-box" data-title="Context window">
-
-"The quick brown **[TARGET]** jumped over the lazy dog"
-
-**Context:** [The, quick, brown, jumped, over, the, lazy, dog]
-**Target:** fox
-
-</div>
-
-**Key Idea:**
-- Train a model to predict target from context (or vice versa)
-- The learned **weights** become our word vectors!
-- We don't care about the prediction task — we want the embeddings!
-
----
-
-# CBOW vs. Skip-gram
+**How do we represent the meaning of words computationally?**
 
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1;">
 
-**CBOW (Continuous Bag of Words):**
-- Given context → predict center word
-- "the, cat, on, the" → "sat"
-- Faster to train
-- Better for frequent words
+**Traditional Approach:**
+- Dictionaries
+- Taxonomies (WordNet)
+- Manual feature engineering
+
+Labor-intensive, hard to scale
 
 </div>
 <div style="flex: 1;">
 
-**Skip-gram:**
-- Given center word → predict context
-- "sat" → "the, cat, on, the"
-- Slower but better quality
-- Better for rare words
-- **Most commonly used**
+**Distributional Approach:**
+- Learn from data
+- Context-based
+- Scalable, unsupervised
+
+Let the data tell us what words mean!
 
 </div>
 </div>
 
-```
-Skip-gram objective: maximize P(context | center)
-```
+---
+
+# The distributional hypothesis
+
+**Key Idea:** Words that appear in similar contexts tend to have similar meanings.
+
+<div class="example-box" data-title="Example">
+
+- "The **cat** sat on the mat"
+- "The **dog** sat on the mat"
+- "The **kitten** sat on the mat"
+
+→ *cat*, *dog*, *kitten* are semantically related
+
+</div>
+
+<div class="note-box" data-title="Implication">
+
+We can learn word meaning from co-occurrence patterns alone!
+
+</div>
+
+---
+
+# From words to vectors
+
+**Goal:** Represent each word as a point in high-dimensional space
+
+<div class="example-box" data-title="Word-context co-occurrence">
+
+| Word | with "the" | with "sat" | with "ran" |
+|------|------------|------------|------------|
+| cat  | 2          | 1          | 0          |
+| dog  | 2          | 0          | 1          |
+| mat  | 1          | 1          | 0          |
+
+</div>
+
+**Problem:** Real vocabularies have 10,000+ words!
+
+→ We need **dimensionality reduction**
 
 ---
 <!-- _class: scale-80 -->
 
-# Context windows: worked example
+# Latent Semantic Analysis (LSA)
 
-**Sentence:** "The cat sat on the mat" | **Window size = 2**
+**The OG of semantic embeddings (1990)**
 
-```
-Position 0: "The" → Context: [cat, sat]
-Position 1: "cat" → Context: [The, sat, on]
-Position 2: "sat" → Context: [The, cat, on, the]
-Position 3: "on"  → Context: [cat, sat, the, mat]
-Position 4: "the" → Context: [sat, on, mat]
-Position 5: "mat" → Context: [on, the]
-```
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
 
-**Skip-gram training pairs** (target → context):
-```
-(The, cat), (The, sat), (cat, The), (cat, sat), (cat, on), ...
-```
-
----
-<!-- _class: scale-85 -->
-
-# The efficiency problem
-
-**Challenge:** Softmax over entire vocabulary is expensive!
-
-$$P(w_{context}|w_{center}) = \frac{\exp(v_{context}^T v_{center})}{\sum_{w=1}^V \exp(v_w^T v_{center})}$$
-
-For 100k vocabulary: 100k exponentials per training example!
-
-<div class="warning-box" data-title="Solution: Negative Sampling">
-
-Instead of predicting across all words, create binary classification:
-- **Positive:** Actual context word (label = 1)
-- **Negative:** K random words (label = 0)
-
-Training becomes O(k) instead of O(V)!
+**Algorithm:**
+1. Build term-document matrix $X$
+2. Apply TF-IDF weighting (recall from last week!)
+3. Perform SVD: $X = U\Sigma V^T$
+4. Keep top $k$ dimensions
+5. Use $U_k$ as word embeddings
 
 </div>
+<div style="flex: 1;">
 
----
-<!-- _class: scale-80 -->
+**SVD Decomposition:**
+```
+X = U × Σ × V^T
 
-# Negative sampling example
-
-**Training pair:** ("cat", "sat") — cat is center, sat is context
-
-```python
-# Positive sample: Does "sat" appear near "cat"? YES (label=1)
-positive_pair = ("cat", "sat", label=1)
-
-# Negative samples: Random words that DON'T appear near "cat"
-negative_pairs = [
-    ("cat", "algorithm", label=0),
-    ("cat", "president", label=0),
-    ("cat", "quantum", label=0),
-]
-
-# Train binary classifier: Is this a real context pair?
-# Instead of 100k-way softmax → just 4 binary predictions!
+U: word-topic associations
+Σ: topic strengths
+V^T: topic-document associations
 ```
 
-**Typical k:** 5-20 negative samples per positive
-
----
-
-# The famous result: vector arithmetic
-
-$$\vec{king} - \vec{man} + \vec{woman} \approx \vec{queen}$$
-
-<div class="example-box" data-title="Other analogies">
-
-- $\vec{Paris} - \vec{France} + \vec{Italy} \approx \vec{Rome}$
-- $\vec{walking} - \vec{walk} + \vec{swim} \approx \vec{swimming}$
-- $\vec{bigger} - \vec{big} + \vec{small} \approx \vec{smaller}$
-
+</div>
 </div>
 
-<div class="note-box" data-title="Why does this work?">
+<div class="note-box" data-title="Key innovation">
 
-Subtracting "man" removes the "male" component; adding "woman" adds the "female" component. Result: "female royal" = queen!
+Discovers latent topics, solves synonymy problem, captures semantic similarity
 
 </div>
 
 ---
 <!-- _class: scale-70 -->
 
-# Word2Vec in Python
+# LSA in Python
 
 ```python
-from gensim.models import Word2Vec
-import gensim.downloader as api
+from sklearn.decomposition import TruncatedSVD
+from sklearn.feature_extraction.text import TfidfVectorizer
 
-# Load pre-trained model (3B words, 300 dimensions)
-model = api.load('word2vec-google-news-300')
+documents = [
+    "The cat sat on the mat",
+    "The dog ran in the park",
+    "Machine learning is amazing",
+]
 
-# Find similar words
-model.most_similar('computer', topn=5)
-# [('computers', 0.72), ('laptop', 0.69), ('PC', 0.68), ...]
+# Build TF-IDF matrix (recall from week 2!)
+tfidf = TfidfVectorizer(max_features=5000, stop_words='english')
+tfidf_matrix = tfidf.fit_transform(documents)
 
-# Word analogies: king - man + woman = ?
-model.most_similar(positive=['king', 'woman'], negative=['man'], topn=1)
-# [('queen', 0.71)]
+# Apply LSA - reduce to 100 dimensions
+lsa = TruncatedSVD(n_components=100, random_state=42)
+doc_embeddings = lsa.fit_transform(tfidf_matrix)
 
-# Train your own
-sentences = [['the', 'cat', 'sat'], ['the', 'dog', 'ran']]
-custom_model = Word2Vec(sentences, vector_size=100, window=5, min_count=1, sg=1)
+print(f"Original: {tfidf_matrix.shape}")  # (3, vocab_size) - sparse
+print(f"After LSA: {doc_embeddings.shape}")  # (3, 100) - dense!
 ```
 
 ---
-<!-- _class: scale-75 -->
 
-# GloVe: Global Vectors
+# Finding similar words with LSA
 
-**Combining count-based and prediction-based methods**
+```python
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Get word embeddings
+vocab = tfidf.get_feature_names_out()
+word_embeddings = lsa.components_.T
+
+def find_similar(word, top_n=5):
+    idx = list(vocab).index(word)
+    word_vec = word_embeddings[idx].reshape(1, -1)
+    sims = cosine_similarity(word_vec, word_embeddings)[0]
+    top_indices = sims.argsort()[-top_n-1:-1][::-1]
+    return [(vocab[i], f"{sims[i]:.3f}") for i in top_indices]
+
+print(find_similar("computer"))
+# [('software', 0.82), ('program', 0.79), ('system', 0.71)]
+```
+
+<div class="tip-box" data-title="Key insight">
+
+LSA finds semantically related words even without explicit labels!
+
+</div>
+
+---
+
+# LSA limitations
 
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1;">
 
-**Key Insight:**
-Ratios of co-occurrence probabilities encode meaning better than raw probabilities!
-
-| Probe | P(w\|ice) | P(w\|steam) | Ratio |
-|-------|-----------|-------------|-------|
-| solid | high | low | >> 1 |
-| gas | low | high | << 1 |
-| water | high | high | ~ 1 |
+**Issues:**
+- SVD is expensive for large corpora
+- Hard to update with new documents
+- Linear relationships only
+- No polysemy handling
 
 </div>
 <div style="flex: 1;">
 
-**GloVe learns:**
+**Example: Polysemy**
 
-$$\vec{w}_i^T \vec{w}_j \approx \log P(i,j)$$
+<div class="warning-box" data-title='Word: "bank"'>
 
-Word vectors whose dot product relates to co-occurrence probability!
+1. Financial institution
+2. River bank
+3. Banking (airplane)
 
-</div>
-</div>
-
----
-<!-- _class: scale-85 -->
-
-# GloVe vs. Word2Vec
-
-| Aspect | Word2Vec | GloVe |
-|--------|----------|-------|
-| Approach | Local context windows | Global co-occurrence |
-| Training | Online (stochastic) | Batch (matrix factorization) |
-| Speed | Medium | Fast for large corpora |
-| Quality | Excellent | Excellent |
-
-<div class="tip-box" data-title="In practice">
-
-Similar performance on most tasks! Choose based on:
-- Corpus size (GloVe better for very large)
-- Training infrastructure (GloVe needs memory for matrix)
+LSA gives ONE vector for all meanings!
 
 </div>
 
----
-
-# FastText: Subword information
-
-**The Problem:** Word2Vec/GloVe give ONE vector per word
-
-<div class="warning-box" data-title="Out-of-Vocabulary (OOV) Problem">
-
-- New word? Unknown!
-- Misspelling? Unknown!
-- Rare morphological form? Unknown!
-
-But "running", "runner", "runnable" share morphology!
-
 </div>
-
-**FastText Solution:** Break words into character n-grams
-
----
-<!-- _class: scale-80 -->
-
-# FastText: Character n-grams
-
-**Example: "where" (with n=3)**
-
-Character trigrams: `<wh, whe, her, ere, re>`
-
-Word vector = average of n-gram vectors:
-
-$$\vec{w}_{where} = \frac{1}{6}(\vec{z}_{<wh} + \vec{z}_{whe} + \vec{z}_{her} + \vec{z}_{ere} + \vec{z}_{re>} + \vec{z}_{<where>})$$
-
-<div class="tip-box" data-title="Benefits">
-
-- Handles OOV words!
-- Captures morphology ("unhappiness" shares n-grams with "unhappy", "happiness")
-- Great for morphologically rich languages (German, Turkish, Finnish)
-- Robust to typos
-
-</div>
-
----
-<!-- _class: scale-85 -->
-
-# Method comparison
-
-| Method | Year | OOV Handling | Best For |
-|--------|------|--------------|----------|
-| LSA | 1990 | No | Topic modeling |
-| LDA | 2003 | No | Interpretable topics |
-| Word2Vec | 2013 | No | General NLP |
-| GloVe | 2014 | No | Large corpora |
-| FastText | 2017 | Yes! | Morphology-rich languages |
-
-<div class="note-box" data-title="Typical dimensions">
-
-50-300 dimensions (100-300 most common for best quality)
-
 </div>
 
 ---
 <!-- _class: scale-80 -->
 
-# Bias in word embeddings
+# Latent Dirichlet Allocation (LDA)
 
-**Embeddings learn biases from training data**
+**A probabilistic approach to topic modeling**
 
-<div class="warning-box" data-title="Gender bias examples">
+<div class="definition-box" data-title="Key assumptions">
 
-- $\vec{man} : \vec{computer\ programmer} :: \vec{woman} : \vec{homemaker}$
-- $\vec{man} : \vec{doctor} :: \vec{woman} : \vec{nurse}$
+1. Each document is a mixture of topics
+2. Each topic is a distribution over words
+3. The mixture proportions vary per document
 
 </div>
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Advantages over LSA:**
+- Probabilistic interpretation
+- Non-negative weights
+- More interpretable topics
+
+</div>
+<div style="flex: 1;">
+
+**Example:** Doc about "tech pets":
+- 60% Technology topic
+- 30% Animals topic
+- 10% Other
+
+</div>
+</div>
+
+---
+<!-- _class: scale-70 -->
+
+# LDA in Python
 
 ```python
-def gender_bias_score(word):
-    return model.similarity(word, 'man') - model.similarity(word, 'woman')
+from sklearn.decomposition import LatentDirichletAllocation
+from sklearn.feature_extraction.text import CountVectorizer
 
-# Results from Google News Word2Vec:
-# programmer: +0.091 (toward man)
-# nurse: -0.109 (toward woman)
+# Create bag-of-words (not TF-IDF for LDA!)
+vectorizer = CountVectorizer(max_features=1000, stop_words='english')
+doc_term_matrix = vectorizer.fit_transform(documents)
+vocab = vectorizer.get_feature_names_out()
+
+# Fit LDA
+lda = LatentDirichletAllocation(n_components=5, random_state=42)
+doc_topics = lda.fit_transform(doc_term_matrix)
+
+# Print top words per topic
+for idx, topic in enumerate(lda.components_):
+    top_words = [vocab[i] for i in topic.argsort()[-7:]]
+    print(f"Topic {idx}: {', '.join(top_words)}")
 ```
 
-<div class="important-box" data-title="Why this matters">
+---
 
-Embeddings used in hiring tools, search, recommendations can perpetuate bias!
+# LDA topic examples
+
+**Example Topics from News Corpus:**
+
+<div class="note-box" data-title="Topic 1: Politics (20%)">
+
+`government, election, president, vote, policy, senate`
+
+</div>
+
+<div class="note-box" data-title="Topic 2: Sports (15%)">
+
+`game, team, player, score, win, season, coach`
+
+</div>
+
+<div class="note-box" data-title="Topic 3: Technology (25%)">
+
+`software, computer, data, algorithm, system, AI`
+
+</div>
+
+**Document representation:** [0.20, 0.15, 0.25, 0.40] ← topic mixture
+
+---
+
+# LSA vs. LDA comparison
+
+| Aspect | LSA | LDA |
+|--------|-----|-----|
+| Approach | Matrix factorization | Probabilistic |
+| Interpretability | Medium | High |
+| Speed | Fast | Medium |
+| Topic coherence | Medium | High |
+| Best for | Search, retrieval | Topic discovery |
+
+<div class="tip-box" data-title="When to use what">
+
+- **LSA**: Quick exploration, large-scale semantic search
+- **LDA**: When you need interpretable topics
 
 </div>
 
 ---
 <!-- _class: scale-80 -->
 
-# Practical tips
+# Visualizing embeddings with UMAP
 
-1. **Start with pre-trained models**
-   - Word2Vec: Google News (300d, 3B words)
-   - GloVe: Common Crawl (300d, 840B tokens)
-   - FastText: 157 languages available
+**Project high-dimensional vectors to 2D:**
 
-2. **Use cosine similarity** (not Euclidean distance)
-   $$\text{sim}(u,v) = \frac{u \cdot v}{||u|| \cdot ||v||}$$
+```python
+import umap
 
-3. **Be aware of biases** — test for bias, consider debiasing techniques
+# Reduce from 100D to 2D
+reducer = umap.UMAP(n_neighbors=15, min_dist=0.1, metric='cosine')
+embeddings_2d = reducer.fit_transform(word_embeddings)
 
-4. **Remember limitations** — static (one vector per word), no polysemy
+# Plot - similar words cluster together!
+plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1])
+for i, word in enumerate(words_to_plot):
+    plt.annotate(word, (embeddings_2d[i, 0], embeddings_2d[i, 1]))
+```
+
+<div class="note-box" data-title="What you should see">
+
+Sports words cluster together, tech words cluster together, etc. — even though we never told the model about categories!
+
+</div>
 
 ---
+<!-- _class: scale-80 -->
+
+# Discussion: Does this capture "meaning"?
+
+<div style="display: flex; gap: 1.5em;">
+<div style="flex: 1;">
+
+**Arguments For:**
+- Captures semantic similarity
+- Works well in practice
+- Aligns with linguistic theory
+- Scalable to large corpora
+
+</div>
+<div style="flex: 1;">
+
+**Arguments Against:**
+- Text-only (no grounding)
+- Missing embodied experience
+- No common sense reasoning
+- Reflects biases in data
+
+</div>
+</div>
+
+<div class="warning-box" data-title="The Symbol Grounding Problem">
+
+"How can meaning be intrinsic to the system, rather than parasitic on the meanings in our heads?" — Harnad (1990)
+
+</div>
+
+---
+<!-- _class: scale-85 -->
 
 # Summary
 
 **What we learned:**
 
-1. **Word2Vec (2013):** Neural revolution — predict context from words
-   - Skip-gram most common, negative sampling for efficiency
-2. **GloVe (2014):** Global co-occurrence statistics
-3. **FastText (2017):** Character n-grams handle OOV
-4. **Bias:** Embeddings reflect training data biases
+1. **Distributional Hypothesis:** Words in similar contexts have similar meanings
+2. **LSA:** SVD on term-document matrix → dense embeddings
+3. **LDA:** Probabilistic topic modeling → interpretable topics
+4. **Visualization:** UMAP reveals semantic structure
 
-<div class="note-box" data-title="Key limitation">
+<div class="note-box" data-title="Limitation">
 
-Static embeddings: one vector per word type
-
-**Next week:** Contextual embeddings (ELMo, BERT) solve polysemy!
+These are **static** embeddings — one vector per word, no context!
 
 </div>
 
+**Tomorrow:** Neural word embeddings (Word2Vec, GloVe, FastText)
+
 ---
-<!-- _class: scale-75 -->
 
 # Key references
 
-**Foundational Papers:**
-- Mikolov et al. (2013). "Efficient Estimation of Word Representations"
-- Pennington et al. (2014). "GloVe: Global Vectors for Word Representation"
-- Bojanowski et al. (2017). "Enriching Word Vectors with Subword Information"
+**Classic Papers:**
+- Deerwester et al. (1990). "Indexing by Latent Semantic Analysis"
+- Blei et al. (2003). "Latent Dirichlet Allocation"
 
 **Tools:**
-- Gensim: `Word2Vec`, `FastText` | Pre-trained: `gensim.downloader`
+- Scikit-learn: `TruncatedSVD`, `LatentDirichletAllocation`
+- Gensim: `LsiModel`, `LdaModel`
 
 <div class="tip-box" data-title="Try it out!">
 
-[Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/) | [Word Analogies](https://contextlab.github.io/llm-course/demos/analogies/)
-
-</div>
-
----
-<!-- _class: scale-90 -->
-
-# Assignment 3: Wikipedia Embeddings
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Apply this week's concepts:**
-- Train embeddings on Wikipedia data
-- Compare LSA vs. Word2Vec
-- Explore semantic relationships
-- Visualize with UMAP
-
-</div>
-<div style="flex: 1;">
-
-**Think about:**
-- How does corpus size affect quality?
-- What analogies work? What fails?
-- Can you detect bias?
-
-</div>
-</div>
-
-<div class="tip-box" data-title="Link">
-
-[Assignment 3: Wikipedia Embeddings](https://contextlab.github.io/llm-course/assignments/assignment-3/)
+Check out the [Topic Modeling demo](https://contextlab.github.io/llm-course/demos/topic-modeling/)
 
 </div>
 
@@ -472,8 +447,8 @@ Static embeddings: one vector per word type
   </div>
 </div>
 
-<div class="tip-box" data-title="Week 3 complete!">
+<div class="tip-box" data-title="See you tomorrow!">
 
-Next week: Contextual embeddings and dimensionality reduction!
+Friday we dive into neural word embeddings!
 
 </div>
