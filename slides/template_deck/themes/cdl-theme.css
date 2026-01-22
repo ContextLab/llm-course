@@ -638,6 +638,51 @@ section>div[style*="gap"]>div,
     min-width: 0 !important;
 }
 
+/* Asymmetric two-column layouts for text + image combinations */
+.columns-narrow-wide,
+.columns-wide-narrow {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 1.5em;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-wrap: nowrap !important;
+    margin: 0 !important;
+}
+
+/* Narrow-wide: first column 35%, second 65% (text left, image right) */
+.columns-narrow-wide > div:first-child {
+    flex: 0 0 35% !important;
+    max-width: 35% !important;
+    min-width: 0 !important;
+}
+.columns-narrow-wide > div:last-child {
+    flex: 0 0 62% !important;
+    max-width: 62% !important;
+    min-width: 0 !important;
+}
+
+/* Wide-narrow: first column 65%, second 35% (image left, text right) */
+.columns-wide-narrow > div:first-child {
+    flex: 0 0 62% !important;
+    max-width: 62% !important;
+    min-width: 0 !important;
+}
+.columns-wide-narrow > div:last-child {
+    flex: 0 0 35% !important;
+    max-width: 35% !important;
+    min-width: 0 !important;
+}
+
+/* Ensure images in asymmetric layouts scale properly */
+.columns-narrow-wide img,
+.columns-wide-narrow img {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
 /* Multi-column layouts: font size controlled by autoscale.js via CSS variable
    Default to 1em (full size) - JS will set --content-scale if scaling needed */
 section>div[style*="display: flex"],

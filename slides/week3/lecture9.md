@@ -17,370 +17,147 @@ Winter 2026
 
 # Today's agenda
 
-<div class="note-box" data-title="1-Hour X-Hour Tutorial">
+<div class="definition-box" data-title="Vibe coding">
 
-1. **Free AI tools for students** (5 min) - GitHub Copilot, Google Gemini
-2. **Setting up your environment** (10 min) - VS Code, OpenCode, oh-my-opencode
-3. **The spec-kit workflow** (15 min) - From design docs to implementation
-4. **Live demo** (25 min) - Build something together!
-5. **Q&A** (5 min)
+Vibe coding means using "AI" coding agents to rapidly prototype and implement software by describing what you want in natural language, then iterating on the output.
 
 </div>
 
-<div class="tip-box" data-title="Hands-on session">
+<div class="note-box" data-title="Topics we'll cover">
 
-Follow along! Open your terminal and VS Code.
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Free AI coding tools for students
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="note-box" data-title="GitHub Copilot (FREE)">
-
-- AI pair programmer in VS Code
-- Autocomplete + chat assistance
-- Sign up: [github.com/education/students](https://github.com/education/students)
+1. **Free AI coding tools for students:** GitHub Copilot, Google Gemini
+2. **Setting up your environment:** VS Code, OpenCode, oh-my-opencode
+3. **The spec-kit workflow:** from design docs to implementation
+4. **Live demo:** build something together!
 
 </div>
 
-<div class="note-box" data-title="Google Gemini (1 year FREE)">
+<div class="tip-box" data-title="Follow along!">
 
-- Gemini 2.5/3 Pro models
-- 2TB storage included
-- Sign up: [gemini.google/students](https://gemini.google/students/)
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-<div class="example-box" data-title="Other options">
-
-- **Cursor** - AI-first IDE ([cursor.com/students](https://cursor.com/students))
-- **Codeium/Windsurf** - Free forever tier
-- **Dartmouth GenAI** - [chat.dartmouth.edu](https://chat.dartmouth.edu)
-
-</div>
-
-<div class="tip-box" data-title="Recommendation">
-
-Start with **GitHub Copilot** + **OpenCode** for the best terminal + IDE combo.
-
-</div>
-
-</div>
-</div>
-
----
-
-# What is "vibe coding"?
-
-<div class="definition-box" data-title="Vibe Coding">
-
-Using AI coding agents to rapidly prototype and implement software by describing what you want in natural language, then iterating on the output.
-
-</div>
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="warning-box" data-title="The old way">
-
-1. Think about the problem
-2. Research documentation
-3. Write code line by line
-4. Debug for hours
-5. Repeat
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-<div class="tip-box" data-title="The vibe coding way">
-
-1. Describe what you want clearly
-2. Let AI draft the solution
-3. Review and iterate
-4. Verify it works
-5. Ship it!
-
-</div>
-
-</div>
-</div>
-
----
-<!-- _class: scale-70 -->
-
-# Installing VS Code
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="note-box" data-title="Download and install">
-
-1. Go to [code.visualstudio.com](https://code.visualstudio.com)
-2. Download for your OS (Mac/Windows/Linux)
-3. Run the installer
-4. Launch VS Code
-
-</div>
-
-<div class="tip-box" data-title="Essential extensions">
-
-- GitHub Copilot
-- Python
-- Jupyter
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-![VS Code w:450](img/vscode.png)
-
-</div>
-</div>
-
----
-<!-- _class: scale-70 -->
-
-# Activating GitHub Copilot
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="note-box" data-title="Setup steps">
-
-1. Click the **Accounts** icon (bottom left of VS Code)
-2. Sign in with your GitHub account
-3. Copilot activates automatically!
-
-</div>
-
-<div class="tip-box" data-title="Verify it works">
-
-Type a comment like `# function to calculate fibonacci` and watch Copilot suggest code!
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-![VS Code Interface w:450](img/vscode.png)
-
-</div>
-</div>
-
----
-<!-- _class: scale-70 -->
-
-# Your terminal
-
-The terminal is where we'll run OpenCode. Open it from VS Code (View → Terminal) or use your system terminal.
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-![Terminal w:400](img/terminal.png)
-
-</div>
-<div style="flex: 1;">
-
-<div class="note-box" data-title="Terminal basics">
-
-- **Mac**: Terminal.app or iTerm2
-- **Windows**: PowerShell or Windows Terminal
-- **Linux**: Your preferred terminal
-
-</div>
-
-</div>
-</div>
-
----
-
-# Installing OpenCode
-
-**OpenCode** is a terminal-based AI coding agent. Think ChatGPT, but it can read and write your files!
-
-<div class="note-box" data-title="Installation (choose one)">
-
-```bash
-curl -fsSL https://opencode.ai/install | bash   # One-liner (recommended)
-npm install -g opencode-ai                       # npm
-brew install anomalyco/tap/opencode              # Homebrew (Mac)
-```
-
-</div>
-
-<div class="example-box" data-title="Connect your API key">
-
-```bash
-opencode auth login                              # Interactive setup
-export ANTHROPIC_API_KEY="your-key"              # Or set environment variable
-```
-
-</div>
-
----
-<!-- _class: scale-70 -->
-
-# Starting OpenCode
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-![Terminal with opencode command w:400](img/terminal_with_opencode_command.png)
-
-</div>
-<div style="flex: 1;">
-
-<div class="note-box" data-title="Launch OpenCode">
-
-```bash
-cd ~/my-project
-opencode
-```
-
-</div>
-
-<div class="tip-box" data-title="First command">
-
-Type `/init` inside OpenCode to create an `AGENTS.md` file that helps the AI understand your project!
-
-</div>
-
-</div>
-</div>
-
----
-<!-- _class: scale-70 -->
-
-# OpenCode in action
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-![OpenCode running w:450](img/opencode.png)
-
-</div>
-<div style="flex: 1;">
-
-<div class="example-box" data-title="Try it out">
-
-Ask OpenCode to do something:
-
-*"Create a Python function that reverses a string"*
-
-Watch it write code, create files, and run tests!
-
-</div>
-
-</div>
-</div>
-
----
-
-# Installing oh-my-opencode
-
-**oh-my-opencode** supercharges OpenCode with specialized agents and power features.
-
-<div class="note-box" data-title="Installation">
-
-```bash
-bunx oh-my-opencode install    # Recommended
-npx oh-my-opencode install     # Alternative
-```
-
-</div>
-
-<div class="example-box" data-title="What it adds">
-
-- **Sisyphus** - Primary orchestrator (plans and delegates)
-- **Oracle** - Architecture and code review expert (GPT-5.2)
-- **Librarian** - Documentation and research
-- **Explore** - Fast codebase navigation
+Install the tools (and *try using them*) as we go&mdash; and ask questions as they arise!
 
 </div>
 
 ---
 <!-- _class: scale-80 -->
 
-# Ultrawork mode
+# Free coding models: use them!
 
-**Ultrawork mode** transforms the AI from a chatbot into an autonomous software engineer.
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="note-box" data-title="Key features">
-
-- Maximum precision execution
-- Parallel agent orchestration
-- Mandatory verification (nothing is "done" without proof)
-- Zero tolerance for partial completion
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-<div class="warning-box" data-title="The philosophy">
-
-"Claim nothing without proof. Execute. Verify. Show evidence."
-
-Ultrawork mode ensures the AI doesn't stop at 80% - it finishes 100%.
-
-</div>
-
-</div>
-</div>
+- [**GitHub Copilot:**](https://github.com/education/students) great at code completion, chat assistance, moderate coding tasks
+- [**Google Gemini:**](https://gemini.google/students/) very long context windows, powerful models that are good at reasoning-heavy tasks
+- [**Dartmouth GenAI:**](https://chat.dartmouth.edu) free access to many models (Claude, ChatGPT, Mistral, etc.)
+- [**Ollama**](https://ollama.com) and [**LM Studio:**](https://lmstudio.ai) run LLMs directly on your laptop (some good ones: llama3.2, deepseek-r1, gemma3, qwen3, gpt-oss)
+- [**Hugging Face**](https://huggingface.co) hosts many open models you can try in your browser or download to run locally. Not great for vibe coding, but useful for integrating models into your projects.
 
 ---
 
-# The /ralph-loop command
+# Setting up your environment: two options
 
-**`/ralph-loop`** is a self-referential development loop that runs until task completion.
+1. **IDE:** full-featured environment with syntax highlighting, debugging, Git integration, extensions (e.g., VS Code, PyCharm)
+2. **Terminal-based coding agent:** lightweight, fast, scriptable (e.g., Claude Code, ChatGPT Codex CLI, OpenCode)
 
-<div class="note-box" data-title="How it works">
+---
+
+# Setting up VS Code
+
+![width:1000px](img/vscode.png)
+
+---
+
+# Setting up VS Code
+
+- Download and install from [code.visualstudio.com](https://code.visualstudio.com)
+- Install essential extensions:
+  - GitHub Copilot
+  - Jupyter
+  - Python
+  - OpenCode
+- Activate Copilot with your GitHub account (click the Accounts icon in bottom left)
+
+---
+
+# Setting up OpenCode (in Terminal)
+
+<div class="note-box" data-title="Run in terminal to install OpenCode">
 
 ```bash
-/ralph-loop "Build a REST API with authentication"
-/ralph-loop "Refactor the payment module" --max-iterations=50
+curl -fsSL https://opencode.ai/install | bash
 ```
 
-The agent keeps working until it outputs `<promise>DONE</promise>` or hits the iteration limit.
+</div>
+
+![width:700px](img/terminal.png)
+
+---
+
+# Launch OpenCode
+
+
+![width:700px](img/terminal_with_opencode_command.png)
+
+---
+
+# Launch OpenCode
+
+
+![width:700px](img/opencode.png)
+
+---
+
+# OpenCode configuration
+
+- Use the `/models` command to connect opencode with your Copilot and Gemini accounts (and OpenAI/Anthropic accounts if you have them)
+- Then install **oh-my-opencode** by entering the following command into opencode:
+
+```
+Install and configure oh-my-opencode by following the instructions here:
+https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads/master/docs/guide/installation.md
+```
+
+---
+<!-- _class: scale-80 -->
+
+
+# Oh-my-opencode highlights
+
+- The main thing oh-my-opencode does is intelligently (and automatically!) orchestrate multiple AI agents to work together on complex tasks. You don't have to do anything special to make this happen (just install the plugin).
+- If you include the keyword "`ultrawork`" in any prompt, the LLM will turn on much stricter execution policies to ensure it completes tasks fully and correctly.
+- The `/ralph-loop` command lets you set up a self-referential development loop that continues working on a task until it is fully complete (or you hit a max iteration limit).
+- The OpenCode extension for VS Code lets you run OpenCode commands directly inside the IDE (super convenient!)
+
+---
+<!-- _class: scale-80 -->
+
+# Initializing OpenCode projects
+
+<div class="note-box" data-title="Start here!">
+
+First clone (download) your project's GitHub repository to your computer:
+
+```bash
+git clone <your-repo-url>
+cd <your-repo-name>
+```
 
 </div>
 
-<div class="tip-box" data-title="Use case">
-
-Perfect for large refactors or when you want the AI to "ship code overnight" while you're away!
-
-Cancel anytime with `/cancel-ralph`.
-
-</div>
+- Then launch opencode (run the `opencode` command inside the project folder):
+- Then initialize the project using the `/init-deep` command (in opencode)
+  - This launches a deep analysis of the codebase to help coding agents understand the project structure and dependencies
+  - The process leaves behind a set of `AGENTS.md` files that help future agents understand the project without having to re-analyze everything from scratch
 
 ---
 
 # The 4-step vibe coding workflow
 
 ```flow
-[Describe:green] --> [Design:blue] --> [Plan:orange] --> [Implement:teal]
+[Describe:green] --> [Design:blue] --> [Plan:orange] --> [Implement:purple]
 ```
 
 <div style="display: flex; gap: 1.5em;">
 <div style="flex: 1;">
 
-<div class="note-box" data-title="1. Detailed description">
+<div class="example-box" data-title="1. Detailed description">
 
 - What are the inputs/outputs?
 - What are the edge cases?
@@ -399,7 +176,7 @@ Cancel anytime with `/cancel-ralph`.
 </div>
 <div style="flex: 1;">
 
-<div class="note-box" data-title="3. Implementation plan">
+<div class="warning-box" data-title="3. Implementation plan">
 
 - Break into small tasks
 - Include verification steps
@@ -407,7 +184,7 @@ Cancel anytime with `/cancel-ralph`.
 
 </div>
 
-<div class="note-box" data-title="4. Implement and verify">
+<div class="definition-box" data-title="4. Implement and verify">
 
 - Let AI write the code
 - Test each piece
@@ -420,9 +197,7 @@ Cancel anytime with `/cancel-ralph`.
 
 ---
 
-# Introducing spec-kit
-
-**spec-kit** is GitHub's toolkit for Spec-Driven Development (SDD).
+# spec-kit: GitHub's toolkit for **Spec-Driven Development** (SDD)
 
 <div class="definition-box" data-title="Core idea">
 
@@ -432,12 +207,12 @@ Instead of "vibe coding" a prompt, you write a **specification** first. The spec
 
 <div class="example-box" data-title="The workflow">
 
-1. `/speckit.specify` - Create the spec (what + why, no how)
-2. `/speckit.clarify` - AI asks clarifying questions
-3. `/speckit.plan` - Generate technical plan
-4. `/speckit.tasks` - Break into actionable tasks
-5. `/speckit.implement` - Execute with verification
-
+1. `/speckit.constitution`: define architectural rules
+2. `/speckit.specify`: create the spec (what + why, no how)
+3. `/speckit.clarify`: AI asks clarifying questions
+4. `/speckit.plan`: generate technical plan
+5. `/speckit.tasks`: break into actionable tasks
+6. `/speckit.implement`: execute with verification
 </div>
 
 ---
@@ -469,7 +244,7 @@ Task appears in the "To Do" column by default.
 
 ---
 
-# Demo: AI-Powered Search Engine
+# Demo: AI-powered search engine
 
 <div class="note-box" data-title="What we're building">
 
@@ -482,9 +257,9 @@ A **single HTML file** that creates an AI-powered search engine:
 
 </div>
 
-<div class="tip-box" data-title="The impressive part">
+<div class="tip-box" data-title="Design decisions">
 
-Minimalist UI with smooth animations + real-time progress showing which pipeline step is running and estimated time remaining!
+Let's create a minimalist UI with smooth animations and real-time progress indicators showing which pipeline step is running and estimated time remaining
 
 </div>
 
@@ -493,7 +268,7 @@ Minimalist UI with smooth animations + real-time progress showing which pipeline
 # The spec-kit workflow for our demo
 
 ```flow
-[Constitution:green] --> [Specify:blue] --> [Clarify:orange] --> [Plan:teal] --> [Tasks:violet] --> [Implement:green]
+[Constitution:green] --> [Specify:blue] --> [Clarify:orange] --> [Plan:teal] --> [Tasks:violet] --> [Implement:red]
 ```
 
 <div class="note-box" data-title="Key difference from ad-hoc prompting">
@@ -502,12 +277,16 @@ Each step produces a **document** that becomes the source of truth. The AI can't
 
 </div>
 
+<div class="important-box" data-title="Why this matters">
+
+LLM-based coding agents can easily get confused, distracted, or go off-track. This happens especially often with complex tasks that require multiple steps (multiple agents workng together, large codebases, and so on). The spec-kit workflow keeps everything grounded in a clear, unambiguous specification that every agent can refer back to as needed.
+
+</div>
+
 ---
 <!-- _class: scale-80 -->
 
-# Step 1: Constitution
-
-The constitution defines **architectural DNA** - rules that govern ALL code.
+# Constitution: define the **architectural DNA**&mdash; rules that govern ALL code in the project
 
 <div class="example-box" data-title="Prompt: /speckit.constitution">
 
@@ -530,11 +309,9 @@ A `constitution.md` file with inviolable rules.
 </div>
 
 ---
-<!-- _class: scale-78 -->
+<!-- _class: scale-70 -->
 
-# Step 2: Specify
-
-Now we describe WHAT we want (not HOW).
+# Specify: describe WHAT we want (not HOW)
 
 <div class="example-box" data-title="Prompt: /speckit.specify">
 
@@ -546,25 +323,25 @@ User Journey:
 2. User types question and submits
 3. System shows real-time progress with current step and time estimate
 4. System displays final answer with numbered references
-
-Non-functional requirements:
-- Loads in <3 seconds on 4G
-- Works offline after first load (model cached)
-- Minimalist, modern aesthetic
+5. ... (add more details!)
 ```
+
+</div>
+
+<div class="note-box" data-title="Output">
+
+A `spec.md` file with detailed user stories, acceptance criteria, and examples.
 
 </div>
 
 ---
 <!-- _class: scale-80 -->
 
-# Step 3: Clarify
+# Clarify (`/speckit.clarify`): use the coding agent to identify ambiguities and ask questions
 
-The AI identifies ambiguities and asks questions.
+<div class="example-box" data-title="The agent might ask things like">
 
-<div class="warning-box" data-title="AI will ask things like">
-
-1. How should search results be fetched? (CORS issues with Google)
+1. How should search results be fetched?
 2. What if the LLM generates poor search terms?
 3. How many results to fetch? (You said 10)
 4. What's the fallback if WebGPU is unavailable?
@@ -572,20 +349,22 @@ The AI identifies ambiguities and asks questions.
 
 </div>
 
-<div class="tip-box" data-title="Our answers">
+<div class="tip-box" data-title="Your job">
 
-Use a CORS proxy for Google. Fetch 10 results. Fall back to WASM. No follow-ups for MVP.
+Answer these questions (interactively) and/or provide additional details and clarifications. You can run `/speckit.clarify` multiple times until you're satisfied, or you can manually edit the `spec.md` file to add, subtract, or modify any details.
 
-**Your answers become part of the spec!**
+</div>
+
+<div class="note-box" data-title="Output">
+
+An updated `spec.md` file with clarifications incorporated.
 
 </div>
 
 ---
 <!-- _class: scale-78 -->
 
-# Step 4: Plan
-
-Now we specify the technical approach.
+# Plan: specify the technical approach
 
 <div class="example-box" data-title="Prompt: /speckit.plan">
 
@@ -609,40 +388,9 @@ Include: architecture diagram, data flow, component breakdown.
 </div>
 
 ---
-
-# The pipeline architecture
-
-```flow
-[Question:green] --> [Search Terms:blue] --> [Google API:orange] --> [Parse Results:teal] --> [Summarize Each:violet] --> [Synthesize:green]
-```
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="note-box" data-title="LLM Call 1: Query to keywords">
-
-"What causes the northern lights?" → "aurora borealis cause science"
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-<div class="note-box" data-title="LLM Calls 2-12: Process results">
-
-Summarize each of 10 results, then synthesize final answer with citations.
-
-</div>
-
-</div>
-</div>
-
----
 <!-- _class: scale-78 -->
 
-# Step 5: Tasks
-
-Break into implementable chunks.
+# Tasks: break the plan into implementable chunks
 
 <div class="example-box" data-title="Prompt: /speckit.tasks">
 
@@ -655,7 +403,7 @@ Break the plan into tasks. Each task should:
 
 </div>
 
-<div class="note-box" data-title="Generated tasks">
+<div class="note-box" data-title="Hypothetical generated tasks">
 
 1. HTML skeleton + CSS variables + loading animation
 2. Transformers.js setup + model loading with progress
@@ -670,336 +418,69 @@ Break the plan into tasks. Each task should:
 ---
 <!-- _class: scale-78 -->
 
-# Step 6: Implement - Task 1
+# Implement: execute each task and verify that it follows the spec!
 
-<div class="example-box" data-title="Prompt for Task 1">
+<div class="example-box" data-title="Prompt: /speckit.implement">
 
-```
-Implement Task 1: HTML skeleton with CSS.
-
-Requirements from spec:
-- Single input field with "Ask me a question!" placeholder
-- Submit button (disabled during processing)
-- Progress area showing: current step, progress bar, time estimate
-- Results area with answer + references
-- CSS: dark mode, smooth transitions, modern sans-serif font
-- Mobile responsive
-
-Write the complete HTML file with embedded <style>.
+```markdown
+For each task:
+1. Write the code to implement the task.
+2. Write tests to verify correctness.
+3. Use ultrawork policies to ensure completeness.
+4. Verify appearance using the playwright tool.
+5. Run tests and fix any issues as you go.
 ```
 
 </div>
 
----
-<!-- _class: scale-78 -->
+<div class="note-box" data-title="Output">
 
-# Step 6: Implement - Task 2
-
-<div class="example-box" data-title="Prompt for Task 2">
-
-```
-Implement Task 2: Add Transformers.js and model loading.
-
-Requirements:
-- Import Transformers.js from CDN
-- Load SmolLM2-360M-Instruct on page load
-- Show model download progress (it's ~400MB)
-- Cache model in browser storage
-- Update UI: "Loading AI model... 45%"
-- Handle WebGPU vs WASM fallback
-
-Add to the existing HTML file.
-```
+Multiple commits implementing each task with verification steps...and the final working product!
 
 </div>
 
+
 ---
-<!-- _class: scale-78 -->
 
-# Step 6: Implement - Task 3
+# Testing and verification
 
-<div class="example-box" data-title="Prompt for Task 3">
+<div class="important-box" data-title="Crucial step">
 
-```
-Implement Task 3: Search term generation.
+Even if you were careful in planning out your spec and tasks, things can still go wrong during implementation. Always test each piece as you complete it, and stress-test the final product to ensure it meets all acceptance criteria. You will likely need to iterate a few times to get everything working perfectly!
 
-Requirements:
-- Take user question as input
-- Prompt SmolLM2 to extract 3-5 search keywords
-- Prompt template: "Extract search keywords from this question. 
-  Return only keywords, comma-separated. Question: {question}"
-- Parse response, handle edge cases
-- Update progress: "Generating search terms..."
+</div>
 
-Add to the existing HTML file.
-```
+<div class="tip-box" data-title="Pro tip">
+
+When you find something broken, it's tempting to vibe code a quick fix without updating the spec or plan. But this is a *very* bad idea: you (and your coding agent helpers!) will quickly find yourselves lost and confused about what the code is supposed to do. Always go back and update the spec, plan, and tasks to reflect any changes you make during implementation.
+
+</div>
+
+<div class="note-box">
+
+*You* don't necessarily need to be the one to update your spec/plan/tasks. You can have your coding agents do it for you! Just be sure to review and verify the changes they make.
 
 </div>
 
 ---
-<!-- _class: scale-80 -->
+<!-- _class: scale-90 -->
 
-# Step 6: Implement - Tasks 4-5
+# Guiding principles
 
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
+<div class="definition-box" data-title="Simplicity">
 
-<div class="example-box" data-title="Task 4: Google Search">
-
-Fetch via CORS proxy, parse HTML for titles, snippets, and URLs. Handle rate limits gracefully.
+Simplicity is the art of maximizing the amount of work not done.
 
 </div>
 
-</div>
-<div style="flex: 1;">
+<div class="note-box" data-title="What this means for vibe coding">
 
-<div class="example-box" data-title="Task 5: Summarization">
+1. Spend time at the start of your project carefully figuring out what you really want to build.
+2. Ambiguities in your initial idea(s) are OK at first, but then you should work with your coding agents to clarify and refine your vision before you start implementing.
+3. Always be on the lookout for opportunities to simplify your design, plan, and implementation.
+4. Use the "single source of truth" principle whereby each function or module is coded once and resued as needed.
+5. Make sure your project remains clean: continually remove unused files, functions, and dependencies as you go.
 
-For each of 10 results: call SmolLM2 with snippet, update progress ("Summarizing 3/10..."), store summary with source URL.
-
-</div>
-
-</div>
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Step 6: Implement - Tasks 6-7
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="example-box" data-title="Task 6: Final Synthesis">
-
-Combine all summaries + question. Generate comprehensive answer. Format with [1], [2] citations. Display with clickable references.
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-<div class="example-box" data-title="Task 7: Error Handling">
-
-Network failures → retry with backoff. Model errors → show friendly message. Timeout → partial results OK.
-
-</div>
-
-</div>
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# The final result
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="note-box" data-title="User experience">
-
-1. Clean input: "Ask me a question!"
-2. Types: "Why is the sky blue?"
-3. Progress bar animates through steps
-4. Answer appears with smooth fade-in
-5. References listed below with summaries
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-<div class="tip-box" data-title="Under the hood">
-
-- ~400MB model cached locally
-- 12 LLM inference calls
-- ~45 seconds total (first run)
-- ~30 seconds (cached model)
-- Works offline after caching!
-
-**Single HTML file! No server. No API keys.**
-
-</div>
-
-</div>
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Why this demo matters
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="note-box" data-title="Technical skills">
-
-- Browser-based ML inference
-- Async JavaScript pipelines
-- Progress UI patterns
-- CORS and web scraping
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-<div class="note-box" data-title="Vibe coding skills">
-
-- Constitution → constraints
-- Spec → requirements
-- Plan → architecture
-- Tasks → incremental progress
-
-</div>
-
-</div>
-</div>
-
-<div class="important-box" data-title="The meta-lesson">
-
-We just designed a complex app without writing a single line of code ourselves. The spec-kit workflow gave us a **complete, implementable plan**.
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Testing the search engine
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="note-box" data-title="Manual testing">
-
-- Open file in browser
-- Check model loads (watch progress)
-- Try simple question
-- Try edge cases: empty query, very long query, non-English
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-<div class="example-box" data-title="Verify each pipeline step">
-
-1. Search terms make sense?
-2. Google results fetched?
-3. Summaries are coherent?
-4. Final answer cites sources?
-5. References link correctly?
-
-</div>
-
-</div>
-</div>
-
-<div class="warning-box" data-title="Don't skip this!">
-
-Open DevTools Console. Watch for errors. LLM output can be unpredictable!
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Common pitfalls
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="warning-box" data-title="Context overflow">
-
-- Break tasks into smaller chunks
-- Don't paste entire codebases
-- Use `/compact` in OpenCode
-
-</div>
-
-<div class="warning-box" data-title="Hallucinations">
-
-- AI invents plausible but wrong APIs
-- Always verify against real docs
-- Test early and often
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-<div class="warning-box" data-title="Vague prompts">
-
-- "Make it better" → fails
-- "Add input validation for edge case X" → works
-
-</div>
-
-<div class="tip-box" data-title="Rule of thumb">
-
-If you can't verify it, don't accept it.
-
-</div>
-
-</div>
-</div>
-
----
-
-# Best practices summary
-
-<div class="note-box" data-title="The vibe coding checklist">
-
-1. **Describe clearly** - Include inputs, outputs, edge cases, examples
-2. **Design first** - Get a technical design doc before coding
-3. **Plan small** - Break into testable ~50-line tasks
-4. **Verify everything** - Run tests, try it yourself, check edge cases
-5. **Iterate** - Don't expect perfection on first try
-
-</div>
-
-<div class="important-box" data-title="Remember">
-
-You don't need to know HOW to code it, but you MUST know WHAT it should do!
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Resources
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-<div class="note-box" data-title="Tools">
-
-- [OpenCode](https://opencode.ai)
-- [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode)
-- [spec-kit](https://github.com/github/spec-kit)
-- [VS Code](https://code.visualstudio.com)
-
-</div>
-
-</div>
-<div style="flex: 1;">
-
-<div class="note-box" data-title="Free for students">
-
-- [GitHub Education](https://github.com/education/students)
-- [Google Gemini](https://gemini.google/students/)
-
-</div>
-
-<div class="tip-box" data-title="Course resources">
-
-- [Assignment 1 vibe coding tips](https://contextlab.github.io/llm-course/assignments/assignment-1/)
-- [Dartmouth GenAI](https://chat.dartmouth.edu)
-- Course Discord for questions!
-
-</div>
-
-</div>
 </div>
 
 ---
@@ -1023,6 +504,6 @@ You don't need to know HOW to code it, but you MUST know WHAT it should do!
 
 <div class="note-box" data-title="Next up">
 
-Lecture 10: Classic embeddings (LSA, LDA) - Friday!
+Lecture 10 (tomorrow): classic embeddings (LSA, LDA)
 
 </div>
