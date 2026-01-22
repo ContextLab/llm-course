@@ -50,11 +50,34 @@ Install the tools (and *try using them*) as we go&mdash; and ask questions as th
 - [**Hugging Face**](https://huggingface.co) hosts many open models you can try in your browser or download to run locally. Not great for vibe coding, but useful for integrating models into your projects.
 
 ---
+<!-- _class: scale-80 -->
 
-# Setting up your environment: two options
+# My favorite paid options
 
-1. **IDE:** full-featured environment with syntax highlighting, debugging, Git integration, extensions (e.g., VS Code, PyCharm)
+- [**Anthropic Claude:**](https://www.anthropic.com/products/claude) fantastic coding model (this is what I use most of the time!).
+- [**OpenAI ChatGPT:**](https://openai.com) powerful, different behavior and feel from Claude; sometimes when one model struggles, the other can help.
+
+<div class="note-box" data-title="Student discounts">
+
+Most paid LLM services offer student discounts and/or free tiers.
+
+</div>
+
+
+---
+
+# Setting up your environment: two(ish) options
+
+1. **Integrated Development Environment (IDE):** full-featured environment with syntax highlighting, debugging, Git integration, extensions (e.g., VS Code, PyCharm)
 2. **Terminal-based coding agent:** lightweight, fast, scriptable (e.g., Claude Code, ChatGPT Codex CLI, OpenCode)
+
+<div class="note-box" data-title="Some other options to try out">
+
+- OpenCode, Claude, and OpenAI all have native desktop apps that combine terminal-based coding agents with IDE-like features (file browsing, syntax highlighting, etc.)
+- Some IDEs are explicitly designed for AI coding (e.g., [Antigravity](https://antigravity.google/), [Cursor](https://cursor.com/))
+- Google Colab now builds in AI coding assistance directly into notebooks (similar to VS Code's Copilot extension); no installation required!
+
+</div>
 
 ---
 
@@ -148,7 +171,7 @@ cd <your-repo-name>
 
 ---
 
-# The 4-step vibe coding workflow
+# The classic four-step vibe coding workflow (for serious projects that you can't just one-shot prompt)
 
 ```flow
 [Describe:green] --> [Design:blue] --> [Plan:orange] --> [Implement:purple]
@@ -201,7 +224,7 @@ cd <your-repo-name>
 
 <div class="definition-box" data-title="Core idea">
 
-Instead of "vibe coding" a prompt, you write a **specification** first. The spec becomes the executable source of truth.
+Instead of writing a technical design doc and implementation plan from scratch, you write a **specification** first. The spec becomes the executable source of truth. spec-kit guides you through the process.
 
 </div>
 
@@ -418,7 +441,7 @@ Break the plan into tasks. Each task should:
 ---
 <!-- _class: scale-78 -->
 
-# Implement: execute each task and verify that it follows the spec!
+# Implement: execute each task (and check against spec)
 
 <div class="example-box" data-title="Prompt: /speckit.implement">
 
@@ -435,7 +458,13 @@ For each task:
 
 <div class="note-box" data-title="Output">
 
-Multiple commits implementing each task with verification steps...and the final working product!
+Multiple commits implementing each task with verification steps...and a draft of the final product!
+
+</div>
+
+<div class="tip-box" data-title="Remember">
+
+Implementation can take a while to run. You can do other stuff in the meantime!
 
 </div>
 
