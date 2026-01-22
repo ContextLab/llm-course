@@ -136,8 +136,8 @@ We strive to create an inclusive learning environment where all students feel su
 |------|-------|--------|-------------|
 | 1 | Jan 5--9 | Introduction, Pattern Matching, ELIZA | [Assignment 1](../assignments/assignment-1/) released (Jan 9) |
 | 2 | Jan 12--16 | Data Cleaning, Tokenization, Text Classification | [Assignment 2](../assignments/assignment-2/) released (Jan 16) |
-| 3 | Jan 19--23 | POS Tagging, Vibe Coding, Classical Embeddings | [Assignment 1](../assignments/assignment-1/) due (Jan 19) |
-| 4 | Jan 26--30 | Word Embeddings, Contextual Embeddings, Dimensionality Reduction | [Assignment 2](../assignments/assignment-2/) due (Jan 26), [Assignment 3](../assignments/assignment-3/) released (Jan 30), [Assignment 4](../assignments/assignment-4/) released (Jan 30) |
+| 3 | Jan 19--23 | POS Tagging, Vibe Coding, Classical Embeddings | [Assignment 1](../assignments/assignment-1/) due (Jan 19), [Assignment 3](../assignments/assignment-3/) released (Jan 23) |
+| 4 | Jan 26--30 | Word Embeddings, Contextual Embeddings, Dimensionality Reduction | [Assignment 2](../assignments/assignment-2/) due (Jan 26), [Assignment 4](../assignments/assignment-4/) released (Jan 30) |
 | 5 | Feb 2--6 | Attention Mechanisms, Transformer Architecture | [Assignment 3](../assignments/assignment-3/) due (Feb 2), [Assignment 5](../assignments/assignment-5/) released (Feb 6) |
 | 6 | Feb 9--13 | BERT Deep Dive, Encoder Models | [Assignment 4](../assignments/assignment-4/) due (Feb 9), [Final Project](../assignments/final-project/) released (Feb 13) |
 | 7 | Feb 16--20 | GPT Architecture, Scaling Up, Implementation | [Assignment 5](../assignments/assignment-5/) due (Feb 16) |
@@ -173,7 +173,7 @@ We strive to create an inclusive learning environment where all students feel su
 | Mon Jan 19 | -- | Martin Luther King Jr. Day (No Class) | -- | **[Assignment 1](../assignments/assignment-1/) Due (Jan 19, 11:59 PM EST)** |
 | Wed Jan 21 | Lecture 8 | POS Tagging & Sentiment Analysis | [HTML](../slides/week3/lecture8.html), [PDF](../slides/week3/lecture8.pdf) | [Linzen et al. (2016)](https://aclanthology.org/Q16-1037/) |
 | Thu Jan 22 | Lecture 9 | Vibe Coding Tips & Tricks | [HTML](../slides/week3/lecture9.html), [PDF](../slides/week3/lecture9.pdf) | [OpenCode](https://opencode.ai), [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode), [spec-kit](https://github.com/github/spec-kit), [GitHub Copilot for Students](https://github.com/education/students), [Google Gemini for Students](https://gemini.google/students/) |
-| Fri Jan 23 | Lecture 10 | Classical Embeddings (LSA, LDA) | [HTML](../slides/week3/lecture10.html), [PDF](../slides/week3/lecture10.pdf) | [Deerwester et al. (1990)](http://wordvec.colorado.edu/papers/Deerwester_1990.pdf), [Blei et al. (2003)](https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf) |
+| Fri Jan 23 | Lecture 10 | Classical Embeddings (LSA, LDA) | [HTML](../slides/week3/lecture10.html), [PDF](../slides/week3/lecture10.pdf) | [Deerwester et al. (1990)](http://wordvec.colorado.edu/papers/Deerwester_1990.pdf), [Blei et al. (2003)](https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf), **[Assignment 3](../assignments/assignment-3/) Released** |
 
 ### Week 4: Word Embeddings & Modern Methods (January 26--30)
 
@@ -182,7 +182,7 @@ We strive to create an inclusive learning environment where all students feel su
 | Mon Jan 26 | Lecture 11 | Word Embeddings (Word2Vec, GloVe, FastText) | [HTML](../slides/week4/lecture11.html), [PDF](../slides/week4/lecture11.pdf) | [Mikolov et al. (2013)](https://arxiv.org/abs/1301.3781), [Pennington et al. (2014)](https://aclanthology.org/D14-1162/), [Bojanowski et al. (2017)](https://arxiv.org/abs/1607.04606), **[Assignment 2](../assignments/assignment-2/) Due (Jan 26, 11:59 PM EST)** |
 | Wed Jan 28 | Lecture 12 | Contextual Embeddings | [HTML](../slides/week4/lecture12.html), [PDF](../slides/week4/lecture12.pdf) | [Peters et al. (2018)](https://aclanthology.org/N18-1202/), [Cer et al. (2018)](https://arxiv.org/abs/1803.11175) |
 | Thu Jan 29 | Lecture 13 | Dimensionality Reduction | [HTML](../slides/week4/lecture13.html), [PDF](../slides/week4/lecture13.pdf) | [McInnes & Healy (2018)](https://arxiv.org/pdf/1802.03426) |
-| Fri Jan 30 | Lecture 14 | Cognitive Models of Semantic Representation | [HTML](../slides/week4/lecture14.html), [PDF](../slides/week4/lecture14.pdf) | [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444), **[Assignment 3](../assignments/assignment-3/) Released**, **[Assignment 4](../assignments/assignment-4/) Released** |
+| Fri Jan 30 | Lecture 14 | Cognitive Models of Semantic Representation | [HTML](../slides/week4/lecture14.html), [PDF](../slides/week4/lecture14.pdf) | [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444), **[Assignment 4](../assignments/assignment-4/) Released** |
 
 ### Week 5: Transformers & Attention Mechanisms (February 2--6)
 
