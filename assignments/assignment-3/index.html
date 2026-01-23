@@ -235,560 +235,276 @@
     <a href="https://classroom.github.com/a/0ofsYcmO" target="_blank" class="accept-btn" style="display: inline-block; background: var(--gradient-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='';this.style.boxShadow='';"><i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>Accept Assignment</a>
     <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">Due: February 2, 2026 at 11:59 PM EST</p>
 </div>
-<h1 id="assignment-3-representing-meaning---a-computational-exploration-of-semantic-space">Assignment 3: Representing Meaning - A Computational Exploration of Semantic Space</h1>
+<h1 id="assignment-3-exploring-document-embeddings">Assignment 3: Exploring Document Embeddings</h1>
+<p><strong>Timeline: 1 Week</strong></p>
 <h2 id="overview">Overview</h2>
 <p><strong>"You shall know a word by the company it keeps."</strong> - J.R. Firth, 1957</p>
-<p>In this assignment, you will embark on a deep exploration of how machines represent meaning. Working with 250,000 Wikipedia articles, you will implement and compare methods spanning five decades of computational linguistics and natural language processing - from classical statistical techniques to modern large language models.</p>
-<p>This assignment asks fundamental questions: What does it mean to "understand" the meaning of a document? How do different computational approaches capture semantic relationships? What aspects of human semantic knowledge can be modeled through distributional representations? Which methods best capture the conceptual structure of human knowledge as encoded in Wikipedia?</p>
-<p>You will implement ~10 different embedding methods, perform sophisticated quantitative and qualitative analyses, create beautiful interactive visualizations, and connect your findings to theories of meaning in cognitive science and linguistics. This is a substantial, 2-week assignment that will deepen your understanding of how we represent and compute with meaning.
-<h2 id="dataset">Dataset</h2></p>
-<p>You can automatically download the dataset from Dropbox if it doesn't already exist in your working directory. The following code will handle downloading the dataset, checking if it's present, and loading it into your notebook:</p>
-<pre><code class="language-python">import os
-import urllib.request
-import pickle
-<h1 id="define-the-file-name-and-url">Define the file name and URL</h1>
-dataset_url = 'https://www.dropbox.com/s/v4juxkc5v2rd0xr/wikipedia.pkl?dl=1'
-dataset_path = 'wikipedia.pkl'
-<h1 id="download-the-dataset-if-it-doesnt-exist">Download the dataset if it doesn't exist</h1>
-if not os.path.exists(dataset_path):
-    print("Downloading dataset...")
-    urllib.request.urlretrieve(dataset_url, dataset_path)
-    print("Download complete.")
-<h1 id="load-the-dataset">Load the dataset</h1>
-with open(dataset_path, 'rb') as f:
-    wikipedia = pickle.load(f)</code></pre>
-The dataset is formatted as a <code>list</code> of dictionary (<code>dict</code>) objects, each with the following keys/values:
+<p>In this assignment, you will explore how machines represent the meaning of documents. Working with Wikipedia articles, you will implement and compare embedding methods spanning five decades of computational linguistics—from classical statistical techniques to modern transformer-based models.</p>
+You will:
 <ul>
-<li><strong>'title'</strong>: The title of the article (string).</li>
-<li><strong>'text'</strong>: The full text of the article (string).</li>
-<li><strong>'id'</strong>: A unique identifier for the article (string).</li>
-<li><strong>'url'</strong>: The link to the Wikipedia page (string).</li>
+<li>Implement ~10 different embedding approaches</li>
+<li>Create beautiful visualizations using UMAP, clustering, and DataMapPlot</li>
+<li>Evaluate embeddings through a document matching task</li>
+<li>Reflect critically on what different methods capture about meaning</li>
 </ul>
-There are 250K articles in all, randomly selected from <a href="https://huggingface.co/datasets/legacy-datasets/wikipedia" target="_blank">this dataset</a>.
+This is a <strong>1-week assignment</strong> designed to be achievable with GenAI assistance. Focus on understanding the trade-offs between methods rather than exhaustive implementation details.
 <h2 id="learning-objectives">Learning Objectives</h2>
 By completing this assignment, you will:
 <ul>
 <li>Understand the evolution of semantic representation from classical to modern NLP</li>
-<li>Implement and compare traditional, neural, and LLM-based embedding methods</li>
-<li>Develop expertise in clustering evaluation and unsupervised learning</li>
-<li>Connect computational methods to cognitive theories of semantic memory</li>
-<li>Create publication-quality visualizations of high-dimensional semantic spaces</li>
+<li>Implement and compare diverse embedding methods</li>
+<li>Create publication-quality visualizations of high-dimensional spaces</li>
+<li>Evaluate embeddings quantitatively through a document matching task</li>
 <li>Think critically about what different methods capture (and miss) about meaning</li>
 </ul>
 <hr>
-<h2 id="part-1-implementing-the-embedding-zoo-40-points">Part 1: Implementing the Embedding Zoo (40 points)</h2>
-<h3 id="task-11-classical-statistical-methods-8-points">Task 1.1: Classical Statistical Methods (8 points)</h3>
-<p>Implement two foundational approaches from classical NLP:</p>
-<strong>Latent Semantic Analysis (LSA)</strong>
+<h2 id="dataset">Dataset</h2>
+<p>We provide a curated dataset of 250,000 Wikipedia articles. The following code downloads and loads the dataset:</p>
+<pre><code class="language-python">import os
+import urllib.request
+import pickle
+<h1 id="download-the-dataset-if-it-doesnt-exist">Download the dataset if it doesn't exist</h1>
+dataset_url = 'https://www.dropbox.com/s/v4juxkc5v2rd0xr/wikipedia.pkl?dl=1'
+dataset_path = 'wikipedia.pkl'
+<p>if not os.path.exists(dataset_path):
+    print("Downloading dataset (~750MB)...")
+    urllib.request.urlretrieve(dataset_url, dataset_path)
+    print("Download complete.")</p>
+<h1 id="load-the-dataset">Load the dataset</h1>
+with open(dataset_path, 'rb') as f:
+    wikipedia = pickle.load(f)
+<p>print(f"Loaded {len(wikipedia)} articles")</code></pre></p>
+Each article is a dictionary with:
 <ul>
-<li>Use TF-IDF followed by truncated SVD (dimensionality reduction)</li>
+<li><code>'title'</code>: Article title (string)</li>
+<li><code>'text'</code>: Full article text (string)</li>
+<li><code>'id'</code>: Unique identifier (string)</li>
+<li><code>'url'</code>: Wikipedia URL (string)</li>
+</ul>
+<strong>Important</strong>: For development and testing, start with a small subset (e.g., 5,000-10,000 articles). Scale up for final results as time permits.
+<hr>
+<h2 id="part-1-implement-embedding-methods-40-points">Part 1: Implement Embedding Methods (40 points)</h2>
+<p>Implement <strong>at least 10</strong> of the following embedding approaches. For each method, create document-level embeddings for your Wikipedia subset.</p>
+<h3 id="classical-methods">Classical Methods</h3>
+<strong>1. Latent Semantic Analysis (LSA)</strong>
+<ul>
+<li>Use <code>CountVectorizer</code> to create a term-document matrix (raw counts, as in Deerwester et al., 1990)</li>
+<li>Apply <code>TruncatedSVD</code> for dimensionality reduction (e.g., 300 dimensions)</li>
+<li>Implementation: <code>sklearn.feature_extraction.text.CountVectorizer</code> + <code>sklearn.decomposition.TruncatedSVD</code></li>
+</ul>
+<strong>2. TF-IDF + SVD</strong>
+<ul>
+<li>Variant of LSA using TF-IDF weighting instead of raw counts</li>
 <li>Implementation: <code>sklearn.feature_extraction.text.TfidfVectorizer</code> + <code>sklearn.decomposition.TruncatedSVD</code></li>
-<li>Reduce to 300 dimensions</li>
-<li>Resources: <a href="https://www.cs.bham.ac.uk/~pxt/IDA/lsa_ind_ar_02.pdf" target="_blank">Original LSA paper (Deerwester et al., 1990)</a></li>
 </ul>
-<strong>Latent Dirichlet Allocation (LDA)</strong>
-<ul>
-<li>Classic probabilistic topic model</li>
-<li>Implementation: <code>sklearn.decomposition.LatentDirichletAllocation</code></li>
-<li>Use 50-100 topics (experiment with different values)</li>
-<li>Resources: <a href="https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf" target="_blank">Original LDA paper (Blei et al., 2003)</a></li>
-</ul>
-<strong>Key questions to explore:</strong>
-<ul>
-<li>What do the LSA dimensions represent? What about LDA topics?</li>
-<li>How interpretable are the resulting representations?</li>
-<li>Do these methods capture syntactic or semantic relationships better?</li>
-</ul>
-<h3 id="task-12-static-word-embeddings-8-points">Task 1.2: Static Word Embeddings (8 points)</h3>
-<p>Implement three influential neural word embedding methods, aggregating word vectors to create document embeddings:</p>
-<strong>Word2Vec</strong>
+<h3 id="static-word-embeddings-aggregate-to-document-level">Static Word Embeddings (aggregate to document level)</h3>
+<strong>3. Word2Vec</strong>
 <ul>
 <li>Use pre-trained <code>word2vec-google-news-300</code> from <code>gensim</code></li>
-<li>Aggregate word vectors (try: mean, TF-IDF weighted mean, max pooling)</li>
-<li>Resources: <a href="https://arxiv.org/abs/1301.3781" target="_blank">Efficient Estimation of Word Representations (Mikolov et al., 2013)</a></li>
+<li>Aggregate word vectors via mean pooling</li>
+<li>Implementation: <code>gensim.downloader</code></li>
 </ul>
-<strong>GloVe</strong>
+<strong>4. GloVe</strong>
 <ul>
 <li>Use pre-trained <code>glove-wiki-gigaword-300</code> from <code>gensim</code></li>
-<li>Aggregate word vectors using same methods as Word2Vec</li>
-<li>Resources: <a href="https://nlp.stanford.edu/pubs/glove.pdf" target="_blank">GloVe: Global Vectors (Pennington et al., 2014)</a></li>
+<li>Aggregate via mean pooling</li>
+<li>Implementation: <code>gensim.downloader</code></li>
 </ul>
-<strong>FastText</strong>
+<strong>5. FastText</strong>
 <ul>
 <li>Use pre-trained <code>fasttext-wiki-news-subwords-300</code> from <code>gensim</code></li>
-<li>Aggregate word vectors; FastText handles OOV words through subword embeddings</li>
-<li>Resources: <a href="https://arxiv.org/abs/1607.04606" target="_blank">Enriching Word Vectors with Subword Information (Bojanowski et al., 2017)</a></li>
+<li>Handles out-of-vocabulary words via subword embeddings</li>
+<li>Implementation: <code>gensim.downloader</code></li>
 </ul>
-<strong>Implementation notes:</strong>
+<h3 id="transformer-based-embeddings">Transformer-Based Embeddings</h3>
+<strong>6. Sentence-BERT (all-MiniLM-L6-v2)</strong>
 <ul>
-<li>For each method, experiment with different aggregation strategies</li>
-<li>Compare simple averaging vs. TF-IDF weighted averaging</li>
-<li>Handle articles longer than typical context windows appropriately</li>
+<li>Lightweight, fast sentence transformer</li>
+<li>Implementation: <code>sentence-transformers</code></li>
 </ul>
-<h3 id="task-13-contextualized-embeddings-8-points">Task 1.3: Contextualized Embeddings (8 points)</h3>
-<p>Implement transformer-based embeddings that capture context:</p>
-<strong>BERT</strong>
+<strong>7. Sentence-BERT (all-mpnet-base-v2)</strong>
 <ul>
-<li>Use <code>bert-base-uncased</code> from Hugging Face Transformers</li>
-<li>Extract embeddings from the [CLS] token or mean pool over all tokens</li>
-<li>Handle long documents with sliding windows or truncation</li>
-<li>Resources: <a href="https://arxiv.org/abs/1810.04805" target="_blank">BERT: Pre-training of Deep Bidirectional Transformers (Devlin et al., 2019)</a></li>
+<li>Higher quality, slower than MiniLM</li>
+<li>Implementation: <code>sentence-transformers</code></li>
 </ul>
-<strong>GPT-2</strong>
+<strong>8. BGE (BAAI General Embedding)</strong>
 <ul>
-<li>Use <code>gpt2</code> from Hugging Face Transformers</li>
-<li>Extract embeddings from final token or mean pool</li>
-<li>Compare different pooling strategies</li>
-<li>Resources: <a href="https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank">Language Models are Unsupervised Multitask Learners (Radford et al., 2019)</a></li>
+<li>State-of-the-art on MTEB benchmark</li>
+<li>Try <code>BAAI/bge-small-en-v1.5</code> or <code>BAAI/bge-base-en-v1.5</code></li>
+<li>Implementation: <code>sentence-transformers</code></li>
 </ul>
-<strong>Key questions:</strong>
+<strong>9. E5</strong>
 <ul>
-<li>How do contextualized embeddings differ from static ones?</li>
-<li>What information do [CLS] tokens capture?</li>
-<li>How does truncation affect representation quality?</li>
+<li>Strong retrieval-focused embeddings</li>
+<li>Try <code>intfloat/e5-small-v2</code> or <code>intfloat/e5-base-v2</code></li>
+<li>Note: Requires prefix <code>"passage: "</code> for documents</li>
+<li>Implementation: <code>sentence-transformers</code></li>
 </ul>
-<h3 id="task-14-modern-sentencedocument-embeddings-8-points">Task 1.4: Modern Sentence/Document Embeddings (8 points)</h3>
-<p>Implement state-of-the-art embedding methods designed specifically for sentences and documents:</p>
-<strong>Sentence Transformers</strong>
+<strong>10. Nomic Embed</strong>
 <ul>
-<li>Use <code>all-MiniLM-L6-v2</code> or <code>all-mpnet-base-v2</code> from <code>sentence-transformers</code></li>
-<li>These are fine-tuned specifically for semantic similarity</li>
-<li>Resources: <a href="https://arxiv.org/abs/1908.10084" target="_blank">Sentence-BERT (Reimers & Gurevych, 2019)</a></li>
+<li>Open-weights, long-context model</li>
+<li>Try <code>nomic-ai/nomic-embed-text-v1.5</code></li>
+<li>Implementation: <code>sentence-transformers</code></li>
 </ul>
-<strong>Llama 3 Embeddings</strong>
+<h3 id="additional-options-pick-any-to-reach-10">Additional Options (pick any to reach 10+)</h3>
 <ul>
-<li>Use Llama 3 8B via <code>llm2vec</code> or similar embedding adapter</li>
-<li>Alternative: Use Llama 3 hidden states directly</li>
-<li>Resources: <a href="https://arxiv.org/abs/2404.05961" target="_blank">LLM2Vec paper</a></li>
+<li><strong>Doc2Vec</strong>: <code>gensim.models.Doc2Vec</code> (train on your corpus)</li>
+<li><strong>Universal Sentence Encoder</strong>: TensorFlow Hub</li>
+<li><strong>OpenAI Embeddings</strong>: <code>text-embedding-3-small</code> (requires API key)</li>
+<li><strong>Instructor Embeddings</strong>: Task-specific prompting</li>
+<li><strong>GTR</strong>: Google's Text Representations</li>
 </ul>
-<strong>Key questions:</strong>
+<h3 id="deliverables-for-part-1">Deliverables for Part 1</h3>
 <ul>
-<li>Why are sentence transformers better for semantic similarity?</li>
-<li>How do LLM embeddings compare to smaller, specialized models?</li>
-<li>What's the trade-off between model size and embedding quality?</li>
-</ul>
-<h3 id="task-15-modern-topic-models-8-points">Task 1.5: Modern Topic Models (8 points)</h3>
-<p>Implement neural topic models that combine traditional topic modeling with modern embeddings:</p>
-<strong>BERTopic</strong>
-<ul>
-<li>Uses BERT embeddings + UMAP + HDBSCAN for topic discovery</li>
-<li>Implementation: <code>bertopic</code> library</li>
-<li>Analyze discovered topics and their coherence</li>
-<li>Resources: <a href="https://maartengr.github.io/BERTopic/" target="_blank">BERTopic documentation</a></li>
-</ul>
-<strong>Top2Vec</strong>
-<ul>
-<li>Jointly learns document and word embeddings with topic vectors</li>
-<li>Implementation: <code>top2vec</code> library</li>
-<li>Compare topic quality with BERTopic and classical LDA</li>
-<li>Resources: <a href="https://arxiv.org/abs/2008.09470" target="_blank">Top2Vec paper (Angelov, 2020)</a></li>
-</ul>
-<strong>Key questions:</strong>
-<ul>
-<li>How do neural topic models differ from LDA?</li>
-<li>Are the discovered topics more coherent? More diverse?</li>
-<li>Can you validate topics against known Wikipedia categories?</li>
-</ul>
-<strong>Deliverable for Part 1:</strong>
-<ul>
-<li>Implementation of all 10+ embedding methods</li>
-<li>For each method: clear documentation of hyperparameters chosen</li>
-<li>Analysis of computational cost (time, memory) for each method</li>
-<li>Embeddings saved in a consistent format for downstream analysis</li>
+<li>Working code for each embedding method</li>
+<li>Brief documentation of hyperparameters chosen</li>
+<li>Embeddings stored in a consistent format (numpy arrays)</li>
 </ul>
 <hr>
-<h2 id="part-2-sophisticated-evaluation-and-analysis-30-points">Part 2: Sophisticated Evaluation and Analysis (30 points)</h2>
-<h3 id="task-21-clustering-with-multiple-algorithms-10-points">Task 2.1: Clustering with Multiple Algorithms (10 points)</h3>
-<p>For each embedding method, apply multiple clustering algorithms:</p>
-<strong>K-Means Clustering</strong>
+<h2 id="part-2-visualization-25-points">Part 2: Visualization (25 points)</h2>
+<p>Create visualizations to understand the structure of your embedding spaces.</p>
+<h3 id="21-dimensionality-reduction-with-umap">2.1 Dimensionality Reduction with UMAP</h3>
+For each embedding method:
+<ol>
+<li>Apply UMAP to reduce to 2D: <code>umap.UMAP(n_neighbors=15, min_dist=0.1, metric='cosine')</code></li>
+<li>Store the 2D coordinates for visualization</li>
+</ol>
+<h3 id="22-clustering">2.2 Clustering</h3>
+<p>Apply clustering to discover document groups:</p>
+<strong>K-Means</strong>
 <ul>
-<li>Determine optimal k using: elbow method, silhouette analysis, gap statistic</li>
-<li>Compare different initialization strategies (k-means++, random)</li>
+<li>Experiment with different k values (e.g., 10, 20, 50)</li>
+<li>Use silhouette score to evaluate cluster quality</li>
 <li>Implementation: <code>sklearn.cluster.KMeans</code></li>
 </ul>
-<strong>Hierarchical Clustering</strong>
+<strong>HDBSCAN</strong>
 <ul>
-<li>Use agglomerative clustering with different linkage methods (ward, average, complete)</li>
-<li>Create dendrograms to visualize cluster relationships</li>
-<li>Implementation: <code>sklearn.cluster.AgglomerativeClustering</code>, <code>scipy.cluster.hierarchy</code></li>
+<li>Density-based clustering that automatically determines cluster count</li>
+<li>Handles noise/outliers gracefully</li>
+<li>Implementation: <code>hdbscan.HDBSCAN</code></li>
 </ul>
-<strong>Density-Based Clustering (DBSCAN/HDBSCAN)</strong>
-<ul>
-<li>Automatically discover clusters without specifying k</li>
-<li>Handle noise and outliers</li>
-<li>Implementation: <code>sklearn.cluster.DBSCAN</code>, <code>hdbscan</code></li>
-</ul>
-<strong>Deliverable:</strong>
-<ul>
-<li>Systematic comparison of clustering results across methods</li>
-<li>Justification for final clustering choices for each embedding type</li>
-<li>Analysis: Do different embeddings suggest different optimal numbers of clusters?</li>
-</ul>
-<h3 id="task-22-quantitative-evaluation-metrics-8-points">Task 2.2: Quantitative Evaluation Metrics (8 points)</h3>
-<p>Implement comprehensive metrics to evaluate embedding and clustering quality:</p>
-<strong>Clustering Quality Metrics</strong>
-<ul>
-<li>Silhouette Score: measures cluster cohesion and separation</li>
-<li>Davies-Bouldin Index: ratio of within-cluster to between-cluster distances</li>
-<li>Calinski-Harabasz Index: ratio of between-cluster to within-cluster variance</li>
-<li>Dunn Index: ratio of minimum inter-cluster to maximum intra-cluster distance</li>
-</ul>
-<strong>Embedding Quality Metrics</strong>
-<ul>
-<li>Intrinsic dimensionality: estimate effective dimensionality using PCA explained variance</li>
-<li>Local structure preservation: compare nearest neighbors before/after embedding</li>
-<li>Global structure preservation: correlation between distance matrices</li>
-<li>Isotropy: measure how uniformly embeddings fill the space</li>
-</ul>
-<strong>Semantic Coherence Metrics</strong>
-<ul>
-<li>Topic coherence (for topic models): PMI, C_v, U_mass coherence scores</li>
-<li>Within-cluster semantic similarity: average cosine similarity within clusters</li>
-<li>Between-cluster semantic distance: separation of cluster centroids</li>
-</ul>
-<strong>Deliverable:</strong>
-<ul>
-<li>Table comparing all embedding methods across all metrics</li>
-<li>Statistical significance testing (e.g., bootstrap confidence intervals)</li>
-<li>Radar/spider plots showing relative strengths of different methods</li>
-<li>Discussion: Which metrics matter most for this task?</li>
-</ul>
-<h3 id="task-23-qualitative-analysis-6-points">Task 2.3: Qualitative Analysis (6 points)</h3>
-<p>Go beyond numbers to understand what each method captures:</p>
-<strong>Cluster Interpretation</strong>
-<ul>
-<li>For each embedding method, examine the top clusters</li>
-<li>Sample representative articles from each cluster</li>
-<li>Use Llama 3 via Ollama to generate descriptive labels for clusters</li>
-<li>Compare cluster interpretability across methods</li>
-</ul>
-<strong>Error Analysis</strong>
-<ul>
-<li>Identify articles that are consistently mis-clustered across methods</li>
-<li>Find articles where different methods disagree strongly</li>
-<li>Analyze: what makes these articles difficult?</li>
-</ul>
-<strong>Semantic Relationships</strong>
-<ul>
-<li>Use nearest neighbor search to find similar articles</li>
-<li>Compare: do different methods find different "neighbors"?</li>
-<li>Analyze specific examples (e.g., "Machine Learning" article - what's nearby?)</li>
-</ul>
-<strong>Analogical Reasoning</strong>
-<ul>
-<li>Test if embeddings support analogies (e.g., "Paris:France :: London:?")</li>
-<li>Compare methods on capturing different relationship types (geographic, categorical, temporal)</li>
-</ul>
-<strong>Deliverable:</strong>
-<ul>
-<li>Cluster labels for top 20 clusters from best-performing methods</li>
-<li>Case studies of interesting articles/clusters</li>
-<li>Analysis of what different embedding types capture (syntax vs. semantics, topics vs. style, etc.)</li>
-</ul>
-<h3 id="task-24-cross-method-comparison-6-points">Task 2.4: Cross-Method Comparison (6 points)</h3>
-<p>Directly compare embedding methods:</p>
-<strong>Embedding Similarity Analysis</strong>
-<ul>
-<li>Compute correlation between distance matrices of different methods</li>
-<li>Use Mantel test for significance</li>
-<li>Create similarity matrix: which methods produce most similar embeddings?</li>
-</ul>
-<strong>Consensus Clustering</strong>
-<ul>
-<li>Where do different methods agree on cluster assignments?</li>
-<li>Use co-association matrix to find robust clusters</li>
-<li>Identify method-specific vs. universal structure</li>
-</ul>
-<strong>Performance vs. Cost Trade-offs</strong>
-<ul>
-<li>Plot quality metrics vs. computational cost (time, memory, CO2)</li>
-<li>Identify the "Pareto frontier" of methods</li>
-<li>Recommendation: which method for which use case?</li>
-</ul>
-<strong>Deliverable:</strong>
-<ul>
-<li>Comprehensive comparison table/visualization</li>
-<li>Discussion of method families (classical vs. neural vs. LLM)</li>
-<li>Recommendations with justification</li>
-</ul>
-<hr>
-<h2 id="part-3-advanced-clustering-and-visualization-15-points">Part 3: Advanced Clustering and Visualization (15 points)</h2>
-<h3 id="task-31-multi-level-clustering-5-points">Task 3.1: Multi-Level Clustering (5 points)</h3>
-<p>Explore hierarchical structure in the Wikipedia knowledge space:</p>
-<strong>Hierarchical Clustering Analysis</strong>
-<ul>
-<li>Create multi-level hierarchies (e.g., Science → Physics → Quantum Mechanics)</li>
-<li>Use recursive clustering or hierarchical agglomerative methods</li>
-<li>Validate against Wikipedia's actual category structure (if available)</li>
-</ul>
-<strong>Dendrogram Analysis</strong>
-<ul>
-<li>Create informative dendrograms showing cluster relationships</li>
-<li>Color-code by major categories</li>
-<li>Interactive dendrograms with Plotly</li>
-</ul>
-<strong>Deliverable:</strong>
-<ul>
-<li>Multi-level cluster hierarchy for best-performing method</li>
-<li>Visualization of cluster relationships</li>
-<li>Analysis: Does the automatic hierarchy match human organization?</li>
-</ul>
-<h3 id="task-32-interactive-visualization-10-points">Task 3.2: Interactive Visualization (10 points)</h3>
-<p>Create publication-quality, interactive visualizations:</p>
-<strong>Dimensionality Reduction for Visualization</strong>
-<ul>
-<li>Apply both UMAP and t-SNE to reduce embeddings to 2D and 3D</li>
-<li>Compare: how do the visualizations differ? Which preserves structure better?</li>
-<li>Experiment with hyperparameters (perplexity for t-SNE, n_neighbors for UMAP)</li>
-</ul>
-<strong>Interactive Plotly Visualizations</strong>
-<p>For each major embedding method, create:</p>
+<h3 id="23-datamapplot-visualizations">2.3 DataMapPlot Visualizations</h3>
+<p>Create publication-quality visualizations using DataMapPlot:</p>
+<pre><code class="language-python">import datamapplot
+<h1 id="create-labeled-visualization">Create labeled visualization</h1>
+fig, ax = datamapplot.create_plot(
+    umap_coords,           # (n_samples, 2) array
+    cluster_labels,        # Label for each point
+    title="Wikipedia Embeddings",
+    sub_title="Method: Sentence-BERT",
+    label_wrap_width=20,
+    darkmode=False
+)</code></pre>
+<strong>Required visualizations:</strong>
 <ol>
-<li><strong>3D Interactive Scatter Plot</strong>
-<ul>
-<li>Each point is an article</li>
-<li>Color by cluster assignment</li>
-<li>Size by article length or importance (e.g., page views)</li>
-<li>Hover: show article title, cluster label, and snippet</li>
-<li>Enable rotation, zoom, selection</li>
-</ul>
-</li>
-<li><strong>2D Hexbin Density Plot</strong>
-<ul>
-<li>Show density of articles in embedding space</li>
-<li>Overlay cluster boundaries</li>
-<li>Interactive region selection</li>
-</ul>
-</li>
-<li><strong>Cluster Comparison View</strong>
-<ul>
-<li>Side-by-side comparison of same data in different embedding spaces</li>
-<li>Linked selections (select in one, highlight in others)</li>
-<li>Show how cluster assignments change</li>
-</ul>
-</li>
+<li>At least <strong>3 different embedding methods</strong> visualized with DataMapPlot</li>
+<li>Compare K-Means vs HDBSCAN clustering on the same embeddings</li>
+<li>Include cluster labels that are meaningful (e.g., use article titles or LLM-generated descriptions)</li>
 </ol>
-<strong>Advanced Visualizations</strong>
+<h3 id="24-comparison-visualizations">2.4 Comparison Visualizations</h3>
+Create at least one visualization that directly compares methods:
 <ul>
-<li>Embedding space "map" with topic regions labeled</li>
-<li>Trajectory visualization (if exploring temporal data)</li>
-<li>Network graph of nearest neighbors</li>
-<li>Confusion matrix of cluster assignments across methods</li>
+<li>Side-by-side DataMapPlots of different embedding methods</li>
+<li>Or overlay showing how the same articles cluster differently</li>
 </ul>
-<strong>Deliverable:</strong>
+<h3 id="deliverables-for-part-2">Deliverables for Part 2</h3>
 <ul>
-<li>At least 5 high-quality interactive Plotly visualizations</li>
-<li>Comparison of t-SNE vs. UMAP for this dataset</li>
-<li>Insights discovered through visualization</li>
-<li>Embedded visualizations in notebook with clear captions</li>
-</ul>
-<hr>
-<h2 id="part-4-cognitive-science-connection-10-points">Part 4: Cognitive Science Connection (10 points)</h2>
-<h3 id="task-41-distributional-semantics-theory-4-points">Task 4.1: Distributional Semantics Theory (4 points)</h3>
-<p>Connect your computational work to theories of meaning:</p>
-<strong>Theoretical Foundations</strong>
-<ul>
-<li>Explain the distributional hypothesis and its cognitive plausibility</li>
-<li>Discuss: How do computational embeddings relate to human semantic memory?</li>
-<li>Compare to theories: semantic networks, feature-based semantics, prototype theory</li>
-</ul>
-<strong>Empirical Connection</strong>
-<ul>
-<li>Compare embedding similarities to human similarity judgments
-<ul>
-<li>Use datasets like SimLex-999, WordSim-353, or create your own</li>
-<li>Compute correlation between embedding cosine similarity and human ratings</li>
-</ul>
-</li>
-<li>Compare cluster structure to human categorization
-<ul>
-<li>Do the discovered clusters match human category boundaries?</li>
-</ul>
-</li>
-</ul>
-<strong>Deliverable:</strong>
-<ul>
-<li>Essay-style section (2-3 pages) connecting your work to cognitive science</li>
-<li>Quantitative comparison to human judgments</li>
-<li>Discussion: What do embeddings capture about human semantics? What do they miss?</li>
-</ul>
-<h3 id="task-42-what-is-meaning-6-points">Task 4.2: What Is Meaning? (6 points)</h3>
-<p>Critically analyze what different methods capture:</p>
-<strong>Philosophical Analysis</strong>
-<ul>
-<li>What notion of "meaning" does each method operationalize?</li>
-<li>Distinguish: sense vs. reference, intension vs. extension, connotation vs. denotation</li>
-<li>Discuss: Can meaning be reduced to distribution? What's missing?</li>
-</ul>
-<strong>Comparative Semantics</strong>
-<ul>
-<li>Show concrete examples where methods disagree</li>
-<li>Analyze: When is LSA better than BERT? When is LDA better than BERTopic?</li>
-<li>Discuss: Compositionality - how well do methods handle phrases and documents?</li>
-</ul>
-<strong>Limitations and Biases</strong>
-<ul>
-<li>What biases are baked into different embedding methods?</li>
-<li>How do corpus choice and size affect representations?</li>
-<li>Discuss the "Chinese Room" argument in the context of embeddings</li>
-</ul>
-<strong>Deliverable:</strong>
-<ul>
-<li>Thoughtful analysis (2-3 pages) of what "meaning" means in your models</li>
-<li>Case studies showing different methods' strengths/weaknesses</li>
-<li>Reflection on the limits of distributional semantics</li>
+<li>UMAP coordinates for all embedding methods</li>
+<li>Cluster assignments (K-Means and HDBSCAN)</li>
+<li>At least 5 high-quality DataMapPlot visualizations</li>
+<li>Brief analysis of what you observe</li>
 </ul>
 <hr>
-<h2 id="part-5-advanced-extensions-and-applications-5-points">Part 5: Advanced Extensions and Applications (5 points)</h2>
-<p>Choose at least ONE of the following extensions:</p>
-<h3 id="option-a-cross-lingual-embeddings">Option A: Cross-Lingual Embeddings</h3>
-<strong>Implementation:</strong>
+<h2 id="part-3-document-matching-evaluation-20-points">Part 3: Document Matching Evaluation (20 points)</h2>
+<p>Evaluate embedding quality through a document matching task.</p>
+<h3 id="the-task">The Task</h3>
+For each document:
+<ol>
+<li>Split it into two halves (first half and second half of the text)</li>
+<li>Embed each half separately</li>
+<li>For the first half, find the most similar embedding among all second halves</li>
+<li>A "match" is correct if the retrieved second half belongs to the same original document</li>
+</ol>
+This tests whether embeddings capture document-level semantics consistently.
+<h3 id="implementation">Implementation</h3>
+<pre><code class="language-python">def evaluate_document_matching(embeddings_first_half, embeddings_second_half):
+    """
+    Compute matching accuracy.
+    
+    For each first-half embedding, find the nearest second-half embedding.
+    Return the fraction where the nearest neighbor is the correct match.
+    """
+    # Your implementation here
+    pass</code></pre>
+<h3 id="metrics-to-report">Metrics to Report</h3>
+For each embedding method, report:
+<ol>
+<li><strong>Accuracy@1</strong>: Fraction where the correct second half is the top match</li>
+<li><strong>Accuracy@5</strong>: Fraction where the correct second half is in the top 5 matches</li>
+<li><strong>Mean Reciprocal Rank (MRR)</strong>: Average of 1/rank for the correct match</li>
+</ol>
+<h3 id="visualization">Visualization</h3>
+<p>Create a <strong>bar plot with error bars</strong> (or another appropriate visualization) comparing all embedding methods. Use bootstrap resampling to compute confidence intervals for your metrics.</p>
+<h3 id="deliverables-for-part-3">Deliverables for Part 3</h3>
 <ul>
-<li>Use multilingual models (mBERT, XLM-R, LaBSE)</li>
-<li>Compare same concepts across languages</li>
-<li>Test: Do "Machine Learning" in English and "Apprentissage Automatique" in French cluster together?</li>
+<li>Implementation of the document matching evaluation</li>
+<li>Bar plot visualization comparing all embedding methods (with error bars)</li>
+<li>Brief analysis: Which methods perform best? Why might that be?</li>
 </ul>
-<strong>Analysis:</strong>
+<hr>
+<h2 id="part-4-reflection-essays-15-points">Part 4: Reflection Essays (15 points)</h2>
+<p>Write <strong>1-2 short essays</strong> (each 300-500 words) reflecting on your findings.</p>
+<h3 id="essay-1-trade-offs-between-methods-required">Essay 1: Trade-offs Between Methods (Required)</h3>
+Discuss the trade-offs you observed:
 <ul>
-<li>Evaluate cross-lingual alignment quality</li>
-<li>Identify language-specific vs. universal concepts</li>
-<li>Application: cross-lingual information retrieval</li>
+<li><strong>Speed vs. Quality</strong>: Which methods are fast but lower quality? Which are slow but excellent?</li>
+<li><strong>Interpretability</strong>: Can you understand what LSA dimensions or clusters represent? How about transformer embeddings?</li>
+<li><strong>What each method captures</strong>: Do some methods capture topical similarity while others capture stylistic similarity?</li>
+<li><strong>Practical recommendations</strong>: When would you use each method in a real application?</li>
 </ul>
-<h3 id="option-b-temporal-analysis">Option B: Temporal Analysis</h3>
-<strong>Implementation:</strong>
+<h3 id="essay-2-what-is-meaning-choose-this-or-your-own-topic">Essay 2: What Is Meaning? (Choose this OR your own topic)</h3>
+Reflect on the deeper questions:
 <ul>
-<li>If dataset has timestamps, analyze how topics evolve over time</li>
-<li>Use dynamic topic models or time-sliced embeddings</li>
-<li>Track: How has "AI" or "Climate Change" evolved in Wikipedia?</li>
+<li>What does it mean for a machine to "understand" meaning?</li>
+<li>Do embeddings truly capture semantics, or just statistical patterns?</li>
+<li>What aspects of human understanding are missing from these representations?</li>
+<li>How do the limitations you observed connect to broader questions about AI and language?</li>
 </ul>
-<strong>Analysis:</strong>
+<strong>Alternative</strong>: Write about a topic of your choice related to embeddings, visualization, or semantic representation. Clear it with the instructor if unsure.
+<h3 id="deliverables-for-part-4">Deliverables for Part 4</h3>
 <ul>
-<li>Visualize concept drift over time</li>
-<li>Identify emerging vs. declining topics</li>
-<li>Connect to real-world events</li>
-</ul>
-<h3 id="option-c-practical-applications">Option C: Practical Applications</h3>
-<p>Implement at least one real-world application:</p>
-<strong>Semantic Search Engine</strong>
-<ul>
-<li>Given a query, find most relevant articles using embedding similarity</li>
-<li>Compare search quality across embedding methods</li>
-<li>Evaluation: NDCG, precision@k, user study</li>
-</ul>
-<strong>Recommendation System</strong>
-<ul>
-<li>"Articles similar to this one" feature</li>
-<li>Diversity-aware recommendations (not all from same cluster)</li>
-<li>Evaluation: coverage, diversity, serendipity</li>
-</ul>
-<strong>Automatic Summarization/Labeling</strong>
-<ul>
-<li>Use LLMs to generate cluster descriptions</li>
-<li>Create Wikipedia "portals" automatically</li>
-<li>Evaluation: human judgment of quality</li>
-</ul>
-<strong>Knowledge Graph Construction</strong>
-<ul>
-<li>Extract relationships between articles from embedding space</li>
-<li>Build graph: nodes = articles, edges = strong semantic similarity</li>
-<li>Analysis: community detection, centrality measures</li>
-</ul>
-<strong>Deliverable for Part 5:</strong>
-<ul>
-<li>Full implementation of chosen extension</li>
-<li>Evaluation demonstrating value</li>
-<li>Discussion of how it enhances understanding of semantic representations</li>
+<li>1-2 essays in markdown cells in your notebook</li>
+<li>Thoughtful engagement with the material (not surface-level observations)</li>
 </ul>
 <hr>
 <h2 id="submission-guidelines">Submission Guidelines</h2>
 <h3 id="github-classroom-submission">GitHub Classroom Submission</h3>
-<p>This assignment is submitted via <strong>GitHub Classroom</strong>. Follow these steps:</p>
 <ol>
-<li><strong>Accept the assignment</strong>: Click the assignment link provided in Canvas or by your instructor
-<ul>
-<li>Repository: <a href="https://github.com/ContextLab/embeddings-llm-course" target="_blank">github.com/ContextLab/embeddings-llm-course</a></li>
-<li>This creates your own private repository for the assignment</li>
-</ul>
-</li>
-<li><strong>Clone your repository</strong>: </li>
+<li><strong>Accept the assignment</strong> via the GitHub Classroom link above</li>
+<li><strong>Clone your repository</strong></li>
+<li><strong>Complete your work</strong> in Google Colab</li>
+<li><strong>Push your notebook</strong> to the repository before the deadline</li>
 </ol>
-<pre><code class="language-bash">   git clone https://github.com/ContextLab/embeddings-llm-course-YOUR_USERNAME.git</code></pre>
-<ol>
-<li><strong>Complete your work</strong>: 
-<ul>
-<li>Work in Google Colab, Jupyter, or your preferred environment</li>
-<li>Save your notebook to the repository</li>
-</ul>
-</li>
-<li><strong>Commit and push your changes</strong>:</li>
-</ol>
-<pre><code class="language-bash">   git add .
-   git commit -m "Complete Wikipedia embeddings assignment"
-   git push</code></pre>
-<ol>
-<li><strong>Verify submission</strong>: Check that your latest commit appears in your GitHub repository before the deadline</li>
-</ol>
-<strong>Deadline</strong>: February 2, 2026 at 11:59 PM EST
 <h3 id="notebook-requirements">Notebook Requirements</h3>
-<p>Submit a <strong>Google Colaboratory notebook</strong> (or Jupyter notebook) that includes:</p>
-<h3 id="technical-requirements">Technical Requirements</h3>
-<ol>
-<li><strong>Reproducibility</strong>
+Your notebook should:
 <ul>
-<li>All code necessary to download datasets and models</li>
-<li>Clear installation instructions for required packages</li>
-<li>Random seeds set for reproducibility</li>
-<li>Must run in Google Colab with GPU runtime (T4 or better)</li>
-<li>Estimated runtime: 2-4 hours for full notebook</li>
+<li>Run completely in Google Colab with GPU runtime</li>
+<li>Include all code to download data and install dependencies</li>
+<li>Have clear markdown sections matching the assignment parts</li>
+<li>Show all visualizations inline</li>
+<li>Include your reflection essays as markdown cells</li>
 </ul>
-</li>
-<li><strong>Organization</strong>
+<h3 id="before-submitting">Before Submitting</h3>
 <ul>
-<li>Clear section headers matching assignment parts</li>
-<li>Table of contents with navigation links</li>
-<li>Markdown cells explaining approach, decisions, and insights</li>
-<li>Code comments for complex operations</li>
-<li>Summary sections after each major part</li>
-</ul>
-</li>
-<li><strong>Outputs</strong>
-<ul>
-<li>All visualizations embedded in notebook</li>
-<li>Tables and metrics clearly formatted</li>
-<li>Long outputs (model training) can be summarized</li>
-<li>Save embeddings to files to avoid recomputation</li>
-</ul>
-</li>
-<li><strong>Writing Quality</strong>
-<ul>
-<li>Clear, concise explanations</li>
-<li>Proper citations for papers and methods</li>
-<li>Academic writing style for analysis sections</li>
-<li>Proofread for grammar and clarity</li>
-</ul>
-</li>
-</ol>
-<h3 id="what-to-submit">What to Submit</h3>
-<ol>
-<li><strong>Primary Deliverable</strong>: Google Colab notebook link (ensure sharing is enabled)</li>
-<li><strong>Optional</strong>: Saved embeddings and models (via Google Drive link)</li>
-<li><strong>Optional</strong>: Standalone HTML export of notebook with all outputs</li>
-</ol>
-<h3 id="collaboration-policy">Collaboration Policy</h3>
-<ul>
-<li>You may discuss high-level approaches with classmates</li>
-<li>You may use GenAI assistance (ChatGPT, Claude, GitHub Copilot)
-<ul>
-<li>Must document what assistance you used and how</li>
-<li>Must understand and be able to explain all code</li>
-</ul>
-</li>
-<li>All analysis, writing, and insights must be your own</li>
-<li>Cite any external code or ideas used</li>
+<li><input type="checkbox" class="task-checkbox"> Notebook runs from start to finish without errors</li>
+<li><input type="checkbox" class="task-checkbox"> All 10+ embedding methods implemented</li>
+<li><input type="checkbox" class="task-checkbox"> At least 5 DataMapPlot visualizations included</li>
+<li><input type="checkbox" class="task-checkbox"> Document matching evaluation complete with bar plot (including error bars)</li>
+<li><input type="checkbox" class="task-checkbox"> 1-2 reflection essays written</li>
+<li><input type="checkbox" class="task-checkbox"> Code is reasonably commented and organized</li>
 </ul>
 <hr>
-<h2 id="grading-rubric-100-points-total">Grading Rubric (100 points total)</h2>
-<h3 id="part-1-implementation-40-points">Part 1: Implementation (40 points)</h3>
+<h2 id="grading-rubric-100-points">Grading Rubric (100 points)</h2>
 <table>
 <thead><tr>
 <th>Component</th>
@@ -797,446 +513,115 @@ By completing this assignment, you will:
 </tr></thead>
 <tbody>
 <tr>
-<td>Classical Methods (LSA, LDA)</td>
-<td>8</td>
-<td>Correct implementation, reasonable hyperparameters, working embeddings</td>
+<td><strong>Part 1: Embeddings</strong></td>
+<td>40</td>
+<td>10+ methods implemented correctly, reasonable hyperparameters</td>
 </tr>
 <tr>
-<td>Static Embeddings (Word2Vec, GloVe, FastText)</td>
-<td>8</td>
-<td>Proper aggregation strategies, handling of OOV words, documented choices</td>
+<td><strong>Part 2: Visualization</strong></td>
+<td>25</td>
+<td>UMAP + clustering + 5+ quality DataMapPlot visualizations</td>
 </tr>
 <tr>
-<td>Contextualized Embeddings (BERT, GPT-2)</td>
-<td>8</td>
-<td>Appropriate pooling, handling of long documents, clear methodology</td>
+<td><strong>Part 3: Evaluation</strong></td>
+<td>20</td>
+<td>Document matching implemented, bar plot with error bars, analysis</td>
 </tr>
 <tr>
-<td>Modern Embeddings (Sentence-BERT, Llama)</td>
-<td>8</td>
-<td>Correct model usage, comparison of approaches, quality embeddings</td>
-</tr>
-<tr>
-<td>Topic Models (BERTopic, Top2Vec)</td>
-<td>8</td>
-<td>Proper configuration, coherent topics, analysis of topic quality</td>
+<td><strong>Part 4: Essays</strong></td>
+<td>15</td>
+<td>Thoughtful, substantive reflection (300-500 words each)</td>
 </tr>
 </tbody>
 </table>
-<strong>Grading notes:</strong>
+<strong>Bonus opportunities:</strong>
 <ul>
-<li>Full credit requires all methods working with reasonable quality</li>
-<li>Partial credit for methods with minor issues or limited analysis</li>
-<li>Bonus points (up to +5) for additional methods or particularly elegant implementations</li>
+<li>Exceptionally insightful analysis (+5)</li>
+<li>Creative additional visualizations (+3)</li>
+<li>Thorough comparison of clustering methods (+2)</li>
 </ul>
-<h3 id="part-2-evaluation-and-analysis-30-points">Part 2: Evaluation and Analysis (30 points)</h3>
+<hr>
+<h2 id="tips-for-success">Tips for Success</h2>
+<h3 id="start-small">Start Small</h3>
+<ul>
+<li>Begin with 1,000-5,000 articles for development</li>
+<li>Get your full pipeline working before scaling up</li>
+<li>Cache embeddings to avoid recomputation</li>
+</ul>
+<h3 id="computational-efficiency">Computational Efficiency</h3>
+<ul>
+<li>Use GPU runtime in Colab for transformer models</li>
+<li>Process documents in batches</li>
+<li>For large models, consider <code>float16</code> precision</li>
+</ul>
+<h3 id="recommended-timeline">Recommended Timeline</h3>
 <table>
 <thead><tr>
-<th>Component</th>
-<th>Points</th>
-<th>Criteria</th>
+<th>Day</th>
+<th>Tasks</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Clustering Algorithms</td>
-<td>10</td>
-<td>Multiple algorithms implemented, systematic comparison, justified choices</td>
+<td>1-2</td>
+<td>Set up environment, implement 5+ embedding methods</td>
 </tr>
 <tr>
-<td>Quantitative Metrics</td>
-<td>8</td>
-<td>Comprehensive metrics, correct implementation, statistical rigor</td>
+<td>3-4</td>
+<td>Complete remaining embeddings, create visualizations</td>
 </tr>
 <tr>
-<td>Qualitative Analysis</td>
-<td>6</td>
-<td>Thoughtful interpretation, case studies, error analysis</td>
-</tr>
-<tr>
-<td>Cross-Method Comparison</td>
-<td>6</td>
-<td>Direct comparisons, correlation analysis, actionable insights</td>
-</tr>
-</tbody>
-</table>
-<strong>Grading notes:</strong>
-<ul>
-<li>Quality of analysis matters more than quantity</li>
-<li>Must go beyond surface-level observations</li>
-<li>Statistical significance testing required for comparisons</li>
-</ul>
-<h3 id="part-3-visualization-15-points">Part 3: Visualization (15 points)</h3>
-<table>
-<thead><tr>
-<th>Component</th>
-<th>Points</th>
-<th>Criteria</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Multi-Level Clustering</td>
 <td>5</td>
-<td>Clear hierarchy, validated against structure, insightful analysis</td>
+<td>Implement document matching evaluation</td>
 </tr>
 <tr>
-<td>Interactive Visualizations</td>
-<td>10</td>
-<td>High-quality Plotly plots, appropriate techniques, informative and beautiful</td>
-</tr>
-</tbody>
-</table>
-<strong>Grading notes:</strong>
-<ul>
-<li>Visualizations must be publication-quality</li>
-<li>Interactivity should enhance understanding</li>
-<li>Captions and explanations required</li>
-<li>Bonus points (up to +3) for particularly creative or insightful visualizations</li>
-</ul>
-<h3 id="part-4-cognitive-science-connection-10-points">Part 4: Cognitive Science Connection (10 points)</h3>
-<table>
-<thead><tr>
-<th>Component</th>
-<th>Points</th>
-<th>Criteria</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Theoretical Connection</td>
-<td>4</td>
-<td>Clear explanation of distributional semantics, connection to cognitive science</td>
-</tr>
-<tr>
-<td>Critical Analysis</td>
 <td>6</td>
-<td>Thoughtful discussion of meaning, limitations, philosophical depth</td>
+<td>Run final experiments, write essays</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Polish, verify reproducibility, submit</td>
 </tr>
 </tbody>
 </table>
-<strong>Grading notes:</strong>
+<h3 id="using-genai-effectively">Using GenAI Effectively</h3>
+You're encouraged to use ChatGPT, Claude, or Copilot to:
 <ul>
-<li>Must engage seriously with cognitive science literature</li>
-<li>Superficial treatment will not receive full credit</li>
-<li>Depth and nuance valued over length</li>
+<li>Debug errors and understand library APIs</li>
+<li>Generate boilerplate code</li>
+<li>Explain concepts from papers</li>
 </ul>
-<h3 id="part-5-advanced-extensions-5-points">Part 5: Advanced Extensions (5 points)</h3>
-<table>
-<thead><tr>
-<th>Component</th>
-<th>Points</th>
-<th>Criteria</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Extension Implementation</td>
-<td>3</td>
-<td>Working implementation of chosen extension, appropriate methodology</td>
-</tr>
-<tr>
-<td>Extension Analysis</td>
-<td>2</td>
-<td>Evaluation of extension, insights gained, discussion of implications</td>
-</tr>
-</tbody>
-</table>
-<strong>Grading notes:</strong>
+You must:
 <ul>
-<li>Choose extension that interests you</li>
-<li>Quality over quantity</li>
-<li>Bonus points (up to +5) for multiple high-quality extensions</li>
+<li>Understand all code you submit</li>
+<li>Write your own analysis and essays</li>
+<li>Document significant AI assistance used</li>
 </ul>
-<h3 id="overall-quality-holistic-assessment">Overall Quality (Holistic Assessment)</h3>
-<table>
-<thead><tr>
-<th>Aspect</th>
-<th>Impact on Grade</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Code Quality</td>
-<td>Clean, well-documented, efficient code can earn bonus points</td>
-</tr>
-<tr>
-<td>Writing Quality</td>
-<td>Clear, insightful writing enhances grade; poor writing reduces it</td>
-</tr>
-<tr>
-<td>Creativity</td>
-<td>Novel approaches or insights can earn significant bonus points</td>
-</tr>
-<tr>
-<td>Reproducibility</td>
-<td>Non-reproducible results may lose up to 10 points</td>
-</tr>
-<tr>
-<td>Late Submission</td>
-<td>Standard course late policy applies</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Maximum Total: 110 points (100 base + 10 possible bonus)</strong></p>
 <hr>
-<h2 id="resources-and-references">Resources and References</h2>
-<h3 id="key-papers-from-syllabus-weeks-3-4">Key Papers (from Syllabus Weeks 3-4)</h3>
-<strong>Foundational Papers:</strong>
+<h2 id="resources">Resources</h2>
+<h3 id="key-libraries">Key Libraries</h3>
+<ul>
+<li><a href="https://www.sbert.net/" target="_blank">Sentence Transformers</a></li>
+<li><a href="https://umap-learn.readthedocs.io/" target="_blank">UMAP</a></li>
+<li><a href="https://hdbscan.readthedocs.io/" target="_blank">HDBSCAN</a></li>
+<li><a href="https://github.com/TutteInstitute/datamapplot" target="_blank">DataMapPlot</a></li>
+<li><a href="https://radimrehurek.com/gensim/" target="_blank">Gensim</a></li>
+<li><a href="https://scikit-learn.org/" target="_blank">Scikit-learn</a></li>
+</ul>
+<h3 id="papers">Papers</h3>
 <ul>
 <li>Deerwester et al. (1990). <a href="https://www.cs.bham.ac.uk/~pxt/IDA/lsa_ind_ar_02.pdf" target="_blank">Indexing by Latent Semantic Analysis</a></li>
-<li>Blei, Ng, & Jordan (2003). <a href="https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf" target="_blank">Latent Dirichlet Allocation</a></li>
-<li>Mikolov et al. (2013). <a href="https://arxiv.org/abs/1301.3781" target="_blank">Efficient Estimation of Word Representations in Vector Space</a></li>
-<li>Pennington, Socher, & Manning (2014). <a href="https://nlp.stanford.edu/pubs/glove.pdf" target="_blank">GloVe: Global Vectors for Word Representation</a></li>
-</ul>
-<strong>Neural Methods:</strong>
-<ul>
-<li>Bojanowski et al. (2017). <a href="https://arxiv.org/abs/1607.04606" target="_blank">Enriching Word Vectors with Subword Information</a></li>
-<li>Devlin et al. (2019). <a href="https://arxiv.org/abs/1810.04805" target="_blank">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></li>
-<li>Radford et al. (2019). <a href="https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank">Language Models are Unsupervised Multitask Learners</a></li>
-<li>Reimers & Gurevych (2019). <a href="https://arxiv.org/abs/1908.10084" target="_blank">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</a></li>
-</ul>
-<strong>Modern Topic Models:</strong>
-<ul>
-<li>Angelov (2020). <a href="https://arxiv.org/abs/2008.09470" target="_blank">Top2Vec: Distributed Representations of Topics</a></li>
-<li>Grootendorst (2022). <a href="https://arxiv.org/abs/2203.05794" target="_blank">BERTopic: Neural Topic Modeling with a Class-based TF-IDF Procedure</a></li>
-</ul>
-<strong>Evaluation and Analysis:</strong>
-<ul>
-<li>van der Maaten & Hinton (2008). <a href="https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf" target="_blank">Visualizing Data using t-SNE</a></li>
-<li>McInnes, Healy, & Melville (2018). <a href="https://arxiv.org/abs/1802.03426" target="_blank">UMAP: Uniform Manifold Approximation and Projection</a></li>
-</ul>
-<strong>Cognitive Science Connection:</strong>
-<ul>
-<li>Lenci (2008). <a href="https://www.academia.edu/download/43947219/Distributional_semantics_in_linguistic_a20160320-31230-nwvv7i.pdf" target="_blank">Distributional semantics in linguistic and cognitive research</a></li>
-<li>Landauer & Dumais (1997). <a href="https://psycnet.apa.org/record/1997-03887-001" target="_blank">A Solution to Plato's Problem: The Latent Semantic Analysis Theory of Acquisition</a></li>
-</ul>
-<h3 id="tutorials-and-documentation">Tutorials and Documentation</h3>
-<strong>Libraries:</strong>
-<ul>
-<li><a href="https://scikit-learn.org/stable/modules/clustering.html" target="_blank">Scikit-learn Clustering</a></li>
-<li><a href="https://radimrehurek.com/gensim/models/word2vec.html" target="_blank">Gensim Word Embeddings</a></li>
-<li><a href="https://huggingface.co/docs/transformers/" target="_blank">Hugging Face Transformers</a></li>
-<li><a href="https://www.sbert.net/" target="_blank">Sentence Transformers</a></li>
-<li><a href="https://maartengr.github.io/BERTopic/" target="_blank">BERTopic Documentation</a></li>
-<li><a href="https://plotly.com/python/" target="_blank">Plotly Python</a></li>
-<li><a href="https://umap-learn.readthedocs.io/" target="_blank">UMAP Documentation</a></li>
-</ul>
-<strong>Tutorials:</strong>
-<ul>
-<li><a href="https://jalammar.github.io/illustrated-word2vec/" target="_blank">Jay Alammar's Illustrated Word2Vec</a></li>
-<li><a href="https://jalammar.github.io/illustrated-bert/" target="_blank">Jay Alammar's Illustrated BERT</a></li>
-<li><a href="https://towardsdatascience.com/topic-modeling-with-bert-779f7db187e6" target="_blank">Topic Modeling with BERTopic (walkthrough)</a></li>
-<li><a href="https://pair-code.github.io/understanding-umap/" target="_blank">Understanding UMAP</a></li>
-</ul>
-<h3 id="datasets-for-human-judgments">Datasets for Human Judgments</h3>
-<ul>
-<li><a href="https://fh295.github.io/simlex.html" target="_blank">SimLex-999</a> - Semantic similarity ratings</li>
-<li><a href="http://alfonseca.org/eng/research/wordsim353.html" target="_blank">WordSim-353</a> - Word similarity dataset</li>
-<li><a href="https://staff.fnwi.uva.nl/e.bruni/MEN" target="_blank">MEN Dataset</a> - Semantic relatedness</li>
+<li>Mikolov et al. (2013). <a href="https://arxiv.org/abs/1301.3781" target="_blank">Word2Vec</a></li>
+<li>Reimers & Gurevych (2019). <a href="https://arxiv.org/abs/1908.10084" target="_blank">Sentence-BERT</a></li>
+<li>McInnes et al. (2018). <a href="https://arxiv.org/abs/1802.03426" target="_blank">UMAP</a></li>
 </ul>
 <hr>
-<h2 id="tips-and-best-practices">Tips and Best Practices</h2>
-<h3 id="computational-efficiency">Computational Efficiency</h3>
-<strong>Working with Large Datasets:</strong>
+<h2 id="questions">Questions?</h2>
 <ul>
-<li>Start with a subset (e.g., 10K articles) for development</li>
-<li>Once code works, scale to full 250K dataset</li>
-<li>Cache embeddings to avoid recomputation</li>
-<li>Use batch processing for transformer models</li>
+<li>Post on the course forum</li>
+<li>Attend office hours</li>
+<li>Email the instructor</li>
 </ul>
-<strong>GPU Utilization:</strong>
-<ul>
-<li>Request GPU runtime in Colab (Runtime → Change runtime type)</li>
-<li>Monitor GPU memory usage with <code>nvidia-smi</code></li>
-<li>Use mixed precision (fp16) for large models</li>
-<li>Clear cache between models: <code>torch.cuda.empty_cache()</code></li>
-</ul>
-<strong>Time Management:</strong>
-<ul>
-<li>Budget ~30 minutes per embedding method for full dataset</li>
-<li>Topic models (BERTopic, Top2Vec) are slowest (1-2 hours)</li>
-<li>Clustering is fast (<5 minutes for most methods)</li>
-<li>Visualization can be slow for 250K points; consider downsampling</li>
-</ul>
-<h3 id="implementation-tips">Implementation Tips</h3>
-<strong>Handling Long Documents:</strong>
-<ul>
-<li>Transformers have max length (512 for BERT, 1024 for GPT-2)</li>
-<li>Strategies:
-<ul>
-<li>Truncate to first N tokens (simple but loses information)</li>
-<li>Sliding window with averaging (more complete but slower)</li>
-<li>Hierarchical: split document, embed chunks, aggregate</li>
-<li>Use models with longer context (Longformer, BigBird)</li>
-</ul>
-</li>
-</ul>
-<strong>Aggregating Word Vectors:</strong>
-<ul>
-<li>Simple mean: <code>np.mean(word_vectors, axis=0)</code></li>
-<li>TF-IDF weighted: weight by term importance</li>
-<li>Max pooling: <code>np.max(word_vectors, axis=0)</code></li>
-<li>Try multiple strategies and compare</li>
-</ul>
-<strong>Choosing Hyperparameters:</strong>
-<ul>
-<li>For clustering: use elbow method, silhouette scores</li>
-<li>For UMAP: <code>n_neighbors=15</code>, <code>min_dist=0.1</code> are good defaults</li>
-<li>For t-SNE: <code>perplexity=30-50</code> for large datasets</li>
-<li>Document your choices and justify them</li>
-</ul>
-<h3 id="analysis-tips">Analysis Tips</h3>
-<strong>Statistical Rigor:</strong>
-<ul>
-<li>Don't just report one number - use confidence intervals</li>
-<li>Compare methods with statistical tests (paired t-test, Wilcoxon)</li>
-<li>Use bootstrap resampling for uncertainty estimates</li>
-<li>Consider multiple random initializations for clustering</li>
-</ul>
-<strong>Visualization Best Practices:</strong>
-<ul>
-<li>Use colorblind-friendly palettes (viridis, plasma, colorbrewer)</li>
-<li>Label axes and include legends</li>
-<li>Make plots large enough to read</li>
-<li>Interactive > static for exploratory analysis</li>
-<li>Include captions explaining what to look for</li>
-</ul>
-<strong>Qualitative Analysis:</strong>
-<ul>
-<li>Look at actual examples, not just metrics</li>
-<li>Sample from best AND worst clusters</li>
-<li>Find interesting edge cases</li>
-<li>Use LLMs to help interpret, but verify their interpretations</li>
-</ul>
-<h3 id="common-pitfalls-to-avoid">Common Pitfalls to Avoid</h3>
-<strong>Don't:</strong>
-<ul>
-<li>Forget to normalize embeddings before clustering (for cosine similarity)</li>
-<li>Use too many clusters (overfitting) or too few (underfitting)</li>
-<li>Trust metrics blindly - always inspect examples</li>
-<li>Cherry-pick results that fit expectations</li>
-<li>Plagiarize or use GenAI output without understanding</li>
-</ul>
-<strong>Do:</strong>
-<ul>
-<li>Start simple, then add complexity</li>
-<li>Validate assumptions with examples</li>
-<li>Compare multiple approaches</li>
-<li>Document limitations and failures</li>
-<li>Be honest about what works and what doesn't</li>
-</ul>
-<h3 id="using-genai-effectively">Using GenAI Effectively</h3>
-<strong>Good uses:</strong>
-<ul>
-<li>Explaining error messages</li>
-<li>Suggesting library functions for specific tasks</li>
-<li>Helping debug code</li>
-<li>Generating boilerplate code</li>
-<li>Explaining concepts from papers</li>
-</ul>
-<strong>Bad uses:</strong>
-<ul>
-<li>Generating analysis without understanding</li>
-<li>Writing interpretation sections wholesale</li>
-<li>Implementing methods you don't understand</li>
-<li>Avoiding learning the underlying concepts</li>
-</ul>
-<strong>Remember:</strong> You must understand and be able to explain everything you submit.
-<hr>
-<h2 id="expected-timeline">Expected Timeline</h2>
-<p>This is a 2-week intensive assignment (Weeks 3-4 of the course). With GenAI assistance and focused implementation, here's a suggested timeline:</p>
-<h3 id="week-1-implementation-of-all-methods-initial-clustering">Week 1: Implementation of All Methods, Initial Clustering</h3>
-<ul>
-<li>Set up environment, download dataset</li>
-<li>Implement all classical methods (LSA, LDA)</li>
-<li>Implement all static embeddings (Word2Vec, GloVe, FastText)</li>
-<li>Implement contextualized embeddings (BERT, GPT-2)</li>
-<li>Implement modern embeddings (Sentence-BERT, Llama)</li>
-<li>Implement topic models (BERTopic, Top2Vec)</li>
-<li>Generate embeddings for full dataset</li>
-<li>Apply clustering algorithms (K-Means, Hierarchical, DBSCAN/HDBSCAN)</li>
-<li>Compute initial quantitative metrics</li>
-</ul>
-<h3 id="week-2-analysis-visualization-cognitive-science-connection-and-extensions">Week 2: Analysis, Visualization, Cognitive Science Connection, and Extensions</h3>
-<ul>
-<li>Perform qualitative analysis and error analysis</li>
-<li>Cross-method comparison and interpretation</li>
-<li>Create multi-level clustering hierarchies</li>
-<li>Create interactive Plotly visualizations (3D scatter, 2D hexbin, cluster comparisons)</li>
-<li>Implement dimensionality reduction (t-SNE and UMAP)</li>
-<li>Write cognitive science connection and theoretical analysis</li>
-<li>Implement advanced extension (Option A, B, or C)</li>
-<li>Polish all outputs and finalize documentation</li>
-</ul>
-<strong>Total estimated effort: 25-35 hours</strong> (with GenAI assistance for coding and documentation)
-<hr>
-<h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
-<p><strong>Q: Do I really need to implement all 10+ methods?</strong>
-A: Yes. The comparison is the core of the assignment. However, if you have significant technical difficulties with one method, document the issue and move on.</p>
-<p><strong>Q: Can I use a smaller subset of the data?</strong>
-A: For development, yes. For final submission, use the full 250K articles (or justify why you used fewer).</p>
-<p><strong>Q: How do I handle out-of-memory errors?</strong>
-A: Use batch processing, reduce batch size, use smaller models, or process in chunks. Ask for help if stuck.</p>
-<p><strong>Q: Can I use different Wikipedia data?</strong>
-A: Prefer the provided dataset for comparability, but you can use different data if you have a good reason (must justify).</p>
-<p><strong>Q: How much analysis is enough?</strong>
-A: Quality > quantity. Deep analysis of a few interesting findings beats superficial treatment of many.</p>
-<p><strong>Q: Can I work with a partner?</strong>
-A: Check course policy. Generally, collaboration is allowed but each person must submit their own work.</p>
-<p><strong>Q: How important are the visualizations?</strong>
-A: Very important. They're worth 15 points and central to understanding the results. Invest time here.</p>
-<p><strong>Q: What if my results are "bad" (low metrics, unclear clusters)?</strong>
-A: Document what you found! Negative results are still results. Analyze why and what it means.</p>
-<p><strong>Q: Can I use commercial APIs (OpenAI, Anthropic)?</strong>
-A: Prefer open-source models, but if you have credits, you can use APIs for comparison.</p>
-<hr>
-<h2 id="getting-help">Getting Help</h2>
-<ul>
-<li><strong>Office Hours</strong>: Best place for debugging and conceptual questions</li>
-<li><strong>Course Forum</strong>: Great for sharing tips and common issues</li>
-<li><strong>GenAI</strong>: Useful for coding help, but understand before using</li>
-<li><strong>Library Documentation</strong>: Always check official docs first</li>
-<li><strong>Papers</strong>: When in doubt, read the original paper</li>
-</ul>
-<hr>
-<h2 id="learning-goals-what-youll-take-away">Learning Goals: What You'll Take Away</h2>
-<p>By completing this assignment, you will:</p>
-<ol>
-<li><strong>Technical Skills</strong>
-<ul>
-<li>Mastery of diverse embedding techniques</li>
-<li>Experience with unsupervised learning and clustering</li>
-<li>Expertise in evaluation metrics and analysis</li>
-<li>Ability to create publication-quality visualizations</li>
-</ul>
-</li>
-<li><strong>Conceptual Understanding</strong>
-<ul>
-<li>Deep understanding of distributional semantics</li>
-<li>Knowledge of trade-offs between different approaches</li>
-<li>Appreciation for the evolution of NLP methods</li>
-<li>Critical thinking about what "meaning" means computationally</li>
-</ul>
-</li>
-<li><strong>Research Skills</strong>
-<ul>
-<li>Ability to design and conduct comparative experiments</li>
-<li>Statistical rigor in evaluation</li>
-<li>Clear communication of findings</li>
-<li>Connection between theory and practice</li>
-</ul>
-</li>
-<li><strong>Practical Knowledge</strong>
-<ul>
-<li>Experience working with large-scale NLP datasets</li>
-<li>Understanding of computational constraints</li>
-<li>Ability to debug and troubleshoot ML pipelines</li>
-<li>Portfolio-worthy project for job applications</li>
-</ul>
-</li>
-</ol>
-<hr>
-<h2 id="final-words">Final Words</h2>
-<p>This assignment is designed to be challenging, extensive, and deeply educational. It's not meant to be completed in a weekend. Take your time, explore the methods, think deeply about the results, and enjoy the process of discovering how machines represent meaning.</p>
-<p>The goal isn't just to get high metrics or pretty plots - it's to develop a sophisticated understanding of how different computational approaches capture semantic information, and to think critically about what these methods reveal (and obscure) about language and meaning.</p>
-<p>Don't hesitate to be creative, try additional ideas, and follow interesting threads you discover. The best projects will show intellectual curiosity, rigorous analysis, and genuine insight.</p>
-<p><strong>Good luck, and enjoy exploring the semantic space!</strong></p>
+Good luck exploring the semantic space!
     </main>
 
     <footer>
