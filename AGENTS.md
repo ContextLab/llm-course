@@ -144,7 +144,8 @@ The chatbot evolution demo has multiple bot implementations:
 ## NOTES
 
 - **Demo 07 (RAG)** has known memory issues in CI. Uses `NODE_OPTIONS="--max-old-space-size=4096"`.
-- **No LSP** for JS/Python in this environment. Use explore agents for code navigation.
 - **GitHub Pages** auto-deploys on push to main. Live at `contextlab.github.io/llm-course/demos/` and `contextlab.github.io/llm-course/assignments/`.
-- **Fonts**: Duplicated in `/admin/` and `/fonts/`. Both needed for different build targets.
+- **Root index.html** is dynamic: parses `/slides/README.md` client-side to build course outline.
+- **Fonts**: Duplicated in `/admin/` and `/fonts/`. Both needed for different build targets (LaTeX vs HTML).
 - **notes/** is dev logs, not course notes. Don't expose to students.
+- **Cross-demo imports**: Demo 02 (chatbot-evolution) imports from Demo 01 (eliza). Don't refactor eliza without checking downstream.
