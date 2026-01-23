@@ -23,11 +23,10 @@ Winter 2026
 2. Implement Latent Semantic Analysis (LSA) with SVD
 3. Apply Latent Dirichlet Allocation (LDA) for topic modeling
 4. Compare classic embedding methods and their trade-offs
-5. Visualize and interpret semantic relationships
 
 </div>
 
-<div class="tip-box" data-title="Central question">
+<div class="tip-box" data-title="Central idea">
 
 *"You shall know a word by the company it keeps"* — J.R. Firth (1957)
 
@@ -36,46 +35,61 @@ Winter 2026
 ---
 <!-- _class: scale-90 -->
 
-# The fundamental question
+#  How do we represent the meaning of words computationally?
 
-**How do we represent the meaning of words computationally?**
+<div class="example-box" data-title="Traditional approaches: labor-intensive and expensive to scale!">
 
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Traditional Approach:**
-- Dictionaries
-- Taxonomies (WordNet)
-- Manual feature engineering
-
-Labor-intensive, hard to scale
+- Symbolic representations (e.g., dictionaries, taxonomies)
+- Manual feature engineering (e.g., counting letters, syllables, POS tags)
+- Taxonomies (e.g., WordNet)
 
 </div>
-<div style="flex: 1;">
 
-**Distributional Approach:**
-- Learn from data
-- Context-based
-- Scalable, unsupervised
+<div class="note-box" data-title="Distributional approaches: data-driven, scalable, unsupervised">
 
-Let the data tell us what words mean!
+- Learn from data (large text corpora)
+- Context-based (words in context)
+- Let the data tell us what words mean!
 
 </div>
+
+---
+
+# Example "traditional" approach: Princeton WordNet
+
+<div class="note-box" data-title="Further reading">
+
+[**Miller (1995, *Communications of the ACM*)**](https://dl.acm.org/doi/abs/10.1145/219717.219748) WordNet: A Lexical Database for English.
+
 </div>
+
+![width:1000px](img/wordnet.png)
 
 ---
 
 # The distributional hypothesis
 
-**Key Idea:** Words that appear in similar contexts tend to have similar meanings.
+<div class="definition-box" data-title="Definition">
 
-<div class="example-box" data-title="Example">
+Words that appear in similar contexts tend to have similar meanings.
+
+</div>
+
+<div class="example-box" data-title="Example 1">
 
 - "The **cat** sat on the mat"
 - "The **dog** sat on the mat"
 - "The **kitten** sat on the mat"
 
-→ *cat*, *dog*, *kitten* are semantically related
+→ *cat*, *dog*, *kitten* are probably semantically related
+
+</div>
+
+<div class="example-box" data-title="Example 2">
+
+- "The **computer** processes **data** quickly by using advanced **algorithms**."
+
+→ *computer*, *data*, *algorithms* are probably semantically related
 
 </div>
 
@@ -87,70 +101,98 @@ We can learn word meaning from co-occurrence patterns alone!
 
 ---
 
-# From words to vectors
+# From **words** to **vectors**: represent each word as a point in a high-dimensional space
 
-**Goal:** Represent each word as a point in high-dimensional space
+![width:600px](img/thought_space.png)
 
-<div class="example-box" data-title="Word-context co-occurrence">
+---
 
-| Word | with "the" | with "sat" | with "ran" |
-|------|------------|------------|------------|
-| cat  | 2          | 1          | 0          |
-| dog  | 2          | 0          | 1          |
-| mat  | 1          | 1          | 0          |
+# How can we construct these high-dimensional word vectors?
+
+- If words that appear in similar contexts have similar meanings, we can represent each word by the contexts it appears in:
+  - We could count how often each word appears near other words (co-occurrence counts)
+  - We could count how often each word appears in each document in a corpus (term-document matrix)
+
+---
+
+# Latent Semantic Analysis (LSA): the OG distributional word representation
+
+<div class="definition-box" data-title="Core idea">
+
+Words that occur in similar documents have similar meanings. We can represent each word by the documents it appears in.
 
 </div>
 
-**Problem:** Real vocabularies have 10,000+ words!
+<div class="example-box" data-title="Term-document matrix: how many times does each word appear in each document?">
 
-→ We need **dimensionality reduction**
+| Document | apple | banana | computer | data | algorithm |
+|----------|-------|--------|----------|------|-----------|
+| Doc 1    | 3     | 2      | 0        | 0    | 0         |
+| Doc 2    | 0     | 0      | 4        | 5    | 2         |
+| Doc 3    | 1     | 1      | 1        | 0    | 0         |
+| Doc 4    | 0     | 0      | 2        | 3    | 4         |
+| Doc 5    | 2     | 0      | 4        | 0    | 0         |
+| Doc 6    | 0     | 3      | 0        | 0    | 0         |
+
+</div>
+
+---
+<!-- _class: scale-60 -->
+
+# Latent Semantic Analysis (LSA): the OG distributional word representation
+
+<div class="note-box" data-title="Further reading">
+
+[**Deerwester et al. (1990, *Journal of the American Society for Information Science*)**](https://doi.org/10.1002/(SICI)1097-4571(199009)41:6%3C391::AID-ASI1%3E3.0.CO;2-9) Indexing by Latent Semantic Analysis.
+
+</div>
+
+- Building the term-document matrix gives us a high-dimensional representation of each word (one dimension per document)
+- It also gives us a high-dimensional representation of each document (one dimension per word)
+- **But:** real corpora have thousands of documents and tens of thousands of words!
+  - Some dimensions (documents, words) will be noisy; we should try to remove them
+  - Some dimensions might be highly correlated with each other; we should try to combine them to improve reliability and efficiency
+  - We can use dimensionality reduction to find a lower-dimensional representation that captures the important structure in the data
+
 
 ---
 <!-- _class: scale-80 -->
 
-# Latent Semantic Analysis (LSA)
+# Formal definition of LSA
 
-**The OG of semantic embeddings (1990)**
+<div class="example-box" data-title="The LSA algorithm">
 
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Algorithm:**
 1. Build term-document matrix $X$
-2. Apply TF-IDF weighting (recall from last week!)
-3. Perform SVD: $X = U\Sigma V^T$
-4. Keep top $k$ dimensions
-5. Use $U_k$ as word embeddings
+2. Perform SVD: $X = U\Sigma V^T$
+3. Keep top $k$ dimensions
+4. Use $U_k$ as word embeddings
 
 </div>
-<div style="flex: 1;">
 
-**SVD Decomposition:**
-```
-X = U × Σ × V^T
+<div class="definition-box" data-title="SVD (Singular Value Decomposition)">
 
-U: word-topic associations
-Σ: topic strengths
-V^T: topic-document associations
-```
+$X = U \Sigma V^T$ decomposes matrix $X$ into the product of three matrices:
+
+- $U$: word-topic associations (number of words × number of topics)
+- $\Sigma$: topic strengths (diagonal matrix)
+- $V^T$: topic-document associations (number of topics × number of documents)
 
 </div>
-</div>
 
-<div class="note-box" data-title="Key innovation">
+<div class="note-box" data-title="Why it matters">
 
-Discovers latent topics, solves synonymy problem, captures semantic similarity
+Learning word representations (vectors) turns the abstract problem of defining "meaning" into a concrete linear algebra problem!
 
 </div>
 
 ---
-<!-- _class: scale-70 -->
+<!-- _class: scale-60 -->
 
 # LSA in Python
 
 ```python
 from sklearn.decomposition import TruncatedSVD
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 
 documents = [
     "The cat sat on the mat",
@@ -158,19 +200,18 @@ documents = [
     "Machine learning is amazing",
 ]
 
-# Build TF-IDF matrix (recall from week 2!)
-tfidf = TfidfVectorizer(max_features=5000, stop_words='english')
-tfidf_matrix = tfidf.fit_transform(documents)
+# Build term-document matrix (bag-of-words)
+vectorizer = CountVectorizer(max_features=5000, stop_words='english')
+doc_term_matrix = vectorizer.fit_transform(documents)
 
 # Apply LSA - reduce to 100 dimensions
+# (Note: for small data, use smaller n_components)
 lsa = TruncatedSVD(n_components=100, random_state=42)
-doc_embeddings = lsa.fit_transform(tfidf_matrix)
-
-print(f"Original: {tfidf_matrix.shape}")  # (3, vocab_size) - sparse
-print(f"After LSA: {doc_embeddings.shape}")  # (3, 100) - dense!
+doc_embeddings = lsa.fit_transform(doc_term_matrix)
 ```
 
 ---
+<!-- _class: scale-70 -->
 
 # Finding similar words with LSA
 
@@ -178,7 +219,7 @@ print(f"After LSA: {doc_embeddings.shape}")  # (3, 100) - dense!
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Get word embeddings
-vocab = tfidf.get_feature_names_out()
+vocab = vectorizer.get_feature_names_out()
 word_embeddings = lsa.components_.T
 
 def find_similar(word, top_n=5):
@@ -189,81 +230,57 @@ def find_similar(word, top_n=5):
     return [(vocab[i], f"{sims[i]:.3f}") for i in top_indices]
 
 print(find_similar("computer"))
-# [('software', 0.82), ('program', 0.79), ('system', 0.71)]
+# [('software', 0.82), ('program', 0.79), ('system', 0.71), ...]
 ```
-
-<div class="tip-box" data-title="Key insight">
-
-LSA finds semantically related words even without explicit labels!
-
-</div>
 
 ---
 
-# LSA limitations
+# Where does LSA fall short?
 
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Issues:**
-- SVD is expensive for large corpora
-- Hard to update with new documents
-- Linear relationships only
-- No polysemy handling
-
-</div>
-<div style="flex: 1;">
-
-**Example: Polysemy**
-
-<div class="warning-box" data-title='Word: "bank"'>
-
-1. Financial institution
-2. River bank
-3. Banking (airplane)
-
-LSA gives ONE vector for all meanings!
-
-</div>
-
-</div>
-</div>
+- Consider the word "bank":
+  - "He deposited money in the bank."
+  - "The river overflowed its bank."
+  - "He had to bank the airplane to the left."
+- LSA will create a single vector for "bank" that mixes these meanings
+- In general: LSA assumes linear relationships, which may not capture complex semantics
 
 ---
 <!-- _class: scale-80 -->
 
 # Latent Dirichlet Allocation (LDA)
 
-**A probabilistic approach to topic modeling**
+<div class="note-box" data-title="Further reading">
 
-<div class="definition-box" data-title="Key assumptions">
-
-1. Each document is a mixture of topics
-2. Each topic is a distribution over words
-3. The mixture proportions vary per document
+[**Blei, Ng, & Jordan (2003, *Journal of Machine Learning Research*)**](http://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf) Latent Dirichlet Allocation.
 
 </div>
 
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
+<div class="definition-box" data-title="A generative model for documents">
 
-**Advantages over LSA:**
-- Probabilistic interpretation
-- Non-negative weights
-- More interpretable topics
+Documents are generated by a mixture of topics, where each topic is a distribution over words. For each document $\mathbf{w}$ in the corpus:
 
-</div>
-<div style="flex: 1;">
-
-**Example:** Doc about "tech pets":
-- 60% Technology topic
-- 30% Animals topic
-- 10% Other
+1. Choose $N \sim \text{Poisson}(\xi)$ (number of words in document)
+2. Choose topic proportions $\theta \sim \text{Dirichlet}(\alpha)$ (mixture of topics)
+3. For each word $w_n$:
+   - Choose a topic $z_n \sim \text{Multinomial}(\theta)$ (topic assignment for this word)
+   - Choose a word $w_n$ from $p(w_n | z_n, \beta)$ (a multinomial probability conditioned on the topic; $\beta$ is the topic-word matrix)
 
 </div>
+
+<div class="tip-box" data-title="Why this is useful">
+
+By writing down a "recipe" for how documents are generated, we can invert the process to infer the hidden topics and their distributions from observed documents! It lets us capture the idea that documents can cover multiple topics, and that individual words can be associated with multiple topics.
+
 </div>
 
 ---
+
+# LDA: cartoon
+
+![width:1000px](img/lda_cartoon.png)
+
+---
+
 <!-- _class: scale-70 -->
 
 # LDA in Python
@@ -272,7 +289,7 @@ LSA gives ONE vector for all meanings!
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer
 
-# Create bag-of-words (not TF-IDF for LDA!)
+# Create bag-of-words
 vectorizer = CountVectorizer(max_features=1000, stop_words='english')
 doc_term_matrix = vectorizer.fit_transform(documents)
 vocab = vectorizer.get_feature_names_out()
@@ -289,144 +306,34 @@ for idx, topic in enumerate(lda.components_):
 
 ---
 
-# LDA topic examples
+# Discussion: are distributional word representations enough to capture meaning?
 
-**Example Topics from News Corpus:**
+<div class="important-box" data-title="Yes!">
 
-<div class="note-box" data-title="Topic 1: Politics (20%)">
-
-`government, election, president, vote, policy, senate`
-
-</div>
-
-<div class="note-box" data-title="Topic 2: Sports (15%)">
-
-`game, team, player, score, win, season, coach`
+  - Captures semantic similarity (e.g., synonyms)
+  - Works well in practice (e.g., information retrieval)
+  - Aligns with linguistic theory (e.g., distributional hypothesis)
+  - Scalable to large corpora
 
 </div>
 
-<div class="note-box" data-title="Topic 3: Technology (25%)">
+<div class="note-box" data-title="But also...no!">
 
-`software, computer, data, algorithm, system, AI`
-
-</div>
-
-**Document representation:** [0.20, 0.15, 0.25, 0.40] ← topic mixture
-
----
-
-# LSA vs. LDA comparison
-
-| Aspect | LSA | LDA |
-|--------|-----|-----|
-| Approach | Matrix factorization | Probabilistic |
-| Interpretability | Medium | High |
-| Speed | Fast | Medium |
-| Topic coherence | Medium | High |
-| Best for | Search, retrieval | Topic discovery |
-
-<div class="tip-box" data-title="When to use what">
-
-- **LSA**: Quick exploration, large-scale semantic search
-- **LDA**: When you need interpretable topics
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Visualizing embeddings with UMAP
-
-**Project high-dimensional vectors to 2D:**
-
-```python
-import umap
-
-# Reduce from 100D to 2D
-reducer = umap.UMAP(n_neighbors=15, min_dist=0.1, metric='cosine')
-embeddings_2d = reducer.fit_transform(word_embeddings)
-
-# Plot - similar words cluster together!
-plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1])
-for i, word in enumerate(words_to_plot):
-    plt.annotate(word, (embeddings_2d[i, 0], embeddings_2d[i, 1]))
-```
-
-<div class="note-box" data-title="What you should see">
-
-Sports words cluster together, tech words cluster together, etc. — even though we never told the model about categories!
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Discussion: Does this capture "meaning"?
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Arguments For:**
-- Captures semantic similarity
-- Works well in practice
-- Aligns with linguistic theory
-- Scalable to large corpora
-
-</div>
-<div style="flex: 1;">
-
-**Arguments Against:**
-- Text-only (no grounding)
-- Missing embodied experience
-- No common sense reasoning
-- Reflects biases in data
-
-</div>
-</div>
-
-<div class="warning-box" data-title="The Symbol Grounding Problem">
-
-"How can meaning be intrinsic to the system, rather than parasitic on the meanings in our heads?" — Harnad (1990)
+  - Text-only (no grounding, missing embodied experience)
+  - No common sense reasoning (e.g., "the sky is blue")
+  - Reflects biases in data
+  - The approaches we've seen today are "bag-of-words" methods (ignore word order)
 
 </div>
 
 ---
 <!-- _class: scale-85 -->
 
-# Summary
+# Key ideas from today
 
-**What we learned:**
-
-1. **Distributional Hypothesis:** Words in similar contexts have similar meanings
-2. **LSA:** SVD on term-document matrix → dense embeddings
-3. **LDA:** Probabilistic topic modeling → interpretable topics
-4. **Visualization:** UMAP reveals semantic structure
-
-<div class="note-box" data-title="Limitation">
-
-These are **static** embeddings — one vector per word, no context!
-
-</div>
-
-**Tomorrow:** Neural word embeddings (Word2Vec, GloVe, FastText)
-
----
-
-# Key references
-
-**Classic Papers:**
-- Deerwester et al. (1990). "Indexing by Latent Semantic Analysis"
-- Blei et al. (2003). "Latent Dirichlet Allocation"
-
-**Tools:**
-- Scikit-learn: `TruncatedSVD`, `LatentDirichletAllocation`
-- Gensim: `LsiModel`, `LdaModel`
-
-<div class="tip-box" data-title="Try it out!">
-
-Check out the [Topic Modeling demo](https://contextlab.github.io/llm-course/demos/topic-modeling/)
-
-</div>
+1. **Distributional Hypothesis:** words in similar contexts have similar meanings
+2. **LSA:** SVD on term-document matrix&mdash; dense embeddings that capture global structure
+3. **LDA:** probabilistic topic modeling&mdash; interpretable topics and word distributions
 
 ---
 
@@ -447,8 +354,8 @@ Check out the [Topic Modeling demo](https://contextlab.github.io/llm-course/demo
   </div>
 </div>
 
-<div class="tip-box" data-title="See you tomorrow!">
+<div class="tip-box" data-title="Up next...">
 
-Friday we dive into neural word embeddings!
+We'll kick off **week 4** with a lecture on **neural embeddings** (Word2Vec, GloVe, FastText)! Also remember that **Assignment 2** is due on **Monday at 11:59 PM**!
 
 </div>
