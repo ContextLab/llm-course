@@ -19,60 +19,59 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will">
 
-1. Understand Word2Vec architectures (CBOW and Skip-gram)
+1. Understand Word2Vec (CBOW and Skip-gram)
 2. Explain how negative sampling makes training efficient
 3. Compare Word2Vec, GloVe, and FastText
-4. Apply word embeddings for analogies and similarity
+4. Use word embeddings to solve analogies and compute similarities
 5. Recognize biases in word embeddings
 
 </div>
 
-<div class="definition-box" data-title="The 2013 revolution">
+<div class="definition-box" data-title="The Word2Vec revolution">
 
-Word2Vec showed that neural networks can learn powerful semantic representations from raw text alone.
-
-</div>
-
----
-<!-- _class: scale-90 -->
-
-# From count-based to prediction-based
-
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
-
-**Count-Based (LSA, LDA):**
-- Build co-occurrence matrix
-- Apply matrix factorization
-- Global statistics
-- Linear relationships
-
-</div>
-<div style="flex: 1;">
-
-**Prediction-Based (Word2Vec):**
-- Predict context from word
-- Train neural network
-- Local context windows
-- Non-linear relationships
-
-</div>
-</div>
-
-<div class="tip-box" data-title="Key difference">
-
-Word2Vec learns by predicting — the embeddings are a byproduct!
+[Word2Vec](https://arxiv.org/abs/1301.3781) showed that neural networks can
+learn powerful semantic representations from raw text alone.
 
 </div>
 
 ---
-<!-- _class: scale-90 -->
 
-# Word2Vec: Core intuition
+# From **count-based** to **prediction-based** embeddings
 
-*Words that appear in similar contexts should have similar representations*
+<div class="example-box" data-title="Count-based methods (LSA, LDA)">
 
-<div class="example-box" data-title="Context window">
+- Input: term-document matrices
+- Uses term co-occurrence statistics across documents
+- Captures **global** patterns and linear relationships
+
+</div>
+
+<div class="note-box" data-title="Prediction-based methods (Word2Vec)">
+
+- Input: raw text sequences
+- Learn to predict context from word (and vice versa)
+- Use **local** context to learn embeddings
+- Captures non-linear relationships
+
+</div>
+
+<div class="tip-box" data-title="Core difference">
+
+Beyond the implementation details, there is an even more fundamental difference between the two classes of approaches. Whereas count-based methods learn by counting (where embeddings are the end goal), prediction-based methods like Word2Vec learn by predicting; the embeddings come "for free" as a consequence of learning to predict.
+
+</div>
+
+---
+
+# Word2Vec: words that appear in similar contexts should have similar embeddings
+
+<div class="definition-box" data-title="Context">
+
+In NLP, **context** refers to the words surrounding a target word within a specified window size (i.e., number of preceding and proceeding words/tokens).
+
+</div>
+
+<div class="example-box" data-title="Example context window">
 
 "The quick brown **[TARGET]** jumped over the lazy dog"
 
@@ -81,40 +80,61 @@ Word2Vec learns by predicting — the embeddings are a byproduct!
 
 </div>
 
-**Key Idea:**
+<div class="note-box" data-title="Key idea">
+
 - Train a model to predict target from context (or vice versa)
-- The learned **weights** become our word vectors!
-- We don't care about the prediction task — we want the embeddings!
+- The learned **weights** become our embedding vectors!
+- We don't actually care about the prediction task; we just want the embeddings!
+
+</div>
 
 ---
 
-# CBOW vs. Skip-gram
+# CBOW: Continuous Bag of Words
 
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
+<div class="definition-box" data-title="CBOW architecture">
 
-**CBOW (Continuous Bag of Words):**
-- Given context → predict center word
-- "the, cat, on, the" → "sat"
-- Faster to train
-- Better for frequent words
+Given context words, predict the center word
 
 </div>
-<div style="flex: 1;">
 
-**Skip-gram:**
-- Given center word → predict context
-- "sat" → "the, cat, on, the"
-- Slower but better quality
-- Better for rare words
-- **Most commonly used**
+<div class="example-box" data-title="Example">
+
+**Input:** "the, cat, on, the" &rarr; **Predict:** "sat"
 
 </div>
+
+<div class="note-box" data-title="Characteristics">
+
+- Quick training (averages context vectors)
+- Better performance for frequent words (word appears in many contexts)
+- Smooths over distributional information
+
 </div>
 
-```
-Skip-gram objective: maximize P(context | center)
-```
+---
+
+# Skip-gram
+
+<div class="definition-box" data-title="Skip-gram architecture">
+
+Given center word, predict the context words
+
+</div>
+
+<div class="example-box" data-title="Example">
+
+**Input:** "sat" &rarr; **Predict:** "the, cat, on, the"
+
+</div>
+
+<div class="note-box" data-title="Characteristics">
+
+- Slower than CBOW but often results in better quality embeddings
+- Better performance for rare words (more focus on specific contexts where the word appears)
+- **Most commonly used** in practice
+
+</div>
 
 ---
 <!-- _class: scale-80 -->
@@ -132,29 +152,42 @@ Position 4: "the" → Context: [sat, on, mat]
 Position 5: "mat" → Context: [on, the]
 ```
 
-**Skip-gram training pairs** (target → context):
+**Skip-gram training pairs** (target &rarr; context):
 ```
 (The, cat), (The, sat), (cat, The), (cat, sat), (cat, on), ...
 ```
 
 ---
-<!-- _class: scale-85 -->
 
 # The efficiency problem
 
-**Challenge:** Softmax over entire vocabulary is expensive!
+<div class="warning-box" data-title="Challenge">
+
+Softmax over entire vocabulary is expensive!
+
+</div>
 
 $$P(w_{context}|w_{center}) = \frac{\exp(v_{context}^T v_{center})}{\sum_{w=1}^V \exp(v_w^T v_{center})}$$
 
 For 100k vocabulary: 100k exponentials per training example!
 
-<div class="warning-box" data-title="Solution: Negative Sampling">
+---
+
+# Solution: Negative sampling
+
+<div class="definition-box" data-title="Key insight">
 
 Instead of predicting across all words, create binary classification:
 - **Positive:** Actual context word (label = 1)
-- **Negative:** K random words (label = 0)
+- **Negative:** $k$ random words (label = 0)
 
-Training becomes O(k) instead of O(V)!
+</div>
+
+<div class="tip-box" data-title="Efficiency gain">
+
+Training becomes $O(k)$ instead of $O(V)$!
+
+Typical $k$: 5&ndash;20 negative samples per positive example.
 
 </div>
 
@@ -163,7 +196,7 @@ Training becomes O(k) instead of O(V)!
 
 # Negative sampling example
 
-**Training pair:** ("cat", "sat") — cat is center, sat is context
+**Training pair:** ("cat", "sat") &mdash; cat is center, sat is context
 
 ```python
 # Positive sample: Does "sat" appear near "cat"? YES (label=1)
@@ -180,25 +213,29 @@ negative_pairs = [
 # Instead of 100k-way softmax → just 4 binary predictions!
 ```
 
-**Typical k:** 5-20 negative samples per positive
-
 ---
 
 # The famous result: vector arithmetic
 
-$$\vec{king} - \vec{man} + \vec{woman} \approx \vec{queen}$$
+$$\overrightarrow{\text{King}} - \overrightarrow{\text{Man}} + \overrightarrow{\text{Woman}} \approx \overrightarrow{\text{Queen}}$$
 
 <div class="example-box" data-title="Other analogies">
 
-- $\vec{Paris} - \vec{France} + \vec{Italy} \approx \vec{Rome}$
-- $\vec{walking} - \vec{walk} + \vec{swim} \approx \vec{swimming}$
-- $\vec{bigger} - \vec{big} + \vec{small} \approx \vec{smaller}$
+- $\overrightarrow{\text{Paris}} - \overrightarrow{\text{France}} + \overrightarrow{\text{Italy}} \approx \overrightarrow{\text{Rome}}$
+- $\overrightarrow{\text{Walking}} - \overrightarrow{\text{Walk}} + \overrightarrow{\text{Swim}} \approx \overrightarrow{\text{Swimming}}$
+- $\overrightarrow{\text{Bigger}} - \overrightarrow{\text{Big}} + \overrightarrow{\text{Small}} \approx \overrightarrow{\text{Smaller}}$
 
 </div>
 
 <div class="note-box" data-title="Why does this work?">
 
 Subtracting "man" removes the "male" component; adding "woman" adds the "female" component. Result: "female royal" = queen!
+
+</div>
+
+<div class="important-box" data-title="Deeper insight">
+
+By learning embeddings that predict context, Word2Vec ends up capturing how each word relates to the contexts in which it appears. It's like each word has some "pull" on the surrounding words (and vice versa). When we do vector arithmetic, we're manipulating these "pulls" to find words that fit the same relational pattern.
 
 </div>
 
@@ -228,80 +265,89 @@ custom_model = Word2Vec(sentences, vector_size=100, window=5, min_count=1, sg=1)
 ```
 
 ---
-<!-- _class: scale-75 -->
 
 # GloVe: Global Vectors
 
-**Combining count-based and prediction-based methods**
+<div class="note-box" data-title="Further reading">
 
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
+[**Pennington, Socher, and Manning (2014, *EMNLP*)**](https://aclanthology.org/D14-1162/) GloVe: Global Vectors for Word Representation.
 
-**Key Insight:**
+</div>
+
+<div class="definition-box" data-title="Key insight">
+
 Ratios of co-occurrence probabilities encode meaning better than raw probabilities!
 
-| Probe | P(w\|ice) | P(w\|steam) | Ratio |
-|-------|-----------|-------------|-------|
-| solid | high | low | >> 1 |
-| gas | low | high | << 1 |
-| water | high | high | ~ 1 |
-
-</div>
-<div style="flex: 1;">
-
-**GloVe learns:**
-
-$$\vec{w}_i^T \vec{w}_j \approx \log P(i,j)$$
-
-Word vectors whose dot product relates to co-occurrence probability!
-
-</div>
 </div>
 
 ---
 <!-- _class: scale-85 -->
 
-# GloVe vs. Word2Vec
+# How does GloVe work?
 
-| Aspect | Word2Vec | GloVe |
-|--------|----------|-------|
-| Approach | Local context windows | Global co-occurrence |
-| Training | Online (stochastic) | Batch (matrix factorization) |
-| Speed | Medium | Fast for large corpora |
-| Quality | Excellent | Excellent |
+<div class="example-box" data-title="Example: how ratios reveal meaning">
 
-<div class="tip-box" data-title="In practice">
+| Probe word | P(w\|ice) | P(w\|steam) | Ratio |
+|------------|-----------|-------------|-------|
+| solid | high | low | >> 1 |
+| gas | low | high | << 1 |
+| water | high | high | ~ 1 |
 
-Similar performance on most tasks! Choose based on:
-- Corpus size (GloVe better for very large)
-- Training infrastructure (GloVe needs memory for matrix)
+</div>
+
+<div class="note-box" data-title="What GloVe does">
+
+GloVe learns word vectors whose dot product relates to co-occurrence probability:
+
+$$\vec{w}_i^T \vec{w}_j \approx \log P(i,j)$$
 
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
-# FastText: Subword information
+# FastText: leveraging *subword information*
 
-**The Problem:** Word2Vec/GloVe give ONE vector per word
+<div class="note-box" data-title="Further reading">
 
-<div class="warning-box" data-title="Out-of-Vocabulary (OOV) Problem">
+[**Bojanowski, Grave, Joulin, and Mikolov (2017, *TACL*)**](https://aclanthology.org/Q17-1010/) Enriching word vectors with subword information.
 
+</div>
+
+<div class="definition-box" data-title="Subword information">
+
+Subword information refers to the smaller components that make up words, such as character n-grams, prefixes, suffixes, and morphemes. These components can provide valuable insights into the meaning and structure of words, especially for rare or out-of-vocabulary terms.
+
+</div>
+
+<div class="warning-box" data-title="The Out-of-Vocabulary (OOV) Problem">
+
+Word2Vec and GloVe give ONE vector per word:
 - New word? Unknown!
 - Misspelling? Unknown!
 - Rare morphological form? Unknown!
 
-But "running", "runner", "runnable" share morphology!
+But "running", "runner", "runnable" share morphology, and we can exploit that!
 
 </div>
 
-**FastText Solution:** Break words into character n-grams
+<div class="tip-box" data-title="Remember...">
+
+Remember back to when we introduced tokens made up of subword units (like Byte Pair Encoding)? FastText takes advantage of this idea by breaking words down into smaller parts, allowing it to create embeddings for words it hasn't seen before.
+
+</div>
 
 ---
-<!-- _class: scale-80 -->
 
-# FastText: Character n-grams
+# FastText: character n-grams
 
-**Example: "where" (with n=3)**
+<div class="definition-box" data-title="Character n-grams">
+
+Character n-grams are contiguous sequences of 'n' characters extracted from a word. 
+
+</div>
+
+<div class="example-box" data-title="Example: character n-grams for 'where'">
 
 Character trigrams: `<wh, whe, her, ere, re>`
 
@@ -309,47 +355,40 @@ Word vector = average of n-gram vectors:
 
 $$\vec{w}_{where} = \frac{1}{6}(\vec{z}_{<wh} + \vec{z}_{whe} + \vec{z}_{her} + \vec{z}_{ere} + \vec{z}_{re>} + \vec{z}_{<where>})$$
 
-<div class="tip-box" data-title="Benefits">
+</div>
 
-- Handles OOV words!
-- Captures morphology ("unhappiness" shares n-grams with "unhappy", "happiness")
-- Great for morphologically rich languages (German, Turkish, Finnish)
-- Robust to typos
+<div class="tip-box" data-title="Why is this useful?">
+
+- **Handles OOV words!** Can generate vectors for words never seen in training
+- **Captures morphology:** "unhappiness" shares n-grams with "unhappy", "happiness"
+- **Great for morphologically rich languages:** German, Turkish, Finnish
+- **Robust to typos:** misspellings share many n-grams with correct spellings
 
 </div>
 
 ---
-<!-- _class: scale-85 -->
 
-# Method comparison
+# Bias in word embeddings
 
-| Method | Year | OOV Handling | Best For |
-|--------|------|--------------|----------|
-| LSA | 1990 | No | Topic modeling |
-| LDA | 2003 | No | Interpretable topics |
-| Word2Vec | 2013 | No | General NLP |
-| GloVe | 2014 | No | Large corpora |
-| FastText | 2017 | Yes! | Morphology-rich languages |
+<div class="warning-box" data-title="Critical issue">
 
-<div class="note-box" data-title="Typical dimensions">
+Embeddings learn biases from training data!
 
-50-300 dimensions (100-300 most common for best quality)
+</div>
+
+<div class="example-box" data-title="Gender bias examples">
+
+- $\overrightarrow{\text{Man}} : \overrightarrow{\text{Computer programmer}} :: \overrightarrow{\text{Woman}} : \overrightarrow{\text{Homemaker}}$
+- $\overrightarrow{\text{Man}} : \overrightarrow{\text{Doctor}} :: \overrightarrow{\text{Woman}} : \overrightarrow{\text{Nurse}}$
 
 </div>
 
 ---
 <!-- _class: scale-80 -->
 
-# Bias in word embeddings
+# Estimating bias
 
-**Embeddings learn biases from training data**
-
-<div class="warning-box" data-title="Gender bias examples">
-
-- $\vec{man} : \vec{computer\ programmer} :: \vec{woman} : \vec{homemaker}$
-- $\vec{man} : \vec{doctor} :: \vec{woman} : \vec{nurse}$
-
-</div>
+<div class="example-box" data-title="Example: estimating term-specific gender bias">
 
 ```python
 def gender_bias_score(word):
@@ -360,94 +399,48 @@ def gender_bias_score(word):
 # nurse: -0.109 (toward woman)
 ```
 
-<div class="important-box" data-title="Why this matters">
-
-Embeddings used in hiring tools, search, recommendations can perpetuate bias!
-
 </div>
 
----
-<!-- _class: scale-80 -->
+<div class="important-box" data-title="Why this matters">
 
-# Practical tips
+Embeddings used in hiring tools, search, and recommendations can perpetuate bias!
 
-1. **Start with pre-trained models**
-   - Word2Vec: Google News (300d, 3B words)
-   - GloVe: Common Crawl (300d, 840B tokens)
-   - FastText: 157 languages available
-
-2. **Use cosine similarity** (not Euclidean distance)
-   $$\text{sim}(u,v) = \frac{u \cdot v}{||u|| \cdot ||v||}$$
-
-3. **Be aware of biases** — test for bias, consider debiasing techniques
-
-4. **Remember limitations** — static (one vector per word), no polysemy
+</div>
 
 ---
 
 # Summary
 
-**What we learned:**
+<div class="note-box" data-title="What we learned">
 
-1. **Word2Vec (2013):** Neural revolution — predict context from words
+1. **Word2Vec (2013):** neural revolution &mdash; predict context from words
    - Skip-gram most common, negative sampling for efficiency
-2. **GloVe (2014):** Global co-occurrence statistics
-3. **FastText (2017):** Character n-grams handle OOV
-4. **Bias:** Embeddings reflect training data biases
+2. **GloVe (2014):** global co-occurrence statistics
+3. **FastText (2017):** character n-grams handle OOV
+4. **Bias:** embeddings reflect training data biases
 
-<div class="note-box" data-title="Key limitation">
+</div>
 
-Static embeddings: one vector per word type
+<div class="tip-box" data-title="An important limitation to think about...">
 
-**Next week:** Contextual embeddings (ELMo, BERT) solve polysemy!
+Word embeddings are fundamentally **static**: each word has a single vector representation, regardless of context. This means they cannot capture the different meanings a word might have in different sentences (e.g., "bank" as a financial institution vs. "bank" as the side of a river). Contextual embeddings (like ELMo, BERT) address this limitation by generating word representations that depend on the surrounding words.
 
 </div>
 
 ---
-<!-- _class: scale-75 -->
-
-# Key references
-
-**Foundational Papers:**
-- Mikolov et al. (2013). "Efficient Estimation of Word Representations"
-- Pennington et al. (2014). "GloVe: Global Vectors for Word Representation"
-- Bojanowski et al. (2017). "Enriching Word Vectors with Subword Information"
-
-**Tools:**
-- Gensim: `Word2Vec`, `FastText` | Pre-trained: `gensim.downloader`
-
-<div class="tip-box" data-title="Try it out!">
-
-[Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/) | [Word Analogies](https://contextlab.github.io/llm-course/demos/analogies/)
-
-</div>
-
----
-<!-- _class: scale-90 -->
 
 # Assignment 3: Wikipedia Embeddings
 
-<div style="display: flex; gap: 1.5em;">
-<div style="flex: 1;">
+<div class="note-box" data-title="What you'll do">
 
-**Apply this week's concepts:**
-- Train embeddings on Wikipedia data
-- Compare LSA vs. Word2Vec
-- Explore semantic relationships
-- Visualize with UMAP
+- Implement **10+ embedding methods** (LSA, Word2Vec, GloVe, FastText, SBERT, BGE, E5, ...)
+- Visualize with **UMAP, clustering, and DataMapPlot**
+- Evaluate via **document matching** (can embeddings match first/second halves?)
+- Write some **reflection essays** on trade-offs and meaning
 
 </div>
-<div style="flex: 1;">
 
-**Think about:**
-- How does corpus size affect quality?
-- What analogies work? What fails?
-- Can you detect bias?
-
-</div>
-</div>
-
-<div class="tip-box" data-title="Link">
+<div class="tip-box" data-title="Due: February 2, 11:59 PM EST">
 
 [Assignment 3: Wikipedia Embeddings](https://contextlab.github.io/llm-course/assignments/assignment-3/)
 
@@ -472,8 +465,8 @@ Static embeddings: one vector per word type
   </div>
 </div>
 
-<div class="tip-box" data-title="Week 3 complete!">
+<div class="tip-box" data-title="Up next...">
 
-Next week: Contextual embeddings and dimensionality reduction!
+Contextual embeddings (ELMo, BERT)! These models construct embeddings based on the entire sentence, allowing for context-sensitive representations.
 
 </div>
