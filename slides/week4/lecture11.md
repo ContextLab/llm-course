@@ -29,8 +29,7 @@ Winter 2026
 
 <div class="definition-box" data-title="The Word2Vec revolution">
 
-[Word2Vec](https://arxiv.org/abs/1301.3781) showed that neural networks can
-learn powerful semantic representations from raw text alone.
+[Word2Vec](https://arxiv.org/abs/1301.3781) showed that neural networks can learn powerful semantic representations from raw text alone.
 
 </div>
 
@@ -353,7 +352,7 @@ Character trigrams: `<wh, whe, her, ere, re>`
 
 Word vector = average of n-gram vectors:
 
-$$\vec{w}_{where} = \frac{1}{6}(\vec{z}_{<wh} + \vec{z}_{whe} + \vec{z}_{her} + \vec{z}_{ere} + \vec{z}_{re>} + \vec{z}_{<where>})$$
+$$\vec{w}_{where} = \frac{1}{5}(\vec{z}_{<wh} + \vec{z}_{whe} + \vec{z}_{her} + \vec{z}_{ere} + \vec{z}_{re>})$$
 
 </div>
 
