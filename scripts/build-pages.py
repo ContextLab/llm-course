@@ -18,7 +18,12 @@ REPO_ROOT = Path(__file__).parent.parent
 
 
 def strip_latex_preamble(text):
-    """Remove LaTeX preamble from markdown files."""
+    """Remove YAML frontmatter and LaTeX preamble from markdown files."""
+    if text.startswith("---"):
+        end_match = re.search(r"\n---\s*\n", text[3:])
+        if end_match:
+            text = text[3 + end_match.end() :]
+
     if "\\begin{" not in text:
         return text
     match = re.search(r"^## ", text, re.MULTILINE)
@@ -38,6 +43,10 @@ def convert_latex_table(text):
     Only converts & to | within actual LaTeX tabular environments,
     not in regular markdown content.
     """
+    text = re.sub(r"\\newpage\s*", "", text)
+    text = re.sub(r"\\pagebreak\s*", "", text)
+    text = re.sub(r"\\needspace\{[^}]*\}\s*", "", text)
+
     # Check if there's a LaTeX tabular environment
     if "\\begin{tabular}" not in text:
         # No LaTeX tables - just remove other LaTeX commands but preserve &
