@@ -29,11 +29,12 @@ Winter 2026
 
 <div class="definition-box" data-title="The goal">
 
-Reduce from $d$ dimensions (e.g., 300-768) to 2-3 dimensions while preserving meaningful structure for visualization.
+Reduce from $d$ dimensions (e.g., 300+) to 2-3 dimensions while preserving meaningful structure for visualization.
 
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
 # The challenge of high dimensions
 
@@ -41,11 +42,11 @@ Reduce from $d$ dimensions (e.g., 300-768) to 2-3 dimensions while preserving me
 
 > "To deal with a 14-dimensional space, visualize a 3-D space and say 'fourteen' to yourself very loudly. Everyone does it."
 > 
-> — **Geoffrey Hinton**, University of Toronto
+> — Geoffrey Hinton
 
 </div>
 
-<div class="warning-box" data-title="The curse of dimensionality">
+<div class="warning-box" data-title="Counterpoint: the curse of dimensionality">
 
 High-dimensional spaces behave counter-intuitively: all points tend to be equidistant!
 
@@ -61,23 +62,24 @@ High-dimensional spaces behave counter-intuitively: all points tend to be equidi
 
 <div class="note-box" data-title="Applications">
 
-- **Visualization:** 2D/3D plots to explore semantic structure
-- **Quality assurance:** Verify embeddings capture expected relationships
-- **Preprocessing:** Reduce noise before clustering
-- **Interpretation:** Understand relationships between words/documents
+- **Visualization:** 2D/3D plots to explore semantic structure geometrically
+- **Quality assurance:** verify embeddings capture expected relationships
+- **Preprocessing:** reduce noise before clustering
+- **Interpretation:** understand relationships between words/documents
 
 </div>
 
 <div class="tip-box" data-title="Two major families">
 
-1. **Matrix factorization:** Linear methods that decompose data into factors
-2. **Manifold learning:** Non-linear methods that preserve geometric structure
+1. **Matrix factorization:** linear methods that decompose data into factors
+2. **Manifold learning:** non-linear methods that preserve geometric structure
 
 </div>
 
 ---
+<!-- _class: scale-90 -->
 
-# Matrix factorization: The big picture
+# What is matrix factorization?
 
 <div class="definition-box" data-title="Core idea">
 
@@ -92,19 +94,25 @@ Where:
 
 </div>
 
-<div class="note-box" data-title="The family">
+<div class="note-box" data-title="Matrix factorization comes in many flavors!">
 
-- **PCA:** Maximize variance, orthogonal factors
-- **ICA:** Maximize statistical independence
-- **Factor Analysis:** Model latent variables with noise
-- **NMF:** Non-negative constraints (interpretable parts)
-- **Dictionary Learning:** Sparse, overcomplete representations
-
+- **PCA:** maximize variance, orthogonal factors
+- **ICA:** maximize statistical independence
+- **Factor Analysis:** model latent variables with noise
+- **NMF:** non-negative constraints (interpretable parts)
+- **Dictionary Learning:** sparse, overcomplete representations
+- **Topographic Factor Analysis:** spatially organized factors
 </div>
 
 ---
 
 # PCA: Principal Component Analysis
+
+<div class="note-box" data-title="Further reading">
+
+[**Pearson (1901, *Philosophical Magazine*)**](https://www.tandfonline.com/doi/abs/10.1080/14786440109462720) On lines and planes of closest fit to systems of points in space.
+
+</div>
 
 <div class="definition-box" data-title="The classic linear method">
 
@@ -112,18 +120,18 @@ Finds directions of **maximum variance** and projects data onto these orthogonal
 
 </div>
 
-<div class="note-box" data-title="Properties">
+<div class="example-box" data-title="Properties">
 
-- **Linear transformation** — preserves global structure
-- **Deterministic** — same result every time
-- **Fast** — efficient computation via SVD
-- **Interpretable** — PCs ranked by variance explained
+- **Linear transformation:** preserves global structure
+- **Deterministic:** same result every time (for some implementations)
+- **Fast:** efficient computation via SVD
+- **Interpretable:** PCs ranked by variance explained
 
 </div>
 
 <div class="tip-box" data-title="When to use PCA">
 
-Quick first exploration, preprocessing for other methods (like t-SNE/UMAP), or when computational speed is critical.
+Quick first exploration, preprocessing for other methods, or when computational speed is critical.
 
 </div>
 
@@ -325,7 +333,7 @@ A Python toolbox for **dimensionality reduction-based visual exploration** of hi
 
 <div style="text-align: center;">
 
-![width:600px](https://github.com/ContextLab/hypertools/raw/master/images/hypertools.gif)
+<img src="https://github.com/ContextLab/hypertools/raw/master/images/hypertools.gif" width="600" style="border: 3px solid #888; border-radius: 4px;">
 
 </div>
 

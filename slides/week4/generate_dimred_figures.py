@@ -43,10 +43,10 @@ np.random.seed(42)
 # Font configuration - use Avenir to match slide theme
 FONT_FAMILY = ["Avenir", "Avenir Next", "Helvetica Neue", "DejaVu Sans", "sans-serif"]
 plt.rcParams["font.family"] = FONT_FAMILY
-plt.rcParams["font.size"] = 12
-plt.rcParams["axes.titlesize"] = 16
-plt.rcParams["axes.labelsize"] = 14
-plt.rcParams["legend.fontsize"] = 10
+plt.rcParams["font.size"] = 14
+plt.rcParams["axes.titlesize"] = 18
+plt.rcParams["axes.labelsize"] = 16  # Increased for x/y labels
+plt.rcParams["legend.fontsize"] = 14  # Increased legend font size
 
 # Categories for 20 Newsgroups
 CATEGORIES = [
@@ -120,8 +120,16 @@ def load_data():
     return embeddings, labels, label_names, tfidf_matrix
 
 
-def create_scatter_plot(coords_2d, labels, label_names, title, filename):
-    """Create and save a scatter plot with transparent background."""
+def create_scatter_plot(coords_2d, labels, label_names, filename, title=None):
+    """Create and save a scatter plot with transparent background.
+
+    Args:
+        coords_2d: 2D coordinates
+        labels: Category labels
+        label_names: Category names
+        filename: Output filename
+        title: Optional title (if None, no title is shown)
+    """
     fig, ax = plt.subplots(figsize=(10, 8))
 
     # Set transparent background
@@ -142,20 +150,25 @@ def create_scatter_plot(coords_2d, labels, label_names, title, filename):
             edgecolors="none",
         )
 
-    ax.set_title(title, fontweight="bold", pad=15)
-    ax.set_xlabel("Dimension 1")
-    ax.set_ylabel("Dimension 2")
+    # Only set title if provided
+    if title:
+        ax.set_title(title, fontweight="bold", pad=15)
 
-    # Legend outside plot
+    ax.set_xlabel("Dimension 1", fontsize=16)
+    ax.set_ylabel("Dimension 2", fontsize=16)
+
+    # Legend outside plot with black border and transparent background
     legend = ax.legend(
         loc="center left",
         bbox_to_anchor=(1.02, 0.5),
         frameon=True,
-        fancybox=True,
+        fancybox=False,  # No rounded corners for cleaner look
         shadow=False,
+        fontsize=14,
     )
-    legend.get_frame().set_alpha(0.8)
-    legend.get_frame().set_facecolor("white")
+    legend.get_frame().set_alpha(0.0)  # Transparent background
+    legend.get_frame().set_edgecolor("black")  # Black border
+    legend.get_frame().set_linewidth(1.5)
 
     # Clean up axes
     ax.spines["top"].set_visible(False)
@@ -180,11 +193,9 @@ def apply_pca(embeddings, labels, label_names, output_dir):
     variance_explained = sum(pca.explained_variance_ratio_)
     print(f"  Variance explained: {variance_explained:.2%}")
 
-    title = (
-        f"PCA: 20 Newsgroups Embeddings\n(Variance explained: {variance_explained:.1%})"
-    )
+    # No title for individual figures
     filename = os.path.join(output_dir, "pca_visualization.png")
-    create_scatter_plot(coords_2d, labels, label_names, title, filename)
+    create_scatter_plot(coords_2d, labels, label_names, filename, title=None)
 
 
 def apply_tsne(embeddings, labels, label_names, output_dir):
@@ -206,9 +217,9 @@ def apply_tsne(embeddings, labels, label_names, output_dir):
     )
     coords_2d = tsne.fit_transform(embeddings_subset)
 
-    title = f"t-SNE: 20 Newsgroups Embeddings\n(Perplexity=30, n={n_samples})"
+    # No title for individual figures
     filename = os.path.join(output_dir, "tsne_visualization.png")
-    create_scatter_plot(coords_2d, labels_subset, label_names, title, filename)
+    create_scatter_plot(coords_2d, labels_subset, label_names, filename, title=None)
 
 
 def apply_umap(embeddings, labels, label_names, output_dir):
@@ -230,9 +241,9 @@ def apply_umap(embeddings, labels, label_names, output_dir):
     )
     coords_2d = reducer.fit_transform(embeddings)
 
-    title = "UMAP: 20 Newsgroups Embeddings\n(n_neighbors=15, min_dist=0.1)"
+    # No title for individual figures
     filename = os.path.join(output_dir, "umap_visualization.png")
-    create_scatter_plot(coords_2d, labels, label_names, title, filename)
+    create_scatter_plot(coords_2d, labels, label_names, filename, title=None)
 
 
 def create_matrix_factorization_grid(
@@ -248,20 +259,22 @@ def create_matrix_factorization_grid(
     X_nonneg = np.abs(X)  # For NMF which requires non-negative input
     y = labels[indices]
 
+    # For Dictionary Learning: use more components then reduce with PCA
+    # This avoids the sparse collapse issue
+    dict_learn = DictionaryLearning(
+        n_components=20,  # Learn 20 components first
+        random_state=42,
+        max_iter=1000,
+        transform_algorithm="omp",  # Orthogonal Matching Pursuit - more stable
+        transform_n_nonzero_coefs=10,  # Allow more non-zero coefficients
+    )
+
     methods = [
         ("PCA", PCA(n_components=2, random_state=42)),
         ("ICA", FastICA(n_components=2, random_state=42, max_iter=500)),
         ("Factor Analysis", FactorAnalysis(n_components=2, random_state=42)),
         ("NMF", NMF(n_components=2, random_state=42, max_iter=500, init="nndsvd")),
-        (
-            "Dictionary Learning",
-            DictionaryLearning(
-                n_components=2,
-                random_state=42,
-                max_iter=500,
-                transform_algorithm="lasso_lars",
-            ),
-        ),
+        ("Dictionary Learning", dict_learn),  # Will reduce to 2D after
     ]
 
     fig, axes = plt.subplots(2, 3, figsize=(14, 9))
@@ -275,6 +288,14 @@ def create_matrix_factorization_grid(
         try:
             if name == "NMF":
                 coords_2d = model.fit_transform(X_nonneg)
+            elif name == "Dictionary Learning":
+                # Dictionary Learning: first transform to 20D, then PCA to 2D
+                print(f"  Computing {name} (20D then PCA to 2D)...")
+                coords_high = model.fit_transform(
+                    X_nonneg
+                )  # Use non-negative for stability
+                pca_reduce = PCA(n_components=2, random_state=42)
+                coords_2d = pca_reduce.fit_transform(coords_high)
             else:
                 coords_2d = model.fit_transform(X)
 
@@ -292,13 +313,14 @@ def create_matrix_factorization_grid(
                         edgecolors="none",
                     )
 
-            ax.set_title(name, fontweight="bold", fontsize=12)
+            ax.set_title(name, fontweight="bold", fontsize=14)
             ax.set_xticks([])
             ax.set_yticks([])
             ax.spines["top"].set_visible(False)
             ax.spines["right"].set_visible(False)
 
         except Exception as e:
+            print(f"    Warning: {name} failed with {e}")
             ax.text(
                 0.5,
                 0.5,
@@ -307,18 +329,21 @@ def create_matrix_factorization_grid(
                 ha="center",
                 va="center",
             )
-            ax.set_title(name, fontweight="bold", fontsize=12)
+            ax.set_title(name, fontweight="bold", fontsize=14)
 
-    # Hide the 6th subplot and add legend there
+    # Hide the 6th subplot and add legend there (no title for legend panel)
     axes[5].axis("off")
     handles, labels_legend = axes[0].get_legend_handles_labels()
-    axes[5].legend(handles, labels_legend, loc="center", frameon=True, fontsize=10)
-    axes[5].set_title("Categories", fontweight="bold", fontsize=12)
-
-    fig.suptitle(
-        "Matrix Factorization Methods: Y ≈ WF", fontsize=16, fontweight="bold", y=0.98
+    legend = axes[5].legend(
+        handles, labels_legend, loc="center", frameon=True, fontsize=12
     )
-    plt.tight_layout(rect=[0, 0, 1, 0.95])
+    legend.get_frame().set_alpha(0.0)  # Transparent background
+    legend.get_frame().set_edgecolor("black")  # Black border
+    legend.get_frame().set_linewidth(1.5)
+    # No title for legend panel
+
+    # No overall figure title
+    plt.tight_layout()
 
     filename = os.path.join(output_dir, "matrix_factorization_grid.png")
     plt.savefig(filename, dpi=150, bbox_inches="tight", transparent=True)
@@ -335,9 +360,6 @@ def create_manifold_learning_grid(embeddings, labels, label_names, output_dir):
     indices = np.random.choice(len(embeddings), n_samples, replace=False)
     X = embeddings[indices]
     y = labels[indices]
-
-    # Pre-compute distance matrix for methods that need it
-    from sklearn.metrics import pairwise_distances
 
     # Set environment variable for UMAP
     os.environ["NUMBA_NUM_THREADS"] = "1"
@@ -399,7 +421,7 @@ def create_manifold_learning_grid(embeddings, labels, label_names, output_dir):
                         edgecolors="none",
                     )
 
-            ax.set_title(name, fontweight="bold", fontsize=12)
+            ax.set_title(name, fontweight="bold", fontsize=14)
             ax.set_xticks([])
             ax.set_yticks([])
             ax.spines["top"].set_visible(False)
@@ -415,16 +437,21 @@ def create_manifold_learning_grid(embeddings, labels, label_names, output_dir):
                 ha="center",
                 va="center",
             )
-            ax.set_title(name, fontweight="bold", fontsize=12)
+            ax.set_title(name, fontweight="bold", fontsize=14)
 
-    # Hide the 6th subplot and add legend there
+    # Hide the 6th subplot and add legend there (no title for legend panel)
     axes[5].axis("off")
     handles, labels_legend = axes[0].get_legend_handles_labels()
-    axes[5].legend(handles, labels_legend, loc="center", frameon=True, fontsize=10)
-    axes[5].set_title("Categories", fontweight="bold", fontsize=12)
+    legend = axes[5].legend(
+        handles, labels_legend, loc="center", frameon=True, fontsize=12
+    )
+    legend.get_frame().set_alpha(0.0)  # Transparent background
+    legend.get_frame().set_edgecolor("black")  # Black border
+    legend.get_frame().set_linewidth(1.5)
+    # No title for legend panel
 
-    fig.suptitle("Manifold Learning Methods", fontsize=16, fontweight="bold", y=0.98)
-    plt.tight_layout(rect=[0, 0, 1, 0.95])
+    # No overall figure title
+    plt.tight_layout()
 
     filename = os.path.join(output_dir, "manifold_learning_grid.png")
     plt.savefig(filename, dpi=150, bbox_inches="tight", transparent=True)

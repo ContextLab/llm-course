@@ -711,18 +711,18 @@ Winter 2026</p>
 </ol>
 </div>
 <div class="definition-box" data-title="The goal">
-<p>Reduce from <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> dimensions (e.g., 300-768) to 2-3 dimensions while preserving meaningful structure for visualization.</p>
+<p>Reduce from <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> dimensions (e.g., 300+) to 2-3 dimensions while preserving meaningful structure for visualization.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-challenge-of-high-dimensions">The challenge of high dimensions</h1>
 <div class="quote-box">
 <blockquote>
 <p>&quot;To deal with a 14-dimensional space, visualize a 3-D space and say 'fourteen' to yourself very loudly. Everyone does it.&quot;</p>
-<p>— <strong>Geoffrey Hinton</strong>, University of Toronto</p>
+<p>— Geoffrey Hinton</p>
 </blockquote>
 </div>
-<div class="warning-box" data-title="The curse of dimensionality">
+<div class="warning-box" data-title="Counterpoint: the curse of dimensionality">
 <p>High-dimensional spaces behave counter-intuitively: all points tend to be equidistant!</p>
 <ul>
 <li><strong>Word2Vec / GloVe:</strong> 300 dimensions</li>
@@ -735,21 +735,21 @@ Winter 2026</p>
 <h1 id="why-dimensionality-reduction">Why dimensionality reduction?</h1>
 <div class="note-box" data-title="Applications">
 <ul>
-<li><strong>Visualization:</strong> 2D/3D plots to explore semantic structure</li>
-<li><strong>Quality assurance:</strong> Verify embeddings capture expected relationships</li>
-<li><strong>Preprocessing:</strong> Reduce noise before clustering</li>
-<li><strong>Interpretation:</strong> Understand relationships between words/documents</li>
+<li><strong>Visualization:</strong> 2D/3D plots to explore semantic structure geometrically</li>
+<li><strong>Quality assurance:</strong> verify embeddings capture expected relationships</li>
+<li><strong>Preprocessing:</strong> reduce noise before clustering</li>
+<li><strong>Interpretation:</strong> understand relationships between words/documents</li>
 </ul>
 </div>
 <div class="tip-box" data-title="Two major families">
 <ol>
-<li><strong>Matrix factorization:</strong> Linear methods that decompose data into factors</li>
-<li><strong>Manifold learning:</strong> Non-linear methods that preserve geometric structure</li>
+<li><strong>Matrix factorization:</strong> linear methods that decompose data into factors</li>
+<li><strong>Manifold learning:</strong> non-linear methods that preserve geometric structure</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="matrix-factorization-the-big-picture">Matrix factorization: The big picture</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="what-is-matrix-factorization">What is matrix factorization?</h1>
 <div class="definition-box" data-title="Core idea">
 <p>Decompose the data matrix into a product of smaller matrices:</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="bold">Y</mi><mo>≈</mo><mi mathvariant="bold">W</mi><mi mathvariant="bold">F</mi></mrow><annotation encoding="application/x-tex">\mathbf{Y} \approx \mathbf{W} \mathbf{F}
@@ -760,31 +760,35 @@ Winter 2026</p>
 <li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">F</mi></mrow><annotation encoding="application/x-tex">\mathbf{F}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf">F</span></span></span></span> is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>×</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">k \times d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> (components × features) — the <strong>factors</strong></li>
 </ul>
 </div>
-<div class="note-box" data-title="The family">
+<div class="note-box" data-title="Matrix factorization comes in many flavors!">
 <ul>
-<li><strong>PCA:</strong> Maximize variance, orthogonal factors</li>
-<li><strong>ICA:</strong> Maximize statistical independence</li>
-<li><strong>Factor Analysis:</strong> Model latent variables with noise</li>
-<li><strong>NMF:</strong> Non-negative constraints (interpretable parts)</li>
-<li><strong>Dictionary Learning:</strong> Sparse, overcomplete representations</li>
+<li><strong>PCA:</strong> maximize variance, orthogonal factors</li>
+<li><strong>ICA:</strong> maximize statistical independence</li>
+<li><strong>Factor Analysis:</strong> model latent variables with noise</li>
+<li><strong>NMF:</strong> non-negative constraints (interpretable parts)</li>
+<li><strong>Dictionary Learning:</strong> sparse, overcomplete representations</li>
+<li><strong>Topographic Factor Analysis:</strong> spatially organized factors</li>
 </ul>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="pca-principal-component-analysis">PCA: Principal Component Analysis</h1>
+<div class="note-box" data-title="Further reading">
+<p><a href="https://www.tandfonline.com/doi/abs/10.1080/14786440109462720"><strong>Pearson (1901, <em>Philosophical Magazine</em>)</strong></a> On lines and planes of closest fit to systems of points in space.</p>
+</div>
 <div class="definition-box" data-title="The classic linear method">
 <p>Finds directions of <strong>maximum variance</strong> and projects data onto these orthogonal &quot;principal components.&quot;</p>
 </div>
-<div class="note-box" data-title="Properties">
+<div class="example-box" data-title="Properties">
 <ul>
-<li><strong>Linear transformation</strong> — preserves global structure</li>
-<li><strong>Deterministic</strong> — same result every time</li>
-<li><strong>Fast</strong> — efficient computation via SVD</li>
-<li><strong>Interpretable</strong> — PCs ranked by variance explained</li>
+<li><strong>Linear transformation:</strong> preserves global structure</li>
+<li><strong>Deterministic:</strong> same result every time (for some implementations)</li>
+<li><strong>Fast:</strong> efficient computation via SVD</li>
+<li><strong>Interpretable:</strong> PCs ranked by variance explained</li>
 </ul>
 </div>
 <div class="tip-box" data-title="When to use PCA">
-<p>Quick first exploration, preprocessing for other methods (like t-SNE/UMAP), or when computational speed is critical.</p>
+<p>Quick first exploration, preprocessing for other methods, or when computational speed is critical.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -962,7 +966,7 @@ Winter 2026</p>
 <p><a href="https://github.com/ContextLab/hypertools"><strong>GitHub</strong></a> | <a href="https://hypertools.readthedocs.io/"><strong>Documentation</strong></a></p>
 </div>
 <div style="text-align: center;">
-<p><img src="https://github.com/ContextLab/hypertools/raw/master/images/hypertools.gif" alt="" style="width:600px;" /></p>
+<img src="https://github.com/ContextLab/hypertools/raw/master/images/hypertools.gif" width="600" style="border: 3px solid #888; border-radius: 4px;" />
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
