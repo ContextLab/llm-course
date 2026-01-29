@@ -136,10 +136,11 @@ Quick first exploration, preprocessing for other methods, or when computational 
 </div>
 
 ---
+<!-- _class: scale-60 -->
 
 # PCA: 20 Newsgroups visualization
 
-![width:800px](figures/pca_visualization.png)
+![height:500px](figures/pca_visualization.png)
 
 <div class="example-box" data-title="Observations">
 
@@ -148,6 +149,7 @@ Categories overlap significantly — PCA captures global structure but loses loc
 </div>
 
 ---
+<!-- _class: scale-60 -->
 
 # Matrix factorization methods compared
 
@@ -165,7 +167,7 @@ Each method optimizes different objectives: PCA maximizes variance, ICA maximize
 
 <div class="note-box" data-title="Further reading">
 
-[**van der Maaten & Hinton (2008, *JMLR*)**](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf) Visualizing Data using t-SNE.
+[**van der Maaten & Hinton (2008, *JMLR*)**](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf) Visualizing data using t-SNE.
 
 </div>
 
@@ -185,14 +187,15 @@ Models similarity as probability distributions. Preserves **local structure** �
 </div>
 
 ---
+<!-- _class: scale-60 -->
 
 # t-SNE: 20 Newsgroups visualization
 
-![width:800px](figures/tsne_visualization.png)
+![height:500px](figures/tsne_visualization.png)
 
 <div class="example-box" data-title="Observations">
 
-Clear, tight clusters emerge — great for identifying groups. Categories now well-separated. Perplexity parameter controls local vs. global focus (here: 30).
+Clear, tight clusters emerge — great for identifying groups. Perplexity parameter controls local vs. global focus (here: 30).
 
 </div>
 
@@ -222,44 +225,46 @@ Theoretically grounded in topology. Preserves **both local AND global** structur
 </div>
 
 ---
+<!-- _class: scale-60 -->
 
 # UMAP: 20 Newsgroups visualization
 
-![width:800px](figures/umap_visualization.png)
+![height:500px](figures/umap_visualization.png)
 
 <div class="example-box" data-title="Observations">
 
-Clear clusters like t-SNE, but preserves global relationships. Related categories (sci.space, sci.med) remain nearby. Much faster than t-SNE for large datasets.
+Clear clusters like t-SNE, but preserves global relationships. Related categories (graphics/windows, baseball/hockey) remain nearby. Much faster than t-SNE for large datasets.
 
 </div>
 
 ---
 
-# Manifold learning: The big picture
+# Manifold learning: the big picture
 
 <div class="definition-box" data-title="Core idea">
 
-Assume high-dimensional data lies on a lower-dimensional **manifold** (curved surface). Learn the manifold structure and unfold it.
+Assume high-dimensional data lies on a lower-dimensional **manifold** (curved surface). Learn the manifold structure and "unfold" it.
 
 </div>
 
-<div class="note-box" data-title="The family">
+<div class="example-box" data-title="Example methods">
 
-- **MDS:** Preserve pairwise distances
-- **Isomap:** Geodesic distances on manifold
-- **Spectral Embedding:** Graph Laplacian eigenvectors
-- **t-SNE:** Probability-based local structure
-- **UMAP:** Topological structure preservation
+- **MDS:** preserve pairwise distances
+- **Isomap:** geodesic distances on manifold
+- **Spectral Embedding:** graph Laplacian eigenvectors
+- **t-SNE:** probability-based local structure
+- **UMAP:** topological structure preservation
 
 </div>
 
 <div class="tip-box" data-title="Key insight">
 
-These methods capture **non-linear** relationships that matrix factorization misses.
+These methods capture **non-linear** relationships that matrix factorization misses. On one hand, these methods can reveal more complex structure; on the other hand they can be computationally intensive, less interpretable, and prone to overfitting to noise.
 
 </div>
 
 ---
+<!-- _class: scale-60 -->
 
 # Manifold learning methods compared
 
@@ -273,41 +278,21 @@ MDS preserves global distances, Isomap uses geodesic paths, Spectral focuses on 
 
 ---
 
-# PCA vs. t-SNE vs. UMAP
-
-| Feature | PCA | t-SNE | UMAP |
-| :--- | :--- | :--- | :--- |
-| **Speed** | Very Fast | Slow | Fast |
-| **Scalability** | Excellent | Poor (<10k) | Excellent |
-| **Global structure** | Yes | No | Yes |
-| **Local structure** | Partial | Yes | Yes |
-| **Deterministic** | Yes | No | Partial |
-| **Out-of-sample** | Yes | No | Yes |
-
-<div class="tip-box" data-title="Best practice workflow">
-
-1. **PCA to 50D:** Fast preprocessing, removes noise
-2. **UMAP to 2D:** Preserves structure, scales well
-
-</div>
-
----
-
 # Visualization best practices
 
 <div class="note-box" data-title="Preparation">
 
-- **Standardize:** Use `StandardScaler` for PCA
-- **Sample:** For very large datasets, subsample or use PCA first
-- **Iterate:** Try multiple hyperparameters
+- **Standardize:** use `StandardScaler` for PCA
+- **Sample:** for very large datasets, subsample or use PCA first
+- **Iterate:** try multiple hyperparameters
 
 </div>
 
 <div class="tip-box" data-title="Presentation">
 
-- **Color intelligently:** By semantic category, cluster, or feature
-- **Interactive:** Use Plotly, datamapplot, or Bokeh for hover tooltips
-- **Annotate selectively:** Label representative points, not every one
+- **Color intelligently:** by semantic category, cluster, or feature
+- **Interactive:** use Plotly, datamapplot, or Bokeh for hover tooltips
+- **Annotate selectively:** label representative points, not every one
 
 </div>
 
@@ -320,14 +305,15 @@ MDS preserves global distances, Isomap uses geodesic paths, Spectral focuses on 
 </div>
 
 ---
+<!-- _class: scale-80 -->
 
-# HyperTools: Quick visualization workflows
+# HyperTools: quick visualization workflows
 
 <div class="note-box" data-title="What is HyperTools?">
 
 A Python toolbox for **dimensionality reduction-based visual exploration** of high-dimensional data. Reduce, align, and plot in a single function call.
 
-[**GitHub**](https://github.com/ContextLab/hypertools) | [**Documentation**](https://hypertools.readthedocs.io/)
+[**GitHub**](https://github.com/ContextLab/hypertools) | [**Documentation**](https://hypertools.readthedocs.io/) | [**Paper**](https://www.jmlr.org/papers/v18/17-434.html)
 
 </div>
 
@@ -338,8 +324,11 @@ A Python toolbox for **dimensionality reduction-based visual exploration** of hi
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
-# HyperTools: Example code
+# HyperTools: Python example
+
+<div class="example-box" data-title="Example">
 
 ```python
 import hypertools as hyp
@@ -355,6 +344,8 @@ reduced = hyp.reduce(data, reduce='PCA', ndims=10)
 aligned = hyp.align(data, align='hyper')
 hyp.plot(aligned, fmt='o')
 ```
+
+</div>
 
 <div class="tip-box" data-title="Key functions">
 
@@ -380,7 +371,7 @@ hyp.plot(aligned, fmt='o')
 
 <div class="tip-box" data-title="Try it yourself!">
 
-📓 [X-hour Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week4/xhour_dimred_demo.ipynb) — Interactive demo with BERTopic and datamapplot
+[X-hour Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week4/xhour_dimred_demo.ipynb) — Interactive demo with BERTopic and datamapplot
 
 </div>
 
@@ -405,6 +396,6 @@ hyp.plot(aligned, fmt='o')
 
 <div class="tip-box" data-title="Up next">
 
-Friday: Cognitive models of semantic representation — how do humans represent meaning?
+Cognitive models of semantic representation: how do *humans* represent meaning?
 
 </div>
