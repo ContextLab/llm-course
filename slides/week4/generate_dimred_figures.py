@@ -30,7 +30,6 @@ from sklearn.decomposition import (
     FastICA,
     FactorAnalysis,
     NMF,
-    DictionaryLearning,
 )
 from sklearn.manifold import TSNE, MDS, Isomap, SpectralEmbedding
 import warnings
@@ -154,8 +153,8 @@ def create_scatter_plot(coords_2d, labels, label_names, filename, title=None):
     if title:
         ax.set_title(title, fontweight="bold", pad=15)
 
-    ax.set_xlabel("Dimension 1", fontsize=16)
-    ax.set_ylabel("Dimension 2", fontsize=16)
+    ax.set_xlabel("Dimension 1", fontsize=20)
+    ax.set_ylabel("Dimension 2", fontsize=20)
 
     # Legend outside plot with black border and transparent background
     legend = ax.legend(
@@ -259,22 +258,11 @@ def create_matrix_factorization_grid(
     X_nonneg = np.abs(X)  # For NMF which requires non-negative input
     y = labels[indices]
 
-    # For Dictionary Learning: use more components then reduce with PCA
-    # This avoids the sparse collapse issue
-    dict_learn = DictionaryLearning(
-        n_components=20,  # Learn 20 components first
-        random_state=42,
-        max_iter=1000,
-        transform_algorithm="omp",  # Orthogonal Matching Pursuit - more stable
-        transform_n_nonzero_coefs=10,  # Allow more non-zero coefficients
-    )
-
     methods = [
         ("PCA", PCA(n_components=2, random_state=42)),
         ("ICA", FastICA(n_components=2, random_state=42, max_iter=500)),
         ("Factor Analysis", FactorAnalysis(n_components=2, random_state=42)),
         ("NMF", NMF(n_components=2, random_state=42, max_iter=500, init="nndsvd")),
-        ("Dictionary Learning", dict_learn),  # Will reduce to 2D after
     ]
 
     fig, axes = plt.subplots(2, 3, figsize=(14, 9))
@@ -288,14 +276,6 @@ def create_matrix_factorization_grid(
         try:
             if name == "NMF":
                 coords_2d = model.fit_transform(X_nonneg)
-            elif name == "Dictionary Learning":
-                # Dictionary Learning: first transform to 20D, then PCA to 2D
-                print(f"  Computing {name} (20D then PCA to 2D)...")
-                coords_high = model.fit_transform(
-                    X_nonneg
-                )  # Use non-negative for stability
-                pca_reduce = PCA(n_components=2, random_state=42)
-                coords_2d = pca_reduce.fit_transform(coords_high)
             else:
                 coords_2d = model.fit_transform(X)
 
@@ -331,16 +311,16 @@ def create_matrix_factorization_grid(
             )
             ax.set_title(name, fontweight="bold", fontsize=14)
 
-    # Hide the 6th subplot and add legend there (no title for legend panel)
+    # Hide unused subplots and add legend to axes[4]
+    axes[4].axis("off")
     axes[5].axis("off")
     handles, labels_legend = axes[0].get_legend_handles_labels()
-    legend = axes[5].legend(
+    legend = axes[4].legend(
         handles, labels_legend, loc="center", frameon=True, fontsize=12
     )
     legend.get_frame().set_alpha(0.0)  # Transparent background
     legend.get_frame().set_edgecolor("black")  # Black border
     legend.get_frame().set_linewidth(1.5)
-    # No title for legend panel
 
     # No overall figure title
     plt.tight_layout()
