@@ -703,302 +703,121 @@ Winter 2026</p>
 <h1 id="learning-objectives">Learning objectives</h1>
 <div class="note-box" data-title="By the end of this lecture, you will">
 <ol>
-<li>Understand the <strong>curse of dimensionality</strong> and why we need reduction</li>
-<li>Explain how <strong>PCA</strong> finds directions of maximum variance</li>
-<li>Understand <strong>t-SNE</strong> and how it preserves local structure</li>
-<li>Apply <strong>UMAP</strong> for fast, scalable dimensionality reduction</li>
-<li>Compare different techniques and follow visualization best practices</li>
+<li>Understand <strong>why</strong> we need dimensionality reduction for embeddings</li>
+<li>Apply <strong>PCA</strong> for fast, linear projection</li>
+<li>Apply <strong>t-SNE</strong> for local structure preservation</li>
+<li>Apply <strong>UMAP</strong> for scalable, global+local structure</li>
+<li>Know <strong>when to use</strong> each technique</li>
 </ol>
 </div>
 <div class="definition-box" data-title="The goal">
-<p>Reduce from <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> dimensions (e.g., 300) to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> dimensions (e.g., 2 or 3) while preserving as much meaningful structure as possible.</p>
+<p>Reduce from <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> dimensions (e.g., 300-768) to 2-3 dimensions while preserving meaningful structure for visualization.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-curse-of-dimensionality">The curse of dimensionality</h1>
-<div class="warning-box" data-title="The problem">
-<p>High-dimensional spaces behave in counter-intuitive ways that make visualization and computation difficult.</p>
-</div>
-<div class="note-box" data-title="Embedding dimensions">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="why-dimensionality-reduction">Why dimensionality reduction?</h1>
+<div class="warning-box" data-title="The curse of dimensionality">
+<p>High-dimensional spaces behave counter-intuitively: all points tend to be equidistant!</p>
 <ul>
-<li><strong>Word2Vec / GloVe / FastText:</strong> 300 dimensions</li>
+<li><strong>Word2Vec / GloVe:</strong> 300 dimensions</li>
 <li><strong>BERT:</strong> 768 dimensions</li>
-<li><strong>GPT-3:</strong> 12,288 dimensions!</li>
+<li><strong>GPT-3:</strong> 12,288 dimensions</li>
 </ul>
 </div>
-<div class="example-box" data-title="Distance concentration">
-<p>In high dimensions, all points tend to cluster around the same distance from the origin!</p>
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">import numpy as np</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"># Sample 1000 random points in different dims</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">for dim in [2, 10, 100, 300]:</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">    points = np.random.randn(1000, dim)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">    dists = np.linalg.norm(points, axis=1)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">    print(f&quot;Dim={dim}: mean={dists.mean():.2f}, std={dists.std():.2f}&quot;)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"># Dim=300: mean=17.3, std=0.50 (Very tight distribution!)</span></span>
-</code></pre>
+<div class="note-box" data-title="Applications">
+<ul>
+<li><strong>Visualization:</strong> 2D/3D plots to explore semantic structure</li>
+<li><strong>Quality assurance:</strong> Verify embeddings capture expected relationships</li>
+<li><strong>Preprocessing:</strong> Reduce noise before clustering</li>
+<li><strong>Interpretation:</strong> Understand relationships between words/documents</li>
+</ul>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="why-dimensionality-reduction">Why dimensionality reduction?</h1>
-<div class="note-box" data-title="Visualization">
-<ul>
-<li>2D/3D plots to explore semantic structure</li>
-<li>Identify clusters and discover patterns</li>
-<li>Quality assurance for embeddings</li>
-</ul>
-</div>
-<div class="tip-box" data-title="Computation & ML">
-<ul>
-<li><strong>Faster algorithms:</strong> Less memory and compute required</li>
-<li><strong>Reduce overfitting:</strong> Feature selection and noise removal</li>
-<li><strong>Scalability:</strong> Enable real-time systems</li>
-</ul>
-</div>
-<div class="important-box" data-title="Interpretation">
-<p>Understand relationships between words/documents and communicate results effectively.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="principal-component-analysis-pca">Principal Component Analysis (PCA)</h1>
+<h1 id="pca-principal-component-analysis">PCA: Principal Component Analysis</h1>
 <div class="definition-box" data-title="The classic linear method">
-<p>Finds directions of maximum variance and projects data onto these orthogonal &quot;principal components.&quot;</p>
+<p>Finds directions of <strong>maximum variance</strong> and projects data onto these orthogonal &quot;principal components.&quot;</p>
 </div>
 <div class="note-box" data-title="Properties">
 <ul>
-<li><strong>Linear transformation:</strong> Preserves global structure</li>
-<li><strong>Deterministic:</strong> Same result every time</li>
-<li><strong>Fast:</strong> Efficient computation via SVD</li>
-<li><strong>Interpretable:</strong> PCs are ranked by variance explained</li>
-</ul>
-</div>
-<div class="example-box" data-title="Intuition">
-<ul>
-<li><strong>PC1:</strong> Captures the most variation in the data</li>
-<li><strong>PC2:</strong> Captures the remaining variation (orthogonal to PC1)</li>
-</ul>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="pca-the-algorithm">PCA: The algorithm</h1>
-<div class="example-box" data-title="Worked example (3D → 2D)">
-<table>
-<thead>
-<tr>
-<th>Word</th>
-<th>x1</th>
-<th>x2</th>
-<th>x3</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>king</td>
-<td>2.0</td>
-<td>1.5</td>
-<td>0.1</td>
-</tr>
-<tr>
-<td>queen</td>
-<td>1.8</td>
-<td>1.6</td>
-<td>0.2</td>
-</tr>
-<tr>
-<td>man</td>
-<td>1.0</td>
-<td>0.5</td>
-<td>0.1</td>
-</tr>
-<tr>
-<td>woman</td>
-<td>0.9</td>
-<td>0.6</td>
-<td>0.2</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Step 1:</strong> Center data (subtract mean)<br />
-<strong>Step 2:</strong> Compute covariance matrix<br />
-<strong>Step 3:</strong> Find eigenvectors/eigenvalues</p>
-</div>
-<div class="note-box" data-title="Variance retained">
-<ul>
-<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>1</mn></msub><mo>=</mo><mn>0.85</mn></mrow><annotation encoding="application/x-tex">\lambda_1 = 0.85</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">λ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.85</span></span></span></span> (85% variance)</li>
-<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>2</mn></msub><mo>=</mo><mn>0.13</mn></mrow><annotation encoding="application/x-tex">\lambda_2 = 0.13</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">λ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.13</span></span></span></span> (13% variance)</li>
-<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>3</mn></msub><mo>=</mo><mn>0.02</mn></mrow><annotation encoding="application/x-tex">\lambda_3 = 0.02</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">λ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.02</span></span></span></span> (2% variance)</li>
-</ul>
-<p><strong>Keep top 2 PCs → 98% variance retained!</strong> Gender remains separable and royalty still clusters.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="pca-in-python">PCA in Python</h1>
-<div class="example-box" data-title="Using scikit-learn">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from sklearn.decomposition import PCA</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">from sklearn.preprocessing import StandardScaler</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Standardize the data (recommended)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">scaler = StandardScaler()</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">embeddings_scaled = scaler.fit_transform(embeddings)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"># Apply PCA</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">pca = PCA(n_components=2)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">embeddings_2d = pca.fit_transform(embeddings_scaled)</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"># Check variance explained</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">print(f&quot;Total variance explained: {sum(pca.explained_variance_ratio_):.2%}&quot;)</span></span>
-</code></pre>
-</div>
-<div class="tip-box" data-title="Visualization">
-<p>Use <code>plt.scatter</code> and <code>plt.annotate</code> to see how words like &quot;king&quot; and &quot;queen&quot; relate in the reduced space.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="pca-limitations">PCA limitations</h1>
-<div class="warning-box" data-title="Assumes linearity">
-<ul>
-<li>Only captures linear relationships</li>
-<li>Word embeddings often have non-linear structure (manifolds)</li>
-<li>May miss important semantic patterns</li>
-</ul>
-</div>
-<div class="note-box" data-title="Other issues">
-<ul>
-<li><strong>Variance ≠ Importance:</strong> Noisy dimensions might have high variance</li>
-<li><strong>Global focus:</strong> May lose local structure (clusters become blurred)</li>
-<li><strong>Interpretability:</strong> PCs are linear combinations, hard to map to specific meanings</li>
+<li><strong>Linear transformation</strong> — preserves global structure</li>
+<li><strong>Deterministic</strong> — same result every time</li>
+<li><strong>Fast</strong> — efficient computation via SVD</li>
+<li><strong>Interpretable</strong> — PCs ranked by variance explained</li>
 </ul>
 </div>
 <div class="tip-box" data-title="When to use PCA">
-<p>Quick first exploration, preprocessing for other methods (like t-SNE/UMAP), or when speed is critical.</p>
+<p>Quick first exploration, preprocessing for other methods (like t-SNE/UMAP), or when computational speed is critical.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="pca-20-newsgroups-visualization">PCA: 20 Newsgroups visualization</h1>
+<p><img src="figures/pca_visualization.png" alt="" style="width:900px;" /></p>
+<div class="example-box" data-title="Observations">
+<ul>
+<li>Categories overlap significantly — PCA captures global structure but loses local clusters</li>
+<li>Fast to compute (~100ms for 7000 documents)</li>
+<li>Only captures <strong>linear</strong> relationships</li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="t-sne-t-distributed-stochastic-neighbor-embedding">t-SNE: t-Distributed Stochastic Neighbor Embedding</h1>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf"><strong>van der Maaten &amp; Hinton (2008, <em>JMLR</em>)</strong></a> Visualizing Data using t-SNE.</p>
 </div>
 <div class="definition-box" data-title="Non-linear visualization">
-<p>Models similarity as probability: Gaussian in high-D, t-distribution in low-D. Minimizes KL divergence between distributions.</p>
+<p>Models similarity as probability distributions. Preserves <strong>local structure</strong> — neighbors stay neighbors.</p>
 </div>
-<div class="tip-box" data-title="Advantages">
+<div class="warning-box" data-title="Caveats">
 <ul>
-<li>Beautiful visualizations that reveal clusters</li>
-<li>Preserves local structure (neighbors stay neighbors)</li>
-<li>Widely used for high-dimensional data exploration</li>
+<li><strong>Slow:</strong> O(N²) complexity</li>
+<li><strong>Non-deterministic:</strong> Different seeds → different layouts</li>
+<li><strong>Cluster sizes are arbitrary</strong> — don't interpret &quot;bigger&quot; as &quot;more variance&quot;</li>
+<li><strong>Distances between clusters are meaningless</strong></li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="t-sne-20-newsgroups-visualization">t-SNE: 20 Newsgroups visualization</h1>
+<p><img src="figures/tsne_visualization.png" alt="" style="width:900px;" /></p>
+<div class="example-box" data-title="Observations">
+<ul>
+<li>Clear, tight clusters emerge — great for identifying groups</li>
+<li>Categories now well-separated</li>
+<li>Perplexity parameter controls local vs. global focus (here: 30)</li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="umap-uniform-manifold-approximation--projection">UMAP: Uniform Manifold Approximation &amp; Projection</h1>
+<div class="note-box" data-title="Further reading">
+<p><a href="https://arxiv.org/abs/1802.03426"><strong>McInnes et al. (2018, <em>arXiv</em>)</strong></a> UMAP: Uniform Manifold Approximation and Projection.</p>
+</div>
+<div class="definition-box" data-title="The modern standard (2018)">
+<p>Theoretically grounded in topology. Preserves <strong>both local AND global</strong> structure.</p>
+</div>
+<div class="tip-box" data-title="Key advantages">
+<ul>
+<li><strong>Fast:</strong> O(N log N) complexity</li>
+<li><strong>Scalable:</strong> Handles millions of points</li>
+<li><strong>Out-of-sample:</strong> Can transform new points without refitting</li>
+<li><strong>Global structure:</strong> Keeps related clusters near each other</li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="umap-20-newsgroups-visualization">UMAP: 20 Newsgroups visualization</h1>
+<p><img src="figures/umap_visualization.png" alt="" style="width:900px;" /></p>
+<div class="example-box" data-title="Observations">
+<ul>
+<li>Clear clusters like t-SNE, but preserves global relationships</li>
+<li>Related categories (sci.space, sci.med) remain nearby</li>
+<li>Much faster than t-SNE for large datasets</li>
 </ul>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="t-sne-key-concepts">t-SNE: Key concepts</h1>
-<div class="important-box" data-title="The crowding problem">
-<p>In 2D, there isn't enough &quot;room&quot; to fit all the neighbors a point had in high-D. The <strong>t-distribution</strong> has heavier tails, allowing moderately-distant points to spread further apart.</p>
-</div>
-<div class="example-box" data-title="Perplexity">
-<p>Balances attention between local and global aspects of the data.</p>
-<ul>
-<li><strong>Low (5):</strong> Tight, fragmented clusters (fine structure)</li>
-<li><strong>Medium (30):</strong> Balanced view (standard choice)</li>
-<li><strong>High (100):</strong> Merged clusters (global view)</li>
-</ul>
-<p><strong>Rule of thumb:</strong> Perplexity <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≈</mo><msqrt><mi>N</mi></msqrt></mrow><annotation encoding="application/x-tex">\approx \sqrt{N}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4831em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.1133em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9267em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span><span style="top:-2.8867em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
-c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
-c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
-c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
-s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
-c69,-144,104.5,-217.7,106.5,-221
-l0 -0
-c5.3,-9.3,12,-14,20,-14
-H400000v40H845.2724
-s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
-c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
-M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1133em;"><span></span></span></span></span></span></span></span></span></p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="t-sne-in-python">t-SNE in Python</h1>
-<div class="example-box" data-title="Using scikit-learn">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from sklearn.manifold import TSNE</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">tsne = TSNE(</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">    n_components=2,</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">    perplexity=30,</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">    n_iter=2000,</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">    random_state=42</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">)</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">embeddings_2d = tsne.fit_transform(embeddings)</span></span>
-</code></pre>
-</div>
-<div class="tip-box" data-title="Pro tip">
-<p>t-SNE is computationally expensive. For large datasets, use PCA to reduce to 50 dimensions first, then run t-SNE.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="t-sne-limitations-and-caveats">t-SNE limitations and caveats</h1>
-<div class="warning-box" data-title="Performance & Determinism">
-<ul>
-<li><strong>Slow:</strong> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>N</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(N^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> complexity (10k points can take 15+ minutes)</li>
-<li><strong>Non-deterministic:</strong> Different random seeds produce different layouts</li>
-<li><strong>No out-of-sample:</strong> Cannot transform new points without refitting everything</li>
-</ul>
-</div>
-<div class="important-box" data-title="Interpretation pitfalls">
-<ul>
-<li><strong>Cluster sizes are arbitrary:</strong> A &quot;bigger&quot; cluster doesn't mean more variance</li>
-<li><strong>Distances between clusters are meaningless:</strong> Global structure is not preserved</li>
-<li><strong>Axes have no meaning:</strong> Don't try to label the x or y axis!</li>
-</ul>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="umap-uniform-manifold-approximation--projection">UMAP: Uniform Manifold Approximation &amp; Projection</h1>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://arxiv.org/abs/1802.03426"><strong>McInnes et al. (2018, <em>arXiv</em>)</strong></a> UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction.</p>
-</div>
-<div class="definition-box" data-title="The modern standard (2018)">
-<p>Theoretically grounded in topology. Faster than t-SNE and preserves both local AND global structure.</p>
-</div>
-<div class="tip-box" data-title="Key advantages">
-<ul>
-<li><strong>Fast:</strong> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>N</mi><mi>log</mi><mo>⁡</mo><mi>N</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(N \log N)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mclose">)</span></span></span></span> complexity</li>
-<li><strong>Scalable:</strong> Handles millions of points</li>
-<li><strong>Out-of-sample:</strong> Can transform new points</li>
-<li><strong>Global structure:</strong> Better at keeping related clusters near each other</li>
-</ul>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="umap-in-python">UMAP in Python</h1>
-<div class="example-box" data-title="Using umap-learn">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">import umap</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">reducer = umap.UMAP(</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">    n_components=2,</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">    n_neighbors=15,  # Local vs. global balance</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">    min_dist=0.1,    # Cluster tightness</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">    metric=&#x27;cosine&#x27;, # Best for word embeddings</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    random_state=42</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">embeddings_2d = reducer.fit_transform(embeddings)</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"># Transform new points!</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code">new_2d = reducer.transform(new_embeddings)</span></span>
-</code></pre>
-</div>
-<div class="note-box" data-title="Hyperparameters">
-<ul>
-<li><strong>n_neighbors:</strong> Small = local structure; Large = global structure</li>
-<li><strong>min_dist:</strong> Small = tight clusters; Large = loose/spread out</li>
-</ul>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="pca-vs-t-sne-vs-umap">PCA vs. t-SNE vs. UMAP</h1>
 <table>
 <thead>
@@ -1050,76 +869,28 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 </table>
 <div class="tip-box" data-title="Best practice workflow">
 <ol>
-<li><strong>PCA to 50D:</strong> Fast, removes noise</li>
-<li><strong>UMAP to 2D:</strong> Preserves structure and scales well</li>
+<li><strong>PCA to 50D:</strong> Fast preprocessing, removes noise</li>
+<li><strong>UMAP to 2D:</strong> Preserves structure, scales well</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="visualization-best-practices">Visualization best practices</h1>
 <div class="note-box" data-title="Preparation">
 <ul>
 <li><strong>Standardize:</strong> Use <code>StandardScaler</code> for PCA</li>
-<li><strong>Sample:</strong> For very large datasets, sample or use PCA first</li>
-<li><strong>Iterate:</strong> Try multiple hyperparameters (perplexity, n_neighbors)</li>
+<li><strong>Sample:</strong> For very large datasets, subsample or use PCA first</li>
+<li><strong>Iterate:</strong> Try multiple hyperparameters</li>
 </ul>
 </div>
 <div class="tip-box" data-title="Presentation">
 <ul>
-<li><strong>Color intelligently:</strong> By semantic category, cluster, or POS tag</li>
-<li><strong>Interactive:</strong> Use Plotly or Bokeh for hover tooltips and zooming</li>
-<li><strong>Annotate selectively:</strong> Label representative words, not every point</li>
+<li><strong>Color intelligently:</strong> By semantic category, cluster, or feature</li>
+<li><strong>Interactive:</strong> Use Plotly, datamapplot, or Bokeh for hover tooltips</li>
+<li><strong>Annotate selectively:</strong> Label representative points, not every one</li>
 </ul>
 </div>
-<div class="example-box" data-title="Interactive Plotly">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">import plotly.express as px</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">fig = px.scatter(df, x=&#x27;x&#x27;, y=&#x27;y&#x27;, color=&#x27;category&#x27;, hover_data=[&#x27;word&#x27;])</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">fig.show()</span></span>
-</code></pre>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="applications-in-nlp">Applications in NLP</h1>
-<div class="example-box" data-title="Embedding quality check">
-<p>Quick sanity check: Do &quot;dog&quot;, &quot;cat&quot;, &quot;fish&quot; cluster together? If it's a random scatter, your embeddings might be poor.</p>
-</div>
-<div class="note-box" data-title="Finding polysemy">
-<p>&quot;Apple&quot; might appear in two clusters: one near &quot;fruit&quot; and another near &quot;tech&quot; (Google, Microsoft).</p>
-</div>
-<div class="tip-box" data-title="Model layer comparison">
-<p>Visualize different BERT layers to see how syntax (lower layers) evolves into semantics (middle layers).</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="case-study-visualizing-bert-layers">Case study: Visualizing BERT layers</h1>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://aclanthology.org/P19-1356/"><strong>Jawahar et al. (2019, <em>ACL</em>)</strong></a> What Does BERT Learn about the Structure of Language?</p>
-</div>
-<div class="example-box" data-title="Findings">
-<ul>
-<li><strong>Layers 0-2:</strong> Syntactic (POS tags cluster)</li>
-<li><strong>Layers 3-8:</strong> Semantic (meaning clusters)</li>
-<li><strong>Layers 9-12:</strong> Task-specific adaptation</li>
-</ul>
-</div>
-<div class="tip-box" data-title="Insight">
-<p>Confirms a linguistic hierarchy where the model builds complex meaning from basic structural components.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="discussion-what-do-2d-views-tell-us">Discussion: What do 2D views tell us?</h1>
-<div class="warning-box" data-title="Information loss">
-<p>Compressing 300D to 2D involves &gt;99% information loss. Projections are &quot;shadows&quot; of the true high-D structure.</p>
-</div>
-<div class="note-box" data-title="What we CAN conclude">
-<ul>
-<li>Rough semantic groupings and relative proximities</li>
-<li>Existence of clusters and outliers</li>
-<li>Qualitative patterns in the data</li>
-</ul>
-</div>
-<div class="important-box" data-title="What we CANNOT conclude">
+<div class="warning-box" data-title="What you CANNOT conclude">
 <ul>
 <li>Exact distances or true high-D geometry</li>
 <li>Quantitative relationships between distant clusters</li>
@@ -1127,33 +898,22 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="summary">Summary</h1>
 <div class="note-box" data-title="What we learned">
 <ol>
-<li><strong>Curse of Dimensionality:</strong> High-D space is counter-intuitive; reduction is essential for visualization.</li>
+<li><strong>Curse of Dimensionality:</strong> High-D space is counter-intuitive; reduction essential for visualization</li>
 <li><strong>PCA:</strong> Linear, fast, global focus. Best for noise removal and preprocessing.</li>
-<li><strong>t-SNE:</strong> Non-linear, local focus. Great for clusters but slow and non-deterministic.</li>
+<li><strong>t-SNE:</strong> Non-linear, local focus. Great for clusters but slow.</li>
 <li><strong>UMAP:</strong> Fast, scalable, preserves local and global structure. The modern default.</li>
-<li><strong>Workflow:</strong> PCA (50D) → UMAP (2D) is the gold standard for NLP visualization.</li>
+<li><strong>Workflow:</strong> PCA (50D) → UMAP (2D) is the gold standard.</li>
 </ol>
 </div>
-<div class="tip-box" data-title="Coming up">
-<p>Next: Cognitive models of semantic representation — how do humans represent meaning?</p>
+<div class="tip-box" data-title="Try it yourself!">
+<p><img class="emoji" draggable="false" alt="📓" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4d3.svg" data-marp-twemoji=""/> <a href="https://contextlab.github.io/llm-course/slides/week4/xhour_dimred_demo.html">X-hour Notebook</a> — Interactive demo with BERTopic and datamapplot</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="further-reading">Further reading</h1>
-<div class="note-box" data-title="Foundational papers">
-<p><a href="https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf"><strong>van der Maaten &amp; Hinton (2008, <em>JMLR</em>)</strong></a> Visualizing Data using t-SNE.</p>
-<p><a href="https://arxiv.org/abs/1802.03426"><strong>McInnes et al. (2018, <em>arXiv</em>)</strong></a> UMAP: Uniform Manifold Approximation and Projection.</p>
-<p><a href="https://aclanthology.org/P19-1356/"><strong>Jawahar et al. (2019, <em>ACL</em>)</strong></a> What Does BERT Learn about the Structure of Language?</p>
-</div>
-<div class="tip-box" data-title="Resources">
-<p><a href="https://distill.pub/2016/misread-tsne/">How to Use t-SNE Effectively (Distill)</a> | <a href="https://umap-learn.readthedocs.io/">UMAP Documentation</a></p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
@@ -1170,7 +930,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
   </div>
 </div>
 <div class="tip-box" data-title="Up next">
-<p>Friday: Cognitive models of semantic representation!</p>
+<p>Friday: Cognitive models of semantic representation — how do humans represent meaning?</p>
 </div>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();

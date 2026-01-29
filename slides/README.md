@@ -153,6 +153,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 **Thursday X-hour (Lecture 13):** Dimensionality Reduction
 - PCA and UMAP for visualization
 - Reading: [McInnes & Healy (2018)](https://arxiv.org/pdf/1802.03426) - UMAP
+- 📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week4/xhour_dimred_demo.html)
 - 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture13.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture13.html)
 
