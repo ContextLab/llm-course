@@ -151,9 +151,10 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture12.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture12.html)
 
 **Thursday X-hour (Lecture 13):** Dimensionality Reduction
-- PCA and UMAP for visualization
-- Reading: [McInnes & Healy (2018)](https://arxiv.org/pdf/1802.03426) - UMAP
-- 📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week4/xhour_dimred_demo.html)
+- Matrix factorization (PCA, ICA, NMF) and manifold learning (t-SNE, UMAP)
+- Reading: [van der Maaten & Hinton (2008)](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf) - t-SNE
+- Reading: [McInnes & Healy (2018)](https://arxiv.org/abs/1802.03426) - UMAP
+- 📓 [X-hour Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week4/xhour_dimred_demo.ipynb)
 - 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture13.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture13.html)
 
@@ -339,8 +340,10 @@ X-hours will be used in the first 4 weeks to make up for missed class time (Feb 
   - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture9.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture9.html)
 
 - **Week 4 Thursday X-hour (Lecture 13):** Dimensionality Reduction
-  - PCA and UMAP for visualization
-  - Reading: [McInnes & Healy (2018)](https://arxiv.org/pdf/1802.03426) - UMAP
+  - Matrix factorization (PCA, ICA, NMF) and manifold learning (t-SNE, UMAP)
+  - Reading: [van der Maaten & Hinton (2008)](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf) - t-SNE
+  - Reading: [McInnes & Healy (2018)](https://arxiv.org/abs/1802.03426) - UMAP
+  - 📓 [X-hour Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week4/xhour_dimred_demo.ipynb)
   - 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/)
   - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture13.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture13.html)
 

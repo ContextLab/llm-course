@@ -704,10 +704,10 @@ Winter 2026</p>
 <div class="note-box" data-title="By the end of this lecture, you will">
 <ol>
 <li>Understand <strong>why</strong> we need dimensionality reduction for embeddings</li>
-<li>Apply <strong>PCA</strong> for fast, linear projection</li>
-<li>Apply <strong>t-SNE</strong> for local structure preservation</li>
-<li>Apply <strong>UMAP</strong> for scalable, global+local structure</li>
+<li>Know the <strong>matrix factorization</strong> family (PCA, ICA, NMF, etc.)</li>
+<li>Know the <strong>manifold learning</strong> family (t-SNE, UMAP, MDS, etc.)</li>
 <li>Know <strong>when to use</strong> each technique</li>
+<li>Apply <strong>HyperTools</strong> for quick visualization workflows</li>
 </ol>
 </div>
 <div class="definition-box" data-title="The goal">
@@ -715,7 +715,13 @@ Winter 2026</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="why-dimensionality-reduction">Why dimensionality reduction?</h1>
+<h1 id="the-challenge-of-high-dimensions">The challenge of high dimensions</h1>
+<div class="quote-box">
+<blockquote>
+<p>&quot;To deal with a 14-dimensional space, visualize a 3-D space and say 'fourteen' to yourself very loudly. Everyone does it.&quot;</p>
+<p>— <strong>Geoffrey Hinton</strong>, University of Toronto</p>
+</blockquote>
+</div>
 <div class="warning-box" data-title="The curse of dimensionality">
 <p>High-dimensional spaces behave counter-intuitively: all points tend to be equidistant!</p>
 <ul>
@@ -724,6 +730,9 @@ Winter 2026</p>
 <li><strong>GPT-3:</strong> 12,288 dimensions</li>
 </ul>
 </div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="why-dimensionality-reduction">Why dimensionality reduction?</h1>
 <div class="note-box" data-title="Applications">
 <ul>
 <li><strong>Visualization:</strong> 2D/3D plots to explore semantic structure</li>
@@ -732,8 +741,36 @@ Winter 2026</p>
 <li><strong>Interpretation:</strong> Understand relationships between words/documents</li>
 </ul>
 </div>
+<div class="tip-box" data-title="Two major families">
+<ol>
+<li><strong>Matrix factorization:</strong> Linear methods that decompose data into factors</li>
+<li><strong>Manifold learning:</strong> Non-linear methods that preserve geometric structure</li>
+</ol>
+</div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="matrix-factorization-the-big-picture">Matrix factorization: The big picture</h1>
+<div class="definition-box" data-title="Core idea">
+<p>Decompose the data matrix into a product of smaller matrices:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="bold">Y</mi><mo>≈</mo><mi mathvariant="bold">W</mi><mi mathvariant="bold">F</mi></mrow><annotation encoding="application/x-tex">\mathbf{Y} \approx \mathbf{W} \mathbf{F}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf" style="margin-right:0.02875em;">Y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf">WF</span></span></span></span></span></p><p>Where:</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">Y</mi></mrow><annotation encoding="application/x-tex">\mathbf{Y}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf" style="margin-right:0.02875em;">Y</span></span></span></span> is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>×</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">n \times d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> (observations × features)</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">W</mi></mrow><annotation encoding="application/x-tex">\mathbf{W}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf" style="margin-right:0.01597em;">W</span></span></span></span> is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>×</mo><mi>k</mi></mrow><annotation encoding="application/x-tex">n \times k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> (observations × components) — the <strong>weights</strong></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">F</mi></mrow><annotation encoding="application/x-tex">\mathbf{F}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf">F</span></span></span></span> is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>×</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">k \times d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> (components × features) — the <strong>factors</strong></li>
+</ul>
+</div>
+<div class="note-box" data-title="The family">
+<ul>
+<li><strong>PCA:</strong> Maximize variance, orthogonal factors</li>
+<li><strong>ICA:</strong> Maximize statistical independence</li>
+<li><strong>Factor Analysis:</strong> Model latent variables with noise</li>
+<li><strong>NMF:</strong> Non-negative constraints (interpretable parts)</li>
+<li><strong>Dictionary Learning:</strong> Sparse, overcomplete representations</li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="pca-principal-component-analysis">PCA: Principal Component Analysis</h1>
 <div class="definition-box" data-title="The classic linear method">
 <p>Finds directions of <strong>maximum variance</strong> and projects data onto these orthogonal &quot;principal components.&quot;</p>
@@ -750,18 +787,21 @@ Winter 2026</p>
 <p>Quick first exploration, preprocessing for other methods (like t-SNE/UMAP), or when computational speed is critical.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="pca-20-newsgroups-visualization">PCA: 20 Newsgroups visualization</h1>
-<p><img src="figures/pca_visualization.png" alt="" style="width:900px;" /></p>
+<p><img src="figures/pca_visualization.png" alt="" style="width:800px;" /></p>
 <div class="example-box" data-title="Observations">
-<ul>
-<li>Categories overlap significantly — PCA captures global structure but loses local clusters</li>
-<li>Fast to compute (~100ms for 7000 documents)</li>
-<li>Only captures <strong>linear</strong> relationships</li>
-</ul>
+<p>Categories overlap significantly — PCA captures global structure but loses local clusters. Fast to compute (~100ms for 7000 documents). Only captures <strong>linear</strong> relationships.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="matrix-factorization-methods-compared">Matrix factorization methods compared</h1>
+<p><img src="figures/matrix_factorization_grid.png" alt="" style="width:800px;" /></p>
+<div class="note-box" data-title="Key differences">
+<p>Each method optimizes different objectives: PCA maximizes variance, ICA maximizes independence, NMF ensures non-negativity. Choose based on your data's structure and interpretability needs.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="t-sne-t-distributed-stochastic-neighbor-embedding">t-SNE: t-Distributed Stochastic Neighbor Embedding</h1>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf"><strong>van der Maaten &amp; Hinton (2008, <em>JMLR</em>)</strong></a> Visualizing Data using t-SNE.</p>
@@ -778,18 +818,14 @@ Winter 2026</p>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="t-sne-20-newsgroups-visualization">t-SNE: 20 Newsgroups visualization</h1>
-<p><img src="figures/tsne_visualization.png" alt="" style="width:900px;" /></p>
+<p><img src="figures/tsne_visualization.png" alt="" style="width:800px;" /></p>
 <div class="example-box" data-title="Observations">
-<ul>
-<li>Clear, tight clusters emerge — great for identifying groups</li>
-<li>Categories now well-separated</li>
-<li>Perplexity parameter controls local vs. global focus (here: 30)</li>
-</ul>
+<p>Clear, tight clusters emerge — great for identifying groups. Categories now well-separated. Perplexity parameter controls local vs. global focus (here: 30).</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="umap-uniform-manifold-approximation--projection">UMAP: Uniform Manifold Approximation &amp; Projection</h1>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://arxiv.org/abs/1802.03426"><strong>McInnes et al. (2018, <em>arXiv</em>)</strong></a> UMAP: Uniform Manifold Approximation and Projection.</p>
@@ -806,18 +842,39 @@ Winter 2026</p>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="umap-20-newsgroups-visualization">UMAP: 20 Newsgroups visualization</h1>
-<p><img src="figures/umap_visualization.png" alt="" style="width:900px;" /></p>
+<p><img src="figures/umap_visualization.png" alt="" style="width:800px;" /></p>
 <div class="example-box" data-title="Observations">
-<ul>
-<li>Clear clusters like t-SNE, but preserves global relationships</li>
-<li>Related categories (sci.space, sci.med) remain nearby</li>
-<li>Much faster than t-SNE for large datasets</li>
-</ul>
+<p>Clear clusters like t-SNE, but preserves global relationships. Related categories (sci.space, sci.med) remain nearby. Much faster than t-SNE for large datasets.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="manifold-learning-the-big-picture">Manifold learning: The big picture</h1>
+<div class="definition-box" data-title="Core idea">
+<p>Assume high-dimensional data lies on a lower-dimensional <strong>manifold</strong> (curved surface). Learn the manifold structure and unfold it.</p>
+</div>
+<div class="note-box" data-title="The family">
+<ul>
+<li><strong>MDS:</strong> Preserve pairwise distances</li>
+<li><strong>Isomap:</strong> Geodesic distances on manifold</li>
+<li><strong>Spectral Embedding:</strong> Graph Laplacian eigenvectors</li>
+<li><strong>t-SNE:</strong> Probability-based local structure</li>
+<li><strong>UMAP:</strong> Topological structure preservation</li>
+</ul>
+</div>
+<div class="tip-box" data-title="Key insight">
+<p>These methods capture <strong>non-linear</strong> relationships that matrix factorization misses.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="manifold-learning-methods-compared">Manifold learning methods compared</h1>
+<p><img src="figures/manifold_learning_grid.png" alt="" style="width:800px;" /></p>
+<div class="note-box" data-title="Key differences">
+<p>MDS preserves global distances, Isomap uses geodesic paths, Spectral focuses on connectivity. t-SNE and UMAP balance local and global structure differently.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="pca-vs-t-sne-vs-umap">PCA vs. t-SNE vs. UMAP</h1>
 <table>
 <thead>
@@ -874,7 +931,7 @@ Winter 2026</p>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="visualization-best-practices">Visualization best practices</h1>
 <div class="note-box" data-title="Preparation">
 <ul>
@@ -898,22 +955,56 @@ Winter 2026</p>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="hypertools-quick-visualization-workflows">HyperTools: Quick visualization workflows</h1>
+<div class="note-box" data-title="What is HyperTools?">
+<p>A Python toolbox for <strong>dimensionality reduction-based visual exploration</strong> of high-dimensional data. Reduce, align, and plot in a single function call.</p>
+<p><a href="https://github.com/ContextLab/hypertools"><strong>GitHub</strong></a> | <a href="https://hypertools.readthedocs.io/"><strong>Documentation</strong></a></p>
+</div>
+<div style="text-align: center;">
+<p><img src="https://github.com/ContextLab/hypertools/raw/master/images/hypertools.gif" alt="" style="width:600px;" /></p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="hypertools-example-code">HyperTools: Example code</h1>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">import hypertools as hyp</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"># Load sample high-dimensional data</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">data = hyp.load(&#x27;weights&#x27;).get_data()</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"># All-in-one: reduce, align, and plot</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">hyp.plot(data, reduce=&#x27;UMAP&#x27;, align=&#x27;hyper&#x27;, ndims=3)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"># Or use functions individually</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">reduced = hyp.reduce(data, reduce=&#x27;PCA&#x27;, ndims=10)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">aligned = hyp.align(data, align=&#x27;hyper&#x27;)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">hyp.plot(aligned, fmt=&#x27;o&#x27;)</span></span>
+</code></pre>
+<div class="tip-box" data-title="Key functions">
+<ul>
+<li><code>hyp.plot()</code> — Visualize with automatic reduction</li>
+<li><code>hyp.reduce()</code> — Dimensionality reduction (PCA, UMAP, t-SNE, etc.)</li>
+<li><code>hyp.align()</code> — Align multiple datasets (Procrustes, hyperalignment)</li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="summary">Summary</h1>
 <div class="note-box" data-title="What we learned">
 <ol>
 <li><strong>Curse of Dimensionality:</strong> High-D space is counter-intuitive; reduction essential for visualization</li>
-<li><strong>PCA:</strong> Linear, fast, global focus. Best for noise removal and preprocessing.</li>
-<li><strong>t-SNE:</strong> Non-linear, local focus. Great for clusters but slow.</li>
+<li><strong>Matrix Factorization:</strong> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">Y</mi><mo>≈</mo><mi mathvariant="bold">W</mi><mi mathvariant="bold">F</mi></mrow><annotation encoding="application/x-tex">\mathbf{Y} \approx \mathbf{W}\mathbf{F}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf" style="margin-right:0.02875em;">Y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf">WF</span></span></span></span> — PCA, ICA, NMF, Factor Analysis</li>
+<li><strong>Manifold Learning:</strong> MDS, Isomap, t-SNE, UMAP — capture non-linear structure</li>
 <li><strong>UMAP:</strong> Fast, scalable, preserves local and global structure. The modern default.</li>
-<li><strong>Workflow:</strong> PCA (50D) → UMAP (2D) is the gold standard.</li>
+<li><strong>HyperTools:</strong> Quick workflow for reduce → align → plot</li>
 </ol>
 </div>
 <div class="tip-box" data-title="Try it yourself!">
-<p><img class="emoji" draggable="false" alt="📓" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4d3.svg" data-marp-twemoji=""/> <a href="https://contextlab.github.io/llm-course/slides/week4/xhour_dimred_demo.html">X-hour Notebook</a> — Interactive demo with BERTopic and datamapplot</p>
+<p><img class="emoji" draggable="false" alt="📓" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4d3.svg" data-marp-twemoji=""/> <a href="https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week4/xhour_dimred_demo.ipynb">X-hour Notebook</a> — Interactive demo with BERTopic and datamapplot</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">

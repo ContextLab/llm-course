@@ -20,10 +20,10 @@ Winter 2026
 <div class="note-box" data-title="By the end of this lecture, you will">
 
 1. Understand **why** we need dimensionality reduction for embeddings
-2. Apply **PCA** for fast, linear projection
-3. Apply **t-SNE** for local structure preservation
-4. Apply **UMAP** for scalable, global+local structure
-5. Know **when to use** each technique
+2. Know the **matrix factorization** family (PCA, ICA, NMF, etc.)
+3. Know the **manifold learning** family (t-SNE, UMAP, MDS, etc.)
+4. Know **when to use** each technique
+5. Apply **HyperTools** for quick visualization workflows
 
 </div>
 
@@ -35,7 +35,15 @@ Reduce from $d$ dimensions (e.g., 300-768) to 2-3 dimensions while preserving me
 
 ---
 
-# Why dimensionality reduction?
+# The challenge of high dimensions
+
+<div class="quote-box">
+
+> "To deal with a 14-dimensional space, visualize a 3-D space and say 'fourteen' to yourself very loudly. Everyone does it."
+> 
+> — **Geoffrey Hinton**, University of Toronto
+
+</div>
 
 <div class="warning-box" data-title="The curse of dimensionality">
 
@@ -47,12 +55,50 @@ High-dimensional spaces behave counter-intuitively: all points tend to be equidi
 
 </div>
 
+---
+
+# Why dimensionality reduction?
+
 <div class="note-box" data-title="Applications">
 
 - **Visualization:** 2D/3D plots to explore semantic structure
 - **Quality assurance:** Verify embeddings capture expected relationships
 - **Preprocessing:** Reduce noise before clustering
 - **Interpretation:** Understand relationships between words/documents
+
+</div>
+
+<div class="tip-box" data-title="Two major families">
+
+1. **Matrix factorization:** Linear methods that decompose data into factors
+2. **Manifold learning:** Non-linear methods that preserve geometric structure
+
+</div>
+
+---
+
+# Matrix factorization: The big picture
+
+<div class="definition-box" data-title="Core idea">
+
+Decompose the data matrix into a product of smaller matrices:
+
+$$\mathbf{Y} \approx \mathbf{W} \mathbf{F}$$
+
+Where:
+- $\mathbf{Y}$ is $n \times d$ (observations × features)
+- $\mathbf{W}$ is $n \times k$ (observations × components) — the **weights**
+- $\mathbf{F}$ is $k \times d$ (components × features) — the **factors**
+
+</div>
+
+<div class="note-box" data-title="The family">
+
+- **PCA:** Maximize variance, orthogonal factors
+- **ICA:** Maximize statistical independence
+- **Factor Analysis:** Model latent variables with noise
+- **NMF:** Non-negative constraints (interpretable parts)
+- **Dictionary Learning:** Sparse, overcomplete representations
 
 </div>
 
@@ -85,13 +131,23 @@ Quick first exploration, preprocessing for other methods (like t-SNE/UMAP), or w
 
 # PCA: 20 Newsgroups visualization
 
-![width:900px](figures/pca_visualization.png)
+![width:800px](figures/pca_visualization.png)
 
 <div class="example-box" data-title="Observations">
 
-- Categories overlap significantly — PCA captures global structure but loses local clusters
-- Fast to compute (~100ms for 7000 documents)
-- Only captures **linear** relationships
+Categories overlap significantly — PCA captures global structure but loses local clusters. Fast to compute (~100ms for 7000 documents). Only captures **linear** relationships.
+
+</div>
+
+---
+
+# Matrix factorization methods compared
+
+![width:800px](figures/matrix_factorization_grid.png)
+
+<div class="note-box" data-title="Key differences">
+
+Each method optimizes different objectives: PCA maximizes variance, ICA maximizes independence, NMF ensures non-negativity. Choose based on your data's structure and interpretability needs.
 
 </div>
 
@@ -124,13 +180,11 @@ Models similarity as probability distributions. Preserves **local structure** �
 
 # t-SNE: 20 Newsgroups visualization
 
-![width:900px](figures/tsne_visualization.png)
+![width:800px](figures/tsne_visualization.png)
 
 <div class="example-box" data-title="Observations">
 
-- Clear, tight clusters emerge — great for identifying groups
-- Categories now well-separated
-- Perplexity parameter controls local vs. global focus (here: 30)
+Clear, tight clusters emerge — great for identifying groups. Categories now well-separated. Perplexity parameter controls local vs. global focus (here: 30).
 
 </div>
 
@@ -163,13 +217,49 @@ Theoretically grounded in topology. Preserves **both local AND global** structur
 
 # UMAP: 20 Newsgroups visualization
 
-![width:900px](figures/umap_visualization.png)
+![width:800px](figures/umap_visualization.png)
 
 <div class="example-box" data-title="Observations">
 
-- Clear clusters like t-SNE, but preserves global relationships
-- Related categories (sci.space, sci.med) remain nearby
-- Much faster than t-SNE for large datasets
+Clear clusters like t-SNE, but preserves global relationships. Related categories (sci.space, sci.med) remain nearby. Much faster than t-SNE for large datasets.
+
+</div>
+
+---
+
+# Manifold learning: The big picture
+
+<div class="definition-box" data-title="Core idea">
+
+Assume high-dimensional data lies on a lower-dimensional **manifold** (curved surface). Learn the manifold structure and unfold it.
+
+</div>
+
+<div class="note-box" data-title="The family">
+
+- **MDS:** Preserve pairwise distances
+- **Isomap:** Geodesic distances on manifold
+- **Spectral Embedding:** Graph Laplacian eigenvectors
+- **t-SNE:** Probability-based local structure
+- **UMAP:** Topological structure preservation
+
+</div>
+
+<div class="tip-box" data-title="Key insight">
+
+These methods capture **non-linear** relationships that matrix factorization misses.
+
+</div>
+
+---
+
+# Manifold learning methods compared
+
+![width:800px](figures/manifold_learning_grid.png)
+
+<div class="note-box" data-title="Key differences">
+
+MDS preserves global distances, Isomap uses geodesic paths, Spectral focuses on connectivity. t-SNE and UMAP balance local and global structure differently.
 
 </div>
 
@@ -223,21 +313,66 @@ Theoretically grounded in topology. Preserves **both local AND global** structur
 
 ---
 
+# HyperTools: Quick visualization workflows
+
+<div class="note-box" data-title="What is HyperTools?">
+
+A Python toolbox for **dimensionality reduction-based visual exploration** of high-dimensional data. Reduce, align, and plot in a single function call.
+
+[**GitHub**](https://github.com/ContextLab/hypertools) | [**Documentation**](https://hypertools.readthedocs.io/)
+
+</div>
+
+<div style="text-align: center;">
+
+![width:600px](https://github.com/ContextLab/hypertools/raw/master/images/hypertools.gif)
+
+</div>
+
+---
+
+# HyperTools: Example code
+
+```python
+import hypertools as hyp
+
+# Load sample high-dimensional data
+data = hyp.load('weights').get_data()
+
+# All-in-one: reduce, align, and plot
+hyp.plot(data, reduce='UMAP', align='hyper', ndims=3)
+
+# Or use functions individually
+reduced = hyp.reduce(data, reduce='PCA', ndims=10)
+aligned = hyp.align(data, align='hyper')
+hyp.plot(aligned, fmt='o')
+```
+
+<div class="tip-box" data-title="Key functions">
+
+- `hyp.plot()` — Visualize with automatic reduction
+- `hyp.reduce()` — Dimensionality reduction (PCA, UMAP, t-SNE, etc.)
+- `hyp.align()` — Align multiple datasets (Procrustes, hyperalignment)
+
+</div>
+
+---
+
 # Summary
 
 <div class="note-box" data-title="What we learned">
 
 1. **Curse of Dimensionality:** High-D space is counter-intuitive; reduction essential for visualization
-2. **PCA:** Linear, fast, global focus. Best for noise removal and preprocessing.
-3. **t-SNE:** Non-linear, local focus. Great for clusters but slow.
+2. **Matrix Factorization:** $\mathbf{Y} \approx \mathbf{W}\mathbf{F}$ — PCA, ICA, NMF, Factor Analysis
+3. **Manifold Learning:** MDS, Isomap, t-SNE, UMAP — capture non-linear structure
 4. **UMAP:** Fast, scalable, preserves local and global structure. The modern default.
-5. **Workflow:** PCA (50D) → UMAP (2D) is the gold standard.
+5. **HyperTools:** Quick workflow for reduce → align → plot
 
 </div>
 
 <div class="tip-box" data-title="Try it yourself!">
 
-📓 [X-hour Notebook](https://contextlab.github.io/llm-course/slides/week4/xhour_dimred_demo.html) — Interactive demo with BERTopic and datamapplot
+📓 [X-hour Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week4/xhour_dimred_demo.ipynb) — Interactive demo with BERTopic and datamapplot
 
 </div>
 
