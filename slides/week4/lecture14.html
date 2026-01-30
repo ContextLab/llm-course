@@ -700,21 +700,10 @@ Dartmouth College<br />
 Winter 2026</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="learning-objectives">Learning objectives</h1>
-<div class="note-box" data-title="By the end of this lecture, you will">
-<ol>
-<li>Use computational models as tools for understanding human semantic representation</li>
-<li>Identify what neural-computational alignment reveals about the nature of meaning</li>
-<li>Critically examine the boundaries of human understanding through a computational lens</li>
-<li>Reflect on whether there are concepts humans fundamentally cannot grasp</li>
-</ol>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="todays-lecture">Today's lecture</h1>
+<h1 id="todays-agenda">Today's agenda</h1>
 <div class="note-box" data-title="A different kind of question">
-<p>Most AI discussions ask: <em>Can machines think like us?</em></p>
-<p>Today we flip the question: <strong>What do machines reveal about how <em>we</em> think?</strong></p>
+<p>Most AI discussions ask: <em>can machines think like us?</em></p>
+<p>Today we flip the question: <strong>what do machines reveal about how <em>we</em> think?</strong></p>
 <ol>
 <li>Computational models as cognitive mirrors</li>
 <li>The surprising alignment between brains and algorithms</li>
@@ -723,26 +712,26 @@ Winter 2026</p>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-mirror-argument">The mirror argument</h1>
-<div class="important-box" data-title="Models as scientific instruments">
+<div class="definition-box" data-title="Models as scientific instruments">
 <p>When a simple algorithm (Word2Vec, BERT) captures aspects of human behavior or brain activity, this tells us something profound:</p>
 <p><strong>The pattern being captured was already there in human cognition.</strong></p>
-<p>Models don't create structure—they <em>reveal</em> structure that exists in language and thought.</p>
+<p>Models don't create structure—they <em>reveal</em> structure that exists in language and thought!</p>
 </div>
-<div class="warning-box" data-title="The implication">
+<div class="example-box" data-title="The implication">
 <p>If statistical co-occurrence predicts how humans judge similarity, perhaps human similarity judgments are <em>themselves</em> largely statistical.</p>
-<p>We may be less &quot;deep&quot; than we imagine.</p>
+<p><strong>We may be less &quot;deep&quot; than we imagine.</strong></p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="what-distributional-models-reveal-about-us">What distributional models reveal about us</h1>
-<div class="tip-box" data-title="Recall from Lectures 10-11">
-<p>Word2Vec learns meaning purely from co-occurrence patterns in text. See <a href="../week3/lecture10.html">Lecture 10</a> and <a href="lecture11.html">Lecture 11</a>.</p>
+<div class="note-box" data-title="Recall from earlier this week...">
+<p>Models like LSA, LDA, and Word2Vec learn meaning purely from co-occurrence patterns in text. See Lectures <a href="../week3/lecture10.html">10</a>, <a href="lecture11.html">11</a>, and <a href="lecture12.html">12</a>.</p>
 </div>
-<div class="important-box" data-title="The uncomfortable finding">
-<p>Word2Vec predicts human similarity judgments with r ≈ 0.7 on standard benchmarks.</p>
-<p>This means: <strong>~50% of variance in human semantic judgments can be explained by word co-occurrence alone.</strong></p>
+<div class="example-box" data-title="For consideration...">
+<p>Word2Vec predicts human <em>relatedness</em> judgments with ρ ≈ 0.70–0.75 on WordSim-353 and MEN (<a href="https://aclanthology.org/D14-1162/">Pennington et al., 2014</a>), approaching human inter-rater agreement (~0.68). It predicts strict <em>similarity</em> less well—ρ ≈ 0.44 on SimLex-999 (<a href="https://doi.org/10.1162/COLI_a_00237">Hill et al., 2015</a>).</p>
+<p><strong>Even the weaker result means ~20% of variance in human semantic judgments is captured by co-occurrence statistics alone.</strong></p>
 <p>What does this say about the nature of human meaning?</p>
 </div>
 <div class="note-box" data-title="Two interpretations">
@@ -750,7 +739,7 @@ Winter 2026</p>
 <strong>Unsettling:</strong> Human &quot;understanding&quot; may be shallower than we think—pattern matching dressed up as insight.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-grounding-question-inverted">The grounding question, inverted</h1>
 <div class="definition-box" data-title="The standard framing">
 <p><strong>Symbol grounding problem:</strong> How can symbols acquire meaning without sensory experience?</p>
@@ -765,7 +754,7 @@ Winter 2026</p>
 <p>Perhaps humans and LLMs differ less in <em>kind</em> than in <em>degree</em>. We're both symbol manipulators—we just have more sensors.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="embodied-cognition-how-much-does-the-body-matter">Embodied cognition: how much does the body matter?</h1>
 <div class="definition-box" data-title="The embodied cognition claim">
 <p>Meaning arises from bodily experience. Reading &quot;kick&quot; activates motor cortex. Understanding requires simulation.</p>
@@ -782,7 +771,7 @@ Winter 2026</p>
 <p>What is the <em>minimum</em> grounding required for genuine understanding? Is there a threshold—or is meaning a continuum?</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="%F0%9F%92%AD-discussion-the-spectrum-of-grounding"><img class="emoji" draggable="false" alt="💭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4ad.svg" data-marp-twemoji=""/> Discussion: The spectrum of grounding</h1>
 <div class="important-box" data-title="Rank these from most to least grounded (5 min)">
 <ol>
@@ -800,7 +789,7 @@ Winter 2026</p>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="neural-evidence-the-alignment-puzzle">Neural evidence: the alignment puzzle</h1>
 <div class="definition-box" data-title="Mitchell et al. (2008): Predicting brain activity from text statistics">
 <p>Trained model to predict fMRI patterns from word co-occurrence with 25 sensory-motor verbs. Result: <strong>77% accuracy</strong> on held-out words.</p>
@@ -817,7 +806,7 @@ Winter 2026</p>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:40%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="background" data-marpit-advanced-background-split="right"><div data-marpit-advanced-background-container="true" data-marpit-advanced-background-direction="horizontal"><figure style="background-image:url(&quot;figures/mitchel_etal_2008.jpeg&quot;);background-size:contain;"></figure></div></section></foreignObject><foreignObject width="60%" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:40%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="content" data-marpit-advanced-background-split="right">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:40%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="background" data-marpit-advanced-background-split="right"><div data-marpit-advanced-background-container="true" data-marpit-advanced-background-direction="horizontal"><figure style="background-image:url(&quot;figures/mitchel_etal_2008.jpeg&quot;);background-size:contain;"></figure></div></section></foreignObject><foreignObject width="60%" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:40%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="content" data-marpit-advanced-background-split="right">
 <h1 id="mitchell-et-al-2008">Mitchell et al. (2008)</h1>
 <div class="important-box" data-title="What this means for human cognition">
 <p>The brain organizes semantic information in ways that parallel statistical structure in language.</p>
@@ -827,7 +816,7 @@ Winter 2026</p>
 <p><a href="https://doi.org/10.1126/science.1152876"><strong>Mitchell et al. (2008, <em>Science</em>)</strong></a></p>
 </div>
 </section>
-</foreignObject><foreignObject width="1280" height="720" data-marpit-advanced-background="pseudo"><section data-theme="cdl-theme" lang="C" style="" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="pseudo" data-marpit-advanced-background-split="right"></section></foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:45%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="background" data-marpit-advanced-background-split="right"><div data-marpit-advanced-background-container="true" data-marpit-advanced-background-direction="horizontal"><figure style="background-image:url(&quot;figures/huth_et_al_2016.webp&quot;);background-size:contain;"></figure></div></section></foreignObject><foreignObject width="55%" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:45%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="content" data-marpit-advanced-background-split="right">
+</foreignObject><foreignObject width="1280" height="720" data-marpit-advanced-background="pseudo"><section data-theme="cdl-theme" lang="C" style="" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="pseudo" data-marpit-advanced-background-split="right"></section></foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:45%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="background" data-marpit-advanced-background-split="right"><div data-marpit-advanced-background-container="true" data-marpit-advanced-background-direction="horizontal"><figure style="background-image:url(&quot;figures/huth_et_al_2016.webp&quot;);background-size:contain;"></figure></div></section></foreignObject><foreignObject width="55%" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:45%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="content" data-marpit-advanced-background-split="right">
 <h1 id="huth-et-al-2016">Huth et al. (2016)</h1>
 <div class="important-box" data-title="The semantic atlas">
 <p>Meaning is distributed across the <em>entire</em> cortex—not localized to &quot;language areas.&quot;</p>
@@ -838,7 +827,7 @@ Winter 2026</p>
 <p>Perhaps we invented neural networks not as alien intelligences, but as mirrors of our own cognitive architecture.</p>
 </div>
 </section>
-</foreignObject><foreignObject width="1280" height="720" data-marpit-advanced-background="pseudo"><section data-theme="cdl-theme" lang="C" style="" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="pseudo" data-marpit-advanced-background-split="right"></section></foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject><foreignObject width="1280" height="720" data-marpit-advanced-background="pseudo"><section data-theme="cdl-theme" lang="C" style="" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="pseudo" data-marpit-advanced-background-split="right"></section></foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="%F0%9F%92%AD-discussion-what-models-teach-us-about-ourselves"><img class="emoji" draggable="false" alt="💭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4ad.svg" data-marp-twemoji=""/> Discussion: What models teach us about ourselves</h1>
 <div class="important-box" data-title="Group discussion (5 min)">
 <p>The Mitchell and Huth findings show that text statistics predict brain activity.</p>
@@ -856,7 +845,7 @@ Winter 2026</p>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-limits-of-human-understanding">The limits of human understanding</h1>
 <div class="important-box" data-title="A thought experiment">
 <p>We easily criticize LLMs for lacking &quot;true&quot; understanding. But what are the limits of <em>human</em> understanding?</p>
@@ -874,7 +863,7 @@ Winter 2026</p>
 <p>Humans seem to have a &quot;cognitive horizon&quot;—concepts we can manipulate symbolically but cannot truly grasp.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="are-humans-stochastic-parrots-too">Are humans &quot;stochastic parrots&quot; too?</h1>
 <div class="definition-box" data-title="The Bender et al. critique, redirected">
 <p>LLMs are &quot;stochastic parrots&quot;—producing fluent language without understanding. But consider human behavior:</p>
@@ -891,7 +880,7 @@ Winter 2026</p>
 <p>What percentage of your beliefs and utterances reflect genuine understanding versus sophisticated pattern matching and repetition?</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-illusion-of-explanatory-depth">The illusion of explanatory depth</h1>
 <div class="definition-box" data-title="Rozenblit & Keil (2002)">
 <p>People dramatically overestimate their understanding of how everyday objects work.</p>
@@ -907,7 +896,7 @@ Winter 2026</p>
 <p>These are exactly the &quot;failures&quot; we attribute to LLMs.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="concepts-humans-cannot-form">Concepts humans cannot form</h1>
 <div class="important-box" data-title="The cognitive closure hypothesis (McGinn, 1989)">
 <p>Just as dogs cannot understand calculus (not because they're stupid, but because they lack the cognitive architecture), humans may be <em>constitutionally incapable</em> of understanding certain truths.</p>
@@ -925,7 +914,7 @@ Winter 2026</p>
 <p>We may be LLMs hallucinating that these questions have answers.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="%F0%9F%92%AD-discussion-the-boundaries-of-human-understanding"><img class="emoji" draggable="false" alt="💭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4ad.svg" data-marp-twemoji=""/> Discussion: The boundaries of human understanding</h1>
 <div class="important-box" data-title="Choose one question (7 min)">
 <ol>
@@ -944,7 +933,7 @@ Winter 2026</p>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-role-of-language-in-thought">The role of language in thought</h1>
 <div class="definition-box" data-title="The Whorfian question, revisited">
 <p>Does language <em>shape</em> thought, or merely <em>express</em> it?</p>
@@ -959,7 +948,7 @@ Winter 2026</p>
 <p>Are there concepts in no human language—thoughts no human has ever thought?</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="meaning-as-a-construction">Meaning as a construction</h1>
 <div class="important-box" data-title="The constructivist view">
 <p>Meaning isn't discovered—it's <em>constructed</em> through interaction between an agent and its environment.</p>
@@ -975,7 +964,7 @@ Winter 2026</p>
 <p>Or is there no threshold—just increasingly sophisticated constructions of meaning, human and machine alike?</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="summary-the-mirror-and-the-horizon">Summary: The mirror and the horizon</h1>
 <div class="note-box" data-title="What we explored today">
 <ol>
@@ -990,7 +979,7 @@ Winter 2026</p>
 <p>Studying how machines fail to understand helps us see how <em>we</em> might fail to understand—and what understanding even means.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="%F0%9F%92%AD-final-reflection-know-thyself"><img class="emoji" draggable="false" alt="💭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4ad.svg" data-marp-twemoji=""/> Final reflection: Know thyself</h1>
 <div class="important-box" data-title="Individual reflection (3 min)">
 <p>The philosopher's injunction was &quot;know thyself.&quot;</p>
@@ -1003,7 +992,7 @@ Winter 2026</p>
 <p>Write a few sentences. These questions have no answers—only honest self-examination.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">

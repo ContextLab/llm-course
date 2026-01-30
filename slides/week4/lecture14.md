@@ -15,26 +15,13 @@ Winter 2026
 
 ---
 
-# Learning objectives
-
-<div class="note-box" data-title="By the end of this lecture, you will">
-
-1. Use computational models as tools for understanding human semantic representation
-2. Identify what neural-computational alignment reveals about the nature of meaning
-3. Critically examine the boundaries of human understanding through a computational lens
-4. Reflect on whether there are concepts humans fundamentally cannot grasp
-
-</div>
-
----
-
-# Today's lecture
+# Today's agenda
 
 <div class="note-box" data-title="A different kind of question">
 
-Most AI discussions ask: *Can machines think like us?*
+Most AI discussions ask: *can machines think like us?*
 
-Today we flip the question: **What do machines reveal about how *we* think?**
+Today we flip the question: **what do machines reveal about how *we* think?**
 
 1. Computational models as cognitive mirrors
 2. The surprising alignment between brains and algorithms
@@ -47,21 +34,21 @@ Today we flip the question: **What do machines reveal about how *we* think?**
 
 # The mirror argument
 
-<div class="important-box" data-title="Models as scientific instruments">
+<div class="definition-box" data-title="Models as scientific instruments">
 
 When a simple algorithm (Word2Vec, BERT) captures aspects of human behavior or brain activity, this tells us something profound:
 
 **The pattern being captured was already there in human cognition.**
 
-Models don't create structure—they *reveal* structure that exists in language and thought.
+Models don't create structure—they *reveal* structure that exists in language and thought!
 
 </div>
 
-<div class="warning-box" data-title="The implication">
+<div class="example-box" data-title="The implication">
 
 If statistical co-occurrence predicts how humans judge similarity, perhaps human similarity judgments are *themselves* largely statistical.
 
-We may be less "deep" than we imagine.
+**We may be less "deep" than we imagine.**
 
 </div>
 
@@ -71,17 +58,17 @@ We may be less "deep" than we imagine.
 
 <!-- _class: scale-90 -->
 
-<div class="tip-box" data-title="Recall from Lectures 10-11">
+<div class="note-box" data-title="Recall from earlier this week...">
 
-Word2Vec learns meaning purely from co-occurrence patterns in text. See [Lecture 10](../week3/lecture10.html) and [Lecture 11](lecture11.html).
+Models like LSA, LDA, and Word2Vec learn meaning purely from co-occurrence patterns in text. See Lectures [10](../week3/lecture10.html), [11](lecture11.html), and [12](lecture12.html).
 
 </div>
 
-<div class="important-box" data-title="The uncomfortable finding">
+<div class="example-box" data-title="For consideration...">
 
-Word2Vec predicts human similarity judgments with r ≈ 0.7 on standard benchmarks.
+Word2Vec predicts human *relatedness* judgments with ρ ≈ 0.70–0.75 on WordSim-353 and MEN ([Pennington et al., 2014](https://aclanthology.org/D14-1162/)), approaching human inter-rater agreement (~0.68). It predicts strict *similarity* less well—ρ ≈ 0.44 on SimLex-999 ([Hill et al., 2015](https://doi.org/10.1162/COLI_a_00237)).
 
-This means: **~50% of variance in human semantic judgments can be explained by word co-occurrence alone.**
+**Even the weaker result means ~20% of variance in human semantic judgments is captured by co-occurrence statistics alone.**
 
 What does this say about the nature of human meaning?
 
