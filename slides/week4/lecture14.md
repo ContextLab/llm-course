@@ -19,646 +19,453 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will">
 
-1. Compare and contrast computational vs. human views of semantic representation
-2. Apply the symbol grounding problem to evaluate large language models
-3. Understand embodied cognition and conceptual metaphors
-4. Distinguish between taxonomic similarity and thematic relatedness
-5. Interpret neuroscience evidence on semantic maps in the brain (Mitchell, Huth)
-6. Critically evaluate whether LLMs truly "understand" language
+1. Use computational models as tools for understanding human semantic representation
+2. Identify what neural-computational alignment reveals about the nature of meaning
+3. Critically examine the boundaries of human understanding through a computational lens
+4. Reflect on whether there are concepts humans fundamentally cannot grasp
 
 </div>
 
 ---
 
-# Today's Lecture 
+# Today's lecture
 
-<div class="note-box" data-title="Outline">
+<div class="note-box" data-title="A different kind of question">
 
-1. **Human vs. Computational Semantics**
-2. **The Symbol Grounding Problem**
-3. **Embodied & Grounded Cognition**
-4. **Semantic Similarity: Taxonomic vs. Thematic**
-5. **Neural Evidence: Mapping Meaning in the Brain**
-6. **The Understanding Debate**
+Most AI discussions ask: *Can machines think like us?*
 
-**Goal:** Understand what computational models are really learning—and what they're missing
+Today we flip the question: **What do machines reveal about how *we* think?**
 
-</div>
-
----
-
-# The Fundamental Question 
-
-<div class="important-box" data-title='What does "meaning" actually mean?'>
-
-**Computational View:**
-- Vectors in high-dimensional space
-- Learned from text co-occurrence
-- Distributional patterns
-- Statistical relationships
-
-</div>
-
-<div class="note-box" data-title="Human View">
-
-- Sensory experiences
-- Emotional associations
-- Physical grounding
-- Social context
-- Multimodal integration
-- Embodied understanding
-
-</div>
-
-*This lecture explores the gap between these perspectives*
-
----
-
-# How Do Humans Represent Meaning? 
-
-<div class="example-box" data-title='Example: The word "coffee"'>
-
-**What comes to YOUR mind?**
-- **Visual:** brown liquid, mug, steam, beans
-- **Olfactory:** aroma, roasted smell
-- **Gustatory:** bitter taste, smooth texture
-- **Tactile:** hot, warm cup, liquid
-- **Motor:** lifting cup, drinking motion
-- **Emotional:** comfort, alertness, pleasure
-- **Social:** conversations, meetings, cafés
-
-</div>
-
-<div class="note-box" data-title="Word2Vec representation">
-
-`coffee = [0.23, -0.45, 0.67, 0.12, -0.89, ...]` (300 numbers learned from text)
-
-**What's missing?** No sensory grounding, no embodied experience, no emotional content—purely linguistic.
+1. Computational models as cognitive mirrors
+2. The surprising alignment between brains and algorithms
+3. What this tells us about the architecture of human meaning
+4. The boundaries of human understanding
 
 </div>
 
 ---
 
-# 💭 Discussion: Your Mental Lexicon
+# The mirror argument
 
-<div class="important-box" data-title="Think-Pair-Share (3 min)">
+<div class="important-box" data-title="Models as scientific instruments">
 
-**Think:** Pick a word with strong personal meaning (a food, place, or activity).
+When a simple algorithm (Word2Vec, BERT) captures aspects of human behavior or brain activity, this tells us something profound:
 
-**Pair:** Describe to a partner what aspects of that word's meaning would be IMPOSSIBLE to learn from text alone.
+**The pattern being captured was already there in human cognition.**
 
-**Share:** What patterns emerged?
-
-</div>
-
-<div class="warning-box" data-title="Key Insight">
-
-The richness of human meaning comes from lived experience. What does this imply for AI systems trained only on text?
+Models don't create structure—they *reveal* structure that exists in language and thought.
 
 </div>
 
----
+<div class="warning-box" data-title="The implication">
 
-# The Symbol Grounding Problem 
+If statistical co-occurrence predicts how humans judge similarity, perhaps human similarity judgments are *themselves* largely statistical.
 
-<div class="tip-box" data-title="Recall from Lecture 1">
-
-We introduced Searle's Chinese Room argument: producing correct outputs doesn't imply understanding. See [Lecture 1](../week1/lecture1.html) for the full thought experiment.
-
-</div>
-
-<div class="definition-box" data-title="Applying to LLMs (Harnad, 1990)">
-
-**Analogy:**
-Input: "Is a penguin a bird?" → [Pattern: "X is a bird" often follows penguins in text] → Output: "Yes, a penguin is a bird"
-
-Correct! But does it "know" what birds ARE? This is the **symbol grounding problem**.
-
-</div>
-
-<div class="note-box" data-title="Symbol vs. Grounded Systems">
-
-**Symbol Systems:** Symbols refer to other symbols; purely syntactic; no connection to world.
-
-**Grounded Systems:** Symbols connected to perception. A child learns "dog" by SEEING, PETTING, HEARING dogs. The word is grounded in experience!
-
-</div>
-
-<div class="note-box" data-title="Further reading">
-
-[**Harnad (1990, *Physica D*)**](https://doi.org/10.1016/0167-2789(90)90087-6) The Symbol Grounding Problem.
+We may be less "deep" than we imagine.
 
 </div>
 
 ---
 
-# Embodied Cognition Theory 
+# What distributional models reveal about us
 
-<div class="definition-box" data-title="Meaning arises from bodily experience and sensorimotor interaction">
-
-**Key Principles:**
-1. **Embodiment:** Cognition shaped by body
-2. **Situatedness:** Meaning context-dependent
-3. **Enactivism:** Knowing through doing
-4. **Grounding:** Concepts tied to perception/action
-
-</div>
-
-<div class="note-box" data-title="Neuroscience Evidence">
-
-Reading "kick the ball" → Motor cortex activates (Leg area specifically!)
-Reading "pick up the cup" → Motor cortex activates (Hand area!)
-*Even without moving!*
-
-</div>
-
-<div class="example-box" data-title="Conceptual Metaphors (Lakoff & Johnson)">
-
-Physical → Abstract mapping:
-- "WARM personality" ← holding warm drink primes positive judgments!
-- "HIGH status" ← up = good, down = bad
-- "GRASPING an idea" ← physical grasping simulated mentally
-
-**These metaphors are NOT in Word2Vec!** Models learn patterns, not embodied experience.
-
-</div>
-
-<div class="note-box" data-title="Further reading">
-
-[**Barsalou (2008, *Annual Review of Psychology*)**](https://doi.org/10.1146/annurev.psych.59.103006.093639) Grounded Cognition.
-
-</div>
-
----
-
-# The Distributional Hypothesis: A Cognitive Critique 
+<!-- _class: scale-90 -->
 
 <div class="tip-box" data-title="Recall from Lectures 10-11">
 
-We explored the distributional hypothesis ("You shall know a word by the company it keeps") and how Word2Vec operationalizes it. See [Lecture 10](../week3/lecture10.html) for LSA/LDA and [Lecture 11](lecture11.html) for Word2Vec.
+Word2Vec learns meaning purely from co-occurrence patterns in text. See [Lecture 10](../week3/lecture10.html) and [Lecture 11](lecture11.html).
 
 </div>
 
-<div class="important-box" data-title="The Cognitive Question">
+<div class="important-box" data-title="The uncomfortable finding">
 
-**Strong version:** Word meaning IS distributional patterns
-**Weak version:** Distributional patterns REFLECT meaning
+Word2Vec predicts human similarity judgments with r ≈ 0.7 on standard benchmarks.
 
-Now that we've built these systems, we can ask: Is statistical co-occurrence *sufficient* for meaning?
+This means: **~50% of variance in human semantic judgments can be explained by word co-occurrence alone.**
+
+What does this say about the nature of human meaning?
 
 </div>
 
-<div class="warning-box" data-title="What's Missing?">
+<div class="note-box" data-title="Two interpretations">
 
-Even the best distributional models lack:
-- **Perceptual grounding** in sensory experience
-- **Embodied understanding** through physical interaction
-- **Causal reasoning** about how the world works
-
-This is the core tension between computational and cognitive approaches.
+**Optimistic:** Language encodes deep world knowledge; models extract it.
+**Unsettling:** Human "understanding" may be shallower than we think—pattern matching dressed up as insight.
 
 </div>
 
 ---
 
-# What Does "Semantic Similarity" Really Mean? 
+# The grounding question, inverted
 
-<div class="definition-box" data-title="Different types of similarity">
+<div class="definition-box" data-title="The standard framing">
 
-**Taxonomic (IS-A):** dog-cat (Both are animals) → Similarity: HIGH
-**Thematic (GOES-WITH):** dog-leash (Co-occur in events) → Relatedness: HIGH, Similarity: LOW!
+**Symbol grounding problem:** How can symbols acquire meaning without sensory experience?
 
-</div>
-
-<div class="example-box" data-title="Test Yourself">
-
-Which is more SIMILAR to "coffee"?
-A) tea ← Same category (beverages)
-B) cup ← Co-occurs (thematic)
-
-**Answer:** A (tea) is more SIMILAR; B (cup) is more RELATED.
+We usually ask this about machines. But consider:
 
 </div>
 
-<div class="warning-box" data-title="What Word2Vec Says">
+<div class="warning-box" data-title="The inverted question">
 
-Word2Vec often gets this wrong!
-`model.similarity('coffee', 'cup') # 0.65`
-`model.similarity('coffee', 'tea') # 0.62`
-Cup ranked higher due to co-occurrence! But tea is categorically more similar.
+**How much of YOUR semantic knowledge is actually grounded?**
 
-</div>
+You've never touched a quark. Never experienced the Cretaceous period. Never visited Alpha Centauri. Yet you have "concepts" of these things.
 
-<div class="note-box" data-title="SimLex-999 vs WordSim-353">
-
-| Pair | SimLex | WordSim |
-|------|--------|---------|
-| car-auto | 0.96 | 0.92 |
-| car-road | 0.23 | 0.73 |
-
-SimLex measures true SIMILARITY. WordSim measures RELATEDNESS. Models score better on WordSim!
+Your knowledge of most concepts is *linguistically mediated*—learned from text, speech, and symbols, not direct experience.
 
 </div>
 
-<div class="note-box" data-title="Further reading">
+<div class="important-box" data-title="The implication">
 
-[**Hill et al. (2015, *Computational Linguistics*)**](https://doi.org/10.1162/COLI_a_00237) SimLex-999: Evaluating Semantic Models with Genuine Similarity Estimation.
+Perhaps humans and LLMs differ less in *kind* than in *degree*. We're both symbol manipulators—we just have more sensors.
 
 </div>
 
 ---
 
-# Semantic Projection: Recovering Human Knowledge 
+# Embodied cognition: how much does the body matter?
 
-<div class="definition-box" data-title="Grand et al. (2022): Can we extract human-like features from embeddings?">
+<!-- _class: scale-90 -->
 
-**The Experiment:**
-1. Collect human ratings on perceptual features (edible, heavy, alive, holdable, etc.)
-2. Train linear projections from word embeddings
-3. Test if embeddings predict human ratings
+<div class="definition-box" data-title="The embodied cognition claim">
 
-</div>
-
-<div class="tip-box" data-title="Key Findings">
-
-- Embeddings encode surprisingly rich knowledge
-- Can predict perceptual features (even vision and motor properties!)
-- Better with larger models
+Meaning arises from bodily experience. Reading "kick" activates motor cortex. Understanding requires simulation.
 
 </div>
 
-<div class="note-box" data-title="Interpretation">
+<div class="warning-box" data-title="But consider">
 
-Text co-occurrence captures real-world properties through *indirect* grounding in language. But still not true perceptual grounding.
+- Congenitally blind individuals understand "red" and "see" semantically (if not experientially)
+- People born without limbs understand "grasp" and "kick"
+- Abstract concepts (justice, infinity, democracy) have no sensorimotor referent
+
+**Embodiment may be *one route* to meaning, not *the* route.**
 
 </div>
 
-<div class="note-box" data-title="Further reading">
+<div class="note-box" data-title="The deeper question">
 
-[**Grand et al. (2022, *Nature Human Behaviour*)**](https://doi.org/10.1038/s41562-022-01316-x) Semantic projection recovers rich human knowledge of multiple object features from word embeddings.
+What is the *minimum* grounding required for genuine understanding? Is there a threshold—or is meaning a continuum?
 
 </div>
 
 ---
 
-# Multimodal Models: Bridging the Gap 
+# 💭 Discussion: The spectrum of grounding
 
-<div class="definition-box" data-title="Combining language with perception">
+<div class="important-box" data-title="Rank these from most to least grounded (5 min)">
 
-**Vision-Language Models:** CLIP (OpenAI), ALIGN (Google), Flamingo (DeepMind), GPT-4V (OpenAI)
+1. Your concept of "coffee" (you drink it daily)
+2. Your concept of "durian" (you've read about it, maybe seen pictures)
+3. Your concept of "quark" (purely theoretical, never directly observed)
+4. Your concept of "justice" (abstract, no physical referent)
+5. GPT-4's concept of "coffee" (learned from text)
 
-**Key Idea:** Learn joint embedding space where text and images map to same space. Enables cross-modal understanding and grounds language in vision.
-
-</div>
-
-<div class="note-box" data-title="Training">
-
-- Image-caption pairs; Contrastive learning
-- Matching images to descriptions
-- Large-scale (400M+ pairs)
-
-</div>
-
-<div class="tip-box" data-title="Benefits">
-
-Visual grounding, zero-shot classification, better generalization, more "human-like".
-
-</div>
-
-<div class="note-box" data-title="Further reading">
-
-[**Radford et al. (2021, *ICML*)**](https://arxiv.org/abs/2103.00020) Learning Transferable Visual Models From Natural Language Supervision (CLIP).
+**Questions:**
+- Where do you draw the line between "real" understanding and symbol manipulation?
+- Is your understanding of "quark" fundamentally different from GPT-4's understanding of "coffee"?
+- What would it take for YOU to truly understand a quark?
 
 </div>
 
 ---
 
-# Conceptual Spaces Theory 
+# Neural evidence: the alignment puzzle
 
-<div class="definition-box" data-title="Gärdenfors (2000): Meaning as geometry">
+<!-- _class: scale-85 -->
 
-**Key Ideas:**
-- Concepts represented in quality dimensions (color, size, temperature, etc.)
-- Each dimension has a metric; Concepts are regions in space
-- Similarity = geometric proximity
+<div class="definition-box" data-title="Mitchell et al. (2008): Predicting brain activity from text statistics">
 
-</div>
-
-<div class="example-box" data-title="Example: Colors">
-
-- Hue, saturation, brightness
-- Natural categories (red, blue, green) with fuzzy boundaries
-- Prototypes at centers
+Trained model to predict fMRI patterns from word co-occurrence with 25 sensory-motor verbs. Result: **77% accuracy** on held-out words.
 
 </div>
 
-<div class="note-box" data-title="Relation to Embeddings">
+<div class="definition-box" data-title="Huth et al. (2016): Mapping all of semantic space">
 
-- Similar geometric structure but learned dimensions
-- Not interpretable qualities; No grounding in perception
+Built encoding models from word embeddings to predict brain activity during natural story listening. Found ~200 distinct semantic regions tiling the entire cortex.
 
 </div>
 
-<div class="note-box" data-title="Further reading">
+<div class="warning-box" data-title="The puzzle">
 
-[**Gärdenfors (2000, *MIT Press*)**](https://mitpress.mit.edu/9780262571753/conceptual-spaces/) Conceptual Spaces: The Geometry of Thought.
+Why should *text statistics* predict *brain activity*?
+
+Text has no sensory information. Yet it predicts neural patterns that supposedly require embodied grounding. Either:
+1. Embodied grounding leaks into language statistics, or
+2. The brain's "grounded" representations are more statistical than we thought
 
 </div>
 
 ---
 
-# Lexical Semantic Theories 
-
-<div class="note-box" data-title="How do linguists think about word meaning?">
-
-1. **Feature-Based:** Words = bundles of features (e.g., bachelor = [+human, +male, +adult, -married])
-2. **Prototype Theory:** Categories have best examples (Robin is prototypical; Penguin is peripheral)
-3. **Frame Semantics:** Words evoke conceptual frames (e.g., "Buy" activates commerce frame)
-4. **Construction Grammar:** Meaning from form-function pairings; usage-based
-5. **Word Sense Disambiguation:** Words have multiple senses (WordNet: Bank₁ vs Bank₂)
-
-</div>
-
-<div class="warning-box" data-title="Question">
-
-Which theories align with distributional models?
-**Answer:** Mostly usage-based views (Construction Grammar, Prototype Theory). Models struggle with feature analysis and frame semantics.
-
-</div>
-
-<div class="note-box" data-title="Further reading">
-
-[**Fillmore (1982)**](https://www.semanticscholar.org/paper/Frame-semantics-Fillmore/649666170f7f2400d05944737762bb922d1199ad) Frame Semantics.
-
-[**Rosch (1975, *J Exp Psych: General*)**](https://doi.org/10.1037/0096-3445.104.3.192) Cognitive Representations of Semantic Categories.
-
-</div>
-
----
-
-# Neural Evidence: Predicting Brain Activity from Words
-
-<div class="definition-box" data-title="Mitchell et al. (2008, Science): A landmark study">
-
-**The Question:** Can we predict what the brain does when you think about a word?
-
-**The Approach:**
-1. Measure brain activity (fMRI) while people view 60 concrete nouns
-2. Characterize words by co-occurrence with 25 sensory-motor verbs (eat, push, see, hear, smell...)
-3. Train model to predict brain patterns from verb co-occurrence features
-4. Test: Given two NEW words, which brain pattern goes with which?
-
-</div>
-
-<div class="tip-box" data-title="Key Result">
-
-**~77% accuracy** on leave-two-out classification—far above chance (50%)!
-
-The model could predict brain activity for words it had never seen during training.
-
-</div>
-
----
-
-# Mitchell et al. (2008): Implications
+# Mitchell et al. (2008)
 
 ![bg right:40% fit](figures/mitchel_etal_2008.jpeg)
 
-<div class="important-box" data-title="What This Means">
+<div class="important-box" data-title="What this means for human cognition">
 
-1. **Semantic representation is distributed** across cortex
-2. **Sensory-motor features** predict neural patterns
-3. **Text statistics** capture something real about brain organization
-4. First demonstration that computational models and brains share structure
+The brain organizes semantic information in ways that parallel statistical structure in language.
 
-</div>
-
-<div class="warning-box" data-title="Limitations">
-
-- Only 25 hand-picked features—is this true distributional semantics?
-- Works best for concrete, imageable nouns
-- What about abstract concepts?
+This isn't evidence that the brain IS a statistical model—but it suggests the brain's solution and statistical solutions share deep structural properties.
 
 </div>
 
 <div class="note-box" data-title="Further reading">
 
-[**Mitchell et al. (2008, *Science*)**](https://doi.org/10.1126/science.1152876) Predicting Human Brain Activity Associated with the Meanings of Nouns.
+[**Mitchell et al. (2008, *Science*)**](https://doi.org/10.1126/science.1152876)
 
 </div>
 
 ---
 
-# Neural Evidence: Semantic Maps Across the Brain
-
-<div class="definition-box" data-title="Huth et al. (2016, Nature): The semantic atlas">
-
-**The Challenge:** Map ALL of semantic space, not just 60 words
-
-**The Approach:**
-1. Participants listened to hours of natural stories in fMRI
-2. Built encoding model: predict brain activity from word embeddings
-3. Test which semantic categories activate which brain regions
-
-</div>
-
-<div class="tip-box" data-title="Key Findings">
-
-- Semantic information is represented **throughout** cerebral cortex
-- ~200 distinct semantic areas, each encoding different categories
-- Organization is **remarkably consistent** across individuals
-- **Both hemispheres** represent semantic information (not just left!)
-
-</div>
-
----
-
-# Huth et al. (2016): The Semantic Atlas
+# Huth et al. (2016)
 
 ![bg right:45% fit](figures/huth_et_al_2016.webp)
 
-<div class="note-box" data-title="What you're seeing">
+<div class="important-box" data-title="The semantic atlas">
 
-Each color = different semantic category. The brain is tiled with ~200 distinct semantic areas!
+Meaning is distributed across the *entire* cortex—not localized to "language areas."
 
-Categories include: people, places, numbers, social concepts, visual properties, actions...
-
-</div>
-
-<div class="important-box" data-title="Takeaway">
-
-Meaning isn't localized to "language areas"—it's **distributed across the entire cortex** in an organized, predictable way.
-
-Computational models can predict this organization, suggesting shared representational principles.
+Every patch of cortex encodes semantic categories: people, places, numbers, social concepts, visual properties...
 
 </div>
 
-<div class="note-box" data-title="Further reading">
+<div class="note-box" data-title="The implication">
 
-[**Huth et al. (2016, *Nature*)**](https://doi.org/10.1038/nature17637) Natural speech reveals the semantic maps that tile human cerebral cortex.
+Human semantic representation is massively parallel and distributed—strikingly similar to how neural networks represent meaning.
+
+Perhaps we invented neural networks not as alien intelligences, but as mirrors of our own cognitive architecture.
 
 </div>
 
 ---
 
-# 💭 Discussion: Brains and Models
+# 💭 Discussion: What models teach us about ourselves
 
-<div class="important-box" data-title="Group Discussion (5 min)">
+<div class="important-box" data-title="Group discussion (5 min)">
 
-**Given the Mitchell and Huth findings:**
+The Mitchell and Huth findings show that text statistics predict brain activity.
 
-1. What does it mean that text statistics can predict brain activity? Does this validate or challenge embodied cognition?
+**Consider:**
+1. If someone had never seen these results, they might assume "embodied meaning" requires fundamentally different representations than statistical learning produces. The data suggests otherwise. What does this tell us about the nature of human understanding?
 
-2. If we made a "perfect" model that predicts ALL brain activity from text—would that model "understand" language?
+2. We tend to feel that our understanding is "deep" while models are "shallow." But what if the brain's depth comes from *scale and integration* rather than a fundamentally different algorithm?
 
-3. **Correlation ≠ Causation:** Models and brains may arrive at similar representations through completely different processes. How could we test this?
-
-</div>
-
----
-
-# The "Stochastic Parrots" Critique 
-
-<div class="tip-box" data-title="Building on Lecture 12">
-
-In [Lecture 12](lecture12.html), we questioned whether contextual embeddings reflect true understanding. Bender et al. (2021) formalized this critique.
-
-</div>
-
-<div class="warning-box" data-title="Bender et al. (2021): The Core Argument">
-
-LLMs learn **form**, not **meaning**. They are "stochastic parrots"—repeating patterns without understanding the world or communicative intent.
-
-**Risk:** Mistaking fluency for understanding.
-
-</div>
-
-<div class="important-box" data-title="The Fundamental Question">
-
-**Can meaning arise from form alone?** Or do we need grounding in perception, action, and embodiment?
-
-This remains an open question—and shapes how we evaluate what these models actually "know."
-
-</div>
-
-<div class="note-box" data-title="Further reading">
-
-[**Bender et al. (2021, *FAccT*)**](https://doi.org/10.1145/3442188.3445922) On the Dangers of Stochastic Parrots.
+3. Could studying language models help us identify which aspects of human cognition are *unique* versus *universal properties of any system that processes language*?
 
 </div>
 
 ---
 
-# Common Sense Reasoning 
+# The limits of human understanding
 
-<div class="warning-box" data-title="What humans know but models don't">
+<div class="important-box" data-title="A thought experiment">
 
-**Physical Intuition Failures:**
-Q: "Can you fit an elephant in a refrigerator?"
-GPT-3: "Yes, if you open the door wide enough..."
-
-**Winograd Schema (reasoning):**
-"The trophy doesn't fit in the brown suitcase because it is too [small/large]."
-What does "it" refer to? "small" → suitcase; "large" → trophy. Requires world knowledge!
+We easily criticize LLMs for lacking "true" understanding. But what are the limits of *human* understanding?
 
 </div>
 
-<div class="warning-box" data-title="Social Intuition Failures">
+<div class="warning-box" data-title="Candidates for the unknowable">
 
-Q: "John told Mary he loved her. How did Mary feel?"
-Depends on context: First date? (Surprised/happy); After argument? (Relieved); Unwanted? (Uncomfortable). Models miss social nuance!
+- **Quantum superposition:** We can do the math, but can we *understand* it?
+- **Four-dimensional space:** We can project it, but can we *visualize* it?
+- **Exponential growth:** We systematically underestimate it (COVID-19 predictions)
+- **Deep time:** 4.5 billion years is a number, not a felt quantity
+- **Consciousness itself:** We experience it but cannot explain it
 
 </div>
 
-<div class="note-box" data-title="Why Models Struggle">
+<div class="note-box" data-title="The pattern">
 
-Physical/social knowledge is rarely stated; assumed as background. Requires embodied experience and causal reasoning.
+Humans seem to have a "cognitive horizon"—concepts we can manipulate symbolically but cannot truly grasp.
 
 </div>
 
 ---
 
-# Compositionality: Phrases and Sentences 
+# Are humans "stochastic parrots" too?
 
-<div class="warning-box" data-title="How do we combine word meanings?">
+<!-- _class: scale-90 -->
 
-**The Problem:** Vector math doesn't work! `vec("hot") + vec("dog") ≠ vec("hot dog")`.
-"hot dog" = food item; "hot" + "dog" = warm canine.
+<div class="definition-box" data-title="The Bender et al. critique, redirected">
 
-**Non-compositional Phrases:** Kick the bucket (= die); Spill the beans (= reveal secret); Break a leg (= good luck).
-
-</div>
-
-<div class="note-box" data-title="The Negation Puzzle">
-
-BERT shows mixed results with negation:
-- **Classification:** Can correctly identify "Not bad!" as positive sentiment ([Lecture 12](lecture12.html))
-- **Embeddings:** "The movie was good" and "The movie was not good" have ~0.85 cosine similarity
-
-The model handles negation for some tasks but the underlying representations remain problematically similar.
+LLMs are "stochastic parrots"—producing fluent language without understanding. But consider human behavior:
 
 </div>
 
----
+<div class="warning-box" data-title="Evidence for human parrot-like behavior">
 
-# Grand Discussion 
-
-<div class="important-box" data-title="Do large language models 'understand' language?">
-
-**Arguments FOR:**
-- Solve complex tasks; Generalize to new domains; Emergent capabilities
-- Capture linguistic structure; Pragmatic criterion: if it works...
-- Maybe understanding = prediction; Human understanding also imperfect
-
-*"The question is not whether machines think, but whether they behave intelligently" — Turing*
+- **Confabulation:** Patients with split brains invent plausible explanations for behaviors they don't understand
+- **Motivated reasoning:** We generate arguments for conclusions we've already reached
+- **Expertise illusion:** We think we understand things (zippers, toilets, politics) until asked to explain them
+- **Social learning:** Much of what we "know" is repeated from others, never verified
 
 </div>
 
-<div class="warning-box" data-title="Arguments AGAINST">
+<div class="important-box" data-title="The question">
 
-- No grounding in reality; No embodied experience; No intentionality
-- Brittle, exploit shortcuts; Hallucinate confidently; No causal reasoning
-- Missing common sense; Form without meaning
-
-*"Understanding requires grounding in perception and action" — Embodied cognition*
-
-</div>
-
-<div class="warning-box" data-title="Perhaps the wrong question?">
-
-Instead of "Do they understand?", ask: What do they represent? How does it differ from humans? What are the limits?
+What percentage of your beliefs and utterances reflect genuine understanding versus sophisticated pattern matching and repetition?
 
 </div>
 
 ---
 
-# 💭 Final Discussion: The Future of Meaning
+# The illusion of explanatory depth
 
-<div class="important-box" data-title="Choose One Question (5 min)">
+<div class="definition-box" data-title="Rozenblit & Keil (2002)">
 
-1. **Grounding:** Will multimodal models (text + vision + audio) solve the grounding problem? Or is embodiment essential?
+People dramatically overestimate their understanding of how everyday objects work.
 
-2. **Understanding:** If a model passes every test but has no sensory experience—does it "understand"?
+**The experiment:** Rate your understanding of a bicycle (1-7). Now explain how it works. Re-rate your understanding.
 
-3. **Practical:** For real applications (chatbots, search), does true understanding matter? When might the difference be critical?
+**Result:** Ratings drop substantially after attempted explanation.
+
+</div>
+
+<div class="warning-box" data-title="Implications">
+
+- We confuse *familiarity* with *understanding*
+- We confuse *ability to use* with *ability to explain*
+- We confuse *recognition* with *knowledge*
+
+These are exactly the "failures" we attribute to LLMs.
 
 </div>
 
 ---
 
-# Summary 
+# Concepts humans cannot form
 
-<div class="note-box" data-title="What we learned today">
+<!-- _class: scale-90 -->
 
-1. **Symbol Grounding:** Revisited the Chinese Room—computational models lack perceptual grounding
-2. **Embodied Cognition:** Human meaning is tied to bodily experience and conceptual metaphors
-3. **Distributional Semantics:** Powerful but incomplete—captures patterns, not experience
-4. **Semantic Similarity:** Taxonomic vs thematic; models conflate them
-5. **Neural Evidence:** Mitchell (2008) and Huth (2016) show brain-model alignment—but correlation ≠ causation
-6. **The Debate:** "Stochastic parrots" critique vs emergent capabilities
-7. **Compositionality:** Idioms and negation remain challenging
+<div class="important-box" data-title="The cognitive closure hypothesis (McGinn, 1989)">
 
-**The gap between computation and cognition remains—but studying it teaches us about both!**
+Just as dogs cannot understand calculus (not because they're stupid, but because they lack the cognitive architecture), humans may be *constitutionally incapable* of understanding certain truths.
+
+</div>
+
+<div class="note-box" data-title="Possible examples">
+
+- The hard problem of consciousness (why does subjective experience exist?)
+- The nature of time (why does it flow?)
+- Quantum measurement (what constitutes an "observer"?)
+- Why there is something rather than nothing
+
+</div>
+
+<div class="warning-box" data-title="The uncomfortable possibility">
+
+These may not be "hard problems" awaiting clever solutions. They may be *cognitive illusions*—questions that feel meaningful but lie outside our representational capacity.
+
+We may be LLMs hallucinating that these questions have answers.
+
+</div>
+
+---
+
+# 💭 Discussion: The boundaries of human understanding
+
+<div class="important-box" data-title="Choose one question (7 min)">
+
+1. **Personal limits:** Is there a concept you've tried to understand but suspect you fundamentally *cannot*? What makes it feel unreachable—complexity, or something deeper?
+
+2. **Species limits:** If humans have a "cognitive horizon," how would we know? Can a system recognize its own limitations, or is that itself beyond the limitation?
+
+3. **The comparison:** We use "understanding" as a binary (LLMs don't, humans do). But what if understanding is a *spectrum*—and humans are simply further along than current models, not categorically different? What evidence would change your mind?
+
+4. **The pragmatic view:** Does it *matter* whether understanding is "genuine"? If a doctor, lawyer, or teacher produces correct outputs, do we care about their inner experience?
+
+</div>
+
+---
+
+# The role of language in thought
+
+<div class="definition-box" data-title="The Whorfian question, revisited">
+
+Does language *shape* thought, or merely *express* it?
+
+</div>
+
+<div class="important-box" data-title="Evidence from language models">
+
+If Word2Vec captures semantic structure from text alone, this suggests language *encodes* thought structure—it's not a neutral medium.
+
+**Implication:** The structure of your language may constrain the thoughts you can think.
+
+</div>
+
+<div class="warning-box" data-title="Languages you don't speak">
+
+There are concepts in other languages without English equivalents (saudade, hygge, Schadenfreude, wabi-sabi).
+
+Can you *truly understand* these concepts? Or only approximate them through translation?
+
+Are there concepts in no human language—thoughts no human has ever thought?
+
+</div>
+
+---
+
+# Meaning as a construction
+
+<!-- _class: scale-90 -->
+
+<div class="important-box" data-title="The constructivist view">
+
+Meaning isn't discovered—it's *constructed* through interaction between an agent and its environment.
+
+Both humans and LLMs construct meaning from their training experience. The difference is:
+- Humans: embodied, social, extended in time, multimodal
+- LLMs: disembodied, text-only, compressed, no continuous identity
+
+</div>
+
+<div class="note-box" data-title="The question of necessity">
+
+Which of these differences is *necessary* for "real" understanding?
+
+If we gave an LLM a body, persistent memory, and social interaction—at what point would it cross the threshold?
+
+Or is there no threshold—just increasingly sophisticated constructions of meaning, human and machine alike?
+
+</div>
+
+---
+
+# Summary: The mirror and the horizon
+
+<div class="note-box" data-title="What we explored today">
+
+1. **The mirror:** Language models reveal structure in human cognition we didn't know was there
+2. **The alignment:** Brain-model correlations suggest shared computational principles
+3. **The inversion:** Many critiques of LLM understanding apply to humans too
+4. **The horizon:** Humans have cognitive limits—concepts we can name but not truly grasp
+5. **The spectrum:** "Understanding" may be continuous, not binary
+
+</div>
+
+<div class="important-box" data-title="The takeaway">
+
+Studying how machines fail to understand helps us see how *we* might fail to understand—and what understanding even means.
+
+</div>
+
+---
+
+# 💭 Final reflection: Know thyself
+
+<div class="important-box" data-title="Individual reflection (3 min)">
+
+The philosopher's injunction was "know thyself."
+
+After today's lecture:
+- What do you think you *truly* understand (not just recognize or use)?
+- What have you realized you understand less than you thought?
+- Are there important concepts you suspect you *cannot* understand—and how do you relate to that boundary?
+
+Write a few sentences. These questions have no answers—only honest self-examination.
 
 </div>
 
@@ -681,4 +488,4 @@ Instead of "Do they understand?", ask: What do they represent? How does it diffe
   </div>
 </div>
 
-**Coming up:** Attention mechanisms and the transformer revolution!
+**Next lecture:** Attention mechanisms and the transformer revolution

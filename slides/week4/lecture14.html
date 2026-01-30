@@ -703,481 +703,307 @@ Winter 2026</p>
 <h1 id="learning-objectives">Learning objectives</h1>
 <div class="note-box" data-title="By the end of this lecture, you will">
 <ol>
-<li>Compare and contrast computational vs. human views of semantic representation</li>
-<li>Apply the symbol grounding problem to evaluate large language models</li>
-<li>Understand embodied cognition and conceptual metaphors</li>
-<li>Distinguish between taxonomic similarity and thematic relatedness</li>
-<li>Interpret neuroscience evidence on semantic maps in the brain (Mitchell, Huth)</li>
-<li>Critically evaluate whether LLMs truly &quot;understand&quot; language</li>
+<li>Use computational models as tools for understanding human semantic representation</li>
+<li>Identify what neural-computational alignment reveals about the nature of meaning</li>
+<li>Critically examine the boundaries of human understanding through a computational lens</li>
+<li>Reflect on whether there are concepts humans fundamentally cannot grasp</li>
 </ol>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="todays-lecture">Today's Lecture</h1>
-<div class="note-box" data-title="Outline">
+<h1 id="todays-lecture">Today's lecture</h1>
+<div class="note-box" data-title="A different kind of question">
+<p>Most AI discussions ask: <em>Can machines think like us?</em></p>
+<p>Today we flip the question: <strong>What do machines reveal about how <em>we</em> think?</strong></p>
 <ol>
-<li><strong>Human vs. Computational Semantics</strong></li>
-<li><strong>The Symbol Grounding Problem</strong></li>
-<li><strong>Embodied &amp; Grounded Cognition</strong></li>
-<li><strong>Semantic Similarity: Taxonomic vs. Thematic</strong></li>
-<li><strong>Neural Evidence: Mapping Meaning in the Brain</strong></li>
-<li><strong>The Understanding Debate</strong></li>
+<li>Computational models as cognitive mirrors</li>
+<li>The surprising alignment between brains and algorithms</li>
+<li>What this tells us about the architecture of human meaning</li>
+<li>The boundaries of human understanding</li>
 </ol>
-<p><strong>Goal:</strong> Understand what computational models are really learning—and what they're missing</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-fundamental-question">The Fundamental Question</h1>
-<div class="important-box" data-title='What does "meaning" actually mean?'>
-<p><strong>Computational View:</strong></p>
-<ul>
-<li>Vectors in high-dimensional space</li>
-<li>Learned from text co-occurrence</li>
-<li>Distributional patterns</li>
-<li>Statistical relationships</li>
-</ul>
+<h1 id="the-mirror-argument">The mirror argument</h1>
+<div class="important-box" data-title="Models as scientific instruments">
+<p>When a simple algorithm (Word2Vec, BERT) captures aspects of human behavior or brain activity, this tells us something profound:</p>
+<p><strong>The pattern being captured was already there in human cognition.</strong></p>
+<p>Models don't create structure—they <em>reveal</em> structure that exists in language and thought.</p>
 </div>
-<div class="note-box" data-title="Human View">
-<ul>
-<li>Sensory experiences</li>
-<li>Emotional associations</li>
-<li>Physical grounding</li>
-<li>Social context</li>
-<li>Multimodal integration</li>
-<li>Embodied understanding</li>
-</ul>
-</div>
-<p><em>This lecture explores the gap between these perspectives</em></p>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="how-do-humans-represent-meaning">How Do Humans Represent Meaning?</h1>
-<div class="example-box" data-title='Example: The word "coffee"'>
-<p><strong>What comes to YOUR mind?</strong></p>
-<ul>
-<li><strong>Visual:</strong> brown liquid, mug, steam, beans</li>
-<li><strong>Olfactory:</strong> aroma, roasted smell</li>
-<li><strong>Gustatory:</strong> bitter taste, smooth texture</li>
-<li><strong>Tactile:</strong> hot, warm cup, liquid</li>
-<li><strong>Motor:</strong> lifting cup, drinking motion</li>
-<li><strong>Emotional:</strong> comfort, alertness, pleasure</li>
-<li><strong>Social:</strong> conversations, meetings, cafés</li>
-</ul>
-</div>
-<div class="note-box" data-title="Word2Vec representation">
-<p><code>coffee = [0.23, -0.45, 0.67, 0.12, -0.89, ...]</code> (300 numbers learned from text)</p>
-<p><strong>What's missing?</strong> No sensory grounding, no embodied experience, no emotional content—purely linguistic.</p>
+<div class="warning-box" data-title="The implication">
+<p>If statistical co-occurrence predicts how humans judge similarity, perhaps human similarity judgments are <em>themselves</em> largely statistical.</p>
+<p>We may be less &quot;deep&quot; than we imagine.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="%F0%9F%92%AD-discussion-your-mental-lexicon"><img class="emoji" draggable="false" alt="💭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4ad.svg" data-marp-twemoji=""/> Discussion: Your Mental Lexicon</h1>
-<div class="important-box" data-title="Think-Pair-Share (3 min)">
-<p><strong>Think:</strong> Pick a word with strong personal meaning (a food, place, or activity).</p>
-<p><strong>Pair:</strong> Describe to a partner what aspects of that word's meaning would be IMPOSSIBLE to learn from text alone.</p>
-<p><strong>Share:</strong> What patterns emerged?</p>
-</div>
-<div class="warning-box" data-title="Key Insight">
-<p>The richness of human meaning comes from lived experience. What does this imply for AI systems trained only on text?</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-symbol-grounding-problem">The Symbol Grounding Problem</h1>
-<div class="tip-box" data-title="Recall from Lecture 1">
-<p>We introduced Searle's Chinese Room argument: producing correct outputs doesn't imply understanding. See <a href="../week1/lecture1.html">Lecture 1</a> for the full thought experiment.</p>
-</div>
-<div class="definition-box" data-title="Applying to LLMs (Harnad, 1990)">
-<p><strong>Analogy:</strong><br />
-Input: &quot;Is a penguin a bird?&quot; → [Pattern: &quot;X is a bird&quot; often follows penguins in text] → Output: &quot;Yes, a penguin is a bird&quot;</p>
-<p>Correct! But does it &quot;know&quot; what birds ARE? This is the <strong>symbol grounding problem</strong>.</p>
-</div>
-<div class="note-box" data-title="Symbol vs. Grounded Systems">
-<p><strong>Symbol Systems:</strong> Symbols refer to other symbols; purely syntactic; no connection to world.</p>
-<p><strong>Grounded Systems:</strong> Symbols connected to perception. A child learns &quot;dog&quot; by SEEING, PETTING, HEARING dogs. The word is grounded in experience!</p>
-</div>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://doi.org/10.1016/0167-2789(90)90087-6"><strong>Harnad (1990, <em>Physica D</em>)</strong></a> The Symbol Grounding Problem.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="embodied-cognition-theory">Embodied Cognition Theory</h1>
-<div class="definition-box" data-title="Meaning arises from bodily experience and sensorimotor interaction">
-<p><strong>Key Principles:</strong></p>
-<ol>
-<li><strong>Embodiment:</strong> Cognition shaped by body</li>
-<li><strong>Situatedness:</strong> Meaning context-dependent</li>
-<li><strong>Enactivism:</strong> Knowing through doing</li>
-<li><strong>Grounding:</strong> Concepts tied to perception/action</li>
-</ol>
-</div>
-<div class="note-box" data-title="Neuroscience Evidence">
-<p>Reading &quot;kick the ball&quot; → Motor cortex activates (Leg area specifically!)<br />
-Reading &quot;pick up the cup&quot; → Motor cortex activates (Hand area!)<br />
-<em>Even without moving!</em></p>
-</div>
-<div class="example-box" data-title="Conceptual Metaphors (Lakoff & Johnson)">
-<p>Physical → Abstract mapping:</p>
-<ul>
-<li>&quot;WARM personality&quot; ← holding warm drink primes positive judgments!</li>
-<li>&quot;HIGH status&quot; ← up = good, down = bad</li>
-<li>&quot;GRASPING an idea&quot; ← physical grasping simulated mentally</li>
-</ul>
-<p><strong>These metaphors are NOT in Word2Vec!</strong> Models learn patterns, not embodied experience.</p>
-</div>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://doi.org/10.1146/annurev.psych.59.103006.093639"><strong>Barsalou (2008, <em>Annual Review of Psychology</em>)</strong></a> Grounded Cognition.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-distributional-hypothesis-a-cognitive-critique">The Distributional Hypothesis: A Cognitive Critique</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="what-distributional-models-reveal-about-us">What distributional models reveal about us</h1>
 <div class="tip-box" data-title="Recall from Lectures 10-11">
-<p>We explored the distributional hypothesis (&quot;You shall know a word by the company it keeps&quot;) and how Word2Vec operationalizes it. See <a href="../week3/lecture10.html">Lecture 10</a> for LSA/LDA and <a href="lecture11.html">Lecture 11</a> for Word2Vec.</p>
+<p>Word2Vec learns meaning purely from co-occurrence patterns in text. See <a href="../week3/lecture10.html">Lecture 10</a> and <a href="lecture11.html">Lecture 11</a>.</p>
 </div>
-<div class="important-box" data-title="The Cognitive Question">
-<p><strong>Strong version:</strong> Word meaning IS distributional patterns<br />
-<strong>Weak version:</strong> Distributional patterns REFLECT meaning</p>
-<p>Now that we've built these systems, we can ask: Is statistical co-occurrence <em>sufficient</em> for meaning?</p>
+<div class="important-box" data-title="The uncomfortable finding">
+<p>Word2Vec predicts human similarity judgments with r ≈ 0.7 on standard benchmarks.</p>
+<p>This means: <strong>~50% of variance in human semantic judgments can be explained by word co-occurrence alone.</strong></p>
+<p>What does this say about the nature of human meaning?</p>
 </div>
-<div class="warning-box" data-title="What's Missing?">
-<p>Even the best distributional models lack:</p>
+<div class="note-box" data-title="Two interpretations">
+<p><strong>Optimistic:</strong> Language encodes deep world knowledge; models extract it.<br />
+<strong>Unsettling:</strong> Human &quot;understanding&quot; may be shallower than we think—pattern matching dressed up as insight.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="the-grounding-question-inverted">The grounding question, inverted</h1>
+<div class="definition-box" data-title="The standard framing">
+<p><strong>Symbol grounding problem:</strong> How can symbols acquire meaning without sensory experience?</p>
+<p>We usually ask this about machines. But consider:</p>
+</div>
+<div class="warning-box" data-title="The inverted question">
+<p><strong>How much of YOUR semantic knowledge is actually grounded?</strong></p>
+<p>You've never touched a quark. Never experienced the Cretaceous period. Never visited Alpha Centauri. Yet you have &quot;concepts&quot; of these things.</p>
+<p>Your knowledge of most concepts is <em>linguistically mediated</em>—learned from text, speech, and symbols, not direct experience.</p>
+</div>
+<div class="important-box" data-title="The implication">
+<p>Perhaps humans and LLMs differ less in <em>kind</em> than in <em>degree</em>. We're both symbol manipulators—we just have more sensors.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="embodied-cognition-how-much-does-the-body-matter">Embodied cognition: how much does the body matter?</h1>
+<div class="definition-box" data-title="The embodied cognition claim">
+<p>Meaning arises from bodily experience. Reading &quot;kick&quot; activates motor cortex. Understanding requires simulation.</p>
+</div>
+<div class="warning-box" data-title="But consider">
 <ul>
-<li><strong>Perceptual grounding</strong> in sensory experience</li>
-<li><strong>Embodied understanding</strong> through physical interaction</li>
-<li><strong>Causal reasoning</strong> about how the world works</li>
+<li>Congenitally blind individuals understand &quot;red&quot; and &quot;see&quot; semantically (if not experientially)</li>
+<li>People born without limbs understand &quot;grasp&quot; and &quot;kick&quot;</li>
+<li>Abstract concepts (justice, infinity, democracy) have no sensorimotor referent</li>
 </ul>
-<p>This is the core tension between computational and cognitive approaches.</p>
+<p><strong>Embodiment may be <em>one route</em> to meaning, not <em>the</em> route.</strong></p>
+</div>
+<div class="note-box" data-title="The deeper question">
+<p>What is the <em>minimum</em> grounding required for genuine understanding? Is there a threshold—or is meaning a continuum?</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="what-does-semantic-similarity-really-mean">What Does &quot;Semantic Similarity&quot; Really Mean?</h1>
-<div class="definition-box" data-title="Different types of similarity">
-<p><strong>Taxonomic (IS-A):</strong> dog-cat (Both are animals) → Similarity: HIGH<br />
-<strong>Thematic (GOES-WITH):</strong> dog-leash (Co-occur in events) → Relatedness: HIGH, Similarity: LOW!</p>
-</div>
-<div class="example-box" data-title="Test Yourself">
-<p>Which is more SIMILAR to &quot;coffee&quot;?<br />
-A) tea ← Same category (beverages)<br />
-B) cup ← Co-occurs (thematic)</p>
-<p><strong>Answer:</strong> A (tea) is more SIMILAR; B (cup) is more RELATED.</p>
-</div>
-<div class="warning-box" data-title="What Word2Vec Says">
-<p>Word2Vec often gets this wrong!<br />
-<code>model.similarity('coffee', 'cup') # 0.65</code><br />
-<code>model.similarity('coffee', 'tea') # 0.62</code><br />
-Cup ranked higher due to co-occurrence! But tea is categorically more similar.</p>
-</div>
-<div class="note-box" data-title="SimLex-999 vs WordSim-353">
-<table>
-<thead>
-<tr>
-<th>Pair</th>
-<th>SimLex</th>
-<th>WordSim</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>car-auto</td>
-<td>0.96</td>
-<td>0.92</td>
-</tr>
-<tr>
-<td>car-road</td>
-<td>0.23</td>
-<td>0.73</td>
-</tr>
-</tbody>
-</table>
-<p>SimLex measures true SIMILARITY. WordSim measures RELATEDNESS. Models score better on WordSim!</p>
-</div>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://doi.org/10.1162/COLI_a_00237"><strong>Hill et al. (2015, <em>Computational Linguistics</em>)</strong></a> SimLex-999: Evaluating Semantic Models with Genuine Similarity Estimation.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="semantic-projection-recovering-human-knowledge">Semantic Projection: Recovering Human Knowledge</h1>
-<div class="definition-box" data-title="Grand et al. (2022): Can we extract human-like features from embeddings?">
-<p><strong>The Experiment:</strong></p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="%F0%9F%92%AD-discussion-the-spectrum-of-grounding"><img class="emoji" draggable="false" alt="💭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4ad.svg" data-marp-twemoji=""/> Discussion: The spectrum of grounding</h1>
+<div class="important-box" data-title="Rank these from most to least grounded (5 min)">
 <ol>
-<li>Collect human ratings on perceptual features (edible, heavy, alive, holdable, etc.)</li>
-<li>Train linear projections from word embeddings</li>
-<li>Test if embeddings predict human ratings</li>
+<li>Your concept of &quot;coffee&quot; (you drink it daily)</li>
+<li>Your concept of &quot;durian&quot; (you've read about it, maybe seen pictures)</li>
+<li>Your concept of &quot;quark&quot; (purely theoretical, never directly observed)</li>
+<li>Your concept of &quot;justice&quot; (abstract, no physical referent)</li>
+<li>GPT-4's concept of &quot;coffee&quot; (learned from text)</li>
+</ol>
+<p><strong>Questions:</strong></p>
+<ul>
+<li>Where do you draw the line between &quot;real&quot; understanding and symbol manipulation?</li>
+<li>Is your understanding of &quot;quark&quot; fundamentally different from GPT-4's understanding of &quot;coffee&quot;?</li>
+<li>What would it take for YOU to truly understand a quark?</li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="neural-evidence-the-alignment-puzzle">Neural evidence: the alignment puzzle</h1>
+<div class="definition-box" data-title="Mitchell et al. (2008): Predicting brain activity from text statistics">
+<p>Trained model to predict fMRI patterns from word co-occurrence with 25 sensory-motor verbs. Result: <strong>77% accuracy</strong> on held-out words.</p>
+</div>
+<div class="definition-box" data-title="Huth et al. (2016): Mapping all of semantic space">
+<p>Built encoding models from word embeddings to predict brain activity during natural story listening. Found ~200 distinct semantic regions tiling the entire cortex.</p>
+</div>
+<div class="warning-box" data-title="The puzzle">
+<p>Why should <em>text statistics</em> predict <em>brain activity</em>?</p>
+<p>Text has no sensory information. Yet it predicts neural patterns that supposedly require embodied grounding. Either:</p>
+<ol>
+<li>Embodied grounding leaks into language statistics, or</li>
+<li>The brain's &quot;grounded&quot; representations are more statistical than we thought</li>
 </ol>
 </div>
-<div class="tip-box" data-title="Key Findings">
-<ul>
-<li>Embeddings encode surprisingly rich knowledge</li>
-<li>Can predict perceptual features (even vision and motor properties!)</li>
-<li>Better with larger models</li>
-</ul>
-</div>
-<div class="note-box" data-title="Interpretation">
-<p>Text co-occurrence captures real-world properties through <em>indirect</em> grounding in language. But still not true perceptual grounding.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:40%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="background" data-marpit-advanced-background-split="right"><div data-marpit-advanced-background-container="true" data-marpit-advanced-background-direction="horizontal"><figure style="background-image:url(&quot;figures/mitchel_etal_2008.jpeg&quot;);background-size:contain;"></figure></div></section></foreignObject><foreignObject width="60%" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:40%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="content" data-marpit-advanced-background-split="right">
+<h1 id="mitchell-et-al-2008">Mitchell et al. (2008)</h1>
+<div class="important-box" data-title="What this means for human cognition">
+<p>The brain organizes semantic information in ways that parallel statistical structure in language.</p>
+<p>This isn't evidence that the brain IS a statistical model—but it suggests the brain's solution and statistical solutions share deep structural properties.</p>
 </div>
 <div class="note-box" data-title="Further reading">
-<p><a href="https://doi.org/10.1038/s41562-022-01316-x"><strong>Grand et al. (2022, <em>Nature Human Behaviour</em>)</strong></a> Semantic projection recovers rich human knowledge of multiple object features from word embeddings.</p>
+<p><a href="https://doi.org/10.1126/science.1152876"><strong>Mitchell et al. (2008, <em>Science</em>)</strong></a></p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="multimodal-models-bridging-the-gap">Multimodal Models: Bridging the Gap</h1>
-<div class="definition-box" data-title="Combining language with perception">
-<p><strong>Vision-Language Models:</strong> CLIP (OpenAI), ALIGN (Google), Flamingo (DeepMind), GPT-4V (OpenAI)</p>
-<p><strong>Key Idea:</strong> Learn joint embedding space where text and images map to same space. Enables cross-modal understanding and grounds language in vision.</p>
+</foreignObject><foreignObject width="1280" height="720" data-marpit-advanced-background="pseudo"><section data-theme="cdl-theme" lang="C" style="" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="pseudo" data-marpit-advanced-background-split="right"></section></foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:45%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="background" data-marpit-advanced-background-split="right"><div data-marpit-advanced-background-container="true" data-marpit-advanced-background-direction="horizontal"><figure style="background-image:url(&quot;figures/huth_et_al_2016.webp&quot;);background-size:contain;"></figure></div></section></foreignObject><foreignObject width="55%" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;--marpit-advanced-background-split:45%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="content" data-marpit-advanced-background-split="right">
+<h1 id="huth-et-al-2016">Huth et al. (2016)</h1>
+<div class="important-box" data-title="The semantic atlas">
+<p>Meaning is distributed across the <em>entire</em> cortex—not localized to &quot;language areas.&quot;</p>
+<p>Every patch of cortex encodes semantic categories: people, places, numbers, social concepts, visual properties...</p>
 </div>
-<div class="note-box" data-title="Training">
-<ul>
-<li>Image-caption pairs; Contrastive learning</li>
-<li>Matching images to descriptions</li>
-<li>Large-scale (400M+ pairs)</li>
-</ul>
+<div class="note-box" data-title="The implication">
+<p>Human semantic representation is massively parallel and distributed—strikingly similar to how neural networks represent meaning.</p>
+<p>Perhaps we invented neural networks not as alien intelligences, but as mirrors of our own cognitive architecture.</p>
 </div>
-<div class="tip-box" data-title="Benefits">
-<p>Visual grounding, zero-shot classification, better generalization, more &quot;human-like&quot;.</p>
-</div>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://arxiv.org/abs/2103.00020"><strong>Radford et al. (2021, <em>ICML</em>)</strong></a> Learning Transferable Visual Models From Natural Language Supervision (CLIP).</p>
+</section>
+</foreignObject><foreignObject width="1280" height="720" data-marpit-advanced-background="pseudo"><section data-theme="cdl-theme" lang="C" style="" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="pseudo" data-marpit-advanced-background-split="right"></section></foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="%F0%9F%92%AD-discussion-what-models-teach-us-about-ourselves"><img class="emoji" draggable="false" alt="💭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4ad.svg" data-marp-twemoji=""/> Discussion: What models teach us about ourselves</h1>
+<div class="important-box" data-title="Group discussion (5 min)">
+<p>The Mitchell and Huth findings show that text statistics predict brain activity.</p>
+<p><strong>Consider:</strong></p>
+<ol>
+<li>
+<p>If someone had never seen these results, they might assume &quot;embodied meaning&quot; requires fundamentally different representations than statistical learning produces. The data suggests otherwise. What does this tell us about the nature of human understanding?</p>
+</li>
+<li>
+<p>We tend to feel that our understanding is &quot;deep&quot; while models are &quot;shallow.&quot; But what if the brain's depth comes from <em>scale and integration</em> rather than a fundamentally different algorithm?</p>
+</li>
+<li>
+<p>Could studying language models help us identify which aspects of human cognition are <em>unique</em> versus <em>universal properties of any system that processes language</em>?</p>
+</li>
+</ol>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="conceptual-spaces-theory">Conceptual Spaces Theory</h1>
-<div class="definition-box" data-title="Gärdenfors (2000): Meaning as geometry">
-<p><strong>Key Ideas:</strong></p>
+<h1 id="the-limits-of-human-understanding">The limits of human understanding</h1>
+<div class="important-box" data-title="A thought experiment">
+<p>We easily criticize LLMs for lacking &quot;true&quot; understanding. But what are the limits of <em>human</em> understanding?</p>
+</div>
+<div class="warning-box" data-title="Candidates for the unknowable">
 <ul>
-<li>Concepts represented in quality dimensions (color, size, temperature, etc.)</li>
-<li>Each dimension has a metric; Concepts are regions in space</li>
-<li>Similarity = geometric proximity</li>
+<li><strong>Quantum superposition:</strong> We can do the math, but can we <em>understand</em> it?</li>
+<li><strong>Four-dimensional space:</strong> We can project it, but can we <em>visualize</em> it?</li>
+<li><strong>Exponential growth:</strong> We systematically underestimate it (COVID-19 predictions)</li>
+<li><strong>Deep time:</strong> 4.5 billion years is a number, not a felt quantity</li>
+<li><strong>Consciousness itself:</strong> We experience it but cannot explain it</li>
 </ul>
 </div>
-<div class="example-box" data-title="Example: Colors">
-<ul>
-<li>Hue, saturation, brightness</li>
-<li>Natural categories (red, blue, green) with fuzzy boundaries</li>
-<li>Prototypes at centers</li>
-</ul>
-</div>
-<div class="note-box" data-title="Relation to Embeddings">
-<ul>
-<li>Similar geometric structure but learned dimensions</li>
-<li>Not interpretable qualities; No grounding in perception</li>
-</ul>
-</div>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://mitpress.mit.edu/9780262571753/conceptual-spaces/"><strong>Gärdenfors (2000, <em>MIT Press</em>)</strong></a> Conceptual Spaces: The Geometry of Thought.</p>
+<div class="note-box" data-title="The pattern">
+<p>Humans seem to have a &quot;cognitive horizon&quot;—concepts we can manipulate symbolically but cannot truly grasp.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="lexical-semantic-theories">Lexical Semantic Theories</h1>
-<div class="note-box" data-title="How do linguists think about word meaning?">
-<ol>
-<li><strong>Feature-Based:</strong> Words = bundles of features (e.g., bachelor = [+human, +male, +adult, -married])</li>
-<li><strong>Prototype Theory:</strong> Categories have best examples (Robin is prototypical; Penguin is peripheral)</li>
-<li><strong>Frame Semantics:</strong> Words evoke conceptual frames (e.g., &quot;Buy&quot; activates commerce frame)</li>
-<li><strong>Construction Grammar:</strong> Meaning from form-function pairings; usage-based</li>
-<li><strong>Word Sense Disambiguation:</strong> Words have multiple senses (WordNet: Bank₁ vs Bank₂)</li>
-</ol>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="are-humans-stochastic-parrots-too">Are humans &quot;stochastic parrots&quot; too?</h1>
+<div class="definition-box" data-title="The Bender et al. critique, redirected">
+<p>LLMs are &quot;stochastic parrots&quot;—producing fluent language without understanding. But consider human behavior:</p>
 </div>
-<div class="warning-box" data-title="Question">
-<p>Which theories align with distributional models?<br />
-<strong>Answer:</strong> Mostly usage-based views (Construction Grammar, Prototype Theory). Models struggle with feature analysis and frame semantics.</p>
+<div class="warning-box" data-title="Evidence for human parrot-like behavior">
+<ul>
+<li><strong>Confabulation:</strong> Patients with split brains invent plausible explanations for behaviors they don't understand</li>
+<li><strong>Motivated reasoning:</strong> We generate arguments for conclusions we've already reached</li>
+<li><strong>Expertise illusion:</strong> We think we understand things (zippers, toilets, politics) until asked to explain them</li>
+<li><strong>Social learning:</strong> Much of what we &quot;know&quot; is repeated from others, never verified</li>
+</ul>
 </div>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://www.semanticscholar.org/paper/Frame-semantics-Fillmore/649666170f7f2400d05944737762bb922d1199ad"><strong>Fillmore (1982)</strong></a> Frame Semantics.</p>
-<p><a href="https://doi.org/10.1037/0096-3445.104.3.192"><strong>Rosch (1975, <em>J Exp Psych: General</em>)</strong></a> Cognitive Representations of Semantic Categories.</p>
+<div class="important-box" data-title="The question">
+<p>What percentage of your beliefs and utterances reflect genuine understanding versus sophisticated pattern matching and repetition?</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="neural-evidence-predicting-brain-activity-from-words">Neural Evidence: Predicting Brain Activity from Words</h1>
-<div class="definition-box" data-title="Mitchell et al. (2008, Science): A landmark study">
-<p><strong>The Question:</strong> Can we predict what the brain does when you think about a word?</p>
-<p><strong>The Approach:</strong></p>
-<ol>
-<li>Measure brain activity (fMRI) while people view 60 concrete nouns</li>
-<li>Characterize words by co-occurrence with 25 sensory-motor verbs (eat, push, see, hear, smell...)</li>
-<li>Train model to predict brain patterns from verb co-occurrence features</li>
-<li>Test: Given two NEW words, which brain pattern goes with which?</li>
-</ol>
+<h1 id="the-illusion-of-explanatory-depth">The illusion of explanatory depth</h1>
+<div class="definition-box" data-title="Rozenblit & Keil (2002)">
+<p>People dramatically overestimate their understanding of how everyday objects work.</p>
+<p><strong>The experiment:</strong> Rate your understanding of a bicycle (1-7). Now explain how it works. Re-rate your understanding.</p>
+<p><strong>Result:</strong> Ratings drop substantially after attempted explanation.</p>
 </div>
-<div class="tip-box" data-title="Key Result">
-<p><strong>~77% accuracy</strong> on leave-two-out classification—far above chance (50%)!</p>
-<p>The model could predict brain activity for words it had never seen during training.</p>
+<div class="warning-box" data-title="Implications">
+<ul>
+<li>We confuse <em>familiarity</em> with <em>understanding</em></li>
+<li>We confuse <em>ability to use</em> with <em>ability to explain</em></li>
+<li>We confuse <em>recognition</em> with <em>knowledge</em></li>
+</ul>
+<p>These are exactly the &quot;failures&quot; we attribute to LLMs.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;--marpit-advanced-background-split:40%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="background" data-marpit-advanced-background-split="right"><div data-marpit-advanced-background-container="true" data-marpit-advanced-background-direction="horizontal"><figure style="background-image:url(&quot;figures/mitchel_etal_2008.jpeg&quot;);background-size:contain;"></figure></div></section></foreignObject><foreignObject width="60%" height="720"><section id="16" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;--marpit-advanced-background-split:40%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="content" data-marpit-advanced-background-split="right">
-<h1 id="mitchell-et-al-2008-implications">Mitchell et al. (2008): Implications</h1>
-<div class="important-box" data-title="What This Means">
-<ol>
-<li><strong>Semantic representation is distributed</strong> across cortex</li>
-<li><strong>Sensory-motor features</strong> predict neural patterns</li>
-<li><strong>Text statistics</strong> capture something real about brain organization</li>
-<li>First demonstration that computational models and brains share structure</li>
-</ol>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="concepts-humans-cannot-form">Concepts humans cannot form</h1>
+<div class="important-box" data-title="The cognitive closure hypothesis (McGinn, 1989)">
+<p>Just as dogs cannot understand calculus (not because they're stupid, but because they lack the cognitive architecture), humans may be <em>constitutionally incapable</em> of understanding certain truths.</p>
 </div>
-<div class="warning-box" data-title="Limitations">
+<div class="note-box" data-title="Possible examples">
 <ul>
-<li>Only 25 hand-picked features—is this true distributional semantics?</li>
-<li>Works best for concrete, imageable nouns</li>
-<li>What about abstract concepts?</li>
+<li>The hard problem of consciousness (why does subjective experience exist?)</li>
+<li>The nature of time (why does it flow?)</li>
+<li>Quantum measurement (what constitutes an &quot;observer&quot;?)</li>
+<li>Why there is something rather than nothing</li>
 </ul>
 </div>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://doi.org/10.1126/science.1152876"><strong>Mitchell et al. (2008, <em>Science</em>)</strong></a> Predicting Human Brain Activity Associated with the Meanings of Nouns.</p>
+<div class="warning-box" data-title="The uncomfortable possibility">
+<p>These may not be &quot;hard problems&quot; awaiting clever solutions. They may be <em>cognitive illusions</em>—questions that feel meaningful but lie outside our representational capacity.</p>
+<p>We may be LLMs hallucinating that these questions have answers.</p>
 </div>
 </section>
-</foreignObject><foreignObject width="1280" height="720" data-marpit-advanced-background="pseudo"><section data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="pseudo" data-marpit-advanced-background-split="right"></section></foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="neural-evidence-semantic-maps-across-the-brain">Neural Evidence: Semantic Maps Across the Brain</h1>
-<div class="definition-box" data-title="Huth et al. (2016, Nature): The semantic atlas">
-<p><strong>The Challenge:</strong> Map ALL of semantic space, not just 60 words</p>
-<p><strong>The Approach:</strong></p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="%F0%9F%92%AD-discussion-the-boundaries-of-human-understanding"><img class="emoji" draggable="false" alt="💭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4ad.svg" data-marp-twemoji=""/> Discussion: The boundaries of human understanding</h1>
+<div class="important-box" data-title="Choose one question (7 min)">
 <ol>
-<li>Participants listened to hours of natural stories in fMRI</li>
-<li>Built encoding model: predict brain activity from word embeddings</li>
-<li>Test which semantic categories activate which brain regions</li>
+<li>
+<p><strong>Personal limits:</strong> Is there a concept you've tried to understand but suspect you fundamentally <em>cannot</em>? What makes it feel unreachable—complexity, or something deeper?</p>
+</li>
+<li>
+<p><strong>Species limits:</strong> If humans have a &quot;cognitive horizon,&quot; how would we know? Can a system recognize its own limitations, or is that itself beyond the limitation?</p>
+</li>
+<li>
+<p><strong>The comparison:</strong> We use &quot;understanding&quot; as a binary (LLMs don't, humans do). But what if understanding is a <em>spectrum</em>—and humans are simply further along than current models, not categorically different? What evidence would change your mind?</p>
+</li>
+<li>
+<p><strong>The pragmatic view:</strong> Does it <em>matter</em> whether understanding is &quot;genuine&quot;? If a doctor, lawyer, or teacher produces correct outputs, do we care about their inner experience?</p>
+</li>
 </ol>
 </div>
-<div class="tip-box" data-title="Key Findings">
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="the-role-of-language-in-thought">The role of language in thought</h1>
+<div class="definition-box" data-title="The Whorfian question, revisited">
+<p>Does language <em>shape</em> thought, or merely <em>express</em> it?</p>
+</div>
+<div class="important-box" data-title="Evidence from language models">
+<p>If Word2Vec captures semantic structure from text alone, this suggests language <em>encodes</em> thought structure—it's not a neutral medium.</p>
+<p><strong>Implication:</strong> The structure of your language may constrain the thoughts you can think.</p>
+</div>
+<div class="warning-box" data-title="Languages you don't speak">
+<p>There are concepts in other languages without English equivalents (saudade, hygge, Schadenfreude, wabi-sabi).</p>
+<p>Can you <em>truly understand</em> these concepts? Or only approximate them through translation?</p>
+<p>Are there concepts in no human language—thoughts no human has ever thought?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="meaning-as-a-construction">Meaning as a construction</h1>
+<div class="important-box" data-title="The constructivist view">
+<p>Meaning isn't discovered—it's <em>constructed</em> through interaction between an agent and its environment.</p>
+<p>Both humans and LLMs construct meaning from their training experience. The difference is:</p>
 <ul>
-<li>Semantic information is represented <strong>throughout</strong> cerebral cortex</li>
-<li>~200 distinct semantic areas, each encoding different categories</li>
-<li>Organization is <strong>remarkably consistent</strong> across individuals</li>
-<li><strong>Both hemispheres</strong> represent semantic information (not just left!)</li>
+<li>Humans: embodied, social, extended in time, multimodal</li>
+<li>LLMs: disembodied, text-only, compressed, no continuous identity</li>
 </ul>
 </div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;--marpit-advanced-background-split:45%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="background" data-marpit-advanced-background-split="right"><div data-marpit-advanced-background-container="true" data-marpit-advanced-background-direction="horizontal"><figure style="background-image:url(&quot;figures/huth_et_al_2016.webp&quot;);background-size:contain;"></figure></div></section></foreignObject><foreignObject width="55%" height="720"><section id="18" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;--marpit-advanced-background-split:45%;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="content" data-marpit-advanced-background-split="right">
-<h1 id="huth-et-al-2016-the-semantic-atlas">Huth et al. (2016): The Semantic Atlas</h1>
-<div class="note-box" data-title="What you're seeing">
-<p>Each color = different semantic category. The brain is tiled with ~200 distinct semantic areas!</p>
-<p>Categories include: people, places, numbers, social concepts, visual properties, actions...</p>
-</div>
-<div class="important-box" data-title="Takeaway">
-<p>Meaning isn't localized to &quot;language areas&quot;—it's <strong>distributed across the entire cortex</strong> in an organized, predictable way.</p>
-<p>Computational models can predict this organization, suggesting shared representational principles.</p>
-</div>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://doi.org/10.1038/nature17637"><strong>Huth et al. (2016, <em>Nature</em>)</strong></a> Natural speech reveals the semantic maps that tile human cerebral cortex.</p>
+<div class="note-box" data-title="The question of necessity">
+<p>Which of these differences is <em>necessary</em> for &quot;real&quot; understanding?</p>
+<p>If we gave an LLM a body, persistent memory, and social interaction—at what point would it cross the threshold?</p>
+<p>Or is there no threshold—just increasingly sophisticated constructions of meaning, human and machine alike?</p>
 </div>
 </section>
-</foreignObject><foreignObject width="1280" height="720" data-marpit-advanced-background="pseudo"><section data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-marpit-advanced-background="pseudo" data-marpit-advanced-background-split="right"></section></foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="%F0%9F%92%AD-discussion-brains-and-models"><img class="emoji" draggable="false" alt="💭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4ad.svg" data-marp-twemoji=""/> Discussion: Brains and Models</h1>
-<div class="important-box" data-title="Group Discussion (5 min)">
-<p><strong>Given the Mitchell and Huth findings:</strong></p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="summary-the-mirror-and-the-horizon">Summary: The mirror and the horizon</h1>
+<div class="note-box" data-title="What we explored today">
 <ol>
-<li>
-<p>What does it mean that text statistics can predict brain activity? Does this validate or challenge embodied cognition?</p>
-</li>
-<li>
-<p>If we made a &quot;perfect&quot; model that predicts ALL brain activity from text—would that model &quot;understand&quot; language?</p>
-</li>
-<li>
-<p><strong>Correlation ≠ Causation:</strong> Models and brains may arrive at similar representations through completely different processes. How could we test this?</p>
-</li>
+<li><strong>The mirror:</strong> Language models reveal structure in human cognition we didn't know was there</li>
+<li><strong>The alignment:</strong> Brain-model correlations suggest shared computational principles</li>
+<li><strong>The inversion:</strong> Many critiques of LLM understanding apply to humans too</li>
+<li><strong>The horizon:</strong> Humans have cognitive limits—concepts we can name but not truly grasp</li>
+<li><strong>The spectrum:</strong> &quot;Understanding&quot; may be continuous, not binary</li>
 </ol>
 </div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-stochastic-parrots-critique">The &quot;Stochastic Parrots&quot; Critique</h1>
-<div class="tip-box" data-title="Building on Lecture 12">
-<p>In <a href="lecture12.html">Lecture 12</a>, we questioned whether contextual embeddings reflect true understanding. Bender et al. (2021) formalized this critique.</p>
-</div>
-<div class="warning-box" data-title="Bender et al. (2021): The Core Argument">
-<p>LLMs learn <strong>form</strong>, not <strong>meaning</strong>. They are &quot;stochastic parrots&quot;—repeating patterns without understanding the world or communicative intent.</p>
-<p><strong>Risk:</strong> Mistaking fluency for understanding.</p>
-</div>
-<div class="important-box" data-title="The Fundamental Question">
-<p><strong>Can meaning arise from form alone?</strong> Or do we need grounding in perception, action, and embodiment?</p>
-<p>This remains an open question—and shapes how we evaluate what these models actually &quot;know.&quot;</p>
-</div>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://doi.org/10.1145/3442188.3445922"><strong>Bender et al. (2021, <em>FAccT</em>)</strong></a> On the Dangers of Stochastic Parrots.</p>
+<div class="important-box" data-title="The takeaway">
+<p>Studying how machines fail to understand helps us see how <em>we</em> might fail to understand—and what understanding even means.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="common-sense-reasoning">Common Sense Reasoning</h1>
-<div class="warning-box" data-title="What humans know but models don't">
-<p><strong>Physical Intuition Failures:</strong><br />
-Q: &quot;Can you fit an elephant in a refrigerator?&quot;<br />
-GPT-3: &quot;Yes, if you open the door wide enough...&quot;</p>
-<p><strong>Winograd Schema (reasoning):</strong><br />
-&quot;The trophy doesn't fit in the brown suitcase because it is too [small/large].&quot;<br />
-What does &quot;it&quot; refer to? &quot;small&quot; → suitcase; &quot;large&quot; → trophy. Requires world knowledge!</p>
-</div>
-<div class="warning-box" data-title="Social Intuition Failures">
-<p>Q: &quot;John told Mary he loved her. How did Mary feel?&quot;<br />
-Depends on context: First date? (Surprised/happy); After argument? (Relieved); Unwanted? (Uncomfortable). Models miss social nuance!</p>
-</div>
-<div class="note-box" data-title="Why Models Struggle">
-<p>Physical/social knowledge is rarely stated; assumed as background. Requires embodied experience and causal reasoning.</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="%F0%9F%92%AD-final-reflection-know-thyself"><img class="emoji" draggable="false" alt="💭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4ad.svg" data-marp-twemoji=""/> Final reflection: Know thyself</h1>
+<div class="important-box" data-title="Individual reflection (3 min)">
+<p>The philosopher's injunction was &quot;know thyself.&quot;</p>
+<p>After today's lecture:</p>
+<ul>
+<li>What do you think you <em>truly</em> understand (not just recognize or use)?</li>
+<li>What have you realized you understand less than you thought?</li>
+<li>Are there important concepts you suspect you <em>cannot</em> understand—and how do you relate to that boundary?</li>
+</ul>
+<p>Write a few sentences. These questions have no answers—only honest self-examination.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="compositionality-phrases-and-sentences">Compositionality: Phrases and Sentences</h1>
-<div class="warning-box" data-title="How do we combine word meanings?">
-<p><strong>The Problem:</strong> Vector math doesn't work! <code>vec(&quot;hot&quot;) + vec(&quot;dog&quot;) ≠ vec(&quot;hot dog&quot;)</code>.<br />
-&quot;hot dog&quot; = food item; &quot;hot&quot; + &quot;dog&quot; = warm canine.</p>
-<p><strong>Non-compositional Phrases:</strong> Kick the bucket (= die); Spill the beans (= reveal secret); Break a leg (= good luck).</p>
-</div>
-<div class="note-box" data-title="The Negation Puzzle">
-<p>BERT shows mixed results with negation:</p>
-<ul>
-<li><strong>Classification:</strong> Can correctly identify &quot;Not bad!&quot; as positive sentiment (<a href="lecture12.html">Lecture 12</a>)</li>
-<li><strong>Embeddings:</strong> &quot;The movie was good&quot; and &quot;The movie was not good&quot; have ~0.85 cosine similarity</li>
-</ul>
-<p>The model handles negation for some tasks but the underlying representations remain problematically similar.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="grand-discussion">Grand Discussion</h1>
-<div class="important-box" data-title="Do large language models 'understand' language?">
-<p><strong>Arguments FOR:</strong></p>
-<ul>
-<li>Solve complex tasks; Generalize to new domains; Emergent capabilities</li>
-<li>Capture linguistic structure; Pragmatic criterion: if it works...</li>
-<li>Maybe understanding = prediction; Human understanding also imperfect</li>
-</ul>
-<p><em>&quot;The question is not whether machines think, but whether they behave intelligently&quot; — Turing</em></p>
-</div>
-<div class="warning-box" data-title="Arguments AGAINST">
-<ul>
-<li>No grounding in reality; No embodied experience; No intentionality</li>
-<li>Brittle, exploit shortcuts; Hallucinate confidently; No causal reasoning</li>
-<li>Missing common sense; Form without meaning</li>
-</ul>
-<p><em>&quot;Understanding requires grounding in perception and action&quot; — Embodied cognition</em></p>
-</div>
-<div class="warning-box" data-title="Perhaps the wrong question?">
-<p>Instead of &quot;Do they understand?&quot;, ask: What do they represent? How does it differ from humans? What are the limits?</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="%F0%9F%92%AD-final-discussion-the-future-of-meaning"><img class="emoji" draggable="false" alt="💭" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4ad.svg" data-marp-twemoji=""/> Final Discussion: The Future of Meaning</h1>
-<div class="important-box" data-title="Choose One Question (5 min)">
-<ol>
-<li>
-<p><strong>Grounding:</strong> Will multimodal models (text + vision + audio) solve the grounding problem? Or is embodiment essential?</p>
-</li>
-<li>
-<p><strong>Understanding:</strong> If a model passes every test but has no sensory experience—does it &quot;understand&quot;?</p>
-</li>
-<li>
-<p><strong>Practical:</strong> For real applications (chatbots, search), does true understanding matter? When might the difference be critical?</p>
-</li>
-</ol>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="summary">Summary</h1>
-<div class="note-box" data-title="What we learned today">
-<ol>
-<li><strong>Symbol Grounding:</strong> Revisited the Chinese Room—computational models lack perceptual grounding</li>
-<li><strong>Embodied Cognition:</strong> Human meaning is tied to bodily experience and conceptual metaphors</li>
-<li><strong>Distributional Semantics:</strong> Powerful but incomplete—captures patterns, not experience</li>
-<li><strong>Semantic Similarity:</strong> Taxonomic vs thematic; models conflate them</li>
-<li><strong>Neural Evidence:</strong> Mitchell (2008) and Huth (2016) show brain-model alignment—but correlation ≠ causation</li>
-<li><strong>The Debate:</strong> &quot;Stochastic parrots&quot; critique vs emergent capabilities</li>
-<li><strong>Compositionality:</strong> Idioms and negation remain challenging</li>
-</ol>
-<p><strong>The gap between computation and cognition remains—but studying it teaches us about both!</strong></p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
@@ -1193,7 +1019,7 @@ Depends on context: First date? (Surprised/happy); After argument? (Relieved); U
     <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
   </div>
 </div>
-<p><strong>Coming up:</strong> Attention mechanisms and the transformer revolution!</p>
+<p><strong>Next lecture:</strong> Attention mechanisms and the transformer revolution</p>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();
 </script></foreignObject></svg></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@4.1.2/lib/bespoke.js.LICENSE.txt */
