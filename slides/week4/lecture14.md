@@ -20,11 +20,11 @@ Winter 2026
 <div class="note-box" data-title="By the end of this lecture, you will">
 
 1. Compare and contrast computational vs. human views of semantic representation
-2. Explain the symbol grounding problem and its relevance to large language models
-3. Understand the principles of embodied cognition and conceptual metaphors
+2. Apply the symbol grounding problem to evaluate large language models
+3. Understand embodied cognition and conceptual metaphors
 4. Distinguish between taxonomic similarity and thematic relatedness
-5. Evaluate empirical evidence from neuroscience regarding semantic maps in the brain
-6. Analyze the "stochastic parrots" debate and the limits of form-based learning
+5. Interpret neuroscience evidence on semantic maps in the brain (Mitchell, Huth)
+6. Critically evaluate whether LLMs truly "understand" language
 
 </div>
 
@@ -35,13 +35,13 @@ Winter 2026
 <div class="note-box" data-title="Outline">
 
 1. **Human vs. Computational Semantics**
-2. **Cognitive Theories of Meaning**
+2. **The Symbol Grounding Problem**
 3. **Embodied & Grounded Cognition**
-4. **Semantic Similarity: What Does It Mean?**
-5. **Empirical Evidence from Cognitive Science**
-6. **Bridging the Gap: Models Meet Minds**
+4. **Semantic Similarity: Taxonomic vs. Thematic**
+5. **Neural Evidence: Mapping Meaning in the Brain**
+6. **The Understanding Debate**
 
-**Goal:** Understand what computational models are really learning
+**Goal:** Understand what computational models are really learning—and what they're missing
 
 </div>
 
@@ -56,7 +56,6 @@ Winter 2026
 - Learned from text co-occurrence
 - Distributional patterns
 - Statistical relationships
-- "You shall know a word by the company it keeps"
 
 </div>
 
@@ -71,7 +70,7 @@ Winter 2026
 
 </div>
 
-*This lecture explores the relationship between computational and cognitive semantics*
+*This lecture explores the gap between these perspectives*
 
 ---
 
@@ -84,12 +83,9 @@ Winter 2026
 - **Olfactory:** aroma, roasted smell
 - **Gustatory:** bitter taste, smooth texture
 - **Tactile:** hot, warm cup, liquid
-- **Auditory:** brewing sounds, pouring
 - **Motor:** lifting cup, drinking motion
-- **Contextual:** morning routine, work, café
 - **Emotional:** comfort, alertness, pleasure
-- **Social:** conversations, meetings
-- **Cultural:** Starbucks, espresso, traditions
+- **Social:** conversations, meetings, cafés
 
 </div>
 
@@ -97,16 +93,27 @@ Winter 2026
 
 `coffee = [0.23, -0.45, 0.67, 0.12, -0.89, ...]` (300 numbers learned from text)
 
-**What's missing?**
-- No sensory grounding, embodied experience, or emotional content
-- No perceptual features or action affordances
-- Purely linguistic
+**What's missing?** No sensory grounding, no embodied experience, no emotional content—purely linguistic.
 
 </div>
 
-<div class="warning-box" data-title="The Grounding Problem">
+---
 
-Computational models lack the rich, multimodal, embodied understanding that humans have.
+# 💭 Discussion: Your Mental Lexicon
+
+<div class="important-box" data-title="Think-Pair-Share (3 min)">
+
+**Think:** Pick a word with strong personal meaning (a food, place, or activity).
+
+**Pair:** Describe to a partner what aspects of that word's meaning would be IMPOSSIBLE to learn from text alone.
+
+**Share:** What patterns emerged?
+
+</div>
+
+<div class="warning-box" data-title="Key Insight">
+
+The richness of human meaning comes from lived experience. What does this imply for AI systems trained only on text?
 
 </div>
 
@@ -114,27 +121,30 @@ Computational models lack the rich, multimodal, embodied understanding that huma
 
 # The Symbol Grounding Problem 
 
-<div class="definition-box" data-title="Harnad (1990): Can symbols have intrinsic meaning?">
+<div class="tip-box" data-title="Recall from Lecture 1">
 
-**The Chinese Room (Searle, 1980):**
-Input &rarr; [Rule Book: If see X output Y] &rarr; Output. Correct response! But no understanding of Chinese.
+We introduced Searle's Chinese Room argument: producing correct outputs doesn't imply understanding. See [Lecture 1](../week1/lecture1.html) for the full thought experiment.
 
-**Analogy to LLMs:**
-Input: "Is a penguin a bird?" &rarr; [Pattern: "X is a bird" often follows penguins in text] &rarr; Output: "Yes, a penguin is a bird". Correct! But does it "know" birds?
+</div>
+
+<div class="definition-box" data-title="Applying to LLMs (Harnad, 1990)">
+
+**Analogy:**
+Input: "Is a penguin a bird?" → [Pattern: "X is a bird" often follows penguins in text] → Output: "Yes, a penguin is a bird"
+
+Correct! But does it "know" what birds ARE? This is the **symbol grounding problem**.
 
 </div>
 
 <div class="note-box" data-title="Symbol vs. Grounded Systems">
 
-**Symbol Systems:** Symbols refer to other symbols; purely syntactic manipulation; no connection to world.
+**Symbol Systems:** Symbols refer to other symbols; purely syntactic; no connection to world.
 
-**Grounded Systems:** Symbols connected to perception. A child learns "dog" by SEEING, PETTING, HEARING, and being LICKED by dogs. The word "dog" is grounded in experience!
+**Grounded Systems:** Symbols connected to perception. A child learns "dog" by SEEING, PETTING, HEARING dogs. The word is grounded in experience!
 
 </div>
 
 <div class="note-box" data-title="Further reading">
-
-[**Searle (1980, *Behavioral and Brain Sciences*)**](https://doi.org/10.1017/S0140525X0000575X) Minds, Brains, and Programs.
 
 [**Harnad (1990, *Physica D*)**](https://doi.org/10.1016/0167-2789(90)90087-6) The Symbol Grounding Problem.
 
@@ -156,21 +166,20 @@ Input: "Is a penguin a bird?" &rarr; [Pattern: "X is a bird" often follows pengu
 
 <div class="note-box" data-title="Neuroscience Evidence">
 
-Reading "kick the ball" &rarr; Motor cortex activates (Leg area specifically!)
-Reading "pick up the cup" &rarr; Motor cortex activates (Hand area activates)
+Reading "kick the ball" → Motor cortex activates (Leg area specifically!)
+Reading "pick up the cup" → Motor cortex activates (Hand area!)
 *Even without moving!*
 
 </div>
 
 <div class="example-box" data-title="Conceptual Metaphors (Lakoff & Johnson)">
 
-Physical &rarr; Abstract mapping:
-- "WARM personality" &larr; holding warm drink primes positive judgments!
-- "HIGH status" &larr; up = good, down = bad (heads held high)
-- "GRASPING an idea" &larr; physical grasping simulated mentally
-- "Heavy heart" &larr; weight = emotional burden
+Physical → Abstract mapping:
+- "WARM personality" ← holding warm drink primes positive judgments!
+- "HIGH status" ← up = good, down = bad
+- "GRASPING an idea" ← physical grasping simulated mentally
 
-**These metaphors are NOT in Word2Vec!** Models learn word patterns, not embodied experience.
+**These metaphors are NOT in Word2Vec!** Models learn patterns, not embodied experience.
 
 </div>
 
@@ -182,40 +191,31 @@ Physical &rarr; Abstract mapping:
 
 ---
 
-# The Distributional Hypothesis Revisited 
+# The Distributional Hypothesis: A Cognitive Critique 
 
-<div class="definition-box" data-title='"You shall know a word by the company it keeps" — J.R. Firth (1957)'>
+<div class="tip-box" data-title="Recall from Lectures 10-11">
+
+We explored the distributional hypothesis ("You shall know a word by the company it keeps") and how Word2Vec operationalizes it. See [Lecture 10](../week3/lecture10.html) for LSA/LDA and [Lecture 11](lecture11.html) for Word2Vec.
+
+</div>
+
+<div class="important-box" data-title="The Cognitive Question">
 
 **Strong version:** Word meaning IS distributional patterns
 **Weak version:** Distributional patterns REFLECT meaning
 
-</div>
-
-<div class="tip-box" data-title="Supports">
-
-- Works remarkably well in practice; captures semantic similarity
-- Enables analogical reasoning; scales to huge vocabularies
-- Unsupervised learning; aligned with usage-based linguistics
+Now that we've built these systems, we can ask: Is statistical co-occurrence *sufficient* for meaning?
 
 </div>
 
-<div class="warning-box" data-title="Limitations">
+<div class="warning-box" data-title="What's Missing?">
 
-- Correlation $\neq$ causation; lacks perceptual grounding
-- No embodied understanding; missing common sense
-- Can't handle novel situations; reflects training data biases
+Even the best distributional models lack:
+- **Perceptual grounding** in sensory experience
+- **Embodied understanding** through physical interaction
+- **Causal reasoning** about how the world works
 
-</div>
-
-<div class="warning-box" data-title="Key Question">
-
-Is distributional semantics sufficient for meaning, or just a useful approximation?
-
-</div>
-
-<div class="note-box" data-title="Further reading">
-
-[**Boleda (2020, *Annual Review of Linguistics*)**](https://doi.org/10.1146/annurev-linguistics-011619-030303) Distributional Semantics and Linguistic Theory.
+This is the core tension between computational and cognitive approaches.
 
 </div>
 
@@ -225,16 +225,16 @@ Is distributional semantics sufficient for meaning, or just a useful approximati
 
 <div class="definition-box" data-title="Different types of similarity">
 
-**Taxonomic (IS-A):** dog-cat (Both are animals) &rarr; Similarity: HIGH
-**Thematic (GOES-WITH):** dog-leash (Co-occur in events) &rarr; Relatedness: HIGH, Similarity: LOW!
+**Taxonomic (IS-A):** dog-cat (Both are animals) → Similarity: HIGH
+**Thematic (GOES-WITH):** dog-leash (Co-occur in events) → Relatedness: HIGH, Similarity: LOW!
 
 </div>
 
 <div class="example-box" data-title="Test Yourself">
 
 Which is more SIMILAR to "coffee"?
-A) tea &larr; Same category (beverages)
-B) cup &larr; Co-occurs (thematic)
+A) tea ← Same category (beverages)
+B) cup ← Co-occurs (thematic)
 
 **Answer:** A (tea) is more SIMILAR; B (cup) is more RELATED.
 
@@ -289,7 +289,7 @@ SimLex measures true SIMILARITY. WordSim measures RELATEDNESS. Models score bett
 
 <div class="note-box" data-title="Interpretation">
 
-Text co-occurrence captures real-world properties through indirect grounding in language. But still not true perceptual grounding.
+Text co-occurrence captures real-world properties through *indirect* grounding in language. But still not true perceptual grounding.
 
 </div>
 
@@ -375,7 +375,7 @@ Visual grounding, zero-shot classification, better generalization, more "human-l
 2. **Prototype Theory:** Categories have best examples (Robin is prototypical; Penguin is peripheral)
 3. **Frame Semantics:** Words evoke conceptual frames (e.g., "Buy" activates commerce frame)
 4. **Construction Grammar:** Meaning from form-function pairings; usage-based
-5. **Word Sense Disambiguation:** Words have multiple senses (WordNet: Bank$_1$ vs Bank$_2$)
+5. **Word Sense Disambiguation:** Words have multiple senses (WordNet: Bank₁ vs Bank₂)
 
 </div>
 
@@ -388,38 +388,56 @@ Which theories align with distributional models?
 
 <div class="note-box" data-title="Further reading">
 
-[**Fillmore (1982, *The Linguistic Society of Korea*)**](https://www.semanticscholar.org/paper/Frame-semantics-Fillmore/649666170f7f2400d05944737762bb922d1199ad) Frame Semantics.
+[**Fillmore (1982)**](https://www.semanticscholar.org/paper/Frame-semantics-Fillmore/649666170f7f2400d05944737762bb922d1199ad) Frame Semantics.
 
-[**Rosch (1975, *Journal of Experimental Psychology: General*)**](https://doi.org/10.1037/0096-3445.104.3.192) Cognitive Representations of Semantic Categories.
+[**Rosch (1975, *J Exp Psych: General*)**](https://doi.org/10.1037/0096-3445.104.3.192) Cognitive Representations of Semantic Categories.
 
 </div>
 
 ---
 
-# Empirical Evidence from Neuroscience 
+# Neural Evidence: Predicting Brain Activity from Words
 
-<div class="definition-box" data-title="What does the brain tell us about semantic representation?">
+<div class="definition-box" data-title="Mitchell et al. (2008, Science): A landmark study">
 
-**fMRI Studies:** Can predict brain activity from word embeddings. Semantic information is distributed across cortex in different regions for different features (Temporal: objects; Motor: actions; Visual: visual features).
+**The Question:** Can we predict what the brain does when you think about a word?
+
+**The Approach:**
+1. Measure brain activity (fMRI) while people view 60 concrete nouns
+2. Characterize words by co-occurrence with 25 sensory-motor verbs (eat, push, see, hear, smell...)
+3. Train model to predict brain patterns from verb co-occurrence features
+4. Test: Given two NEW words, which brain pattern goes with which?
 
 </div>
 
-<div class="tip-box" data-title="Findings">
+<div class="tip-box" data-title="Key Result">
 
-- Word2Vec correlates with neural patterns, but imperfectly
-- Human brain uses multimodal integration (Language areas + sensory areas)
+**~77% accuracy** on leave-two-out classification—far above chance (50%)!
+
+The model could predict brain activity for words it had never seen during training.
 
 </div>
 
-<div class="note-box" data-title="Brain vs. Model Representations">
+---
 
-| Feature | Brain | Model (BERT) |
-|---------|-------|--------------|
-| Distributed | Yes | Yes |
-| Hierarchical | Yes | Yes |
-| Context-sensitive | Yes | Yes |
-| Grounded | Yes | No |
-| Fast | Yes | Yes |
+# Mitchell et al. (2008): Implications
+
+![bg right:40% fit](figures/mitchel_etal_2008.jpeg)
+
+<div class="important-box" data-title="What This Means">
+
+1. **Semantic representation is distributed** across cortex
+2. **Sensory-motor features** predict neural patterns
+3. **Text statistics** capture something real about brain organization
+4. First demonstration that computational models and brains share structure
+
+</div>
+
+<div class="warning-box" data-title="Limitations">
+
+- Only 25 hand-picked features—is this true distributional semantics?
+- Works best for concrete, imageable nouns
+- What about abstract concepts?
 
 </div>
 
@@ -427,39 +445,105 @@ Which theories align with distributional models?
 
 [**Mitchell et al. (2008, *Science*)**](https://doi.org/10.1126/science.1152876) Predicting Human Brain Activity Associated with the Meanings of Nouns.
 
+</div>
+
+---
+
+# Neural Evidence: Semantic Maps Across the Brain
+
+<div class="definition-box" data-title="Huth et al. (2016, Nature): The semantic atlas">
+
+**The Challenge:** Map ALL of semantic space, not just 60 words
+
+**The Approach:**
+1. Participants listened to hours of natural stories in fMRI
+2. Built encoding model: predict brain activity from word embeddings
+3. Test which semantic categories activate which brain regions
+
+</div>
+
+<div class="tip-box" data-title="Key Findings">
+
+- Semantic information is represented **throughout** cerebral cortex
+- ~200 distinct semantic areas, each encoding different categories
+- Organization is **remarkably consistent** across individuals
+- **Both hemispheres** represent semantic information (not just left!)
+
+</div>
+
+---
+
+# Huth et al. (2016): The Semantic Atlas
+
+![bg right:45% fit](figures/huth_et_al_2016.webp)
+
+<div class="note-box" data-title="What you're seeing">
+
+Each color = different semantic category. The brain is tiled with ~200 distinct semantic areas!
+
+Categories include: people, places, numbers, social concepts, visual properties, actions...
+
+</div>
+
+<div class="important-box" data-title="Takeaway">
+
+Meaning isn't localized to "language areas"—it's **distributed across the entire cortex** in an organized, predictable way.
+
+Computational models can predict this organization, suggesting shared representational principles.
+
+</div>
+
+<div class="note-box" data-title="Further reading">
+
 [**Huth et al. (2016, *Nature*)**](https://doi.org/10.1038/nature17637) Natural speech reveals the semantic maps that tile human cerebral cortex.
 
 </div>
 
 ---
 
-# The "Stochastic Parrots" Debate 
+# 💭 Discussion: Brains and Models
 
-<div class="warning-box" data-title="Bender et al. (2021): On the Dangers of Stochastic Parrots">
+<div class="important-box" data-title="Group Discussion (5 min)">
 
-**The Argument:** LLMs learn form, not meaning. They are "stochastic parrots" repeating patterns without understanding of the world or communicative intent. Risk: Mistaking fluency for understanding.
+**Given the Mitchell and Huth findings:**
 
-**Evidence:** Fail on simple reasoning; sensitive to phrasing; hallucinate facts; no common sense; brittle to adversarial inputs.
+1. What does it mean that text statistics can predict brain activity? Does this validate or challenge embodied cognition?
 
-</div>
+2. If we made a "perfect" model that predicts ALL brain activity from text—would that model "understand" language?
 
-<div class="tip-box" data-title="Counter-Arguments">
-
-Emergent capabilities at scale; performance on complex tasks; transfer to new domains. Maybe understanding = prediction? Pragmatic success criterion.
+3. **Correlation ≠ Causation:** Models and brains may arrive at similar representations through completely different processes. How could we test this?
 
 </div>
 
-<div class="warning-box" data-title="The Core Question">
+---
 
-**Can meaning arise from form alone?** Or do we need grounding in perception, action, social interaction, and physical embodiment?
+# The "Stochastic Parrots" Critique 
+
+<div class="tip-box" data-title="Building on Lecture 12">
+
+In [Lecture 12](lecture12.html), we questioned whether contextual embeddings reflect true understanding. Bender et al. (2021) formalized this critique.
+
+</div>
+
+<div class="warning-box" data-title="Bender et al. (2021): The Core Argument">
+
+LLMs learn **form**, not **meaning**. They are "stochastic parrots"—repeating patterns without understanding the world or communicative intent.
+
+**Risk:** Mistaking fluency for understanding.
+
+</div>
+
+<div class="important-box" data-title="The Fundamental Question">
+
+**Can meaning arise from form alone?** Or do we need grounding in perception, action, and embodiment?
+
+This remains an open question—and shapes how we evaluate what these models actually "know."
 
 </div>
 
 <div class="note-box" data-title="Further reading">
 
-[**Bender & Koller (2020, *ACL*)**](https://aclanthology.org/2020.acl-main.463/) Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data.
-
-[**Bender et al. (2021, *FAccT*)**](https://doi.org/10.1145/3442188.3445922) On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?
+[**Bender et al. (2021, *FAccT*)**](https://doi.org/10.1145/3442188.3445922) On the Dangers of Stochastic Parrots.
 
 </div>
 
@@ -475,7 +559,7 @@ GPT-3: "Yes, if you open the door wide enough..."
 
 **Winograd Schema (reasoning):**
 "The trophy doesn't fit in the brown suitcase because it is too [small/large]."
-What does "it" refer to? "small" &rarr; suitcase; "large" &rarr; trophy. Requires world knowledge!
+What does "it" refer to? "small" → suitcase; "large" → trophy. Requires world knowledge!
 
 </div>
 
@@ -488,7 +572,7 @@ Depends on context: First date? (Surprised/happy); After argument? (Relieved); U
 
 <div class="note-box" data-title="Why Models Struggle">
 
-Physical/social knowledge is rarely stated; assumed as background knowledge. Requires embodied experience and causal reasoning.
+Physical/social knowledge is rarely stated; assumed as background. Requires embodied experience and causal reasoning.
 
 </div>
 
@@ -500,17 +584,18 @@ Physical/social knowledge is rarely stated; assumed as background knowledge. Req
 
 **The Problem:** Vector math doesn't work! `vec("hot") + vec("dog") ≠ vec("hot dog")`.
 "hot dog" = food item; "hot" + "dog" = warm canine.
-Same issue: `vec("red") + vec("herring") ≠ vec("red herring")` (distraction, not a fish!).
 
 **Non-compositional Phrases:** Kick the bucket (= die); Spill the beans (= reveal secret); Break a leg (= good luck).
 
 </div>
 
-<div class="note-box" data-title="What Transformers Learn">
+<div class="note-box" data-title="The Negation Puzzle">
 
-Input: "break a leg" &rarr; Attention sees this phrase often in "good luck" contexts &rarr; Output: idiomatic meaning. But fails on novel combinations!
+BERT shows mixed results with negation:
+- **Classification:** Can correctly identify "Not bad!" as positive sentiment ([Lecture 12](lecture12.html))
+- **Embeddings:** "The movie was good" and "The movie was not good" have ~0.85 cosine similarity
 
-**The Negation Problem:** BERT struggles with negation. "The movie was good" vs "The movie was not good" embeddings are very similar (~0.85 cosine sim), but "not" should flip the meaning.
+The model handles negation for some tasks but the underlying representations remain problematically similar.
 
 </div>
 
@@ -547,19 +632,33 @@ Instead of "Do they understand?", ask: What do they represent? How does it diffe
 
 ---
 
+# 💭 Final Discussion: The Future of Meaning
+
+<div class="important-box" data-title="Choose One Question (5 min)">
+
+1. **Grounding:** Will multimodal models (text + vision + audio) solve the grounding problem? Or is embodiment essential?
+
+2. **Understanding:** If a model passes every test but has no sensory experience—does it "understand"?
+
+3. **Practical:** For real applications (chatbots, search), does true understanding matter? When might the difference be critical?
+
+</div>
+
+---
+
 # Summary 
 
 <div class="note-box" data-title="What we learned today">
 
-1. **Symbol Grounding:** Computational models lack perceptual grounding
-2. **Embodied Cognition:** Human meaning tied to bodily experience
-3. **Distributional Semantics:** Powerful but incomplete theory
-4. **Semantic Similarity:** Multiple types, models capture some
-5. **Empirical Evidence:** Models align with neural patterns but miss multimodality
-6. **Common Sense:** Models struggle with physical and social reasoning
-7. **Compositionality:** Non-literal language remains challenging
+1. **Symbol Grounding:** Revisited the Chinese Room—computational models lack perceptual grounding
+2. **Embodied Cognition:** Human meaning is tied to bodily experience and conceptual metaphors
+3. **Distributional Semantics:** Powerful but incomplete—captures patterns, not experience
+4. **Semantic Similarity:** Taxonomic vs thematic; models conflate them
+5. **Neural Evidence:** Mitchell (2008) and Huth (2016) show brain-model alignment—but correlation ≠ causation
+6. **The Debate:** "Stochastic parrots" critique vs emergent capabilities
+7. **Compositionality:** Idioms and negation remain challenging
 
-**The gap between computation and cognition remains, but we're making progress!**
+**The gap between computation and cognition remains—but studying it teaches us about both!**
 
 </div>
 
