@@ -20,10 +20,10 @@ All assignments are submitted via GitHub Classroom. Click the "Accept Assignment
 |---|-------|----------|-----|--------|
 | 1 | [ELIZA Chatbot](./assignment-1/) | Week 1 (Jan 9) | **Jan 19, 11:59 PM EST** | 15% |
 | 2 | [SPAM Classifier](./assignment-2/) | Week 2 (Jan 16) | **Jan 26, 11:59 PM EST** | 15% |
-| 3 | [Wikipedia Embeddings](./assignment-3/) | Week 3 (Jan 23) | **Feb 2, 11:59 PM EST** | 15% |
-| 4 | [Customer Service Chatbot](./assignment-4/) | Week 4 (Jan 30) | **Feb 9, 11:59 PM EST** | 15% |
-| 5 | [Build GPT](./assignment-5/) | Week 6 (Feb 9) | **Feb 16, 11:59 PM EST** | 15% |
-| Final | [Research Project](./final-project/) | Week 9 (Mar 4) | **Mar 9, 11:59 PM EST** | 25% |
+| 3 | [Wikipedia Embeddings](./assignment-3/) | Week 3 (Jan 23) | **Feb 6, 11:59 PM EST** | 15% |
+| 4 | [Customer Service Chatbot](./assignment-4/) | Feb 6 | **Feb 16, 11:59 PM EST** | 15% |
+| 5 | [Build GPT](./assignment-5/) | Week 6 (Feb 9) | **Feb 16, 11:59 PM EST** | Extra Credit |
+| Final | [Research Project](./final-project/) | Feb 16 | **Mar 9, 11:59 PM EST** | 25% |
 
 ## Late Policy
 

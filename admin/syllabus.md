@@ -208,3 +208,4 @@ Instructor away February 23--27. No classes this week. Use this time to work on 
 ### Final Exam Period (March 13--17)
 
 No additional submissions required. Final project materials were due March 9.
+  
