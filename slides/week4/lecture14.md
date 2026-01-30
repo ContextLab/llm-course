@@ -66,7 +66,7 @@ Models like LSA, LDA, and Word2Vec learn meaning purely from co-occurrence patte
 
 <div class="example-box" data-title="For consideration...">
 
-Word2Vec predicts human *relatedness* judgments with ρ ≈ 0.70–0.75 on WordSim-353 and MEN ([Pennington et al., 2014](https://aclanthology.org/D14-1162/)), approaching human inter-rater agreement (~0.68). It predicts strict *similarity* less well—ρ ≈ 0.44 on SimLex-999 ([Hill et al., 2015](https://doi.org/10.1162/COLI_a_00237)).
+Word2Vec predicts human *relatedness* judgments with ρ ≈ 0.70–0.75 on WordSim-353 ([Finkelstein et al., 2002](https://doi.org/10.1145/503104.503110)) and MEN ([Bruni et al., 2014](https://doi.org/10.1613/jair.4135)), approaching human inter-rater agreement (~0.68). It predicts strict *similarity* less well—ρ ≈ 0.44 on SimLex-999 ([Hill et al., 2015](https://doi.org/10.1162/COLI_a_00237)).
 
 **Even the weaker result means ~20% of variance in human semantic judgments is captured by co-occurrence statistics alone.**
 
