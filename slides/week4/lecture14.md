@@ -109,7 +109,7 @@ Meaning arises from bodily experience. Reading the word "kick" activates motor c
 
 </div>
 
-<div class="note-box" data-title="But perhaps embodiment is just be of several possible routes to meaning">
+<div class="note-box" data-title="But perhaps embodiment is just one of several possible routes to meaning">
 
 - Congenitally blind individuals understand "red" and "see" semantically (if not experientially)
 - People born without limbs understand "grasp" and "kick"
