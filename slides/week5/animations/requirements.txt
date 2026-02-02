@@ -1,0 +1,11 @@
+# Manim Community Edition for rendering animations
+manim>=0.17.3
+
+# Dependencies
+numpy>=1.20.0
+scipy>=1.7.0
+Pillow>=9.0.0
+
+# For GIF conversion
+imageio>=2.9.0
+imageio-ffmpeg>=0.4.5

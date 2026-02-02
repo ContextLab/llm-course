@@ -1,0 +1,7 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/QueryKeyValue/1697185472_2820909246_223132457.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/QueryKeyValue/2038921957_1853576504_1537116480.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/QueryKeyValue/2038921957_1676533603_3199592280.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/QueryKeyValue/2038921957_3602991803_927157900.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/QueryKeyValue/2038921957_1377037060_1468950537.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/QueryKeyValue/2038921957_1831374817_2464836235.mp4'

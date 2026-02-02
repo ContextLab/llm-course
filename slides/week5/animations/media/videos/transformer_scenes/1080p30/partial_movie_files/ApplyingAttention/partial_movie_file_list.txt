@@ -1,0 +1,9 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/ApplyingAttention/1697185472_3145138140_223132457.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/ApplyingAttention/2038921957_1542238499_833087350.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/ApplyingAttention/2038921957_422628456_2679668519.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/ApplyingAttention/2038921957_1115714268_1198499488.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/ApplyingAttention/2038921957_2124386837_2819317871.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/ApplyingAttention/2038921957_422628456_1068447502.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/ApplyingAttention/2038921957_3686906257_3903858682.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/ApplyingAttention/2038921957_1831374817_32259969.mp4'

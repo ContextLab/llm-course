@@ -1,527 +1,464 @@
 ---
 marp: true
 theme: cdl-theme
-paginate: true
-header: 'PSYC 51.17: Models of Language and Communication'
-footer: 'Winter 2026'
+math: katex
+transition: fade 0.25s
+author: Contextual Dynamics Lab
 ---
 
-<!-- _class: lead -->
+# Lecture 15: The animated transformer
+### PSYC 51.17: Models of language and communication
 
-# Lecture 15: Attention mechanisms
-## Week 5, Lecture 1 - From seq2seq to attention
-
-**PSYC 51.17: Models of Language and Communication**
-
+Jeremy R. Manning
+Dartmouth College
 Winter 2026
 
 ---
 
-# Today's Agenda 
+# Learning objectives
 
+<div class="note-box" data-title="By the end of this lecture, you will">
 
+1. Understand the Transformer as a function that predicts the next word
+2. Follow data from raw text through tokenization, embedding, and attention
+3. Explain how queries, keys, and values enable self-attention
+4. See how multiple attention heads capture different patterns
+5. Understand how stacking blocks creates deep representations
 
-1. **The Context Problem**: Why static embeddings aren't enough
-2. **Sequence-to-Sequence Models**: The foundation
-3. **The Bottleneck Problem**: Why vanilla Seq2Seq struggles
-4. **Attention Mechanisms**: The breakthrough innovation
-5. **How Attention Works**: Step-by-step computation
-6. **Visualizing Attention**: Interpreting the weights
-
-*Goal: Understand why and how attention revolutionized NLP*
+</div>
 
 ---
 
-# The context problem
+# What is a Transformer?
 
-**Why do we need context-aware models?**
+The Transformer is a machine learning model for **sequence modeling**. Given a sequence of *things*, the model can predict what the next *thing* in the sequence might be.
 
-<div class="tip-box" data-title="Example: The word 'bank'">
+<div class="definition-box" data-title="The big picture">
 
-1. "I deposited money at the **bank**" (financial institution)
-2. "We sat by the river **bank**" (riverside)
-3. "The plane started to **bank** left" (tilt/turn)
+We can think of the Transformer as a function that operates on a phrase:
 
-</div>
+$$\text{Transformer}(X, \theta) \rightarrow Y$$
 
-<div class="columns">
-<div class="column">
-
-**Static Embeddings (Word2Vec):**
-- One vector per word
-- Context-independent
-- "bank" = [0.2, -0.5, 0.8, ...] always
+where $X$ is our input sequence and $\theta$ represents the model parameters.
 
 </div>
-<div class="column">
-
-**Context-Aware Models:**
-- Different representation per occurrence
-- Uses surrounding context
-- Handles polysemy naturally
-
-</div>
-</div>
-
 
 ---
 
-# Sequence-to-sequence models
+# What is a Transformer?
 
-**The breakthrough for variable-length input/output problems**
+<img src="animations/gifs/transformerfunc.gif" width="900" alt="Transformer function animation">
 
-**Applications:**
-- Machine Translation: English → French
-- Summarization: Long text → Short summary
-- Question Answering: Question + Context → Answer
-- Dialogue Systems: User input → System response
+<div class="tip-box" data-title="Example">
 
-<div class="tip-box" data-title="Concrete Example: Machine Translation">
-
-**Input:** "The cat sat on the mat" (6 tokens)
-**Output:** "Le chat s'est assis sur le tapis" (7 tokens)
-
-Different input/output lengths require flexible architecture!
+**Input:** "the robots will bring ___"
+**Output:** "prosperity" (the model's best guess for the next word)
 
 </div>
 
-*Reference: Sutskever et al. (2014) - "Sequence to Sequence Learning with Neural Networks"*
-
 ---
 
-# Encoder-Decoder Architecture 
+# Tokenization
 
+The Transformer operates on sequences, so we first need to **tokenize** the input phrase. One approach is to treat each word as a token.
 
-**Two-part architecture: Encode then Decode**
+<div class="definition-box" data-title="How it works">
 
-<div class="columns">
-<div class="column">
-
-**Encoder:**
-- Reads input sequence
-- Compresses to fixed-size vector
-- Captures semantic meaning
-
-**Decoder:**
-- Starts from context vector
-- Generates output sequence
-- One token at a time
-
-</div>
-<div class="column">
-
-**Worked Example:**
-```
-Input: "The" → "cat" → "sat"
- ↓ ↓ ↓
- h₁ → h₂ → h₃ = context
- ↓
-Output: "Le" ← "chat" ← [START]
-```
-
-The final hidden state h₃ summarizes the entire input!
-
-</div>
-</div>
-
-
----
-
-# The seq2seq bottleneck problem
-
-**Challenge: All information compressed into single vector!**
-
-<div class="warning-box" data-title="The Problem">
-
-- Long sequences → information loss
-- Fixed-size context vector is a bottleneck
-- Early tokens forgotten by the time we reach the end
-- Performance degrades with sequence length
+The model doesn't understand words directly—it identifies tokens using unique numbers from a vocabulary.
 
 </div>
 
-<div class="tip-box" data-title="Concrete Example: Long Sentence Translation">
+---
 
-**Input (20 words):** "The quick brown fox jumps over the lazy dog while the cat watches from the warm sunny windowsill nearby"
+# Tokenization
 
-**Problem:** All 20 words must fit into one 256-dim vector!
-- Early words ("The quick brown") get overwritten
-- By the time we translate, we've "forgotten" the beginning
+<img src="animations/gifs/tokenization.gif" width="900" alt="Tokenization animation">
+
+<div class="example-box" data-title="Our running example">
+
+"the robots will bring" → [3206, 2736, 3657, 400]
+
+Each word maps to a unique ID in the vocabulary.
 
 </div>
 
-**Solution: Attention! **
-
-
 ---
 
-# Attention mechanism: The big idea
+# 1. Embeddings: Numbers speak louder than words
 
-**Instead of compressing everything into one vector...**
+For each token, the Transformer maintains a vector called an **embedding**. An embedding aims to capture the semantic meaning of the token—similar tokens have similar embeddings.
 
-**Let the decoder look at all encoder hidden states!**
+<div class="note-box" data-title="Recall from Lecture 11">
 
-```
-$h_1$ -> $h_2$ -> $h_3$ -> $h_4$ -> Encoder: -> $s_t$ -> Decoder: -> Input: "The cat sat down"
-```
-
-**Key Insight:** When generating "chat" (cat), pay more attention to "cat" in the input!
-
-*Reference: Bahdanau et al. (2015) - "Neural Machine Translation by Jointly Learning to Align and Translate"*
-
----
-
-# How Attention Works: Step by Step 
-
-
-**Computing attention weights:**
-
-1. **Score**: How relevant is each encoder state to current decoder state?
- - e_{t,i} = score(s_t, h_i) = s_t^T W_a h_i
-
-2. **Normalize**: Convert scores to probabilities (softmax)
- - alpha_{t,i} = exp(e_{t,i}) / sum_j exp(e_{t,j})
-
-3. **Context**: Weighted sum of encoder states
- - c_t = sum_i alpha_{t,i} * h_i
-
-4. **Decode**: Use context vector along with decoder state
- - s_{t+1} = f(s_t, c_t, y_t)
-
-**Result:** Decoder dynamically focuses on different parts of input!
-
----
-
-# Worked Example: Attention Computation 
-
-
-**Translating "I love cats" → "J'aime les chats"**
-
-**Step 1: Encoder produces hidden states**
-```
-h₁ = [0.2, 0.8] ("I")
-h₂ = [0.9, 0.3] ("love")
-h₃ = [0.4, 0.7] ("cats")
-```
-
-**Step 2: When generating "chats", compute scores**
-- Decoder state s = [0.5, 0.6]
-- Score with h₁: s · h₁ = 0.5×0.2 + 0.6×0.8 = **0.58**
-- Score with h₂: s · h₂ = 0.5×0.9 + 0.6×0.3 = **0.63**
-- Score with h₃: s · h₃ = 0.5×0.4 + 0.6×0.7 = **0.62**
-
-**Step 3: Softmax to get attention weights**
-- alpha = softmax([0.58, 0.63, 0.62]) = **[0.31, 0.35, 0.34]**
-
-**Step 4: Context = weighted sum**
-- c = 0.31×h₁ + 0.35×h₂ + 0.34×h₃ = **[0.51, 0.58]**
-
-Model focuses most on "love" and "cats" when generating "chats"!
-
----
-
-<!-- _class: scale-80 -->
-
-# Attention score functions
-
-**Different ways to compute the score**
-
-<div class="columns">
-<div class="column">
-
-**1. Additive (Bahdanau):**
-```python
-# score = v^T * tanh(W1*s + W2*h)
-score = v @ tanh(W1 @ s + W2 @ h)
-```
-- More parameters, flexible
-
-**2. Multiplicative (Luong):**
-```python
-# score = s^T * W * h
-score = s @ W @ h
-```
-- Simpler, faster
-
-</div>
-<div class="column">
-
-**3. Dot-Product:**
-```python
-# score = s^T * h
-score = s @ h
-```
-- No parameters!
-
-**4. Scaled Dot-Product (Transformers):**
-```python
-# score = (s^T * h) / sqrt(d)
-score = (s @ h) / sqrt(dim)
-```
-- Prevents gradient issues
-
-</div>
-</div>
-
-*Reference: Luong et al. (2015) - "Effective Approaches to Attention-based Neural Machine Translation"*
-
----
-
-<!-- _class: scale-85 -->
-
-# Attention visualization
-
-**Example: English → French translation with attention weights**
-
-**Input:** "The European Economic Area"
-**Output:** "La zone economique europeenne"
-
-```
- The European Economic Area
-La [0.8] 0.1 0.05 0.05
-zone 0.05 [0.1] 0.1 [0.75] ← "zone" = "Area"
-economique 0.05 0.1 [0.8] 0.05
-europeenne 0.05 [0.8] 0.1 0.05 ← reordering!
-```
-
-**Observations:**
-- Diagonal pattern for similar word order
-- Model learns alignment automatically!
-- "europeenne" attends to "European" (reordering handled!)
-- No need for explicit word alignment annotations
-
-*Attention provides interpretability: we can see what the model is "looking at"*
-
----
-
-# Benefits of Attention Mechanisms 
-
-
-1. **Solves the Bottleneck Problem**
- - Decoder has access to all encoder states
-- No information compression into single vector
-- Works well for long sequences
-
- 
-
-2. **Improves Performance**
- - Better BLEU scores on translation tasks
-- Handles long-range dependencies
-- More robust to sequence length
-
- 
-
-3. **Provides Interpretability**
- - Can visualize what the model focuses on
-- Helps debug and understand model behavior
-- Builds trust in model predictions
-
- 
-
-4. **Enables Better Alignment**
- - Learns source-target correspondences
-- No need for external alignment tools
-- Works across different language pairs
-
-**Attention became the foundation for modern NLP!**
-
----
-
-# Real-World Impact of Attention 
-
-
-
-**Attention mechanisms revolutionized multiple domains:**
-
-<div class="columns">
-<div class="column">
-
-**Machine Translation:**
-- Google Translate (2016)
-- DeepL
-- Facebook translations
-- Dramatic quality improvements
-
-**Text Summarization:**
-- News article summarization
-- Document understanding
-- Email auto-responses
-
-</div>
-<div class="column">
-
-**Question Answering:**
-- Reading comprehension
-- Search engines
-- Virtual assistants
-
-**Speech Recognition:**
-- Attend to acoustic features
-- Better transcription accuracy
-- Listen, Attend and Spell models
-
-</div>
-</div>
-
-<div class="note-box" data-title="Key Milestone">
-
-By 2016, attention-based models became the standard for sequence-to-sequence tasks, paving the way for the Transformer revolution in 2017.
+This is the same idea as Word2Vec, but the embeddings are learned jointly with the rest of the model.
 
 </div>
 
-
 ---
 
-<!-- _class: scale-75 -->
+# Token embeddings
 
-# Implementing attention in PyTorch
+<img src="animations/gifs/wordembeddings.gif" width="900" alt="Word embeddings animation">
 
-**Simple attention mechanism implementation**
+<div class="definition-box" data-title="Dimensions">
 
-```python
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-class BahdanauAttention(nn.Module):
- def __init__(self, hidden_dim):
- super().__init__()
- self.W_dec = nn.Linear(hidden_dim, hidden_dim)
- self.W_enc = nn.Linear(hidden_dim, hidden_dim)
- self.v = nn.Linear(hidden_dim, 1)
-
- def forward(self, decoder_hidden, encoder_outputs):
- # Compute scores: how relevant is each encoder state?
- dec = self.W_dec(decoder_hidden).unsqueeze(1) # [batch, 1, hidden]
- enc = self.W_enc(encoder_outputs) # [batch, seq_len, hidden]
- scores = self.v(torch.tanh(dec + enc)) # [batch, seq_len, 1]
-
- # Normalize to get attention weights (sum to 1)
- attn_weights = F.softmax(scores, dim=1) # [batch, seq_len, 1]
-
- # Weighted sum of encoder outputs
- context = torch.sum(attn_weights * encoder_outputs, dim=1)
-
- return context, attn_weights.squeeze(-1)
-```
-
----
-
-<!-- _class: scale-80 -->
-
-# Using the attention module
-
-**Complete example with sample data**
-
-```python
-# Initialize attention module
-attn = BahdanauAttention(hidden_dim=64)
-
-# Sample encoder outputs (3 words, 64-dim hidden state)
-encoder_outputs = torch.randn(1, 3, 64) # [batch=1, seq_len=3, hidden=64]
-
-# Current decoder hidden state
-decoder_hidden = torch.randn(1, 64) # [batch=1, hidden=64]
-
-# Compute attention
-context, weights = attn(decoder_hidden, encoder_outputs)
-
-print(f"Context shape: {context.shape}") # [1, 64]
-print(f"Attention weights: {weights}") # [1, 3] - sums to 1.0!
-
-# Example output:
-# Attention weights: tensor([[0.28, 0.45, 0.27]])
-# "The" "cat" "sat"
-# Model focuses most on "cat" when generating next output word!
-```
-
-
----
-
-# Discussion questions
-
-1. **Why is attention called "soft alignment"?**
- - How is it different from hard alignment?
-- What are the advantages of soft vs. hard?
-
- 
-
-2. **Computational Cost:**
- - What is the time complexity of attention?
-- How does it scale with sequence length?
-- When might this be a problem?
-
- 
-
-3. **Interpretability:**
- - Can we always trust attention weights as explanations?
-- What about when attention is uniform across all inputs?
-
- 
-
-4. **Beyond Seq2Seq:**
- - Where else might attention be useful?
-- Can we apply it within a single sequence?
-- (Spoiler: Yes! That's self-attention → next lecture!)
-
-
----
-
-# Looking ahead
-
-**What's Next?**
-
-**Today we learned:**
-- The context problem in NLP
-- Sequence-to-sequence architecture
-- The bottleneck problem
-- How attention mechanisms work
-- Attention as alignment and interpretation
-
-**Next lecture (Lecture 16):**
-- Self-attention within a sequence
-- "Attention is All You Need"
-- The transformer framework
-- Multi-head attention
-- Positional encodings
-
-<div class="tip-box" data-title="Interactive demo">
-
-Explore the transformer step-by-step: [Animated Transformer Demo](https://contextlab.github.io/llm-course/demos/16-animated-transformer/)
+Our transformer has embedding vectors of length **C = 768**. All embeddings can be packed together in a single $T \times C$ matrix, where $T = 4$ is the number of input tokens.
 
 </div>
 
+---
+
+# Position embeddings
+
+In order to capture the significance of the **position** of a token within a sequence, the Transformer also maintains embeddings for each position.
+
+<div class="tip-box" data-title="Why positions matter">
+
+Without position information, "cat sat" and "sat cat" would look identical to the model!
+
+</div>
 
 ---
 
-# Summary
+# Position embeddings
 
-**Key Takeaways:**
+<img src="animations/gifs/positionembeddings.gif" width="900" alt="Position embeddings animation">
 
-1. **Context Matters** - Static embeddings can't capture context-dependent meanings
-2. **Seq2Seq Bottleneck** - Fixed-size context vector limits performance on long sequences
-3. **Attention is the Solution** - Dynamic access to all encoder states with weighted combinations
-4. **Benefits** - Better performance, automatic alignment, and model interpretability
+<div class="definition-box" data-title="Sinusoidal encoding">
 
-**Attention mechanisms laid the foundation for modern transformer-based models!**
+$$PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i/d}}\right)$$
+
+Different frequencies encode both absolute position and relative distances.
+
+</div>
+
+---
+
+# Combined embeddings
+
+Finally, these two $T \times C$ matrices are **added together** to obtain a position-dependent embedding for each token.
+
+---
+
+# Combined embeddings
+
+<img src="animations/gifs/preparingembeddings.gif" width="900" alt="Preparing embeddings animation">
+
+<div class="tip-box" data-title="Result">
+
+Each position now has a unique representation combining **what** (token meaning) and **where** (sequence position).
+
+</div>
+
+---
+
+# 2. Queries, keys, and values
+
+The Transformer computes three vectors for each of the $T$ input vectors: **query**, **key**, and **value**.
+
+This is done by multiplying with learned weight matrices:
+
+$$Q = XW_Q \quad K = XW_K \quad V = XW_V$$
+
+---
+
+# Queries, keys, and values
+
+<img src="animations/gifs/querykeyvalue.gif" width="900" alt="QKV animation">
+
+<div class="note-box" data-title="The weight matrices">
+
+$W_Q$, $W_K$, and $W_V$ are all part of $\theta$—the learned model parameters.
+
+</div>
+
+---
+
+# What are Q, K, V?
+
+<div class="tip-box" data-title="Search engine analogy">
+
+Imagine you have a database of images with text descriptions:
+
+- **Query:** The user's search text
+- **Key:** The text descriptions in your database
+- **Value:** The actual images
+
+Only those images (values) whose descriptions (keys) best match the search (query) are returned.
+
+</div>
+
+<div class="note-box" data-title="Self-attention intuition">
+
+Self-attention works similarly—tokens "query" other tokens to find which ones they should pay attention to.
+
+</div>
+
+---
+
+# 3. Two heads are better than one
+
+The Transformer splits the Q, K, V matrices into multiple **heads**.
+
+<div class="definition-box" data-title="Multi-head attention">
+
+With C = 768 columns and 12 heads, each head operates on 64 dimensions.
+
+</div>
+
+---
+
+# Splitting into heads
+
+<img src="animations/gifs/splittingheads.gif" width="900" alt="Splitting heads animation">
+
+<div class="tip-box" data-title="Why multiple heads?">
+
+Different heads can specialize in different patterns—syntax, coreference, semantic roles, etc. The model decides what's useful!
+
+</div>
+
+---
+
+# 4. Time to pay attention
+
+Self-attention is the core idea behind the Transformer.
+
+<div class="definition-box" data-title="Computing attention scores">
+
+We compute an attention scores matrix by multiplying query and key matrices:
+
+$$A = \frac{Q \cdot K^T}{\sqrt{d_k}}$$
+
+</div>
+
+---
+
+# Attention scores
+
+<img src="animations/gifs/selfattention.gif" width="900" alt="Self attention animation">
+
+<div class="example-box" data-title="What the scores mean">
+
+The attention matrix tells us how much attention each token should pay to every other token. E.g., "bring" might have a score of 0.3 for "robots" (row 4, column 2).
+
+</div>
+
+---
+
+# 5. Applying attention
+
+The attention score for a token needs to be **masked** if it occurs later in the sequence.
+
+<div class="warning-box" data-title="Causal masking">
+
+"bring" can pay attention to "robots", but not vice-versa—a token shouldn't look at future tokens when predicting its own next token.
+
+</div>
+
+---
+
+# Applying attention
+
+<img src="animations/gifs/applyingattention.gif" width="900" alt="Applying attention animation">
+
+<div class="definition-box" data-title="Three steps">
+
+1. **Mask** future tokens (set upper triangle to $-\infty$)
+2. **Softmax** each row (normalize to probabilities)
+3. **Multiply by V** (weighted sum of value vectors)
+
+</div>
+
+---
+
+# Weighted output
+
+<div class="example-box" data-title="How outputs are computed">
+
+The output for "robots" is a weighted sum of value vectors:
+
+$$Y(\text{robots}) = 0.47 \cdot V(\text{the}) + 0.53 \cdot V(\text{robots})$$
+
+Each token's new representation is informed by relevant context!
+
+</div>
+
+---
+
+# 5. Putting all heads together
+
+Having computed outputs for all 12 heads, we now **concatenate** them:
+
+$$\text{MultiHead} = \text{Concat}(Y_1, Y_2, ..., Y_{12}) \cdot W_O$$
+
+---
+
+# Concatenating heads
+
+<img src="animations/gifs/concatheads.gif" width="900" alt="Concat heads animation">
+
+<div class="definition-box" data-title="Back to original size">
+
+64 dimensions per head × 12 heads = 768 = C
+
+The input and output of self-attention are both $T \times C$ matrices.
+
+</div>
+
+---
+
+# 6. Feed forward
+
+Everything so far has been **linear operations**. This isn't enough to capture complex relationships!
+
+<div class="definition-box" data-title="Adding non-linearity">
+
+$$\text{FFN}(x) = \text{ReLU}(xW_1 + b_1)W_2 + b_2$$
+
+The hidden layer expands to $4C = 3072$ dimensions, then projects back to $C = 768$.
+
+</div>
+
+---
+
+# Feed-forward network
+
+<img src="animations/gifs/feedforward.gif" width="900" alt="Feed forward animation">
+
+<div class="note-box" data-title="Why it matters">
+
+All the weight matrices in the FFN are part of $\theta$. Research suggests this is where factual "knowledge" is stored.
+
+</div>
+
+---
+
+# 7. We need to go deeper
+
+All the steps in sections 2–6 constitute a single **Transformer block**.
+
+<div class="definition-box" data-title="Stacking blocks">
+
+Each block takes a $T \times C$ matrix as input and outputs a $T \times C$ matrix. To capture complex relationships, many blocks are stacked together.
+
+</div>
+
+---
+
+# Stacking blocks
+
+<img src="animations/gifs/goingdeeper.gif" width="900" alt="Going deeper animation">
+
+<div class="tip-box" data-title="Model sizes">
+
+- GPT-2: 12–48 blocks
+- GPT-3: 96 blocks
+- GPT-4: Unknown (estimated 120+)
+
+</div>
+
+---
+
+# 8. Making a prediction
+
+Finally, we're ready to predict the next token!
+
+<div class="definition-box" data-title="The final step">
+
+Take the last token's output vector and multiply by a $V \times C$ weight matrix, where $V$ is the vocabulary size. Apply softmax to get a probability distribution over all words.
+
+</div>
+
+---
+
+# Making a prediction
+
+<img src="animations/gifs/makingprediction.gif" width="900" alt="Making prediction animation">
+
+<div class="example-box" data-title="Our example">
+
+"prosperity" gets 92% probability, "destruction" only 5%.
+
+So: "the robots will bring **prosperity**"
+
+</div>
+
+---
+
+# 9. Text generator go brrr
+
+Now that we can predict the next token, we can **generate text** one token at a time.
+
+<div class="definition-box" data-title="Autoregressive generation">
+
+The first token produced is added to the prompt and fed back to produce the second token, which is then fed back to produce the third, and so on.
+
+</div>
+
+---
+
+# Autoregressive generation
+
+<img src="animations/gifs/generatingtext.gif" width="900" alt="Generating text animation">
+
+<div class="warning-box" data-title="Context limit">
+
+Transformers have a maximum context length (N tokens). As generation continues, we may need to drop the oldest tokens.
+
+</div>
+
+---
+
+# And that's it!
+
+<div class="definition-box" data-title="The complete picture">
+
+1. **Tokenize** text to IDs
+2. **Embed** tokens + positions
+3. **Project** to Q, K, V
+4. **Split** into attention heads
+5. **Compute** attention scores
+6. **Apply** masking and softmax
+7. **Multiply** by V for output
+8. **Concatenate** heads
+9. **Feed forward** with non-linearity
+10. **Stack** many blocks
+11. **Predict** next token
+
+</div>
+
+---
+
+# What we left out
+
+<div class="note-box" data-title="Details for another day">
+
+To focus on the core concepts, we skipped:
+- **Layer normalization** (stabilizes training)
+- **Residual connections** (helps gradient flow)
+- **Dropout** (regularization)
+- **Training** (how $\theta$ is learned)
+
+See [nanoGPT](https://github.com/karpathy/nanoGPT/blob/master/model.py) for a complete implementation.
+
+</div>
 
 ---
 
 # References
 
-**Key Papers:**
+<div class="note-box" data-title="Further reading">
 
-- **Sutskever et al. (2014)** - Sequence to Sequence Learning with Neural Networks
-- **Bahdanau et al. (2015)** - Neural Machine Translation by Jointly Learning to Align and Translate
-- **Luong et al. (2015)** - Effective Approaches to Attention-based Neural Machine Translation
-- **Vaswani et al. (2017)** - Attention Is All You Need
+[**Vaswani et al. (2017)**](https://arxiv.org/abs/1706.03762) "Attention Is All You Need" — The original transformer paper.
 
-**Additional Resources:**
-- Jay Alammar's blog: "Visualizing A Neural Machine Translation Model"
-- Distill.pub: "Attention and Augmented Recurrent Neural Networks"
+[**The Animated Transformer**](https://prvnsmpth.github.io/animated-transformer/) — Visual walkthrough that inspired this lecture.
 
+[**The Illustrated Transformer**](https://jalammar.github.io/illustrated-transformer/) — Jay Alammar's detailed visual guide.
 
----
+[**nanoGPT**](https://github.com/karpathy/nanoGPT) — Andrej Karpathy's minimal GPT implementation.
+
+</div>
 
 ---
 
@@ -530,17 +467,20 @@ Explore the transformer step-by-step: [Animated Transformer Demo](https://contex
 <div class="emoji-figure">
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
-    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a> me</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a></span>
   </div>
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
-    <span class="label">Join our <a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+    <span class="label"><a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
   </div>
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
-    <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
+    <span class="label"><a href="https://context-lab.youcanbook.me">Office hours</a></span>
   </div>
 </div>
 
-**Next lecture:** Transformer architecture
+<div class="tip-box" data-title="Up next...">
 
+**Lecture 16:** Training transformers — loss functions, optimization, and scaling laws
+
+</div>

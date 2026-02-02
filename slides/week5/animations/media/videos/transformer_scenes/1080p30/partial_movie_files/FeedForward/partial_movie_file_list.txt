@@ -1,0 +1,8 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/FeedForward/1697185472_2636606927_223132457.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/FeedForward/2038921957_172266925_3986798577.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/FeedForward/2038921957_3674064772_9129628.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/FeedForward/2038921957_1060845375_3862079189.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/FeedForward/2038921957_2906800249_523541083.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/FeedForward/2038921957_2040554423_658403069.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/FeedForward/2038921957_1831374817_2483678595.mp4'
