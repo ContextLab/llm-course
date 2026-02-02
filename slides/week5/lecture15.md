@@ -29,50 +29,37 @@ Winter 2026
 
 ---
 
-# What is a Transformer?
+# What is a transformer?
 
 The Transformer is a machine learning model for **sequence modeling**. Given a sequence of *things*, the model can predict what the next *thing* in the sequence might be.
 
 <div class="definition-box" data-title="The big picture">
 
-We can think of the Transformer as a function that operates on a phrase:
+We can think of the Transformer as a function: $\text{Transformer}(X, \theta) \rightarrow Y$
 
-$$\text{Transformer}(X, \theta) \rightarrow Y$$
-
-where $X$ is our input sequence and $\theta$ represents the model parameters.
+- $X$ is our input sequence
+- $\theta$ represents the model parameters
+- $Y$ is the predicted next token
 
 </div>
 
 ---
 
-# What is a Transformer?
+# The transformer function
 
-<img src="animations/gifs/transformerfunc.gif" width="900" alt="Transformer function animation">
-
-<div class="tip-box" data-title="Example">
-
-**Input:** "the robots will bring ___"
-**Output:** "prosperity" (the model's best guess for the next word)
-
-</div>
+<img src="animations/gifs/transformerfunc.gif" width="1000">
 
 ---
 
 # Tokenization
 
-The Transformer operates on sequences, so we first need to **tokenize** the input phrase. One approach is to treat each word as a token.
+<div class="definition-box" data-title="How tokenization works">
 
-<div class="definition-box" data-title="How it works">
+The Transformer operates on sequences, so we first **tokenize** the input phrase. One approach is to treat each word as a token.
 
 The model doesn't understand words directly—it identifies tokens using unique numbers from a vocabulary.
 
 </div>
-
----
-
-# Tokenization
-
-<img src="animations/gifs/tokenization.gif" width="900" alt="Tokenization animation">
 
 <div class="example-box" data-title="Our running example">
 
@@ -84,7 +71,7 @@ Each word maps to a unique ID in the vocabulary.
 
 ---
 
-# 1. Embeddings: Numbers speak louder than words
+# 1. Embeddings: numbers speak louder than words
 
 For each token, the Transformer maintains a vector called an **embedding**. An embedding aims to capture the semantic meaning of the token—similar tokens have similar embeddings.
 
@@ -98,7 +85,11 @@ This is the same idea as Word2Vec, but the embeddings are learned jointly with t
 
 # Token embeddings
 
-<img src="animations/gifs/wordembeddings.gif" width="900" alt="Word embeddings animation">
+<img src="animations/gifs/wordembeddings.gif" width="1000">
+
+---
+
+# Token embeddings
 
 <div class="definition-box" data-title="Dimensions">
 
@@ -110,9 +101,15 @@ Our transformer has embedding vectors of length **C = 768**. All embeddings can 
 
 # Position embeddings
 
-In order to capture the significance of the **position** of a token within a sequence, the Transformer also maintains embeddings for each position.
+<img src="animations/gifs/positionembeddings.gif" width="1000">
+
+---
+
+# Position embeddings
 
 <div class="tip-box" data-title="Why positions matter">
+
+In order to capture the significance of the **position** of a token within a sequence, the Transformer also maintains embeddings for each position.
 
 Without position information, "cat sat" and "sat cat" would look identical to the model!
 
@@ -120,33 +117,19 @@ Without position information, "cat sat" and "sat cat" would look identical to th
 
 ---
 
-# Position embeddings
+# Combined embeddings
 
-<img src="animations/gifs/positionembeddings.gif" width="900" alt="Position embeddings animation">
-
-<div class="definition-box" data-title="Sinusoidal encoding">
-
-$$PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i/d}}\right)$$
-
-Different frequencies encode both absolute position and relative distances.
-
-</div>
+<img src="animations/gifs/preparingembeddings.gif" width="1000">
 
 ---
 
 # Combined embeddings
 
-Finally, these two $T \times C$ matrices are **added together** to obtain a position-dependent embedding for each token.
+<div class="definition-box" data-title="Token + position = input">
 
----
+The token and position embedding matrices ($T \times C$ each) are **added together** to obtain a position-dependent embedding for each token.
 
-# Combined embeddings
-
-<img src="animations/gifs/preparingembeddings.gif" width="900" alt="Preparing embeddings animation">
-
-<div class="tip-box" data-title="Result">
-
-Each position now has a unique representation combining **what** (token meaning) and **where** (sequence position).
+The token and position embeddings are all part of $\theta$, meaning they are tuned during model training.
 
 </div>
 
@@ -154,23 +137,17 @@ Each position now has a unique representation combining **what** (token meaning)
 
 # 2. Queries, keys, and values
 
-The Transformer computes three vectors for each of the $T$ input vectors: **query**, **key**, and **value**.
-
-This is done by multiplying with learned weight matrices:
+The Transformer computes three vectors for each token: **query**, **key**, and **value**. This is done by multiplying with learned weight matrices:
 
 $$Q = XW_Q \quad K = XW_K \quad V = XW_V$$
 
+The weight matrices $W_Q$, $W_K$, $W_V$ are all part of $\theta$.
+
 ---
 
-# Queries, keys, and values
+# Query, key, value projections
 
-<img src="animations/gifs/querykeyvalue.gif" width="900" alt="QKV animation">
-
-<div class="note-box" data-title="The weight matrices">
-
-$W_Q$, $W_K$, and $W_V$ are all part of $\theta$—the learned model parameters.
-
-</div>
+<img src="animations/gifs/querykeyvalue.gif" width="1000">
 
 ---
 
@@ -198,19 +175,7 @@ Self-attention works similarly—tokens "query" other tokens to find which ones 
 
 # 3. Two heads are better than one
 
-The Transformer splits the Q, K, V matrices into multiple **heads**.
-
-<div class="definition-box" data-title="Multi-head attention">
-
-With C = 768 columns and 12 heads, each head operates on 64 dimensions.
-
-</div>
-
----
-
-# Splitting into heads
-
-<img src="animations/gifs/splittingheads.gif" width="900" alt="Splitting heads animation">
+The Transformer splits the Q, K, V matrices into multiple **heads**. With C = 768 columns and 12 heads, each head operates on 64 dimensions.
 
 <div class="tip-box" data-title="Why multiple heads?">
 
@@ -220,47 +185,43 @@ Different heads can specialize in different patterns—syntax, coreference, sema
 
 ---
 
-# 4. Time to pay attention
+# Splitting into heads
 
-Self-attention is the core idea behind the Transformer.
-
-<div class="definition-box" data-title="Computing attention scores">
-
-We compute an attention scores matrix by multiplying query and key matrices:
-
-$$A = \frac{Q \cdot K^T}{\sqrt{d_k}}$$
-
-</div>
+<img src="animations/gifs/splittingheads.gif" width="1000">
 
 ---
 
-# Attention scores
+# 4. Time to pay attention
 
-<img src="animations/gifs/selfattention.gif" width="900" alt="Self attention animation">
+Self-attention is the core idea behind the Transformer. We compute an **attention scores** matrix:
 
-<div class="example-box" data-title="What the scores mean">
+$$A = \frac{Q \cdot K^T}{\sqrt{d_k}}$$
 
-The attention matrix tells us how much attention each token should pay to every other token. E.g., "bring" might have a score of 0.3 for "robots" (row 4, column 2).
+This matrix tells us how much attention each token should pay to every other token.
 
-</div>
+---
+
+# Computing attention scores
+
+<img src="animations/gifs/selfattn.gif" width="1000">
 
 ---
 
 # 5. Applying attention
 
-The attention score for a token needs to be **masked** if it occurs later in the sequence.
-
-<div class="warning-box" data-title="Causal masking">
-
-"bring" can pay attention to "robots", but not vice-versa—a token shouldn't look at future tokens when predicting its own next token.
-
-</div>
+<img src="animations/gifs/selfattnpt2.gif" width="1000">
 
 ---
 
 # Applying attention
 
-<img src="animations/gifs/applyingattention.gif" width="900" alt="Applying attention animation">
+<div class="warning-box" data-title="Causal masking">
+
+The attention score for a token needs to be **masked** if it occurs later in the sequence.
+
+"bring" can pay attention to "robots", but not vice-versa—a token shouldn't look at future tokens when predicting its next token.
+
+</div>
 
 <div class="definition-box" data-title="Three steps">
 
@@ -269,6 +230,12 @@ The attention score for a token needs to be **masked** if it occurs later in the
 3. **Multiply by V** (weighted sum of value vectors)
 
 </div>
+
+---
+
+# Computing outputs
+
+<img src="animations/gifs/selfattnpt3.gif" width="1000">
 
 ---
 
@@ -281,28 +248,6 @@ The output for "robots" is a weighted sum of value vectors:
 $$Y(\text{robots}) = 0.47 \cdot V(\text{the}) + 0.53 \cdot V(\text{robots})$$
 
 Each token's new representation is informed by relevant context!
-
-</div>
-
----
-
-# 5. Putting all heads together
-
-Having computed outputs for all 12 heads, we now **concatenate** them:
-
-$$\text{MultiHead} = \text{Concat}(Y_1, Y_2, ..., Y_{12}) \cdot W_O$$
-
----
-
-# Concatenating heads
-
-<img src="animations/gifs/concatheads.gif" width="900" alt="Concat heads animation">
-
-<div class="definition-box" data-title="Back to original size">
-
-64 dimensions per head × 12 heads = 768 = C
-
-The input and output of self-attention are both $T \times C$ matrices.
 
 </div>
 
@@ -324,7 +269,11 @@ The hidden layer expands to $4C = 3072$ dimensions, then projects back to $C = 7
 
 # Feed-forward network
 
-<img src="animations/gifs/feedforward.gif" width="900" alt="Feed forward animation">
+<img src="animations/gifs/feedfwd.gif" width="1000">
+
+---
+
+# Feed-forward network
 
 <div class="note-box" data-title="Why it matters">
 
@@ -336,19 +285,7 @@ All the weight matrices in the FFN are part of $\theta$. Research suggests this 
 
 # 7. We need to go deeper
 
-All the steps in sections 2–6 constitute a single **Transformer block**.
-
-<div class="definition-box" data-title="Stacking blocks">
-
-Each block takes a $T \times C$ matrix as input and outputs a $T \times C$ matrix. To capture complex relationships, many blocks are stacked together.
-
-</div>
-
----
-
-# Stacking blocks
-
-<img src="animations/gifs/goingdeeper.gif" width="900" alt="Going deeper animation">
+All the steps in sections 2–6 constitute a single **Transformer block**. Each block takes a $T \times C$ matrix as input and outputs a $T \times C$ matrix.
 
 <div class="tip-box" data-title="Model sizes">
 
@@ -360,21 +297,25 @@ Each block takes a $T \times C$ matrix as input and outputs a $T \times C$ matri
 
 ---
 
+# Stacking transformer blocks
+
+<img src="animations/gifs/goingdeeper.gif" width="1000">
+
+---
+
 # 8. Making a prediction
 
-Finally, we're ready to predict the next token!
+<img src="animations/gifs/prediction.gif" width="1000">
+
+---
+
+# Making a prediction
 
 <div class="definition-box" data-title="The final step">
 
 Take the last token's output vector and multiply by a $V \times C$ weight matrix, where $V$ is the vocabulary size. Apply softmax to get a probability distribution over all words.
 
 </div>
-
----
-
-# Making a prediction
-
-<img src="animations/gifs/makingprediction.gif" width="900" alt="Making prediction animation">
 
 <div class="example-box" data-title="Our example">
 
@@ -388,19 +329,17 @@ So: "the robots will bring **prosperity**"
 
 # 9. Text generator go brrr
 
-Now that we can predict the next token, we can **generate text** one token at a time.
-
-<div class="definition-box" data-title="Autoregressive generation">
-
-The first token produced is added to the prompt and fed back to produce the second token, which is then fed back to produce the third, and so on.
-
-</div>
+<img src="animations/gifs/generatingtext.gif" width="1000">
 
 ---
 
 # Autoregressive generation
 
-<img src="animations/gifs/generatingtext.gif" width="900" alt="Generating text animation">
+<div class="definition-box" data-title="How text generation works">
+
+The first token produced is added to the prompt and fed back to produce the second token, which is then fed back to produce the third, and so on.
+
+</div>
 
 <div class="warning-box" data-title="Context limit">
 
@@ -421,10 +360,9 @@ Transformers have a maximum context length (N tokens). As generation continues, 
 5. **Compute** attention scores
 6. **Apply** masking and softmax
 7. **Multiply** by V for output
-8. **Concatenate** heads
-9. **Feed forward** with non-linearity
-10. **Stack** many blocks
-11. **Predict** next token
+8. **Feed forward** with non-linearity
+9. **Stack** many blocks
+10. **Predict** next token
 
 </div>
 
@@ -434,7 +372,7 @@ Transformers have a maximum context length (N tokens). As generation continues, 
 
 <div class="note-box" data-title="Details for another day">
 
-To focus on the core concepts, we skipped:
+To focus on the most important aspects, we skipped:
 - **Layer normalization** (stabilizes training)
 - **Residual connections** (helps gradient flow)
 - **Dropout** (regularization)

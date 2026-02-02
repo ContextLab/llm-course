@@ -1,0 +1,13 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/429858703_1518291876_2687137646.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/4129186542_3756560811_2676380761.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/4129186542_1681145380_1263334065.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/4129186542_2740418682_2298938679.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/4129186542_806089854_637237785.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/4129186542_64756526_145306584.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/4129186542_2263619438_3394224763.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/4129186542_3422690374_3846134129.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/4129186542_3439411671_2023860264.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/4129186542_2934989943_3340031754.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/4129186542_4042241601_1198148483.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/WordEmbeddings/4129186542_2671462033_478762661.mp4'

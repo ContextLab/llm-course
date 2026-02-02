@@ -18,18 +18,17 @@ from pathlib import Path
 # Scene names to render (must match class names in transformer_scenes.py)
 SCENES = [
     "TransformerFunc",
-    "Tokenization",
     "WordEmbeddings",
     "PositionEmbeddings",
     "PreparingEmbeddings",
     "QueryKeyValue",
     "SplittingHeads",
-    "SelfAttention",
-    "ApplyingAttention",
-    "ConcatHeads",
-    "FeedForward",
+    "SelfAttn",
+    "SelfAttnPt2",
+    "SelfAttnPt3",
+    "FeedFwd",
     "GoingDeeper",
-    "MakingPrediction",
+    "Prediction",
     "GeneratingText",
 ]
 

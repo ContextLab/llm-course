@@ -1,5 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/Tokenization/1697185472_2208498414_2358810818.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/Tokenization/2038921957_1713918287_2657609199.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/Tokenization/2038921957_3030131316_4052666021.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p30/partial_movie_files/Tokenization/2038921957_1831374817_2085141320.mp4'
