@@ -279,9 +279,15 @@ This matrix tells us how much attention each token should pay to every other tok
 ![height:500](animations/gifs/selfattn.gif)
 
 ---
-<!-- _class: scale-80 -->
+<!-- _class: scale-70 -->
 
 # Applying attention
+
+<div class="warning-box" data-title="Causal masking">
+
+The attention score for a token needs to be **masked** if it occurs later in the sequence. In our example, "bring" can pay attention to "robots", but not vice-versa—a token shouldn't look at future tokens when predicting its next token.
+
+</div>
 
 <div class="note-box" data-title="Bringing back V">
 
@@ -295,17 +301,19 @@ $V$ contains the information we want to aggregate, while $A$ tells us *how much*
 
 </div>
 
-<div class="warning-box" data-title="Causal masking">
+<div class="important-box" data-title="Implementation details">
 
-The attention score for a token needs to be **masked** if it occurs later in the sequence. In our example, "bring" can pay attention to "robots", but not vice-versa—a token shouldn't look at future tokens when predicting its next token.
+1. **Mask** future tokens (set upper triangle to $-\infty$)
+2. **Softmax** each row (normalize to probabilities)
+3. **Multiply by V** (weighted sum of value vectors)
 
 </div>
 
-<div class="important-box" data-title="Implementation details">
+<div class="definition-box" data-title="Sotfmax definition">
 
-1. **Mask** future tokens (set upper triangle to 0)
-2. **Softmax** each row (normalize to probabilities)
-3. **Multiply by V** (weighted sum of value vectors)
+The softmax function converts raw scores into probabilities (note: $-\infty$ becomes 0 after softmax):
+
+$$\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_{j} e^{z_j}}$$
 
 </div>
 
@@ -332,7 +340,17 @@ Each head captures different aspects of the input sequence. By concatenating the
 
 </div>
 
+<div class="tip-box" data-title="Intuition 1">
 
+Remember how in ELIZA our text processing function computed the *output* (response) by combining various features of the input? The effect of applying attention and merging heads is similar: we get a rich representation of the input sequence that informs us about *future* tokens. This will be used in the next step to make predictions about the *next* token in the sequence.
+
+</div>
+
+<div class="tip-box" data-title="Intuition 2">
+
+The effect of adding in positional information and applying attention is that each token's representation now encodes not just its identity, but also its context within the sequence. This "sneaks in" more learnable parameters that enable the model to capture rich temporal structure in the data.
+
+</div>
 
 ---
 
@@ -357,9 +375,9 @@ The hidden layer expands to $4C = 3072$ dimensions, then projects back to $C = 7
 <div class="note-box" data-title="Dimensions">
 
 - $W_{nn}$: $C \times 4C$
-- $b_1$: $4C$
+- $b_1$: $4C$ (gets replicated for each token; not shown in next animation)
 - $W_{mm}$: $4C \times C$
-- $b_2$: $C$
+- $b_2$: $C$ (gets replicated for each token; not shown in next animation)
 
 </div>
 
@@ -397,7 +415,7 @@ The expansion to $4C$ dimensions allows the model to capture more complex patter
 
 <div class="definition-box" data-title="Transformer block">
 
-All the steps thus constitute a *single* **Transformer block**. Each block takes a $T \times C$ matrix as input and outputs a $T \times C$ matrix.
+All the steps thus constitute a *single* **transformer block**. Each block takes a $T \times C$ matrix as input and outputs a $T \times C$ matrix.
 
 </div>
 
@@ -405,8 +423,7 @@ All the steps thus constitute a *single* **Transformer block**. Each block takes
 
 - GPT-2: 12–48 blocks
 - GPT-3: 96 blocks
-- GPT-4: Unknown (likely 120+)
-- GPT-5: Hundreds?
+- GPT-4+: 100+ blocks (exact architecture not public)
 
 </div>
 
@@ -422,7 +439,7 @@ All the steps thus constitute a *single* **Transformer block**. Each block takes
 
 <div class="definition-box" data-title="The final step">
 
-Take the last token's output vector and multiply by a $V \times C$ weight matrix, where $V$ is the vocabulary size. Normalize to get a probability distribution over all words.
+Take the last token's output vector ($1 \times C$) and multiply by a $C \times V$ weight matrix, where $V$ is the vocabulary size. Normalize (softmax) to get a probability distribution over all words.
 
 </div>
 
@@ -431,6 +448,12 @@ Take the last token's output vector and multiply by a $V \times C$ weight matrix
 In our example, "prosperity" might get a 92% probability, but "suffering" only 20%, and so on.
 
 So if "prosperity" has the highest probability, the model predicts "the robots will bring **prosperity**"
+
+</div>
+
+<div class="tip-box" data-title="Why use only the last token?">
+
+We only care about predicting the *next* token after the entire input sequence, so we only use the output corresponding to the last token. But we needed to process the entire sequence to get context!
 
 </div>
 
@@ -540,6 +563,6 @@ See [nanoGPT](https://github.com/karpathy/nanoGPT/blob/master/model.py) for a co
 
 <div class="tip-box" data-title="Up next...">
 
-Training transformers: loss functions, optimization, and scaling laws...*oh my!*
+Training transformers: where do the parameters ($\theta$) come from?
 
 </div>
