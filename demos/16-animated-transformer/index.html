@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Transformer - Step by Step</title>
+    <link rel="stylesheet" href="../shared/css/demo-styles.css">
+    <link rel="stylesheet" href="css/animation-styles.css">
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <!-- p5.js - required by Manim.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+<body>
+    <nav class="demo-nav">
+        <a href="../" class="back-link">← All Demos</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+            <span id="theme-icon">🌙</span>
+        </button>
+    </nav>
+
+    <div class="hero-header">
+        <div class="container">
+            <h1 class="hero-title">Animated Transformer</h1>
+            <p class="hero-subtitle">Step through the transformer architecture, one operation at a time</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="step-controls">
+                <button id="prev-btn" class="btn btn-secondary" disabled>← Previous</button>
+                <span class="step-indicator">
+                    Step <span id="current-step">1</span> of <span id="total-steps">12</span>
+                </span>
+                <button id="next-btn" class="btn btn-primary">Next →</button>
+            </div>
+            <div class="playback-controls">
+                <button id="play-btn" class="btn btn-secondary">▶ Play</button>
+                <button id="reset-btn" class="btn btn-secondary">↻ Reset</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="animation-container">
+            <!-- p5.js Canvas Container -->
+            <div class="canvas-wrapper">
+                <div id="canvas-container"></div>
+            </div>
+            
+            <!-- Step Description Panel -->
+            <div class="description-panel">
+                <h2 id="step-title">Step 1: Tokenization</h2>
+                <div id="step-description" class="step-description">
+                    <p>Text is split into tokens - subword units that the model can process.</p>
+                </div>
+                <div id="step-formula" class="step-formula"></div>
+                <div id="step-insight" class="step-insight"></div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 8.33%"></div>
+            </div>
+            <div class="progress-dots" id="progress-dots"></div>
+        </div>
+
+        <!-- Input Text -->
+        <div class="input-section">
+            <label for="input-text">Input text:</label>
+            <input type="text" id="input-text" value="The cat sat" placeholder="Enter text...">
+            <button id="update-btn" class="btn btn-secondary">Update</button>
+        </div>
+
+        <!-- Credits -->
+        <div class="credits-section">
+            <p>Inspired by <a href="https://prvnsmpth.github.io/animated-transformer/" target="_blank">The Animated Transformer</a> 
+            and <a href="https://github.com/JazonJiao/Manim.js" target="_blank">Manim.js</a>.</p>
+        </div>
+    </div>
+
+    <script src="../shared/js/visualization-utils.js"></script>
+    <script type="module" src="js/transformer-animation.js"></script>
+</body>
+</html>

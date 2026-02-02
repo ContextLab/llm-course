@@ -8,8 +8,8 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Lecture 15: Attention Mechanisms
-## Week 5, Lecture 1 - From Seq2Seq to Attention
+# Lecture 15: Attention mechanisms
+## Week 5, Lecture 1 - From seq2seq to attention
 
 **PSYC 51.17: Models of Language and Communication**
 
@@ -32,14 +32,11 @@ Winter 2026
 
 ---
 
-# The Context Problem 
-
-
+# The context problem
 
 **Why do we need context-aware models?**
 
-<div class="callout tip">
-<div class="callout-title">Example: The word "bank"</div>
+<div class="tip-box" data-title="Example: The word 'bank'">
 
 1. "I deposited money at the **bank**" (financial institution)
 2. "We sat by the river **bank**" (riverside)
@@ -69,8 +66,7 @@ Winter 2026
 
 ---
 
-# Sequence-to-Sequence Models 
-
+# Sequence-to-sequence models
 
 **The breakthrough for variable-length input/output problems**
 
@@ -80,8 +76,7 @@ Winter 2026
 - Question Answering: Question + Context → Answer
 - Dialogue Systems: User input → System response
 
-<div class="callout tip">
-<div class="callout-title">Concrete Example: Machine Translation</div>
+<div class="tip-box" data-title="Concrete Example: Machine Translation">
 
 **Input:** "The cat sat on the mat" (6 tokens)
 **Output:** "Le chat s'est assis sur le tapis" (7 tokens)
@@ -132,13 +127,11 @@ The final hidden state h₃ summarizes the entire input!
 
 ---
 
-# The Seq2Seq Bottleneck Problem 
-
+# The seq2seq bottleneck problem
 
 **Challenge: All information compressed into single vector!**
 
-<div class="callout warning">
-<div class="callout-title">The Problem</div>
+<div class="warning-box" data-title="The Problem">
 
 - Long sequences → information loss
 - Fixed-size context vector is a bottleneck
@@ -147,8 +140,7 @@ The final hidden state h₃ summarizes the entire input!
 
 </div>
 
-<div class="callout tip">
-<div class="callout-title">Concrete Example: Long Sentence Translation</div>
+<div class="tip-box" data-title="Concrete Example: Long Sentence Translation">
 
 **Input (20 words):** "The quick brown fox jumps over the lazy dog while the cat watches from the warm sunny windowsill nearby"
 
@@ -163,8 +155,7 @@ The final hidden state h₃ summarizes the entire input!
 
 ---
 
-# Attention Mechanism: The Big Idea 
-
+# Attention mechanism: The big idea
 
 **Instead of compressing everything into one vector...**
 
@@ -229,8 +220,9 @@ Model focuses most on "love" and "cats" when generating "chats"!
 
 ---
 
-# Attention Score Functions 
+<!-- _class: scale-80 -->
 
+# Attention score functions
 
 **Different ways to compute the score**
 
@@ -275,8 +267,9 @@ score = (s @ h) / sqrt(dim)
 
 ---
 
-# Attention Visualization 
+<!-- _class: scale-85 -->
 
+# Attention visualization
 
 **Example: English → French translation with attention weights**
 
@@ -370,8 +363,7 @@ europeenne 0.05 [0.8] 0.1 0.05 ← reordering!
 </div>
 </div>
 
-<div class="callout info">
-<div class="callout-title">Key Milestone</div>
+<div class="note-box" data-title="Key Milestone">
 
 By 2016, attention-based models became the standard for sequence-to-sequence tasks, paving the way for the Transformer revolution in 2017.
 
@@ -380,8 +372,9 @@ By 2016, attention-based models became the standard for sequence-to-sequence tas
 
 ---
 
-# Implementing Attention in PyTorch 
+<!-- _class: scale-75 -->
 
+# Implementing attention in PyTorch
 
 **Simple attention mechanism implementation**
 
@@ -414,8 +407,9 @@ class BahdanauAttention(nn.Module):
 
 ---
 
-# Using the Attention Module 
+<!-- _class: scale-80 -->
 
+# Using the attention module
 
 **Complete example with sample data**
 
@@ -444,8 +438,7 @@ print(f"Attention weights: {weights}") # [1, 3] - sums to 1.0!
 
 ---
 
-# Discussion Questions 
-
+# Discussion questions
 
 1. **Why is attention called "soft alignment"?**
  - How is it different from hard alignment?
@@ -474,8 +467,7 @@ print(f"Attention weights: {weights}") # [1, 3] - sums to 1.0!
 
 ---
 
-# Looking Ahead 
-
+# Looking ahead
 
 **What's Next?**
 
@@ -486,69 +478,43 @@ print(f"Attention weights: {weights}") # [1, 3] - sums to 1.0!
 - How attention mechanisms work
 - Attention as alignment and interpretation
 
-**Next lecture (Lecture 13):**
-- : Attention within a sequence
-- : "Attention is All You Need"
-- : The new framework
-- : Learning diverse relationships
-- : Injecting order information
+**Next lecture (Lecture 16):**
+- Self-attention within a sequence
+- "Attention is All You Need"
+- The transformer framework
+- Multi-head attention
+- Positional encodings
 
-**Get ready for the Transformer revolution! **
+<div class="tip-box" data-title="Interactive demo">
+
+Explore the transformer step-by-step: [Animated Transformer Demo](https://contextlab.github.io/llm-course/demos/16-animated-transformer/)
+
+</div>
 
 
 ---
 
-# Summary 
-
+# Summary
 
 **Key Takeaways:**
 
-1. **Context Matters**
- - Static embeddings can't capture context-dependent meanings
-- Need dynamic representations based on context
-2. **Seq2Seq Bottleneck**
- - Fixed-size context vector limits performance
-- Information loss for long sequences
-3. **Attention is the Solution**
- - Dynamic access to all encoder states
-- Weighted combination based on relevance
-- Attention weights sum to 1.0 (probability distribution)
-4. **Benefits**
- - Better performance on long sequences
-- Automatic alignment learning
-- Model interpretability
+1. **Context Matters** - Static embeddings can't capture context-dependent meanings
+2. **Seq2Seq Bottleneck** - Fixed-size context vector limits performance on long sequences
+3. **Attention is the Solution** - Dynamic access to all encoder states with weighted combinations
+4. **Benefits** - Better performance, automatic alignment, and model interpretability
 
 **Attention mechanisms laid the foundation for modern transformer-based models!**
 
 ---
 
-# References 
-
+# References
 
 **Key Papers:**
 
-- **Sutskever et al. (2014)** - "Sequence to Sequence Learning with Neural Networks"
- 
-- Introduced encoder-decoder architecture
-- Foundation for seq2seq models
-
- 
-
- \item **Bahdanau et al. (2015)** - "Neural Machine Translation by Jointly Learning to Align and Translate"
- - Introduced additive attention mechanism
-- Solved the bottleneck problem
-
- 
-
- \item **Luong et al. (2015)** - "Effective Approaches to Attention-based Neural Machine Translation"
- - Multiplicative attention variants
-- Global vs. local attention
-
- 
-
- \item **Vaswani et al. (2017)** - "Attention Is All You Need"
- - The Transformer architecture (next lecture!)
-- Scaled dot-product attention
+- **Sutskever et al. (2014)** - Sequence to Sequence Learning with Neural Networks
+- **Bahdanau et al. (2015)** - Neural Machine Translation by Jointly Learning to Align and Translate
+- **Luong et al. (2015)** - Effective Approaches to Attention-based Neural Machine Translation
+- **Vaswani et al. (2017)** - Attention Is All You Need
 
 **Additional Resources:**
 - Jay Alammar's blog: "Visualizing A Neural Machine Translation Model"
@@ -557,19 +523,24 @@ print(f"Attention weights: {weights}") # [1, 3] - sums to 1.0!
 
 ---
 
-# Questions? 
+---
 
+# Questions?
 
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a> me</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
+    <span class="label">Join our <a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
+    <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
+  </div>
+</div>
 
-**Discussion Time**
-
-**Office Hours Topics:**
-- Implementing attention from scratch
-- Different attention mechanisms
-- Debugging attention-based models
-- Assignment 4 preparation
-
-Thank you! 
-
-See you next lecture for Transformers!
+**Next lecture:** Transformer architecture
 

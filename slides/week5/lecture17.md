@@ -8,7 +8,7 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Lecture 17: Training Transformers
+# Lecture 17: Training transformers
 ## Week 5, Lecture 3 - From Architecture to Implementation
 
 **PSYC 51.17: Models of Language and Communication**
@@ -32,7 +32,7 @@ Winter 2026
 
 ---
 
-# Positional Encoding 
+# Positional encoding
 
 
 **Problem: Self-attention is permutation-invariant!**
@@ -85,7 +85,7 @@ Final input (add them):
 
 ---
 
-# Why Sinusoidal Positional Encoding? 
+# Why sinusoidal positional encoding?
 
 
 **Advantages of sine/cosine functions:**
@@ -132,7 +132,7 @@ Each position has a unique "barcode"!
 
 ---
 
-# Visualizing Positional Encodings 
+# Visualizing positional encodings
 
 
 **Each position gets a unique pattern across dimensions**
@@ -150,7 +150,7 @@ Pos 0 -> Pos 5 -> Pos 9 -> Dim 0 -> Dim 4 -> Dim 7
 
 ---
 
-# Feed-Forward Networks 
+# Feed-forward networks
 
 
 **After attention, apply position-wise feed-forward network**
@@ -182,7 +182,7 @@ class FeedForward(nn.Module):
 
 ---
 
-# Why Feed-Forward Networks? 
+# Why feed-forward networks?
 
 
 **Role in the Transformer:**
@@ -216,7 +216,7 @@ class FeedForward(nn.Module):
 
 ---
 
-# Layer Normalization & Residual Connections 
+# Layer normalization & residual connections
 
 
 **Critical for training deep transformers!**
@@ -262,7 +262,7 @@ x = LayerNorm(x + FeedForward(x))
 
 ---
 
-# Pre-Norm vs Post-Norm 
+# Pre-norm vs post-norm
 
 
 
@@ -297,17 +297,14 @@ x = x + FFN(LayerNorm(x))
 </div>
 </div>
 
-<div class="callout info">
-<div class="callout-title">Recommendation</div>
-
+<div class="note-box" data-title="Recommendation">
 For deep transformers (24+ layers), Pre-Norm is preferred due to better training stability. Post-Norm can achieve slightly better final performance with careful tuning.
-
 </div>
 
 
 ---
 
-# Complete Transformer Block 
+# Complete transformer block
 
 
 **Putting it all together:**
@@ -339,18 +336,15 @@ encoder = nn.Sequential(*[TransformerBlock() for _ in range(12)])
 
 ---
 
-# FlashAttention: Making Transformers Faster 
+# FlashAttention: Making transformers faster
 
 
 **Problem: Standard attention is slow and memory-hungry!**
 
-<div class="callout warning">
-<div class="callout-title">Standard Attention Complexity</div>
-
+<div class="warning-box" data-title="Standard Attention Complexity">
 - Time: O(n^2) where n = sequence length
 - Memory: O(n^2) to store attention matrix
 - Bottleneck: Reading/writing to GPU memory (HBM)
-
 </div>
 
 <div class="columns">
@@ -395,7 +389,7 @@ for tile in tiles:
 
 ---
 
-# Other Attention Optimizations 
+# Other attention optimizations
 
 
 **Addressing the $O(n^2)$ problem:**
@@ -430,37 +424,29 @@ for tile in tiles:
 
 ---
 
-# Three Transformer Architectures 
+# Three transformer architectures
 
 
 
-| p{4cm}p{4cm}} Architecture | How it works | **Examples \ | Uses** |
+| Architecture | How it works | Examples | Uses |
 | --- | --- | --- | --- |
-| Best for: Classification, NER, QA |
-| Best for: Generation, completion |
-| Decoder: masked + cross-attention | T5, BART, mT5 |
-| Best for: Translation, summarization |
+| **Encoder-Only** | Full self-attention | BERT, RoBERTa | Classification, NER, QA |
+| **Decoder-Only** | Causal/masked attention | GPT-2, GPT-3 | Generation, completion |
+| **Encoder-Decoder** | Encoder + decoder with cross-attention | T5, BART, mT5 | Translation, summarization |
 
-<div class="callout info">
-<div class="callout-title">Key Difference: Attention Masking</div>
-
+<div class="note-box" data-title="Key Difference: Attention Masking">
 - **Encoder:** Full self-attention (bidirectional)
 - **Decoder:** Causal/masked attention (unidirectional)
-
 </div>
 
 
 ---
 
-# Visual Comparison: Encoder vs Decoder vs Both
+# Visual comparison: Encoder vs Decoder vs Both
 
+**Encoder-Only (BERT):** Self-Attention → bidirectional
 
-
-```
-**Encoder-Only (BERT) -> Self-Attention -> bidirectional -> \textbf{Decoder-Only (GPT) -> Masked Attn -> causal
-```
-
-\end{center**
+**Decoder-Only (GPT):** Masked Attention → causal
 
 **Choosing the Right Architecture:**
 - Need to understand full context? → **Encoder** (BERT)
@@ -470,7 +456,7 @@ for tile in tiles:
 
 ---
 
-# Using Transformers in Practice 
+# Using transformers in practice
 
 
 **HuggingFace makes it easy!**
@@ -503,7 +489,7 @@ it_embedding = hidden_states[0, 10, :] # 768-dim context-aware vector
 
 ---
 
-# Comparing Architectures: Code Examples 
+# Comparing architectures: Code examples
 
 
 **Different architectures for different tasks**
@@ -534,11 +520,7 @@ seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 
 ---
 
-# Practical Tips for Training Transformers 
-
-
-<div class="columns">
-<div class="column">
+# Practical tips for training transformers (Part 1)
 
 **1. Learning Rate & Warmup**
 ```python
@@ -561,8 +543,9 @@ optimizer = AdamW(
 )
 ```
 
-</div>
-<div class="column">
+---
+
+# Practical tips for training transformers (Part 2)
 
 **3. Regularization**
 ```python
@@ -585,45 +568,39 @@ with autocast(): # Use FP16
 # 2x faster, 2x less memory!
 ```
 
-</div>
-</div>
-
 
 ---
 
-# Computational Efficiency Tips 
+# Computational efficiency tips (Part 1)
 
-
-1. **Batch Size**
- - Larger batches = better GPU utilization
+**1. Batch Size**
+- Larger batches = better GPU utilization
 - Use gradient accumulation if GPU memory limited
 - Typical: effective batch size 256-2048 tokens
 
- 
-
-2. **Sequence Length**
- - Shorter sequences train faster (quadratic complexity!)
+**2. Sequence Length**
+- Shorter sequences train faster (quadratic complexity!)
 - Consider truncation or sliding windows
 - Pack multiple examples to maximize GPU usage
 
- 
+---
 
-3. **Model Size**
- - Start small, scale up if needed
+# Computational efficiency tips (Part 2)
+
+**3. Model Size**
+- Start small, scale up if needed
 - DistilBERT: 40% smaller, 60% faster, 97% performance
 - Consider model distillation for deployment
 
- 
-
-4. **Hardware**
- - GPUs with high memory bandwidth (A100, H100)
+**4. Hardware**
+- GPUs with high memory bandwidth (A100, H100)
 - Multi-GPU training with data parallelism
 - Use FlashAttention when available
 
 
 ---
 
-# Discussion Questions 
+# Discussion questions
 
 
 1. **Positional Encoding:**
@@ -654,26 +631,21 @@ with autocast(): # Use FP16
 
 ---
 
-# Looking Ahead to Week 6 
-
+# Looking ahead to Week 6
 
 **This week (Week 5) we learned:**
-- Attention mechanisms (Lecture 12)
-- Self-attention and transformer architecture (Lecture 13)
-- Training transformers: all the components (Lecture 14)
+- Attention mechanisms (Lecture 15)
+- Self-attention and transformer architecture (Lecture 16)
+- Training transformers: all the components (Lecture 17)
 
 **Next week (Week 6):**
 
 - Masked Language Modeling
 - Pre-training and fine-tuning
 - Contextual embeddings in action
-
- \item 
- - RoBERTa, ALBERT, DistilBERT
+- RoBERTa, ALBERT, DistilBERT
 - Improvements and optimizations
-
- \item 
- - Real-world BERT applications
+- Real-world BERT applications
 - Cognitive neuroscience connections
 - Understanding vs. pattern matching
 
@@ -681,7 +653,7 @@ with autocast(): # Use FP16
 
 ---
 
-# Summary 
+# Summary
 
 
 **Key Takeaways:**
@@ -706,20 +678,14 @@ with autocast(): # Use FP16
 
 ---
 
-# References 
+# References
 
 
 **Essential Papers:**
 
-- **Vaswani et al. (2017)** - "Attention Is All You Need"
- 
-- The original Transformer paper
-
- \item **Su et al. (2021)** - "RoFormer: Enhanced Transformer with Rotary Position Embedding"
- - Modern positional encoding approach
-
- \item **Dao et al. (2022)** - "FlashAttention: Fast and Memory-Efficient Exact Attention"
- - Making transformers faster
+- **Vaswani et al. (2017)** - "Attention Is All You Need" - The original Transformer paper
+- **Su et al. (2021)** - "RoFormer: Enhanced Transformer with Rotary Position Embedding" - Modern positional encoding approach
+- **Dao et al. (2022)** - "FlashAttention: Fast and Memory-Efficient Exact Attention" - Making transformers faster
 
 **Tutorials:**
 - HuggingFace Course: Chapters 1.4, 1.5
@@ -729,20 +695,22 @@ with autocast(): # Use FP16
 
 ---
 
-# Questions? 
+# Questions?
 
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a> me</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
+    <span class="label">Join our <a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
+    <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
+  </div>
+</div>
 
-
-**Discussion Time**
-
-**Topics for discussion:**
-- Positional encoding approaches
-- Architecture choices
-- Training tips and tricks
-- Implementation questions
-- Assignment 4 preparation
-
-Thank you! 
-
-See you next week for BERT!
+**Next week:** BERT deep dive
 

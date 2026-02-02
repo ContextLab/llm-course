@@ -8,8 +8,8 @@ footer: 'Winter 2026'
 
 <!-- _class: lead -->
 
-# Lecture 16: Transformer Architecture
-## Week 5, Lecture 2 - Attention Is All You Need
+# Lecture 16: Transformer architecture
+## Week 5, Lecture 2 - Attention is all you need
 
 **PSYC 51.17: Models of Language and Communication**
 
@@ -17,7 +17,7 @@ Winter 2026
 
 ---
 
-# Today's Agenda 
+# Today's agenda 
 
 
 
@@ -32,7 +32,7 @@ Winter 2026
 
 ---
 
-# The Transformer Revolution 
+# The transformer revolution 
 
 
 
@@ -60,8 +60,7 @@ Winter 2026
 </div>
 </div>
 
-<div class="callout tip">
-<div class="callout-title">Speed Comparison</div>
+<div class="tip-box" data-title="Speed comparison">
 
 Processing "The cat sat on the mat" (6 tokens):
 - **RNN:** 6 sequential steps (must wait for each)
@@ -75,7 +74,7 @@ Training speedup: **10-100x faster** on modern hardware
 
 ---
 
-# Why Get Rid of RNNs? 
+# Why get rid of RNNs? 
 
 
 **Limitations of Recurrent Architectures:**
@@ -119,26 +118,18 @@ Transformer: Direct connection!
 
 ---
 
-# Transformer Architecture Overview 
-
-
-
-```
-**Encoder -> Feed Forward -> Multi-Head Attention -> Feed Forward -> Multi-Head Attention -> Input -> \textbf{Decoder -> Feed Forward
-```
-
-\end{center**
+# Transformer architecture overview
 
 **Key Components:**
 - **Multi-Head Self-Attention**: Relate all positions to each other
 - **Feed-Forward Networks**: Transform representations
-- **Residual Connections & Layer Norm**: Training stability (not shown)
+- **Residual Connections & Layer Norm**: Training stability
 - **Positional Encoding**: Inject position information
 
 
 ---
 
-# Self-Attention: The Core Mechanism 
+# Self-attention: the core mechanism 
 
 
 **Key idea: Each word attends to all other words in the sequence**
@@ -157,8 +148,7 @@ V = X @ W_V # Transform input to values
 Attention(Q, K, V) = softmax(Q @ K.T / sqrt(d)) @ V
 ```
 
-<div class="callout tip">
-<div class="callout-title">Intuition</div>
+<div class="tip-box" data-title="Intuition">
 
 Each token asks: "Which other tokens are relevant to me?" (Q vs K)
 Then collects information from relevant tokens (weighted sum of V)
@@ -168,7 +158,7 @@ Then collects information from relevant tokens (weighted sum of V)
 
 ---
 
-# Understanding Query, Key, Value 
+# Understanding query, key, value 
 
 
 
@@ -205,8 +195,7 @@ Then collects information from relevant tokens (weighted sum of V)
 </div>
 </div>
 
-<div class="callout info">
-<div class="callout-title">Key Insight</div>
+<div class="note-box" data-title="Key insight">
 
 Each token simultaneously acts as:
 - A query (what it needs from other tokens)
@@ -218,7 +207,7 @@ Each token simultaneously acts as:
 
 ---
 
-# Scaled Dot-Product Attention 
+# Scaled dot-product attention 
 
 
 **Step-by-step computation with concrete example:**
@@ -252,7 +241,7 @@ output = weights @ V # [3 x 4] - new contextual embeddings
 
 ---
 
-# Self-Attention Example: Pronoun Resolution 
+# Self-attention example: pronoun resolution 
 
 
 **Sentence: "The animal didn't cross the street because it was too tired"**
@@ -277,7 +266,7 @@ Attention weights when processing "it":
 
 ---
 
-# Visualizing the Attention Matrix 
+# Visualizing the attention matrix 
 
 
 **For sentence: "The cat sat on the mat"**
@@ -301,7 +290,7 @@ Attention weights when processing "it":
 
 ---
 
-# Multi-Head Attention 
+# Multi-head attention 
 
 
 **Why use multiple attention heads?**
@@ -352,7 +341,7 @@ Head 3 (position):
 
 ---
 
-# Why Multiple Heads? 
+# Why multiple heads? 
 
 
 
@@ -390,8 +379,7 @@ Head 3 (position):
 </div>
 </div>
 
-<div class="callout info">
-<div class="callout-title">Ensemble Effect</div>
+<div class="note-box" data-title="Ensemble effect">
 
 Multiple heads provide a richer, more diverse representation by attending to different aspects of the input simultaneously!
 
@@ -400,7 +388,7 @@ Multiple heads provide a richer, more diverse representation by attending to dif
 
 ---
 
-# Three Types of Attention 
+# Three types of attention 
 
 
 1. **Self-Attention (Encoder)**
@@ -429,7 +417,7 @@ Multiple heads provide a richer, more diverse representation by attending to dif
 
 ---
 
-# Masked Self-Attention 
+# Masked self-attention 
 
 
 **Preventing the model from "cheating" during generation**
@@ -462,7 +450,7 @@ masked_scores = scores + mask
 
 ---
 
-# Cross-Attention 
+# Cross-attention 
 
 
 **Connecting encoder and decoder in seq2seq models**
@@ -481,7 +469,7 @@ Encoder Outputs -> (Keys & Values) -> Decoder State -> (Queries) -> Cross-Attent
 
 ---
 
-# Implementing Self-Attention in PyTorch 
+# Implementing self-attention in PyTorch 
 
 
 **Scaled dot-product attention**
@@ -528,7 +516,7 @@ out, weights = attn(x)
 
 ---
 
-# Computational Complexity 
+# Computational complexity 
 
 
 **Understanding the cost of self-attention**
@@ -540,8 +528,7 @@ out, weights = attn(x)
 
 where n = sequence length, d = embedding dimension
 
-<div class="callout tip">
-<div class="callout-title">Concrete Example: Memory Usage</div>
+<div class="tip-box" data-title="Concrete example: memory usage">
 
 **Sequence length n = 1000 tokens, d = 768 (BERT-base)**
 
@@ -561,7 +548,7 @@ Total: **576 MB** just for attention weights!
 
 ---
 
-# Discussion Questions 
+# Discussion questions 
 
 
 1. **Self-Attention vs RNN Attention:**
@@ -592,7 +579,7 @@ Total: **576 MB** just for attention weights!
 
 ---
 
-# Looking Ahead 
+# Looking ahead 
 
 
 **What's Next?**
@@ -603,20 +590,22 @@ Total: **576 MB** just for attention weights!
 - Multi-head attention
 - Three types of attention (self, masked, cross)
 
-**Next lecture (Lecture 14 - Training Transformers):**
-- : How to inject position information
-- : The other key component
-- : Training stability
-- : Making transformers faster
-- : Encoder, Decoder, Encoder-Decoder
-- : Training and using transformers
+**Next lecture (Lecture 17 - Training Transformers):**
+- Positional encodings: How to inject position information
+- Feed-forward networks: The other key component
+- Layer normalization: Training stability
+- Optimization: Making transformers faster
+- Full architectures: Encoder, Decoder, Encoder-Decoder
+- Pre-training and fine-tuning: Training and using transformers
 
-**We're building up to BERT and GPT! **
+**We're building up to BERT and GPT!**
 
 
 ---
 
-# Summary 
+# Summary
+
+<!-- _class: scale-90 --> 
 
 
 **Key Takeaways:**
@@ -640,56 +629,55 @@ Total: **576 MB** just for attention weights!
 
 ---
 
-# References 
+# References
+
+<!-- _class: scale-85 --> 
 
 
 **Essential Papers:**
 
 - **Vaswani et al. (2017)** - "Attention Is All You Need"
- 
-- The original Transformer paper
-- Introduced self-attention, multi-head attention
-- Foundation of modern NLP
+  - The original Transformer paper
+  - Introduced self-attention, multi-head attention
+  - Foundation of modern NLP
 
- 
-
- \item **Bahdanau et al. (2015)** - "Neural Machine Translation by Jointly Learning to Align and Translate"
- - Original attention mechanism (for comparison)
+- **Bahdanau et al. (2015)** - "Neural Machine Translation by Jointly Learning to Align and Translate"
+  - Original attention mechanism (for comparison)
 
 **Tutorials and Resources:**
+
 - **The Illustrated Transformer** by Jay Alammar
- 
-- https://jalammar.github.io/illustrated-transformer/
-- Visual step-by-step explanation
+  - https://jalammar.github.io/illustrated-transformer/
+  - Visual step-by-step explanation
 
- 
+- **Annotated Transformer** by Harvard NLP
+  - https://nlp.seas.harvard.edu/annotated-transformer/
+  - Line-by-line implementation
 
- \item **Annotated Transformer** by Harvard NLP
- - https://nlp.seas.harvard.edu/annotated-transformer/
-- Line-by-line implementation
-
- 
-
- \item **HuggingFace Course** - Chapter 1.4
- - How Transformers work
+- **HuggingFace Course** - Chapter 3
+  - How Transformers work
 
 
 ---
 
-# Questions? 
+---
 
+# Questions?
 
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a> me</span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
+    <span class="label">Join our <a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
+    <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
+  </div>
+</div>
 
-**Discussion Time**
-
-**Topics for discussion:**
-- Self-attention mechanism
-- Query, Key, Value intuition
-- Multi-head attention
-- Masked vs. unmasked attention
-- Implementation questions
-
-Thank you! 
-
-Next: Training Transformers!
+**Next lecture:** Training transformers
 
