@@ -105,13 +105,14 @@ def convert_to_gif(src: Path, scene_name: str):
             str(palette),
             "-lavfi",
             vf_gif,
-            "-loop",
-            "1",
             str(dest),
         ],
         capture_output=True,
     )
     palette.unlink(missing_ok=True)
+    subprocess.run(
+        ["gifsicle", "--no-loopcount", str(dest), "-o", str(dest)], capture_output=True
+    )
     print(f"  -> Saved: {dest}")
     return dest
 
