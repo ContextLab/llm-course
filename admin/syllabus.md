@@ -164,13 +164,13 @@ We strive to create an inclusive learning environment where all students feel su
 | Thu Jan 29 | Lecture 13 | Dimensionality Reduction | [HTML](https://contextlab.github.io/llm-course/slides/week4/lecture13.html), [PDF](https://contextlab.github.io/llm-course/slides/week4/lecture13.pdf) | [McInnes & Healy (2018)](https://arxiv.org/pdf/1802.03426) |
 | Fri Jan 30 | Lecture 14 | Cognitive Models of Semantic Representation | [HTML](https://contextlab.github.io/llm-course/slides/week4/lecture14.html), [PDF](https://contextlab.github.io/llm-course/slides/week4/lecture14.pdf) | [Anderson et al. (2016)](https://www.jneurosci.org/content/36/45/11444) |
 \needspace{3in}
-### Week 5: Transformers & Attention Mechanisms (February 2--6)
+### Week 5: Transformer Architecture (February 2--6)
 
 | Day | Lecture | Topics | Slides | Materials |
 |-----|---------|--------|--------|-----------|
-| Mon Feb 2 | Lecture 15 | Attention Mechanisms | [HTML](https://contextlab.github.io/llm-course/slides/week5/lecture15.html), [PDF](https://contextlab.github.io/llm-course/slides/week5/lecture15.pdf) | [Bahdanau et al. (2015)](https://arxiv.org/abs/1409.0473), [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) |
-| Wed Feb 4 | Lecture 16 | Transformer Architecture | [HTML](https://contextlab.github.io/llm-course/slides/week5/lecture16.html), [PDF](https://contextlab.github.io/llm-course/slides/week5/lecture16.pdf) | [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) |
-| Fri Feb 6 | Lecture 17 | Training Transformers | [HTML](https://contextlab.github.io/llm-course/slides/week5/lecture17.html), [PDF](https://contextlab.github.io/llm-course/slides/week5/lecture17.pdf) | **[Assignment 3](https://contextlab.github.io/llm-course/assignments/assignment-3/) Due (Feb 6, 11:59 PM EST)**, **[Assignment 4](https://contextlab.github.io/llm-course/assignments/assignment-4/) Released** |
+| Mon Feb 2 | Lecture 15 | Transformer Architecture | [HTML](https://contextlab.github.io/llm-course/slides/week5/lecture15.html), [PDF](https://contextlab.github.io/llm-course/slides/week5/lecture15.pdf) | [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762), [The Animated Transformer](https://prvnsmpth.github.io/animated-transformer/) |
+| Wed Feb 4 | Lecture 16 | Training Transformers | [HTML](https://contextlab.github.io/llm-course/slides/week5/lecture16.html), [PDF](https://contextlab.github.io/llm-course/slides/week5/lecture16.pdf) | [Kaplan et al. (2020)](https://arxiv.org/abs/2001.08361) |
+| Fri Feb 6 | Lecture 17 | Retrieval Augmented Generation (RAG) | [HTML](https://contextlab.github.io/llm-course/slides/week5/lecture17.html), [PDF](https://contextlab.github.io/llm-course/slides/week5/lecture17.pdf) | [Lewis et al. (2020)](https://arxiv.org/abs/2005.11401), **[Assignment 3](https://contextlab.github.io/llm-course/assignments/assignment-3/) Due**, **[Assignment 4](https://contextlab.github.io/llm-course/assignments/assignment-4/) Released** |
 \needspace{3in}
 ### Week 6: Encoder Models (February 9--13)
 
@@ -196,7 +196,7 @@ Instructor away February 23--27. No classes this week. Use this time to work on 
 
 | Day | Lecture | Topics | Slides | Materials |
 |-----|---------|--------|--------|-----------|
-| Mon Mar 2 | Lecture 24 | Retrieval Augmented Generation (RAG) | [HTML](https://contextlab.github.io/llm-course/slides/week9/lecture24.html), [PDF](https://contextlab.github.io/llm-course/slides/week9/lecture24.pdf) | [Lewis et al. (2020)](https://arxiv.org/abs/2005.11401) |
+| Mon Mar 2 | Lecture 24 | Agents and Tool Use | [HTML](https://contextlab.github.io/llm-course/slides/week9/lecture24.html), [PDF](https://contextlab.github.io/llm-course/slides/week9/lecture24.pdf) | [Yao et al. (2023)](https://arxiv.org/abs/2210.03629), [Schick et al. (2023)](https://arxiv.org/abs/2302.04761) |
 | Wed Mar 4 | Lecture 25 | Mixture of Experts & Efficiency | [HTML](https://contextlab.github.io/llm-course/slides/week9/lecture25.html), [PDF](https://contextlab.github.io/llm-course/slides/week9/lecture25.pdf) | [Fedus et al. (2022)](https://arxiv.org/abs/2101.03961), [Jiang et al. (2024)](https://arxiv.org/abs/2401.04088) |
 | Fri Mar 6 | Lecture 26 | Ethics, Bias, and Safety | [HTML](https://contextlab.github.io/llm-course/slides/week9/lecture26.html), [PDF](https://contextlab.github.io/llm-course/slides/week9/lecture26.pdf) | [Bender et al. (2021)](https://dl.acm.org/doi/10.1145/3442188.3445922) |
 \needspace{2in}

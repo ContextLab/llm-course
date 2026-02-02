@@ -165,25 +165,26 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 ---
 
-## Week 5: Transformers & Attention Mechanisms
+## Week 5: Transformer Architecture
 
-**Monday (Lecture 15):** Attention Mechanisms
-- The evolution from RNNs to attention
-- Attention mechanisms explained
-- Reading: [Bahdanau et al. (2015)](https://arxiv.org/abs/1409.0473) - Neural Machine Translation with Attention
+**Monday (Lecture 15):** Transformer Architecture
+- The animated transformer: step-by-step walkthrough
+- Tokenization, embeddings, attention, feed-forward networks
 - Reading: [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) - Attention is All You Need
-- 🎮 **Try it:** [Attention Mechanism](https://contextlab.github.io/llm-course/demos/attention/)
+- Reference: [The Animated Transformer](https://prvnsmpth.github.io/animated-transformer/)
+- 🎮 **Try it:** [Transformer Explorer](https://contextlab.github.io/llm-course/demos/transformer/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture15.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture15.html)
 
-**Wednesday (Lecture 16):** Transformer Architecture
-- Self-attention, multi-head attention
-- Positional encodings
-- Reading: [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) - Attention is All You Need
+**Wednesday (Lecture 16):** Training Transformers
+- Loss functions, optimization, scaling laws
+- Reading: [Kaplan et al. (2020)](https://arxiv.org/abs/2001.08361) - Scaling Laws for Neural Language Models
 - HuggingFace: [Chapter 3](https://huggingface.co/learn/nlp-course/chapter3)
-- 🎮 **Try it:** [Transformer Explorer](https://contextlab.github.io/llm-course/demos/transformer/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture16.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture16.html)
 
-**Friday (Lecture 17):** Training Transformers
+**Friday (Lecture 17):** Retrieval Augmented Generation (RAG)
+- RAG architecture and applications
+- Reading: [Lewis et al. (2020)](https://arxiv.org/abs/2005.11401) - RAG
+- 🎮 **Try it:** [RAG System Demo](https://contextlab.github.io/llm-course/demos/rag/)
 - **📝 Assignment 3 Due (Feb 6, 11:59 PM EST)**
 - **Assignment 4 Released:** [Customer Service Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-4/) (Due: Feb 16, 11:59 PM EST)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture17.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture17.html)
@@ -239,10 +240,10 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 ## Week 9: Advanced Topics
 
-**Monday (Lecture 24):** Retrieval Augmented Generation (RAG)
-- RAG architecture and applications
-- Reading: [Lewis et al. (2020)](https://arxiv.org/abs/2005.11401) - RAG
-- 🎮 **Try it:** [RAG System Demo](https://contextlab.github.io/llm-course/demos/rag/)
+**Monday (Lecture 24):** Agents and Tool Use
+- Function calling, ReAct framework, autonomous agents
+- Reading: [Yao et al. (2023)](https://arxiv.org/abs/2210.03629) - ReAct: Synergizing Reasoning and Acting
+- Reading: [Schick et al. (2023)](https://arxiv.org/abs/2302.04761) - Toolformer
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture24.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture24.html)
 
 **Wednesday (Lecture 25):** Mixture of Experts & Efficiency
