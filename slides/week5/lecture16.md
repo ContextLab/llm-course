@@ -106,6 +106,7 @@ where $c$ is the index of the correct next token.
 </div>
 
 ---
+<!-- _class: scale-80 -->
 
 # Understanding cross-entropy
 
@@ -163,10 +164,10 @@ Perplexity measures how "confused" the model is. A perplexity of $k$ means the m
 
 <div class="definition-box" data-title="Four steps, repeated millions of times">
 
-1. **Forward pass**: Feed a batch of text through the model to get predictions
-2. **Compute loss**: Compare predictions to actual next tokens using cross-entropy
-3. **Backward pass**: Compute gradients $\nabla_\theta \mathcal{L}$ via backpropagation
-4. **Update parameters**: Adjust $\theta$ to reduce the loss
+1. **Forward pass**: feed a batch of text through the model to get predictions
+2. **Compute loss**: compare predictions to actual next tokens using cross-entropy
+3. **Backward pass**: compute gradients $\nabla_\theta \mathcal{L}$ via backpropagation
+4. **Update parameters**: adjust $\theta$ to reduce the loss
 
 $$\theta \leftarrow \theta - \eta \nabla_\theta \mathcal{L}$$
 
@@ -176,11 +177,12 @@ where $\eta$ is the **learning rate** — how big a step we take.
 
 <div class="warning-box" data-title="Scale matters">
 
-GPT-3 has 175 billion parameters. Each training step updates *all* of them. Training took ~$4.6 million in compute costs and processed ~300 billion tokens.
+GPT-3 has 175 billion parameters. Each training step updates *all* of them. Training took ~$4.6 million in compute costs and processed ~300 billion tokens. GPT-4 likely cost over $100 million to train, and GPT-5 (trillions of parameters) was even more expensive to train. Energy consumption and environmental impact are significant concerns at this scale.
 
 </div>
 
 ---
+<!-- _class: scale-90 -->
 
 # Gradient descent intuition
 
@@ -231,6 +233,7 @@ Standard Adam "hides" weight decay inside the adaptive learning rate, making it 
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
 # Learning rate scheduling
 
@@ -245,6 +248,7 @@ Modern transformers use a **learning rate schedule** with two phases:
 </div>
 
 <div class="example-box" data-title="Learning rate schedule in Python">
+
 
 ```python
 from transformers import get_cosine_schedule_with_warmup
