@@ -693,7 +693,7 @@
 
 </script>
 </head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="lecture-22-scaling-up-to-gpt-3-and-beyond">Lecture 22: Scaling up to GPT-3 and beyond</h1>
+<h1 id="lecture-23-implementing-gpt-from-scratch">Lecture 23: Implementing GPT from scratch</h1>
 <h3 id="psyc-5117-models-of-language-and-communication">PSYC 51.17: Models of language and communication</h3>
 <p>Jeremy R. Manning<br />
 Dartmouth College<br />
@@ -703,713 +703,645 @@ Winter 2026</p>
 <h1 id="learning-objectives">Learning objectives</h1>
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 <ul>
-<li>Describe how <strong>GPT-2</strong> demonstrated zero-shot task transfer through scale</li>
-<li>Explain how <strong>GPT-3</strong> enabled <strong>few-shot learning</strong> without fine-tuning</li>
-<li>State the key findings of <strong>scaling laws</strong> (Kaplan et al., 2020) and <strong>Chinchilla</strong> (Hoffmann et al., 2022)</li>
-<li>Outline the <strong>RLHF</strong> pipeline that transformed GPT-3 into ChatGPT</li>
-<li>Compare <strong>open</strong> vs. <strong>closed</strong> model ecosystems and their tradeoffs</li>
-<li>Apply <strong>prompting techniques</strong> including few-shot and chain-of-thought</li>
+<li>Implement a <strong>complete GPT model</strong> from scratch in PyTorch</li>
+<li>Build each component: <strong>BPE tokenizer</strong>, <strong>embeddings</strong>, <strong>masked attention</strong>, <strong>transformer block</strong></li>
+<li>Write a <strong>training loop</strong> with proper optimization (AdamW, gradient clipping)</li>
+<li>Implement <strong>text generation</strong> with greedy decoding and sampling strategies</li>
+<li>Compare <strong>temperature</strong>, <strong>top-k</strong>, and <strong>nucleus (top-p)</strong> sampling</li>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-2-language-models-are-unsupervised-multitask-learners">GPT-2: language models are unsupervised multitask learners</h1>
-<div class="definition-box" data-title="The 10x scale-up">
-<p>GPT-2 (Radford et al., 2019) scaled GPT-1 by an order of magnitude and discovered that <strong>larger models can perform tasks without any fine-tuning</strong>.</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>GPT-1 (2018)</th>
-<th>GPT-2 (2019)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Parameters</td>
-<td>117M</td>
-<td>1.5B (13x)</td>
-</tr>
-<tr>
-<td>Training data</td>
-<td>BooksCorpus (5B tokens)</td>
-<td>WebText (40GB, ~8x)</td>
-</tr>
-<tr>
-<td>Fine-tuning needed?</td>
-<td>Yes</td>
-<td><strong>No</strong> (zero-shot transfer)</td>
-</tr>
-</tbody>
-</table>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="announcements">Announcements</h1>
+<div class="warning-box" data-title="Week 8: no classes">
+<p>There are <strong>no classes February 23--27</strong> (instructor away). Use this time to work on your <strong>final project</strong> and the optional Assignment 5 (Build GPT).</p>
 </div>
-<div class="important-box" data-title="The key claim">
-<p>&quot;Language models are unsupervised multitask learners&quot; -- a single model trained on next-token prediction implicitly learns to translate, summarize, answer questions, and more.</p>
+<div class="note-box" data-title="After the break">
+<p>Week 9 covers agents and tool use, mixture of experts, and ethics/safety. The final project is due <strong>March 9</strong>.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-webtext-dataset">The WebText dataset</h1>
-<div class="note-box" data-title="Curated web scraping as training data">
-<p>GPT-2 introduced a new data curation strategy:</p>
+<h1 id="what-we-are-building-today">What we are building today</h1>
+<div class="definition-box" data-title="A complete mini-GPT">
+<p>We will implement every component of a GPT language model from scratch -- small enough to train on a laptop, but architecturally identical to GPT-2:</p>
 <ol>
-<li>Scrape all outbound links from Reddit posts with <strong>3+ karma</strong> (community quality signal)</li>
-<li>Filter for quality and diversity</li>
-<li>Remove Wikipedia (to avoid test set contamination)</li>
-<li>Result: <strong>40GB of text</strong> from ~8 million documents</li>
+<li><strong>Tokenization</strong> with Byte-Pair Encoding (tiktoken)</li>
+<li><strong>Token + position embeddings</strong></li>
+<li><strong>Masked multi-head attention</strong></li>
+<li><strong>Transformer decoder blocks</strong> (pre-norm with residual connections)</li>
+<li><strong>Language model head</strong> for next-token prediction</li>
+<li><strong>Training loop</strong> with AdamW and gradient clipping</li>
+<li><strong>Text generation</strong> with multiple sampling strategies</li>
 </ol>
 </div>
-<div class="tip-box" data-title="Why Reddit karma works as a quality filter">
-<p>Reddit's upvote system acts as human curation at scale. Links that receive 3+ karma have been judged interesting or valuable by at least a few people, filtering out spam and low-quality content without manual review.</p>
-</div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-2-model-sizes">GPT-2 model sizes</h1>
-<div class="note-box" data-title="Four progressively released models">
-<table>
-<thead>
-<tr>
-<th>Model</th>
-<th>Parameters</th>
-<th>Layers</th>
-<th>Hidden size</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Small</td>
-<td>117M</td>
-<td>12</td>
-<td>768</td>
-</tr>
-<tr>
-<td>Medium</td>
-<td>345M</td>
-<td>24</td>
-<td>1,024</td>
-</tr>
-<tr>
-<td>Large</td>
-<td>762M</td>
-<td>36</td>
-<td>1,280</td>
-</tr>
-<tr>
-<td>XL</td>
-<td>1.5B</td>
-<td>48</td>
-<td>1,600</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="warning-box" data-title="Staged release for safety">
-<p>OpenAI released GPT-2 over 9 months (Feb--Nov 2019), starting with the smallest model, due to concerns about potential misuse for generating disinformation. This was one of the first high-profile cases of responsible AI release practices.</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="setup-and-hyperparameters">Setup and hyperparameters</h1>
+<div class="example-box" data-title="Required libraries and configuration">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">import torch</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">import torch.nn as nn</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">import torch.nn.functional as F</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">from torch.utils.data import Dataset, DataLoader</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">import tiktoken  # OpenAI&#x27;s BPE tokenizer</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">device = &#x27;cuda&#x27; if torch.cuda.is_available() else &#x27;cpu&#x27;</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">config = {</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    &#x27;vocab_size&#x27;: 50257,    # GPT-2 vocabulary size</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">    &#x27;d_model&#x27;: 384,         # Embedding dimension</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">    &#x27;n_layers&#x27;: 6,          # Number of transformer blocks</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">    &#x27;n_heads&#x27;: 6,           # Number of attention heads</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    &#x27;max_seq_len&#x27;: 256,     # Maximum sequence length</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">    &#x27;dropout&#x27;: 0.1,</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="zero-shot-task-transfer">Zero-shot task transfer</h1>
-<div class="definition-box" data-title="Performing tasks without fine-tuning">
-<p>GPT-2 can perform tasks it was never explicitly trained for, simply by being prompted with the right text format. This works because the model encountered similar patterns in its diverse training data.</p>
-</div>
-<div class="example-box" data-title="Zero-shot prompting examples">
-<p><strong>Translation</strong>: <code>&quot;English: I love machine learning\nFrench:&quot;</code> → <code>&quot;J'aime l'apprentissage automatique&quot;</code></p>
-<p><strong>Question answering</strong>: <code>&quot;Q: What is the capital of France?\nA:&quot;</code> → <code>&quot;Paris&quot;</code></p>
-<p><strong>Summarization</strong>: <code>&quot;[Long article]\n\nTL;DR:&quot;</code> → generates a summary</p>
-<p>The model learned these formats from web text where such patterns naturally occur (bilingual pages, Q&amp;A forums, Reddit TL;DR summaries).</p>
+<h1 id="setup-and-hyperparameters-1">Setup and hyperparameters</h1>
+<div class="example-box" data-title="Required libraries and configuration">
+<pre><code class="language-python has-line-numbers" data-start-line="16">
+<span class="line"><span class="line-num">16</span><span class="line-code">    &#x27;batch_size&#x27;: 32,</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">    &#x27;learning_rate&#x27;: 3e-4,</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">    &#x27;num_epochs&#x27;: 10</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">}</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-2-zero-shot-performance">GPT-2 zero-shot performance</h1>
-<div class="note-box" data-title="Benchmark results (no fine-tuning)">
-<table>
-<thead>
-<tr>
-<th>Task</th>
-<th>Fine-tuned SOTA</th>
-<th>GPT-2 (zero-shot)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Translation (En→Fr)</td>
-<td>45.6 BLEU</td>
-<td>11.5</td>
-</tr>
-<tr>
-<td>Summarization</td>
-<td>40.2 ROUGE</td>
-<td>29.3</td>
-</tr>
-<tr>
-<td>Question answering</td>
-<td>89.4%</td>
-<td>63.1%</td>
-</tr>
-<tr>
-<td>Reading comprehension</td>
-<td>91.8 F1</td>
-<td>55.0</td>
-</tr>
-</tbody>
-</table>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="tokenization-with-bpe">Tokenization with BPE</h1>
+<div class="definition-box" data-title="Byte-pair encoding recap">
+<p>BPE starts with individual characters and iteratively merges the most frequent adjacent pairs into new tokens. This produces a subword vocabulary that handles common words as single tokens and rare words as sequences of subword pieces.</p>
 </div>
-<div class="note-box" data-title="Interpretation">
-<p>GPT-2's zero-shot performance was far behind fine-tuned models, but the fact that it worked <strong>at all</strong> was groundbreaking. Performance improved consistently with model size, suggesting that further scaling might close the gap.</p>
+<div class="example-box" data-title="Using tiktoken (GPT-2's tokenizer)">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">tokenizer = tiktoken.get_encoding(&quot;gpt2&quot;)</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">text = &quot;Hello, how are you doing today?&quot;</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">tokens = tokenizer.encode(text)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># [15496, 11, 703, 389, 345, 1804, 1909, 30]</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"># Decode back to text</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">decoded = tokenizer.decode(tokens)  # &quot;Hello, how are you doing today?&quot;</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"># Inspect individual tokens</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">for tid in tokens:</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-2-text-generation-quality">GPT-2 text generation quality</h1>
-<div class="example-box" data-title="The unicorn sample that went viral">
-<p><strong>Prompt</strong>: &quot;In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains.&quot;</p>
-<p><strong>GPT-2 continued</strong>: &quot;Even more surprising to the researchers was the fact that the unicorns spoke perfect English. The scientist named the population, after their distinctive horn, Ovid's Unicorn. These four-horned, silver-white unicorns were previously unknown to science...&quot;</p>
-</div>
-<div class="warning-box" data-title="Key observations">
-<ul>
-<li><strong>Coherent and fluent</strong> across multiple paragraphs</li>
-<li><strong>Maintains context</strong> and narrative style</li>
-<li><strong>Completely fabricated</strong> -- confident hallucination of non-existent facts</li>
-<li>This dual nature (fluent but unreliable) remains a core challenge for all LLMs</li>
-</ul>
+<h1 id="tokenization-with-bpe-1">Tokenization with BPE</h1>
+<div class="example-box" data-title="Using tiktoken (GPT-2's tokenizer)">
+<pre><code class="language-python has-line-numbers" data-start-line="12">
+<span class="line"><span class="line-num">12</span><span class="line-code">    print(f&quot;  {tid}: &#x27;{tokenizer.decode([tid])}&#x27;&quot;)</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-3-the-175-billion-parameter-model">GPT-3: the 175 billion parameter model</h1>
-<div class="definition-box" data-title="Brown et al. (2020): 'Language Models are Few-Shot Learners'">
-<p>GPT-3 scaled up another <strong>100x</strong> and discovered that at sufficient scale, models develop <strong>in-context learning</strong> -- the ability to learn new tasks from just a few examples in the prompt.</p>
-<table>
-<thead>
-<tr>
-<th>Model</th>
-<th>Parameters</th>
-<th>Scale relative to GPT-1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GPT-1</td>
-<td>117M</td>
-<td>1x</td>
-</tr>
-<tr>
-<td>GPT-2</td>
-<td>1.5B</td>
-<td>13x</td>
-</tr>
-<tr>
-<td>GPT-3</td>
-<td>175B</td>
-<td><strong>1,500x</strong></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="important-box" data-title="The central finding">
-<p>New capabilities <em>emerged</em> at this scale that were absent in smaller models -- arithmetic, basic reasoning, code generation, and robust few-shot learning across dozens of tasks.</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="creating-a-text-dataset">Creating a text dataset</h1>
+<div class="example-box" data-title="Sliding window over tokenized text">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">class TextDataset(Dataset):</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">    def __init__(self, text_file, tokenizer, max_seq_len):</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">        with open(text_file, &#x27;r&#x27;, encoding=&#x27;utf-8&#x27;) as f:</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">            text = f.read()</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">        self.tokens = tokenizer.encode(text)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">        self.max_seq_len = max_seq_len</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    def __len__(self):</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">        return len(self.tokens) - self.max_seq_len</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">    def __getitem__(self, idx):</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">        chunk = self.tokens[idx : idx + self.max_seq_len + 1]</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">        x = torch.tensor(chunk[:-1], dtype=torch.long)  # Input</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-3-specifications">GPT-3 specifications</h1>
-<div class="note-box" data-title="Model architecture">
-<table>
-<thead>
-<tr>
-<th>Component</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Transformer layers</td>
-<td>96</td>
-</tr>
-<tr>
-<td>Hidden size (d_model)</td>
-<td>12,288</td>
-</tr>
-<tr>
-<td>Attention heads</td>
-<td>96</td>
-</tr>
-<tr>
-<td>Context window</td>
-<td>2,048 tokens</td>
-</tr>
-<tr>
-<td>Vocabulary size</td>
-<td>50,257 (BPE)</td>
-</tr>
-<tr>
-<td>Total parameters</td>
-<td>175 billion</td>
-</tr>
-</tbody>
-</table>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="creating-a-text-dataset-1">Creating a text dataset</h1>
+<div class="example-box" data-title="Sliding window over tokenized text">
+<pre><code class="language-python has-line-numbers" data-start-line="14">
+<span class="line"><span class="line-num">14</span><span class="line-code">        y = torch.tensor(chunk[1:],  dtype=torch.long)  # Target</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">        return x, y</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">dataset = TextDataset(&#x27;shakespeare.txt&#x27;, tokenizer, config[&#x27;max_seq_len&#x27;])</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">dataloader = DataLoader(dataset, batch_size=config[&#x27;batch_size&#x27;], shuffle=True)</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
 </div>
-<div class="note-box" data-title="Training details">
-<table>
-<thead>
-<tr>
-<th>Detail</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Training tokens</td>
-<td>300 billion</td>
-</tr>
-<tr>
-<td>Training data</td>
-<td>570GB filtered (Common Crawl, WebText2, Books, Wikipedia)</td>
-</tr>
-<tr>
-<td>Training compute</td>
-<td>~3,640 petaflop-days</td>
-</tr>
-<tr>
-<td>Estimated cost</td>
-<td>~$4.6M</td>
-</tr>
-</tbody>
-</table>
+<div class="note-box" data-title="Why offset by 1?">
+<p>The target at each position is the <em>next</em> token. For input <code>[A, B, C, D]</code>, the targets are <code>[B, C, D, E]</code>. This is the autoregressive training signal.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-3-training-data-composition">GPT-3 training data composition</h1>
-<div class="note-box" data-title="A carefully balanced mixture">
-<table>
-<thead>
-<tr>
-<th>Dataset</th>
-<th>Tokens</th>
-<th>Weight in training</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Common Crawl (filtered)</td>
-<td>410B</td>
-<td>60%</td>
-</tr>
-<tr>
-<td>WebText2</td>
-<td>19B</td>
-<td>22%</td>
-</tr>
-<tr>
-<td>Books1</td>
-<td>12B</td>
-<td>8%</td>
-</tr>
-<tr>
-<td>Books2</td>
-<td>55B</td>
-<td>8%</td>
-</tr>
-<tr>
-<td>Wikipedia</td>
-<td>3B</td>
-<td>3%</td>
-</tr>
-</tbody>
-</table>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="token-and-position-embeddings">Token and position embeddings</h1>
+<div class="example-box" data-title="Embedding layer implementation">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">class Embeddings(nn.Module):</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">    def __init__(self, vocab_size, d_model, max_seq_len, dropout):</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">        super().__init__()</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">        self.token_embed = nn.Embedding(vocab_size, d_model)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">        self.pos_embed = nn.Embedding(max_seq_len, d_model)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">        self.dropout = nn.Dropout(dropout)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    def forward(self, x):</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">        seq_len = x.size(1)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">        tok_emb = self.token_embed(x)                        # (B, T, D)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">        pos_emb = self.pos_embed(torch.arange(seq_len, device=x.device))  # (T, D)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">        return self.dropout(tok_emb + pos_emb)               # Broadcasting adds positions</span></span>
+</code></pre>
 </div>
-<div class="tip-box" data-title="Questions to consider">
-<p>Notice that high-quality sources (WebText2, Books, Wikipedia) are sampled <strong>more frequently</strong> than their token count would suggest. Why might oversampling quality data improve performance even when more data is available?</p>
+<div class="note-box" data-title="Two sources of information combined">
+<p><strong>Token embeddings</strong> encode <em>what</em> each token means. <strong>Position embeddings</strong> encode <em>where</em> each token sits in the sequence. Their sum gives the model both word identity and word order.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="few-shot-learning-learning-from-examples-in-the-prompt">Few-shot learning: learning from examples in the prompt</h1>
-<div class="definition-box" data-title="Three learning paradigms">
-<ul>
-<li><strong>Zero-shot</strong>: Task description only -- no examples</li>
-<li><strong>One-shot</strong>: One input-output example provided</li>
-<li><strong>Few-shot</strong>: Multiple examples (typically 3--100) provided in the prompt</li>
-</ul>
-<p>Critically, <strong>no gradient updates occur</strong> -- the model's weights remain frozen. All &quot;learning&quot; happens through pattern recognition in the prompt context.</p>
-</div>
-<div class="example-box" data-title="Few-shot translation">
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">dog -&gt; chien</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">cat -&gt; chat</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">bird -&gt; oiseau</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">I love AI -&gt;</span></span>
+<h1 id="masked-multi-head-attention">Masked multi-head attention</h1>
+<div class="example-box" data-title="Attention with causal masking (part 1: projections)">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">class MultiHeadAttention(nn.Module):</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">    def __init__(self, d_model, n_heads, dropout):</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">        super().__init__()</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">        assert d_model % n_heads == 0</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">        self.n_heads = n_heads</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">        self.head_dim = d_model // n_heads</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">        self.q_linear = nn.Linear(d_model, d_model)</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">        self.k_linear = nn.Linear(d_model, d_model)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">        self.v_linear = nn.Linear(d_model, d_model)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">        self.out_linear = nn.Linear(d_model, d_model)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">        self.dropout = nn.Dropout(dropout)</span></span>
 </code></pre>
-<p>GPT-3 output: <code>&quot;J'aime l'IA&quot;</code></p>
+<div class="code-continued-indicator">continued...</div>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="few-shot-sentiment-classification">Few-shot sentiment classification</h1>
-<div class="example-box" data-title="Classifying reviews with 3 examples">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">prompt = &quot;&quot;&quot;Classify each review as Positive or Negative.</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">Review: &quot;This movie was amazing, I loved every minute!&quot;</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">Sentiment: Positive</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">Review: &quot;Terrible film, complete waste of time.&quot;</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">Sentiment: Negative</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">Review: &quot;A masterpiece of modern cinema.&quot;</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">Sentiment: Positive</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">Review: &quot;The acting was wooden and the plot made no sense.&quot;</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">Sentiment:&quot;&quot;&quot;</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># GPT-3 output: &quot;Negative&quot;</span></span>
+<h1 id="masked-multi-head-attention-1">Masked multi-head attention</h1>
+<div class="example-box" data-title="Attention with causal masking (part 1: projections)">
+<pre><code class="language-python has-line-numbers" data-start-line="13">
+<span class="line"><span class="line-num">13</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    def forward(self, x, mask=None):</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">        B, T, D = x.shape</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">        Q = self.q_linear(x).view(B, T, self.n_heads, self.head_dim).transpose(1, 2)</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">        K = self.k_linear(x).view(B, T, self.n_heads, self.head_dim).transpose(1, 2)</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">        V = self.v_linear(x).view(B, T, self.n_heads, self.head_dim).transpose(1, 2)</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">        # Q, K, V shape: (B, n_heads, T, head_dim)</span></span>
 </code></pre>
-<p>The model recognizes the pattern from examples and applies it to the new input -- no weight updates, no fine-tuning, pure inference.</p>
+<div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="emergent-abilities">Emergent abilities</h1>
-<div class="definition-box" data-title="Wei et al. (2022)">
-<p><strong>Emergent abilities</strong> are capabilities that appear only above a certain model scale and are essentially absent in smaller models. They cannot be predicted by extrapolating from smaller models.</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="attention-computation">Attention computation</h1>
+<div class="example-box" data-title="Attention with causal masking (part 2: scores and output)">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">        # Scaled dot-product attention</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">        scores = torch.matmul(Q, K.transpose(-2, -1)) / (self.head_dim ** 0.5)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">        if mask is not None:</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">            scores = scores.masked_fill(mask == 0, float(&#x27;-inf&#x27;))</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">        attn_weights = F.softmax(scores, dim=-1)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">        attn_weights = self.dropout(attn_weights)</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">        # Apply attention to values and concatenate heads</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">        out = torch.matmul(attn_weights, V)                  # (B, n_heads, T, head_dim)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">        out = out.transpose(1, 2).contiguous().view(B, T, D) # (B, T, D)</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">        return self.out_linear(out)</span></span>
+</code></pre>
 </div>
-<div class="note-box" data-title="Examples of emergent capabilities">
-<table>
-<thead>
-<tr>
-<th>Capability</th>
-<th>Approximate emergence threshold</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Multi-digit arithmetic</td>
-<td>~10B parameters</td>
-</tr>
-<tr>
-<td>Code generation</td>
-<td>~10B parameters</td>
-</tr>
-<tr>
-<td>Multi-step reasoning</td>
-<td>~100B parameters</td>
-</tr>
-<tr>
-<td>Chain-of-thought reasoning</td>
-<td>~100B parameters</td>
-</tr>
-<tr>
-<td>Analogical reasoning</td>
-<td>~100B parameters</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="warning-box" data-title="Caveat">
-<p>Recent work has questioned whether emergence is real or an artifact of evaluation metrics (Schaeffer et al., 2023). The debate continues.</p>
+<div class="note-box" data-title="The causal mask">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">def create_causal_mask(seq_len, device):</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">    return torch.tril(torch.ones(seq_len, seq_len, device=device))</span></span>
+</code></pre>
+<p>Each row <code>i</code> has 1s at positions <code>0..i</code> and 0s at positions <code>i+1..T-1</code>, blocking attention to future tokens.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="scaling-laws">Scaling laws</h1>
-<div class="definition-box" data-title="Kaplan et al. (2020): 'Scaling Laws for Neural Language Models'">
-<p>Model performance (measured by cross-entropy loss) scales as a <strong>power law</strong> with three factors:</p>
-<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>L</mi><mo stretchy="false">(</mo><mi>N</mi><mo stretchy="false">)</mo><mo>≈</mo><msup><mrow><mo fence="true">(</mo><mfrac><msub><mi>N</mi><mi>c</mi></msub><mi>N</mi></mfrac><mo fence="true">)</mo></mrow><msub><mi>α</mi><mi>N</mi></msub></msup></mrow><annotation encoding="application/x-tex">L(N) \approx \left(\frac{N_c}{N}\right)^{\alpha_N}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4543em;vertical-align:-0.95em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.5043em;"><span style="top:-3.9029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3567em;margin-left:-0.0037em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1433em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p><p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> is the number of parameters, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">N_c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> is a constant, and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>N</mi></msub><mo>≈</mo><mn>0.076</mn></mrow><annotation encoding="application/x-tex">\alpha_N \approx 0.076</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6331em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.076</span></span></span></span>.</p>
-</div>
-<div class="note-box" data-title="Key findings">
-<ol>
-<li>Performance improves <strong>smoothly and predictably</strong> with scale</li>
-<li>Model <strong>shape</strong> (depth vs. width) matters surprisingly little</li>
-<li>10x more parameters → ~15% lower loss</li>
-<li>The three scaling axes (parameters, data, compute) can substitute for each other to some extent</li>
-</ol>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="chinchilla-scaling-laws">Chinchilla scaling laws</h1>
-<div class="important-box" data-title="Hoffmann et al. (2022): 'Training Compute-Optimal Large Language Models'">
-<p>Previous models were <strong>over-parameterized and under-trained</strong>. For a given compute budget, the optimal allocation is approximately <strong>20 tokens per parameter</strong>.</p>
-</div>
-<div class="note-box" data-title="GPT-3 was undertrained">
-<table>
-<thead>
-<tr>
-<th>Model</th>
-<th>Parameters</th>
-<th>Training tokens</th>
-<th>Tokens/parameter</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GPT-3</td>
-<td>175B</td>
-<td>300B</td>
-<td>1.7 (far below optimal)</td>
-</tr>
-<tr>
-<td>Chinchilla</td>
-<td>70B</td>
-<td>1.4T</td>
-<td>20 (optimal)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Result</strong>: Chinchilla (70B) <strong>outperformed</strong> GPT-3 (175B) despite being 2.5x smaller, because it was trained on 4.7x more data.</p>
-</div>
-<div class="tip-box" data-title="Impact on the field">
-<p>Chinchilla scaling directly influenced Llama 2, Mistral, and other modern models that prioritize longer training over larger parameter counts.</p>
+<h1 id="feed-forward-network-and-transformer-block">Feed-forward network and transformer block</h1>
+<div class="example-box" data-title="The two sub-layers of each GPT block">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">class FeedForward(nn.Module):</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">    def __init__(self, d_model, dropout):</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">        super().__init__()</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">        self.net = nn.Sequential(</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">            nn.Linear(d_model, 4 * d_model),</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">            nn.GELU(),                        # GPT uses GELU, not ReLU</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">            nn.Linear(4 * d_model, d_model),</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">            nn.Dropout(dropout)</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">        )</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    def forward(self, x):</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">        return self.net(x)</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="from-gpt-3-to-chatgpt">From GPT-3 to ChatGPT</h1>
-<div class="note-box" data-title="The three-stage evolution">
-<table>
-<thead>
-<tr>
-<th>Stage</th>
-<th>Model</th>
-<th>Key innovation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>GPT-3 (2020)</td>
-<td>Next-token prediction at massive scale</td>
-</tr>
-<tr>
-<td>2</td>
-<td>InstructGPT (2022)</td>
-<td><strong>Instruction tuning</strong> on human-written responses</td>
-</tr>
-<tr>
-<td>3</td>
-<td>ChatGPT (Nov 2022)</td>
-<td><strong>RLHF</strong> for helpful, harmless conversation</td>
-</tr>
-</tbody>
-</table>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="feed-forward-network-and-transformer-block-1">Feed-forward network and transformer block</h1>
+<div class="example-box" data-title="The two sub-layers of each GPT block">
+<pre><code class="language-python has-line-numbers" data-start-line="12">
+<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">class TransformerBlock(nn.Module):</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    def __init__(self, d_model, n_heads, dropout):</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">        super().__init__()</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">        self.ln1 = nn.LayerNorm(d_model)</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">        self.attention = MultiHeadAttention(d_model, n_heads, dropout)</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">        self.ln2 = nn.LayerNorm(d_model)</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">        self.ffn = FeedForward(d_model, dropout)</span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code">    def forward(self, x, mask):</span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code">        x = x + self.attention(self.ln1(x), mask)   # Pre-norm + residual</span></span>
+</code></pre>
+<div class="code-continued-indicator">...continued...</div>
 </div>
-<div class="definition-box" data-title="What is instruction tuning?">
-<p>Fine-tune the model on (instruction, response) pairs so it learns to <strong>follow commands</strong> rather than merely continue text. Before instruction tuning, asking GPT-3 to &quot;Write a haiku about AI&quot; might produce an essay <em>about</em> haiku writing. After instruction tuning, it actually writes the haiku.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="feed-forward-network-and-transformer-block-2">Feed-forward network and transformer block</h1>
+<div class="example-box" data-title="The two sub-layers of each GPT block">
+<pre><code class="language-python has-line-numbers" data-start-line="23">
+<span class="line"><span class="line-num">23</span><span class="line-code">        x = x + self.ffn(self.ln2(x))               # Pre-norm + residual</span></span>
+<span class="line"><span class="line-num">24</span><span class="line-code">        return x</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="rlhf-reinforcement-learning-from-human-feedback">RLHF: reinforcement learning from human feedback</h1>
-<div class="note-box" data-title="The three-step RLHF pipeline (Ouyang et al., 2022)">
-<p><strong>Step 1 -- Supervised fine-tuning (SFT)</strong>: Train on human-written example responses to learn basic instruction-following.</p>
-<p><strong>Step 2 -- Reward model training</strong>: Generate multiple responses to the same prompt, have humans rank them, and train a model to predict human preferences.</p>
-<p><strong>Step 3 -- RL optimization (PPO)</strong>: Use the reward model as a scoring function and optimize the language model's policy to maximize predicted human preference scores.</p>
-</div>
-<div class="important-box" data-title="Why RLHF matters">
-<p>RLHF aligns the model's objective with <strong>what humans actually want</strong> (helpful, honest, harmless) rather than just next-token likelihood. This is what made ChatGPT feel qualitatively different from GPT-3.</p>
+<h1 id="complete-gpt-model">Complete GPT model</h1>
+<div class="example-box" data-title="Assembling all components">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">class GPT(nn.Module):</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">    def __init__(self, vocab_size, d_model, n_layers, n_heads, max_seq_len, dropout):</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">        super().__init__()</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">        self.max_seq_len = max_seq_len</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">        self.embeddings = Embeddings(vocab_size, d_model, max_seq_len, dropout)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">        self.blocks = nn.ModuleList([</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">            TransformerBlock(d_model, n_heads, dropout) for _ in range(n_layers)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">        ])</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">        self.ln_f = nn.LayerNorm(d_model)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">        self.lm_head = nn.Linear(d_model, vocab_size, bias=False)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">        self.apply(self._init_weights)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="rlhf-in-practice">RLHF in practice</h1>
-<div class="example-box" data-title="Training the reward model">
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Prompt: &quot;How do I make a cake?&quot;</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">Response A (human rank: 1st):</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">&quot;Here&#x27;s a simple recipe: Preheat oven to 350F.</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> Mix 2 cups flour, 1.5 cups sugar...&quot;</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">Response B (human rank: 2nd):</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">&quot;Cake is a type of dessert that originated in</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> ancient civilizations...&quot;</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">Response C (human rank: 3rd):</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">&quot;I cannot help with that request.&quot;</span></span>
+<h1 id="complete-gpt-model-1">Complete GPT model</h1>
+<div class="example-box" data-title="Assembling all components">
+<pre><code class="language-python has-line-numbers" data-start-line="13">
+<span class="line"><span class="line-num">13</span><span class="line-code">    def _init_weights(self, module):</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">        if isinstance(module, nn.Linear):</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">            if module.bias is not None:</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">                torch.nn.init.zeros_(module.bias)</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">        elif isinstance(module, nn.Embedding):</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)</span></span>
 </code></pre>
-<p>The reward model learns: direct, helpful answers score highest; tangential information scores lower; unhelpful refusals score lowest.</p>
+<div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="chatgpts-impact">ChatGPT's impact</h1>
-<div class="note-box" data-title="The fastest-growing consumer application in history">
-<ul>
-<li>Launched <strong>November 30, 2022</strong></li>
-<li><strong>1 million users</strong> in 5 days</li>
-<li><strong>100 million users</strong> in 2 months</li>
-<li>Brought LLMs into mainstream public consciousness</li>
-</ul>
-</div>
-<div class="tip-box" data-title="Questions to consider">
-<p>ChatGPT's architecture (GPT-3.5 + RLHF) was not dramatically different from what researchers had been building. Why did <em>this particular release</em> capture public attention so completely? What role did the conversational interface play vs. the underlying capabilities?</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-modern-llm-landscape">The modern LLM landscape</h1>
-<div class="note-box" data-title="Key milestones after GPT-3 (2020--2025)">
-<table>
-<thead>
-<tr>
-<th>Year</th>
-<th>Milestone</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>2022</td>
-<td>ChatGPT launched (OpenAI)</td>
-</tr>
-<tr>
-<td>2023</td>
-<td>GPT-4 -- multimodal, improved reasoning</td>
-</tr>
-<tr>
-<td>2023</td>
-<td>Llama 2 -- open weights from Meta (70B)</td>
-</tr>
-<tr>
-<td>2023</td>
-<td>Claude 2 (Anthropic), Gemini (Google)</td>
-</tr>
-<tr>
-<td>2024</td>
-<td>Claude 3.5, GPT-4o, Llama 3, Mistral Large</td>
-</tr>
-<tr>
-<td>2024--25</td>
-<td>Smaller efficient models (Phi, Qwen, Gemma)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="note-box" data-title="Five key trends">
-<ol>
-<li><strong>Multimodal</strong> capabilities (text + vision + audio)</li>
-<li><strong>Longer context windows</strong> (100K+ tokens)</li>
-<li><strong>Better reasoning</strong> (chain-of-thought, tool use)</li>
-<li><strong>Open-source alternatives</strong> approaching closed-model quality</li>
-<li><strong>Efficiency gains</strong> -- smaller models matching larger predecessors</li>
-</ol>
+<h1 id="gpt-forward-pass">GPT forward pass</h1>
+<div class="example-box" data-title="Forward pass with optional loss computation">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">    def forward(self, x, targets=None):</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">        seq_len = x.size(1)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">        mask = create_causal_mask(seq_len, x.device)</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">        x = self.embeddings(x)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">        for block in self.blocks:</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">            x = block(x, mask)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">        x = self.ln_f(x)</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">        logits = self.lm_head(x)          # (batch, seq_len, vocab_size)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">        loss = None</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">        if targets is not None:</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">            loss = F.cross_entropy(</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">                logits.view(-1, logits.size(-1)),</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">                targets.view(-1)</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">            )</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="open-vs-closed-models">Open vs. closed models</h1>
-<div class="note-box" data-title="The ongoing debate">
-<table>
-<thead>
-<tr>
-<th>Dimension</th>
-<th>Closed (GPT-4, Claude)</th>
-<th>Open (Llama, Mistral)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Safety control</td>
-<td>Centralized moderation</td>
-<td>Community-dependent</td>
-</tr>
-<tr>
-<td>Transparency</td>
-<td>Low (proprietary)</td>
-<td>High (weights available)</td>
-</tr>
-<tr>
-<td>Customization</td>
-<td>Limited (API only)</td>
-<td>Full (fine-tune, modify)</td>
-</tr>
-<tr>
-<td>Cost model</td>
-<td>Per-token API fees</td>
-<td>One-time compute cost</td>
-</tr>
-<tr>
-<td>Cutting-edge performance</td>
-<td>Usually ahead</td>
-<td>Rapidly closing gap</td>
-</tr>
-<tr>
-<td>Misuse risk</td>
-<td>Lower (gated access)</td>
-<td>Higher (unrestricted)</td>
-</tr>
-</tbody>
-</table>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="gpt-forward-pass-1">GPT forward pass</h1>
+<div class="example-box" data-title="Forward pass with optional loss computation">
+<pre><code class="language-python has-line-numbers" data-start-line="17">
+<span class="line"><span class="line-num">17</span><span class="line-code">        return logits, loss</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
 </div>
-<div class="tip-box" data-title="Questions to consider">
-<p>Is AI safety better served by keeping models closed (preventing misuse) or open (enabling public scrutiny of flaws)? What lessons can we draw from open-source software?</p>
+<div class="note-box" data-title="Parameter count for our mini-GPT">
+<p>With <code>d_model=384</code>, <code>n_layers=6</code>, <code>n_heads=6</code>, and <code>vocab_size=50257</code>, this model has approximately <strong>30 million parameters</strong> -- small enough to train on a single GPU in a few hours.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="training-loop">Training loop</h1>
+<div class="example-box" data-title="Training with AdamW and gradient clipping">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">model = GPT(</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">    config[&#x27;vocab_size&#x27;], config[&#x27;d_model&#x27;], config[&#x27;n_layers&#x27;],</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">    config[&#x27;n_heads&#x27;], config[&#x27;max_seq_len&#x27;], config[&#x27;dropout&#x27;]</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">).to(device)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">optimizer = torch.optim.AdamW(</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">    model.parameters(), lr=config[&#x27;learning_rate&#x27;],</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    betas=(0.9, 0.95), weight_decay=0.1</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">model.train()</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">for epoch in range(config[&#x27;num_epochs&#x27;]):</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">    total_loss = 0</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    for x, y in dataloader:</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="prompting-techniques">Prompting techniques</h1>
-<div class="note-box" data-title="Practical strategies for getting better outputs">
-<p><strong>Zero-shot with clear instructions</strong>:</p>
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Classify the following text as spam or not spam.</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">Respond with only &quot;spam&quot; or &quot;not spam&quot;.</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">Text: &quot;Congratulations! You&#x27;ve won $1,000,000!&quot;</span></span>
+<h1 id="training-loop-1">Training loop</h1>
+<div class="example-box" data-title="Training with AdamW and gradient clipping">
+<pre><code class="language-python has-line-numbers" data-start-line="15">
+<span class="line"><span class="line-num">15</span><span class="line-code">        x, y = x.to(device), y.to(device)</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">        logits, loss = model(x, targets=y)</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">        optimizer.zero_grad()</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">        loss.backward()</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)</span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code">        optimizer.step()</span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code">        total_loss += loss.item()</span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code">    print(f&quot;Epoch {epoch+1}, Loss: {total_loss / len(dataloader):.4f}&quot;)</span></span>
 </code></pre>
-<p><strong>Few-shot with examples</strong>:</p>
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">&quot;Meeting at 3pm tomorrow&quot; -&gt; not spam</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">&quot;URGENT: Send money now!&quot; -&gt; spam</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">&quot;Can you review this document?&quot; -&gt; not spam</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">&quot;You&#x27;ve been selected for a prize!&quot; -&gt;</span></span>
-</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="chain-of-thought-prompting">Chain-of-thought prompting</h1>
-<div class="definition-box" data-title="Wei et al. (2022)">
-<p><strong>Chain-of-thought (CoT)</strong> prompting asks the model to show its reasoning step by step before giving a final answer. This dramatically improves performance on reasoning tasks, especially math and logic problems.</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="training-best-practices">Training best practices</h1>
+<div class="note-box" data-title="Five key techniques for stable GPT training">
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Gradient clipping</strong> (max norm 1.0)</td>
+<td>Prevents exploding gradients that destabilize training</td>
+</tr>
+<tr>
+<td><strong>AdamW optimizer</strong></td>
+<td>Decoupled weight decay; better than standard Adam for transformers</td>
+</tr>
+<tr>
+<td><strong>Learning rate warmup</strong></td>
+<td>Gradually increase LR over first ~1,000 steps to avoid early instability</td>
+</tr>
+<tr>
+<td><strong>Cosine LR decay</strong></td>
+<td>Smoothly reduce LR after warmup for fine-grained convergence</td>
+</tr>
+<tr>
+<td><strong>Mixed precision</strong> (float16/bfloat16)</td>
+<td>2--3x speedup on modern GPUs with minimal quality loss</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="example-box" data-title="Chain-of-thought example">
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Q: Roger has 5 tennis balls. He buys 2 more cans of tennis</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">   balls. Each can has 3 balls. How many does he have now?</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">Let&#x27;s think step by step:</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">1. Roger starts with 5 tennis balls</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">2. He buys 2 cans × 3 balls per can = 6 new balls</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">3. Total = 5 + 6 = 11 tennis balls</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">A: 11</span></span>
-</code></pre>
-<p>Simply adding <strong>&quot;Let's think step by step&quot;</strong> can improve accuracy on math word problems from ~18% to ~79% (Kojima et al., 2022).</p>
+<div class="tip-box" data-title="Practical advice">
+<p>If loss is not decreasing: check learning rate (try 1e-4 to 3e-4), verify data pipeline outputs correct input/target pairs, and watch for NaN values. If you run out of memory: reduce batch size or sequence length first, then try gradient accumulation.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="current-limitations-of-llms">Current limitations of LLMs</h1>
-<div class="warning-box" data-title="What LLMs still struggle with">
-<ul>
-<li><strong>Hallucinations</strong>: Confidently generate false statements with no awareness of uncertainty</li>
-<li><strong>Reasoning depth</strong>: Multi-step logic and mathematical proofs remain unreliable</li>
-<li><strong>Knowledge currency</strong>: Training data has a cutoff date; no access to real-time information</li>
-<li><strong>Consistency</strong>: May give different answers to the same question across runs</li>
-<li><strong>Prompt sensitivity</strong>: Small wording changes can dramatically alter outputs</li>
-</ul>
+<h1 id="greedy-decoding">Greedy decoding</h1>
+<div class="example-box" data-title="Generating text by always picking the most likely token">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">@torch.no_grad()</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">def generate_greedy(model, tokenizer, prompt, max_new_tokens=50):</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">    model.eval()</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">    tokens = tokenizer.encode(prompt)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">    x = torch.tensor([tokens], dtype=torch.long, device=device)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">    for _ in range(max_new_tokens):</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">        x_crop = x[:, -model.max_seq_len:]</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">        logits, _ = model(x_crop)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">        logits = logits[:, -1, :]                # Last position only</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">        next_token = torch.argmax(logits, dim=-1, keepdim=True)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">        x = torch.cat([x, next_token], dim=1)</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    return tokenizer.decode(x[0].tolist())</span></span>
+</code></pre>
 </div>
-<div class="note-box" data-title="Active areas of research">
-<p>Each limitation has spawned research directions: RAG for knowledge currency (Lecture 17), tool use for grounding (Lecture 24), constitutional AI for alignment, and formal verification for reasoning reliability.</p>
+<div class="warning-box" data-title="Greedy decoding is deterministic but repetitive">
+<p>Always picking <code>argmax</code> produces the same output every time and tends to get stuck in repetitive loops. Real applications use <strong>sampling</strong> to introduce controlled randomness.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="key-takeaways">Key takeaways</h1>
-<div class="important-box" data-title="Core concepts from this lecture">
-<ol>
-<li><strong>GPT-2</strong> showed that scale enables zero-shot task transfer without fine-tuning</li>
-<li><strong>GPT-3</strong> (175B) demonstrated few-shot in-context learning and emergent abilities</li>
-<li><strong>Scaling laws</strong> predict smooth power-law improvement with more parameters, data, and compute</li>
-<li><strong>Chinchilla scaling</strong> showed models should be trained longer on more data, not just made bigger</li>
-<li><strong>RLHF</strong> aligned GPT-3 with human preferences to create ChatGPT</li>
-<li><strong>Chain-of-thought prompting</strong> dramatically improves reasoning by eliciting step-by-step thinking</li>
-</ol>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="sampling-strategies">Sampling strategies</h1>
+<div class="definition-box" data-title="Three ways to add controlled randomness">
+<ul>
+<li><strong>Temperature</strong> (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>): Scale logits by <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi mathvariant="normal">/</mi><mi>T</mi></mrow><annotation encoding="application/x-tex">1/T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1/</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> before softmax. <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">T &lt; 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> sharpens the distribution (more conservative); <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>&gt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">T &gt; 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> flattens it (more creative).</li>
+<li><strong>Top-k</strong>: Sample only from the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> most probable tokens. Typical: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>40</mn></mrow><annotation encoding="application/x-tex">k = 40</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">40</span></span></span></span>.</li>
+<li><strong>Nucleus (top-p)</strong>: Sample from the smallest set of tokens whose cumulative probability exceeds <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>. Typical: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mn>0.9</mn></mrow><annotation encoding="application/x-tex">p = 0.9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.9</span></span></span></span> or <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.95</mn></mrow><annotation encoding="application/x-tex">0.95</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.95</span></span></span></span>.</li>
+</ul>
+</div>
+<div class="note-box" data-title="Comparison">
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Greedy</td>
+<td>Deterministic, fast</td>
+<td>Repetitive, boring</td>
+</tr>
+<tr>
+<td>Temperature</td>
+<td>Simple control knob</td>
+<td>Can produce nonsense at high <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span></td>
+</tr>
+<tr>
+<td>Top-k</td>
+<td>Filters unlikely tokens</td>
+<td>Fixed <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> may be too broad or narrow</td>
+</tr>
+<tr>
+<td>Nucleus (top-p)</td>
+<td>Adapts to distribution shape</td>
+<td>Slightly more complex</td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="further-reading">Further reading</h1>
-<div class="note-box" data-title="References">
-<ul>
-<li><strong>Radford et al. (2019)</strong> -- &quot;Language Models are Unsupervised Multitask Learners&quot; (GPT-2) <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">[PDF]</a></li>
-<li><strong>Brown et al. (2020)</strong> -- &quot;Language Models are Few-Shot Learners&quot; (GPT-3) <a href="https://arxiv.org/abs/2005.14165">[arXiv]</a></li>
-<li><strong>Kaplan et al. (2020)</strong> -- &quot;Scaling Laws for Neural Language Models&quot; <a href="https://arxiv.org/abs/2001.08361">[arXiv]</a></li>
-<li><strong>Hoffmann et al. (2022)</strong> -- &quot;Training Compute-Optimal Large Language Models&quot; (Chinchilla) <a href="https://arxiv.org/abs/2203.15556">[arXiv]</a></li>
-<li><strong>Ouyang et al. (2022)</strong> -- &quot;Training language models to follow instructions&quot; (InstructGPT) <a href="https://arxiv.org/abs/2203.02155">[arXiv]</a></li>
-<li><strong>Wei et al. (2022)</strong> -- &quot;Emergent Abilities of Large Language Models&quot; <a href="https://arxiv.org/abs/2206.07682">[arXiv]</a></li>
-</ul>
+<h1 id="implementing-sampling">Implementing sampling</h1>
+<div class="example-box" data-title="Top-k and nucleus sampling in PyTorch">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">def sample_next_token(logits, temperature=1.0, top_k=None, top_p=None):</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">    logits = logits / temperature</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">    if top_k is not None:</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">        top_k = min(top_k, logits.size(-1))</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">        threshold = torch.topk(logits, top_k)[0][..., -1, None]</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">        logits[logits &lt; threshold] = float(&#x27;-inf&#x27;)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    if top_p is not None:</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">        sorted_logits, sorted_idx = torch.sort(logits, descending=True)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">        cumprobs = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">        remove = cumprobs &gt; top_p</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">        remove[..., 1:] = remove[..., :-1].clone()</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">        remove[..., 0] = False</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">        logits[sorted_idx[remove]] = float(&#x27;-inf&#x27;)</span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"></span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="implementing-sampling-1">Implementing sampling</h1>
+<div class="example-box" data-title="Top-k and nucleus sampling in PyTorch">
+<pre><code class="language-python has-line-numbers" data-start-line="17">
+<span class="line"><span class="line-num">17</span><span class="line-code">    probs = F.softmax(logits, dim=-1)</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">    return torch.multinomial(probs, num_samples=1)</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="complete-generation-function">Complete generation function</h1>
+<div class="example-box" data-title="Putting it all together">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">@torch.no_grad()</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">def generate(model, tokenizer, prompt, max_new_tokens=100,</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">             temperature=0.8, top_k=40, top_p=0.9):</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">    model.eval()</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">    tokens = tokenizer.encode(prompt)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">    x = torch.tensor([tokens], dtype=torch.long, device=device)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    for _ in range(max_new_tokens):</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">        x_crop = x[:, -model.max_seq_len:]</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">        logits, _ = model(x_crop)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">        next_token = sample_next_token(</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">            logits[0, -1, :], temperature=temperature, top_k=top_k, top_p=top_p</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">        )</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">        x = torch.cat([x, next_token.unsqueeze(0)], dim=1)</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="complete-generation-function-1">Complete generation function</h1>
+<div class="example-box" data-title="Putting it all together">
+<pre><code class="language-python has-line-numbers" data-start-line="15">
+<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">    return tokenizer.decode(x[0].tolist())</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code"># Generate text</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">print(generate(model, tokenizer, &quot;Once upon a time&quot;))</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="31" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="debugging-and-common-issues">Debugging and common issues</h1>
+<div class="warning-box" data-title="Problems you will encounter">
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Loss not decreasing</td>
+<td>LR too high/low, data bug</td>
+<td>Try LR in [1e-4, 3e-4]; verify x/y offset</td>
+</tr>
+<tr>
+<td>Out of memory</td>
+<td>Batch/sequence too large</td>
+<td>Reduce batch size; use gradient accumulation</td>
+</tr>
+<tr>
+<td>Poor generation quality</td>
+<td>Undertrained</td>
+<td>Train longer; use more/better data</td>
+</tr>
+<tr>
+<td>Repetitive output</td>
+<td>Greedy decoding or low temperature</td>
+<td>Use nucleus sampling (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mn>0.9</mn></mrow><annotation encoding="application/x-tex">p = 0.9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.9</span></span></span></span>)</td>
+</tr>
+<tr>
+<td>NaN loss</td>
+<td>Numerical instability</td>
+<td>Add gradient clipping; check for empty batches</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="32" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="extensions-for-the-ambitious">Extensions for the ambitious</h1>
+<div class="note-box" data-title="Ways to enhance your implementation">
+<p><strong>Architectural improvements</strong>:</p>
+<ul>
+<li><strong>Rotary position embeddings (RoPE)</strong>: Better length generalization than learned positions</li>
+<li><strong>Flash Attention</strong>: Memory-efficient attention (2--4x faster)</li>
+<li><strong>Grouped-query attention (GQA)</strong>: Fewer KV heads for efficient inference</li>
+</ul>
+<p><strong>Training improvements</strong>:</p>
+<ul>
+<li><strong>Learning rate warmup + cosine decay</strong>: Standard schedule for stable training</li>
+<li><strong>Mixed precision</strong>: <code>torch.cuda.amp</code> for 2--3x speedup</li>
+<li><strong>Gradient accumulation</strong>: Simulate larger batch sizes on limited hardware</li>
+</ul>
+<p><strong>Inference improvements</strong>:</p>
+<ul>
+<li><strong>KV cache</strong>: Cache key/value tensors to avoid recomputation during generation</li>
+<li><strong>Quantization (INT8)</strong>: 2--4x smaller model with minimal quality loss</li>
+<li><strong>Speculative decoding</strong>: Use a small draft model to speed up a large model</li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="33" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="key-takeaways">Key takeaways</h1>
+<div class="important-box" data-title="Core concepts from this lecture">
+<ol>
+<li><strong>GPT is conceptually simple</strong>: A stack of transformer decoder blocks predicting the next token</li>
+<li><strong>Five core components</strong>: Tokenizer → embeddings → masked attention → feed-forward → LM head</li>
+<li><strong>Training requires care</strong>: AdamW, gradient clipping, learning rate scheduling, and good data</li>
+<li><strong>Generation is an art</strong>: Temperature, top-k, and nucleus sampling control the creativity-coherence tradeoff</li>
+<li><strong>Building it yourself</strong> is the best way to deeply understand how modern LLMs work</li>
+</ol>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="34" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="further-reading">Further reading</h1>
+<div class="note-box" data-title="References and resources">
+<ul>
+<li><strong>Karpathy, &quot;Let's build GPT&quot;</strong> -- Step-by-step video tutorial <a href="https://www.youtube.com/watch?v=kCc8FmEb1nY">[YouTube]</a></li>
+<li><strong>nanoGPT</strong> -- Clean, minimal GPT implementation <a href="https://github.com/karpathy/nanoGPT">[GitHub]</a></li>
+<li><strong>Radford et al. (2018)</strong> -- &quot;Improving Language Understanding by Generative Pre-Training&quot; <a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">[PDF]</a></li>
+<li><strong>Vaswani et al. (2017)</strong> -- &quot;Attention is All You Need&quot; <a href="https://arxiv.org/abs/1706.03762">[arXiv]</a></li>
+<li><strong>The Annotated Transformer</strong> -- Harvard NLP <a href="https://nlp.seas.harvard.edu/2018/04/03/attention.html">[Blog]</a></li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="35" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
@@ -1426,7 +1358,7 @@ Winter 2026</p>
   </div>
 </div>
 <div class="tip-box" data-title="Up next...">
-<p>Implementing GPT from scratch: building a language model in PyTorch</p>
+<p>Week 9 (after break): Agents and tool use -- giving language models the ability to act</p>
 </div>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();

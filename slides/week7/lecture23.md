@@ -1,995 +1,610 @@
 ---
 marp: true
 theme: cdl-theme
-paginate: true
-header: 'Models of Language and Conversation'
-footer: 'Week 7'
+math: katex
+transition: fade 0.25s
+author: Contextual Dynamics Lab
 ---
 
-<!-- _class: lead -->
+# Lecture 23: Implementing GPT from scratch
 
-# Lecture 23: Implementing GPT from Scratch
-## Building a Language Model in PyTorch 
+### PSYC 51.17: Models of language and communication
 
-**Models of Language and Conversation**
-
-Week 7
-
----
-
-# Today's Journey 
-
-<!-- TODO: Add manual table of contents or navigation -->
-
+Jeremy R. Manning
+Dartmouth College
+Winter 2026
 
 ---
 
-# What We'll Build Today 
+# Learning objectives
 
+<div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-
- <div class="callout warning">
-<div class="callout-title">Goal</div>
-
-Implement a simplified GPT model from scratch in PyTorch!
+- Implement a **complete GPT model** from scratch in PyTorch
+- Build each component: **BPE tokenizer**, **embeddings**, **masked attention**, **transformer block**
+- Write a **training loop** with proper optimization (AdamW, gradient clipping)
+- Implement **text generation** with greedy decoding and sampling strategies
+- Compare **temperature**, **top-k**, and **nucleus (top-p)** sampling
 
 </div>
 
- 
+---
 
- **Components we'll cover:**
- 1. Tokenization (Byte-Pair Encoding)
-2. Embeddings (token + position)
-3. Masked Multi-Head Attention
-4. Transformer Decoder Block
-5. Language Model Head
-6. Training Loop
-7. Text Generation
+# Announcements
 
- 
+<div class="warning-box" data-title="Week 8: no classes">
 
- <div class="callout tip">
-<div class="callout-title">Think about it!</div>
-
-We'll build a "nano-GPT"—small enough to train on a laptop, but with the same architecture as the real thing!
+There are **no classes February 23--27** (instructor away). Use this time to work on your **final project** and the optional Assignment 5 (Build GPT).
 
 </div>
 
+<div class="note-box" data-title="After the break">
+
+Week 9 covers agents and tool use, mixture of experts, and ethics/safety. The final project is due **March 9**.
+
+</div>
 
 ---
 
-# Required Libraries 
+# What we are building today
 
+<div class="definition-box" data-title="A complete mini-GPT">
+
+We will implement every component of a GPT language model from scratch -- small enough to train on a laptop, but architecturally identical to GPT-2:
+
+1. **Tokenization** with Byte-Pair Encoding (tiktoken)
+2. **Token + position embeddings**
+3. **Masked multi-head attention**
+4. **Transformer decoder blocks** (pre-norm with residual connections)
+5. **Language model head** for next-token prediction
+6. **Training loop** with AdamW and gradient clipping
+7. **Text generation** with multiple sampling strategies
+
+</div>
+
+---
+
+# Setup and hyperparameters
+
+<div class="example-box" data-title="Required libraries and configuration">
 
 ```python
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
-import numpy as np
-import tiktoken # OpenAI's BPE tokenizer
+import tiktoken  # OpenAI's BPE tokenizer
 
-# Check for GPU
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-print(f"Using device: {device}")
 
-# Hyperparameters
 config = {
- 'vocab_size': 50257, # GPT-2 vocabulary size
- 'd_model': 384, # Embedding dimension
- 'n_layers': 6, # Number of transformer blocks
- 'n_heads': 6, # Number of attention heads
- 'max_seq_len': 256, # Maximum sequence length
- 'dropout': 0.1,
- 'batch_size': 32,
- 'learning_rate': 3e-4,
- 'num_epochs': 10
+    'vocab_size': 50257,    # GPT-2 vocabulary size
+    'd_model': 384,         # Embedding dimension
+    'n_layers': 6,          # Number of transformer blocks
+    'n_heads': 6,           # Number of attention heads
+    'max_seq_len': 256,     # Maximum sequence length
+    'dropout': 0.1,
+    'batch_size': 32,
+    'learning_rate': 3e-4,
+    'num_epochs': 10
 }
 ```
 
-*Install: pip install torch tiktoken*
+</div>
 
 ---
 
-# What is Tokenization? 
+# Tokenization with BPE
 
+<div class="definition-box" data-title="Byte-pair encoding recap">
 
-
- <div class="callout info">
-<div class="callout-title">Tokenization</div>
-
-Converting text into a sequence of integer IDs that the model can process.
+BPE starts with individual characters and iteratively merges the most frequent adjacent pairs into new tokens. This produces a subword vocabulary that handles common words as single tokens and rare words as sequences of subword pieces.
 
 </div>
 
- 
-
- **Common strategies:**
- 1. **Word-level**: Split on spaces
- - Huge vocabulary, can't handle unknown words
-2. **Character-level**: Individual characters
- - Very long sequences, loses word structure
-3. **Subword-level (BPE)**: Best of both worlds! 
- - Frequent words: one token
-- Rare words: multiple subword tokens
-- Can handle any word via character fallback
-
-
----
-
-# Byte-Pair Encoding (BPE) 
-
-
- **How BPE works:**
-
- 
-
- 1. Start with characters as base vocabulary
-2. Find most frequent pair of adjacent tokens
-3. Merge this pair into a new token
-4. Repeat until desired vocabulary size
-
- 
-
- <div class="callout info">
-<div class="callout-title">Example</div>
-
- **Text:** "low low low lower lower newest newest"
-
- 
-
- **Iterations:**
- 1. Merge "l" + "o" → "lo"
-2. Merge "lo" + "w" → "low"
-3. Merge "low" + "e" + "r" → "lower"
-4. Merge "n" + "e" + "w" + "e" + "s" + "t" → "newest"
-
- 
-
- **Vocabulary:** [l, o, w, e, r, n, s, t, lo, low, lower, newest, ...]
-
-</div>
-
-
----
-
-# BPE Tokenization in Code 
-
+<div class="example-box" data-title="Using tiktoken (GPT-2's tokenizer)">
 
 ```python
-import tiktoken
-
-# Load GPT-2 tokenizer (uses BPE)
 tokenizer = tiktoken.get_encoding("gpt2")
 
-# Example text
 text = "Hello, how are you doing today?"
-
-# Encode: text -> token IDs
 tokens = tokenizer.encode(text)
-print("Tokens:", tokens)
-# Output: [15496, 11, 703, 389, 345, 1804, 1909, 30]
+# [15496, 11, 703, 389, 345, 1804, 1909, 30]
 
-# Decode: token IDs -> text
-decoded = tokenizer.decode(tokens)
-print("Decoded:", decoded)
-# Output: "Hello, how are you doing today?"
+# Decode back to text
+decoded = tokenizer.decode(tokens)  # "Hello, how are you doing today?"
 
-# See individual token strings
-for token_id in tokens:
- token_str = tokenizer.decode([token_id])
- print(f"{token_id}: '{token_str}'")
-
-# Vocabulary size
-print(f"Vocab size: {tokenizer.n_vocab}") # 50257
+# Inspect individual tokens
+for tid in tokens:
+    print(f"  {tid}: '{tokenizer.decode([tid])}'")
 ```
 
+</div>
 
 ---
 
-# Creating a Text Dataset 
+# Creating a text dataset
 
+<div class="example-box" data-title="Sliding window over tokenized text">
 
 ```python
 class TextDataset(Dataset):
- def __init__(self, text_file, tokenizer, max_seq_len):
- # Load text
- with open(text_file, 'r', encoding='utf-8') as f:
- text = f.read()
+    def __init__(self, text_file, tokenizer, max_seq_len):
+        with open(text_file, 'r', encoding='utf-8') as f:
+            text = f.read()
+        self.tokens = tokenizer.encode(text)
+        self.max_seq_len = max_seq_len
 
- # Tokenize entire text
- self.tokens = tokenizer.encode(text)
- self.max_seq_len = max_seq_len
+    def __len__(self):
+        return len(self.tokens) - self.max_seq_len
 
- def __len__(self):
- # Number of sequences we can extract
- return len(self.tokens) - self.max_seq_len
+    def __getitem__(self, idx):
+        chunk = self.tokens[idx : idx + self.max_seq_len + 1]
+        x = torch.tensor(chunk[:-1], dtype=torch.long)  # Input
+        y = torch.tensor(chunk[1:],  dtype=torch.long)  # Target
+        return x, y
 
- def __getitem__(self, idx):
- # Get sequence of length max_seq_len + 1
- # (we need +1 for the target)
- chunk = self.tokens[idx:idx + self.max_seq_len + 1]
-
- # Input: all but last token
- x = torch.tensor(chunk[:-1], dtype=torch.long)
- # Target: all but first token
- y = torch.tensor(chunk[1:], dtype=torch.long)
-
- return x, y
-
-# Usage
 dataset = TextDataset('shakespeare.txt', tokenizer, config['max_seq_len'])
 dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True)
 ```
 
+</div>
+
+<div class="note-box" data-title="Why offset by 1?">
+
+The target at each position is the *next* token. For input `[A, B, C, D]`, the targets are `[B, C, D, E]`. This is the autoregressive training signal.
+
+</div>
 
 ---
 
-# Token and Position Embeddings 
+# Token and position embeddings
 
+<div class="example-box" data-title="Embedding layer implementation">
 
 ```python
 class Embeddings(nn.Module):
- def __init__(self, vocab_size, d_model, max_seq_len, dropout):
- super().__init__()
- # Token embeddings: map token IDs to vectors
- self.token_embed = nn.Embedding(vocab_size, d_model)
+    def __init__(self, vocab_size, d_model, max_seq_len, dropout):
+        super().__init__()
+        self.token_embed = nn.Embedding(vocab_size, d_model)
+        self.pos_embed = nn.Embedding(max_seq_len, d_model)
+        self.dropout = nn.Dropout(dropout)
 
- # Position embeddings: encode position information
- self.pos_embed = nn.Embedding(max_seq_len, d_model)
-
- self.dropout = nn.Dropout(dropout)
- self.d_model = d_model
-
- def forward(self, x):
- # x shape: (batch_size, seq_len)
- seq_len = x.size(1)
-
- # Token embeddings
- tok_emb = self.token_embed(x) # (batch, seq_len, d_model)
-
- # Position embeddings
- positions = torch.arange(0, seq_len, device=x.device)
- pos_emb = self.pos_embed(positions) # (seq_len, d_model)
-
- # Combine (broadcasting handles batch dimension)
- embeddings = tok_emb + pos_emb
-
- return self.dropout(embeddings)
+    def forward(self, x):
+        seq_len = x.size(1)
+        tok_emb = self.token_embed(x)                        # (B, T, D)
+        pos_emb = self.pos_embed(torch.arange(seq_len, device=x.device))  # (T, D)
+        return self.dropout(tok_emb + pos_emb)               # Broadcasting adds positions
 ```
 
+</div>
+
+<div class="note-box" data-title="Two sources of information combined">
+
+**Token embeddings** encode *what* each token means. **Position embeddings** encode *where* each token sits in the sequence. Their sum gives the model both word identity and word order.
+
+</div>
 
 ---
 
-# Masked Multi-Head Attention 
+# Masked multi-head attention
 
+<div class="example-box" data-title="Attention with causal masking (part 1: projections)">
 
 ```python
 class MultiHeadAttention(nn.Module):
- def __init__(self, d_model, n_heads, dropout):
- super().__init__()
- assert d_model % n_heads == 0
+    def __init__(self, d_model, n_heads, dropout):
+        super().__init__()
+        assert d_model % n_heads == 0
+        self.n_heads = n_heads
+        self.head_dim = d_model // n_heads
 
- self.d_model = d_model
- self.n_heads = n_heads
- self.head_dim = d_model // n_heads
+        self.q_linear = nn.Linear(d_model, d_model)
+        self.k_linear = nn.Linear(d_model, d_model)
+        self.v_linear = nn.Linear(d_model, d_model)
+        self.out_linear = nn.Linear(d_model, d_model)
+        self.dropout = nn.Dropout(dropout)
 
- # Linear layers for Q, K, V
- self.q_linear = nn.Linear(d_model, d_model)
- self.k_linear = nn.Linear(d_model, d_model)
- self.v_linear = nn.Linear(d_model, d_model)
-
- # Output projection
- self.out_linear = nn.Linear(d_model, d_model)
- self.dropout = nn.Dropout(dropout)
-
- def forward(self, x, mask=None):
- batch_size, seq_len, d_model = x.shape
-
- # Linear projections and split into heads
- Q = self.q_linear(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
- K = self.k_linear(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
- V = self.v_linear(x).view(batch_size, seq_len, self.n_heads, self.head_dim)
-
- # Transpose for attention: (batch, n_heads, seq_len, head_dim)
- Q = Q.transpose(1, 2)
- K = K.transpose(1, 2)
- V = V.transpose(1, 2)
+    def forward(self, x, mask=None):
+        B, T, D = x.shape
+        Q = self.q_linear(x).view(B, T, self.n_heads, self.head_dim).transpose(1, 2)
+        K = self.k_linear(x).view(B, T, self.n_heads, self.head_dim).transpose(1, 2)
+        V = self.v_linear(x).view(B, T, self.n_heads, self.head_dim).transpose(1, 2)
+        # Q, K, V shape: (B, n_heads, T, head_dim)
 ```
 
+</div>
 
 ---
 
-# Attention Computation (cont.) 
+# Attention computation
 
+<div class="example-box" data-title="Attention with causal masking (part 2: scores and output)">
 
 ```python
-# Scaled dot-product attention
- # Scores: (batch, n_heads, seq_len, seq_len)
- scores = torch.matmul(Q, K.transpose(-2, -1)) / np.sqrt(self.head_dim)
+        # Scaled dot-product attention
+        scores = torch.matmul(Q, K.transpose(-2, -1)) / (self.head_dim ** 0.5)
 
- # Apply causal mask (prevent attending to future tokens)
- if mask is not None:
- scores = scores.masked_fill(mask == 0, float('-inf'))
+        if mask is not None:
+            scores = scores.masked_fill(mask == 0, float('-inf'))
 
- # Softmax to get attention weights
- attn_weights = F.softmax(scores, dim=-1)
- attn_weights = self.dropout(attn_weights)
+        attn_weights = F.softmax(scores, dim=-1)
+        attn_weights = self.dropout(attn_weights)
 
- # Apply attention to values
- # Output: (batch, n_heads, seq_len, head_dim)
- attn_output = torch.matmul(attn_weights, V)
-
- # Concatenate heads
- attn_output = attn_output.transpose(1, 2).contiguous()
- attn_output = attn_output.view(batch_size, seq_len, d_model)
-
- # Final linear projection
- output = self.out_linear(attn_output)
-
- return output
+        # Apply attention to values and concatenate heads
+        out = torch.matmul(attn_weights, V)                  # (B, n_heads, T, head_dim)
+        out = out.transpose(1, 2).contiguous().view(B, T, D) # (B, T, D)
+        return self.out_linear(out)
 ```
 
+</div>
 
----
-
-# Creating the Causal Mask 
-
+<div class="note-box" data-title="The causal mask">
 
 ```python
 def create_causal_mask(seq_len, device):
- """
- Create a causal (lower-triangular) mask for autoregressive generation.
-
- Returns:
- mask: (seq_len, seq_len) with 1s on and below diagonal, 0s above
- """
- mask = torch.tril(torch.ones(seq_len, seq_len, device=device))
- return mask # Shape: (seq_len, seq_len)
-
-# Example: 5x5 causal mask
-mask = create_causal_mask(5, 'cpu')
-print(mask)
-# tensor([[1., 0., 0., 0., 0.],
-# [1., 1., 0., 0., 0.],
-# [1., 1., 1., 0., 0.],
-# [1., 1., 1., 1., 0.],
-# [1., 1., 1., 1., 1.]])
+    return torch.tril(torch.ones(seq_len, seq_len, device=device))
 ```
 
-**Key insight:** Each position can only attend to itself and previous positions!
+Each row `i` has 1s at positions `0..i` and 0s at positions `i+1..T-1`, blocking attention to future tokens.
+
+</div>
 
 ---
 
-# Feed-Forward Network 
+# Feed-forward network and transformer block
 
+<div class="example-box" data-title="The two sub-layers of each GPT block">
 
 ```python
 class FeedForward(nn.Module):
- def __init__(self, d_model, dropout):
- super().__init__()
- # GPT uses 4 * d_model as the hidden dimension
- self.net = nn.Sequential(
- nn.Linear(d_model, 4 * d_model),
- nn.GELU(), # GPT uses GELU activation
- nn.Linear(4 * d_model, d_model),
- nn.Dropout(dropout)
- )
+    def __init__(self, d_model, dropout):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(d_model, 4 * d_model),
+            nn.GELU(),                        # GPT uses GELU, not ReLU
+            nn.Linear(4 * d_model, d_model),
+            nn.Dropout(dropout)
+        )
+    def forward(self, x):
+        return self.net(x)
 
- def forward(self, x):
- return self.net(x)
-```
-
-**Why GELU (Gaussian Error Linear Unit)?**
-- Smooth, non-monotonic activation
-- Used in BERT and GPT
-- Slight improvement over ReLU for language models
-
-$$(x) = x \cdot \Phi(x) = x \cdot {2}\left[1 + \left({}\right)\right]$$
-
----
-
-# Transformer Decoder Block 
-
-
-```python
 class TransformerBlock(nn.Module):
- def __init__(self, d_model, n_heads, dropout):
- super().__init__()
- self.attention = MultiHeadAttention(d_model, n_heads, dropout)
- self.feed_forward = FeedForward(d_model, dropout)
+    def __init__(self, d_model, n_heads, dropout):
+        super().__init__()
+        self.ln1 = nn.LayerNorm(d_model)
+        self.attention = MultiHeadAttention(d_model, n_heads, dropout)
+        self.ln2 = nn.LayerNorm(d_model)
+        self.ffn = FeedForward(d_model, dropout)
 
- # Layer normalization (applied before sub-layers in GPT)
- self.ln1 = nn.LayerNorm(d_model)
- self.ln2 = nn.LayerNorm(d_model)
-
- def forward(self, x, mask):
- # Pre-norm architecture (used in GPT)
- # Attention with residual connection
- x = x + self.attention(self.ln1(x), mask)
-
- # Feed-forward with residual connection
- x = x + self.feed_forward(self.ln2(x))
-
- return x
+    def forward(self, x, mask):
+        x = x + self.attention(self.ln1(x), mask)   # Pre-norm + residual
+        x = x + self.ffn(self.ln2(x))               # Pre-norm + residual
+        return x
 ```
 
-**Note:** GPT uses *pre-norm* (LayerNorm before sub-layers), while original Transformer used *post-norm*.
+</div>
 
 ---
 
-# Complete GPT Model 
+# Complete GPT model
 
+<div class="example-box" data-title="Assembling all components">
 
 ```python
 class GPT(nn.Module):
- def __init__(self, vocab_size, d_model, n_layers, n_heads, max_seq_len, dropout):
- super().__init__()
- self.max_seq_len = max_seq_len
+    def __init__(self, vocab_size, d_model, n_layers, n_heads, max_seq_len, dropout):
+        super().__init__()
+        self.max_seq_len = max_seq_len
+        self.embeddings = Embeddings(vocab_size, d_model, max_seq_len, dropout)
+        self.blocks = nn.ModuleList([
+            TransformerBlock(d_model, n_heads, dropout) for _ in range(n_layers)
+        ])
+        self.ln_f = nn.LayerNorm(d_model)
+        self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
+        self.apply(self._init_weights)
 
- # Embeddings
- self.embeddings = Embeddings(vocab_size, d_model, max_seq_len, dropout)
-
- # Transformer blocks
- self.blocks = nn.ModuleList([
- TransformerBlock(d_model, n_heads, dropout)
- for _ in range(n_layers)
- ])
-
- # Final layer norm
- self.ln_f = nn.LayerNorm(d_model)
-
- # Language model head (projects to vocabulary)
- self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
-
- # Initialize weights
- self.apply(self._init_weights)
-
- def _init_weights(self, module):
- if isinstance(module, nn.Linear):
- torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
- if module.bias is not None:
- torch.nn.init.zeros_(module.bias)
- elif isinstance(module, nn.Embedding):
- torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+    def _init_weights(self, module):
+        if isinstance(module, nn.Linear):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+            if module.bias is not None:
+                torch.nn.init.zeros_(module.bias)
+        elif isinstance(module, nn.Embedding):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
 ```
 
+</div>
 
 ---
 
-# GPT Forward Pass 
+# GPT forward pass
 
+<div class="example-box" data-title="Forward pass with optional loss computation">
 
 ```python
-def forward(self, x, targets=None):
- # x shape: (batch_size, seq_len)
- seq_len = x.size(1)
+    def forward(self, x, targets=None):
+        seq_len = x.size(1)
+        mask = create_causal_mask(seq_len, x.device)
 
- # Create causal mask
- mask = create_causal_mask(seq_len, x.device)
+        x = self.embeddings(x)
+        for block in self.blocks:
+            x = block(x, mask)
+        x = self.ln_f(x)
+        logits = self.lm_head(x)          # (batch, seq_len, vocab_size)
 
- # Embeddings
- x = self.embeddings(x) # (batch, seq_len, d_model)
-
- # Apply transformer blocks
- for block in self.blocks:
- x = block(x, mask)
-
- # Final layer norm
- x = self.ln_f(x)
-
- # Project to vocabulary
- logits = self.lm_head(x) # (batch, seq_len, vocab_size)
-
- # Compute loss if targets provided
- loss = None
- if targets is not None:
- # Flatten for cross-entropy
- loss = F.cross_entropy(
- logits.view(-1, logits.size(-1)),
- targets.view(-1)
- )
-
- return logits, loss
+        loss = None
+        if targets is not None:
+            loss = F.cross_entropy(
+                logits.view(-1, logits.size(-1)),
+                targets.view(-1)
+            )
+        return logits, loss
 ```
 
+</div>
+
+<div class="note-box" data-title="Parameter count for our mini-GPT">
+
+With `d_model=384`, `n_layers=6`, `n_heads=6`, and `vocab_size=50257`, this model has approximately **30 million parameters** -- small enough to train on a single GPU in a few hours.
+
+</div>
 
 ---
-
-# Training Loop 
-
-
-```python
-# Initialize model
-model = GPT(
- vocab_size=config['vocab_size'],
- d_model=config['d_model'],
- n_layers=config['n_layers'],
- n_heads=config['n_heads'],
- max_seq_len=config['max_seq_len'],
- dropout=config['dropout']
-).to(device)
-
-# Optimizer (AdamW is used for GPT)
-optimizer = torch.optim.AdamW(
- model.parameters(),
- lr=config['learning_rate'],
- betas=(0.9, 0.95),
- weight_decay=0.1
-)
 
 # Training loop
+
+<div class="example-box" data-title="Training with AdamW and gradient clipping">
+
+```python
+model = GPT(
+    config['vocab_size'], config['d_model'], config['n_layers'],
+    config['n_heads'], config['max_seq_len'], config['dropout']
+).to(device)
+
+optimizer = torch.optim.AdamW(
+    model.parameters(), lr=config['learning_rate'],
+    betas=(0.9, 0.95), weight_decay=0.1
+)
+
 model.train()
 for epoch in range(config['num_epochs']):
- total_loss = 0
- for batch_idx, (x, y) in enumerate(dataloader):
- x, y = x.to(device), y.to(device)
-
- # Forward pass
- logits, loss = model(x, targets=y)
-
- # Backward pass
- optimizer.zero_grad()
- loss.backward()
- torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
- optimizer.step()
-
- total_loss += loss.item()
-
- avg_loss = total_loss / len(dataloader)
- print(f"Epoch {epoch+1}/{config['num_epochs']}, Loss: {avg_loss:.4f}")
+    total_loss = 0
+    for x, y in dataloader:
+        x, y = x.to(device), y.to(device)
+        logits, loss = model(x, targets=y)
+        optimizer.zero_grad()
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        optimizer.step()
+        total_loss += loss.item()
+    print(f"Epoch {epoch+1}, Loss: {total_loss / len(dataloader):.4f}")
 ```
 
+</div>
 
 ---
 
-# Training Tips 
+# Training best practices
 
+<div class="note-box" data-title="Five key techniques for stable GPT training">
 
- **Best practices for training GPT:**
+| Technique | Why it matters |
+|-----------|---------------|
+| **Gradient clipping** (max norm 1.0) | Prevents exploding gradients that destabilize training |
+| **AdamW optimizer** | Decoupled weight decay; better than standard Adam for transformers |
+| **Learning rate warmup** | Gradually increase LR over first ~1,000 steps to avoid early instability |
+| **Cosine LR decay** | Smoothly reduce LR after warmup for fine-grained convergence |
+| **Mixed precision** (float16/bfloat16) | 2--3x speedup on modern GPUs with minimal quality loss |
 
- 
+</div>
 
- 1. **Gradient clipping**
- - Prevents exploding gradients
-- Clip to max norm of 1.0
-2. **Learning rate schedule**
- - Warmup for first few thousand steps
-- Cosine decay afterwards
-3. **AdamW optimizer**
- - Adam with decoupled weight decay
-- Better than standard Adam for transformers
-4. **Batch size**
- - Larger is better (up to memory limits)
-- Use gradient accumulation if needed
-5. **Mixed precision training**
- - Use float16 for speed
-- 2-3x faster on modern GPUs
+<div class="tip-box" data-title="Practical advice">
 
+If loss is not decreasing: check learning rate (try 1e-4 to 3e-4), verify data pipeline outputs correct input/target pairs, and watch for NaN values. If you run out of memory: reduce batch size or sequence length first, then try gradient accumulation.
+
+</div>
 
 ---
 
-# Greedy Decoding 
+# Greedy decoding
 
+<div class="example-box" data-title="Generating text by always picking the most likely token">
 
 ```python
 @torch.no_grad()
 def generate_greedy(model, tokenizer, prompt, max_new_tokens=50):
- model.eval()
+    model.eval()
+    tokens = tokenizer.encode(prompt)
+    x = torch.tensor([tokens], dtype=torch.long, device=device)
 
- # Encode prompt
- tokens = tokenizer.encode(prompt)
- x = torch.tensor([tokens], dtype=torch.long, device=device)
+    for _ in range(max_new_tokens):
+        x_crop = x[:, -model.max_seq_len:]
+        logits, _ = model(x_crop)
+        logits = logits[:, -1, :]                # Last position only
+        next_token = torch.argmax(logits, dim=-1, keepdim=True)
+        x = torch.cat([x, next_token], dim=1)
 
- for _ in range(max_new_tokens):
- # Get predictions (crop to max_seq_len if needed)
- x_crop = x[:, -model.max_seq_len:]
- logits, _ = model(x_crop)
-
- # Focus on last token's predictions
- logits = logits[:, -1, :] # (batch, vocab_size)
-
- # Get token with highest probability
- next_token = torch.argmax(logits, dim=-1, keepdim=True)
-
- # Append to sequence
- x = torch.cat([x, next_token], dim=1)
-
- # Stop if we generate end-of-sequence token
- if next_token.item() == tokenizer.eot_token:
- break
-
- # Decode and return
- generated_text = tokenizer.decode(x[0].tolist())
- return generated_text
-
-# Example usage
-prompt = "Once upon a time"
-generated = generate_greedy(model, tokenizer, prompt, max_new_tokens=100)
-print(generated)
+    return tokenizer.decode(x[0].tolist())
 ```
 
+</div>
+
+<div class="warning-box" data-title="Greedy decoding is deterministic but repetitive">
+
+Always picking `argmax` produces the same output every time and tends to get stuck in repetitive loops. Real applications use **sampling** to introduce controlled randomness.
+
+</div>
 
 ---
 
-# Sampling Strategies 
+# Sampling strategies
 
+<div class="definition-box" data-title="Three ways to add controlled randomness">
 
- **Different ways to sample next token:**
+- **Temperature** ($T$): Scale logits by $1/T$ before softmax. $T < 1$ sharpens the distribution (more conservative); $T > 1$ flattens it (more creative).
+- **Top-k**: Sample only from the $k$ most probable tokens. Typical: $k = 40$.
+- **Nucleus (top-p)**: Sample from the smallest set of tokens whose cumulative probability exceeds $p$. Typical: $p = 0.9$ or $0.95$.
 
- 
+</div>
 
- 1. **Greedy Decoding**
- - Always pick most likely token
-- Deterministic, fast
-- Repetitive, boring
-2. **Temperature Sampling**
- - Scale logits by temperature $T$
-- $T < 1$: More conservative (peaked distribution)
-- $T > 1$: More random (flat distribution)
-3. **Top-k Sampling**
- - Sample from top $k$ most likely tokens
-- Typical: $k = 40$
-4. **Nucleus (Top-p) Sampling**
- - Sample from smallest set with cumulative probability $\geq p$
-- Typical: $p = 0.9$ or $p = 0.95$
-- Best for creative generation
+<div class="note-box" data-title="Comparison">
 
+| Strategy | Pros | Cons |
+|----------|------|------|
+| Greedy | Deterministic, fast | Repetitive, boring |
+| Temperature | Simple control knob | Can produce nonsense at high $T$ |
+| Top-k | Filters unlikely tokens | Fixed $k$ may be too broad or narrow |
+| Nucleus (top-p) | Adapts to distribution shape | Slightly more complex |
+
+</div>
 
 ---
 
-# Top-k and Nucleus Sampling 
+# Implementing sampling
 
+<div class="example-box" data-title="Top-k and nucleus sampling in PyTorch">
 
 ```python
 def sample_next_token(logits, temperature=1.0, top_k=None, top_p=None):
- """
- Sample next token from logits with various strategies.
+    logits = logits / temperature
 
- Args:
- logits: (vocab_size,) unnormalized log probabilities
- temperature: Temperature for sampling
- top_k: If set, only sample from top k tokens
- top_p: If set, only sample from nucleus (top-p)
- """
- # Apply temperature
- logits = logits / temperature
+    if top_k is not None:
+        top_k = min(top_k, logits.size(-1))
+        threshold = torch.topk(logits, top_k)[0][..., -1, None]
+        logits[logits < threshold] = float('-inf')
 
- # Top-k filtering
- if top_k is not None:
- top_k = min(top_k, logits.size(-1))
- indices_to_remove = logits < torch.topk(logits, top_k)[0][..., -1, None]
- logits[indices_to_remove] = float('-inf')
+    if top_p is not None:
+        sorted_logits, sorted_idx = torch.sort(logits, descending=True)
+        cumprobs = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
+        remove = cumprobs > top_p
+        remove[..., 1:] = remove[..., :-1].clone()
+        remove[..., 0] = False
+        logits[sorted_idx[remove]] = float('-inf')
 
- # Nucleus (top-p) filtering
- if top_p is not None:
- sorted_logits, sorted_indices = torch.sort(logits, descending=True)
- cumulative_probs = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
-
- # Remove tokens with cumulative probability above threshold
- sorted_indices_to_remove = cumulative_probs > top_p
- sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
- sorted_indices_to_remove[..., 0] = 0
-
- indices_to_remove = sorted_indices[sorted_indices_to_remove]
- logits[indices_to_remove] = float('-inf')
-
- # Sample from distribution
- probs = F.softmax(logits, dim=-1)
- next_token = torch.multinomial(probs, num_samples=1)
-
- return next_token
+    probs = F.softmax(logits, dim=-1)
+    return torch.multinomial(probs, num_samples=1)
 ```
 
+</div>
 
 ---
 
-# Complete Generation Function 
+# Complete generation function
 
+<div class="example-box" data-title="Putting it all together">
 
 ```python
 @torch.no_grad()
 def generate(model, tokenizer, prompt, max_new_tokens=100,
- temperature=1.0, top_k=40, top_p=0.9):
- model.eval()
+             temperature=0.8, top_k=40, top_p=0.9):
+    model.eval()
+    tokens = tokenizer.encode(prompt)
+    x = torch.tensor([tokens], dtype=torch.long, device=device)
 
- tokens = tokenizer.encode(prompt)
- x = torch.tensor([tokens], dtype=torch.long, device=device)
+    for _ in range(max_new_tokens):
+        x_crop = x[:, -model.max_seq_len:]
+        logits, _ = model(x_crop)
+        next_token = sample_next_token(
+            logits[0, -1, :], temperature=temperature, top_k=top_k, top_p=top_p
+        )
+        x = torch.cat([x, next_token.unsqueeze(0)], dim=1)
 
- for _ in range(max_new_tokens):
- x_crop = x[:, -model.max_seq_len:]
- logits, _ = model(x_crop)
- logits = logits[:, -1, :] # Last token
+    return tokenizer.decode(x[0].tolist())
 
- # Sample next token
- next_token = sample_next_token(
- logits[0],
- temperature=temperature,
- top_k=top_k,
- top_p=top_p
- )
-
- x = torch.cat([x, next_token.unsqueeze(0)], dim=1)
-
- if next_token.item() == tokenizer.eot_token:
- break
-
- return tokenizer.decode(x[0].tolist())
-
-# Creative generation
-text = generate(model, tokenizer, "The AI revolution",
- temperature=0.8, top_p=0.9)
-print(text)
+# Generate text
+print(generate(model, tokenizer, "Once upon a time"))
 ```
 
+</div>
 
 ---
 
-# Model Size vs. Performance 
+# Debugging and common issues
 
+<div class="warning-box" data-title="Problems you will encounter">
 
- 
- 
-```
- 10M -> 100M -> 1B -> 10B -> 100B+
-```
-
- 
-
- 
-
- **Practical model sizes for different use cases:**
- - **10M-100M**: Learning/experimentation, simple tasks
-- **100M-1B**: Specialized domains, resource-constrained
-- **1B-10B**: General-purpose, good quality
-- **10B-100B+**: State-of-the-art performance
-
-
----
-
-# Computational Requirements 
-
-
-
- **Training a 125M parameter GPT:**
-
- 
-
- 
- | Training Time | 1-2 days (single GPU) |
-| --- | --- |
-| Training Data | $\sim$10-100 GB text |
-| Total Compute | $\sim$100 GPU-hours |
-
- 
-
- 
-
- **Scaling up to GPT-3 (175B):**
- - 1000x more parameters
-- ~10,000x more compute needed
-- Requires distributed training across many GPUs
-- Estimated $4.6M in compute costs
-
- 
-
- <div class="callout tip">
-<div class="callout-title">Think about it!</div>
-
-This is why pre-trained models are so valuable—you don't have to train from scratch!
+| Problem | Likely cause | Fix |
+|---------|-------------|-----|
+| Loss not decreasing | LR too high/low, data bug | Try LR in [1e-4, 3e-4]; verify x/y offset |
+| Out of memory | Batch/sequence too large | Reduce batch size; use gradient accumulation |
+| Poor generation quality | Undertrained | Train longer; use more/better data |
+| Repetitive output | Greedy decoding or low temperature | Use nucleus sampling ($p = 0.9$) |
+| NaN loss | Numerical instability | Add gradient clipping; check for empty batches |
 
 </div>
 
-
 ---
 
-# Common Issues and Debugging 
+# Extensions for the ambitious
 
+<div class="note-box" data-title="Ways to enhance your implementation">
 
- **Problems you might encounter:**
+**Architectural improvements**:
+- **Rotary position embeddings (RoPE)**: Better length generalization than learned positions
+- **Flash Attention**: Memory-efficient attention (2--4x faster)
+- **Grouped-query attention (GQA)**: Fewer KV heads for efficient inference
 
- 
+**Training improvements**:
+- **Learning rate warmup + cosine decay**: Standard schedule for stable training
+- **Mixed precision**: `torch.cuda.amp` for 2--3x speedup
+- **Gradient accumulation**: Simulate larger batch sizes on limited hardware
 
- 1. **Loss not decreasing**
- - Check learning rate (try 1e-4 to 3e-4)
-- Verify data pipeline
-- Check for NaN/Inf values
-2. **Out of memory**
- - Reduce batch size
-- Reduce sequence length
-- Use gradient accumulation
-- Enable mixed precision
-3. **Poor generation quality**
- - Train longer
-- Use larger model
-- Improve data quality
-- Tune sampling parameters
-4. **Repetitive text**
- - Increase temperature
-- Use nucleus sampling
-- Add repetition penalty
-
-
----
-
-# Extensions and Improvements 
-
-
- **Ways to enhance your GPT implementation:**
-
- 
-
- 1. **Architectural improvements**
- - Rotary Position Embeddings (RoPE)
-- Flash Attention (faster attention)
-- Grouped-Query Attention
-2. **Training techniques**
- - Learning rate warmup and decay
-- Gradient accumulation
-- Mixed precision training (FP16/BF16)
-3. **Data improvements**
- - Data deduplication
-- Quality filtering
-- Curriculum learning
-4. **Inference optimizations**
- - KV-cache for faster generation
-- Model quantization (int8)
-- Speculative decoding
-
-
----
-
-# Resources for Further Learning 
-
-
- **Recommended resources:**
-
- 
-
- - **Andrej Karpathy's nanoGPT**
- 
-- Clean, minimal GPT implementation
-- [github.com/karpathy/nanoGPT](https://github.com/karpathy/nanoGPT)
-
- \item **Andrej Karpathy's "Let's build GPT" video**
- - Excellent step-by-step tutorial
-- [YouTube](https://www.youtube.com/watch?v=kCc8FmEb1nY)
-
- \item **HuggingFace Transformers**
- - Production-ready implementations
-- [huggingface.co/transformers](https://huggingface.co/transformers)
-
- \item **PyTorch Documentation**
- - Official tutorials and guides
-- [pytorch.org/tutorials](https://pytorch.org/tutorials)
-
- 
-
----
-
-# Hands-On Exercise 
-
-
- <div class="callout warning">
-<div class="callout-title">Your Task</div>
-
-Implement and train a small GPT model on your own text corpus!
+**Inference improvements**:
+- **KV cache**: Cache key/value tensors to avoid recomputation during generation
+- **Quantization (INT8)**: 2--4x smaller model with minimal quality loss
+- **Speculative decoding**: Use a small draft model to speed up a large model
 
 </div>
 
- 
-
- **Steps:**
- 1. Choose a dataset (Shakespeare, Wikipedia, your own text)
-2. Set up the data pipeline
-3. Initialize the model (start small: 6 layers, 384 d_model)
-4. Train for 10-20 epochs
-5. Experiment with generation
-6. Try different sampling strategies
-
- 
-
- **Starter code available:**
- - Course GitHub repository
-- Google Colab notebook
-- Estimated time: 2-3 hours
-
-
 ---
 
-# Key Takeaways 
+# Key takeaways
 
+<div class="important-box" data-title="Core concepts from this lecture">
 
- 1. **GPT is conceptually simple**
- - Stack of transformer decoder blocks
-- Predict next token
-
- 
-
-2. **Key components**
- - BPE tokenization
-- Token + position embeddings
-- Masked multi-head attention
-- Feed-forward networks
-
- 
-
-3. **Training requires care**
- - Good data, proper hyperparameters
-- Gradient clipping, learning rate schedules
-
- 
-
-4. **Generation is an art**
- - Balance creativity and coherence
-- Temperature, top-k, top-p sampling
-
- 
-
-5. **Implementation teaches you how LLMs work**
- - Understanding through building!
-
-
----
-
-# Readings 
-
-
-
- <div class="callout info">
-<div class="callout-title">Required Readings</div>
-
-1. **Vaswani et al. (2017)** - "Attention is All You Need" \\
- [[ArXiv]](https://arxiv.org/abs/1706.03762)
-2. **Radford et al. (2018)** - "Improving Language Understanding by Generative Pre-Training" \\
- [[PDF]](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)
+1. **GPT is conceptually simple**: A stack of transformer decoder blocks predicting the next token
+2. **Five core components**: Tokenizer → embeddings → masked attention → feed-forward → LM head
+3. **Training requires care**: AdamW, gradient clipping, learning rate scheduling, and good data
+4. **Generation is an art**: Temperature, top-k, and nucleus sampling control the creativity-coherence tradeoff
+5. **Building it yourself** is the best way to deeply understand how modern LLMs work
 
 </div>
 
- 
+---
 
- <div class="callout info">
-<div class="callout-title">Code Resources</div>
+# Further reading
 
-- **nanoGPT** by Andrej Karpathy \\
- [github.com/karpathy/nanoGPT](https://github.com/karpathy/nanoGPT)
-- **The Annotated Transformer** \\
- [Harvard NLP](https://nlp.seas.harvard.edu/2018/04/03/attention.html)
-- **PyTorch Transformer Tutorial** \\
- [pytorch.org](https://pytorch.org/tutorials/beginner/transformer_tutorial.html)
+<div class="note-box" data-title="References and resources">
+
+- **Karpathy, "Let's build GPT"** -- Step-by-step video tutorial [[YouTube]](https://www.youtube.com/watch?v=kCc8FmEb1nY)
+- **nanoGPT** -- Clean, minimal GPT implementation [[GitHub]](https://github.com/karpathy/nanoGPT)
+- **Radford et al. (2018)** -- "Improving Language Understanding by Generative Pre-Training" [[PDF]](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)
+- **Vaswani et al. (2017)** -- "Attention is All You Need" [[arXiv]](https://arxiv.org/abs/1706.03762)
+- **The Annotated Transformer** -- Harvard NLP [[Blog]](https://nlp.seas.harvard.edu/2018/04/03/attention.html)
 
 </div>
 
-
 ---
 
-# Next Week 
+# Questions?
 
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
+    <span class="label"><a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
+    <span class="label"><a href="https://context-lab.youcanbook.me">Office hours</a></span>
+  </div>
+</div>
 
- **Week 8: No Classes - Instructor Away**
+<div class="tip-box" data-title="Up next...">
 
- 
+Week 9 (after break): Agents and tool use -- giving language models the ability to act
 
- **Use this week to:**
- - Complete the GPT implementation exercise
-- Catch up on readings
-- Work on assignments
-- Experiment with different architectures
-
- 
-
- **Week 9: RAG & Mixture of Experts**
- - Retrieval Augmented Generation
-- Mixture of Experts architectures
-- Ethics, Bias, and Safety in LLMs
-
-
----
-
-
- Questions? 
-
- 
-
- Happy Coding! 
- 
+</div>

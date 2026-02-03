@@ -1,354 +1,278 @@
 ---
 marp: true
 theme: cdl-theme
-paginate: true
-header: 'PSYC 51.17: Models of Language and Communication'
-footer: 'Winter 2026'
+math: katex
+transition: fade 0.25s
+author: Contextual Dynamics Lab
 ---
 
-<!-- _class: lead -->
+# Lecture 20: Applications of encoder models
+### PSYC 51.17: Models of language and communication
 
-# Lecture 20: Applications of Encoder Models
-## Week 6, Lecture 3 - From Theory to Practice
-
-**PSYC 51.17: Models of Language and Communication**
-
+Jeremy R. Manning
+Dartmouth College
 Winter 2026
 
 ---
 
-# Today's Agenda 
+# Learning objectives
 
+<div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
+1. Apply BERT to real-world NLP tasks: classification, NER, QA, and semantic similarity
+2. Explain how BERT improved Google Search
+3. Connect transformer representations to cognitive neuroscience findings
+4. Evaluate the "understanding vs pattern matching" debate
+5. Identify limitations and biases in deployed language models
 
-1. **Real-World Applications**: Where BERT shines
-2. **Cognitive Neuroscience**: Brain-model parallels
-3. **Understanding vs. Pattern Matching**: The big debate
-4. **Limitations**: What BERT can't do
-5. **Practical Tips**: Deployment and optimization
-6. **Future Directions**: Where are we heading?
-
-*Goal: Connect BERT to real applications and understand broader implications*
+</div>
 
 ---
 
-# BERT Applications 
+# Where BERT excels
 
+<div class="note-box" data-title="BERT powers a wide range of understanding tasks">
 
+**Classification tasks:** Sentiment analysis, topic classification, spam detection, intent recognition
 
-**BERT excels at understanding tasks:**
+**Token-level tasks:** Named entity recognition (NER), part-of-speech tagging, word sense disambiguation
 
-<div class="columns">
-<div class="column">
+**Span-level tasks:** Question answering, extractive summarization, information extraction
 
-**Classification Tasks:**
-- Sentiment Analysis
-- Topic Classification
-- Spam Detection
-- Intent Recognition
-
-**Token-Level Tasks:**
-- Named Entity Recognition (NER)
-- Part-of-Speech Tagging
-- Word Sense Disambiguation
-
-</div>
-<div class="column">
-
-**Span-Level Tasks:**
-- Question Answering
-- Extractive Summarization
-- Information Extraction
-
-**Sentence-Pair Tasks:**
-- Semantic Similarity
-- Natural Language Inference
-- Paraphrase Detection
-
-</div>
-</div>
-
-<div class="callout info">
-<div class="callout-title">Industry Impact</div>
-
-BERT powers:
-- Google Search (understanding queries)
-- Customer service chatbots
-- Content moderation
-- Document understanding
+**Sentence-pair tasks:** Semantic similarity, natural language inference, paraphrase detection
 
 </div>
 
+<div class="important-box" data-title="Industry impact">
+
+BERT powers Google Search (understanding queries), customer service chatbots, content moderation systems, and document understanding pipelines at companies worldwide.
+
+</div>
 
 ---
+<!-- _class: scale-90 -->
 
-# Case Study: Google Search 
+# Case study: Google Search
 
-**BERT revolutionized search in 2019**
+<div class="definition-box" data-title="BERT revolutionized search in 2019">
+
+Before BERT, search engines primarily matched keywords. BERT enabled Google to understand *how words relate to each other* — especially prepositions, negations, and context words.
+
+</div>
+
+<div class="example-box" data-title="Why word order matters">
 
 ```python
-# Why word order matters: BERT understands prepositions!
 query = "2019 brazil traveler to usa need a visa"
 
-# Before BERT (bag-of-words matching):
-keywords = ["brazil", "traveler", "usa", "visa"]
-# Matches both: "US traveler to Brazil" AND "Brazil traveler to US"
+# Before BERT (keyword matching):
+# Matches both "US traveler to Brazil" AND "Brazil traveler to US"
 
 # With BERT (contextual understanding):
-bert_understanding = {
- "subject": "brazil traveler", # WHO is traveling
- "destination": "usa", # WHERE they're going
- "direction": "brazil → usa", # The preposition "to" is key!
- "intent": "visa requirements"
-}
-# BERT correctly ranks: "Brazil citizen visa requirements for USA"
+# Understands "to USA" means the traveler's DESTINATION is the US
+# Correctly ranks: "Brazil citizen visa requirements for USA"
 ```
 
-<div class="callout tip">
-<div class="callout-title">More Examples of Context-Sensitive Queries</div>
+</div>
+
+<div class="note-box" data-title="More examples of context-sensitive queries">
 
 | Query | Before BERT | With BERT |
 |-------|-------------|-----------|
 | "can you get medicine for someone pharmacy" | Generic pharmacy results | Picking up prescriptions for others |
-| "do estheticians stand a lot at work" | Esthetician job listings | Physical demands of the job |
-| "parking on a hill with no curb" | Parking tickets, curb info | How to park safely without a curb |
+| "do estheticians stand a lot at work" | Job listings | Physical demands of the job |
+| "parking on a hill with no curb" | Parking tickets | How to park safely without a curb |
+
+Google reported BERT improved 1 in 10 English searches.
 
 </div>
-
-*Google reported BERT improved 1 in 10 searches in English*
 
 ---
+<!-- _class: scale-85 -->
 
-# Question Answering with BERT 
+# Question answering with BERT
 
-
-**Extractive QA: Find answer span in passage**
-
-<div class="callout tip">
-<div class="callout-title">Example</div>
-
-**Context:** "The Normans (Norman: Nourmands; French: Normands; Latin: Normanni) were the people who in the 10th and 11th centuries gave their name to Normandy, a region in France."
-
-**Question:** "In what country is Normandy located?"
-
-**Answer:** France
-
-</div>
+<div class="example-box" data-title="Extractive QA: find the answer span in a passage">
 
 ```python
 from transformers import pipeline
 
-# Load QA pipeline with BERT
-qa_pipeline = pipeline("question-answering", model="bert-large-uncased-whole-word-masking-finetuned-squad")
+qa = pipeline("question-answering",
+              model="bert-large-uncased-whole-word-masking-finetuned-squad")
 
-# Ask question
-result = qa_pipeline(
- question="In what country is Normandy located?",
- context="The Normans were the people who in the 10th and 11th centuries gave their name to Normandy, a region in France."
+result = qa(
+    question="In what country is Normandy located?",
+    context="The Normans were the people who in the 10th and 11th centuries "
+            "gave their name to Normandy, a region in France."
 )
-
 print(result)
 # {'answer': 'France', 'score': 0.987, 'start': 134, 'end': 140}
 ```
 
-**BERT predicts start and end positions of the answer span!**
+</div>
 
----
+<div class="note-box" data-title="How it works">
 
-# Named Entity Recognition 
-
-
-**Token-level classification task**
-
-<div class="callout tip">
-<div class="callout-title">Example</div>
-
-**Input:** "Apple Inc. is headquartered in Cupertino, California."
-
-**Output:**
-- Apple Inc. → {ORGANIZATION}
-- Cupertino → {LOCATION}
-- California → {LOCATION}
+BERT predicts two things for each token in the passage: the probability that it's the **start** of the answer, and the probability that it's the **end** of the answer. The answer span is the highest-scoring (start, end) pair.
 
 </div>
+
+---
+<!-- _class: scale-85 -->
+
+# Named entity recognition
+
+<div class="example-box" data-title="Token-level classification with BERT">
 
 ```python
 from transformers import pipeline
 
-# Load NER pipeline
-ner_pipeline = pipeline("ner", model="dslim/bert-base-NER")
+ner = pipeline("ner", model="dslim/bert-base-NER")
 
-# Extract entities
 text = "Apple Inc. is headquartered in Cupertino, California."
-entities = ner_pipeline(text)
+entities = ner(text)
 
-for entity in entities:
- print(f"{entity['word']}: {entity['entity']} (score: {entity['score']:.2f})")
-
-# Output:
-# Apple: B-ORG (score: 0.99)
-# Inc: I-ORG (score: 0.99)
-# Cupertino: B-LOC (score: 0.99)
-# California: B-LOC (score: 0.99)
+for e in entities:
+    print(f"{e['word']}: {e['entity']} (score: {e['score']:.2f})")
+# Apple: B-ORG (0.99)
+# Inc:   I-ORG (0.99)
+# Cupertino:  B-LOC (0.99)
+# California: B-LOC (0.99)
 ```
 
+</div>
 
----
+<div class="note-box" data-title="BIO tagging scheme">
 
-# Sentiment Analysis 
-
-
-**Sequence classification task**
-
-<div class="callout tip">
-<div class="callout-title">Examples</div>
-
-- "This movie was absolutely amazing!" → {POSITIVE}
-- "The product broke after one week." → {NEGATIVE}
-- "The weather is cloudy today." → {NEUTRAL}
+- **B-** prefix: Beginning of an entity
+- **I-** prefix: Inside (continuation) of an entity
+- **O**: Outside any entity
+- Entity types: PER (person), ORG (organization), LOC (location), MISC (miscellaneous)
 
 </div>
+
+---
+<!-- _class: scale-85 -->
+
+# Sentiment analysis
+
+<div class="example-box" data-title="Sequence classification with BERT">
 
 ```python
 from transformers import pipeline
 
-# Load sentiment analysis pipeline
-sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
+sentiment = pipeline("sentiment-analysis",
+                     model="distilbert-base-uncased-finetuned-sst-2-english")
 
-# Analyze sentiments
 texts = [
- "This movie was absolutely amazing!",
- "The product broke after one week.",
- "The weather is cloudy today."
+    "This movie was absolutely amazing!",
+    "The product broke after one week.",
+    "The weather is cloudy today."
 ]
 
 for text in texts:
- result = sentiment_pipeline(text)[0]
- print(f"{text}")
- print(f" → {result['label']} (confidence: {result['score']:.2f})\n")
+    result = sentiment(text)[0]
+    print(f"{text}")
+    print(f"  → {result['label']} (confidence: {result['score']:.2f})")
 ```
 
-**Applications:** Customer reviews, social media monitoring, brand sentiment
+</div>
+
+<div class="tip-box" data-title="Applications">
+
+Sentiment analysis powers customer review analysis, social media monitoring, brand reputation tracking, and financial market sentiment indicators.
+
+</div>
 
 ---
+<!-- _class: scale-85 -->
 
-# Semantic Similarity 
+# Semantic similarity
 
-
-**Measuring sentence similarity with BERT embeddings**
+<div class="example-box" data-title="Measuring sentence similarity with BERT embeddings">
 
 ```python
 from transformers import BertTokenizer, BertModel
-import torch
 import torch.nn.functional as F
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
 
 def get_sentence_embedding(sentence):
- inputs = tokenizer(sentence, return_tensors='pt', padding=True, truncation=True)
- outputs = model(**inputs)
- # Use [CLS] token embedding as sentence representation
- return outputs.last_hidden_state[:, 0, :]
+    inputs = tokenizer(sentence, return_tensors='pt', padding=True, truncation=True)
+    outputs = model(**inputs)
+    return outputs.last_hidden_state[:, 0, :]  # [CLS] token
 
-# Compare sentences
 sent1 = "The cat is sleeping on the couch"
-sent2 = "A feline is resting on the sofa"
-sent3 = "The weather is nice today"
+sent2 = "A feline is resting on the sofa"     # Paraphrase
+sent3 = "The weather is nice today"            # Unrelated
 
-emb1 = get_sentence_embedding(sent1)
-emb2 = get_sentence_embedding(sent2)
-emb3 = get_sentence_embedding(sent3)
+emb1, emb2, emb3 = [get_sentence_embedding(s) for s in [sent1, sent2, sent3]]
 
-# Compute cosine similarities
-sim_12 = F.cosine_similarity(emb1, emb2).item()
-sim_13 = F.cosine_similarity(emb1, emb3).item()
-
-print(f"Similarity (1-2): {sim_12:.3f}") # High (paraphrases)
-print(f"Similarity (1-3): {sim_13:.3f}") # Low (different topics)
+print(f"Paraphrase similarity: {F.cosine_similarity(emb1, emb2).item():.3f}")  # High
+print(f"Unrelated similarity:  {F.cosine_similarity(emb1, emb3).item():.3f}")  # Low
 ```
 
+</div>
 
 ---
 
-# Cognitive Neuroscience Perspective 
+# Cognitive neuroscience perspective
 
+<div class="definition-box" data-title="How do brains and models process language?">
 
-**How do brains and models process language?**
+Both biological brains and transformer models process language through **predictive processing** — constantly anticipating upcoming input based on context.
 
-<div class="columns">
-<div class="column">
+**In the brain:**
+- The N400 ERP component reflects surprise at unexpected words
+- Left inferior frontal gyrus (IFG) handles syntax
+- Left superior temporal gyrus (STG/MTG) handles semantics
+- Prediction errors drive learning and adaptation
 
-**Predictive Processing in the Brain:**
-- Brain constantly predicts upcoming input
-- N400: Neural response to unexpected words
-- P600: Syntactic anomaly detection
-- Context shapes predictions
-- Prediction errors drive learning
-
-**Key Brain Regions:**
-- **Left IFG**: Syntax processing
-- **Left STG/MTG**: Semantic processing
-- **ATL**: Conceptual knowledge
+**In transformer models:**
+- Cross-entropy loss measures surprise at each token
+- Lower layers encode syntax, upper layers encode semantics
+- Gradient descent optimizes predictions
+- Both systems are hierarchical, context-sensitive, and predictive
 
 </div>
-<div class="column">
-
-**Predictive Processing in Models:**
-- BERT: Predict masked words
-- GPT: Predict next word
-- Both use context to predict
-- Surprise = high loss
-- Gradient descent = learning
-
-**Similarities:**
-- Both hierarchical
-- Both context-sensitive
-- Both predictive
-- Both learn from errors
-
-</div>
-</div>
-
-*References: Kuperberg & Jaeger (2016), Willems et al. (2016), Hagoort & Indefrey (2014)*
 
 ---
 
-# Prediction in Brains vs. Language Models 
+# Prediction in brains vs language models
 
-**Parallels between neural and artificial systems**
+<div class="note-box" data-title="Parallels between neural and artificial systems">
 
-| Phenomenon | Human Brain | Transformer Models |
+| Phenomenon | Human brain | Transformer models |
 |------------|-------------|-------------------|
 | **Surprise** | N400 amplitude (EEG) | Cross-entropy loss |
-| **Hierarchy** | sounds → words → sentences | tokens → phrases → meaning |
-| **Context** | Prior discourse, world knowledge | Self-attention over sequence |
+| **Hierarchy** | Sounds → words → sentences | Tokens → phrases → meaning |
+| **Context** | Prior discourse + world knowledge | Self-attention over sequence |
 | **Representation** | Population coding (neurons) | Distributed embeddings (vectors) |
 
+</div>
+
+<div class="example-box" data-title="The N400 / surprisal parallel">
+
 ```python
-# Concrete example: Surprise/N400 parallel
-sentence_a = "I take my coffee with cream and sugar" # Expected
-sentence_b = "I take my coffee with cream and socks" # Surprising
+sentence_a = "I take my coffee with cream and sugar"   # Expected
+sentence_b = "I take my coffee with cream and socks"   # Surprising!
 
-# Brain: N400 amplitude higher for "socks"
-# Model: Higher loss for "socks"
-loss_a = model.compute_loss("sugar", context) # Low loss
-loss_b = model.compute_loss("socks", context) # High loss
+# Brain: N400 amplitude much higher for "socks"
+# Model: Higher cross-entropy loss for "socks"
 
-# Both systems encode "surprisal" = -log P(word | context)
 surprisal = -np.log(model.predict_prob("socks", context))
-# Correlates with N400 amplitude in EEG studies!
+# Surprisal correlates with N400 amplitude in EEG studies!
 ```
 
-**Question:** Are these superficial analogies or deep connections?
-
-*Reference: Kuperberg & Jaeger (2016) - "What do we mean by prediction in language comprehension?"*
+</div>
 
 ---
+<!-- _class: scale-85 -->
 
-# Neural Encoding with Language Models 
+# Neural encoding with language models
 
-**Can we predict brain activity from language models?**
+<div class="example-box" data-title="Can we predict brain activity from BERT representations?">
 
 ```python
 # Neural encoding experiment workflow
@@ -357,83 +281,59 @@ from transformers import BertModel
 
 # 1. Participant reads sentences while in fMRI scanner
 sentences = ["The dog chased the cat", "She opened the door", ...]
-brain_activity = fmri_scanner.record(sentences) # (n_sentences, n_voxels)
+brain_activity = fmri_scanner.record(sentences)  # (n_sentences, n_voxels)
 
 # 2. Extract BERT representations for same sentences
 bert = BertModel.from_pretrained("bert-base-uncased")
 bert_embeddings = []
 for sent in sentences:
- outputs = bert(tokenizer(sent, return_tensors="pt"))
- # Use layer 8 (found to correlate best with semantic areas)
- bert_embeddings.append(outputs.hidden_states[8].mean(dim=1))
+    outputs = bert(tokenizer(sent, return_tensors="pt"))
+    bert_embeddings.append(outputs.hidden_states[8].mean(dim=1))  # Layer 8
 
-# 3. Train encoding model: BERT → Brain
+# 3. Train encoding model: BERT representations → brain activity
 from sklearn.linear_model import Ridge
 encoder = Ridge().fit(bert_embeddings[:80], brain_activity[:80])
 
-# 4. Predict brain activity for new sentences
+# 4. Predict brain activity for held-out sentences
 predictions = encoder.predict(bert_embeddings[80:])
 correlation = np.corrcoef(predictions.flat, brain_activity[80:].flat)[0,1]
-# Correlation ~ 0.3-0.5 in language areas (significant!)
+# Correlation ~ 0.3–0.5 in language areas (statistically significant!)
 ```
 
-**Key finding:** BERT layer 8 best predicts semantic areas; layers 2-4 predict phonological areas
+**Key finding:** BERT layer 8 best predicts semantic brain areas; layers 2–4 predict phonological areas.
 
-*Reference: Caucheteux & King (2022) - "Brains and algorithms partially converge"*
+</div>
 
 ---
 
-# Discussion: What Does the Model "Understand"? 
+# Understanding vs pattern matching
 
-
-
-**Does BERT understand language?**
-
-<div class="columns">
-<div class="column">
+<div class="tip-box" data-title="Questions to consider">
 
 **Evidence FOR understanding:**
-- Captures syntax and semantics
-- Resolves ambiguity
+- Captures syntax and semantics automatically
+- Resolves lexical ambiguity based on context
 - Handles long-range dependencies
-- Generalizes to new examples
-- Predicts brain activity
-- Solves complex tasks
-
-*"If it acts like it understands, maybe it does?"*
-
-</div>
-<div class="column">
+- Generalizes to unseen examples
+- Predicts brain activity patterns
 
 **Evidence AGAINST understanding:**
-- No grounding in physical world
-- No sensory experience
-- No social context
+- No grounding in the physical world
+- No sensory or social experience
 - Brittle to adversarial examples
 - No common sense reasoning
-- Only pattern matching?
+- Might be "just" sophisticated pattern matching
 
-*"Understanding requires more than statistical patterns"*
-
-</div>
-</div>
-
-<div class="callout info">
-<div class="callout-title">Key Questions</div>
-
-- What is the difference between understanding and correlation?
-- Can meaning exist without grounding?
-- Is human understanding fundamentally different?
+**The key question:** Is there a meaningful difference between "understanding" and "very good pattern matching"? Does it matter for applications?
 
 </div>
-
-**Class Discussion: What do YOU think?**
 
 ---
+<!-- _class: scale-85 -->
 
-# Adversarial Examples and Brittleness 
+# Adversarial examples and brittleness
 
-**BERT can be fooled easily**
+<div class="example-box" data-title="BERT can be fooled by simple tricks">
 
 ```python
 from transformers import pipeline
@@ -441,374 +341,171 @@ classifier = pipeline("sentiment-analysis")
 
 # Works correctly
 classifier("This movie was absolutely wonderful!")
-# → [{'label': 'POSITIVE', 'score': 0.9998}]
+# → POSITIVE (0.9998)
 
-# Adding irrelevant negative words flips prediction!
+# Adding irrelevant negative words flips the prediction!
 classifier("This movie was absolutely wonderful! [SEP] bad bad bad bad")
-# → [{'label': 'NEGATIVE', 'score': 0.9234}] # WRONG!
+# → NEGATIVE (0.9234)  # WRONG!
 
-# Synonym substitution can break it
-classifier("The food was good") # → POSITIVE (0.99)
-classifier("The food was fine") # → POSITIVE (0.72) # Less confident
-classifier("The food was ok") # → NEGATIVE (0.51) # WRONG!
-
-# Typos cause problems
-classifier("This is amazign!") # Might work
-classifier("Thsi si amzaign!") # Likely wrong prediction
+# Synonym substitution changes confidence
+classifier("The food was good")  # → POSITIVE (0.99)
+classifier("The food was fine")  # → POSITIVE (0.72)  # Less confident
+classifier("The food was ok")    # → NEGATIVE (0.51)  # Flipped!
 ```
 
-<div class="callout warning">
-<div class="callout-title">Implications for Deployment</div>
+</div>
 
-- **Adversarial attacks**: Malicious users can manipulate predictions
-- **Robustness testing**: Always test with perturbed inputs
+<div class="warning-box" data-title="Implications for deployment">
+
+- **Adversarial attacks**: Malicious users can manipulate model predictions
+- **Robustness testing**: Always test with perturbed inputs before deployment
 - **Defense strategies**: Adversarial training, input validation, ensemble methods
 
 </div>
 
-**Key insight:** Models learn statistical patterns, which can include spurious correlations
-
 ---
 
-# Limitations of Current Models 
+# Bias in language models
 
+<div class="warning-box" data-title="Models reflect and amplify societal biases">
 
-**Despite impressive performance, transformers have limitations:**
+BERT inherits biases from its training data (books and Wikipedia contain historical biases):
 
-1. **Quadratic Complexity**
- - Self-attention scales as $O(n^2)$
-- Limited context windows (512-4096 tokens)
-- Cannot process very long documents efficiently
-2. **No True Understanding**
- - Pattern matching vs. comprehension
-- Lack of common sense
-- No world model
-3. **Data Efficiency**
- - Requires massive training data
-- Humans learn language with much less data
-- Not biologically plausible
-4. **Biases and Fairness**
- - Inherits biases from training data
-- Can amplify stereotypes
-- Ethical concerns
-
-
----
-
-# Bias in Language Models 
-
-**Models reflect and can amplify societal biases**
-
-```python
-from transformers import pipeline
-unmasker = pipeline("fill-mask", model="bert-base-uncased")
-
-# Gender bias in occupations
-unmasker("The doctor said [MASK] would be late.")
-# → [('he', 0.62), ('she', 0.18), ('it', 0.08), ...]
-
-unmasker("The nurse said [MASK] would be late.")
-# → [('she', 0.71), ('he', 0.15), ('it', 0.06), ...]
-
-# Racial bias (different sentiment for names)
-classifier = pipeline("sentiment-analysis")
-classifier("Emily is a brilliant scientist.") # POSITIVE: 0.98
-classifier("Jamal is a brilliant scientist.") # POSITIVE: 0.94 # Lower!
-
-# Where does bias come from?
-# Training data (books, Wikipedia) contains historical biases
-# Model learns and sometimes amplifies these patterns
-```
-
-<div class="callout warning">
-<div class="callout-title">Mitigation Strategies</div>
-
-1. **Data-level:** Balanced training corpora, counterfactual augmentation
-2. **Model-level:** Debiasing loss functions, fine-tuning on balanced data
-3. **Output-level:** Post-hoc filtering, human review for sensitive applications
-4. **Evaluation:** Regular bias audits using standardized benchmarks (WinoBias, etc.)
+- Gender bias in occupations: "The doctor said [MASK] would be late" → "he" (62%) vs "she" (18%)
+- "The nurse said [MASK] would be late" → "she" (71%) vs "he" (15%)
+- Racial bias in sentiment: Different confidence scores for identical sentences with different names
 
 </div>
 
+<div class="note-box" data-title="Mitigation strategies">
+
+1. **Data-level**: Balanced training corpora, counterfactual data augmentation
+2. **Model-level**: Debiasing loss functions, fine-tuning on balanced datasets
+3. **Output-level**: Post-hoc filtering, human review for sensitive applications
+4. **Evaluation**: Regular bias audits using standardized benchmarks (WinoBias, StereoSet)
+
+</div>
 
 ---
 
-# Practical Tips for Working with Transformers 
+# Limitations of current encoder models
 
+<div class="warning-box" data-title="Despite impressive performance, significant limitations remain">
 
-1. **Start with Pre-trained Models**
- - Don't train from scratch (too expensive!)
-- Use HuggingFace Model Hub
-- Choose appropriate model size
-2. **Fine-tuning Best Practices**
- - Use small learning rate (1e-5 to 5e-5)
-- Add warmup steps
-- Monitor for overfitting
-- Freeze early layers if data is limited
-3. **Computational Efficiency**
- - Use mixed precision training (FP16)
-- Gradient accumulation for larger batch sizes
-- Consider DistilBERT for faster inference
+**Quadratic complexity**: Self-attention scales as $O(n^2)$ with sequence length, limiting context to 512–4096 tokens.
+
+**No generation capability**: BERT is designed for understanding, not producing text. For generation tasks, use decoder models (GPT) or encoder-decoder models (T5, BART).
+
+**Data hunger**: Pre-training requires billions of words. Humans learn language with orders of magnitude less data.
+
+**No world model**: BERT learns statistical patterns in text but has no grounding in physical reality, sensory experience, or causal reasoning.
+
+**Fragility**: Small input perturbations can cause large output changes, making models unreliable in adversarial settings.
+
+</div>
+
+---
+
+# Practical deployment tips
+
+<div class="tip-box" data-title="Making BERT work in production">
+
+**Start with pre-trained models** — never train from scratch. Use HuggingFace Model Hub.
+
+**Fine-tuning best practices:**
+- Learning rate: 1e-5 to 5e-5 (much lower than pre-training)
+- Warmup steps: 6–10% of total training steps
+- Monitor for overfitting; freeze early layers if data is limited
+- 3–5 epochs is usually sufficient
+
+**Optimization for speed:**
+- Use DistilBERT for 60% faster inference with 97% quality
+- Quantization (INT8) gives 2–4× speedup with minimal quality loss
+- Export to ONNX Runtime for production serving
 - Use FlashAttention when available
-4. **Evaluation**
- - Use task-specific metrics
-- Test on out-of-distribution data
-- Check for biases
-- Visualize attention for interpretability
 
+</div>
 
----
-
-# Deployment Considerations 
-
-**Moving from research to production**
-
-```python
-# Example: Optimizing BERT for production deployment
-from transformers import BertModel, BertTokenizer
-import torch
-import onnxruntime
-
-# Step 1: Load model
-model = BertModel.from_pretrained("bert-base-uncased")
-tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
-
-# Step 2: Quantize for speed (INT8 instead of FP32)
-quantized_model = torch.quantization.quantize_dynamic(
- model, {torch.nn.Linear}, dtype=torch.qint8
-)
-# Result: 4x smaller, 2x faster on CPU
-
-# Step 3: Export to ONNX for production
-dummy_input = tokenizer("Hello world", return_tensors="pt")
-torch.onnx.export(model, dummy_input, "bert.onnx")
-
-# Step 4: Use ONNX Runtime for inference
-session = onnxruntime.InferenceSession("bert.onnx")
-# 1.5x faster than PyTorch, works on any platform
-```
+<div class="note-box" data-title="Optimization results">
 
 | Optimization | Size | Latency | Quality |
-|--------------|------|---------|---------|
+|-------------|------|---------|---------|
 | Original (FP32) | 420MB | 50ms | 100% |
 | Quantized (INT8) | 110MB | 25ms | 99.5% |
-| ONNX + Quantized | 110MB | 20ms | 99.5% |
 | DistilBERT + ONNX | 65MB | 12ms | 97% |
 
+</div>
 
 ---
 
-# Future Directions 
+# Encoder vs decoder: looking ahead
 
+<div class="note-box" data-title="Different architectures for different tasks">
 
-**Where is the field heading?**
+| | Encoder (BERT) | Decoder (GPT) |
+|---|---|---|
+| **Training** | Masked language modeling | Autoregressive next-token |
+| **Context** | Bidirectional | Left-to-right (causal) |
+| **Best for** | Understanding tasks | Generation tasks |
+| **Examples** | Classification, NER, QA, similarity | Text completion, dialogue, creative writing |
 
-1. **Longer Context**
- - Efficient attention mechanisms (linear, sparse)
-- Models with 100K+ token context
-- Better long-document understanding
+**Interesting trend:** Decoder-only models (GPT-3, LLaMA) can also do classification via prompting. "In-context learning" blurs the distinction between understanding and generation architectures. The field is moving toward unified decoder-only models.
 
- 
-
-2. **Multimodal Models**
- - Vision + Language (CLIP, DALL-E)
-- Audio + Language (Whisper)
-- Grounded understanding
-
- 
-
-3. **Better Pre-training**
- - More efficient objectives
-- Curriculum learning
-- Continual learning
-
- 
-
-4. **Smaller, More Efficient Models**
- - Better compression techniques
-- Lottery ticket hypothesis
-- Edge deployment
-
- 
-
-5. **Addressing Limitations**
- - Debiasing and fairness
-- Robustness and adversarial training
-- Common sense reasoning
-- Interpretability and explainability
-
+</div>
 
 ---
 
-# Encoder vs Decoder Models Revisited 
+# Discussion
 
+<div class="tip-box" data-title="Questions to consider">
 
-**Different models for different tasks**
+1. **Understanding vs pattern matching:** Where do you draw the line? Is there a test for "true" understanding? Does it matter if the application works?
 
-| p{4.5cm}} | Encoder (BERT) | Decoder (GPT) |
-| --- | --- | --- |
-| • Classification |
-| • NER, QA |
-| • Similarity | Generation tasks: |
-| • Text completion |
-| • Dialogue |
-| • Creative writing |
+2. **Brain-model parallels:** How useful are comparisons between transformers and the brain? What can neuroscience learn from AI, and vice versa?
 
-**Interesting observation:**
-- Decoder-only models (GPT-3, LLaMA) can also do classification via prompting!
-- "In-context learning" blurs the distinction
-- Trend toward unified decoder-only architectures
+3. **Bias and fairness:** Who is responsible for addressing bias in language models? Can we ever have completely unbiased models? How do we balance accuracy and fairness?
 
+4. **The future of encoder models:** Will BERT-style encoders remain relevant as GPT-style decoders get better at everything? Or do understanding and generation require fundamentally different approaches?
+
+</div>
 
 ---
 
-# Discussion Questions 
+# References
 
+<div class="note-box" data-title="Further reading">
 
-1. **Understanding vs. Pattern Matching:**
- - Where do you draw the line?
-- Is there a test for "true" understanding?
-- Does it matter for applications?
+[**Devlin et al. (2019, *NAACL*)**](https://aclanthology.org/N19-1423/) "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
 
- 
+[**Caucheteux & King (2022, *Nature Communications*)**](https://doi.org/10.1038/s41467-022-28236-3) "Brains and algorithms partially converge in natural language processing"
 
-2. **Brain-Model Parallels:**
- - How useful are these comparisons?
-- What can neuroscience learn from AI?
-- What can AI learn from neuroscience?
+[**Kuperberg & Jaeger (2016, *Language, Cognition and Neuroscience*)**](https://doi.org/10.1080/23273798.2015.1102299) "What do we mean by prediction in language comprehension?"
 
- 
+[**Bender & Koller (2020, *ACL*)**](https://aclanthology.org/2020.acl-main.463/) "Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data"
 
-3. **Bias and Fairness:**
- - Who is responsible for addressing bias?
-- Can we ever have completely unbiased models?
-- How do we balance accuracy and fairness?
-
- 
-
-4. **Future of NLP:**
- - Will encoder models remain relevant?
-- Are decoder-only models the future?
-- What's the next big breakthrough?
-
+</div>
 
 ---
 
-# Assignment 4: Context-Aware Models 
+# Questions?
 
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
+    <span class="label"><a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
+    <span class="label"><a href="https://context-lab.youcanbook.me">Office hours</a></span>
+  </div>
+</div>
 
-**Hands-on experience with transformers!**
+<div class="tip-box" data-title="Up next...">
 
-**Tasks:**
-1. **Implement Attention Mechanism**
- - Build scaled dot-product attention from scratch
-- Visualize attention weights
-2. **Fine-tune BERT**
- - Load pre-trained BERT
-- Fine-tune on sentiment analysis
-- Compare to baseline models
-3. **Analyze Contextual Embeddings**
- - Extract embeddings for polysemous words
-- Visualize how context changes representations
-- Compare BERT vs Word2Vec
-4. **Explore Different Architectures**
- - Compare BERT (encoder) vs GPT (decoder)
-- Test on different tasks
-- Analyze strengths/weaknesses
-5. **Research Component**
- - Read one paper from references
-- Write brief summary & critical analysis
+Week 7: GPT and autoregressive generation — from decoder architecture to text generation
 
-**Due:** Check course website for deadline
-
----
-
-# Summary: Weeks 5-6 
-
-
-**What we learned:**
-
-1. **Evolution of Context**
- - Seq2Seq → Attention → Transformers
-- From bottleneck to full parallelization
-2. **Transformer Architecture**
- - Self-attention, multi-head attention
-- Positional encoding, layer norm, residuals
-- Encoder-only (BERT), Decoder-only (GPT), Both (T5)
-3. **BERT & Variants**
- - Masked Language Modeling
-- Pre-train then fine-tune paradigm
-- RoBERTa, ALBERT, DistilBERT, ELECTRA
-4. **Applications**
- - Classification, NER, QA, similarity
-- Real-world impact (Google Search, etc.)
-5. **Broader Implications**
- - Brain-model parallels
-- Understanding vs. pattern matching
-- Limitations and future directions
-
-
----
-
-# Resources \& Further Reading 
-
-
-**Key Papers:**
-- Vaswani et al. (2017) - Attention Is All You Need
-- Devlin et al. (2019) - BERT: Pre-training of Deep Bidirectional Transformers
-- Liu et al. (2019) - RoBERTa
-- Sanh et al. (2019) - DistilBERT
-- Dao et al. (2022) - FlashAttention
-
-**Cognitive Neuroscience:**
-- Hagoort & Indefrey (2014) - The neurobiology of language beyond single words
-- Kuperberg & Jaeger (2016) - What do we mean by prediction in language comprehension?
-- Willems et al. (2016) - Prediction during natural language comprehension
-
-**Tutorials:**
-- HuggingFace Course: Chapters 1, 7
-- The Illustrated Transformer: https://jalammar.github.io/illustrated-transformer/
-- BertViz: https://github.com/jessevig/bertviz
-
-
----
-
-# Looking Forward in the Course 
-
-
-**Where do we go from here?**
-
-**Upcoming Topics:**
-- **Week 7:** Decoder models and text generation (GPT family)
-- **Week 8:** Scaling laws and large language models
-- **Week 9:** Prompting, in-context learning, and instruction tuning
-- **Week 10:** Alignment, RLHF, and ethical considerations
-
-**The Journey Continues:**
-- From understanding (BERT) to generation (GPT)
-- From supervised learning to few-shot learning
-- From narrow tasks to general-purpose models
-- From academic research to societal impact
-
-**The transformer revolution continues! **
-
-
----
-
-# Questions? 
-
-
-
-**Discussion Time**
-
-**Topics to discuss:**
-- BERT applications
-- Understanding vs. pattern matching
-- Cognitive neuroscience connections
-- Limitations and future work
-- Assignment 4 questions
-
-Thank you! 
-
-See you in Week 7 for GPT and text generation!
-
+</div>

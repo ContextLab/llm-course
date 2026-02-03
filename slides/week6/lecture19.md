@@ -1,698 +1,523 @@
 ---
 marp: true
 theme: cdl-theme
-paginate: true
-header: 'PSYC 51.17: Models of Language and Communication'
-footer: 'Winter 2026'
+math: katex
+transition: fade 0.25s
+author: Contextual Dynamics Lab
 ---
 
-<!-- _class: lead -->
+# Lecture 19: BERT variants
+### PSYC 51.17: Models of language and communication
 
-# Lecture 19: BERT Variants
-## Week 6, Lecture 2 - Improvements and Optimizations
-
-**PSYC 51.17: Models of Language and Communication**
-
+Jeremy R. Manning
+Dartmouth College
 Winter 2026
 
 ---
 
-# Today's Agenda 
+# Learning objectives
 
+<div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
+1. Identify the key limitations of the original BERT training procedure
+2. Explain how RoBERTa, ALBERT, DistilBERT, and ELECTRA each address different BERT limitations
+3. Compare parameter efficiency, training efficiency, and inference speed across variants
+4. Select the appropriate BERT variant for a given task and constraint
+5. Use HuggingFace to load and swap between different BERT variants
 
-1. **RoBERTa**: Robustly Optimized BERT
-2. **ALBERT**: A Lite BERT with parameter sharing
-3. **DistilBERT**: Knowledge distillation for efficiency
-4. **ELECTRA**: Replace Token Detection
-5. **Comparative Analysis**: When to use which variant
-6. **Practical Considerations**: Model selection guide
-
-*Goal: Understand improvements to BERT and choose the right model*
-
----
-
-# BERT's Limitations 
-
-
-**What could be improved?**
-
-1. **Training Procedure**
- - Some choices seemed arbitrary
-- NSP task might not be useful
-- Static masking (same masks every epoch)
-
- 
-
-2. **Model Size**
- - 110M (Base) or 340M (Large) parameters
-- Large memory footprint
-- Slow inference
-
- 
-
-3. **Training Efficiency**
- - Only 15% of tokens are predicted
-- 85% of computation "wasted"?
-- Could we learn more efficiently?
-
- 
-
-4. **Data and Compute**
- - Trained on limited data (3.3B words)
-- Modern datasets much larger
-- Could benefit from more training
-
-**Many variants address these issues!**
+</div>
 
 ---
 
-# RoBERTa: Robustly Optimized BERT 
+# BERT's limitations
 
+<div class="warning-box" data-title="What could be improved?">
 
-**Key idea: Better training = Better performance**
+**Training procedure:**
+- Next Sentence Prediction (NSP) may not be useful
+- Static masking — same masks are reused every epoch
+- Some hyperparameter choices seemed arbitrary
 
-**RoBERTa's Improvements (Liu et al. 2019):**
+**Model size:**
+- 110M (Base) or 340M (Large) parameters
+- Large memory footprint for deployment
+- Slow inference for real-time applications
 
-1. **Remove NSP Task**
- - Next Sentence Prediction hurt performance
-- Use only Masked Language Modeling
-- Full sentences (don't need sentence pairs)
+**Training efficiency:**
+- Only 15% of tokens provide a training signal (the masked ones)
+- 85% of computation is "wasted" on non-masked positions
 
- 
+**Data and compute:**
+- Trained on only 3.3B words — modern datasets are much larger
+- Could benefit from more training steps and larger batches
 
-2. **Dynamic Masking**
- - Generate masking pattern every time
-- BERT: static masks (same for every epoch)
-- More diverse training signal
-
- 
-
-3. **Larger Batches, More Data**
- - Batch size: 8K sequences (vs BERT's 256)
-- 160GB text (vs BERT's 16GB)
-- Longer training (500K steps vs 100K)
-
- 
-
-4. **Longer Sequences**
- - Train with longer sequences
-- Better for downstream tasks
-
-*Reference: Liu et al. (2019) - "RoBERTa: A Robustly Optimized BERT Pretraining Approach"*
+</div>
 
 ---
 
-# RoBERTa Results 
+# RoBERTa: robustly optimized BERT
 
+<div class="definition-box" data-title="Key idea: better training = better performance">
 
+RoBERTa (Liu et al., 2019) keeps BERT's architecture but fixes the training recipe:
 
-**Consistent improvements over BERT**
+1. **Remove NSP** — Next Sentence Prediction hurt performance. Use only MLM with full sentences.
+2. **Dynamic masking** — Generate a new masking pattern every time a sequence is seen, instead of reusing the same mask.
+3. **Larger batches, more data** — Batch size 8K sequences (vs BERT's 256), 160GB text (vs 16GB), 500K steps (vs 100K).
+4. **Longer sequences** — Train on longer contiguous text for better long-range understanding.
 
+</div>
+
+<div class="tip-box" data-title="Takeaway">
+
+Training procedure matters as much as architecture. RoBERTa shows that BERT was significantly **undertrained**.
+
+</div>
+
+---
+
+# Dynamic vs static masking
+
+<div class="note-box" data-title="How masking patterns are generated">
+
+**Static masking (BERT):**
+- Mask tokens once during preprocessing
+- Same masks reused every epoch
+- Example: "My [MASK] is cute" → same every time
+- Risk: model memorizes mask positions
+
+**Dynamic masking (RoBERTa):**
+- Generate new masks on-the-fly during training
+- Different masks each time the same sequence is seen
+- Epoch 1: "My [MASK] is cute"
+- Epoch 2: "My dog [MASK] cute"
+- Epoch 3: "My dog is [MASK]"
+- Result: more diverse training signal, better generalization
+
+</div>
+
+---
+
+# RoBERTa results
+
+<div class="note-box" data-title="Consistent improvements over BERT">
+
+| Task | BERT-Large | RoBERTa | Improvement |
+|------|-----------|---------|-------------|
 | SQuAD 2.0 | 83.1 | 89.4 | +6.3 |
-| --- | --- | --- | --- |
 | MNLI | 86.7 | 90.2 | +3.5 |
 | SST-2 | 94.9 | 96.4 | +1.5 |
 | RACE | 72.0 | 83.2 | +11.2 |
 
-**Key Findings:**
-
-- Dynamic masking better than static
-- More data + longer training = better results
-- RoBERTa-Large matches or beats BERT-Large on all tasks
-- Sometimes huge gains (RACE: +11.2 points!)
-
-<div class="callout info">
-<div class="callout-title">Takeaway</div>
-
-Training procedure matters as much as architecture! RoBERTa shows that BERT was undertrained.
-
 </div>
 
+<div class="important-box" data-title="Key findings">
+
+- Dynamic masking consistently outperforms static masking
+- More data + longer training = substantial gains
+- Removing NSP improves downstream task performance
+- Some tasks see enormous gains (RACE: +11.2 points!)
+
+</div>
 
 ---
 
-# Dynamic vs Static Masking 
+# ALBERT: a lite BERT
 
+<div class="definition-box" data-title="Key idea: parameter sharing for efficiency">
 
-**How masking patterns are generated**
+ALBERT (Lan et al., 2019) dramatically reduces BERT's parameter count through two innovations:
 
-<div class="columns">
-<div class="column">
+**1. Factorized embedding parameters:**
+- BERT: vocabulary (30K) × hidden size (768) = 23M parameters
+- ALBERT: vocabulary (30K) × embedding size (128) + embedding (128) × hidden (768) = 3.9M parameters
+- **83% fewer embedding parameters**
 
-**Static Masking (BERT):**
+**2. Cross-layer parameter sharing:**
+- All 12 transformer layers share the *same* weights
+- Like running the same layer 12 times (iterative refinement)
+- **89% fewer transformer parameters**
 
-**Preprocessing:**
-- Mask tokens once
-- Save masked dataset
-- Same masks every epoch
-
-**Epoch 1:** "My [MASK] is cute"
-
-**Epoch 2:** "My [MASK] is cute"
-
-**Epoch 3:** "My [MASK] is cute"
-
-**Problem:**
-- Model sees same masks repeatedly
-- Less diverse training signal
-- Potential overfitting to mask patterns
+**3. Sentence Order Prediction (SOP):**
+- Replaces NSP with a harder task: are sentences A, B in correct order or swapped?
+- Forces the model to learn discourse coherence, not just topic matching
 
 </div>
-<div class="column">
-
-**Dynamic Masking (RoBERTa):**
-
-**On-the-fly:**
-- Generate masks during training
-- Different masks each time
-- More variety
-
-**Epoch 1:** "My [MASK] is cute"
-
-**Epoch 2:** "My dog [MASK] cute"
-
-**Epoch 3:** "My dog is [MASK]"
-
-**Benefits:**
-- More diverse training examples
-- Better generalization
-- Prevents memorization
-
-</div>
-</div>
-
-**Cost:** Slight computational overhead, but worth it!
 
 ---
+<!-- _class: scale-90 -->
 
-# ALBERT: A Lite BERT 
+# ALBERT parameter efficiency
 
-**Key idea: Parameter sharing for efficiency**
+<div class="note-box" data-title="Dramatic parameter reduction">
 
-**ALBERT's Innovations (Lan et al. 2019):**
-
-<div class="columns">
-<div class="column">
-
-**1. Factorized Embedding**
-```python
-# BERT: Direct embedding
-# 30K vocab × 768 hidden = 23M params
-bert_embed = nn.Embedding(30000, 768)
-
-# ALBERT: Two-step embedding
-# 30K × 128 + 128 × 768 = 3.8M + 0.1M
-albert_embed = nn.Embedding(30000, 128)
-albert_project = nn.Linear(128, 768)
-# Savings: 83% fewer embedding params!
-```
-
-</div>
-<div class="column">
-
-**2. Cross-Layer Sharing**
-- All 12 layers share same weights
-- 89% parameter reduction
-
-**3. Sentence Order Prediction**
-```python
-# NSP (BERT): Is B after A? (too easy)
-# SOP (ALBERT): Are A,B in order?
-# - Positive: [A, B] (correct order)
-# - Negative: [B, A] (swapped order)
-# Harder task → better representations
-```
-
-</div>
-</div>
-
-*Reference: Lan et al. (2019) - "ALBERT: A Lite BERT for Self-supervised Learning"*
-
----
-
-# ALBERT Parameter Efficiency 
-
-
-
-**Dramatic parameter reduction!**
-
-| ALBERT-base | 12 | 768 | 12M |
-| --- | --- | --- | --- |
+| Model | Layers | Hidden size | Parameters |
+|-------|--------|-------------|------------|
+| BERT-base | 12 | 768 | 110M |
+| ALBERT-base | 12 | 768 | **12M** |
 | ALBERT-large | 24 | 1024 | 18M |
 | ALBERT-xlarge | 24 | 2048 | 60M |
 | ALBERT-xxlarge | 12 | 4096 | 235M |
 
-**Key Observations:**
-- ALBERT-base: than BERT-base
-- Can train much larger hidden sizes with same memory
-- ALBERT-xxlarge: 4096 hidden dim, still only 235M params
-- Trade-off: fewer params but similar computation (layer sharing)
+</div>
 
-<div class="callout info">
-<div class="callout-title">Benefits</div>
+<div class="example-box" data-title="Factorized embedding in code">
 
-- Lower memory footprint
-- Easier to deploy
-- Can scale to larger hidden dimensions
+```python
+import torch.nn as nn
+
+# BERT: direct embedding (30K vocab × 768 hidden = 23M params)
+bert_embed = nn.Embedding(30000, 768)
+
+# ALBERT: two-step embedding (30K × 128 + 128 × 768 = 3.9M params)
+albert_embed = nn.Embedding(30000, 128)
+albert_project = nn.Linear(128, 768)
+# 83% fewer embedding parameters!
+```
 
 </div>
 
-
 ---
+<!-- _class: scale-85 -->
 
-# Cross-Layer Parameter Sharing 
+# Cross-layer parameter sharing
 
-**How ALBERT achieves parameter efficiency**
+<div class="example-box" data-title="BERT vs ALBERT layer structure">
 
-<div class="columns">
-<div class="column">
-
-**BERT (No Sharing):**
 ```python
 class BERT:
- def __init__(self):
- # Each layer has unique parameters
- self.layers = [
- TransformerLayer() for _ in range(12)
- ]
- # 12 × 7M params = 85M params
+    def __init__(self):
+        # Each layer has unique parameters
+        self.layers = [TransformerLayer() for _ in range(12)]
+        # 12 × 7M params = 85M params in transformer layers
 
- def forward(self, x):
- for layer in self.layers:
- x = layer(x) # Different weights
- return x
-```
+    def forward(self, x):
+        for layer in self.layers:
+            x = layer(x)   # Different weights each time
+        return x
 
-</div>
-<div class="column">
-
-**ALBERT (Full Sharing):**
-```python
 class ALBERT:
- def __init__(self):
- # Single shared layer!
- self.shared_layer = TransformerLayer()
- # 1 × 7M params = 7M params
+    def __init__(self):
+        # Single shared layer
+        self.shared_layer = TransformerLayer()
+        # 1 × 7M params = 7M params (89% reduction!)
 
- def forward(self, x):
- for _ in range(12):
- x = self.shared_layer(x) # Same weights!
- return x
+    def forward(self, x):
+        for _ in range(12):
+            x = self.shared_layer(x)  # Same weights reused
+        return x
 ```
 
 </div>
+
+<div class="note-box" data-title="Trade-off">
+
+ALBERT has 89% fewer parameters but the **same compute cost** — it still performs 12 forward passes through the transformer layer. The savings are in memory, not speed.
+
 </div>
-
-**Intuition:** Each layer refines the representation. Like a "residual network unrolled" - iterative refinement with shared weights.
-
-**Trade-off:** 89% fewer parameters, same compute (still 12 forward passes)
-
 
 ---
 
-# DistilBERT: Knowledge Distillation 
+# DistilBERT: knowledge distillation
 
-**Key idea: Train small model to mimic large model**
+<div class="definition-box" data-title="Key idea: train a small model to mimic a large model">
+
+Knowledge distillation (Sanh et al., 2019) compresses BERT into a smaller, faster model:
+
+- **Teacher**: Full BERT-base (12 layers, frozen)
+- **Student**: DistilBERT (6 layers, trainable)
+- **Training signal**: Student learns to match the teacher's *soft probability distributions*, not just the hard labels
+
+The teacher's "wrong" predictions contain useful information — e.g., predicting "cat" is more likely than "car" for a masked animal slot tells the student about semantic similarity.
+
+</div>
+
+<div class="note-box" data-title="Results">
+
+| Metric | BERT-base | DistilBERT | Change |
+|--------|-----------|------------|--------|
+| Parameters | 110M | 66M | 40% smaller |
+| Inference speed | 1× | 1.6× | 60% faster |
+| GLUE score | 79.6 | 77.0 | 97% retained |
+
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# DistilBERT training
+
+<div class="example-box" data-title="Knowledge distillation training loop">
 
 ```python
-# Knowledge Distillation Training Loop
-teacher = BertModel.from_pretrained("bert-base") # 12 layers, frozen
-student = DistilBertModel(num_layers=6) # 6 layers, trainable
+teacher = BertModel.from_pretrained("bert-base")  # 12 layers, frozen
+student = DistilBertModel(num_layers=6)            # 6 layers, trainable
 
 for batch in training_data:
- # Teacher provides "soft targets" (probability distributions)
- with torch.no_grad():
- teacher_logits = teacher(batch) # e.g., [0.7, 0.2, 0.1, ...]
+    # Teacher provides "soft targets" (probability distributions)
+    with torch.no_grad():
+        teacher_logits = teacher(batch)  # e.g., [0.7, 0.2, 0.1, ...]
 
- # Student tries to match teacher's distribution
- student_logits = student(batch)
+    # Student tries to match teacher's distribution
+    student_logits = student(batch)
 
- # Distillation loss: KL divergence between distributions
- # Temperature T=2 softens the distribution (more informative)
- loss_distill = KL_divergence(
- softmax(student_logits / T),
- softmax(teacher_logits / T)
- )
+    # Distillation loss: KL divergence between soft distributions
+    # Temperature T=2 softens the distribution (more informative)
+    loss_distill = KL_divergence(
+        softmax(student_logits / T),
+        softmax(teacher_logits / T)
+    )
+    loss_mlm = masked_lm_loss(student_logits, labels)
 
- # Also include MLM loss for language modeling
- loss_mlm = masked_lm_loss(student_logits, labels)
-
- # Combined loss
- loss = 0.5 * loss_distill + 0.5 * loss_mlm
+    loss = 0.5 * loss_distill + 0.5 * loss_mlm
 ```
 
-**Why soft targets work:** Teacher's "wrong" predictions contain information (e.g., "dog" → "cat" more likely than "car")
-
-*Reference: Sanh et al. (2019) - "DistilBERT, a distilled version of BERT"*
+</div>
 
 ---
 
-# DistilBERT Results 
+# ELECTRA: efficient learning from all tokens
 
+<div class="definition-box" data-title="Key idea: learn from 100% of tokens, not just 15%">
 
-**Significant efficiency gains!**
+ELECTRA (Clark et al., 2020) uses a **generator-discriminator** setup:
 
-| Inference Speed | 1x | 1.6x | 60% faster |
-| --- | --- | --- | --- |
-| GLUE Score | 79.6 | 77.0 | 97% retained |
+1. A small **generator** (like a mini-BERT) fills in masked tokens with plausible replacements
+2. A **discriminator** classifies *every* token as original or replaced
+3. The discriminator provides a training signal for **all tokens** — not just the 15% that were masked
 
-**Performance on Specific Tasks:**
+</div>
 
-| SST-2 (Acc) | 94.9 | 92.7 |
-| --- | --- | --- |
-| MNLI (Acc) | 86.7 | 82.2 |
-
-**When to Use DistilBERT:**
-- Production deployment (latency-critical)
-- Edge devices (limited memory)
-- High-throughput scenarios
-- When 2-3% performance drop is acceptable
-
-
----
-
-# ELECTRA: Efficient Learning 
-
-**Key idea: Learn from all tokens, not just 15%**
+<div class="example-box" data-title="ELECTRA training example">
 
 ```python
-# ELECTRA Training: Generator + Discriminator setup
-sentence = "The chef cooked a delicious meal"
-masked = "The chef [MASK] a delicious meal"
+sentence  = "The chef cooked a delicious meal"
+masked    = "The chef [MASK] a delicious meal"
 
-# Small generator (like BERT) fills in masks
-generator_output = generator(masked)
-# Generator predicts: "ate" (plausible but wrong)
-
+# Small generator fills in the mask
+generator_output = generator(masked)  # Predicts: "ate" (plausible but wrong)
 corrupted = "The chef ate a delicious meal"
 
-# Discriminator classifies EACH token: original or replaced?
-discriminator_output = discriminator(corrupted)
-# Output per token: [orig, orig, REPLACED, orig, orig, orig]
-
-# Loss computed on ALL tokens (not just 15%!)
-labels = [0, 0, 1, 0, 0, 0] # 1 = replaced
-loss = binary_cross_entropy(discriminator_output, labels)
+# Discriminator classifies EVERY token: original or replaced?
+discriminator(corrupted)
+# Output: [orig, orig, REPLACED, orig, orig, orig]
+# Loss computed on ALL 6 tokens (not just 1 masked token!)
 ```
 
-<div class="callout tip">
-<div class="callout-title">Efficiency Gain</div>
-
-**BERT:** Learns from 15% of tokens (masked ones only)
-**ELECTRA:** Learns from 100% of tokens (all get labeled)
-
-Result: Same quality with 4x less compute!
-
 </div>
-
-*Reference: Clark et al. (2020) - "ELECTRA: Pre-training Text Encoders as Discriminators"*
 
 ---
 
-# ELECTRA Benefits 
+# ELECTRA efficiency
 
+<div class="note-box" data-title="Learning from every token">
 
+**BERT:** Learns from 15% of tokens (masked ones only) — 85% of compute generates no training signal.
 
-**More efficient pre-training**
+**ELECTRA:** Learns from 100% of tokens (all get a real/replaced label) — every position contributes to learning.
 
-**Advantages:**
-1. **Sample Efficiency**
- - Learn from all tokens (100%) vs only masked (15%)
-- Reaches same performance with less data
-- Faster convergence
-
- 
-
-2. **Better Performance**
- - ELECTRA-Small outperforms BERT-Small
-- ELECTRA-Base competitive with BERT-Large
-- With same compute, ELECTRA is better
-
- 
-
-3. **Computational Efficiency**
- - Smaller generator (1/4 to 1/2 size of discriminator)
-- Faster to train than BERT
-- Lower computational cost for same quality
-
-<div class="callout info">
-<div class="callout-title">Key Insight</div>
-
-Replace Token Detection is more sample-efficient than Masked LM because it provides a learning signal for every token!
+**Result:** ELECTRA reaches BERT-level performance with **4× less compute**.
 
 </div>
 
+<div class="tip-box" data-title="When to use ELECTRA">
+
+ELECTRA is ideal when you have limited compute budget:
+- ELECTRA-Small outperforms BERT-Small
+- ELECTRA-Base is competitive with BERT-Large
+- With the same compute budget, ELECTRA consistently wins
+
+</div>
 
 ---
 
-# BERT Variants Comparison 
+# Variant comparison summary
 
+<div class="note-box" data-title="Choosing the right BERT variant">
 
-**Summary of key variants**
+| Model | Key innovation | Best for |
+|-------|---------------|----------|
+| **BERT** | MLM + NSP | Baseline, well-understood |
+| **RoBERTa** | Better training recipe | Maximum quality |
+| **ALBERT** | Parameter sharing | Memory-constrained deployment |
+| **DistilBERT** | Knowledge distillation | Speed-critical production |
+| **ELECTRA** | Replaced token detection | Limited training budget |
 
-| p{3cm}p{3cm}} Model | Key Innovation | Advantages | Best For |
-| --- | --- | --- | --- |
-
-**General Guidelines:**
+**General guidelines:**
 - **Best quality:** RoBERTa-Large
 - **Best efficiency:** DistilBERT
 - **Limited memory:** ALBERT
 - **Limited training budget:** ELECTRA
 - **Good default:** RoBERTa-Base or BERT-Base
 
+</div>
 
 ---
 
-# Other Notable BERT Variants 
+# Other notable BERT variants
 
+<div class="note-box" data-title="The BERT family keeps growing">
 
-**The BERT family keeps growing!**
+**DeBERTa** (Microsoft, 2020): Disentangled attention separates content and position representations. Enhanced mask decoder. State-of-the-art on SuperGLUE.
 
-1. **DeBERTa (Microsoft, 2020)**
- - Disentangled attention (separate content and position)
-- Enhanced mask decoder
-- State-of-the-art on SuperGLUE
+**SpanBERT** (Facebook, 2019): Masks random contiguous *spans* instead of individual tokens. Span boundary objective. Better for extractive tasks (QA, coreference).
 
- 
+**ERNIE** (Baidu, 2019): Entity-level and phrase-level masking. Knowledge-enhanced pre-training. Strong on Chinese NLP tasks.
 
-2. **ERNIE (Baidu, 2019)**
- - Entity-level and phrase-level masking
-- Knowledge enhancement
-- Strong on Chinese NLP tasks
+**BART** (Facebook, 2019): Encoder-decoder architecture (not encoder-only). Denoising autoencoder with various corruption strategies. Excellent for generation tasks.
 
- 
-
-3. **SpanBERT (Facebook, 2019)**
- - Mask random spans instead of random tokens
-- Span boundary objective
-- Better for span-based tasks (QA, coreference)
-
- 
-
-4. **BART (Facebook, 2019)**
- - Encoder-decoder (not encoder-only)
-- Denoising autoencoder with various corruptions
-- Excellent for generation tasks
-
+</div>
 
 ---
 
-# Model Selection Guide 
+# Model selection guide
 
+<div class="tip-box" data-title="How to choose the right model for your task">
 
-**How to choose the right model for your task**
+**Step 1:** What are your constraints?
+- Need maximum quality? → **RoBERTa-Large**
+- Need fast inference? → **DistilBERT**
+- Need small memory footprint? → **ALBERT**
+- Limited training compute? → **ELECTRA**
+- Need text generation? → Consider **BART** or **GPT** instead
 
-```
-Start -> Quality or Speed? -> RoBERTa-Large -> Memory? -> DistilBERT -> ALBERT -> \begin{tabular
-```
+**Step 2:** Consider your domain
+- Biomedical text? → **BioBERT**, **PubMedBERT**
+- Scientific text? → **SciBERT**
+- Legal text? → **LegalBERT**
+- Multilingual? → **mBERT**, **XLM-RoBERTa**
 
-**Additional Considerations:**
-- **Domain:** Consider domain-specific pre-trained models (BioBERT, SciBERT, etc.)
-- **Language:** Multilingual? Use mBERT, XLM-R
-- **Task type:** Generation? Consider BART/T5 instead
+**Step 3:** Start simple, iterate
+- Begin with `bert-base-uncased` as a baseline
+- Try RoBERTa-base for an easy quality boost
+- Optimize for speed/memory only if needed
 
+</div>
 
 ---
+<!-- _class: scale-85 -->
 
-# Using Different BERT Variants 
+# Using different variants with HuggingFace
 
-
-**Easy switching with HuggingFace**
+<div class="example-box" data-title="Easy model switching with AutoModel">
 
 ```python
 from transformers import AutoModel, AutoTokenizer
 
+# All variants share the same API — just change the model name!
+
 # BERT
-bert_model = AutoModel.from_pretrained("bert-base-uncased")
-bert_tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+model = AutoModel.from_pretrained("bert-base-uncased")
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 
 # RoBERTa
-roberta_model = AutoModel.from_pretrained("roberta-base")
-roberta_tokenizer = AutoTokenizer.from_pretrained("roberta-base")
+model = AutoModel.from_pretrained("roberta-base")
+tokenizer = AutoTokenizer.from_pretrained("roberta-base")
 
 # ALBERT
-albert_model = AutoModel.from_pretrained("albert-base-v2")
-albert_tokenizer = AutoTokenizer.from_pretrained("albert-base-v2")
+model = AutoModel.from_pretrained("albert-base-v2")
+tokenizer = AutoTokenizer.from_pretrained("albert-base-v2")
 
 # DistilBERT
-distilbert_model = AutoModel.from_pretrained("distilbert-base-uncased")
-distilbert_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+model = AutoModel.from_pretrained("distilbert-base-uncased")
+tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 
 # ELECTRA
-electra_model = AutoModel.from_pretrained("google/electra-base-discriminator")
-electra_tokenizer = AutoTokenizer.from_pretrained("google/electra-base-discriminator")
-
-# All have the same API!
-inputs = tokenizer("Hello, my dog is cute", return_tensors="pt")
-outputs = model(**inputs)
+model = AutoModel.from_pretrained("google/electra-base-discriminator")
+tokenizer = AutoTokenizer.from_pretrained("google/electra-base-discriminator")
 ```
 
+</div>
+
 ---
+<!-- _class: scale-85 -->
 
-# Benchmarking BERT Variants: Worked Example 
+# Benchmarking variants
 
-**Practical comparison on sentiment analysis**
+<div class="example-box" data-title="Comparing models on sentiment analysis">
 
 ```python
 import time
 from transformers import pipeline
 
-# Load different models for sentiment analysis
 models = {
- "bert-base": "textattack/bert-base-uncased-SST-2",
- "distilbert": "distilbert-base-uncased-finetuned-sst-2-english",
- "albert": "textattack/albert-base-v2-SST-2",
+    "bert-base": "textattack/bert-base-uncased-SST-2",
+    "distilbert": "distilbert-base-uncased-finetuned-sst-2-english",
+    "albert": "textattack/albert-base-v2-SST-2",
 }
-
-test_texts = ["This movie was fantastic!", "I hated every minute of it."] * 100
+test_texts = ["This movie was fantastic!", "I hated every minute."] * 100
 
 for name, model_id in models.items():
- pipe = pipeline("sentiment-analysis", model=model_id)
-
- start = time.time()
- results = pipe(test_texts)
- elapsed = time.time() - start
-
- print(f"{name}: {elapsed:.2f}s for 200 samples ({200/elapsed:.1f} samples/sec)")
+    pipe = pipeline("sentiment-analysis", model=model_id)
+    start = time.time()
+    results = pipe(test_texts)
+    elapsed = time.time() - start
+    print(f"{name}: {elapsed:.2f}s ({200/elapsed:.0f} samples/sec)")
 ```
 
-**Typical Results:**
 | Model | Accuracy | Speed (samples/sec) | Memory |
 |-------|----------|---------------------|--------|
-| bert-base | 93.2% | 45 | 420MB |
-| distilbert | 91.3% | 85 | 250MB |
-| albert | 92.7% | 38 | 45MB |
+| bert-base | 93.2% | ~45 | 420MB |
+| distilbert | 91.3% | ~85 | 250MB |
+| albert | 92.7% | ~38 | 45MB |
+
+</div>
 
 ---
 
-# Discussion Questions 
+# Discussion
 
+<div class="tip-box" data-title="Questions to consider">
 
-1. **Training vs Architecture:**
- - RoBERTa shows training matters. Is architecture overrated?
-- How much can we improve with just better training?
-- What's the right balance?
+1. **Training vs architecture:** RoBERTa shows that training matters enormously. Is architecture innovation overrated? How much can we improve just by training longer and better?
 
- 
+2. **Parameter efficiency:** ALBERT shares all layers and still works well. Why? What does this tell us about what different layers learn? Is there a "sweet spot" for sharing?
 
-2. **Parameter Efficiency:**
- - ALBERT shares all layers. Why does this work?
-- What are the limits of parameter sharing?
-- Is there a "sweet spot"?
+3. **Knowledge distillation:** Why does the student learn *better* from the teacher's soft probabilities than from hard labels? What information is encoded in the teacher's distribution over wrong answers?
 
- 
+4. **Model selection in practice:** How do you decide which variant to use for a real project? Is it worth fine-tuning multiple variants and comparing?
 
-3. **Knowledge Distillation:**
- - Why does student learn better from teacher than from labels?
-- What information is in the soft probabilities?
-- Can we distill even further?
-
- 
-
-4. **Model Selection:**
- - How do you decide which model to use?
-- Is it worth fine-tuning multiple variants?
-- What about model ensembles?
-
+</div>
 
 ---
 
-# Looking Ahead 
+# References
 
+<div class="note-box" data-title="Further reading">
 
-**Today we learned:**
-- RoBERTa: Better training matters
-- ALBERT: Parameter sharing for efficiency
-- DistilBERT: Knowledge distillation
-- ELECTRA: Replace token detection
-- How to choose the right variant
+[**Liu et al. (2019, *arXiv*)**](https://arxiv.org/abs/1907.11692) "RoBERTa: A Robustly Optimized BERT Pretraining Approach"
 
-**Next lecture (Lecture 17 - Applications of Encoder Models):**
+[**Lan et al. (2019, *ICLR*)**](https://arxiv.org/abs/1909.11942) "ALBERT: A Lite BERT for Self-supervised Learning of Language Representations"
 
-**From theory to practice! **
+[**Sanh et al. (2019, *NeurIPS Workshop*)**](https://arxiv.org/abs/1910.01108) "DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter"
 
+[**Clark et al. (2020, *ICLR*)**](https://arxiv.org/abs/2003.10555) "ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators"
 
----
+[**He et al. (2020, *ICLR*)**](https://arxiv.org/abs/2006.03654) "DeBERTa: Decoding-enhanced BERT with Disentangled Attention"
 
-# Summary 
-
-
-**Key Takeaways:**
-
-1. **RoBERTa**
- - Training procedure matters as much as architecture
-- Remove NSP, dynamic masking, more data = better results
-2. **ALBERT**
- - Parameter sharing dramatically reduces model size
-- Factorized embeddings for efficiency
-- 89% fewer parameters than BERT
-3. **DistilBERT**
- - Knowledge distillation for deployment
-- 40% smaller, 60% faster, 97% performance
-4. **ELECTRA**
- - Replace token detection more sample-efficient
-- Learn from all tokens, not just 15%
-5. **Model Selection**
- - Choose based on constraints (quality, speed, memory)
-- HuggingFace makes it easy to experiment
-
+</div>
 
 ---
 
-# References 
+# Questions?
 
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
+    <span class="label"><a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
+    <span class="label"><a href="https://context-lab.youcanbook.me">Office hours</a></span>
+  </div>
+</div>
 
-**Essential Papers:**
+<div class="tip-box" data-title="Up next...">
 
-- **Liu et al. (2019)** - "RoBERTa: A Robustly Optimized BERT Pretraining Approach"
-- **Lan et al. (2019)** - "ALBERT: A Lite BERT for Self-supervised Learning"
-- **Sanh et al. (2019)** - "DistilBERT, a distilled version of BERT"
-- **Clark et al. (2020)** - "ELECTRA: Pre-training Text Encoders as Discriminators"
-- **He et al. (2020)** - "DeBERTa: Decoding-enhanced BERT with Disentangled Attention"
+Applications of encoder models: from Google Search to cognitive neuroscience
 
-**Resources:**
-- HuggingFace Model Hub: https://huggingface.co/models
-- Papers With Code: BERT variants leaderboard
-- Model Cards: Detailed documentation for each variant
-
-
----
-
-# Questions? 
-
-
-
-**Discussion Time**
-
-**Topics for discussion:**
-- BERT variants and improvements
-- Model selection strategies
-- Knowledge distillation
-- Parameter efficiency
-- Implementation questions
-
-Thank you! 
-
-Next: Applications and Real-World Use Cases!
-
+</div>

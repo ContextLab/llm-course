@@ -1,835 +1,458 @@
 ---
 marp: true
 theme: cdl-theme
-paginate: true
-header: 'PSYC 51.17: Models of Language and Communication'
-footer: 'Week 9'
+math: katex
+transition: fade 0.25s
+author: Contextual Dynamics Lab
 ---
 
-<!-- _class: lead -->
+# Lecture 25: Mixture of experts and efficiency
 
-# Lecture 25: Mixture of Experts \& Efficiency
-## Scaling Efficiently with Sparse Models 
+### PSYC 51.17: Models of language and communication
 
-**PSYC 51.17: Models of Language and Communication**
-
-Week 9
+Jeremy R. Manning
+Dartmouth College
+Winter 2026
 
 ---
 
-# Today's Journey 
+# Learning objectives
 
-<div class="callout info">
-<div class="callout-title">What we'll cover</div>
+<div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. **The Scaling Problem**: Why bigger isn't always better
-2. **Mixture of Experts**: Sparse activation for efficiency
-3. **How MoE Works**: Routing, load balancing, training
-4. **Real-World MoE**: Mixtral and production systems
-5. **Other Efficiency Techniques**: Quantization, pruning, distillation
+- Explain the **scaling dilemma** and why dense models are computationally wasteful
+- Describe the **Mixture of Experts (MoE)** architecture: experts, routers, and sparse activation
+- Implement a **simplified MoE layer** in PyTorch
+- Discuss **load balancing** challenges and their solutions
+- Evaluate efficiency techniques: **quantization**, **distillation**, **Flash Attention**, and **speculative decoding**
+- Assess the role of efficiency in **democratizing access** to powerful AI
 
 </div>
 
 ---
 
-# The Scaling Dilemma 
+# The scaling dilemma
 
+<div class="note-box" data-title="Bigger models perform better, but at enormous cost">
 
-
-Larger models perform better... but at what cost?
-
-**Training a 175B parameter model (GPT-3 scale):**
-- Cost: $4-12 million in compute
-- Energy: Equivalent to 120 homes for a year
-- Time: Weeks to months on thousands of GPUs
-- Inference: Slow and expensive ($0.002-0.02 per 1K tokens)
-- Environmental: Massive carbon footprint
-
-<div class="callout warning">
-<div class="callout-title">The Challenge</div>
-
-Can we get the benefits of scale without the full computational cost?
+| Model | Parameters | Estimated training cost | CO$_2$ equivalent |
+|-------|------------|------------------------|-------------------|
+| GPT-1 | 117M | ~$10K | Negligible |
+| GPT-3 | 175B | ~$4.6M | 112 cars for 1 year |
+| GPT-4 | ~1.8T (est.) | ~$100M+ | Unknown |
 
 </div>
 
-**Key Insight:** Not all parameters need to be active for every input!
+<div class="important-box" data-title="The key insight">
 
----
-
-# Dense vs Sparse Models 
-
-<div class="columns">
-<div class="column">
-
-**Dense Models (e.g., GPT-3):**
-```
-Input Token
- ↓
-[] ← All neurons active
-[] ← 100% of parameters used
-[] ← Every forward pass
- ↓
-Output
-```
-- 175B parameters, 175B active
-- High compute per token
-- Simple architecture
-
-</div>
-<div class="column">
-
-**Sparse Models (MoE):**
-```
-Input Token
- ↓
-[] ← Only 2 experts active
-[] ← ~25% of parameters used
-[] ← Per forward pass
- ↓
-Output
-```
-- 56B total, 14B active (Mixtral)
-- Low compute per token
-- Complex routing logic
-
-</div>
-</div>
-
-<div class="callout info">
-<div class="callout-title">Key Insight</div>
-
-MoE = More capacity (learning), less compute (inference). Best of both worlds!
+In a dense model like GPT-3, **every parameter is active for every input token**. But not all parameters need to be active for every input. A math question does not require the same circuitry as a French translation. **Can we activate only the relevant parameters?**
 
 </div>
 
 ---
 
-# What is Mixture of Experts? 
+# Dense vs. sparse models
 
+<div class="definition-box" data-title="Two approaches to scaling">
 
-<div class="callout info">
-<div class="callout-title">Mixture of Experts (MoE)</div>
-
-A neural network architecture where different "expert" sub-networks specialize in different parts of the input space, with a gating mechanism that routes inputs to the appropriate experts.
+- **Dense models** (GPT-3, Llama): All parameters are active for every token. 175B parameters = 175B active.
+- **Sparse models** (MoE): Only a subset of parameters are active per token. 47B total parameters, but only 13B active per token (Mixtral).
 
 </div>
 
-**Key Components:**
-1. **Experts**: Multiple specialized feed-forward networks
-2. **Router/Gate**: Learned function that assigns inputs to experts
-3. **Sparse Activation**: Only top-k experts process each input
+<div class="note-box" data-title="The MoE tradeoff">
 
-**Intuition:**
-- Different experts become good at different things
-- Math expert, code expert, language expert, etc.
-- Router learns which expert(s) to use for each input
+| Dimension | Dense | Sparse (MoE) |
+|-----------|-------|-------------|
+| Active parameters per token | 100% | ~25% |
+| Total parameters (memory) | N | 3--8x N |
+| Compute per token | High | Low |
+| Architecture complexity | Simple | Complex (routing) |
+| Quality at matched compute | Baseline | **Higher** |
 
-*Reference: Shazeer et al. (2017) - "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer"*
+MoE gives you more *capacity* (knowledge storage) with less *compute* (inference cost).
 
----
-
-# MoE Architecture 
-
-```flow
-[Input x] --> [Router g(x)] --> [Expert 1: Math] --> [Weighted Sum] --> [Output y]
- --> [Expert 2: Code] --> [Weighted Sum]
- --> [Expert 3: Language] --> [Weighted Sum]
- --> [Expert 4-8: Inactive]
-```
-
-**Concrete Example: Processing "def factorial(n):"**
-
-```python
-# Router computes scores for each expert
-router_logits = router(token_embedding) # Shape: (8,) for 8 experts
-# [0.1, 0.9, 0.3, 0.2, 0.1, 0.1, 0.1, 0.1] # Expert 2 (Code) scores highest!
-
-# Select top-2 experts
-top_k_indices = [1, 2] # Expert 2 (Code) and Expert 3 (Language)
-top_k_weights = [0.75, 0.25] # Normalized weights
-
-# Only these 2 experts process the token
-output = 0.75 * expert_2(x) + 0.25 * expert_3(x)
-# Other 6 experts do NO computation for this token!
-```
-
-**Typical setup:** N=8-64 experts, but only top-2 are active per token
+</div>
 
 ---
 
-# The Router Mechanism 
+# What is Mixture of Experts?
 
-**Step-by-step routing for a single token:**
+<div class="definition-box" data-title="Shazeer et al. (2017)">
+
+A **Mixture of Experts** layer replaces the single feed-forward network in each transformer block with **multiple parallel feed-forward networks** (experts) and a **router** that selects which experts process each token.
+
+Key components:
+1. **Experts**: N independent feed-forward networks (typically 8--64)
+2. **Router (gate)**: A learned linear layer that assigns tokens to experts
+3. **Top-k selection**: Only the top-k experts (typically k=2) are activated per token
+
+</div>
+
+<div class="tip-box" data-title="Intuition">
+
+Think of experts as specialists on a team. When a code-related token arrives, the "code expert" handles it. When a French token arrives, the "French expert" activates. The router is the dispatcher.
+
+</div>
+
+---
+
+# The router mechanism
+
+<div class="example-box" data-title="Routing a token to top-2 experts">
 
 ```python
 import torch.nn.functional as F
 
 def route_token(x, router_weights, num_experts=8, k=2):
- """Route a token to top-k experts"""
- # Step 1: Compute routing scores (linear projection)
- # router_weights: (hidden_dim, num_experts)
- logits = x @ router_weights # Shape: (num_experts,)
- # Example: [-0.5, 2.1, 1.3, 0.2, -0.1, 0.0, -0.3, 0.1]
+    # Step 1: Compute routing scores
+    logits = x @ router_weights           # (num_experts,)
+    # e.g., [-0.5, 2.1, 1.3, 0.2, -0.1, 0.0, -0.3, 0.1]
 
- # Step 2: Convert to probabilities
- probs = F.softmax(logits, dim=-1)
- # Example: [0.04, 0.52, 0.24, 0.08, 0.03, 0.03, 0.03, 0.03]
+    # Step 2: Convert to probabilities
+    probs = F.softmax(logits, dim=-1)
+    # e.g., [0.04, 0.52, 0.24, 0.08, 0.03, 0.03, 0.03, 0.03]
 
- # Step 3: Select top-k experts
- top_k_probs, top_k_indices = torch.topk(probs, k)
- # indices: [1, 2], probs: [0.52, 0.24]
+    # Step 3: Select top-k experts
+    top_k_probs, top_k_indices = torch.topk(probs, k)
+    # indices: [1, 2], probs: [0.52, 0.24]
 
- # Step 4: Normalize selected probabilities
- top_k_probs = top_k_probs / top_k_probs.sum()
- # [0.68, 0.32] # Now sums to 1
-
- return top_k_indices, top_k_probs
- # Expert 1 handles 68%, Expert 2 handles 32%
+    # Step 4: Normalize selected weights
+    top_k_probs = top_k_probs / top_k_probs.sum()  # [0.68, 0.32]
+    return top_k_indices, top_k_probs
 ```
+
+Output: Expert 1 handles 68%, Expert 2 handles 32%. The other 6 experts do **no computation**.
+
+</div>
 
 ---
 
-# MoE in PyTorch (Simplified) 
+# MoE layer in PyTorch
 
+<div class="example-box" data-title="Simplified implementation">
 
 ```python
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
 class MoELayer(nn.Module):
- def __init__(self, d_model, num_experts, expert_capacity, k=2):
- super().__init__()
- self.num_experts = num_experts
- self.k = k # Top-k routing
+    def __init__(self, d_model, num_experts=8, k=2):
+        super().__init__()
+        self.k = k
+        self.gate = nn.Linear(d_model, num_experts)
+        self.experts = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(d_model, 4 * d_model),
+                nn.GELU(),
+                nn.Linear(4 * d_model, d_model)
+            ) for _ in range(num_experts)
+        ])
 
- # Router
- self.gate = nn.Linear(d_model, num_experts)
-
- # Experts (simple FFN for each)
- self.experts = nn.ModuleList([
- nn.Sequential(
- nn.Linear(d_model, 4 * d_model),
- nn.ReLU(),
- nn.Linear(4 * d_model, d_model)
- )
- for _ in range(num_experts)
- ])
-
- def forward(self, x):
- # x: (batch_size, seq_len, d_model)
- batch_size, seq_len, d_model = x.shape
-
- # Compute routing scores
- router_logits = self.gate(x) # (batch, seq, num_experts)
- router_probs = F.softmax(router_logits, dim=-1)
-
- # Select top-k experts
- top_k_probs, top_k_indices = torch.topk(router_probs, self.k, dim=-1)
- # top_k_probs: (batch, seq, k)
- # top_k_indices: (batch, seq, k)
+    def forward(self, x):
+        router_probs = F.softmax(self.gate(x), dim=-1)
+        top_k_probs, top_k_idx = torch.topk(router_probs, self.k, dim=-1)
+        top_k_probs = top_k_probs / top_k_probs.sum(dim=-1, keepdim=True)
+        output = torch.zeros_like(x)
+        for i in range(self.k):
+            for eid in range(len(self.experts)):
+                mask = (top_k_idx[..., i] == eid)
+                if mask.any():
+                    output[mask] += top_k_probs[..., i][mask].unsqueeze(-1) \
+                                    * self.experts[eid](x[mask])
+        return output
 ```
 
+</div>
 
 ---
 
-# MoE Forward Pass (cont.) 
+# Load balancing
 
+<div class="warning-box" data-title="The routing collapse problem">
+
+Without intervention, the router tends to send most tokens to a few "popular" experts, leaving others undertrained or completely **dead** (never activated). This wastes parameters and reduces model capacity.
+
+</div>
+
+<div class="note-box" data-title="Two solutions">
+
+**1. Auxiliary load-balancing loss** (added to training objective):
+
+$$\mathcal{L}_{\text{aux}} = \alpha \cdot N \cdot \sum_{i=1}^{N} f_i \cdot P_i$$
+
+where $f_i$ is the fraction of tokens routed to expert $i$, $P_i$ is the average routing probability for expert $i$, and $\alpha$ is a small coefficient (~0.01). This penalizes imbalanced routing.
+
+**2. Expert capacity limits**: Each expert has a maximum number of tokens it can process per batch. Overflow tokens are routed to the next-best expert.
+
+</div>
+
+---
+
+# Training challenges
+
+<div class="note-box" data-title="What makes MoE training harder than dense models">
+
+| Challenge | Cause | Mitigation |
+|-----------|-------|------------|
+| **Routing collapse** | Router converges to always picking same experts | Load-balancing loss, random routing |
+| **Dead experts** | Some experts never receive tokens | Expert dropout, periodic reinitialization |
+| **High variance gradients** | Discrete routing decisions | Larger batch sizes, softmax gating |
+| **Memory overhead** | All experts must be in memory | Expert parallelism across GPUs |
+| **Communication cost** | Tokens must be sent to correct GPU | Optimized all-to-all communication |
+
+</div>
+
+<div class="tip-box" data-title="Questions to consider">
+
+Despite these challenges, MoE models are becoming the default for frontier models (Mixtral, GPT-4 reportedly uses MoE). What does this tell us about the compute-quality tradeoff?
+
+</div>
+
+---
+
+# Mixtral 8x7B
+
+<div class="definition-box" data-title="Jiang et al. (2024): the MoE model that changed the game">
+
+**Mixtral** from Mistral AI demonstrated that open-weight MoE models can match or exceed much larger dense models:
+
+| Specification | Value |
+|--------------|-------|
+| Total parameters | 47B (8 experts x 7B, minus shared layers) |
+| Active parameters per token | 13B (top-2 routing) |
+| Transformer layers | 32 |
+| Context window | 32K tokens |
+| License | Apache 2.0 (fully open) |
+
+</div>
+
+<div class="important-box" data-title="The headline result">
+
+Mixtral (47B total, 13B active) **matches Llama 2 70B** on benchmarks while running at **5x the speed**. Quality of a 70B model at the cost of a 13B model.
+
+</div>
+
+---
+
+# What do experts learn?
+
+<div class="note-box" data-title="Emergent specialization (no supervision required)">
+
+Analysis of Mixtral's routing patterns reveals natural specialization:
+
+| Token type | Primary expert | Example tokens |
+|------------|---------------|----------------|
+| Code | Expert 2 | `def`, `class`, `import` |
+| French | Expert 5 | `la`, `le`, `français` |
+| Math | Expert 7 | `∑`, `∫`, `theorem` |
+| Common English | Expert 1 | `the`, `is`, `and` |
+| Technical | Expert 3 | `neural`, `gradient` |
+
+</div>
+
+<div class="tip-box" data-title="Questions to consider">
+
+Nobody told Expert 2 to specialize in code -- it emerged from training. This mirrors how brain regions develop functional specialization. What does this suggest about the relationship between architecture and learned structure?
+
+</div>
+
+---
+
+# Model compression: quantization
+
+<div class="definition-box" data-title="Reducing precision to reduce memory and speed up inference">
+
+**Quantization** converts model weights from high-precision floating point to lower-precision integers, dramatically reducing memory and often improving speed.
+
+</div>
+
+<div class="note-box" data-title="Memory savings for a 7B parameter model">
+
+| Precision | Bits per weight | Model size | Fits on... |
+|-----------|----------------|------------|-----------|
+| FP32 | 32 | 28 GB | High-end GPU |
+| FP16 / BF16 | 16 | 14 GB | Consumer GPU |
+| INT8 | 8 | 7 GB | Gaming GPU |
+| INT4 | 4 | 3.5 GB | Laptop GPU |
+
+INT4 quantization enables running a **7 billion parameter model on a laptop** with only 1--2% quality degradation on most benchmarks.
+
+</div>
+
+---
+
+# Knowledge distillation
+
+<div class="definition-box" data-title="Training a small model to mimic a large one">
+
+In **knowledge distillation**, a small "student" model is trained to match the output distribution of a large "teacher" model, rather than training from raw data alone. The student learns the teacher's "dark knowledge" -- the relative probabilities across all tokens, not just the top-1 prediction.
+
+</div>
+
+<div class="example-box" data-title="Distillation in practice">
 
 ```python
-# Initialize output
- output = torch.zeros_like(x)
+# Teacher: Large model (frozen, no gradients)
+teacher_logits = large_model(input)  # (batch, seq, vocab)
 
- # Route to experts
- for i in range(self.k):
- # Get expert indices for this position
- expert_idx = top_k_indices[:, :, i] # (batch, seq)
- expert_weight = top_k_probs[:, :, i] # (batch, seq)
+# Student: Small model (being trained)
+student_logits = small_model(input)
 
- # Process through each expert
- for expert_id in range(self.num_experts):
- # Mask for tokens routed to this expert
- mask = (expert_idx == expert_id)
-
- if mask.any():
- # Get tokens for this expert
- expert_input = x[mask]
-
- # Process through expert
- expert_output = self.experts[expert_id](expert_input)
-
- # Add weighted output
- output[mask] += expert_weight[mask].unsqueeze(-1) * expert_output
-
- return output
+# Distillation loss: match teacher's soft probabilities
+loss = F.kl_div(
+    F.log_softmax(student_logits / temperature, dim=-1),
+    F.softmax(teacher_logits / temperature, dim=-1),
+    reduction='batchmean'
+)
 ```
 
-*Note: This is simplified. Production implementations handle batching and load balancing more efficiently.*
+**Result**: DistilBERT is 40% smaller than BERT but retains 97% of its performance.
+
+</div>
 
 ---
 
-# Load Balancing Problem 
+# Inference optimizations
 
-**Problem:** Without balancing, some experts get overused!
+<div class="note-box" data-title="Making generation faster without changing the model">
 
-```
-Expert Usage Distribution (Unbalanced):
+**KV cache**: During generation, cache key and value tensors from previous tokens. Avoids recomputing attention over the entire sequence at each step. Reduces per-token cost from $O(n)$ to $O(1)$.
 
-E1: 40% ← Overloaded!
-E2: 22%
-E3: 15%
-E4: 10%
-E5: 5%
-E6: 4%
-E7: 3% ← Undertrained
-E8: 1% ← "Dead" expert
-```
+**Flash Attention** (Dao et al., 2022): Tiled, memory-efficient attention that avoids materializing the full $n \times n$ attention matrix. 2--4x faster and enables longer sequences.
 
-**Desired (Balanced):**
-```
-E1: 12.5%
-E2: 12.5%
-E3: 12.5%
-... (all equal)
-```
+**Speculative decoding**: Use a small "draft" model to propose several tokens at once, then verify them in parallel with the large model. If 4 out of 5 draft tokens are accepted, you get ~4x speedup with identical output quality.
 
-**Why imbalance is bad:**
-- "Dead" experts waste parameters (never trained properly)
-- Popular experts become bottlenecks during parallel inference
-- Model loses expressiveness it paid for in memory
+**Continuous batching** (vLLM): New requests join an ongoing batch without waiting for the longest sequence to finish. Dramatically improves throughput for serving.
+
+</div>
 
 ---
 
-# Load Balancing Solutions 
+# State space models: an alternative to attention
 
-**Solution 1: Auxiliary Loss (Penalize Imbalance)**
+<div class="definition-box" data-title="Mamba (Gu & Dao, 2023)">
+
+**State space models (SSMs)** replace self-attention with a recurrent mechanism that processes sequences in **linear time** $O(n)$ instead of quadratic $O(n^2)$:
 
 ```python
-def compute_load_balance_loss(router_probs, expert_assignments, alpha=0.01):
- """Add penalty to main loss for imbalanced routing"""
- num_experts = router_probs.shape[-1]
-
- # f_i: fraction of tokens actually sent to expert i
- tokens_per_expert = expert_assignments.sum(dim=0) # Count per expert
- f = tokens_per_expert / tokens_per_expert.sum() # [0.4, 0.22, ...]
-
- # P_i: average routing probability for expert i
- P = router_probs.mean(dim=0) # [0.35, 0.2, ...]
-
- # Loss: encourages f and P to both be uniform (1/N each)
- aux_loss = alpha * num_experts * (f * P).sum()
- return aux_loss # Added to main training loss
-```
-
-**Solution 2: Expert Capacity Limits**
-
-```python
-capacity = (batch_size * seq_len) // num_experts * capacity_factor # e.g., 1.25x
-# If Expert 1 already has `capacity` tokens, overflow goes to Expert 2
-```
-
----
-
-# Training Instability 
-
-
-**Challenges in training MoE:**
-
-1. **Routing Collapse**
- - All tokens routed to one or few experts
-- *Solution:* Load balancing loss, initialization
-2. **Expert Imbalance**
- - Some experts undertrained
-- *Solution:* Balanced batching, capacity limits
-3. **High Variance Gradients**
- - Discrete routing decisions
-- *Solution:* Softmax gating, larger batch sizes
-4. **Dead Experts**
- - Expert never gets activated
-- *Solution:* Expert dropout, random routing
-
-**Best Practice:** Start with dense model, then convert to MoE for fine-tuning
-
----
-
-# Memory and Communication 
-
-
-**MoE Memory Requirements:**
-
-<div class="callout warning">
-<div class="callout-title">Challenge</div>
-
-All experts must be in memory, even if only 2 are active!
-
-</div>
-
-**Example: Mixtral 8x7B**
-- 8 experts × 7B parameters each = 56B total
-- But only 2 experts active → 14B active parameters
-- **Memory:** Need to store all 56B parameters
-- **Compute:** Only process 14B parameters per token
-
-**Solutions:**
-1. **Expert Parallelism**: Distribute experts across GPUs
-2. **Offloading**: Keep inactive experts on CPU/disk
-3. **Quantization**: Reduce precision (int8, int4)
-4. **Shared Experts**: Some experts always active for all tokens
-
-
----
-
-# Mixtral 8x7B 
-
-
-<div class="callout info">
-<div class="callout-title">Mixtral (Jiang et al., 2024)</div>
-
-A state-of-the-art sparse MoE model from Mistral AI with 8 experts, each 7B parameters.
-
-</div>
-
-**Architecture:**
-- **Total parameters**: 47B (8 experts × 7B, minus shared layers)
-- **Active parameters**: 13B (only 2 experts active per token)
-- **Layers**: 32 transformer blocks
-- **Context**: 32K tokens
-- **Vocabulary**: 32K tokens (SentencePiece)
-
-**Training:**
-- Open weights (Apache 2.0 license)
-- Multilingual (English, French, German, Spanish, Italian)
-- Code-capable
-
-*Reference: Jiang et al. (2024) - "Mixtral of Experts"*
-
----
-
-# Mixtral Performance 
-
-**Comparison with dense models:**
-
-| Model | Total Params | Active Params | MMLU Score | Speed vs 70B |
-|-------|--------------|---------------|------------|--------------|
-| Llama 2 13B | 13B | 13B | 55.0 | 5× faster |
-| **Mixtral 8x7B** | **47B** | **13B** | **70.6** | **5× faster** |
-| Llama 2 70B | 70B | 70B | 69.7 | 1× (baseline) |
-| GPT-3.5 | ~175B | ~175B | 70.0 | N/A (API) |
-
-**The Magic of MoE:**
-
-```
-Mixtral achieves:
-
- Quality of 70B model (MMLU: 70.6 vs 69.7) 
- Speed of 13B model (only 13B active) 
- = Best of both worlds! 
-
-```
-
-<div class="callout warning">
-<div class="callout-title">Catch</div>
-
-Still need memory for all 47B params. Savings are in compute, not VRAM.
-
-</div>
-
----
-
-# What Do Experts Learn? 
-
-**Experts naturally specialize without explicit supervision!**
-
-**Analyzed routing patterns in Mixtral:**
-
-```
-Token Type → Most Active Experts
-
-"def", "class", "import" → Expert 2 (Code)
-"la", "le", "français" → Expert 5 (French)
-"∑", "∫", "theorem" → Expert 7 (Math)
-"the", "is", "and" → Expert 1 (Common words)
-"neural", "gradient" → Expert 3 (Technical)
-```
-
-**Concrete Example: Sentence routing**
-
-```
-"The neural network learns via backpropagation"
- 
- E1 E3 E3 E1 E1 E3
-
-Different tokens in the same sentence use different experts!
-```
-
-<div class="callout info">
-<div class="callout-title">Key Finding</div>
-
-Specialization is **emergent**. Nobody told Expert 2 to handle code!
-
-</div>
-
----
-
-# Model Compression Methods 
-
-**Beyond MoE: Making models smaller and faster**
-
-<div class="columns">
-<div class="column">
-
-**1. Quantization**
-```python
-# Original: 32-bit float (4 bytes/param)
-weight = 0.123456789 # Full precision
-
-# INT8: 8-bit integer (1 byte/param)
-weight_int8 = 31 # Scaled + quantized
-# 4× memory reduction!
-
-# INT4: 4-bit (0.5 byte/param)
-# 8× memory reduction!
-```
-
-**Llama 2 7B Memory:**
-- FP32: 28 GB
-- FP16: 14 GB
-- INT8: 7 GB
-- INT4: 3.5 GB ← Fits on laptop!
-
-</div>
-<div class="column">
-
-**2. Knowledge Distillation**
-```python
-# Teacher: Large model (GPT-4)
-# Student: Small model (GPT-2)
-
-teacher_output = gpt4(input)
-student_output = gpt2(input)
-
-# Train student to match teacher
-loss = KL_div(student_output,
- teacher_output)
-```
-
-**Results:**
-- DistilBERT: 40% smaller, 97% quality
-- TinyLlama: 1.1B matches 7B on tasks
-
-</div>
-</div>
-
----
-
-# Inference Optimizations 
-
-**Making generation faster:**
-
-<div class="columns">
-<div class="column">
-
-**1. KV Cache (Essential)**
-```python
-# Without cache: Recompute all attention
-# Token 100 attends to tokens 1-99
-# = O(n) attention per token!
-
-# With cache: Store previous K,V
-cache = {}
+state = initial_state           # Fixed size, independent of sequence length
 for token in sequence:
- k, v = compute_kv(token)
- cache[pos] = (k, v) # Store!
- # Only compute attention once
-```
-
-**2. Flash Attention**
-```
-Standard: Load full attention matrix
-FlashAtt: Tiled, memory-efficient
-→ 2-4× faster, fits longer sequences
+    state = A @ state + B @ token   # Update state
+    output = C @ state              # Read output
 ```
 
 </div>
-<div class="column">
 
-**3. Speculative Decoding**
-```python
-# Draft model (fast, small): 7B
-draft_tokens = small_model.generate(5)
-# ["The", "cat", "sat", "on", "mat"]
+<div class="note-box" data-title="Attention vs. SSM scaling">
 
-# Target model (slow, large): 70B
-verified = large_model.verify(draft_tokens)
-# ["The", "cat", "sat", "on", "the"]
-# 
+| Sequence length | Attention cost | SSM cost |
+|----------------|---------------|----------|
+| 1K | 1x | 1x |
+| 4K | 16x | 4x |
+| 16K | 256x | 16x |
+| 64K | 4,096x | 64x |
 
-# Accept 4/5 in one batch!
-# 2-3× speedup, same quality
-```
-
-**4. Continuous Batching (vLLM)**
-- New requests join mid-batch
-- No waiting for longest sequence
-
-</div>
-</div>
-
----
-
-# State Space Models: Mamba 
-
-**Alternative to Transformers with linear-time complexity**
-
-<div class="columns">
-<div class="column">
-
-**Transformer Attention: O(n)**
-```
-Sequence length: 1K 4K 16K 64K
-Compute (relative): 1 16 256 4096
- ↑
- Gets expensive fast!
-```
-
-**Mamba SSM: O(n)**
-```
-Sequence length: 1K 4K 16K 64K
-Compute (relative): 1 4 16 64
- ↑
- Linear scaling!
-```
-
-</div>
-<div class="column">
-
-**How SSMs Work (Simplified)**
-```python
-# State evolves with each token
-state = initial_state # Fixed size!
-for token in sequence:
- # Update state (no attention)
- state = A @ state + B @ token
- output = C @ state
- # Always O(1) per token!
-```
-
-**Key Insight:**
-- Transformers: Every token attends to all previous tokens
-- SSMs: Compress history into fixed-size state
-
-</div>
-</div>
-
-*Reference: Gu & Dao (2023) - "Mamba: Linear-Time Sequence Modeling with Selective State Spaces"*
-
----
-
-# Efficiency Trade-off Landscape 
-
-**Choosing the Right Technique for Your Use Case:**
-
-```
- Quality
- ↑
- GPT-4 (175B) Dense Large
- 
- Mixtral (47B/13B) MoE
- 
- Llama-7B-Q4 Quantized
- 
- DistilGPT-2 Distilled
- 
- → Speed/Cost
-```
-
-| Technique | Best For | Trade-off |
-|-----------|----------|-----------|
-| Dense Large | Maximum quality | Expensive, slow |
-| MoE | Quality + speed | High memory |
-| Quantization | Edge deployment | Slight quality loss |
-| Distillation | Fixed tasks | Requires teacher |
-| Pruning | Latency-critical | Irreversible |
-
-<div class="callout tip">
-<div class="callout-title">Decision Tree</div>
-
-Need max quality? → Dense. Need speed on GPU? → MoE. Need to run locally? → Quantized.
+SSMs scale linearly, making them attractive for very long sequences. Hybrid architectures (attention + SSM) are an active research direction.
 
 </div>
 
 ---
 
-# Environmental Impact 
+# The efficiency landscape
 
+<div class="note-box" data-title="Choosing the right technique">
 
-**The carbon cost of large language models:**
-
-| GPT-3 | 502 | 112 cars for 1 year |
-| --- | --- | --- |
-| Llama 2 | ~539 | 120 cars for 1 year |
-
-**Factors affecting carbon footprint:**
-- Model size (more parameters = more compute)
-- Training time
-- Hardware efficiency (newer GPUs more efficient)
-- Energy source (coal vs solar)
-- Location of data center
-
-*Source: Strubell et al. (2019) - "Energy and Policy Considerations for Deep Learning in NLP"*
-
----
-
-# Democratizing Access 
-
-
-
-Should powerful AI be accessible to everyone, or only large organizations?
-
-**Current reality:**
-- Training GPT-3 scale model: $4-12M
-- Requires 1000+ GPUs
-- Only big tech companies can afford
-- Creates AI "haves" and "have-nots"
-
-**Efficiency enables democratization:**
-- Smaller models on consumer hardware
-- Open-source weights (Llama, Mixtral, Mistral)
-- Efficient fine-tuning (LoRA, QLoRA)
-- Cloud access with pay-per-use pricing
-- Edge deployment (on-device models)
-
-<div class="callout warning">
-<div class="callout-title">Goal</div>
-
-Make AI accessible to researchers, startups, and developing nations—not just big tech!
+| Technique | Best for | Main tradeoff |
+|-----------|----------|---------------|
+| **Dense large model** | Maximum quality | Expensive, slow |
+| **MoE** | Quality + speed | High memory (all experts stored) |
+| **Quantization** | Edge / local deployment | Small quality loss |
+| **Distillation** | Fixed tasks, small budget | Requires teacher model |
+| **Flash Attention** | Longer contexts | Implementation complexity |
+| **Speculative decoding** | Faster generation | Requires draft model |
+| **SSMs (Mamba)** | Very long sequences | Less proven than attention |
 
 </div>
 
+<div class="tip-box" data-title="Decision heuristic">
 
----
-
-# Open vs Closed Models 
-
-
-<div class="columns">
-<div class="column">
-
-**Closed (GPT-4, Claude):**
-- Better safety control
-- Monetization easier
-- Protect IP
-- Can update/improve
-- No transparency
-- Vendor lock-in
-- Limited customization
-- Privacy concerns
+Need max quality? → Dense large. Need quality + speed on GPU? → MoE. Need to run on a laptop? → Quantized small model. Need extremely long contexts? → Hybrid attention + SSM.
 
 </div>
-<div class="column">
 
-**Open (Llama, Mixtral):**
-- Transparency
-- Community innovation
-- Full control
-- No API costs
-- Privacy (on-prem)
-- Potential misuse
-- Compute requirements
-- Need ML expertise
+---
+
+# Environmental impact and democratization
+
+<div class="warning-box" data-title="The carbon cost of scale">
+
+Training GPT-3 produced an estimated **502 tonnes of CO$_2$** -- equivalent to 112 cars driven for a year (Strubell et al., 2019). As models grow, so does their environmental footprint.
 
 </div>
+
+<div class="note-box" data-title="Efficiency enables access">
+
+Efficiency techniques are not just about cost -- they are about **who gets to use AI**:
+
+- **Quantized open models** (Llama, Mixtral) run on consumer hardware
+- **LoRA / QLoRA** enable fine-tuning on a single GPU
+- **Smaller efficient models** (Phi, Gemma) bring quality to resource-constrained settings
+- **Open weights** let researchers, startups, and developing nations participate in AI development
+
+Without efficiency research, frontier AI would remain exclusive to a handful of well-funded organizations.
+
 </div>
 
-**The debate:**
-- Mirrors open-source software vs proprietary
-- But higher stakes (safety, dual-use concerns)
-- Trend: Moving toward more open models
-- Efficiency helps open models (smaller = easier to distribute)
+---
 
+# Key takeaways
+
+<div class="important-box" data-title="Core concepts from this lecture">
+
+1. **MoE** replaces dense feed-forward layers with multiple experts and a router, activating only top-k per token
+2. **Mixtral 8x7B** achieves 70B-quality at 13B-cost, proving MoE works at scale
+3. **Load balancing** (auxiliary loss, capacity limits) is critical to prevent routing collapse
+4. **Quantization** (INT4/INT8) enables running large models on consumer hardware
+5. **Knowledge distillation** transfers capability from large teacher to small student models
+6. **Inference optimizations** (KV cache, Flash Attention, speculative decoding) dramatically speed up generation
+7. **Efficiency is an equity issue**: it determines who can access and benefit from AI
+
+</div>
 
 ---
 
-# Future of Efficient LLMs 
+# Further reading
 
+<div class="note-box" data-title="References">
 
-**Where is the field heading?**
+- **Shazeer et al. (2017)** -- "Outrageously Large Neural Networks: The Sparsely-Gated MoE Layer" [[arXiv]](https://arxiv.org/abs/1701.06538)
+- **Jiang et al. (2024)** -- "Mixtral of Experts" [[arXiv]](https://arxiv.org/abs/2401.04088)
+- **Fedus et al. (2022)** -- "Switch Transformers" [[arXiv]](https://arxiv.org/abs/2101.03961)
+- **Dao et al. (2022)** -- "FlashAttention" [[arXiv]](https://arxiv.org/abs/2205.14135)
+- **Gu & Dao (2023)** -- "Mamba: Linear-Time Sequence Modeling" [[arXiv]](https://arxiv.org/abs/2312.00752)
+- **Strubell et al. (2019)** -- "Energy and Policy Considerations for Deep Learning" [[arXiv]](https://arxiv.org/abs/1906.02243)
 
-1. **Hybrid Architectures**
- - Combine MoE + attention + SSMs
-- Use different mechanisms for different parts
-- Dynamic architecture selection
-2. **Conditional Computation**
- - Adjust depth/width based on input difficulty
-- Early exit for easy examples
-- More compute for hard problems
-3. **Neural Architecture Search**
- - Automatically find efficient architectures
-- Multi-objective optimization (quality + speed + size)
-4. **Hardware Co-Design**
- - Design models for specific hardware
-- Custom chips for LLMs (TPUs, Groq, Cerebras)
-- Edge-specific models
-
+</div>
 
 ---
 
-# Key Takeaways 
+# Questions?
 
+<div class="emoji-figure">
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
+    <span class="label"><a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+  </div>
+  <div class="emoji-col">
+    <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
+    <span class="label"><a href="https://context-lab.youcanbook.me">Office hours</a></span>
+  </div>
+</div>
 
-1. **MoE enables efficient scaling**
- - More parameters, fewer active per token
-- Better quality/compute ratio
+<div class="tip-box" data-title="Up next...">
 
- 
+Ethics, bias, and safety: responsible development of large language models
 
-2. **Challenges exist but solvable**
- - Load balancing, training instability
-- Solutions: auxiliary losses, capacity limits
-
- 
-
-3. **Mixtral proves MoE works at scale**
- - 70B-quality with 13B-cost
-- Open weights accelerate adoption
-
- 
-
-4. **Many paths to efficiency**
- - Quantization, pruning, distillation
-- Flash attention, speculative decoding
-- SSMs, hybrid architectures
-
- 
-
-5. **Efficiency enables democratization**
- - Lower costs, environmental impact
-- Accessible to more researchers
-
-
----
-
-# Readings 
-
-
-**Required:**
-1. **Shazeer et al. (2017)**: Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer
- [[arXiv]](https://arxiv.org/abs/1701.06538)
-2. **Jiang et al. (2024)**: Mixtral of Experts
- [[arXiv]](https://arxiv.org/abs/2401.04088)
-
-**Recommended:**
-- Fedus et al. (2022): Switch Transformers [[arXiv]](https://arxiv.org/abs/2101.03961)
-- Gu & Dao (2023): Mamba [[arXiv]](https://arxiv.org/abs/2312.00752)
-- Dao et al. (2022): FlashAttention [[arXiv]](https://arxiv.org/abs/2205.14135)
-- Strubell et al. (2019): Energy and Policy Considerations [[arXiv]](https://arxiv.org/abs/1906.02243)
-- HuggingFace MoE Blog [[Blog]](https://huggingface.co/blog/moe)
-
-
----
-
-
-Questions? 
-
-Next: Ethics, Bias, and Safety!
-
+</div>

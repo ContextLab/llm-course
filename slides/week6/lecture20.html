@@ -693,7 +693,7 @@
 
 </script>
 </head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="lecture-22-scaling-up-to-gpt-3-and-beyond">Lecture 22: Scaling up to GPT-3 and beyond</h1>
+<h1 id="lecture-20-applications-of-encoder-models">Lecture 20: Applications of encoder models</h1>
 <h3 id="psyc-5117-models-of-language-and-communication">PSYC 51.17: Models of language and communication</h3>
 <p>Jeremy R. Manning<br />
 Dartmouth College<br />
@@ -702,714 +702,498 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="learning-objectives">Learning objectives</h1>
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
+<ol>
+<li>Apply BERT to real-world NLP tasks: classification, NER, QA, and semantic similarity</li>
+<li>Explain how BERT improved Google Search</li>
+<li>Connect transformer representations to cognitive neuroscience findings</li>
+<li>Evaluate the &quot;understanding vs pattern matching&quot; debate</li>
+<li>Identify limitations and biases in deployed language models</li>
+</ol>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="where-bert-excels">Where BERT excels</h1>
+<div class="note-box" data-title="BERT powers a wide range of understanding tasks">
+<p><strong>Classification tasks:</strong> Sentiment analysis, topic classification, spam detection, intent recognition</p>
+<p><strong>Token-level tasks:</strong> Named entity recognition (NER), part-of-speech tagging, word sense disambiguation</p>
+<p><strong>Span-level tasks:</strong> Question answering, extractive summarization, information extraction</p>
+<p><strong>Sentence-pair tasks:</strong> Semantic similarity, natural language inference, paraphrase detection</p>
+</div>
+<div class="important-box" data-title="Industry impact">
+<p>BERT powers Google Search (understanding queries), customer service chatbots, content moderation systems, and document understanding pipelines at companies worldwide.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="case-study-google-search">Case study: Google Search</h1>
+<div class="definition-box" data-title="BERT revolutionized search in 2019">
+<p>Before BERT, search engines primarily matched keywords. BERT enabled Google to understand <em>how words relate to each other</em> — especially prepositions, negations, and context words.</p>
+</div>
+<div class="example-box" data-title="Why word order matters">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">query = &quot;2019 brazil traveler to usa need a visa&quot;</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"># Before BERT (keyword matching):</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Matches both &quot;US traveler to Brazil&quot; AND &quot;Brazil traveler to US&quot;</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"># With BERT (contextual understanding):</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"># Understands &quot;to USA&quot; means the traveler&#x27;s DESTINATION is the US</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># Correctly ranks: &quot;Brazil citizen visa requirements for USA&quot;</span></span>
+</code></pre>
+</div>
+<div class="note-box" data-title="More examples of context-sensitive queries">
+<table>
+<thead>
+<tr>
+<th>Query</th>
+<th>Before BERT</th>
+<th>With BERT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;can you get medicine for someone pharmacy&quot;</td>
+<td>Generic pharmacy results</td>
+<td>Picking up prescriptions for others</td>
+</tr>
+<tr>
+<td>&quot;do estheticians stand a lot at work&quot;</td>
+<td>Job listings</td>
+<td>Physical demands of the job</td>
+</tr>
+<tr>
+<td>&quot;parking on a hill with no curb&quot;</td>
+<td>Parking tickets</td>
+<td>How to park safely without a curb</td>
+</tr>
+</tbody>
+</table>
+<p>Google reported BERT improved 1 in 10 English searches.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="question-answering-with-bert">Question answering with BERT</h1>
+<div class="example-box" data-title="Extractive QA: find the answer span in a passage">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">qa = pipeline(&quot;question-answering&quot;,</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">              model=&quot;bert-large-uncased-whole-word-masking-finetuned-squad&quot;)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">result = qa(</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">    question=&quot;In what country is Normandy located?&quot;,</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    context=&quot;The Normans were the people who in the 10th and 11th centuries &quot;</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">            &quot;gave their name to Normandy, a region in France.&quot;</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">print(result)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"># {&#x27;answer&#x27;: &#x27;France&#x27;, &#x27;score&#x27;: 0.987, &#x27;start&#x27;: 134, &#x27;end&#x27;: 140}</span></span>
+</code></pre>
+</div>
+<div class="note-box" data-title="How it works">
+<p>BERT predicts two things for each token in the passage: the probability that it's the <strong>start</strong> of the answer, and the probability that it's the <strong>end</strong> of the answer. The answer span is the highest-scoring (start, end) pair.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="named-entity-recognition">Named entity recognition</h1>
+<div class="example-box" data-title="Token-level classification with BERT">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">ner = pipeline(&quot;ner&quot;, model=&quot;dslim/bert-base-NER&quot;)</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">text = &quot;Apple Inc. is headquartered in Cupertino, California.&quot;</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">entities = ner(text)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">for e in entities:</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    print(f&quot;{e[&#x27;word&#x27;]}: {e[&#x27;entity&#x27;]} (score: {e[&#x27;score&#x27;]:.2f})&quot;)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"># Apple: B-ORG (0.99)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"># Inc:   I-ORG (0.99)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"># Cupertino:  B-LOC (0.99)</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"># California: B-LOC (0.99)</span></span>
+</code></pre>
+</div>
+<div class="note-box" data-title="BIO tagging scheme">
 <ul>
-<li>Describe how <strong>GPT-2</strong> demonstrated zero-shot task transfer through scale</li>
-<li>Explain how <strong>GPT-3</strong> enabled <strong>few-shot learning</strong> without fine-tuning</li>
-<li>State the key findings of <strong>scaling laws</strong> (Kaplan et al., 2020) and <strong>Chinchilla</strong> (Hoffmann et al., 2022)</li>
-<li>Outline the <strong>RLHF</strong> pipeline that transformed GPT-3 into ChatGPT</li>
-<li>Compare <strong>open</strong> vs. <strong>closed</strong> model ecosystems and their tradeoffs</li>
-<li>Apply <strong>prompting techniques</strong> including few-shot and chain-of-thought</li>
+<li><strong>B-</strong> prefix: Beginning of an entity</li>
+<li><strong>I-</strong> prefix: Inside (continuation) of an entity</li>
+<li><strong>O</strong>: Outside any entity</li>
+<li>Entity types: PER (person), ORG (organization), LOC (location), MISC (miscellaneous)</li>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-2-language-models-are-unsupervised-multitask-learners">GPT-2: language models are unsupervised multitask learners</h1>
-<div class="definition-box" data-title="The 10x scale-up">
-<p>GPT-2 (Radford et al., 2019) scaled GPT-1 by an order of magnitude and discovered that <strong>larger models can perform tasks without any fine-tuning</strong>.</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="sentiment-analysis">Sentiment analysis</h1>
+<div class="example-box" data-title="Sequence classification with BERT">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">sentiment = pipeline(&quot;sentiment-analysis&quot;,</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">                     model=&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">texts = [</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">    &quot;This movie was absolutely amazing!&quot;,</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    &quot;The product broke after one week.&quot;,</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    &quot;The weather is cloudy today.&quot;</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">]</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">for text in texts:</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">    result = sentiment(text)[0]</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    print(f&quot;{text}&quot;)</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">    print(f&quot;  → {result[&#x27;label&#x27;]} (confidence: {result[&#x27;score&#x27;]:.2f})&quot;)</span></span>
+</code></pre>
+</div>
+<div class="tip-box" data-title="Applications">
+<p>Sentiment analysis powers customer review analysis, social media monitoring, brand reputation tracking, and financial market sentiment indicators.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="semantic-similarity">Semantic similarity</h1>
+<div class="example-box" data-title="Measuring sentence similarity with BERT embeddings">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import BertTokenizer, BertModel</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">import torch.nn.functional as F</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">tokenizer = BertTokenizer.from_pretrained(&#x27;bert-base-uncased&#x27;)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">model = BertModel.from_pretrained(&#x27;bert-base-uncased&#x27;)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">def get_sentence_embedding(sentence):</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    inputs = tokenizer(sentence, return_tensors=&#x27;pt&#x27;, padding=True, truncation=True)</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    outputs = model(**inputs)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    return outputs.last_hidden_state[:, 0, :]  # [CLS] token</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">sent1 = &quot;The cat is sleeping on the couch&quot;</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="semantic-similarity-1">Semantic similarity</h1>
+<div class="example-box" data-title="Measuring sentence similarity with BERT embeddings">
+<pre><code class="language-python has-line-numbers" data-start-line="13">
+<span class="line"><span class="line-num">13</span><span class="line-code">sent2 = &quot;A feline is resting on the sofa&quot;     # Paraphrase</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">sent3 = &quot;The weather is nice today&quot;            # Unrelated</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code">emb1, emb2, emb3 = [get_sentence_embedding(s) for s in [sent1, sent2, sent3]]</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">print(f&quot;Paraphrase similarity: {F.cosine_similarity(emb1, emb2).item():.3f}&quot;)  # High</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">print(f&quot;Unrelated similarity:  {F.cosine_similarity(emb1, emb3).item():.3f}&quot;)  # Low</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="cognitive-neuroscience-perspective">Cognitive neuroscience perspective</h1>
+<div class="definition-box" data-title="How do brains and models process language?">
+<p>Both biological brains and transformer models process language through <strong>predictive processing</strong> — constantly anticipating upcoming input based on context.</p>
+<p><strong>In the brain:</strong></p>
+<ul>
+<li>The N400 ERP component reflects surprise at unexpected words</li>
+<li>Left inferior frontal gyrus (IFG) handles syntax</li>
+<li>Left superior temporal gyrus (STG/MTG) handles semantics</li>
+<li>Prediction errors drive learning and adaptation</li>
+</ul>
+<p><strong>In transformer models:</strong></p>
+<ul>
+<li>Cross-entropy loss measures surprise at each token</li>
+<li>Lower layers encode syntax, upper layers encode semantics</li>
+<li>Gradient descent optimizes predictions</li>
+<li>Both systems are hierarchical, context-sensitive, and predictive</li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="prediction-in-brains-vs-language-models">Prediction in brains vs language models</h1>
+<div class="note-box" data-title="Parallels between neural and artificial systems">
+<table>
+<thead>
+<tr>
+<th>Phenomenon</th>
+<th>Human brain</th>
+<th>Transformer models</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Surprise</strong></td>
+<td>N400 amplitude (EEG)</td>
+<td>Cross-entropy loss</td>
+</tr>
+<tr>
+<td><strong>Hierarchy</strong></td>
+<td>Sounds → words → sentences</td>
+<td>Tokens → phrases → meaning</td>
+</tr>
+<tr>
+<td><strong>Context</strong></td>
+<td>Prior discourse + world knowledge</td>
+<td>Self-attention over sequence</td>
+</tr>
+<tr>
+<td><strong>Representation</strong></td>
+<td>Population coding (neurons)</td>
+<td>Distributed embeddings (vectors)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="example-box" data-title="The N400 / surprisal parallel">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">sentence_a = &quot;I take my coffee with cream and sugar&quot;   # Expected</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">sentence_b = &quot;I take my coffee with cream and socks&quot;   # Surprising!</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Brain: N400 amplitude much higher for &quot;socks&quot;</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># Model: Higher cross-entropy loss for &quot;socks&quot;</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">surprisal = -np.log(model.predict_prob(&quot;socks&quot;, context))</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># Surprisal correlates with N400 amplitude in EEG studies!</span></span>
+</code></pre>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="neural-encoding-with-language-models">Neural encoding with language models</h1>
+<div class="example-box" data-title="Can we predict brain activity from BERT representations?">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"># Neural encoding experiment workflow</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">import numpy as np</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">from transformers import BertModel</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"># 1. Participant reads sentences while in fMRI scanner</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">sentences = [&quot;The dog chased the cat&quot;, &quot;She opened the door&quot;, ...]</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">brain_activity = fmri_scanner.record(sentences)  # (n_sentences, n_voxels)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"># 2. Extract BERT representations for same sentences</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">bert = BertModel.from_pretrained(&quot;bert-base-uncased&quot;)</span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="neural-encoding-with-language-models-1">Neural encoding with language models</h1>
+<div class="example-box" data-title="Can we predict brain activity from BERT representations?">
+<pre><code class="language-python has-line-numbers" data-start-line="11">
+<span class="line"><span class="line-num">11</span><span class="line-code">bert_embeddings = []</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">for sent in sentences:</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">    outputs = bert(tokenizer(sent, return_tensors=&quot;pt&quot;))</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    bert_embeddings.append(outputs.hidden_states[8].mean(dim=1))  # Layer 8</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"># 3. Train encoding model: BERT representations → brain activity</span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code">from sklearn.linear_model import Ridge</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code">encoder = Ridge().fit(bert_embeddings[:80], brain_activity[:80])</span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code"># 4. Predict brain activity for held-out sentences</span></span>
+</code></pre>
+<div class="code-continued-indicator">...continued...</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="neural-encoding-with-language-models-2">Neural encoding with language models</h1>
+<div class="example-box" data-title="Can we predict brain activity from BERT representations?">
+<pre><code class="language-python has-line-numbers" data-start-line="21">
+<span class="line"><span class="line-num">21</span><span class="line-code">predictions = encoder.predict(bert_embeddings[80:])</span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code">correlation = np.corrcoef(predictions.flat, brain_activity[80:].flat)[0,1]</span></span>
+<span class="line"><span class="line-num">23</span><span class="line-code"># Correlation ~ 0.3–0.5 in language areas (statistically significant!)</span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+</div>
+<p><strong>Key finding:</strong> BERT layer 8 best predicts semantic brain areas; layers 2–4 predict phonological areas.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="understanding-vs-pattern-matching">Understanding vs pattern matching</h1>
+<div class="tip-box" data-title="Questions to consider">
+<p><strong>Evidence FOR understanding:</strong></p>
+<ul>
+<li>Captures syntax and semantics automatically</li>
+<li>Resolves lexical ambiguity based on context</li>
+<li>Handles long-range dependencies</li>
+<li>Generalizes to unseen examples</li>
+<li>Predicts brain activity patterns</li>
+</ul>
+<p><strong>Evidence AGAINST understanding:</strong></p>
+<ul>
+<li>No grounding in the physical world</li>
+<li>No sensory or social experience</li>
+<li>Brittle to adversarial examples</li>
+<li>No common sense reasoning</li>
+<li>Might be &quot;just&quot; sophisticated pattern matching</li>
+</ul>
+<p><strong>The key question:</strong> Is there a meaningful difference between &quot;understanding&quot; and &quot;very good pattern matching&quot;? Does it matter for applications?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="adversarial-examples-and-brittleness">Adversarial examples and brittleness</h1>
+<div class="example-box" data-title="BERT can be fooled by simple tricks">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">classifier = pipeline(&quot;sentiment-analysis&quot;)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"># Works correctly</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">classifier(&quot;This movie was absolutely wonderful!&quot;)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"># → POSITIVE (0.9998)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"># Adding irrelevant negative words flips the prediction!</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">classifier(&quot;This movie was absolutely wonderful! [SEP] bad bad bad bad&quot;)</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code"># → NEGATIVE (0.9234)  # WRONG!</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code"># Synonym substitution changes confidence</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">classifier(&quot;The food was good&quot;)  # → POSITIVE (0.99)</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">classifier(&quot;The food was fine&quot;)  # → POSITIVE (0.72)  # Less confident</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">classifier(&quot;The food was ok&quot;)    # → NEGATIVE (0.51)  # Flipped!</span></span>
+</code></pre>
+</div>
+<div class="warning-box" data-title="Implications for deployment">
+<ul>
+<li><strong>Adversarial attacks</strong>: Malicious users can manipulate model predictions</li>
+<li><strong>Robustness testing</strong>: Always test with perturbed inputs before deployment</li>
+<li><strong>Defense strategies</strong>: Adversarial training, input validation, ensemble methods</li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="bias-in-language-models">Bias in language models</h1>
+<div class="warning-box" data-title="Models reflect and amplify societal biases">
+<p>BERT inherits biases from its training data (books and Wikipedia contain historical biases):</p>
+<ul>
+<li>Gender bias in occupations: &quot;The doctor said [MASK] would be late&quot; → &quot;he&quot; (62%) vs &quot;she&quot; (18%)</li>
+<li>&quot;The nurse said [MASK] would be late&quot; → &quot;she&quot; (71%) vs &quot;he&quot; (15%)</li>
+<li>Racial bias in sentiment: Different confidence scores for identical sentences with different names</li>
+</ul>
+</div>
+<div class="note-box" data-title="Mitigation strategies">
+<ol>
+<li><strong>Data-level</strong>: Balanced training corpora, counterfactual data augmentation</li>
+<li><strong>Model-level</strong>: Debiasing loss functions, fine-tuning on balanced datasets</li>
+<li><strong>Output-level</strong>: Post-hoc filtering, human review for sensitive applications</li>
+<li><strong>Evaluation</strong>: Regular bias audits using standardized benchmarks (WinoBias, StereoSet)</li>
+</ol>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="limitations-of-current-encoder-models">Limitations of current encoder models</h1>
+<div class="warning-box" data-title="Despite impressive performance, significant limitations remain">
+<p><strong>Quadratic complexity</strong>: Self-attention scales as <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> with sequence length, limiting context to 512–4096 tokens.</p>
+<p><strong>No generation capability</strong>: BERT is designed for understanding, not producing text. For generation tasks, use decoder models (GPT) or encoder-decoder models (T5, BART).</p>
+<p><strong>Data hunger</strong>: Pre-training requires billions of words. Humans learn language with orders of magnitude less data.</p>
+<p><strong>No world model</strong>: BERT learns statistical patterns in text but has no grounding in physical reality, sensory experience, or causal reasoning.</p>
+<p><strong>Fragility</strong>: Small input perturbations can cause large output changes, making models unreliable in adversarial settings.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="practical-deployment-tips">Practical deployment tips</h1>
+<div class="tip-box" data-title="Making BERT work in production">
+<p><strong>Start with pre-trained models</strong> — never train from scratch. Use HuggingFace Model Hub.</p>
+<p><strong>Fine-tuning best practices:</strong></p>
+<ul>
+<li>Learning rate: 1e-5 to 5e-5 (much lower than pre-training)</li>
+<li>Warmup steps: 6–10% of total training steps</li>
+<li>Monitor for overfitting; freeze early layers if data is limited</li>
+<li>3–5 epochs is usually sufficient</li>
+</ul>
+<p><strong>Optimization for speed:</strong></p>
+<ul>
+<li>Use DistilBERT for 60% faster inference with 97% quality</li>
+<li>Quantization (INT8) gives 2–4× speedup with minimal quality loss</li>
+<li>Export to ONNX Runtime for production serving</li>
+<li>Use FlashAttention when available</li>
+</ul>
+</div>
+<div class="note-box" data-title="Optimization results">
+<table>
+<thead>
+<tr>
+<th>Optimization</th>
+<th>Size</th>
+<th>Latency</th>
+<th>Quality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Original (FP32)</td>
+<td>420MB</td>
+<td>50ms</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>Quantized (INT8)</td>
+<td>110MB</td>
+<td>25ms</td>
+<td>99.5%</td>
+</tr>
+<tr>
+<td>DistilBERT + ONNX</td>
+<td>65MB</td>
+<td>12ms</td>
+<td>97%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="encoder-vs-decoder-looking-ahead">Encoder vs decoder: looking ahead</h1>
+<div class="note-box" data-title="Different architectures for different tasks">
 <table>
 <thead>
 <tr>
 <th></th>
-<th>GPT-1 (2018)</th>
-<th>GPT-2 (2019)</th>
+<th>Encoder (BERT)</th>
+<th>Decoder (GPT)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Parameters</td>
-<td>117M</td>
-<td>1.5B (13x)</td>
+<td><strong>Training</strong></td>
+<td>Masked language modeling</td>
+<td>Autoregressive next-token</td>
 </tr>
 <tr>
-<td>Training data</td>
-<td>BooksCorpus (5B tokens)</td>
-<td>WebText (40GB, ~8x)</td>
+<td><strong>Context</strong></td>
+<td>Bidirectional</td>
+<td>Left-to-right (causal)</td>
 </tr>
 <tr>
-<td>Fine-tuning needed?</td>
-<td>Yes</td>
-<td><strong>No</strong> (zero-shot transfer)</td>
+<td><strong>Best for</strong></td>
+<td>Understanding tasks</td>
+<td>Generation tasks</td>
+</tr>
+<tr>
+<td><strong>Examples</strong></td>
+<td>Classification, NER, QA, similarity</td>
+<td>Text completion, dialogue, creative writing</td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="important-box" data-title="The key claim">
-<p>&quot;Language models are unsupervised multitask learners&quot; -- a single model trained on next-token prediction implicitly learns to translate, summarize, answer questions, and more.</p>
+<p><strong>Interesting trend:</strong> Decoder-only models (GPT-3, LLaMA) can also do classification via prompting. &quot;In-context learning&quot; blurs the distinction between understanding and generation architectures. The field is moving toward unified decoder-only models.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-webtext-dataset">The WebText dataset</h1>
-<div class="note-box" data-title="Curated web scraping as training data">
-<p>GPT-2 introduced a new data curation strategy:</p>
-<ol>
-<li>Scrape all outbound links from Reddit posts with <strong>3+ karma</strong> (community quality signal)</li>
-<li>Filter for quality and diversity</li>
-<li>Remove Wikipedia (to avoid test set contamination)</li>
-<li>Result: <strong>40GB of text</strong> from ~8 million documents</li>
-</ol>
-</div>
-<div class="tip-box" data-title="Why Reddit karma works as a quality filter">
-<p>Reddit's upvote system acts as human curation at scale. Links that receive 3+ karma have been judged interesting or valuable by at least a few people, filtering out spam and low-quality content without manual review.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-2-model-sizes">GPT-2 model sizes</h1>
-<div class="note-box" data-title="Four progressively released models">
-<table>
-<thead>
-<tr>
-<th>Model</th>
-<th>Parameters</th>
-<th>Layers</th>
-<th>Hidden size</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Small</td>
-<td>117M</td>
-<td>12</td>
-<td>768</td>
-</tr>
-<tr>
-<td>Medium</td>
-<td>345M</td>
-<td>24</td>
-<td>1,024</td>
-</tr>
-<tr>
-<td>Large</td>
-<td>762M</td>
-<td>36</td>
-<td>1,280</td>
-</tr>
-<tr>
-<td>XL</td>
-<td>1.5B</td>
-<td>48</td>
-<td>1,600</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="warning-box" data-title="Staged release for safety">
-<p>OpenAI released GPT-2 over 9 months (Feb--Nov 2019), starting with the smallest model, due to concerns about potential misuse for generating disinformation. This was one of the first high-profile cases of responsible AI release practices.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="zero-shot-task-transfer">Zero-shot task transfer</h1>
-<div class="definition-box" data-title="Performing tasks without fine-tuning">
-<p>GPT-2 can perform tasks it was never explicitly trained for, simply by being prompted with the right text format. This works because the model encountered similar patterns in its diverse training data.</p>
-</div>
-<div class="example-box" data-title="Zero-shot prompting examples">
-<p><strong>Translation</strong>: <code>&quot;English: I love machine learning\nFrench:&quot;</code> → <code>&quot;J'aime l'apprentissage automatique&quot;</code></p>
-<p><strong>Question answering</strong>: <code>&quot;Q: What is the capital of France?\nA:&quot;</code> → <code>&quot;Paris&quot;</code></p>
-<p><strong>Summarization</strong>: <code>&quot;[Long article]\n\nTL;DR:&quot;</code> → generates a summary</p>
-<p>The model learned these formats from web text where such patterns naturally occur (bilingual pages, Q&amp;A forums, Reddit TL;DR summaries).</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-2-zero-shot-performance">GPT-2 zero-shot performance</h1>
-<div class="note-box" data-title="Benchmark results (no fine-tuning)">
-<table>
-<thead>
-<tr>
-<th>Task</th>
-<th>Fine-tuned SOTA</th>
-<th>GPT-2 (zero-shot)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Translation (En→Fr)</td>
-<td>45.6 BLEU</td>
-<td>11.5</td>
-</tr>
-<tr>
-<td>Summarization</td>
-<td>40.2 ROUGE</td>
-<td>29.3</td>
-</tr>
-<tr>
-<td>Question answering</td>
-<td>89.4%</td>
-<td>63.1%</td>
-</tr>
-<tr>
-<td>Reading comprehension</td>
-<td>91.8 F1</td>
-<td>55.0</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="note-box" data-title="Interpretation">
-<p>GPT-2's zero-shot performance was far behind fine-tuned models, but the fact that it worked <strong>at all</strong> was groundbreaking. Performance improved consistently with model size, suggesting that further scaling might close the gap.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-2-text-generation-quality">GPT-2 text generation quality</h1>
-<div class="example-box" data-title="The unicorn sample that went viral">
-<p><strong>Prompt</strong>: &quot;In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains.&quot;</p>
-<p><strong>GPT-2 continued</strong>: &quot;Even more surprising to the researchers was the fact that the unicorns spoke perfect English. The scientist named the population, after their distinctive horn, Ovid's Unicorn. These four-horned, silver-white unicorns were previously unknown to science...&quot;</p>
-</div>
-<div class="warning-box" data-title="Key observations">
-<ul>
-<li><strong>Coherent and fluent</strong> across multiple paragraphs</li>
-<li><strong>Maintains context</strong> and narrative style</li>
-<li><strong>Completely fabricated</strong> -- confident hallucination of non-existent facts</li>
-<li>This dual nature (fluent but unreliable) remains a core challenge for all LLMs</li>
-</ul>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-3-the-175-billion-parameter-model">GPT-3: the 175 billion parameter model</h1>
-<div class="definition-box" data-title="Brown et al. (2020): 'Language Models are Few-Shot Learners'">
-<p>GPT-3 scaled up another <strong>100x</strong> and discovered that at sufficient scale, models develop <strong>in-context learning</strong> -- the ability to learn new tasks from just a few examples in the prompt.</p>
-<table>
-<thead>
-<tr>
-<th>Model</th>
-<th>Parameters</th>
-<th>Scale relative to GPT-1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GPT-1</td>
-<td>117M</td>
-<td>1x</td>
-</tr>
-<tr>
-<td>GPT-2</td>
-<td>1.5B</td>
-<td>13x</td>
-</tr>
-<tr>
-<td>GPT-3</td>
-<td>175B</td>
-<td><strong>1,500x</strong></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="important-box" data-title="The central finding">
-<p>New capabilities <em>emerged</em> at this scale that were absent in smaller models -- arithmetic, basic reasoning, code generation, and robust few-shot learning across dozens of tasks.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-3-specifications">GPT-3 specifications</h1>
-<div class="note-box" data-title="Model architecture">
-<table>
-<thead>
-<tr>
-<th>Component</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Transformer layers</td>
-<td>96</td>
-</tr>
-<tr>
-<td>Hidden size (d_model)</td>
-<td>12,288</td>
-</tr>
-<tr>
-<td>Attention heads</td>
-<td>96</td>
-</tr>
-<tr>
-<td>Context window</td>
-<td>2,048 tokens</td>
-</tr>
-<tr>
-<td>Vocabulary size</td>
-<td>50,257 (BPE)</td>
-</tr>
-<tr>
-<td>Total parameters</td>
-<td>175 billion</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="note-box" data-title="Training details">
-<table>
-<thead>
-<tr>
-<th>Detail</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Training tokens</td>
-<td>300 billion</td>
-</tr>
-<tr>
-<td>Training data</td>
-<td>570GB filtered (Common Crawl, WebText2, Books, Wikipedia)</td>
-</tr>
-<tr>
-<td>Training compute</td>
-<td>~3,640 petaflop-days</td>
-</tr>
-<tr>
-<td>Estimated cost</td>
-<td>~$4.6M</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-3-training-data-composition">GPT-3 training data composition</h1>
-<div class="note-box" data-title="A carefully balanced mixture">
-<table>
-<thead>
-<tr>
-<th>Dataset</th>
-<th>Tokens</th>
-<th>Weight in training</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Common Crawl (filtered)</td>
-<td>410B</td>
-<td>60%</td>
-</tr>
-<tr>
-<td>WebText2</td>
-<td>19B</td>
-<td>22%</td>
-</tr>
-<tr>
-<td>Books1</td>
-<td>12B</td>
-<td>8%</td>
-</tr>
-<tr>
-<td>Books2</td>
-<td>55B</td>
-<td>8%</td>
-</tr>
-<tr>
-<td>Wikipedia</td>
-<td>3B</td>
-<td>3%</td>
-</tr>
-</tbody>
-</table>
-</div>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="discussion">Discussion</h1>
 <div class="tip-box" data-title="Questions to consider">
-<p>Notice that high-quality sources (WebText2, Books, Wikipedia) are sampled <strong>more frequently</strong> than their token count would suggest. Why might oversampling quality data improve performance even when more data is available?</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="few-shot-learning-learning-from-examples-in-the-prompt">Few-shot learning: learning from examples in the prompt</h1>
-<div class="definition-box" data-title="Three learning paradigms">
-<ul>
-<li><strong>Zero-shot</strong>: Task description only -- no examples</li>
-<li><strong>One-shot</strong>: One input-output example provided</li>
-<li><strong>Few-shot</strong>: Multiple examples (typically 3--100) provided in the prompt</li>
-</ul>
-<p>Critically, <strong>no gradient updates occur</strong> -- the model's weights remain frozen. All &quot;learning&quot; happens through pattern recognition in the prompt context.</p>
-</div>
-<div class="example-box" data-title="Few-shot translation">
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">dog -&gt; chien</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">cat -&gt; chat</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">bird -&gt; oiseau</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">I love AI -&gt;</span></span>
-</code></pre>
-<p>GPT-3 output: <code>&quot;J'aime l'IA&quot;</code></p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="few-shot-sentiment-classification">Few-shot sentiment classification</h1>
-<div class="example-box" data-title="Classifying reviews with 3 examples">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">prompt = &quot;&quot;&quot;Classify each review as Positive or Negative.</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">Review: &quot;This movie was amazing, I loved every minute!&quot;</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">Sentiment: Positive</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">Review: &quot;Terrible film, complete waste of time.&quot;</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">Sentiment: Negative</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">Review: &quot;A masterpiece of modern cinema.&quot;</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">Sentiment: Positive</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">Review: &quot;The acting was wooden and the plot made no sense.&quot;</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">Sentiment:&quot;&quot;&quot;</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># GPT-3 output: &quot;Negative&quot;</span></span>
-</code></pre>
-<p>The model recognizes the pattern from examples and applies it to the new input -- no weight updates, no fine-tuning, pure inference.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="emergent-abilities">Emergent abilities</h1>
-<div class="definition-box" data-title="Wei et al. (2022)">
-<p><strong>Emergent abilities</strong> are capabilities that appear only above a certain model scale and are essentially absent in smaller models. They cannot be predicted by extrapolating from smaller models.</p>
-</div>
-<div class="note-box" data-title="Examples of emergent capabilities">
-<table>
-<thead>
-<tr>
-<th>Capability</th>
-<th>Approximate emergence threshold</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Multi-digit arithmetic</td>
-<td>~10B parameters</td>
-</tr>
-<tr>
-<td>Code generation</td>
-<td>~10B parameters</td>
-</tr>
-<tr>
-<td>Multi-step reasoning</td>
-<td>~100B parameters</td>
-</tr>
-<tr>
-<td>Chain-of-thought reasoning</td>
-<td>~100B parameters</td>
-</tr>
-<tr>
-<td>Analogical reasoning</td>
-<td>~100B parameters</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="warning-box" data-title="Caveat">
-<p>Recent work has questioned whether emergence is real or an artifact of evaluation metrics (Schaeffer et al., 2023). The debate continues.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="scaling-laws">Scaling laws</h1>
-<div class="definition-box" data-title="Kaplan et al. (2020): 'Scaling Laws for Neural Language Models'">
-<p>Model performance (measured by cross-entropy loss) scales as a <strong>power law</strong> with three factors:</p>
-<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>L</mi><mo stretchy="false">(</mo><mi>N</mi><mo stretchy="false">)</mo><mo>≈</mo><msup><mrow><mo fence="true">(</mo><mfrac><msub><mi>N</mi><mi>c</mi></msub><mi>N</mi></mfrac><mo fence="true">)</mo></mrow><msub><mi>α</mi><mi>N</mi></msub></msup></mrow><annotation encoding="application/x-tex">L(N) \approx \left(\frac{N_c}{N}\right)^{\alpha_N}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4543em;vertical-align:-0.95em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.5043em;"><span style="top:-3.9029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3567em;margin-left:-0.0037em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1433em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p><p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> is the number of parameters, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">N_c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> is a constant, and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>N</mi></msub><mo>≈</mo><mn>0.076</mn></mrow><annotation encoding="application/x-tex">\alpha_N \approx 0.076</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6331em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.076</span></span></span></span>.</p>
-</div>
-<div class="note-box" data-title="Key findings">
 <ol>
-<li>Performance improves <strong>smoothly and predictably</strong> with scale</li>
-<li>Model <strong>shape</strong> (depth vs. width) matters surprisingly little</li>
-<li>10x more parameters → ~15% lower loss</li>
-<li>The three scaling axes (parameters, data, compute) can substitute for each other to some extent</li>
+<li>
+<p><strong>Understanding vs pattern matching:</strong> Where do you draw the line? Is there a test for &quot;true&quot; understanding? Does it matter if the application works?</p>
+</li>
+<li>
+<p><strong>Brain-model parallels:</strong> How useful are comparisons between transformers and the brain? What can neuroscience learn from AI, and vice versa?</p>
+</li>
+<li>
+<p><strong>Bias and fairness:</strong> Who is responsible for addressing bias in language models? Can we ever have completely unbiased models? How do we balance accuracy and fairness?</p>
+</li>
+<li>
+<p><strong>The future of encoder models:</strong> Will BERT-style encoders remain relevant as GPT-style decoders get better at everything? Or do understanding and generation require fundamentally different approaches?</p>
+</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="chinchilla-scaling-laws">Chinchilla scaling laws</h1>
-<div class="important-box" data-title="Hoffmann et al. (2022): 'Training Compute-Optimal Large Language Models'">
-<p>Previous models were <strong>over-parameterized and under-trained</strong>. For a given compute budget, the optimal allocation is approximately <strong>20 tokens per parameter</strong>.</p>
-</div>
-<div class="note-box" data-title="GPT-3 was undertrained">
-<table>
-<thead>
-<tr>
-<th>Model</th>
-<th>Parameters</th>
-<th>Training tokens</th>
-<th>Tokens/parameter</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GPT-3</td>
-<td>175B</td>
-<td>300B</td>
-<td>1.7 (far below optimal)</td>
-</tr>
-<tr>
-<td>Chinchilla</td>
-<td>70B</td>
-<td>1.4T</td>
-<td>20 (optimal)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Result</strong>: Chinchilla (70B) <strong>outperformed</strong> GPT-3 (175B) despite being 2.5x smaller, because it was trained on 4.7x more data.</p>
-</div>
-<div class="tip-box" data-title="Impact on the field">
-<p>Chinchilla scaling directly influenced Llama 2, Mistral, and other modern models that prioritize longer training over larger parameter counts.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="from-gpt-3-to-chatgpt">From GPT-3 to ChatGPT</h1>
-<div class="note-box" data-title="The three-stage evolution">
-<table>
-<thead>
-<tr>
-<th>Stage</th>
-<th>Model</th>
-<th>Key innovation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>GPT-3 (2020)</td>
-<td>Next-token prediction at massive scale</td>
-</tr>
-<tr>
-<td>2</td>
-<td>InstructGPT (2022)</td>
-<td><strong>Instruction tuning</strong> on human-written responses</td>
-</tr>
-<tr>
-<td>3</td>
-<td>ChatGPT (Nov 2022)</td>
-<td><strong>RLHF</strong> for helpful, harmless conversation</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="definition-box" data-title="What is instruction tuning?">
-<p>Fine-tune the model on (instruction, response) pairs so it learns to <strong>follow commands</strong> rather than merely continue text. Before instruction tuning, asking GPT-3 to &quot;Write a haiku about AI&quot; might produce an essay <em>about</em> haiku writing. After instruction tuning, it actually writes the haiku.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="rlhf-reinforcement-learning-from-human-feedback">RLHF: reinforcement learning from human feedback</h1>
-<div class="note-box" data-title="The three-step RLHF pipeline (Ouyang et al., 2022)">
-<p><strong>Step 1 -- Supervised fine-tuning (SFT)</strong>: Train on human-written example responses to learn basic instruction-following.</p>
-<p><strong>Step 2 -- Reward model training</strong>: Generate multiple responses to the same prompt, have humans rank them, and train a model to predict human preferences.</p>
-<p><strong>Step 3 -- RL optimization (PPO)</strong>: Use the reward model as a scoring function and optimize the language model's policy to maximize predicted human preference scores.</p>
-</div>
-<div class="important-box" data-title="Why RLHF matters">
-<p>RLHF aligns the model's objective with <strong>what humans actually want</strong> (helpful, honest, harmless) rather than just next-token likelihood. This is what made ChatGPT feel qualitatively different from GPT-3.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="rlhf-in-practice">RLHF in practice</h1>
-<div class="example-box" data-title="Training the reward model">
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Prompt: &quot;How do I make a cake?&quot;</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">Response A (human rank: 1st):</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">&quot;Here&#x27;s a simple recipe: Preheat oven to 350F.</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"> Mix 2 cups flour, 1.5 cups sugar...&quot;</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">Response B (human rank: 2nd):</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">&quot;Cake is a type of dessert that originated in</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"> ancient civilizations...&quot;</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">Response C (human rank: 3rd):</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">&quot;I cannot help with that request.&quot;</span></span>
-</code></pre>
-<p>The reward model learns: direct, helpful answers score highest; tangential information scores lower; unhelpful refusals score lowest.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="chatgpts-impact">ChatGPT's impact</h1>
-<div class="note-box" data-title="The fastest-growing consumer application in history">
-<ul>
-<li>Launched <strong>November 30, 2022</strong></li>
-<li><strong>1 million users</strong> in 5 days</li>
-<li><strong>100 million users</strong> in 2 months</li>
-<li>Brought LLMs into mainstream public consciousness</li>
-</ul>
-</div>
-<div class="tip-box" data-title="Questions to consider">
-<p>ChatGPT's architecture (GPT-3.5 + RLHF) was not dramatically different from what researchers had been building. Why did <em>this particular release</em> capture public attention so completely? What role did the conversational interface play vs. the underlying capabilities?</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-modern-llm-landscape">The modern LLM landscape</h1>
-<div class="note-box" data-title="Key milestones after GPT-3 (2020--2025)">
-<table>
-<thead>
-<tr>
-<th>Year</th>
-<th>Milestone</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>2022</td>
-<td>ChatGPT launched (OpenAI)</td>
-</tr>
-<tr>
-<td>2023</td>
-<td>GPT-4 -- multimodal, improved reasoning</td>
-</tr>
-<tr>
-<td>2023</td>
-<td>Llama 2 -- open weights from Meta (70B)</td>
-</tr>
-<tr>
-<td>2023</td>
-<td>Claude 2 (Anthropic), Gemini (Google)</td>
-</tr>
-<tr>
-<td>2024</td>
-<td>Claude 3.5, GPT-4o, Llama 3, Mistral Large</td>
-</tr>
-<tr>
-<td>2024--25</td>
-<td>Smaller efficient models (Phi, Qwen, Gemma)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="note-box" data-title="Five key trends">
-<ol>
-<li><strong>Multimodal</strong> capabilities (text + vision + audio)</li>
-<li><strong>Longer context windows</strong> (100K+ tokens)</li>
-<li><strong>Better reasoning</strong> (chain-of-thought, tool use)</li>
-<li><strong>Open-source alternatives</strong> approaching closed-model quality</li>
-<li><strong>Efficiency gains</strong> -- smaller models matching larger predecessors</li>
-</ol>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="open-vs-closed-models">Open vs. closed models</h1>
-<div class="note-box" data-title="The ongoing debate">
-<table>
-<thead>
-<tr>
-<th>Dimension</th>
-<th>Closed (GPT-4, Claude)</th>
-<th>Open (Llama, Mistral)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Safety control</td>
-<td>Centralized moderation</td>
-<td>Community-dependent</td>
-</tr>
-<tr>
-<td>Transparency</td>
-<td>Low (proprietary)</td>
-<td>High (weights available)</td>
-</tr>
-<tr>
-<td>Customization</td>
-<td>Limited (API only)</td>
-<td>Full (fine-tune, modify)</td>
-</tr>
-<tr>
-<td>Cost model</td>
-<td>Per-token API fees</td>
-<td>One-time compute cost</td>
-</tr>
-<tr>
-<td>Cutting-edge performance</td>
-<td>Usually ahead</td>
-<td>Rapidly closing gap</td>
-</tr>
-<tr>
-<td>Misuse risk</td>
-<td>Lower (gated access)</td>
-<td>Higher (unrestricted)</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="tip-box" data-title="Questions to consider">
-<p>Is AI safety better served by keeping models closed (preventing misuse) or open (enabling public scrutiny of flaws)? What lessons can we draw from open-source software?</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="references">References</h1>
+<div class="note-box" data-title="Further reading">
+<p><a href="https://aclanthology.org/N19-1423/"><strong>Devlin et al. (2019, <em>NAACL</em>)</strong></a> &quot;BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding&quot;</p>
+<p><a href="https://doi.org/10.1038/s41467-022-28236-3"><strong>Caucheteux &amp; King (2022, <em>Nature Communications</em>)</strong></a> &quot;Brains and algorithms partially converge in natural language processing&quot;</p>
+<p><a href="https://doi.org/10.1080/23273798.2015.1102299"><strong>Kuperberg &amp; Jaeger (2016, <em>Language, Cognition and Neuroscience</em>)</strong></a> &quot;What do we mean by prediction in language comprehension?&quot;</p>
+<p><a href="https://aclanthology.org/2020.acl-main.463/"><strong>Bender &amp; Koller (2020, <em>ACL</em>)</strong></a> &quot;Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data&quot;</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="prompting-techniques">Prompting techniques</h1>
-<div class="note-box" data-title="Practical strategies for getting better outputs">
-<p><strong>Zero-shot with clear instructions</strong>:</p>
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Classify the following text as spam or not spam.</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">Respond with only &quot;spam&quot; or &quot;not spam&quot;.</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">Text: &quot;Congratulations! You&#x27;ve won $1,000,000!&quot;</span></span>
-</code></pre>
-<p><strong>Few-shot with examples</strong>:</p>
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">&quot;Meeting at 3pm tomorrow&quot; -&gt; not spam</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">&quot;URGENT: Send money now!&quot; -&gt; spam</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">&quot;Can you review this document?&quot; -&gt; not spam</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">&quot;You&#x27;ve been selected for a prize!&quot; -&gt;</span></span>
-</code></pre>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="chain-of-thought-prompting">Chain-of-thought prompting</h1>
-<div class="definition-box" data-title="Wei et al. (2022)">
-<p><strong>Chain-of-thought (CoT)</strong> prompting asks the model to show its reasoning step by step before giving a final answer. This dramatically improves performance on reasoning tasks, especially math and logic problems.</p>
-</div>
-<div class="example-box" data-title="Chain-of-thought example">
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Q: Roger has 5 tennis balls. He buys 2 more cans of tennis</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">   balls. Each can has 3 balls. How many does he have now?</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">Let&#x27;s think step by step:</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">1. Roger starts with 5 tennis balls</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">2. He buys 2 cans × 3 balls per can = 6 new balls</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">3. Total = 5 + 6 = 11 tennis balls</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">A: 11</span></span>
-</code></pre>
-<p>Simply adding <strong>&quot;Let's think step by step&quot;</strong> can improve accuracy on math word problems from ~18% to ~79% (Kojima et al., 2022).</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="current-limitations-of-llms">Current limitations of LLMs</h1>
-<div class="warning-box" data-title="What LLMs still struggle with">
-<ul>
-<li><strong>Hallucinations</strong>: Confidently generate false statements with no awareness of uncertainty</li>
-<li><strong>Reasoning depth</strong>: Multi-step logic and mathematical proofs remain unreliable</li>
-<li><strong>Knowledge currency</strong>: Training data has a cutoff date; no access to real-time information</li>
-<li><strong>Consistency</strong>: May give different answers to the same question across runs</li>
-<li><strong>Prompt sensitivity</strong>: Small wording changes can dramatically alter outputs</li>
-</ul>
-</div>
-<div class="note-box" data-title="Active areas of research">
-<p>Each limitation has spawned research directions: RAG for knowledge currency (Lecture 17), tool use for grounding (Lecture 24), constitutional AI for alignment, and formal verification for reasoning reliability.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="key-takeaways">Key takeaways</h1>
-<div class="important-box" data-title="Core concepts from this lecture">
-<ol>
-<li><strong>GPT-2</strong> showed that scale enables zero-shot task transfer without fine-tuning</li>
-<li><strong>GPT-3</strong> (175B) demonstrated few-shot in-context learning and emergent abilities</li>
-<li><strong>Scaling laws</strong> predict smooth power-law improvement with more parameters, data, and compute</li>
-<li><strong>Chinchilla scaling</strong> showed models should be trained longer on more data, not just made bigger</li>
-<li><strong>RLHF</strong> aligned GPT-3 with human preferences to create ChatGPT</li>
-<li><strong>Chain-of-thought prompting</strong> dramatically improves reasoning by eliciting step-by-step thinking</li>
-</ol>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="further-reading">Further reading</h1>
-<div class="note-box" data-title="References">
-<ul>
-<li><strong>Radford et al. (2019)</strong> -- &quot;Language Models are Unsupervised Multitask Learners&quot; (GPT-2) <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">[PDF]</a></li>
-<li><strong>Brown et al. (2020)</strong> -- &quot;Language Models are Few-Shot Learners&quot; (GPT-3) <a href="https://arxiv.org/abs/2005.14165">[arXiv]</a></li>
-<li><strong>Kaplan et al. (2020)</strong> -- &quot;Scaling Laws for Neural Language Models&quot; <a href="https://arxiv.org/abs/2001.08361">[arXiv]</a></li>
-<li><strong>Hoffmann et al. (2022)</strong> -- &quot;Training Compute-Optimal Large Language Models&quot; (Chinchilla) <a href="https://arxiv.org/abs/2203.15556">[arXiv]</a></li>
-<li><strong>Ouyang et al. (2022)</strong> -- &quot;Training language models to follow instructions&quot; (InstructGPT) <a href="https://arxiv.org/abs/2203.02155">[arXiv]</a></li>
-<li><strong>Wei et al. (2022)</strong> -- &quot;Emergent Abilities of Large Language Models&quot; <a href="https://arxiv.org/abs/2206.07682">[arXiv]</a></li>
-</ul>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
@@ -1426,7 +1210,7 @@ Winter 2026</p>
   </div>
 </div>
 <div class="tip-box" data-title="Up next...">
-<p>Implementing GPT from scratch: building a language model in PyTorch</p>
+<p>Week 7: GPT and autoregressive generation — from decoder architecture to text generation</p>
 </div>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();
