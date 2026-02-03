@@ -1,697 +1,528 @@
 ---
 marp: true
 theme: cdl-theme
-paginate: true
-header: 'PSYC 51.17: Models of Language and Communication'
-footer: 'Winter 2026'
+math: katex
+transition: fade 0.25s
+author: Contextual Dynamics Lab
 ---
 
-<!-- _class: lead -->
+# Lecture 17: Retrieval augmented generation
+### PSYC 51.17: Models of language and communication
 
-# Lecture 17: Training transformers
-## Week 5, Lecture 3 - From Architecture to Implementation
-
-**PSYC 51.17: Models of Language and Communication**
-
+Jeremy R. Manning
+Dartmouth College
 Winter 2026
 
 ---
 
-# Today's Agenda 
+# Learning objectives
 
+<div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
+1. Explain why language models need external knowledge
+2. Describe the RAG pipeline: retrieve, augment, generate
+3. Understand how embeddings enable semantic retrieval
+4. Implement a basic RAG system in Python
+5. Evaluate tradeoffs between RAG and fine-tuning
 
-1. **Positional Encoding**: Injecting sequence order
-2. **Feed-Forward Networks**: The other key component
-3. **Layer Norm & Residuals**: Training deep networks
-4. **FlashAttention**: Making transformers faster
-5. **Three Architectures**: Encoder, Decoder, Both
-6. **Practical Implementation**: Using HuggingFace
-
-*Goal: Complete understanding of transformer training and implementation*
+</div>
 
 ---
 
-# Positional encoding
+# Announcements
 
+<div class="important-box" data-title="Assignment 3 due this week">
 
-**Problem: Self-attention is permutation-invariant!**
+**Wikipedia Embeddings** assignment is due **Thursday, February 6 at 11:59 PM EST**.
 
-Without position information:
-- "The cat sat" = "sat cat the" = "cat the sat"
-- Order matters in language!
-
-**Solution: Add positional encodings to input embeddings**
-
-<div class="columns">
-<div class="column">
-
-**Original Transformer (Sinusoidal):**
-```python
-# PE(pos, 2i) = sin(pos / 10000^(2i/d))
-# PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
-
-# Position 0, dim 0: sin(0/10000^0) = 0
-# Position 1, dim 0: sin(1/10000^0) = 0.84
-# Position 2, dim 0: sin(2/10000^0) = 0.91
-```
-
-**Properties:**
-- Deterministic, unique per position
-- Generalizes to unseen lengths
+Submit via GitHub Classroom.
 
 </div>
-<div class="column">
 
-**Concrete Example:**
-```
-Token embeddings:
-"The" = [0.2, 0.5, 0.1, 0.8]
-"cat" = [0.9, 0.3, 0.7, 0.2]
+<div class="note-box" data-title="Assignment 4 released">
 
-Positional encodings:
-pos_0 = [0.0, 1.0, 0.0, 1.0]
-pos_1 = [0.84, 0.54, 0.01, 1.0]
+[**Customer Service Chatbot**](https://contextlab.github.io/llm-course/assignments/assignment-4/) — build a context-aware chatbot using retrieval and generation techniques.
 
-Final input (add them):
-"The" = [0.2, 1.5, 0.1, 1.8]
-"cat" = [1.74, 0.84, 0.71, 1.2]
-```
+Due: **February 16 at 11:59 PM EST**.
 
 </div>
-</div>
-
-*References: Vaswani et al. (2017), Su et al. (2021)*
 
 ---
 
-# Why sinusoidal positional encoding?
+# The knowledge problem
 
+<div class="definition-box" data-title="Two kinds of knowledge">
 
-**Advantages of sine/cosine functions:**
+**Parametric knowledge**: Facts stored *inside* the model's parameters during training. The model "knows" things because it memorized patterns from its training data.
 
-<div class="columns">
-<div class="column">
-
-**1. Unique Patterns**
-- Each position gets unique vector
-- Different frequencies per dimension
-
-**2. Relative Position Info**
-- PE(pos+k) = linear function of PE(pos)
-- Model learns relative positions
-
-**3. Extrapolation**
-- Works for sequences longer than training
-- No need to retrain
-
-**4. No Parameters**
-- Deterministic, saves memory
+**Non-parametric knowledge**: Facts stored *outside* the model in documents, databases, or APIs. The model accesses this knowledge at inference time.
 
 </div>
-<div class="column">
 
-**Visualization:**
-```
-Dim 0 (high freq): ~~~~~ (fast oscillation)
-Dim 1 (mid freq): ~~~ (medium)
-Dim 2 (low freq): ~ (slow)
+<div class="tip-box" data-title="Analogy">
 
-Position 0: [0.0, 0.0, 0.0, ...]
-Position 1: [0.84, 0.01, 0.0001, ...]
-Position 2: [0.91, 0.02, 0.0002, ...]
-...
-Position 100: [0.51, 0.86, 0.01, ...]
-
-Each position has a unique "barcode"!
-```
+Parametric knowledge is like what you remember from studying. Non-parametric knowledge is like having your textbook open during an exam — you can look things up when you need them.
 
 </div>
-</div>
-
 
 ---
 
-# Visualizing positional encodings
+# Why parametric knowledge falls short
 
+<div class="warning-box" data-title="Limitations of relying only on model parameters">
 
-**Each position gets a unique pattern across dimensions**
+1. **Hallucination**: The model confidently generates plausible-sounding but incorrect information
+2. **Stale data**: The model's knowledge is frozen at training time — it doesn't know about events after its cutoff date
+3. **No citations**: The model can't tell you *where* it learned something, making it hard to verify claims
+4. **Costly updates**: Retraining or fine-tuning to add new knowledge is expensive and slow
+5. **Long tail**: Rare or specialized facts are poorly represented in pre-training data
 
-```
-Pos 0 -> Pos 5 -> Pos 9 -> Dim 0 -> Dim 4 -> Dim 7
-```
-
-**Key Insight:**
-- Lower dimensions: Rapid oscillation (high frequency)
-- Higher dimensions: Slow oscillation (low frequency)
-- Creates a unique "barcode" for each position
-- Model learns to use these patterns for positional awareness
-
+</div>
 
 ---
 
-# Feed-forward networks
+# What is RAG?
 
+<div class="definition-box" data-title="Retrieval Augmented Generation">
 
-**After attention, apply position-wise feed-forward network**
+**RAG** is a technique that gives language models access to external knowledge by *retrieving* relevant documents and *including* them in the prompt. The model generates its response based on both its parametric knowledge and the retrieved context.
 
-**Architecture:** Two linear layers with ReLU/GELU activation
+</div>
 
-```python
-class FeedForward(nn.Module):
- def __init__(self, d_model=768, d_ff=3072): # 4x expansion
- super().__init__()
- self.linear1 = nn.Linear(d_model, d_ff) # 768 → 3072
- self.linear2 = nn.Linear(d_ff, d_model) # 3072 → 768
- self.relu = nn.ReLU()
+<div class="note-box" data-title="Key insight">
 
- def forward(self, x):
- # x: [batch, seq_len, 768]
- x = self.linear1(x) # [batch, seq_len, 3072]
- x = self.relu(x) # Non-linearity!
- x = self.linear2(x) # [batch, seq_len, 768]
- return x
+Instead of trying to store all knowledge in the model's parameters, we let the model *look things up* in a knowledge base at inference time. This separates *what the model knows how to do* (reasoning, language) from *what facts it has access to* (documents, data).
 
-# Applied to each position independently
-# Same weights for all positions
-```
-
-**Purpose:** Add non-linearity and increase model capacity
-- Attention is mostly linear (weighted sums)
-- FFN adds expressiveness through ReLU/GELU
+</div>
 
 ---
 
-# Why feed-forward networks?
+# The RAG pipeline
 
+<div class="definition-box" data-title="Five steps">
 
-**Role in the Transformer:**
+1. **Query**: The user asks a question
+2. **Embed**: Convert the query into a vector using an embedding model
+3. **Retrieve**: Find the most similar document chunks in a vector database
+4. **Augment**: Insert the retrieved chunks into the prompt as context
+5. **Generate**: The language model generates an answer grounded in the retrieved context
 
-1. **Add Non-linearity**
- - Attention is mostly linear operations (weighted sums)
-- FFN introduces non-linear transformations
-- ReLU/GELU activation adds expressiveness
+</div>
 
- 
+<div class="tip-box" data-title="The big picture">
 
-2. **Position-wise Processing**
- - Attention mixes information across positions
-- FFN processes each position independently
-- Allows position-specific feature transformations
+$$\text{RAG}(q) = \text{LLM}(q + \text{retrieve}(q, \mathcal{D}))$$
 
- 
+where $q$ is the query and $\mathcal{D}$ is the document collection.
 
-3. **Increase Model Capacity**
- - Expansion (4x) provides more parameters
-- Can learn complex feature combinations
-- Most parameters in transformer are in FFN layers!
-
- 
-
-4. **Feature Refinement**
- - Attention gathers context
-- FFN refines and transforms the representation
-- Two complementary operations
-
+</div>
 
 ---
 
-# Layer normalization & residual connections
+# Embeddings for retrieval
 
+<div class="definition-box" data-title="Connecting to lectures 11-15">
 
-**Critical for training deep transformers!**
+Remember embeddings? In lectures 11-14, we learned that embeddings map text to vectors where **semantic similarity corresponds to geometric proximity**:
 
-<div class="columns">
-<div class="column">
+$$\text{similar meaning} \Leftrightarrow \text{nearby vectors}$$
 
-**Residual Connections:**
-```python
-# output = sublayer(x) + x
-x = x + self.attention(x)
-x = x + self.feedforward(x)
-```
-- Gradients flow directly through
-- Prevents vanishing gradients
-- Enables 96-layer models (GPT-3)!
+RAG uses this property for retrieval: embed the query and the documents into the same vector space, then find the documents closest to the query.
 
 </div>
-<div class="column">
 
-**Layer Normalization:**
-```python
-# Normalize across features (not batch)
-def layer_norm(x, gamma, beta):
- mean = x.mean(dim=-1)
- std = x.std(dim=-1)
- return gamma * (x - mean) / std + beta
+<div class="note-box" data-title="Which embedding model?">
 
-# Example: x = [0.2, 0.8, 0.5]
-# mean=0.5, std=0.25
-# normalized = [-1.2, 1.2, 0.0]
-```
+For RAG, we typically use **sentence embedding** models (not word-level) that produce a single vector for an entire passage:
+- **Sentence-BERT** (all-MiniLM-L6-v2): Fast, good quality, 384 dimensions
+- **OpenAI text-embedding-3-small**: API-based, 1536 dimensions
+- **BGE, E5, GTE**: Open-source alternatives with strong performance
 
 </div>
-</div>
-
-**Standard Pattern (Post-Norm):**
-```python
-x = LayerNorm(x + Attention(x))
-x = LayerNorm(x + FeedForward(x))
-```
-
 
 ---
 
-# Pre-norm vs post-norm
+# Vector similarity
 
+<div class="definition-box" data-title="Measuring how similar two texts are">
 
+Given embedding vectors $a$ and $b$, we compute **cosine similarity**:
 
-**Two ways to arrange LayerNorm and residual connections**
+$$\text{sim}(a, b) = \frac{a \cdot b}{\|a\| \|b\|} = \frac{\sum_i a_i b_i}{\sqrt{\sum_i a_i^2} \cdot \sqrt{\sum_i b_i^2}}$$
 
-<div class="columns">
-<div class="column">
-
-**Post-Norm (Original):**
-```python
-# Normalize AFTER residual
-x = LayerNorm(x + Attention(x))
-x = LayerNorm(x + FFN(x))
-```
-- Used in original Transformer, BERT
-- Can be unstable for deep models
-- Requires careful initialization
+- $\text{sim} = 1$: Identical meaning
+- $\text{sim} = 0$: Unrelated
+- $\text{sim} = -1$: Opposite meaning
 
 </div>
-<div class="column">
 
-**Pre-Norm (Modern):**
-```python
-# Normalize BEFORE sublayer
-x = x + Attention(LayerNorm(x))
-x = x + FFN(LayerNorm(x))
-```
-- Used in GPT-2, GPT-3, LLaMA
-- More stable gradients
-- Easier to train 96+ layer models
-
-</div>
-</div>
-
-<div class="note-box" data-title="Recommendation">
-For deep transformers (24+ layers), Pre-Norm is preferred due to better training stability. Post-Norm can achieve slightly better final performance with careful tuning.
-</div>
-
-
----
-
-# Complete transformer block
-
-
-**Putting it all together:**
+<div class="example-box" data-title="Example">
 
 ```python
-class TransformerBlock(nn.Module):
- def __init__(self, d_model=768, n_heads=12, d_ff=3072):
- super().__init__()
- self.attention = MultiHeadAttention(d_model, n_heads)
- self.ffn = FeedForward(d_model, d_ff)
- self.norm1 = nn.LayerNorm(d_model)
- self.norm2 = nn.LayerNorm(d_model)
+from sentence_transformers import SentenceTransformer, util
 
- def forward(self, x):
- # Self-attention with residual
- x = x + self.attention(self.norm1(x))
- # Feed-forward with residual
- x = x + self.ffn(self.norm2(x))
- return x
+model = SentenceTransformer("all-MiniLM-L6-v2")
 
-# Stack N blocks!
-encoder = nn.Sequential(*[TransformerBlock() for _ in range(12)])
-```
+query = model.encode("What causes rain?")
+doc1 = model.encode("Precipitation occurs when water vapor condenses.")
+doc2 = model.encode("The stock market closed higher today.")
 
-**Model sizes:**
-- BERT-base: 12 blocks, 110M params | BERT-large: 24 blocks, 340M params
-- GPT-3: 96 blocks, 175B params!
-
-
----
-
-# FlashAttention: Making transformers faster
-
-
-**Problem: Standard attention is slow and memory-hungry!**
-
-<div class="warning-box" data-title="Standard Attention Complexity">
-- Time: O(n^2) where n = sequence length
-- Memory: O(n^2) to store attention matrix
-- Bottleneck: Reading/writing to GPU memory (HBM)
-</div>
-
-<div class="columns">
-<div class="column">
-
-**FlashAttention Innovation:**
-- Tile-based computation
-- Uses fast SRAM instead of slow HBM
-- Fused operations (fewer memory reads)
-- Recomputation in backward pass
-
-```python
-# Standard: materialize full n×n matrix
-attn = softmax(Q @ K.T / sqrt(d))
-out = attn @ V # O(n^2) memory
-
-# FlashAttention: compute in tiles
-for tile in tiles:
- # Only load small tile to SRAM
- # Never materialize full matrix!
+print(util.cos_sim(query, doc1))  # ~0.72 (relevant!)
+print(util.cos_sim(query, doc2))  # ~0.05 (irrelevant)
 ```
 
 </div>
-<div class="column">
 
-**Concrete Speedup:**
+---
 
-| Method | Speed | Memory |
-| --- | --- | --- |
-| Standard | 1x | 1x |
-| FlashAttention | 3x faster | 0.5x |
+# Why do we need chunking?
 
-**Real Impact:**
-- Sequence 1024→4096 on same GPU
-- Training 2-4x faster
-- Used in: LLaMA, GPT-4, Mistral
+<div class="definition-box" data-title="Breaking documents into pieces">
+
+Real documents are long — hundreds or thousands of pages. We can't embed an entire book as a single vector (too much information is lost). Instead, we split documents into smaller **chunks** and embed each chunk separately.
 
 </div>
+
+<div class="tip-box" data-title="Chunking strategies">
+
+- **Fixed-size**: Split every $n$ characters/tokens (simple but may cut mid-sentence)
+- **Sentence-based**: Split on sentence boundaries (preserves meaning better)
+- **Semantic**: Use topic shifts to determine chunk boundaries (best quality but most complex)
+- **Recursive**: Split on paragraphs first, then sentences if chunks are still too long
+
 </div>
 
-*Reference: Dao et al. (2022) - "FlashAttention"*
-
 ---
 
-# Other attention optimizations
+# Chunk size tradeoffs
 
+<div class="warning-box" data-title="Getting the chunk size right matters">
 
-**Addressing the $O(n^2)$ problem:**
+**Too small** (e.g., individual sentences):
+- Loses surrounding context
+- May not contain enough information to answer the question
+- Retrieves many fragments that are hard to piece together
 
-1. **Sparse Attention**
- - Only attend to subset of positions
-- Local windows + global tokens
-- Used in: Longformer, BigBird
+**Too large** (e.g., entire chapters):
+- Embedding quality degrades — too much information in one vector
+- Includes irrelevant content alongside relevant content
+- Uses up the language model's context window
 
- 
-
-2. **Linear Attention**
- - Approximate attention with linear complexity
-- Kernel trick to avoid materializing attention matrix
-- Used in: Performer, Linear Transformer
-
- 
-
-3. **Low-Rank Approximation**
- - Factorize attention matrix
-- Reduce memory footprint
-- Used in: Linformer
-
- 
-
-4. **Sliding Window**
- - Fixed-size local attention window
-- Constant memory usage
-- Used in: Mistral 7B
-
-**Trade-off:** Efficiency vs. expressiveness. Full attention often still best for quality.
-
----
-
-# Three transformer architectures
-
-
-
-| Architecture | How it works | Examples | Uses |
-| --- | --- | --- | --- |
-| **Encoder-Only** | Full self-attention | BERT, RoBERTa | Classification, NER, QA |
-| **Decoder-Only** | Causal/masked attention | GPT-2, GPT-3 | Generation, completion |
-| **Encoder-Decoder** | Encoder + decoder with cross-attention | T5, BART, mT5 | Translation, summarization |
-
-<div class="note-box" data-title="Key Difference: Attention Masking">
-- **Encoder:** Full self-attention (bidirectional)
-- **Decoder:** Causal/masked attention (unidirectional)
 </div>
 
+<div class="tip-box" data-title="Rules of thumb">
+
+A good starting point is **256-512 tokens** per chunk with **50-100 token overlap** between adjacent chunks. This ensures each chunk has enough context and important information at chunk boundaries isn't lost.
+
+</div>
 
 ---
 
-# Visual comparison: Encoder vs Decoder vs Both
+# Vector databases
 
-**Encoder-Only (BERT):** Self-Attention → bidirectional
+<div class="definition-box" data-title="Specialized storage for embeddings">
 
-**Decoder-Only (GPT):** Masked Attention → causal
+A **vector database** stores embedding vectors and provides fast **approximate nearest neighbor** (ANN) search. Instead of comparing a query to every document (slow for millions of documents), vector databases use indexing structures to find the most similar vectors in milliseconds.
 
-**Choosing the Right Architecture:**
-- Need to understand full context? → **Encoder** (BERT)
-- Need to generate text? → **Decoder** (GPT)
-- Need both (translate, summarize)? → **Encoder-Decoder** (T5)
+</div>
 
+<div class="note-box" data-title="Why not just use a list?">
+
+Brute-force search over $n$ vectors takes $O(n)$ time. For 10 million chunks, that's 10 million cosine similarity computations per query. Vector databases use techniques like HNSW (Hierarchical Navigable Small World graphs) to reduce this to roughly $O(\log n)$.
+
+</div>
 
 ---
 
-# Using transformers in practice
+# Popular vector databases
 
+<div class="note-box" data-title="Options for different use cases">
 
-**HuggingFace makes it easy!**
+| Database | Type | Best for |
+|----------|------|----------|
+| **FAISS** | Library (Meta) | Research, local experiments |
+| **ChromaDB** | Embedded DB | Prototyping, small-medium scale |
+| **Pinecone** | Managed cloud | Production, no-ops |
+| **Weaviate** | Self-hosted | Full-featured, hybrid search |
+| **Qdrant** | Self-hosted | Performance-focused |
+
+For this course, **ChromaDB** or **FAISS** are the easiest to get started with — no server or API key needed.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Python: embedding documents
+
+<div class="example-box" data-title="Step 1: embed your knowledge base">
 
 ```python
-from transformers import AutoModel, AutoTokenizer
+from sentence_transformers import SentenceTransformer
 
-# Load pre-trained model (downloads ~440MB first time)
-model_name = "bert-base-uncased"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModel.from_pretrained(model_name)
+# Load embedding model
+embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
-# Tokenize input
-text = "The animal didn't cross the street because it was too tired"
-inputs = tokenizer(text, return_tensors="pt")
-print(inputs['input_ids'])
-# tensor([[ 101, 1996, 4111, 2134, 1005, 1056, 2892, 1996,
-# 2395, 2138, 2009, 2001, 2205, 5458, 102]])
-# [CLS] The animal didn ' t cross the ...
+# Your knowledge base (in practice, loaded from files)
+documents = [
+    "The transformer was introduced by Vaswani et al. in 2017.",
+    "BERT uses bidirectional attention for language understanding.",
+    "GPT models use autoregressive (left-to-right) generation.",
+    "Attention mechanisms allow models to focus on relevant context.",
+    "Fine-tuning adapts a pre-trained model to a specific task.",
+]
 
-# Get contextualized embeddings
-outputs = model(**inputs)
-hidden_states = outputs.last_hidden_state # [1, 15, 768]
-
-# "it" is at position 10 - its embedding knows it refers to "animal"!
-it_embedding = hidden_states[0, 10, :] # 768-dim context-aware vector
+# Embed all documents
+doc_embeddings = embedder.encode(documents, convert_to_tensor=True)
+print(doc_embeddings.shape)  # (5, 384) — 5 docs, 384 dims each
 ```
 
-*Reference: HuggingFace Course - Chapter 1.4*
+</div>
 
 ---
+<!-- _class: scale-90 -->
 
-# Comparing architectures: Code examples
+# Python: retrieval
 
-
-**Different architectures for different tasks**
+<div class="example-box" data-title="Step 2: find relevant documents">
 
 ```python
-from transformers import AutoModelForSequenceClassification, \
- AutoModelForCausalLM, \
- AutoModelForSeq2SeqLM
+from sentence_transformers import util
 
-# 1. ENCODER-ONLY (BERT): Classification
-encoder_model = AutoModelForSequenceClassification.from_pretrained(
- "bert-base-uncased", num_labels=2
+def retrieve(query, documents, doc_embeddings, top_k=3):
+    """Find the top_k most relevant documents for a query."""
+    # Embed the query
+    query_embedding = embedder.encode(query, convert_to_tensor=True)
+
+    # Compute cosine similarity against all documents
+    scores = util.cos_sim(query_embedding, doc_embeddings)[0]
+
+    # Get top-k results
+    top_indices = scores.argsort(descending=True)[:top_k]
+
+    results = []
+    for idx in top_indices:
+        results.append({
+            "text": documents[idx],
+            "score": scores[idx].item()
+        })
+    return results
+
+# Example query
+results = retrieve("How do transformers work?", documents, doc_embeddings)
+for r in results:
+    print(f"  [{r['score']:.3f}] {r['text']}")
+```
+
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# Python: generation with context
+
+<div class="example-box" data-title="Step 3: augment the prompt and generate">
+
+```python
+from openai import OpenAI  # or any LLM API
+
+client = OpenAI()
+
+def rag_answer(query, documents, doc_embeddings):
+    """Answer a question using RAG."""
+    # Step 1: Retrieve relevant context
+    context_docs = retrieve(query, documents, doc_embeddings, top_k=3)
+    context = "\n".join([doc["text"] for doc in context_docs])
+
+    # Step 2: Build the augmented prompt
+    prompt = f"""Answer the question based on the provided context.
+If the context doesn't contain the answer, say "I don't know."
+
+Context:
+{context}
+
+Question: {query}
+Answer:"""
+
+    # Step 3: Generate with the LLM
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return response.choices[0].message.content
+
+answer = rag_answer("What is BERT?", documents, doc_embeddings)
+print(answer)
+```
+
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# End-to-end RAG with ChromaDB
+
+<div class="example-box" data-title="A complete mini RAG system">
+
+```python
+import chromadb
+from sentence_transformers import SentenceTransformer
+
+# Set up ChromaDB (persistent storage)
+client = chromadb.Client()
+collection = client.create_collection("course_notes")
+
+# Add documents (ChromaDB handles embedding automatically)
+collection.add(
+    documents=[
+        "The transformer uses self-attention to process sequences in parallel.",
+        "Cross-entropy loss measures prediction error for classification.",
+        "RAG combines retrieval with generation for knowledge-grounded answers.",
+    ],
+    ids=["doc1", "doc2", "doc3"]
 )
-# Use for: Sentiment analysis, NER, classification
 
-# 2. DECODER-ONLY (GPT): Text generation
-decoder_model = AutoModelForCausalLM.from_pretrained("gpt2")
-# Use for: Text completion, creative writing, few-shot learning
-
-# 3. ENCODER-DECODER (T5): Seq2Seq tasks
-seq2seq_model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
-# Use for: Translation, summarization, question answering
-
-# All use transformer architecture, different attention patterns!
+# Query — ChromaDB embeds the query and finds nearest neighbors
+results = collection.query(query_texts=["How does attention work?"], n_results=2)
+print(results["documents"])
+# [['The transformer uses self-attention to process sequences in parallel.',
+#   'RAG combines retrieval with generation for knowledge-grounded answers.']]
 ```
 
-**Key Takeaway:** Choose architecture based on your task!
+</div>
 
 ---
 
-# Practical tips for training transformers (Part 1)
+# RAG vs fine-tuning
 
-**1. Learning Rate & Warmup**
-```python
-# Warmup: gradually increase LR
-# Then decay (linear or cosine)
-scheduler = get_linear_schedule_with_warmup(
- optimizer,
- num_warmup_steps=1000, # ~10% of training
- num_training_steps=10000
-)
-# Fine-tuning: lr=2e-5, From scratch: lr=1e-4
-```
+<div class="tip-box" data-title="When to use which">
 
-**2. Optimizer**
-```python
-optimizer = AdamW(
- model.parameters(),
- lr=2e-5,
- weight_decay=0.01 # L2 regularization
-)
-```
+| | RAG | Fine-tuning |
+|---|---|---|
+| **Knowledge updates** | Easy — just update the documents | Hard — requires retraining |
+| **Cost** | Cheap (no training needed) | Expensive (GPU time, data prep) |
+| **Citations** | Natural — you know which docs were retrieved | Not possible |
+| **Hallucination** | Reduced (grounded in retrieved text) | Can still hallucinate |
+| **Domain adaptation** | Good for factual Q&A | Better for style/behavior changes |
+| **Latency** | Higher (retrieval + generation) | Lower (just generation) |
+
+</div>
+
+<div class="note-box" data-title="They're complementary">
+
+Many production systems use *both*: fine-tune the model for the domain's style and behavior, then use RAG for up-to-date factual knowledge.
+
+</div>
 
 ---
 
-# Practical tips for training transformers (Part 2)
+# Advanced RAG techniques
 
-**3. Regularization**
-```python
-# Dropout after attention and FFN
-self.dropout = nn.Dropout(0.1)
+<div class="note-box" data-title="Beyond basic RAG">
 
-# Gradient clipping
-torch.nn.utils.clip_grad_norm_(
- model.parameters(), max_norm=1.0
-)
-```
+1. **Re-ranking**: After initial retrieval, use a cross-encoder model to re-score and re-order results for better precision
 
-**4. Mixed Precision (FP16)**
-```python
-from torch.cuda.amp import autocast
+2. **Hybrid search**: Combine vector similarity (semantic) with keyword matching (BM25) for more robust retrieval
 
-with autocast(): # Use FP16
- outputs = model(inputs)
- loss = criterion(outputs, labels)
-# 2x faster, 2x less memory!
-```
+3. **Query expansion**: Rewrite or expand the user's query using an LLM before retrieval to improve recall
 
+4. **Multi-hop retrieval**: For complex questions, retrieve → generate an intermediate answer → retrieve again with new context
+
+5. **Contextual compression**: Summarize retrieved chunks to fit more information into the context window
+
+</div>
 
 ---
 
-# Computational efficiency tips (Part 1)
+# Limitations of RAG
 
-**1. Batch Size**
-- Larger batches = better GPU utilization
-- Use gradient accumulation if GPU memory limited
-- Typical: effective batch size 256-2048 tokens
+<div class="warning-box" data-title="RAG is not a silver bullet">
 
-**2. Sequence Length**
-- Shorter sequences train faster (quadratic complexity!)
-- Consider truncation or sliding windows
-- Pack multiple examples to maximize GPU usage
+**Retrieval quality**: If the retriever fails to find relevant documents, the generator can't produce a good answer — garbage in, garbage out.
 
----
+**Context window limits**: Even with RAG, there's a limit to how much retrieved text fits in the prompt. Long documents may need aggressive chunking or summarization.
 
-# Computational efficiency tips (Part 2)
+**Latency**: The retrieval step adds time. For real-time applications, this overhead matters.
 
-**3. Model Size**
-- Start small, scale up if needed
-- DistilBERT: 40% smaller, 60% faster, 97% performance
-- Consider model distillation for deployment
+**Reasoning over multiple sources**: RAG is great for finding a specific fact, but struggles when the answer requires synthesizing information across many documents.
 
-**4. Hardware**
-- GPUs with high memory bandwidth (A100, H100)
-- Multi-GPU training with data parallelism
-- Use FlashAttention when available
+**Embedding quality**: The retriever is only as good as the embedding model. Domain-specific queries may need domain-specific embeddings.
 
+</div>
 
 ---
 
-# Discussion questions
+# Best practices
 
+<div class="tip-box" data-title="Making RAG work well">
 
-1. **Positional Encoding:**
- - Why add instead of concatenate?
-- What happens without positional encoding?
-- Learned vs. fixed: which is better?
+1. **Chunk wisely**: Experiment with chunk sizes (256-512 tokens is a good start). Use overlap between chunks.
+2. **Choose the right embedding model**: Test multiple models on your specific domain. General-purpose models may not capture domain-specific semantics.
+3. **Evaluate retrieval separately**: Before blaming the LLM, check if the retriever is finding the right documents.
+4. **Include metadata**: Store source, date, and section info with chunks so the LLM can cite sources.
+5. **Handle "I don't know"**: Instruct the model to say when the context doesn't contain the answer rather than hallucinating.
 
- 
-
-2. **Architecture Choice:**
- - When would you use encoder-only vs decoder-only?
-- Can GPT do classification? Can BERT generate?
-- Why has decoder-only become more popular recently?
-
- 
-
-3. **Scaling:**
- - Is bigger always better?
-- What are the limits to scaling transformers?
-- How do we make them more efficient?
-
- 
-
-4. **Training Stability:**
- - Why are residual connections so important?
-- Pre-norm vs post-norm: trade-offs?
-
+</div>
 
 ---
 
-# Looking ahead to Week 6
+# Try it yourself
 
-**This week (Week 5) we learned:**
-- Attention mechanisms (Lecture 15)
-- Self-attention and transformer architecture (Lecture 16)
-- Training transformers: all the components (Lecture 17)
+<div class="note-box" data-title="Interactive demo">
 
-**Next week (Week 6):**
+Explore our interactive RAG demo to see retrieval augmented generation in action:
 
-- Masked Language Modeling
-- Pre-training and fine-tuning
-- Contextual embeddings in action
-- RoBERTa, ALBERT, DistilBERT
-- Improvements and optimizations
-- Real-world BERT applications
-- Cognitive neuroscience connections
-- Understanding vs. pattern matching
+[**RAG System Demo**](https://contextlab.github.io/llm-course/demos/rag/) — Upload documents, ask questions, and see how the system retrieves relevant passages and generates grounded answers.
 
-**Assignment 4:** Building context-aware systems (check syllabus for details)
+</div>
+
+<div class="tip-box" data-title="Assignment 4 connection">
+
+Your next assignment asks you to build a **Customer Service Chatbot** that uses retrieval and generation techniques. The RAG concepts from today's lecture are directly applicable!
+
+</div>
 
 ---
 
-# Summary
+# Discussion: RAG applications
 
+<div class="tip-box" data-title="Questions to consider">
 
-**Key Takeaways:**
+1. What kinds of applications benefit most from RAG? Where would fine-tuning be better?
+2. A company wants to build a chatbot that answers questions about their internal documents. What are the privacy implications of using RAG vs. fine-tuning?
+3. How would you evaluate whether a RAG system is working well? What metrics matter?
+4. If the retrieved documents contain contradictory information, how should the system handle that?
 
-1. **Positional Encoding**
- - Sine/cosine functions inject position information
-- Enables model to understand order
-2. **Feed-Forward Networks**
- - Position-wise transformations
-- Add non-linearity and capacity
-3. **LayerNorm & Residuals**
- - Critical for training deep networks
-- Stabilize gradients, enable deeper models
-4. **Three Architectures**
- - Encoder (BERT), Decoder (GPT), Both (T5)
-- Choose based on task requirements
-5. **Practical Considerations**
- - Use HuggingFace for easy implementation
-- FlashAttention for efficiency
-- Careful hyperparameter tuning
+</div>
 
+---
+
+# Discussion: the future of knowledge-grounded generation
+
+<div class="tip-box" data-title="Questions to consider">
+
+1. Will RAG eventually be unnecessary if models get large enough to memorize everything?
+2. How does RAG change the economics of AI — who controls the knowledge base controls the answers?
+3. Could RAG be used to make language models more "honest" about what they know vs. don't know?
+4. What happens when the retrieved documents themselves contain misinformation?
+
+</div>
 
 ---
 
 # References
 
+<div class="note-box" data-title="Further reading">
 
-**Essential Papers:**
+[**Lewis et al. (2020, *NeurIPS*)**](https://arxiv.org/abs/2005.11401) "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" — The original RAG paper.
 
-- **Vaswani et al. (2017)** - "Attention Is All You Need" - The original Transformer paper
-- **Su et al. (2021)** - "RoFormer: Enhanced Transformer with Rotary Position Embedding" - Modern positional encoding approach
-- **Dao et al. (2022)** - "FlashAttention: Fast and Memory-Efficient Exact Attention" - Making transformers faster
+[**Borgeaud et al. (2022, *ICML*)**](https://arxiv.org/abs/2112.04426) "Improving Language Models by Retrieving from Trillions of Tokens" — RETRO: scaling retrieval to massive corpora.
 
-**Tutorials:**
-- HuggingFace Course: Chapters 1.4, 1.5
-- The Illustrated Transformer: https://jalammar.github.io/illustrated-transformer/
-- Annotated Transformer: https://nlp.seas.harvard.edu/annotated-transformer/
+[**Gao et al. (2024, *arXiv*)**](https://arxiv.org/abs/2312.10997) "Retrieval-Augmented Generation for Large Language Models: A Survey" — Comprehensive survey of RAG techniques.
 
+[**ChromaDB Documentation**](https://docs.trychroma.com/) — Getting started with vector databases for RAG.
+
+</div>
 
 ---
 
@@ -700,17 +531,20 @@ with autocast(): # Use FP16
 <div class="emoji-figure">
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
-    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a> me</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a></span>
   </div>
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
-    <span class="label">Join our <a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+    <span class="label"><a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
   </div>
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
-    <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
+    <span class="label"><a href="https://context-lab.youcanbook.me">Office hours</a></span>
   </div>
 </div>
 
-**Next week:** BERT deep dive
+<div class="tip-box" data-title="Up next...">
 
+Week 6: BERT and encoder models — bidirectional attention and masked language modeling!
+
+</div>

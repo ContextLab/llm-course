@@ -1,664 +1,580 @@
 ---
 marp: true
 theme: cdl-theme
-paginate: true
-header: 'PSYC 51.17: Models of Language and Communication'
-footer: 'Winter 2026'
+math: katex
+transition: fade 0.25s
+author: Contextual Dynamics Lab
 ---
 
-<!-- _class: lead -->
+# Lecture 16: Training transformer models
+### PSYC 51.17: Models of language and communication
 
-# Lecture 16: Transformer architecture
-## Week 5, Lecture 2 - Attention is all you need
-
-**PSYC 51.17: Models of Language and Communication**
-
+Jeremy R. Manning
+Dartmouth College
 Winter 2026
 
 ---
 
-# Today's agenda 
+# Learning objectives
 
+<div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
+1. Explain what it means to "train" a transformer model
+2. Describe the training loop: forward pass, loss, backward pass, update
+3. Understand cross-entropy loss and perplexity as training metrics
+4. Explain scaling laws and their practical implications
+5. Distinguish between pre-training and fine-tuning
 
-1. **The Transformer Revolution**: Why it changed everything
-2. **Architecture Overview**: Encoder, Decoder, and components
-3. **Self-Attention**: The core mechanism (Q, K, V)
-4. **Self-Attention Example**: Understanding pronoun resolution
-5. **Multi-Head Attention**: Learning diverse relationships
-6. **Three Types of Attention**: Self, Masked, Cross
-
-*Goal: Understand the Transformer architecture and self-attention*
+</div>
 
 ---
 
-# The transformer revolution 
+# Where we left off
 
+<div class="note-box" data-title="Recap from lecture 15">
 
+Last time we saw the transformer as a function:
 
-**"Attention Is All You Need"**
+$$\text{Transformer}(X, \theta) \rightarrow Y$$
 
-<div class="columns">
-<div class="column">
-
-**Before Transformers (2017):**
-- RNNs/LSTMs with attention
-- Sequential processing
-- Hard to parallelize
-- Limited context window
-- Slow training
-
-</div>
-<div class="column">
-
-**After Transformers:**
-- Parallel processing
-- Scales to GPUs/TPUs
-- Long-range dependencies
-- Fast & effective
-
-</div>
-</div>
-
-<div class="tip-box" data-title="Speed comparison">
-
-Processing "The cat sat on the mat" (6 tokens):
-- **RNN:** 6 sequential steps (must wait for each)
-- **Transformer:** 1 parallel step (all tokens at once!)
-
-Training speedup: **10-100x faster** on modern hardware
+We traced data from raw text through tokenization, embedding, attention, and feed-forward layers. But we treated the parameters $\theta$ as given.
 
 </div>
 
-*Reference: Vaswani et al. (2017) - "Attention Is All You Need"*
+<div class="tip-box" data-title="Today's question">
+
+Where do the parameters $\theta$ come from? How does the model *learn* to predict the next token?
+
+</div>
 
 ---
 
-# Why get rid of RNNs? 
+# What does "training" mean?
 
+<div class="definition-box" data-title="Training a language model">
 
-**Limitations of Recurrent Architectures:**
+**Training** is the process of finding parameters $\theta$ that make the model's predictions match the data. Given a large corpus of text, we want:
 
-<div class="columns">
-<div class="column">
+$$\theta^* = \arg\min_\theta \mathcal{L}(\theta)$$
 
-**1. Sequential Bottleneck**
-- Must process token t before t+1
-- Cannot parallelize across sequence
-
-**2. Long-Range Dependencies**
-- Info flows through many steps
-- Gradient vanishing problems
-
-**3. Memory Constraints**
-- Hidden state must remember all
+where $\mathcal{L}$ is a **loss function** that measures how wrong the model's predictions are.
 
 </div>
-<div class="column">
-
-**Concrete Example:**
-```
-Sentence: "The cat that I saw
-yesterday at the park sat down"
-
-Token 1 ("The") to token 11 ("sat"):
-- RNN: Info passes through 10 steps
-- Gradients shrink: 0.9^10 = 0.35
-- By token 11, "The" is almost gone!
-
-Transformer: Direct connection!
-- "sat" attends directly to "cat"
-- No information degradation
-```
-
-</div>
-</div>
-
-**Transformer Solution:** Every token can attend to every other token directly!
-
----
-
-# Transformer architecture overview
-
-**Key Components:**
-- **Multi-Head Self-Attention**: Relate all positions to each other
-- **Feed-Forward Networks**: Transform representations
-- **Residual Connections & Layer Norm**: Training stability
-- **Positional Encoding**: Inject position information
-
-
----
-
-# Self-attention: the core mechanism 
-
-
-**Key idea: Each word attends to all other words in the sequence**
-
-**Three learned projections:**
-- **Query (Q)**: What am I looking for?
-- **Key (K)**: What do I contain?
-- **Value (V)**: What information do I have?
-
-**Computation:**
-```
-Q = X @ W_Q # Transform input to queries
-K = X @ W_K # Transform input to keys
-V = X @ W_V # Transform input to values
-
-Attention(Q, K, V) = softmax(Q @ K.T / sqrt(d)) @ V
-```
 
 <div class="tip-box" data-title="Intuition">
 
-Each token asks: "Which other tokens are relevant to me?" (Q vs K)
-Then collects information from relevant tokens (weighted sum of V)
+Imagine the model is a student learning to finish sentences. We show it millions of sentences, and every time it guesses the next word wrong, we nudge its parameters to make a better guess next time.
 
 </div>
-
 
 ---
 
-# Understanding query, key, value 
+# The language modeling objective
 
+<div class="definition-box" data-title="Next-token prediction">
 
+Given a sequence of tokens $x_1, x_2, \ldots, x_{t-1}$, the model predicts a probability distribution over the vocabulary for the next token $x_t$:
 
-**Analogy: Database lookup or information retrieval**
+$$P(x_t \mid x_1, x_2, \ldots, x_{t-1}; \theta)$$
 
-<div class="columns">
-<div class="column">
-
-**Information Retrieval:**
-- **Query**: Your search query
-- **Key**: Document titles/keywords
-- **Value**: Document contents
-
-**Process:**
-1. Compare query to all keys
-2. Get similarity scores
-3. Weight values by scores
-4. Return weighted combination
-
-</div>
-<div class="column">
-
-**Self-Attention:**
-- **Query**: What token $i$ is looking for
-- **Key**: What token $j$ offers
-- **Value**: Information from token $j$
-
-**Process:**
-1. Compare $Q_i$ to all $K_j$
-2. Get attention scores
-3. Weight all $V_j$ by scores
-4. Return new representation for $i$
-
-</div>
-</div>
-
-<div class="note-box" data-title="Key insight">
-
-Each token simultaneously acts as:
-- A query (what it needs from other tokens)
-- A key (how it should be retrieved)
-- A value (what information it provides)
+The goal is to maximize the probability of the *actual* next token across the entire training corpus.
 
 </div>
 
+<div class="note-box" data-title="This is self-supervised learning">
+
+No human labels needed! The "label" is simply the next word in the text. This is why we can train on virtually unlimited data from the internet.
+
+</div>
 
 ---
 
-# Scaled dot-product attention 
+# Cross-entropy loss
 
+<div class="definition-box" data-title="The loss function">
 
-**Step-by-step computation with concrete example:**
+**Cross-entropy loss** measures how different the model's predicted distribution $\hat{y}$ is from the true distribution $y$ (a one-hot vector for the correct token):
 
-**Input:** 3 tokens, embedding dim = 4
+$$\mathcal{L} = -\sum_{i=1}^{V} y_i \log(\hat{y}_i)$$
+
+Since $y$ is one-hot (only the correct token has $y_i = 1$), this simplifies to:
+
+$$\mathcal{L} = -\log(\hat{y}_c)$$
+
+where $c$ is the index of the correct next token.
+
+</div>
+
+---
+
+# Understanding cross-entropy
+
+<div class="tip-box" data-title="Why negative log probability?">
+
+- If the model assigns probability 1.0 to the correct token: $-\log(1.0) = 0$ (no loss!)
+- If the model assigns probability 0.5: $-\log(0.5) = 0.69$
+- If the model assigns probability 0.01: $-\log(0.01) = 4.6$ (high loss!)
+
+The loss penalizes confident *wrong* predictions heavily and rewards confident *correct* predictions.
+
+</div>
+
+<div class="example-box" data-title="Concrete example">
+
+```
+Vocabulary: [the, cat, sat, on, mat]  (V=5)
+True next token: "sat" → y = [0, 0, 1, 0, 0]
+
+Model prediction: ŷ = [0.1, 0.2, 0.5, 0.15, 0.05]
+Loss = -log(0.5) = 0.69
+
+Better prediction: ŷ = [0.05, 0.05, 0.85, 0.03, 0.02]
+Loss = -log(0.85) = 0.16  ← much lower!
+```
+
+</div>
+
+---
+
+# Perplexity
+
+<div class="definition-box" data-title="Perplexity: a more intuitive metric">
+
+**Perplexity** is the exponential of the average cross-entropy loss across a sequence:
+
+$$\text{PPL} = e^{\mathcal{L}} = e^{-\frac{1}{N}\sum_{t=1}^{N} \log P(x_t \mid x_{<t})}$$
+
+</div>
+
+<div class="tip-box" data-title="Intuition">
+
+Perplexity measures how "confused" the model is. A perplexity of $k$ means the model is, on average, as uncertain as if it were choosing uniformly among $k$ options.
+
+- **PPL = 1**: Perfect prediction (impossible in practice)
+- **PPL = 10**: Like choosing among 10 equally likely words
+- **PPL = 100**: Very uncertain
+- **GPT-3 on test data**: PPL ≈ 20
+
+</div>
+
+---
+
+# The training loop
+
+<div class="definition-box" data-title="Four steps, repeated millions of times">
+
+1. **Forward pass**: Feed a batch of text through the model to get predictions
+2. **Compute loss**: Compare predictions to actual next tokens using cross-entropy
+3. **Backward pass**: Compute gradients $\nabla_\theta \mathcal{L}$ via backpropagation
+4. **Update parameters**: Adjust $\theta$ to reduce the loss
+
+$$\theta \leftarrow \theta - \eta \nabla_\theta \mathcal{L}$$
+
+where $\eta$ is the **learning rate** — how big a step we take.
+
+</div>
+
+<div class="warning-box" data-title="Scale matters">
+
+GPT-3 has 175 billion parameters. Each training step updates *all* of them. Training took ~$4.6 million in compute costs and processed ~300 billion tokens.
+
+</div>
+
+---
+
+# Gradient descent intuition
+
+<div class="tip-box" data-title="The hiking analogy">
+
+Imagine you're lost in a foggy mountain range and want to reach the lowest valley:
+
+1. **Feel the slope** under your feet (compute the gradient)
+2. **Take a step downhill** (update parameters in the direction that reduces loss)
+3. **Repeat** until you reach a valley (convergence)
+
+The **learning rate** ($\eta$) controls your step size:
+- Too large → you overshoot the valley and bounce around
+- Too small → you make progress painfully slowly
+- Just right → you descend efficiently
+
+</div>
+
+<div class="note-box" data-title="Stochastic gradient descent">
+
+In practice, we don't compute the gradient over the *entire* dataset (too expensive). Instead, we use random **mini-batches** of data — this is called **stochastic gradient descent** (SGD).
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Optimization: AdamW
+
+<div class="definition-box" data-title="The optimizer of choice for transformers">
+
+**AdamW** (Adaptive Moment Estimation with Weight Decay) improves on basic gradient descent:
+
+1. **Adaptive learning rates**: Each parameter gets its own learning rate based on gradient history
+2. **Momentum**: Uses exponential moving average of past gradients to smooth updates
+3. **Weight decay**: Adds regularization to prevent parameters from growing too large
+
+$$m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t \quad \text{(momentum)}$$
+$$v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2 \quad \text{(squared gradients)}$$
+$$\theta_t = \theta_{t-1} - \eta \frac{m_t}{\sqrt{v_t} + \epsilon} - \lambda \theta_{t-1} \quad \text{(update + decay)}$$
+
+</div>
+
+<div class="tip-box" data-title="Why AdamW?">
+
+Standard Adam "hides" weight decay inside the adaptive learning rate, making it less effective. AdamW decouples weight decay from the gradient-based update, leading to better generalization.
+
+</div>
+
+---
+
+# Learning rate scheduling
+
+<div class="definition-box" data-title="Warmup then decay">
+
+Modern transformers use a **learning rate schedule** with two phases:
+
+1. **Warmup** (first ~1-10% of training): Gradually increase $\eta$ from 0 to the target value. This prevents large, unstable updates early when the model is randomly initialized.
+
+2. **Decay** (remaining training): Gradually decrease $\eta$ using a cosine or linear schedule. This allows fine-grained optimization as the model approaches convergence.
+
+</div>
+
+<div class="example-box" data-title="Learning rate schedule in Python">
 
 ```python
-# Input embeddings (3 tokens x 4 dims)
-X = [[0.1, 0.2, 0.3, 0.4], # "The"
- [0.5, 0.6, 0.7, 0.8], # "cat"
- [0.2, 0.3, 0.4, 0.5]] # "sat"
+from transformers import get_cosine_schedule_with_warmup
 
-# Step 1: Compute Q, K, V (using learned weights W_q, W_k, W_v)
-Q = X @ W_q # [3 x 4]
-K = X @ W_k # [3 x 4]
-V = X @ W_v # [3 x 4]
+optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)
 
-# Step 2: Compute attention scores
-scores = Q @ K.T # [3 x 3] - each token vs each token
+scheduler = get_cosine_schedule_with_warmup(
+    optimizer,
+    num_warmup_steps=1000,     # warmup for 1000 steps
+    num_training_steps=100000  # total training steps
+)
 
-# Step 3: Scale by sqrt(d_k) to prevent large values
-scores = scores / sqrt(4) # divide by 2
-
-# Step 4: Softmax to get attention weights
-weights = softmax(scores) # rows sum to 1
-
-# Step 5: Weighted sum of values
-output = weights @ V # [3 x 4] - new contextual embeddings
-```
-
-
----
-
-# Self-attention example: pronoun resolution 
-
-
-**Sentence: "The animal didn't cross the street because it was too tired"**
-
-**Question: What does "it" refer to?**
-
-```
-Attention weights when processing "it":
-
- The animal didn't cross the street because it was too tired
-"it" → 0.02 [0.45] 0.03 0.05 0.02 0.08 0.05 0.15 0.05 0.02 0.08
- ↑
- High attention to "animal" - model learns coreference!
-```
-
-**Self-attention allows the model to:**
-- Resolve pronouns ("it" → "animal", not "street")
-- Understand long-range dependencies (8 tokens apart!)
-- Capture syntactic and semantic relationships
-- Do this in parallel for all positions!
-
-
----
-
-# Visualizing the attention matrix 
-
-
-**For sentence: "The cat sat on the mat"**
-
-| To $\rightarrow$ | The | cat | sat | on | the | mat |
-| --- | --- | --- | --- | --- | --- | --- |
-| From $\downarrow$ | | | | | | |
-| cat | 0.1 | 0.5 | 0.2 | 0.1 | 0.05 | 0.05 |
-| sat | 0.05 | 0.3 | 0.4 | 0.15 | 0.05 | 0.05 |
-| on | 0.05 | 0.1 | 0.2 | 0.3 | 0.1 | 0.25 |
-| the | 0.05 | 0.05 | 0.05 | 0.1 | 0.3 | 0.45 |
-| mat | 0.05 | 0.05 | 0.1 | 0.2 | 0.2 | 0.4 |
-
-**Observations:**
-- Each row sums to 1.0 (probability distribution)
-- Diagonal elements often high (self-attention)
-- "cat" attends to itself and "The" (determiner-noun relationship)
-- "mat" attends to "the" (determiner) and "on" (preposition)
-- Captures syntactic and semantic structure automatically!
-
-
----
-
-# Multi-head attention 
-
-
-**Why use multiple attention heads?**
-
-<div class="columns">
-<div class="column">
-
-**Intuition:**
-- Different heads learn different relationships
-- Head 1: Syntactic relationships
-- Head 2: Semantic relationships
-- Head 3: Positional patterns
-
-**Formula:**
-```python
-# Each head has its own W_Q, W_K, W_V
-head_1 = Attention(Q @ W1_Q, K @ W1_K, V @ W1_V)
-head_2 = Attention(Q @ W2_Q, K @ W2_K, V @ W2_V)
-# ... more heads ...
-
-# Concatenate and project
-output = concat(head_1, head_2, ...) @ W_O
+# In training loop:
+for batch in dataloader:
+    loss = model(batch).loss
+    loss.backward()
+    optimizer.step()
+    scheduler.step()  # update learning rate
+    optimizer.zero_grad()
 ```
 
 </div>
-<div class="column">
-
-**Concrete Example:**
-```
-Sentence: "The cat sat on the mat"
-
-Head 1 (syntax):
- "sat" → "cat" (subject-verb)
- "mat" → "the" (determiner)
-
-Head 2 (semantics):
- "sat" → "mat" (action-location)
- "cat" → "sat" (agent-action)
-
-Head 3 (position):
- Each word → neighbors
-```
-
-</div>
-</div>
-
-*BERT-base: 12 heads, BERT-large: 16 heads, GPT-3: 96 heads!*
 
 ---
 
-# Why multiple heads? 
+# Gradient clipping
 
+<div class="warning-box" data-title="The exploding gradient problem">
 
-
-**Example: Different heads learn different patterns**
-
-**Sentence: "The cat sat on the mat"**
-
-<div class="columns">
-<div class="column">
-
-**Head 1: Syntactic Dependencies**
-- "cat" → "The" (noun-determiner)
-- "sat" → "cat" (verb-subject)
-- "mat" → "the" (noun-determiner)
-- Learns grammar structure
-
-**Head 2: Semantic Relations**
-- "sat" → "mat" (action-location)
-- "cat" → "mat" (agent-location)
-- Learns meaning relationships
-
-</div>
-<div class="column">
-
-**Head 3: Local Context**
-- Each word → neighbors
-- Short-range dependencies
-- N-gram like patterns
-
-**Head 4: Long-Range**
-- Distant word relationships
-- Document-level context
-- Coreference resolution
-
-</div>
-</div>
-
-<div class="note-box" data-title="Ensemble effect">
-
-Multiple heads provide a richer, more diverse representation by attending to different aspects of the input simultaneously!
+During backpropagation through many layers, gradients can grow exponentially large — this is called **exploding gradients**. A single bad gradient can destroy hours of training progress by making a catastrophically large parameter update.
 
 </div>
 
+<div class="definition-box" data-title="The fix: gradient clipping">
+
+Before updating parameters, cap the total gradient norm to a maximum value:
+
+$$\text{if } \|\nabla_\theta \mathcal{L}\| > \text{max\_norm}: \quad \nabla_\theta \mathcal{L} \leftarrow \text{max\_norm} \cdot \frac{\nabla_\theta \mathcal{L}}{\|\nabla_\theta \mathcal{L}\|}$$
+
+This preserves the gradient *direction* while limiting its *magnitude*. A common choice is $\text{max\_norm} = 1.0$.
+
+</div>
 
 ---
+<!-- _class: scale-90 -->
 
-# Three types of attention 
+# Training with HuggingFace
 
-
-1. **Self-Attention (Encoder)**
- - Each position attends to all positions in same sequence
-- Bidirectional: can see past and future
-- Used in: BERT, encoder-only models
-
- 
-
-2. **Masked Self-Attention (Decoder)**
- - Each position attends only to previous positions
-- Prevents "looking into the future"
-- Used in: GPT, decoder-only models
-
- 
-
-3. **Cross-Attention (Encoder-Decoder)**
- - Decoder attends to encoder outputs
-- Queries from decoder, Keys/Values from encoder
-- Used in: T5, BART, machine translation
-
-| Masked Self-Attention | Sequence | Same sequence (past only) |
-| --- | --- | --- |
-| Cross-Attention | Decoder | Encoder |
-
-
----
-
-# Masked self-attention 
-
-
-**Preventing the model from "cheating" during generation**
-
-**Problem:** During training, we have the full target sequence. Without masking, the model could "peek" at future tokens!
-
-**Solution:** Mask out future positions by setting attention scores to -infinity before softmax.
+<div class="example-box" data-title="A complete training loop">
 
 ```python
-# Example: Generating "The cat sat"
-# When predicting "sat", model should only see "The cat"
+from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments
+from datasets import load_dataset
 
-scores = [[0.5, 0.3, 0.2], # "The" can see: The
- [0.4, 0.5, 0.1], # "cat" can see: The, cat
- [0.2, 0.4, 0.4]] # "sat" can see: The, cat, sat
+# Load model and tokenizer
+model = AutoModelForCausalLM.from_pretrained("gpt2")
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
 
-# Apply causal mask (upper triangle = -infinity)
-mask = [[ 0, -inf, -inf],
- [ 0, 0, -inf],
- [ 0, 0, 0 ]]
+# Load and tokenize data
+dataset = load_dataset("wikitext", "wikitext-2-raw-v1")
+def tokenize(examples):
+    return tokenizer(examples["text"], truncation=True, max_length=512)
+tokenized = dataset.map(tokenize, batched=True)
 
-masked_scores = scores + mask
-# After softmax: future positions get weight 0!
+# Configure training
+args = TrainingArguments(
+    output_dir="./results",
+    num_train_epochs=3,
+    per_device_train_batch_size=8,
+    learning_rate=5e-5,
+    warmup_steps=500,
+    weight_decay=0.01,
+    logging_steps=100,
+)
+
+# Train!
+trainer = Trainer(model=model, args=args, train_dataset=tokenized["train"])
+trainer.train()
 ```
-
-**Result:** Token at position t can only attend to positions <= t
-- Maintains autoregressive property
-- Enables parallel training while preserving causality
-
-
----
-
-# Cross-attention 
-
-
-**Connecting encoder and decoder in seq2seq models**
-
-```
-Encoder Outputs -> (Keys & Values) -> Decoder State -> (Queries) -> Cross-Attention -> Context-Aware Decoder
-```
-
-**Key Properties:**
-- **Q** comes from decoder (what decoder needs)
-- **K, V** come from encoder (what input provides)
-- Allows decoder to "look at" relevant parts of input
-- Similar to the original attention mechanism from Lecture 12!
-
-**Used in:** Machine translation, summarization, any encoder-decoder task
-
----
-
-# Implementing self-attention in PyTorch 
-
-
-**Scaled dot-product attention**
-
-```python
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import math
-
-class SelfAttention(nn.Module):
- def __init__(self, embed_dim):
- super().__init__()
- self.embed_dim = embed_dim
- self.W_q = nn.Linear(embed_dim, embed_dim)
- self.W_k = nn.Linear(embed_dim, embed_dim)
- self.W_v = nn.Linear(embed_dim, embed_dim)
-
- def forward(self, x, mask=None):
- Q = self.W_q(x) # Queries: what am I looking for?
- K = self.W_k(x) # Keys: what do I contain?
- V = self.W_v(x) # Values: what info do I provide?
-
- # Attention scores: how similar are Q and K?
- scores = torch.matmul(Q, K.transpose(-2, -1))
- scores = scores / math.sqrt(self.embed_dim) # Scale!
-
- if mask is not None: # For causal/decoder attention
- scores = scores.masked_fill(mask == 0, -1e9)
-
- attn_weights = F.softmax(scores, dim=-1) # Normalize
- output = torch.matmul(attn_weights, V) # Weighted sum
-
- return output, attn_weights
-
-# Usage example:
-attn = SelfAttention(embed_dim=64)
-x = torch.randn(1, 5, 64) # 5 tokens, 64-dim embeddings
-out, weights = attn(x)
-# out: [1, 5, 64] - contextualized embeddings
-# weights: [1, 5, 5] - attention matrix
-```
-
-
----
-
-# Computational complexity 
-
-
-**Understanding the cost of self-attention**
-
-| Component | Time Complexity | Memory |
-| --- | --- | --- |
-| Self-Attention | O(n^2 * d) | O(n^2) |
-| Feed-Forward | O(n * d^2) | O(d) |
-
-where n = sequence length, d = embedding dimension
-
-<div class="tip-box" data-title="Concrete example: memory usage">
-
-**Sequence length n = 1000 tokens, d = 768 (BERT-base)**
-
-Attention matrix size: n x n = 1000 x 1000 = **1 million entries**
-At fp32 (4 bytes): **4 MB** per layer, per head
-
-BERT-base: 12 layers x 12 heads = 144 attention matrices
-Total: **576 MB** just for attention weights!
-
-**If n = 10,000:** 100x more = **57.6 GB** (won't fit on most GPUs!)
 
 </div>
 
-**Typical context limits:**
-- BERT: 512 | GPT-2: 1024 | GPT-3: 2048 | GPT-4: 128k (with optimizations)
+---
 
+# Scaling laws
+
+<div class="definition-box" data-title="Kaplan et al. (2020): neural scaling laws">
+
+OpenAI discovered that language model performance follows **predictable power laws** as you increase:
+
+1. **Model size** ($N$ parameters): $\mathcal{L} \propto N^{-0.076}$
+2. **Dataset size** ($D$ tokens): $\mathcal{L} \propto D^{-0.095}$
+3. **Compute budget** ($C$ FLOPs): $\mathcal{L} \propto C^{-0.050}$
+
+These relationships are remarkably smooth across **seven orders of magnitude**.
+
+</div>
+
+<div class="tip-box" data-title="What this means">
+
+Performance improves as a straight line on a log-log plot. There are no sudden jumps or plateaus — just smooth, predictable improvement. This means we can *predict* how well a model will perform before training it.
+
+</div>
 
 ---
 
-# Discussion questions 
+# Visualizing scaling laws
 
+<div class="note-box" data-title="Log-log plots reveal power laws">
 
-1. **Self-Attention vs RNN Attention:**
- - What's the key difference?
-- Why is self-attention more powerful?
-- When might RNNs still be useful?
+When we plot loss vs. compute on log-log axes, the relationship is linear:
 
- 
+$$\log(\mathcal{L}) = -\alpha \log(C) + \beta$$
 
-2. **Query, Key, Value Framework:**
- - Why three separate projections instead of one?
-- What if we used $Q = K = V = X$?
-- How does this relate to information retrieval?
+This means doubling compute reduces loss by a *fixed percentage* — not a fixed amount.
 
- 
+</div>
 
-3. **Multi-Head Attention:**
- - Why not just use one big attention head?
-- How many heads is optimal?
-- Can we interpret what each head learns?
+<div class="example-box" data-title="Concrete numbers">
 
- 
+```
+Model        Parameters    Loss    Perplexity
+GPT-2 small  117M         3.30    27.0
+GPT-2 medium 345M         3.07    21.5
+GPT-2 large  774M         2.93    18.8
+GPT-2 XL     1.5B         2.85    17.4
+GPT-3        175B         ~2.4    ~11.0
+```
 
-4. **Scalability:**
- - $O(n^2)$ is problematic for long documents. Solutions?
-- Sparse attention? Local attention? Other ideas?
+Each ~10x increase in parameters gives roughly the same *percentage* improvement in loss.
 
+</div>
 
 ---
 
-# Looking ahead 
+# Chinchilla scaling
 
+<div class="definition-box" data-title="Hoffmann et al. (2022): compute-optimal training">
 
-**What's Next?**
+Kaplan et al. suggested scaling model size faster than data. **Chinchilla** showed this was wrong:
 
-**Today we learned:**
-- Why transformers replaced RNNs
-- Self-attention mechanism (Q, K, V)
-- Multi-head attention
-- Three types of attention (self, masked, cross)
+For a fixed compute budget, the optimal allocation is approximately:
 
-**Next lecture (Lecture 17 - Training Transformers):**
-- Positional encodings: How to inject position information
-- Feed-forward networks: The other key component
-- Layer normalization: Training stability
-- Optimization: Making transformers faster
-- Full architectures: Encoder, Decoder, Encoder-Decoder
-- Pre-training and fine-tuning: Training and using transformers
+$$\text{tokens} \approx 20 \times \text{parameters}$$
 
-**We're building up to BERT and GPT!**
+A 70B parameter model should be trained on ~1.4 trillion tokens.
 
+</div>
+
+<div class="warning-box" data-title="Many models were undertrained">
+
+Chinchilla (70B params, 1.4T tokens) matched GPT-3 (175B params, 300B tokens) despite being **2.5x smaller**. GPT-3 was undertrained relative to its size — it needed more data, not more parameters.
+
+</div>
 
 ---
 
-# Summary
+# What scaling laws tell us
 
-<!-- _class: scale-90 --> 
+<div class="tip-box" data-title="Practical implications">
 
+1. **Predictability**: We can estimate final performance from small-scale experiments — train small models first, then extrapolate
+2. **Resource allocation**: Don't just make models bigger — balance parameters and data
+3. **No free lunch**: Improving loss by 10% requires roughly 10x more compute
+4. **Emergent abilities**: Some capabilities (like arithmetic, translation) appear suddenly at certain scales, even though the loss curve is smooth
 
-**Key Takeaways:**
+</div>
 
-1. **Transformer Revolution**
- - Pure attention, no recurrence
-- Parallel processing, faster training
-2. **Self-Attention Mechanism**
- - Query, Key, Value framework
-- Each token attends to all others
-- Scaled dot-product: $(QK^T/)V$
-3. **Multi-Head Attention**
- - Multiple heads learn diverse relationships
-- Concatenate and project back
-- Richer representations
-4. **Three Attention Types**
- - Self (encoder), Masked (decoder), Cross (encoder-decoder)
-- Different uses for different architectures
+<div class="note-box" data-title="The cost of scale">
 
-**Self-attention is the foundation of modern NLP!**
+| Model | Parameters | Training cost (est.) |
+|-------|-----------|---------------------|
+| BERT-base | 110M | ~$5,000 |
+| GPT-2 | 1.5B | ~$50,000 |
+| GPT-3 | 175B | ~$4,600,000 |
+| GPT-4 | ~1.8T (rumored) | ~$100,000,000 |
+
+</div>
+
+---
+
+# Pre-training vs fine-tuning
+
+<div class="definition-box" data-title="Two phases of training">
+
+**Pre-training**: Train a large model on a massive, general-purpose corpus (e.g., internet text). The model learns language patterns, facts, and reasoning. This is expensive and done once.
+
+**Fine-tuning**: Take the pre-trained model and train it further on a smaller, task-specific dataset. This adapts the general knowledge to a specific use case. This is cheap and done many times.
+
+</div>
+
+<div class="tip-box" data-title="Analogy">
+
+Pre-training is like getting a liberal arts education — broad knowledge about many topics. Fine-tuning is like specializing in medical school — adapting that broad foundation to a specific domain.
+
+</div>
+
+---
+
+# Why does fine-tuning work?
+
+<div class="note-box" data-title="Transfer learning">
+
+During pre-training, the model learns:
+- Grammar and syntax
+- World knowledge and facts
+- Reasoning patterns
+- Contextual understanding
+
+These capabilities **transfer** to new tasks. Fine-tuning only needs to teach the model *how to apply* its existing knowledge to the new task format.
+
+</div>
+
+<div class="definition-box" data-title="Key advantage">
+
+Fine-tuning a pre-trained model on 1,000 labeled examples typically outperforms training from scratch on 100,000 examples. The pre-trained representations give the model a massive head start.
+
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# Fine-tuning with HuggingFace
+
+<div class="example-box" data-title="Fine-tuning BERT for sentiment classification">
+
+```python
+from transformers import AutoModelForSequenceClassification, Trainer, TrainingArguments
+from datasets import load_dataset
+
+# Load pre-trained BERT + add classification head
+model = AutoModelForSequenceClassification.from_pretrained(
+    "bert-base-uncased", num_labels=2  # positive/negative
+)
+
+# Load task-specific data
+dataset = load_dataset("imdb")  # 50,000 movie reviews
+
+# Fine-tuning hyperparameters (much smaller than pre-training!)
+args = TrainingArguments(
+    output_dir="./sentiment-model",
+    num_train_epochs=3,           # just 3 epochs
+    per_device_train_batch_size=16,
+    learning_rate=2e-5,           # very small learning rate
+    warmup_ratio=0.1,
+    weight_decay=0.01,
+    evaluation_strategy="epoch",
+)
+
+trainer = Trainer(model=model, args=args,
+    train_dataset=dataset["train"], eval_dataset=dataset["test"])
+trainer.train()
+# Achieves ~93% accuracy in ~30 minutes on a single GPU!
+```
+
+</div>
+
+---
+
+# Practical training advice
+
+<div class="tip-box" data-title="Rules of thumb">
+
+1. **Start small**: Test your pipeline with a small model before scaling up
+2. **Learning rate**: Fine-tuning uses 10-100x smaller learning rates than pre-training (typically 1e-5 to 5e-5)
+3. **Epochs**: Fine-tuning needs only 2-5 epochs (vs. 1 epoch for pre-training on large data)
+4. **Batch size**: Larger batches give more stable gradients but require more memory. Use gradient accumulation if your GPU is too small
+5. **Evaluation**: Always hold out a validation set and monitor for overfitting
+
+</div>
+
+---
+
+# Common training pitfalls
+
+<div class="warning-box" data-title="Things that go wrong">
+
+**Overfitting**: The model memorizes the training data instead of learning general patterns. Signs: training loss drops but validation loss increases. Fix: more data, dropout, early stopping.
+
+**Catastrophic forgetting**: During fine-tuning, the model "forgets" its pre-trained knowledge. Fix: use small learning rates, freeze lower layers, or use techniques like LoRA.
+
+**Data quality**: Garbage in, garbage out. Models trained on noisy, biased, or duplicated data learn those patterns. Fix: careful data curation and deduplication.
+
+**Training instability**: Loss spikes or NaN values during training. Fix: gradient clipping, learning rate warmup, smaller batch sizes.
+
+</div>
+
+---
+
+# Discussion: scaling and efficiency
+
+<div class="tip-box" data-title="Questions to consider">
+
+1. If scaling laws predict smooth improvement, will we reach human-level performance by just scaling up? Why or why not?
+2. Training GPT-4 reportedly cost ~$100M. Is this sustainable? Who can afford to train these models?
+3. Chinchilla showed we can match larger models with more data. What are the implications for open-source models?
+4. How should we balance model performance against environmental cost (energy, carbon emissions)?
+
+</div>
+
+---
+
+# Discussion: training data and ethics
+
+<div class="tip-box" data-title="Questions to consider">
+
+1. Pre-training data comes from the internet — who gave permission? What about copyright?
+2. Models learn biases present in training data (gender, race, culture). Whose responsibility is it to fix this?
+3. Fine-tuning with "human feedback" (RLHF) introduces the biases of the annotators. How do we account for this?
+4. Should training data be publicly documented? What are the tradeoffs of transparency?
+
+</div>
 
 ---
 
 # References
 
-<!-- _class: scale-85 --> 
+<div class="note-box" data-title="Further reading">
 
+[**Kaplan et al. (2020, *arXiv*)**](https://arxiv.org/abs/2001.08361) "Scaling Laws for Neural Language Models" — Discovered power-law scaling relationships.
 
-**Essential Papers:**
+[**Hoffmann et al. (2022, *arXiv*)**](https://arxiv.org/abs/2203.15556) "Training Compute-Optimal Large Language Models" — The Chinchilla paper on optimal data-parameter balance.
 
-- **Vaswani et al. (2017)** - "Attention Is All You Need"
-  - The original Transformer paper
-  - Introduced self-attention, multi-head attention
-  - Foundation of modern NLP
+[**Vaswani et al. (2017, *NeurIPS*)**](https://arxiv.org/abs/1706.03762) "Attention Is All You Need" — The original transformer paper.
 
-- **Bahdanau et al. (2015)** - "Neural Machine Translation by Jointly Learning to Align and Translate"
-  - Original attention mechanism (for comparison)
+[**HuggingFace NLP Course, Chapter 3**](https://huggingface.co/learn/nlp-course/chapter3) — Hands-on tutorial for fine-tuning pre-trained models.
 
-**Tutorials and Resources:**
+[**Loshchilov & Hutter (2019, *ICLR*)**](https://arxiv.org/abs/1711.05101) "Decoupled Weight Decay Regularization" — The AdamW optimizer paper.
 
-- **The Illustrated Transformer** by Jay Alammar
-  - https://jalammar.github.io/illustrated-transformer/
-  - Visual step-by-step explanation
-
-- **Annotated Transformer** by Harvard NLP
-  - https://nlp.seas.harvard.edu/annotated-transformer/
-  - Line-by-line implementation
-
-- **HuggingFace Course** - Chapter 3
-  - How Transformers work
-
-
----
+</div>
 
 ---
 
@@ -667,17 +583,20 @@ Total: **576 MB** just for attention weights!
 <div class="emoji-figure">
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-navy">&#x1F4E7;</span>
-    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a> me</span>
+    <span class="label"><a href="mailto:jeremy@dartmouth.edu">Email</a></span>
   </div>
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-purple">&#x1F4AC;</span>
-    <span class="label">Join our <a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
+    <span class="label"><a href="https://discord.gg/sftEk9Ygdw">Discord</a></span>
   </div>
   <div class="emoji-col">
     <span class="emoji emoji-xl emoji-bg emoji-bg-green">&#x1F481;</span>
-    <span class="label">Come to <a href="https://context-lab.youcanbook.me">office hours</a></span>
+    <span class="label"><a href="https://context-lab.youcanbook.me">Office hours</a></span>
   </div>
 </div>
 
-**Next lecture:** Training transformers
+<div class="tip-box" data-title="Up next...">
 
+Retrieval Augmented Generation (RAG): giving language models access to external knowledge!
+
+</div>
