@@ -616,21 +616,31 @@ def generate_table_html(
     return result
 
 
-def split_table(table_lines: list, max_rows: int, current_title: str) -> list:
+def split_table(
+    table_lines: list,
+    max_rows: int,
+    current_title: str,
+    cont_max_rows: "int | None" = None,
+    enclosing_box_div: "str | None" = None,
+) -> list:
     """
     Split a long table across multiple slides.
 
     Args:
         table_lines: List of markdown table lines
-        max_rows: Maximum data rows per slide
+        max_rows: Maximum data rows for the first chunk
         current_title: Current slide title for continuation slides
+        cont_max_rows: Maximum data rows for continuation chunks (defaults to max_rows)
+        enclosing_box_div: If set, wraps each chunk in this box div (e.g. '<div class="note-box" ...>')
 
     Returns:
         List of output lines (including slide separators and continued indicators)
     """
+    if cont_max_rows is None:
+        cont_max_rows = max_rows
+
     parsed = parse_markdown_table(table_lines)
     if not parsed or len(parsed["data_rows"]) <= max_rows:
-        # No splitting needed, return original markdown
         return table_lines
 
     result = []
@@ -638,28 +648,29 @@ def split_table(table_lines: list, max_rows: int, current_title: str) -> list:
     separator = parsed["separator"]
     data_rows = parsed["data_rows"]
 
-    # Detect columns with long content across ALL rows (for consistent alignment)
     long_columns = detect_long_columns(data_rows)
 
-    # Split data rows into chunks
     chunks = []
-    for i in range(0, len(data_rows), max_rows):
-        chunks.append(data_rows[i : i + max_rows])
+    pos = 0
+    chunk_idx = 0
+    while pos < len(data_rows):
+        current_max = max_rows if chunk_idx == 0 else cont_max_rows
+        chunks.append(data_rows[pos : pos + current_max])
+        pos += current_max
+        chunk_idx += 1
 
-    # Generate slides for each chunk
     for chunk_idx, chunk in enumerate(chunks):
         if chunk_idx > 0:
-            # Add slide separator and title for continuation
             result.append("")
             result.append("---")
             result.append("")
             if current_title:
                 result.append(current_title)
                 result.append("")
+            if enclosing_box_div:
+                result.append(enclosing_box_div)
+                result.append("")
 
-        # Generate HTML table for this chunk
-        # All chunks are part of a split table, so mark them to prevent autoscaling
-        # Pass long_columns to ensure consistent left-alignment across all slides
         is_continuation = chunk_idx > 0
         table_html = generate_table_html(
             header,
@@ -671,28 +682,47 @@ def split_table(table_lines: list, max_rows: int, current_title: str) -> list:
         )
         result.extend(table_html)
 
-        # Add continued indicator based on position in sequence
         is_first = chunk_idx == 0
         is_last = chunk_idx == len(chunks) - 1
 
         if is_first and not is_last:
-            # First slide of split table (more to come)
             result.append("")
             result.append('<div class="table-continued-indicator">continued...</div>')
         elif not is_first and not is_last:
-            # Middle slide (continuation, more to come)
             result.append("")
             result.append(
                 '<div class="table-continued-indicator">...continued...</div>'
             )
         elif not is_first and is_last:
-            # Last slide (continuation, no more)
             result.append("")
             result.append(
                 '<div class="table-continued-indicator-last">...continued</div>'
             )
 
+        if enclosing_box_div:
+            result.append("")
+            result.append("</div>")
+
     return result
+
+
+def detect_enclosing_box(result_lines: list, search_from_idx: int) -> "str | None":
+    """Search backward from search_from_idx to find an unclosed callout box div."""
+    div_depth = 0
+    for idx in range(search_from_idx - 1, max(search_from_idx - 30, -1), -1):
+        stripped = result_lines[idx].strip()
+        if stripped == "---":
+            return None
+        if stripped == "</div>":
+            div_depth += 1
+        elif stripped.startswith("<div ") or stripped == "<div>":
+            if div_depth > 0:
+                div_depth -= 1
+            else:
+                if re.search(r'class="[^"]*\b\w+-box\b', stripped):
+                    return stripped
+                return None
+    return None
 
 
 def highlight_code_line(code_line: str, lang: str) -> str:
@@ -797,6 +827,7 @@ CODE_BLOCK_PATTERN = re.compile(r"```(?:\w+)?\n(.*?)```", re.DOTALL)
 TABLE_PATTERN = re.compile(r"^\|.*\|$", re.MULTILINE)
 SCALE_CLASS_PATTERN = re.compile(r"<!--\s*_class:\s*([^>]*scale-\d+[^>]*)\s*-->")
 NO_AUTOSCALE_PATTERN = re.compile(r"<!--\s*no-autoscale\s*-->", re.IGNORECASE)
+SPLIT_DIRECTIVE_PATTERN = re.compile(r"<!--\s*split:\s*(\d+)(?:\s*,\s*(\d+))?\s*-->")
 EMOJI_FIGURE_PATTERN = re.compile(r'<div\s+class="emoji-figure"')
 FLOW_DIAGRAM_PATTERN = re.compile(r"```flow\n.*?```", re.DOTALL)
 
@@ -1281,6 +1312,16 @@ def process_markdown(
     table_lines_buffer = []
     table_start_idx = -1
 
+    # State tracking for per-slide split directives (<!-- split: N --> or <!-- split: N, M -->)
+    # When set, overrides compute_available_code_lines() for the NEXT code block or table only.
+    # Format: (first_max, cont_max_or_none) — first_max for first chunk, cont_max for continuations.
+    # If cont_max is None, first_max is used for all chunks.
+    pending_split_directive = None
+
+    # When a code block or table inside a callout box is split, we close/re-open the box
+    # on each continuation slide. The original </div> from the source must then be skipped.
+    skip_next_closing_div = False
+
     # Statistics
     stats = {
         "input_lines": len(lines),
@@ -1291,6 +1332,7 @@ def process_markdown(
         "slides_added": 0,
         "arrows_processed": 0,
         "flow_diagrams_processed": flow_diagrams_processed,
+        "split_directives_found": 0,
         "overflow_warnings": len(
             [
                 w
@@ -1315,6 +1357,8 @@ def process_markdown(
         # Track slide boundaries
         if line.strip() == "---" and not in_code_block:
             current_slide_start = i + 1
+            pending_split_directive = None
+            skip_next_closing_div = False
 
         # Track current slide title (for continuation slides)
         title_match = re.match(r"^(#{1,2})\s+(.+)$", line)
@@ -1338,104 +1382,103 @@ def process_markdown(
         if in_code_block and line.strip().startswith(code_block_fence[0] * 3):
             in_code_block = False
 
-            # Compute context-aware max lines for this slide
-            slide_content = "\n".join(lines[current_slide_start:i])
-            effective_max_lines = (
-                compute_available_code_lines(slide_content, max_lines)
-                if not no_split
-                else max_lines
-            )
+            if pending_split_directive is not None:
+                first_max = pending_split_directive[0]
+                cont_max = (
+                    pending_split_directive[1]
+                    if pending_split_directive[1] is not None
+                    else first_max
+                )
+                effective_max_lines = first_max
+                pending_split_directive = None
+                use_variable_step = first_max != cont_max
+            else:
+                slide_content = "\n".join(lines[current_slide_start:i])
+                effective_max_lines = (
+                    compute_available_code_lines(slide_content, max_lines)
+                    if not no_split
+                    else max_lines
+                )
+                cont_max = effective_max_lines
+                use_variable_step = False
 
-            # Check if we need to split this code block
             if not no_split and len(code_lines_buffer) > effective_max_lines:
-                # Remove the opening fence we already added
                 result_lines = result_lines[:code_block_start_idx]
 
-                # Split into chunks
+                enclosing_box_div = detect_enclosing_box(
+                    result_lines, len(result_lines)
+                )
+
                 chunks = []
-                for j in range(0, len(code_lines_buffer), effective_max_lines):
-                    chunks.append(code_lines_buffer[j : j + effective_max_lines])
+                pos = 0
+                chunk_idx = 0
+                while pos < len(code_lines_buffer):
+                    current_max = effective_max_lines if chunk_idx == 0 else cont_max
+                    chunks.append(code_lines_buffer[pos : pos + current_max])
+                    pos += current_max
+                    chunk_idx += 1
 
                 stats["code_blocks_split"] += 1
                 stats["slides_added"] += len(chunks) - 1
 
-                # Generate slides for each chunk
+                cumulative_lines = 0
                 for chunk_idx, chunk in enumerate(chunks):
-                    start_line_num = chunk_idx * effective_max_lines + 1
+                    start_line_num = cumulative_lines + 1
 
                     if chunk_idx > 0:
-                        # Add slide separator and title for continuation
                         result_lines.append("")
                         result_lines.append("---")
                         result_lines.append("")
                         if current_title:
                             result_lines.append(current_title)
                             result_lines.append("")
+                        if enclosing_box_div:
+                            result_lines.append(enclosing_box_div)
+                            result_lines.append("")
 
-                    if chunk_idx == 0:
-                        # First chunk: use HTML with line numbers and syntax highlighting
-                        lang_class = (
-                            f'class="language-{code_block_lang} has-line-numbers"'
-                            if code_block_lang
-                            else 'class="has-line-numbers"'
-                        )
+                    lang_class = (
+                        f'class="language-{code_block_lang} has-line-numbers"'
+                        if code_block_lang
+                        else 'class="has-line-numbers"'
+                    )
+                    result_lines.append(
+                        f'<pre><code {lang_class} data-start-line="{start_line_num}">'
+                    )
+                    for line_idx, code_line in enumerate(chunk):
+                        line_num = start_line_num + line_idx
+                        highlighted = highlight_code_line(code_line, code_block_lang)
                         result_lines.append(
-                            f'<pre><code {lang_class} data-start-line="1">'
+                            f'<span class="line"><span class="line-num">{line_num}</span><span class="line-code">{highlighted}</span></span>'
                         )
-                        for line_idx, code_line in enumerate(chunk):
-                            line_num = line_idx + 1
-                            highlighted = highlight_code_line(
-                                code_line, code_block_lang
-                            )
-                            result_lines.append(
-                                f'<span class="line"><span class="line-num">{line_num}</span><span class="line-code">{highlighted}</span></span>'
-                            )
-                        result_lines.append("</code></pre>")
-                    else:
-                        # Continuation chunks: use HTML with data-start-line attribute and syntax highlighting
-                        lang_class = (
-                            f'class="language-{code_block_lang} has-line-numbers"'
-                            if code_block_lang
-                            else 'class="has-line-numbers"'
-                        )
-                        result_lines.append(
-                            f'<pre><code {lang_class} data-start-line="{start_line_num}">'
-                        )
-                        for line_idx, code_line in enumerate(chunk):
-                            line_num = start_line_num + line_idx
-                            highlighted = highlight_code_line(
-                                code_line, code_block_lang
-                            )
-                            result_lines.append(
-                                f'<span class="line"><span class="line-num">{line_num}</span><span class="line-code">{highlighted}</span></span>'
-                            )
-                        result_lines.append("</code></pre>")
+                    result_lines.append("</code></pre>")
 
-                    # Add continued indicator based on position in sequence
-                    # First slide: "continued..."
-                    # Middle slides: "...continued..."
-                    # Last slide: "...continued"
+                    cumulative_lines += len(chunk)
+
                     is_first = chunk_idx == 0
                     is_last = chunk_idx == len(chunks) - 1
 
                     if is_first and not is_last:
-                        # First slide of split code (more to come)
                         result_lines.append("")
                         result_lines.append(
                             '<div class="code-continued-indicator">continued...</div>'
                         )
                     elif not is_first and not is_last:
-                        # Middle slide (continuation, more to come)
                         result_lines.append("")
                         result_lines.append(
                             '<div class="code-continued-indicator">...continued...</div>'
                         )
                     elif not is_first and is_last:
-                        # Last slide (continuation, no more) - uses different class for positioning
                         result_lines.append("")
                         result_lines.append(
                             '<div class="code-continued-indicator-last">...continued</div>'
                         )
+
+                    if enclosing_box_div:
+                        result_lines.append("")
+                        result_lines.append("</div>")
+
+                if enclosing_box_div:
+                    skip_next_closing_div = True
             else:
                 # No splitting needed, but still add line numbers and syntax highlighting
                 # Remove the opening fence we already added
@@ -1482,57 +1525,110 @@ def process_markdown(
                 # Check if we need to split this table (has more than 2 lines: header + separator + data)
                 # A table needs at least header + separator = 2 lines, plus data rows
                 parsed = parse_markdown_table(table_lines_buffer)
+
+                if pending_split_directive is not None:
+                    table_first_max = pending_split_directive[0]
+                    table_cont_max = (
+                        pending_split_directive[1]
+                        if pending_split_directive[1] is not None
+                        else table_first_max
+                    )
+                    pending_split_directive = None
+                else:
+                    table_first_max = max_table_rows
+                    table_cont_max = max_table_rows
+
                 if (
                     not no_split
                     and parsed
-                    and len(parsed["data_rows"]) > max_table_rows
+                    and len(parsed["data_rows"]) > table_first_max
                 ):
-                    # Remove any table lines we may have added
                     result_lines = result_lines[:table_start_idx]
 
-                    # Split the table
+                    table_enclosing_box = detect_enclosing_box(
+                        result_lines, len(result_lines)
+                    )
+
                     split_result = split_table(
-                        table_lines_buffer, max_table_rows, current_title
+                        table_lines_buffer,
+                        table_first_max,
+                        current_title,
+                        table_cont_max,
+                        enclosing_box_div=table_enclosing_box,
                     )
                     result_lines.extend(split_result)
 
+                    if table_enclosing_box:
+                        skip_next_closing_div = True
+
                     stats["tables_split"] += 1
-                    # Calculate how many slides were added
-                    num_chunks = (
-                        len(parsed["data_rows"]) + max_table_rows - 1
-                    ) // max_table_rows
+                    num_data_rows = len(parsed["data_rows"])
+                    num_chunks = 1
+                    remaining = num_data_rows - table_first_max
+                    if remaining > 0:
+                        num_chunks += (remaining + table_cont_max - 1) // table_cont_max
                     stats["slides_added"] += num_chunks - 1
                 else:
-                    # No splitting needed, output original markdown table
                     result_lines.extend(table_lines_buffer)
 
                 table_lines_buffer = []
 
-                # Now add the current non-table line (with arrow processing)
-                result_lines.append(process_arrow_syntax(line))
+                if skip_next_closing_div and line.strip() == "</div>":
+                    skip_next_closing_div = False
+                else:
+                    result_lines.append(process_arrow_syntax(line))
             else:
-                # Regular line (not in code block, not table)
+                if skip_next_closing_div and line.strip() == "</div>":
+                    skip_next_closing_div = False
+                    i += 1
+                    continue
+                split_match = SPLIT_DIRECTIVE_PATTERN.match(line.strip())
+                if split_match:
+                    first_max = int(split_match.group(1))
+                    cont_max = (
+                        int(split_match.group(2)) if split_match.group(2) else None
+                    )
+                    pending_split_directive = (first_max, cont_max)
+                    stats["split_directives_found"] += 1
                 result_lines.append(process_arrow_syntax(line))
 
         i += 1
 
-    # Handle any remaining buffered table at end of file
     if in_table and table_lines_buffer:
         parsed = parse_markdown_table(table_lines_buffer)
-        if not no_split and parsed and len(parsed["data_rows"]) > max_table_rows:
-            # Remove any table lines we may have added
+
+        if pending_split_directive is not None:
+            table_first_max = pending_split_directive[0]
+            table_cont_max = (
+                pending_split_directive[1]
+                if pending_split_directive[1] is not None
+                else table_first_max
+            )
+            pending_split_directive = None
+        else:
+            table_first_max = max_table_rows
+            table_cont_max = max_table_rows
+
+        if not no_split and parsed and len(parsed["data_rows"]) > table_first_max:
             result_lines = result_lines[:table_start_idx]
 
-            # Split the table
+            table_enclosing_box = detect_enclosing_box(result_lines, len(result_lines))
+
             split_result = split_table(
-                table_lines_buffer, max_table_rows, current_title
+                table_lines_buffer,
+                table_first_max,
+                current_title,
+                table_cont_max,
+                enclosing_box_div=table_enclosing_box,
             )
             result_lines.extend(split_result)
 
             stats["tables_split"] += 1
-            num_chunks = (
-                len(parsed["data_rows"]) + max_table_rows - 1
-            ) // max_table_rows
+            num_data_rows = len(parsed["data_rows"])
+            num_chunks = 1
+            remaining = num_data_rows - table_first_max
+            if remaining > 0:
+                num_chunks += (remaining + table_cont_max - 1) // table_cont_max
             stats["slides_added"] += num_chunks - 1
         else:
             result_lines.extend(table_lines_buffer)
@@ -1603,6 +1699,8 @@ def main():
             print(f"Scale classes auto-injected: {stats['scale_classes_injected']}")
         if stats.get("overflow_warnings", 0) > 0:
             print(f"Overflow warnings: {stats['overflow_warnings']}")
+        if stats.get("split_directives_found", 0) > 0:
+            print(f"Split directives found: {stats['split_directives_found']}")
 
     except FileNotFoundError as e:
         print(f"Error: {e}", file=sys.stderr)

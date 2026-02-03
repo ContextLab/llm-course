@@ -48,6 +48,10 @@ template_deck/
 
 **Line preservation**: `process_markdown.py` maintains line numbers across split slides.
 
+**Per-slide split control**: Use `<!-- split: N -->` or `<!-- split: N, M -->` before a code block or table to override the split threshold. One-shot directive, resets at slide boundaries.
+
+**Box-aware splitting**: Code/tables inside callout boxes (note-box, example-box, etc.) automatically re-wrap in the same box on continuation slides.
+
 ## ANTI-PATTERNS
 
 | Pattern | Problem |

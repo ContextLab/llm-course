@@ -38,7 +38,7 @@ slides/
 
 **Output location**: HTML/PDF generated in same directory as source .md.
 
-**Content splitting**: Long code/tables auto-split by `process_markdown.py` with "continued..." markers.
+**Content splitting**: Long code/tables auto-split by `process_markdown.py` with "continued..." markers. Use `<!-- split: N -->` or `<!-- split: N, M -->` to override per-slide. Splits inside callout boxes automatically re-wrap in the same box type on each continuation slide.
 
 ## ANTI-PATTERNS
 

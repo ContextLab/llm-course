@@ -97,7 +97,7 @@ git submodule update --remote            # Pull latest from submodule remotes
 
 **Cross-demo imports**: Demo 02 imports ElizaEngine from `../../eliza/js/eliza-engine.js`. Demos share `/demos/data/gutenberg/` corpus.
 
-**Slide preprocessing**: `process_markdown.py` auto-splits tables/code >N lines, adds "continued..." markers, renders ```flow blocks as SVG.
+**Slide preprocessing**: `process_markdown.py` auto-splits tables/code >N lines, adds "continued..." markers, renders ```flow blocks as SVG. Per-slide override: `<!-- split: N -->` or `<!-- split: N, M -->` before a code block or table. Splits inside callout boxes auto-wrap continuations in the same box type.
 
 ## COMMANDS
 

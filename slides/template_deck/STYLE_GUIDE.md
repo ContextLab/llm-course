@@ -252,6 +252,36 @@ Default: 20 lines per slide. Adjust with `-l` flag:
 ./compile.sh presentation.md -l 15
 ```
 
+### Per-slide split control
+
+Override the split threshold for a single code block or table using an HTML comment directive:
+
+```markdown
+<!-- split: 5 -->
+```python
+# This block splits after 5 lines on all chunks
+```
+```
+
+Use two values to set different thresholds for the first chunk vs continuations:
+
+```markdown
+<!-- split: 3, 8 -->
+```python
+# First chunk: 3 lines, continuation chunks: 8 lines each
+```
+```
+
+Rules:
+- Directive applies to the **next** code block or table only (one-shot, consumed after use)
+- Resets at slide boundaries (`---`)
+- Works for both code blocks and tables (for tables, the number controls data rows)
+- When no directive is present, behavior is unchanged (context-aware auto-splitting)
+
+### Box-aware splitting
+
+When a code block or table inside a callout box (e.g., `example-box`, `note-box`, `warning-box`, etc.) is split across slides, each continuation slide automatically wraps the content in the **same box type with the same title**. No extra markup needed — just place your code or table inside the box as usual.
+
 ---
 
 ## Equations
