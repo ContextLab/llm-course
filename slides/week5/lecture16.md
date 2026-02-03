@@ -159,6 +159,7 @@ Perplexity measures how "confused" the model is. A perplexity of $k$ means the m
 </div>
 
 ---
+<!-- _class: scale-95 -->
 
 # The training loop
 
@@ -293,7 +294,7 @@ This preserves the gradient *direction* while limiting its *magnitude*. A common
 </div>
 
 ---
-<!-- _class: scale-90 -->
+<!-- _class: scale-80 -->
 
 # Training with HuggingFace
 
@@ -354,6 +355,7 @@ Performance improves as a straight line on a log-log plot. There are no sudden j
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
 # Visualizing scaling laws
 
@@ -369,14 +371,13 @@ This means doubling compute reduces loss by a *fixed percentage* — not a fixed
 
 <div class="example-box" data-title="Concrete numbers">
 
-```
-Model        Parameters    Loss    Perplexity
-GPT-2 small  117M         3.30    27.0
-GPT-2 medium 345M         3.07    21.5
-GPT-2 large  774M         2.93    18.8
-GPT-2 XL     1.5B         2.85    17.4
-GPT-3        175B         ~2.4    ~11.0
-```
+| Model | Parameters | Loss | Perplexity |
+|-------|-----------|------|-----------|
+| GPT-2 small | 117M | 3.30 | 27.0 |
+| GPT-2 medium | 345M | 3.07 | 21.5 |
+| GPT-2 large | 774M | 2.93 | 18.8 |
+| GPT-2 XL | 1.5B | 2.85 | 17.4 |
+| GPT-3 | 175B | ~2.4 | ~11.0 |
 
 Each ~10x increase in parameters gives roughly the same *percentage* improvement in loss.
 
