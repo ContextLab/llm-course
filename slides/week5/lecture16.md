@@ -405,27 +405,9 @@ trainer.train()
 
 1. **Start small**: Test your pipeline with a small model before scaling up
 2. **Learning rate**: Fine-tuning uses 10-100x smaller learning rates than pre-training (typically 1e-5 to 5e-5)
-3. **Epochs**: Fine-tuning needs only 2-5 epochs (vs. 1 epoch for pre-training on large data)
+3. **Epochs**: Fine-tuning needs only 2-5 epochs; pre-training typically makes 1-2 passes over the data since the dataset is so large
 4. **Batch size**: Larger batches give more stable gradients but require more memory. Use gradient accumulation if your GPU is too small
 5. **Evaluation**: Always hold out a validation set and monitor for overfitting
-
-</div>
-
----
-
-# References
-
-<div class="note-box" data-title="Further reading">
-
-[**Vaswani et al. (2017, *NeurIPS*)**](https://arxiv.org/abs/1706.03762) "Attention Is All You Need" — The original transformer paper.
-
-[**Kaplan et al. (2020, *arXiv*)**](https://arxiv.org/abs/2001.08361) "Scaling Laws for Neural Language Models"
-
-[**Hoffmann et al. (2022, *arXiv*)**](https://arxiv.org/abs/2203.15556) "Training Compute-Optimal Large Language Models" (Chinchilla)
-
-[**Ouyang et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2203.02155) "Training language models to follow instructions with human feedback" (InstructGPT/RLHF)
-
-[**HuggingFace NLP Course, Chapter 3**](https://huggingface.co/learn/nlp-course/chapter3) — Hands-on fine-tuning tutorial.
 
 </div>
 
