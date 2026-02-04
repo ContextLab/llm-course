@@ -20,10 +20,10 @@ Winter 2026
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
 1. Explain what it means to "train" a transformer model
-2. Describe the training loop: forward pass, loss, backward pass, update
+2. Describe how training data is constructed from raw text
 3. Understand cross-entropy loss and perplexity as training metrics
-4. Explain scaling laws and their practical implications
-5. Distinguish between pre-training and fine-tuning
+4. Describe the training loop and key optimization techniques
+5. Distinguish between foundation models, instruct-tuned models, and fine-tuned models
 
 </div>
 
@@ -88,6 +88,48 @@ No human labels needed! The "label" is simply the next word in the text. This is
 </div>
 
 ---
+<!-- _class: scale-90 -->
+
+# From raw text to training data
+
+<div class="definition-box" data-title="How training data is constructed">
+
+Training data is built from raw text in three steps:
+
+1. **Tokenize** every document in the corpus independently
+2. **Concatenate** all token sequences into one long stream (optionally separated by `<EOS>` tokens)
+3. **Chunk** the stream into fixed-length blocks of `block_size` tokens (e.g., 1024 or 2048)
+
+Each chunk becomes one training example. Leftover tokens shorter than `block_size` are dropped.
+
+</div>
+
+<div class="note-box" data-title="Why not pad individual documents?">
+
+Padding wastes compute — every `[PAD]` token is a wasted FLOP. Concatenation ensures every token in every batch is a real training signal. This is the standard approach used by HuggingFace, GPT-2/3, LLaMA, and most modern language models.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# The causal attention mask
+
+<div class="definition-box" data-title="How one chunk trains the whole model">
+
+Within each chunk, the **causal attention mask** (a lower-triangular matrix) ensures position $t$ can only attend to positions $1, 2, \ldots, t$. This means every position simultaneously predicts its next token — one forward pass through a chunk of length $L$ produces $L$ training signals.
+
+Labels are simply the input shifted right by one position. The model handles this internally during the forward pass.
+
+</div>
+
+<div class="tip-box" data-title="Intuition">
+
+Think of it like a classroom where every student takes the same test at the same time, but each student can only see the questions before theirs. Student 1 sees nothing and guesses the first word. Student 2 sees word 1 and predicts word 2. Student $L$ sees all previous words and predicts the last. All $L$ students learn simultaneously from a single test.
+
+</div>
+
+---
 
 # Cross-entropy loss
 
@@ -136,6 +178,7 @@ Loss = -log(0.85) = 0.16  ← much lower!
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
 # Perplexity
 
@@ -145,16 +188,21 @@ Loss = -log(0.85) = 0.16  ← much lower!
 
 $$\text{PPL} = e^{\mathcal{L}} = e^{-\frac{1}{N}\sum_{t=1}^{N} \log P(x_t \mid x_{<t})}$$
 
+A perplexity of $k$ means the model is, on average, as uncertain as if it were choosing uniformly among $k$ options.
+
 </div>
 
-<div class="tip-box" data-title="Intuition">
+<div class="note-box" data-title="Perplexity in practice">
 
-Perplexity measures how "confused" the model is. A perplexity of $k$ means the model is, on average, as uncertain as if it were choosing uniformly among $k$ options.
+- **Model comparison**: Lower PPL = better model. GPT-2 Small (PPL $\approx$ 27) vs. GPT-2 XL (PPL $\approx$ 17) vs. GPT-3 (PPL $\approx$ 11)
+- **Training monitoring**: Plot PPL over training steps; it should decrease. Spikes indicate instability.
+- **Evaluation**: Standard metric on held-out test sets (e.g., WikiText-103)
 
-- **PPL = 1**: Perfect prediction (impossible in practice)
-- **PPL = 10**: Like choosing among 10 equally likely words
-- **PPL = 100**: Very uncertain
-- **GPT-3 on test data**: PPL ≈ 20
+</div>
+
+<div class="warning-box" data-title="Limitations of perplexity">
+
+Only measures token-level prediction accuracy — doesn't capture fluency, coherence, or factual correctness. A model with low PPL can still hallucinate or generate toxic content. Can't compare models with different vocabularies (different PPL scales), and values are domain-dependent.
 
 </div>
 
@@ -183,149 +231,77 @@ GPT-3 has 175 billion parameters. Each training step updates *all* of them. Trai
 </div>
 
 ---
-<!-- _class: scale-90 -->
+<!-- _class: scale-85 -->
 
-# Gradient descent intuition
+# Optimization and regularization
 
-<div class="tip-box" data-title="The hiking analogy">
+<div class="definition-box" data-title="Key techniques for training transformers">
 
-Imagine you're lost in a foggy mountain range and want to reach the lowest valley:
-
-1. **Feel the slope** under your feet (compute the gradient)
-2. **Take a step downhill** (update parameters in the direction that reduces loss)
-3. **Repeat** until you reach a valley (convergence)
-
-The **learning rate** ($\eta$) controls your step size:
-- Too large → you overshoot the valley and bounce around
-- Too small → you make progress painfully slowly
-- Just right → you descend efficiently
+- **Stochastic gradient descent (SGD)**: Use random mini-batches instead of the entire dataset. Faster and noisier, but works well in practice.
+- **AdamW optimizer**: Gives each parameter its own adaptive learning rate based on gradient history. Adds momentum (smooths updates) and weight decay (prevents overfitting). The standard choice for transformers.
+- **Learning rate scheduling**: Start with a warmup phase (gradually increase LR), then decay with a cosine or linear schedule. Prevents instability early in training.
+- **Gradient clipping**: Cap gradient magnitude to prevent "exploding gradients" from destroying training progress. Typical max norm = 1.0.
 
 </div>
 
-<div class="note-box" data-title="Stochastic gradient descent">
+<div class="note-box" data-title="Further reading">
 
-In practice, we don't compute the gradient over the *entire* dataset (too expensive). Instead, we use random **mini-batches** of data — this is called **stochastic gradient descent** (SGD).
+[**Loshchilov & Hutter (2019, *ICLR*)**](https://arxiv.org/abs/1711.05101) "Decoupled Weight Decay Regularization" — The AdamW optimizer paper.
+
+[**Vaswani et al. (2017, *NeurIPS*)**](https://arxiv.org/abs/1706.03762) "Attention Is All You Need" — Introduced warmup scheduling for transformers.
 
 </div>
 
 ---
-<!-- _class: scale-90 -->
+<!-- _class: scale-85 -->
 
-# Optimization: AdamW
+# Scaling laws
 
-<div class="definition-box" data-title="The optimizer of choice for transformers">
+<div class="definition-box" data-title="Bigger models + more data = better performance">
 
-**AdamW** (Adaptive Moment Estimation with Weight Decay) improves on basic gradient descent:
+Language model performance follows predictable **power laws**: smooth, straight lines on log-log plots when you increase model size, dataset size, or compute budget.
 
-1. **Adaptive learning rates**: Each parameter gets its own learning rate based on gradient history
-2. **Momentum**: Uses exponential moving average of past gradients to smooth updates
-3. **Weight decay**: Adds regularization to prevent parameters from growing too large
+- **Kaplan et al. (2020)**: Discovered these relationships across seven orders of magnitude
+- **Hoffmann et al. (2022, "Chinchilla")**: Showed optimal training balances model size and data — a smaller model trained on more data can match a larger undertrained model (Chinchilla 70B matched GPT-3 175B)
 
-$$m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t \quad \text{(momentum)}$$
-$$v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2 \quad \text{(squared gradients)}$$
-$$\theta_t = \theta_{t-1} - \eta \frac{m_t}{\sqrt{v_t} + \epsilon} - \lambda \theta_{t-1} \quad \text{(update + decay)}$$
+Key takeaway: you can predict model performance before training by running small-scale experiments first.
 
 </div>
 
-<div class="tip-box" data-title="Why AdamW?">
+<div class="note-box" data-title="Further reading">
 
-Standard Adam "hides" weight decay inside the adaptive learning rate, making it less effective. AdamW decouples weight decay from the gradient-based update, leading to better generalization.
+[**Kaplan et al. (2020, *arXiv*)**](https://arxiv.org/abs/2001.08361) "Scaling Laws for Neural Language Models"
+
+[**Hoffmann et al. (2022, *arXiv*)**](https://arxiv.org/abs/2203.15556) "Training Compute-Optimal Large Language Models" (Chinchilla)
 
 </div>
 
 ---
 <!-- _class: scale-70 -->
 
-# Learning rate scheduling
-
-<div class="definition-box" data-title="Warmup then decay">
-
-Modern transformers use a **learning rate schedule** with two phases:
-
-1. **Warmup** (first ~1-10% of training): Gradually increase $\eta$ from 0 to the target value. This prevents large, unstable updates early when the model is randomly initialized.
-
-2. **Decay** (remaining training): Gradually decrease $\eta$ using a cosine or linear schedule. This allows fine-grained optimization as the model approaches convergence.
-
-</div>
-
-<div class="example-box" data-title="Learning rate schedule in Python">
-
-
-```python
-from transformers import get_cosine_schedule_with_warmup
-
-optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)
-
-scheduler = get_cosine_schedule_with_warmup(
-    optimizer,
-    num_warmup_steps=1000,     # warmup for 1000 steps
-    num_training_steps=100000  # total training steps
-)
-
-# In training loop:
-for batch in dataloader:
-    loss = model(batch).loss
-    loss.backward()
-    optimizer.step()
-    scheduler.step()  # update learning rate
-    optimizer.zero_grad()
-```
-
-</div>
-
----
-
-# Gradient clipping
-
-<div class="warning-box" data-title="The exploding gradient problem">
-
-During backpropagation through many layers, gradients can grow exponentially large — this is called **exploding gradients**. A single bad gradient can destroy hours of training progress by making a catastrophically large parameter update.
-
-</div>
-
-<div class="definition-box" data-title="The fix: gradient clipping">
-
-Before updating parameters, cap the total gradient norm to a maximum value:
-
-$$\text{if } \|\nabla_\theta \mathcal{L}\| > \text{max\_norm}: \quad \nabla_\theta \mathcal{L} \leftarrow \text{max\_norm} \cdot \frac{\nabla_\theta \mathcal{L}}{\|\nabla_\theta \mathcal{L}\|}$$
-
-This preserves the gradient *direction* while limiting its *magnitude*. A common choice is $\text{max\_norm} = 1.0$.
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
 # Training with HuggingFace
 
-<div class="example-box" data-title="A complete training loop">
+<div class="example-box" data-title="Pre-training a language model">
 
+<!-- split: 22 -->
 ```python
-from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import Trainer, TrainingArguments
 from datasets import load_dataset
 
-# Load model and tokenizer
 model = AutoModelForCausalLM.from_pretrained("gpt2")
 tokenizer = AutoTokenizer.from_pretrained("gpt2")
 
-# Load and tokenize data
 dataset = load_dataset("wikitext", "wikitext-2-raw-v1")
 def tokenize(examples):
     return tokenizer(examples["text"], truncation=True, max_length=512)
 tokenized = dataset.map(tokenize, batched=True)
 
-# Configure training
 args = TrainingArguments(
-    output_dir="./results",
-    num_train_epochs=3,
-    per_device_train_batch_size=8,
-    learning_rate=5e-5,
-    warmup_steps=500,
-    weight_decay=0.01,
-    logging_steps=100,
+    output_dir="./results", num_train_epochs=3,
+    per_device_train_batch_size=8, learning_rate=5e-5,
+    warmup_steps=500, weight_decay=0.01,
 )
-
-# Train!
 trainer = Trainer(model=model, args=args, train_dataset=tokenized["train"])
 trainer.train()
 ```
@@ -333,176 +309,90 @@ trainer.train()
 </div>
 
 ---
+<!-- _class: scale-90 -->
 
-# Scaling laws
+# From pre-training to deployment
 
-<div class="definition-box" data-title="Kaplan et al. (2020): neural scaling laws">
+<div class="definition-box" data-title="Three stages of model development">
 
-OpenAI discovered that language model performance follows **predictable power laws** as you increase:
+1. **Pre-training** $\rightarrow$ **Foundation model**: Train on a massive general text corpus (books, web, code). The model learns language patterns, world knowledge, and reasoning. Expensive ($millions), done once. Examples: GPT-3 base, LLaMA, Mistral.
 
-1. **Model size** ($N$ parameters): $\mathcal{L} \propto N^{-0.076}$
-2. **Dataset size** ($D$ tokens): $\mathcal{L} \propto D^{-0.095}$
-3. **Compute budget** ($C$ FLOPs): $\mathcal{L} \propto C^{-0.050}$
+2. **Instruction tuning + RLHF** $\rightarrow$ **Instruct model**: Fine-tune the foundation model on instruction-following data and human preference feedback. The model learns to be helpful, harmless, and honest. This is what makes ChatGPT different from raw GPT-4. Examples: ChatGPT, Claude, Gemini.
 
-These relationships are remarkably smooth across **seven orders of magnitude**.
-
-</div>
-
-<div class="tip-box" data-title="What this means">
-
-Performance improves as a straight line on a log-log plot. There are no sudden jumps or plateaus — just smooth, predictable improvement. This means we can *predict* how well a model will perform before training it.
+3. **Task-specific fine-tuning** $\rightarrow$ **Specialized model**: Further fine-tune on domain data for a specific application. Cheap, fast, and highly effective. Examples: medical diagnosis, legal analysis, code generation for a specific codebase.
 
 </div>
 
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-90 -->
 
-# Visualizing scaling laws
+# Why instruction tuning matters
 
-<div class="note-box" data-title="Log-log plots reveal power laws">
+<div class="tip-box" data-title="Foundation models are powerful but unruly">
 
-When we plot loss vs. compute on log-log axes, the relationship is linear:
+A foundation model has vast knowledge but no "manners" — it will complete any text prompt, including harmful or nonsensical ones. Instruction tuning teaches the model to follow instructions, answer questions helpfully, and refuse harmful requests.
 
-$$\log(\mathcal{L}) = -\alpha \log(C) + \beta$$
-
-This means doubling compute reduces loss by a *fixed percentage* — not a fixed amount.
+**RLHF** (Reinforcement Learning from Human Feedback): Humans rank model outputs, and the model is trained to prefer higher-ranked responses. This is the key technique behind ChatGPT, Claude, and other assistants.
 
 </div>
 
-<div class="example-box" data-title="Concrete numbers">
+<div class="note-box" data-title="Further reading">
 
-| Model | Parameters | Loss | Perplexity |
-|-------|-----------|------|-----------|
-| GPT-2 small | 117M | 3.30 | 27.0 |
-| GPT-2 medium | 345M | 3.07 | 21.5 |
-| GPT-2 large | 774M | 2.93 | 18.8 |
-| GPT-2 XL | 1.5B | 2.85 | 17.4 |
-| GPT-3 | 175B | ~2.4 | ~11.0 |
+[**Ouyang et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2203.02155) "Training language models to follow instructions with human feedback" — The InstructGPT paper that launched the instruction-tuning revolution.
 
-Each ~10x increase in parameters gives roughly the same *percentage* improvement in loss.
+[**Bai et al. (2022, *arXiv*)**](https://arxiv.org/abs/2204.05862) "Constitutional AI: Harmlessness from AI Feedback" — An alternative to human feedback.
 
 </div>
 
 ---
 
-# Chinchilla scaling
+# Task-specific fine-tuning
 
-<div class="definition-box" data-title="Hoffmann et al. (2022): compute-optimal training">
+<div class="definition-box" data-title="Adapting a model to your task">
 
-Kaplan et al. suggested scaling model size faster than data. **Chinchilla** showed this was wrong:
+Take a pre-trained (or instruct-tuned) model and train it further on task-specific data:
 
-For a fixed compute budget, the optimal allocation is approximately:
-
-$$\text{tokens} \approx 20 \times \text{parameters}$$
-
-A 70B parameter model should be trained on ~1.4 trillion tokens.
+- Only needs small datasets (hundreds to thousands of examples)
+- Uses tiny learning rates (10-100x smaller than pre-training) to preserve existing knowledge
+- Training takes minutes to hours, not weeks
 
 </div>
 
-<div class="warning-box" data-title="Many models were undertrained">
+<div class="tip-box" data-title="Why does it work?">
 
-Chinchilla (70B params, 1.4T tokens) matched GPT-3 (175B params, 300B tokens) despite being **2.5x smaller**. GPT-3 was undertrained relative to its size — it needed more data, not more parameters.
-
-</div>
-
----
-
-# What scaling laws tell us
-
-<div class="tip-box" data-title="Practical implications">
-
-1. **Predictability**: We can estimate final performance from small-scale experiments — train small models first, then extrapolate
-2. **Resource allocation**: Don't just make models bigger — balance parameters and data
-3. **No free lunch**: Improving loss by 10% requires roughly 10x more compute
-4. **Emergent abilities**: Some capabilities (like arithmetic, translation) appear suddenly at certain scales, even though the loss curve is smooth
-
-</div>
-
-<div class="note-box" data-title="The cost of scale">
-
-| Model | Parameters | Training cost (est.) |
-|-------|-----------|---------------------|
-| BERT-base | 110M | ~$5,000 |
-| GPT-2 | 1.5B | ~$50,000 |
-| GPT-3 | 175B | ~$4,600,000 |
-| GPT-4 | ~1.8T (rumored) | ~$100,000,000 |
+The pre-trained model already understands language, facts, and reasoning. Fine-tuning just teaches it the *format* and *focus* of your task — like an expert learning a new specialty. Fine-tuning on 1,000 labeled examples typically outperforms training from scratch on 100,000 examples.
 
 </div>
 
 ---
-
-# Pre-training vs fine-tuning
-
-<div class="definition-box" data-title="Two phases of training">
-
-**Pre-training**: Train a large model on a massive, general-purpose corpus (e.g., internet text). The model learns language patterns, facts, and reasoning. This is expensive and done once.
-
-**Fine-tuning**: Take the pre-trained model and train it further on a smaller, task-specific dataset. This adapts the general knowledge to a specific use case. This is cheap and done many times.
-
-</div>
-
-<div class="tip-box" data-title="Analogy">
-
-Pre-training is like getting a liberal arts education — broad knowledge about many topics. Fine-tuning is like specializing in medical school — adapting that broad foundation to a specific domain.
-
-</div>
-
----
-
-# Why does fine-tuning work?
-
-<div class="note-box" data-title="Transfer learning">
-
-During pre-training, the model learns:
-- Grammar and syntax
-- World knowledge and facts
-- Reasoning patterns
-- Contextual understanding
-
-These capabilities **transfer** to new tasks. Fine-tuning only needs to teach the model *how to apply* its existing knowledge to the new task format.
-
-</div>
-
-<div class="definition-box" data-title="Key advantage">
-
-Fine-tuning a pre-trained model on 1,000 labeled examples typically outperforms training from scratch on 100,000 examples. The pre-trained representations give the model a massive head start.
-
-</div>
-
----
-<!-- _class: scale-85 -->
+<!-- _class: scale-70 -->
 
 # Fine-tuning with HuggingFace
 
-<div class="example-box" data-title="Fine-tuning BERT for sentiment classification">
+<div class="example-box" data-title="Fine-tuning for sentiment classification">
 
+<!-- split: 24 -->
 ```python
-from transformers import AutoModelForSequenceClassification, Trainer, TrainingArguments
+from transformers import AutoModelForSequenceClassification
+from transformers import Trainer, TrainingArguments
 from datasets import load_dataset
 
-# Load pre-trained BERT + add classification head
 model = AutoModelForSequenceClassification.from_pretrained(
-    "bert-base-uncased", num_labels=2  # positive/negative
+    "bert-base-uncased", num_labels=2
 )
+dataset = load_dataset("imdb")
 
-# Load task-specific data
-dataset = load_dataset("imdb")  # 50,000 movie reviews
-
-# Fine-tuning hyperparameters (much smaller than pre-training!)
 args = TrainingArguments(
-    output_dir="./sentiment-model",
-    num_train_epochs=3,           # just 3 epochs
-    per_device_train_batch_size=16,
-    learning_rate=2e-5,           # very small learning rate
-    warmup_ratio=0.1,
-    weight_decay=0.01,
+    output_dir="./sentiment-model", num_train_epochs=3,
+    per_device_train_batch_size=16, learning_rate=2e-5,
+    warmup_ratio=0.1, weight_decay=0.01,
     evaluation_strategy="epoch",
 )
-
-trainer = Trainer(model=model, args=args,
-    train_dataset=dataset["train"], eval_dataset=dataset["test"])
+trainer = Trainer(
+    model=model, args=args,
+    train_dataset=dataset["train"], eval_dataset=dataset["test"],
+)
 trainer.train()
-# Achieves ~93% accuracy in ~30 minutes on a single GPU!
 ```
 
 </div>
@@ -523,61 +413,19 @@ trainer.train()
 
 ---
 
-# Common training pitfalls
-
-<div class="warning-box" data-title="Things that go wrong">
-
-**Overfitting**: The model memorizes the training data instead of learning general patterns. Signs: training loss drops but validation loss increases. Fix: more data, dropout, early stopping.
-
-**Catastrophic forgetting**: During fine-tuning, the model "forgets" its pre-trained knowledge. Fix: use small learning rates, freeze lower layers, or use techniques like LoRA.
-
-**Data quality**: Garbage in, garbage out. Models trained on noisy, biased, or duplicated data learn those patterns. Fix: careful data curation and deduplication.
-
-**Training instability**: Loss spikes or NaN values during training. Fix: gradient clipping, learning rate warmup, smaller batch sizes.
-
-</div>
-
----
-
-# Discussion: scaling and efficiency
-
-<div class="tip-box" data-title="Questions to consider">
-
-1. If scaling laws predict smooth improvement, will we reach human-level performance by just scaling up? Why or why not?
-2. Training GPT-4 reportedly cost ~$100M. Is this sustainable? Who can afford to train these models?
-3. Chinchilla showed we can match larger models with more data. What are the implications for open-source models?
-4. How should we balance model performance against environmental cost (energy, carbon emissions)?
-
-</div>
-
----
-
-# Discussion: training data and ethics
-
-<div class="tip-box" data-title="Questions to consider">
-
-1. Pre-training data comes from the internet — who gave permission? What about copyright?
-2. Models learn biases present in training data (gender, race, culture). Whose responsibility is it to fix this?
-3. Fine-tuning with "human feedback" (RLHF) introduces the biases of the annotators. How do we account for this?
-4. Should training data be publicly documented? What are the tradeoffs of transparency?
-
-</div>
-
----
-
 # References
 
 <div class="note-box" data-title="Further reading">
 
-[**Kaplan et al. (2020, *arXiv*)**](https://arxiv.org/abs/2001.08361) "Scaling Laws for Neural Language Models" — Discovered power-law scaling relationships.
-
-[**Hoffmann et al. (2022, *arXiv*)**](https://arxiv.org/abs/2203.15556) "Training Compute-Optimal Large Language Models" — The Chinchilla paper on optimal data-parameter balance.
-
 [**Vaswani et al. (2017, *NeurIPS*)**](https://arxiv.org/abs/1706.03762) "Attention Is All You Need" — The original transformer paper.
 
-[**HuggingFace NLP Course, Chapter 3**](https://huggingface.co/learn/nlp-course/chapter3) — Hands-on tutorial for fine-tuning pre-trained models.
+[**Kaplan et al. (2020, *arXiv*)**](https://arxiv.org/abs/2001.08361) "Scaling Laws for Neural Language Models"
 
-[**Loshchilov & Hutter (2019, *ICLR*)**](https://arxiv.org/abs/1711.05101) "Decoupled Weight Decay Regularization" — The AdamW optimizer paper.
+[**Hoffmann et al. (2022, *arXiv*)**](https://arxiv.org/abs/2203.15556) "Training Compute-Optimal Large Language Models" (Chinchilla)
+
+[**Ouyang et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2203.02155) "Training language models to follow instructions with human feedback" (InstructGPT/RLHF)
+
+[**HuggingFace NLP Course, Chapter 3**](https://huggingface.co/learn/nlp-course/chapter3) — Hands-on fine-tuning tutorial.
 
 </div>
 
