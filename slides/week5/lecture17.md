@@ -52,17 +52,17 @@ Due: **February 16 at 11:59 PM EST**.
 
 <div class="definition-box" data-title="Two kinds of knowledge">
 
-**Parametric knowledge**: Facts stored *inside* the model's parameters during training. The model "knows" things because it memorized patterns from its training data.
+**Parametric knowledge**: facts stored *inside* the model's parameters during training. The model "knows" things because it memorized patterns from its training data.
 
-**Non-parametric knowledge**: Facts stored *outside* the model in documents, databases, or APIs. The model accesses this knowledge at inference time.
+**Non-parametric knowledge**: facts stored *outside* the model in documents, databases, or APIs. The model accesses this knowledge at inference time.
 
 </div>
 
 <div class="warning-box" data-title="Why parametric knowledge falls short">
 
-1. **Hallucination**: The model confidently generates plausible-sounding but incorrect information
-2. **Stale data**: Knowledge is frozen at training time — the model doesn't know about recent events
-3. **No citations**: The model can't tell you *where* it learned something, making claims hard to verify
+1. **Hallucination**: the model confidently generates plausible-sounding but incorrect information
+2. **Stale data**: knowledge is frozen at training time — the model doesn't know about recent events
+3. **No citations**: the model can't tell you *where* it learned something, making claims hard to verify
 
 </div>
 
@@ -112,9 +112,9 @@ You already know that embeddings map text to vectors where **semantic similarity
 <div class="tip-box" data-title="Which embedding model?">
 
 For RAG, we use **sentence embedding** models (not word-level) that produce a single vector for an entire passage. All of these are free and open-source:
-- **Sentence-BERT** (all-MiniLM-L6-v2): Fast, good quality, 384 dimensions
-- **BGE** (BAAI/bge-small-en-v1.5): State-of-the-art for retrieval
-- **E5, GTE**: Strong open-source alternatives
+- **Sentence-BERT** (all-MiniLM-L6-v2): fast, good quality, 384 dimensions
+- **BGE** (BAAI/bge-small-en-v1.5): state-of-the-art for retrieval
+- **E5, GTE**: strong open-source alternatives
 
 </div>
 
@@ -130,10 +130,10 @@ Real documents are long. We can't embed an entire book as a single vector (too m
 
 <div class="tip-box" data-title="Chunking strategies">
 
-- **Fixed-size**: Split every $n$ characters/tokens (simple but may cut mid-sentence)
-- **Sentence-based**: Split on sentence boundaries (preserves meaning better)
-- **Semantic**: Use topic shifts to determine chunk boundaries (best quality but most complex)
-- **Recursive**: Split on paragraphs first, then sentences if chunks are still too long
+- **Fixed-size**: split every $n$ characters/tokens (simple but may cut mid-sentence)
+- **Sentence-based**: split on sentence boundaries (preserves meaning better)
+- **Semantic**: use topic shifts to determine chunk boundaries (best quality but most complex)
+- **Recursive**: split on paragraphs first, then sentences if chunks are still too long
 
 </div>
 
@@ -238,7 +238,7 @@ FLAN-T5 runs locally in Colab. For better quality, try `google/flan-t5-large` (r
 </div>
 
 ---
-<!-- _class: scale-80 -->
+<!-- _class: scale-70 -->
 
 # End-to-end RAG with ChromaDB
 
@@ -298,21 +298,22 @@ Many production systems use *both*: fine-tune the model for the domain's style a
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
 # Beyond basic RAG
 
 <div class="note-box" data-title="Advanced techniques">
 
-1. **Re-ranking**: After initial retrieval, use a cross-encoder model to re-score and re-order results for better precision
-2. **Hybrid search**: Combine vector similarity (semantic) with keyword matching (BM25) for more robust retrieval
-3. **Query expansion**: Rewrite or expand the user's query using an LLM before retrieval to improve recall
+1. **Re-ranking**: after initial retrieval, use a cross-encoder model to re-score and re-order results for better precision
+2. **Hybrid search**: combine vector similarity (semantic) with keyword matching (BM25) for more robust retrieval
+3. **Query expansion**: rewrite or expand the user's query using an LLM before retrieval to improve recall
 
 </div>
 
 <div class="warning-box" data-title="Limitations to keep in mind">
 
-1. **Retrieval quality**: If the retriever fails to find relevant documents, the generator can't produce a good answer — garbage in, garbage out
-2. **Context window limits**: There's a limit to how much retrieved text fits in the prompt, requiring aggressive chunking or summarization
+1. **Retrieval quality**: if the retriever fails to find relevant documents, the generator can't produce a good answer — garbage in, garbage out
+2. **Context window limits**: there's a limit to how much retrieved text fits in the prompt, requiring aggressive chunking or summarization
 3. **Multi-source reasoning**: RAG is great for finding a specific fact, but struggles when answers require synthesizing information across many documents
 
 </div>
@@ -323,11 +324,11 @@ Many production systems use *both*: fine-tune the model for the domain's style a
 
 <div class="tip-box" data-title="Making RAG work well">
 
-1. **Chunk wisely**: Experiment with chunk sizes (256-512 tokens is a good start). Use overlap between chunks.
-2. **Choose the right embedding model**: Test multiple models on your specific domain. General-purpose models may not capture domain-specific semantics.
-3. **Evaluate retrieval separately**: Before blaming the LLM, check if the retriever is finding the right documents.
-4. **Include metadata**: Store source, date, and section info with chunks so the LLM can cite sources.
-5. **Handle "I don't know"**: Instruct the model to say when the context doesn't contain the answer rather than hallucinating.
+1. **Chunk wisely**: experiment with chunk sizes (256-512 tokens is a good start). Use overlap between chunks.
+2. **Choose the right embedding model**: test multiple models on your specific domain. General-purpose models may not capture domain-specific semantics.
+3. **Evaluate retrieval separately**: before blaming the LLM, check if the retriever is finding the right documents.
+4. **Include metadata**: store source, date, and section info with chunks so the LLM can cite sources.
+5. **Handle "I don't know"**: instruct the model to say when the context doesn't contain the answer rather than hallucinating.
 
 </div>
 

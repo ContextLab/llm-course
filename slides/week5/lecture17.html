@@ -724,14 +724,14 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-knowledge-problem">The knowledge problem</h1>
 <div class="definition-box" data-title="Two kinds of knowledge">
-<p><strong>Parametric knowledge</strong>: Facts stored <em>inside</em> the model's parameters during training. The model &quot;knows&quot; things because it memorized patterns from its training data.</p>
-<p><strong>Non-parametric knowledge</strong>: Facts stored <em>outside</em> the model in documents, databases, or APIs. The model accesses this knowledge at inference time.</p>
+<p><strong>Parametric knowledge</strong>: facts stored <em>inside</em> the model's parameters during training. The model &quot;knows&quot; things because it memorized patterns from its training data.</p>
+<p><strong>Non-parametric knowledge</strong>: facts stored <em>outside</em> the model in documents, databases, or APIs. The model accesses this knowledge at inference time.</p>
 </div>
 <div class="warning-box" data-title="Why parametric knowledge falls short">
 <ol>
-<li><strong>Hallucination</strong>: The model confidently generates plausible-sounding but incorrect information</li>
-<li><strong>Stale data</strong>: Knowledge is frozen at training time — the model doesn't know about recent events</li>
-<li><strong>No citations</strong>: The model can't tell you <em>where</em> it learned something, making claims hard to verify</li>
+<li><strong>Hallucination</strong>: the model confidently generates plausible-sounding but incorrect information</li>
+<li><strong>Stale data</strong>: knowledge is frozen at training time — the model doesn't know about recent events</li>
+<li><strong>No citations</strong>: the model can't tell you <em>where</em> it learned something, making claims hard to verify</li>
 </ol>
 </div>
 </section>
@@ -793,9 +793,9 @@ Winter 2026</p>
 <div class="tip-box" data-title="Which embedding model?">
 <p>For RAG, we use <strong>sentence embedding</strong> models (not word-level) that produce a single vector for an entire passage. All of these are free and open-source:</p>
 <ul>
-<li><strong>Sentence-BERT</strong> (all-MiniLM-L6-v2): Fast, good quality, 384 dimensions</li>
-<li><strong>BGE</strong> (BAAI/bge-small-en-v1.5): State-of-the-art for retrieval</li>
-<li><strong>E5, GTE</strong>: Strong open-source alternatives</li>
+<li><strong>Sentence-BERT</strong> (all-MiniLM-L6-v2): fast, good quality, 384 dimensions</li>
+<li><strong>BGE</strong> (BAAI/bge-small-en-v1.5): state-of-the-art for retrieval</li>
+<li><strong>E5, GTE</strong>: strong open-source alternatives</li>
 </ul>
 </div>
 </section>
@@ -806,10 +806,10 @@ Winter 2026</p>
 </div>
 <div class="tip-box" data-title="Chunking strategies">
 <ul>
-<li><strong>Fixed-size</strong>: Split every <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> characters/tokens (simple but may cut mid-sentence)</li>
-<li><strong>Sentence-based</strong>: Split on sentence boundaries (preserves meaning better)</li>
-<li><strong>Semantic</strong>: Use topic shifts to determine chunk boundaries (best quality but most complex)</li>
-<li><strong>Recursive</strong>: Split on paragraphs first, then sentences if chunks are still too long</li>
+<li><strong>Fixed-size</strong>: split every <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> characters/tokens (simple but may cut mid-sentence)</li>
+<li><strong>Sentence-based</strong>: split on sentence boundaries (preserves meaning better)</li>
+<li><strong>Semantic</strong>: use topic shifts to determine chunk boundaries (best quality but most complex)</li>
+<li><strong>Recursive</strong>: split on paragraphs first, then sentences if chunks are still too long</li>
 </ul>
 </div>
 <div class="warning-box" data-title="Size tradeoffs">
@@ -905,7 +905,7 @@ Winter 2026</p>
 <p>FLAN-T5 runs locally in Colab. For better quality, try <code>google/flan-t5-large</code> (requires GPU).</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-70" data-theme="cdl-theme" lang="C" class="scale-70" style="--class:scale-70;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="end-to-end-rag-with-chromadb">End-to-end RAG with ChromaDB</h1>
 <div class="example-box" data-title="A complete mini RAG system">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -1003,19 +1003,19 @@ Winter 2026</p>
 <p>Many production systems use <em>both</em>: fine-tune the model for the domain's style and behavior, then use RAG for up-to-date factual knowledge.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="beyond-basic-rag">Beyond basic RAG</h1>
 <div class="note-box" data-title="Advanced techniques">
 <ol>
-<li><strong>Re-ranking</strong>: After initial retrieval, use a cross-encoder model to re-score and re-order results for better precision</li>
-<li><strong>Hybrid search</strong>: Combine vector similarity (semantic) with keyword matching (BM25) for more robust retrieval</li>
-<li><strong>Query expansion</strong>: Rewrite or expand the user's query using an LLM before retrieval to improve recall</li>
+<li><strong>Re-ranking</strong>: after initial retrieval, use a cross-encoder model to re-score and re-order results for better precision</li>
+<li><strong>Hybrid search</strong>: combine vector similarity (semantic) with keyword matching (BM25) for more robust retrieval</li>
+<li><strong>Query expansion</strong>: rewrite or expand the user's query using an LLM before retrieval to improve recall</li>
 </ol>
 </div>
 <div class="warning-box" data-title="Limitations to keep in mind">
 <ol>
-<li><strong>Retrieval quality</strong>: If the retriever fails to find relevant documents, the generator can't produce a good answer — garbage in, garbage out</li>
-<li><strong>Context window limits</strong>: There's a limit to how much retrieved text fits in the prompt, requiring aggressive chunking or summarization</li>
+<li><strong>Retrieval quality</strong>: if the retriever fails to find relevant documents, the generator can't produce a good answer — garbage in, garbage out</li>
+<li><strong>Context window limits</strong>: there's a limit to how much retrieved text fits in the prompt, requiring aggressive chunking or summarization</li>
 <li><strong>Multi-source reasoning</strong>: RAG is great for finding a specific fact, but struggles when answers require synthesizing information across many documents</li>
 </ol>
 </div>
@@ -1024,11 +1024,11 @@ Winter 2026</p>
 <h1 id="best-practices">Best practices</h1>
 <div class="tip-box" data-title="Making RAG work well">
 <ol>
-<li><strong>Chunk wisely</strong>: Experiment with chunk sizes (256-512 tokens is a good start). Use overlap between chunks.</li>
-<li><strong>Choose the right embedding model</strong>: Test multiple models on your specific domain. General-purpose models may not capture domain-specific semantics.</li>
-<li><strong>Evaluate retrieval separately</strong>: Before blaming the LLM, check if the retriever is finding the right documents.</li>
-<li><strong>Include metadata</strong>: Store source, date, and section info with chunks so the LLM can cite sources.</li>
-<li><strong>Handle &quot;I don't know&quot;</strong>: Instruct the model to say when the context doesn't contain the answer rather than hallucinating.</li>
+<li><strong>Chunk wisely</strong>: experiment with chunk sizes (256-512 tokens is a good start). Use overlap between chunks.</li>
+<li><strong>Choose the right embedding model</strong>: test multiple models on your specific domain. General-purpose models may not capture domain-specific semantics.</li>
+<li><strong>Evaluate retrieval separately</strong>: before blaming the LLM, check if the retriever is finding the right documents.</li>
+<li><strong>Include metadata</strong>: store source, date, and section info with chunks so the LLM can cite sources.</li>
+<li><strong>Handle &quot;I don't know&quot;</strong>: instruct the model to say when the context doesn't contain the answer rather than hallucinating.</li>
 </ol>
 </div>
 </section>
