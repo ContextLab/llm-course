@@ -199,7 +199,7 @@ for idx in top_indices:
 </div>
 
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-75 -->
 
 # Python: generation with context
 
