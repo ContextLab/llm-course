@@ -233,556 +233,136 @@
 <div style="background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin: 2rem 0; text-align: center;">
     <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Ready to Start?</h3>
     <a href="https://classroom.github.com/a/RYMMhVAL" target="_blank" class="accept-btn" style="display: inline-block; background: var(--gradient-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-md); font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(99,102,241,0.4)';" onmouseout="this.style.transform='';this.style.boxShadow='';"><i class="fa-solid fa-rocket" style="margin-right: 0.5rem;"></i>Accept Assignment</a>
-    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">Due: February 9, 2026 at 11:59 PM EST</p>
+    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">Due: February 16, 2026 at 11:59 PM EST</p>
 </div>
 <h1 id="assignment-4-context-aware-customer-service-chatbot">Assignment 4: Context-Aware Customer Service Chatbot</h1>
 <p><strong>Timeline: 1 Week</strong></p>
 <h2 id="overview">Overview</h2>
-<p>In this assignment, you will build a sophisticated, context-aware customer service chatbot that uses modern transformer models and retrieval-augmented generation (RAG) techniques. Unlike traditional rule-based chatbots, your system will leverage semantic understanding to match customer queries with relevant knowledge base entries and generate contextually appropriate responses.</p>
-<p>This is a <strong>1-week assignment</strong> designed to be achievable with GenAI assistance (ChatGPT, Claude, GitHub Copilot). You can focus on system design, integration, and evaluation rather than getting bogged down in low-level implementation details.</p>
-You will implement a complete RAG pipeline that:
-<ul>
-<li>Uses transformer-based encoders (BERT or similar) to understand customer queries semantically</li>
-<li>Performs efficient semantic search over a knowledge base using vector similarity</li>
-<li>Retrieves relevant context to ground responses in factual information</li>
-<li>Handles multi-turn conversations while maintaining context</li>
-<li>Compares your approach against simpler keyword-matching baselines</li>
-</ul>
-This assignment simulates a real-world application where customers need accurate, context-aware assistance, and where hallucinated or incorrect information could damage user trust.
+<p>In this assignment, you will build a customer service chatbot that uses <strong>retrieval-augmented generation (RAG)</strong> to answer questions about a fictional company called TechCo. Your system will:</p>
+<ol>
+<li><strong>Retrieve</strong> relevant FAQ entries using semantic search (sentence embeddings + cosine similarity)</li>
+<li><strong>Compare</strong> semantic search against a TF-IDF keyword baseline</li>
+<li><strong>Generate</strong> helpful responses based on the retrieved context</li>
+</ol>
+This assignment directly applies concepts from <strong>Lecture 17 (RAG)</strong> and builds on your knowledge of embeddings from <strong>Lectures 11-12</strong>.
 <h2 id="learning-objectives">Learning Objectives</h2>
-<p>By completing this assignment, you will develop the following skills:</p>
-<ol>
-<li><strong>Semantic Understanding</strong>: Apply transformer-based models (BERT, Sentence-BERT) to encode text into meaningful vector representations</li>
-<li><strong>Information Retrieval</strong>: Implement efficient semantic search using vector similarity and libraries like FAISS</li>
-<li><strong>Retrieval-Augmented Generation (RAG)</strong>: Combine retrieval and generation to produce grounded, factual responses</li>
-<li><strong>Evaluation Design</strong>: Develop metrics to assess chatbot quality, including retrieval accuracy and response relevance</li>
-<li><strong>System Architecture</strong>: Design and implement a complete end-to-end conversational AI system</li>
-<li><strong>Baseline Comparison</strong>: Understand the importance of baselines by comparing against keyword-matching approaches</li>
-<li><strong>Production Considerations</strong>: Handle edge cases, multi-turn conversations, and system scalability</li>
-</ol>
-<h2 id="background">Background</h2>
-<h3 id="context-aware-language-understanding">Context-Aware Language Understanding</h3>
-Traditional customer service systems often rely on keyword matching or simple pattern recognition (like your Assignment 1 ELIZA chatbot). However, customers express the same need in many different ways:
 <ul>
-<li>"I can't log into my account"</li>
-<li>"My password isn't working"</li>
-<li>"I'm having authentication issues"</li>
-<li>"The login page keeps rejecting my credentials"</li>
-</ul>
-Transformer-based models like BERT can understand that these queries are semantically similar, even when they share few keywords. This is achieved through:
-<ol>
-<li><strong>Contextualized Embeddings</strong>: BERT produces vector representations where semantically similar text has similar vectors</li>
-<li><strong>Semantic Similarity</strong>: Using cosine similarity or other distance metrics to find relevant knowledge base entries</li>
-<li><strong>Dense Retrieval</strong>: Unlike sparse keyword methods (TF-IDF, BM25), dense vector representations capture deeper semantic meaning</li>
-</ol>
-<h3 id="retrieval-augmented-generation-rag">Retrieval-Augmented Generation (RAG)</h3>
-<p>RAG systems combine the strengths of retrieval (finding relevant information) and generation (producing natural language). The typical pipeline:</p>
-<ol>
-<li><strong>Encode</strong>: Convert the user query into a vector representation</li>
-<li><strong>Retrieve</strong>: Find the most similar entries in your knowledge base</li>
-<li><strong>Augment</strong>: Include retrieved context with the query</li>
-<li><strong>Generate</strong>: Produce a response grounded in the retrieved information</li>
-</ol>
-This approach helps prevent hallucination and ensures responses are factually grounded in your knowledge base.
-<h3 id="key-papers-and-concepts">Key Papers and Concepts</h3>
-<ul>
-<li><strong>BERT</strong> (Devlin et al., 2018): Bidirectional encoder representations from transformers</li>
-<li><strong>Sentence-BERT</strong> (Reimers & Gurevych, 2019): Modified BERT for efficient sentence embeddings</li>
-<li><strong>RAG</strong> (Lewis et al., 2020): Retrieval-augmented generation for knowledge-intensive tasks</li>
-<li><strong>Dense Passage Retrieval</strong> (Karpukhin et al., 2020): Using dense representations for passage retrieval</li>
+<li>Apply sentence embeddings for semantic search</li>
+<li>Implement cosine similarity retrieval (the same approach from Lecture 17)</li>
+<li>Compare semantic search vs. keyword matching baselines</li>
+<li>Build a working RAG-style chatbot with template-based response generation</li>
+<li>Evaluate retrieval quality using Accuracy at k and MRR</li>
 </ul>
 <h2 id="dataset">Dataset</h2>
-<p>You will use a customer service FAQ dataset. We recommend one of the following options:</p>
-<h3 id="option-1-huggingface-dataset-recommended">Option 1: HuggingFace Dataset (Recommended)</h3>
-<p>Use the <code>customer_support_twitter</code> dataset or similar customer service datasets from HuggingFace:</p>
-<pre><code class="language-python">from datasets import load_dataset
-<h1 id="load-customer-support-conversations">Load customer support conversations</h1>
-dataset = load_dataset("salesken/customer_support_twitter")</code></pre>
-Alternatively, explore these datasets:
-<ul>
-<li><code>salesken/customer_support_twitter</code>: Real customer support conversations</li>
-<li><code>banking77</code>: Banking customer service intents</li>
-<li><code>SetFit/customer_support</code>: Multi-domain customer support dataset</li>
-</ul>
-<h3 id="option-2-create-your-own-knowledge-base">Option 2: Create Your Own Knowledge Base</h3>
-<p>You can create a synthetic knowledge base for a specific domain (e-commerce, banking, tech support, etc.):</p>
-<pre><code class="language-python">knowledge_base = [
-    {
-        "question": "How do I reset my password?",
-        "answer": "To reset your password, click 'Forgot Password' on the login page. Enter your email address, and we'll send you a reset link. Follow the link to create a new password.",
-        "category": "account_access"
-    },
-    {
-        "question": "What is your return policy?",
-        "answer": "We offer a 30-day return policy for most items. Products must be in original condition with tags attached. Refunds are processed within 5-7 business days.",
-        "category": "returns"
-    },
-    # Add 100+ entries for a meaningful knowledge base
-]</code></pre>
-<h3 id="option-3-web-scraping">Option 3: Web Scraping</h3>
-<p>Scrape FAQs from public customer support pages (ensure compliance with terms of service):</p>
-<pre><code class="language-python"># Example: Parse FAQ pages from a website
-import requests
-from bs4 import BeautifulSoup
-<h1 id="your-scraping-code-herecodepre">Your scraping code here</code></pre></h1>
-<strong>Requirements</strong>:
-<ul>
-<li>Minimum 100 FAQ entries for meaningful evaluation</li>
-<li>Diverse topics/categories (at least 5-10 categories)</li>
-<li>Both simple and complex queries</li>
-<li>Include some ambiguous questions that require context</li>
-</ul>
+<p>We provide a <strong>50-entry FAQ knowledge base</strong> for TechCo covering: account access, billing, product features, shipping and returns, technical support, and general information.</p>
+<p>We also provide <strong>20 test queries</strong> with ground-truth relevant FAQ IDs for evaluation.</p>
+<p>The data is automatically downloaded in the notebook.</p>
 <h2 id="your-tasks">Your Tasks</h2>
-<h3 id="1-build-a-semantic-search-system">1. Build a Semantic Search System</h3>
-<p>Implement a semantic search system that can find relevant FAQ entries given a customer query.</p>
-<p><strong>Requirements</strong>:</p>
-a) <strong>Encode the Knowledge Base</strong>:
-<ul>
-<li>Use a pre-trained sentence transformer model (e.g., <code>sentence-transformers/all-MiniLM-L6-v2</code>)</li>
-<li>Generate embeddings for all FAQ questions/answers</li>
-<li>Store embeddings for efficient retrieval</li>
-</ul>
-<pre><code class="language-python">from sentence_transformers import SentenceTransformer
-<p>model = SentenceTransformer('all-MiniLM-L6-v2')
-<h1 id="your-code-herecodepre">Your code here</code></pre></h1></p>
-b) <strong>Implement Efficient Search</strong>:
-<ul>
-<li>Use FAISS or similar library for fast similarity search</li>
-<li>Implement both cosine similarity and L2 distance metrics</li>
-<li>Support retrieving top-k results</li>
-</ul>
-<pre><code class="language-python">import faiss
-import numpy as np
-<h1 id="build-faiss-index">Build FAISS index</h1>
-dimension = embeddings.shape[1]
-index = faiss.IndexFlatL2(dimension)
-index.add(embeddings)</code></pre>
-c) <strong>Query Processing</strong>:
-<ul>
-<li>Encode incoming queries using the same model</li>
-<li>Retrieve top-k most similar FAQ entries</li>
-<li>Return results with similarity scores</li>
-</ul>
-<h3 id="2-implement-a-baseline-keyword-matching">2. Implement a Baseline (Keyword Matching)</h3>
-<p>Create a simple baseline using traditional keyword matching to demonstrate the value of semantic search.</p>
-<strong>Requirements</strong>:
-<ul>
-<li>Implement TF-IDF with cosine similarity OR BM25</li>
-<li>Use the same knowledge base</li>
-<li>Compare retrieval quality against your semantic approach</li>
-</ul>
-<pre><code class="language-python">from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-<h1 id="your-baseline-implementationcodepre">Your baseline implementation</code></pre></h1>
-<h3 id="3-build-the-retrieval-mechanism">3. Build the Retrieval Mechanism</h3>
-<p>Develop a complete retrieval system that:</p>
-a) <strong>Handles Query Variations</strong>:
-<ul>
-<li>Test with paraphrased queries</li>
-<li>Handle typos and misspellings (optional: add spelling correction)</li>
-<li>Support queries of varying length</li>
-</ul>
-b) <strong>Context Filtering</strong>:
-<ul>
-<li>Implement category-based filtering (if applicable)</li>
-<li>Use confidence thresholds to reject low-quality matches</li>
-<li>Handle "no good match" scenarios gracefully</li>
-</ul>
-c) <strong>Re-ranking</strong> (Advanced):
-<ul>
-<li>Optionally implement a re-ranking step using cross-encoders</li>
-<li>This can improve retrieval quality for ambiguous queries</li>
-</ul>
-<h3 id="4-generate-contextual-responses">4. Generate Contextual Responses</h3>
-<p>Use the retrieved context to generate helpful responses.</p>
-<p><strong>Requirements</strong>:</p>
-a) <strong>Template-Based Generation</strong> (Minimum):
-<ul>
-<li>Use retrieved FAQ answers directly</li>
-<li>Format responses naturally</li>
-<li>Include confidence indicators</li>
-</ul>
-b) <strong>LLM-Based Generation</strong> (Recommended):
-<ul>
-<li>Use a lightweight LLM (via Ollama, HuggingFace, or OpenAI API)</li>
-<li>Provide retrieved context in the prompt</li>
-<li>Generate natural, conversational responses</li>
-</ul>
-<pre><code class="language-python"># Example prompt structure
-def generate_response(query, retrieved_contexts):
-    prompt = f"""You are a helpful customer service assistant.
-<p>Customer Question: {query}</p>
-<p>Relevant Information:
-{retrieved_contexts}</p>
-<p>Provide a helpful, accurate response based on the information above.
-Do not make up information not present in the context."""</p>
-<p># Call your LLM here
-    return response</code></pre></p>
-c) <strong>Response Quality</strong>:
-<ul>
-<li>Ensure responses are grounded in retrieved context</li>
-<li>Handle cases where no good match exists</li>
-<li>Provide clear, actionable information</li>
-</ul>
-<h3 id="5-handle-multi-turn-conversations">5. Handle Multi-Turn Conversations</h3>
-<p>Extend your system to maintain context across multiple conversation turns.</p>
-<p><strong>Requirements</strong>:</p>
-a) <strong>Conversation State</strong>:
-<ul>
-<li>Track conversation history</li>
-<li>Maintain context from previous turns</li>
-<li>Update query encoding with conversation context</li>
-</ul>
-b) <strong>Context Integration</strong>:
-<ul>
-<li>Combine current query with relevant prior context</li>
-<li>Implement conversation summarization for long dialogues</li>
-<li>Handle follow-up questions ("What about shipping?", "How long does that take?")</li>
-</ul>
-c) <strong>Example Multi-Turn Flow</strong>:
-<pre><code>User: "I want to return an item"
-Bot: "Our return policy allows returns within 30 days..."
-<p>User: "How do I start the process?"
-Bot: [Uses context that this is about returns]</p>
-<p>User: "What about shipping costs?"
-Bot: [Understands this relates to return shipping]</code></pre></p>
-<h3 id="6-evaluate-response-quality">6. Evaluate Response Quality</h3>
-<p>Develop comprehensive evaluation metrics for your system.</p>
-<p><strong>Required Metrics</strong>:</p>
-a) <strong>Retrieval Metrics</strong>:
-<ul>
-<li><strong>Precision@k</strong>: Of the k retrieved documents, how many are relevant?</li>
-<li><strong>Recall@k</strong>: Of all relevant documents, how many are in top-k?</li>
-<li><strong>MRR (Mean Reciprocal Rank)</strong>: Position of first relevant result</li>
-<li>Create a test set with ground-truth relevant FAQs for queries</li>
-</ul>
-b) <strong>Response Quality</strong>:
-<ul>
-<li><strong>Semantic Similarity</strong>: Compare generated response to ground truth</li>
-<li><strong>Factual Grounding</strong>: Verify responses don't hallucinate information</li>
-<li><strong>Human Evaluation</strong>: Test on sample queries and manually assess quality</li>
-</ul>
-c) <strong>Baseline Comparison</strong>:
-<ul>
-<li>Compare semantic search vs. keyword matching on all metrics</li>
-<li>Use statistical tests to determine significance</li>
-<li>Visualize results with charts/graphs</li>
-</ul>
-d) <strong>Error Analysis</strong>:
-<ul>
-<li>Identify failure modes (when does the system fail?)</li>
-<li>Categorize errors (retrieval failures vs. generation issues)</li>
-<li>Provide examples of good and bad responses</li>
-</ul>
-<h3 id="7-advanced-features-optional-bonus">7. Advanced Features (Optional Bonus)</h3>
-<p>Implement one or more of these for extra credit:</p>
-<ul>
-<li><strong>Hybrid Search</strong>: Combine semantic and keyword search for better results</li>
-<li><strong>Cross-Encoder Re-ranking</strong>: Use a cross-encoder model to re-rank retrieved results</li>
-<li><strong>Query Expansion</strong>: Expand queries with synonyms or related terms</li>
-<li><strong>Active Learning</strong>: Identify uncertain cases for human review</li>
-<li><strong>Multimodal Support</strong>: Handle queries about images or documents</li>
-<li><strong>Intent Classification</strong>: Classify query intent before retrieval</li>
-<li><strong>Conversation Analytics</strong>: Track common issues and query patterns</li>
-</ul>
+<h3 id="required-100-points">Required (100 points)</h3>
+<table>
+<thead><tr>
+<th>Component</th>
+<th>Points</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Semantic Search</td>
+<td>20</td>
+<td>Implement semantic_search() using sentence-transformers</td>
+</tr>
+<tr>
+<td>TF-IDF Baseline</td>
+<td>10</td>
+<td>Implement tfidf_search() using scikit-learn</td>
+</tr>
+<tr>
+<td>Response Generation</td>
+<td>15</td>
+<td>Implement generate_response() with confidence logic</td>
+</tr>
+<tr>
+<td>Evaluation</td>
+<td>20</td>
+<td>Implement evaluate_retrieval() and create bar chart</td>
+</tr>
+<tr>
+<td>Error Analysis</td>
+<td>10</td>
+<td>8+ examples with explanations</td>
+</tr>
+<tr>
+<td>Interactive Demo</td>
+<td>5</td>
+<td>Implement chat() function</td>
+</tr>
+<tr>
+<td>Code Quality</td>
+<td>10</td>
+<td>Clean, well-commented code</td>
+</tr>
+<tr>
+<td>Reflection Essay</td>
+<td>10</td>
+<td>300-500 word reflection</td>
+</tr>
+</tbody>
+</table>
+<h3 id="optional-bonus-up-to-8-points">Optional Bonus (up to +8 points)</h3>
+<table>
+<thead><tr>
+<th>Bonus</th>
+<th>Points</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Multi-Turn Conversation</td>
+<td>+2</td>
+<td>Implement ConversationManager for context tracking</td>
+</tr>
+<tr>
+<td>LLM-Based Generation</td>
+<td>+3</td>
+<td>Use FLAN-T5 for response generation</td>
+</tr>
+<tr>
+<td>Hybrid Search</td>
+<td>+2</td>
+<td>Combine TF-IDF and semantic scores</td>
+</tr>
+<tr>
+<td>UMAP Visualization</td>
+<td>+1</td>
+<td>Visualize the FAQ embedding space</td>
+</tr>
+</tbody>
+</table>
 <h2 id="technical-requirements">Technical Requirements</h2>
-<h3 id="required-libraries">Required Libraries</h3>
-<pre><code class="language-python"># Core ML/NLP
-transformers&gt;=4.30.0
-sentence-transformers&gt;=2.2.0
-torch&gt;=2.0.0
-<h1 id="vector-search">Vector Search</h1>
-faiss-cpu&gt;=1.7.4  # or faiss-gpu for GPU support
-<h1 id="traditional-ir-baseline">Traditional IR (baseline)</h1>
-scikit-learn&gt;=1.3.0
-rank-bm25&gt;=0.2.2
-<h1 id="data-handling">Data Handling</h1>
-datasets&gt;=2.14.0
-pandas&gt;=2.0.0
-numpy&gt;=1.24.0
-<h1 id="visualization">Visualization</h1>
-matplotlib&gt;=3.7.0
-seaborn&gt;=0.12.0
-plotly&gt;=5.14.0
-<h1 id="optional-llm-integration">Optional: LLM Integration</h1>
-openai&gt;=0.27.0  # if using OpenAI
-<h1 id="or-use-ollama-for-local-llmscodepre">or use Ollama for local LLMs</code></pre></h1>
-<h3 id="recommended-models">Recommended Models</h3>
-<strong>Sentence Encoders</strong> (choose one or compare multiple):
 <ul>
-<li><code>sentence-transformers/all-MiniLM-L6-v2</code> (fast, good quality)</li>
-<li><code>sentence-transformers/all-mpnet-base-v2</code> (higher quality)</li>
-<li><code>BAAI/bge-small-en-v1.5</code> (state-of-the-art for retrieval)</li>
-<li><code>intfloat/e5-small-v2</code> (efficient, strong performance)</li>
+<li>All libraries are installed in the notebook</li>
+<li>CPU is sufficient (Colab free tier works)</li>
+<li>No API keys required</li>
+<li>No external servers</li>
 </ul>
-<strong>Cross-Encoders</strong> (for re-ranking):
+<h2 id="submission">Submission</h2>
+<p>Push your completed notebook to your GitHub Classroom repository before the deadline.</p>
+<h3 id="checklist">Checklist</h3>
 <ul>
-<li><code>cross-encoder/ms-marco-MiniLM-L-6-v2</code></li>
+<li>All required functions implemented (no NotImplementedError)</li>
+<li>Evaluation metrics computed with bar chart</li>
+<li>Error analysis with 8+ examples</li>
+<li>Reflection written (300-500 words)</li>
+<li>All cells execute without errors</li>
 </ul>
-<strong>Generation Models</strong> (optional):
-<ul>
-<li>Local: Llama 3 8B via Ollama</li>
-<li>API: OpenAI GPT-3.5-turbo or GPT-4</li>
-<li>HuggingFace: Flan-T5, GPT-2, or similar</li>
-</ul>
-<h3 id="computational-requirements">Computational Requirements</h3>
-<ul>
-<li><strong>CPU</strong>: Sufficient for most encoder models with FAISS</li>
-<li><strong>GPU</strong>: Recommended for faster embedding generation with larger models</li>
-<li><strong>Memory</strong>: 8GB+ RAM recommended</li>
-<li><strong>Storage</strong>: ~2GB for models and data</li>
-</ul>
-The entire assignment should run in <strong>Google Colaboratory</strong> with a free tier GPU and is designed to be completable in <strong>1 week</strong> with GenAI assistance.
-<h2 id="deliverables">Deliverables</h2>
-<p>Submit a <strong>Google Colaboratory notebook</strong> that includes:</p>
-<h3 id="1-code-implementation-60">1. Code Implementation (60%)</h3>
-<ul>
-<li>Complete, runnable code for all required components</li>
-<li>Clear code organization with functions/classes</li>
-<li>Proper error handling and edge case management</li>
-<li>Comments explaining key design decisions</li>
-</ul>
-<h3 id="2-documentation-20">2. Documentation (20%)</h3>
-<ul>
-<li><strong>Markdown cells</strong> explaining your approach for each section</li>
-<li>System architecture diagram or description</li>
-<li>Model selection justification</li>
-<li>Design decisions and trade-offs</li>
-</ul>
-<h3 id="3-evaluation-and-analysis-15">3. Evaluation and Analysis (15%)</h3>
-<ul>
-<li>Comprehensive evaluation metrics implementation</li>
-<li>Baseline comparison with statistical analysis</li>
-<li>Visualizations (charts, confusion matrices, example outputs)</li>
-<li>Error analysis with specific examples</li>
-</ul>
-<h3 id="4-examples-and-demo-5">4. Examples and Demo (5%)</h3>
-<ul>
-<li>At least 10 example queries with system responses</li>
-<li>Include both successful and failure cases</li>
-<li>Demo of multi-turn conversation (at least 3 turns)</li>
-<li>Comparison of semantic vs. keyword baseline on same queries</li>
-</ul>
-<h3 id="required-sections-in-notebook">Required Sections in Notebook</h3>
-<ol>
-<li><strong>Introduction</strong>: Overview of your system</li>
-<li><strong>Data Loading</strong>: Load and explore the knowledge base</li>
-<li><strong>Semantic Search Implementation</strong>: Encoder model and FAISS</li>
-<li><strong>Baseline Implementation</strong>: TF-IDF or BM25</li>
-<li><strong>Response Generation</strong>: Template or LLM-based</li>
-<li><strong>Multi-Turn Handling</strong>: Conversation state management</li>
-<li><strong>Evaluation</strong>: Metrics, comparisons, and analysis</li>
-<li><strong>Examples</strong>: Interactive demos</li>
-<li><strong>Conclusion</strong>: Findings, limitations, future improvements</li>
-</ol>
-<h2 id="evaluation-criteria">Evaluation Criteria</h2>
-<p>Your assignment will be graded on the following criteria:</p>
-<h3 id="technical-implementation-40-points">Technical Implementation (40 points)</h3>
-<ul>
-<li><strong>Semantic Search</strong> (15 pts): Correct implementation of encoder + FAISS</li>
-<li><strong>Baseline</strong> (5 pts): Working keyword-matching baseline</li>
-<li><strong>Response Generation</strong> (10 pts): Quality and grounding of responses</li>
-<li><strong>Multi-Turn</strong> (10 pts): Effective conversation context handling</li>
-</ul>
-<h3 id="evaluation-and-analysis-25-points">Evaluation and Analysis (25 points)</h3>
-<ul>
-<li><strong>Metrics</strong> (10 pts): Proper implementation of retrieval and quality metrics</li>
-<li><strong>Comparison</strong> (10 pts): Thorough baseline comparison with statistics</li>
-<li><strong>Error Analysis</strong> (5 pts): Insightful analysis of failure modes</li>
-</ul>
-<h3 id="code-quality-and-documentation-20-points">Code Quality and Documentation (20 points)</h3>
-<ul>
-<li><strong>Code Organization</strong> (10 pts): Clean, modular, well-commented code</li>
-<li><strong>Documentation</strong> (10 pts): Clear markdown explanations throughout</li>
-</ul>
-<h3 id="examples-and-presentation-10-points">Examples and Presentation (10 points)</h3>
-<ul>
-<li><strong>Quality Examples</strong> (5 pts): Diverse, illustrative examples</li>
-<li><strong>Demo</strong> (5 pts): Working interactive demonstration</li>
-</ul>
-<h3 id="creativity-and-innovation-5-points">Creativity and Innovation (5 points)</h3>
-<ul>
-<li><strong>Advanced Features</strong> (3 pts): Implementation of optional features</li>
-<li><strong>Novel Insights</strong> (2 pts): Unique observations or improvements</li>
-</ul>
-<strong>Total: 100 points</strong>
-<h3 id="grading-rubric">Grading Rubric</h3>
-<ul>
-<li><strong>A (90-100)</strong>: Exceptional implementation with advanced features, thorough evaluation, and clear documentation</li>
-<li><strong>B (80-89)</strong>: Complete implementation of all required components with good evaluation</li>
-<li><strong>C (70-79)</strong>: Working system with basic evaluation and some documentation gaps</li>
-<li><strong>D (60-69)</strong>: Partial implementation with significant gaps</li>
-<li><strong>F (<60)</strong>: Incomplete or non-functional submission</li>
-</ul>
-<h2 id="tips-for-success">Tips for Success</h2>
-<h3 id="getting-started-1-week-timeline">Getting Started (1-Week Timeline)</h3>
-<ol>
-<li><strong>Start Simple</strong>: Begin with a small knowledge base (20-30 FAQs) to test your pipeline</li>
-<li><strong>Incremental Development</strong>: Build and test each component separately before integration</li>
-<li><strong>Use Examples</strong>: Work through concrete examples at each step</li>
-<li><strong>Validate Early</strong>: Check that embeddings and retrieval make sense before moving to generation</li>
-<li><strong>Leverage GenAI</strong>: Use ChatGPT, Claude, or GitHub Copilot to accelerate implementation. Ask for help understanding libraries, debugging errors, and optimizing code.</li>
-</ol>
-<h3 id="common-pitfalls-to-avoid">Common Pitfalls to Avoid</h3>
-<ol>
-<li><strong>Ignoring Normalization</strong>: Normalize embeddings for cosine similarity</li>
-<li><strong>Wrong Distance Metric</strong>: FAISS L2 distance requires normalized vectors for cosine similarity, or use IndexFlatIP</li>
-<li><strong>Memory Issues</strong>: Batch embedding generation for large knowledge bases</li>
-<li><strong>Overfitting to Examples</strong>: Test on diverse, unseen queries</li>
-<li><strong>Hallucination</strong>: Always ground responses in retrieved context</li>
-<li><strong>Ignoring Edge Cases</strong>: Handle no-match scenarios gracefully</li>
-</ol>
-<h3 id="debugging-strategies">Debugging Strategies</h3>
-<ol>
-<li><strong>Print Similarities</strong>: Inspect actual similarity scores to understand retrieval</li>
-<li><strong>Manual Inspection</strong>: Look at retrieved documents for sample queries</li>
-<li><strong>Embedding Visualization</strong>: Use t-SNE/UMAP to visualize embedding space</li>
-<li><strong>Start Small</strong>: Debug with 10 FAQs before scaling to 100+</li>
-</ol>
-<h3 id="performance-optimization">Performance Optimization</h3>
-<ol>
-<li><strong>Cache Embeddings</strong>: Don't re-encode the knowledge base every time</li>
-<li><strong>Batch Processing</strong>: Encode multiple queries at once</li>
-<li><strong>FAISS GPU</strong>: Use GPU-accelerated FAISS for large knowledge bases</li>
-<li><strong>Model Selection</strong>: Balance model size with quality needs</li>
-</ol>
-<h3 id="going-beyond-requirements">Going Beyond Requirements</h3>
-<ul>
-<li>Implement A/B testing framework to compare different models</li>
-<li>Add conversation analytics dashboard</li>
-<li>Create a web interface using Gradio or Streamlit</li>
-<li>Fine-tune sentence transformers on your domain data</li>
-<li>Implement feedback loops for continuous improvement</li>
-</ul>
-<h2 id="resources-and-references">Resources and References</h2>
-<h3 id="key-papers">Key Papers</h3>
-<ol>
-<li><strong>BERT</strong>: Devlin et al. (2018). "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding". <a href="https://arxiv.org/abs/1810.04805" target="_blank">arXiv:1810.04805</a></li>
-<li><strong>Sentence-BERT</strong>: Reimers & Gurevych (2019). "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks". <a href="https://arxiv.org/abs/1908.10084" target="_blank">arXiv:1908.10084</a></li>
-<li><strong>RAG</strong>: Lewis et al. (2020). "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks". <a href="https://arxiv.org/abs/2005.11401" target="_blank">arXiv:2005.11401</a></li>
-<li><strong>Dense Passage Retrieval</strong>: Karpukhin et al. (2020). "Dense Passage Retrieval for Open-Domain Question Answering". <a href="https://arxiv.org/abs/2004.04906" target="_blank">arXiv:2004.04906</a></li>
-<li><strong>ColBERT</strong>: Khattab & Zaharia (2020). "ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT". <a href="https://arxiv.org/abs/2004.12832" target="_blank">arXiv:2004.12832</a></li>
-</ol>
-<h3 id="documentation-and-tutorials">Documentation and Tutorials</h3>
-<ul>
-<li><strong>HuggingFace Transformers</strong>: <a href="https://huggingface.co/docs/transformers/" target="_blank">https://huggingface.co/docs/transformers/</a></li>
-<li><strong>Sentence Transformers</strong>: <a href="https://www.sbert.net/" target="_blank">https://www.sbert.net/</a></li>
-<li><strong>FAISS</strong>: <a href="https://github.com/facebookresearch/faiss/wiki" target="_blank">https://github.com/facebookresearch/faiss/wiki</a></li>
-<li><strong>LangChain</strong> (optional framework): <a href="https://python.langchain.com/" target="_blank">https://python.langchain.com/</a></li>
-</ul>
-<h3 id="code-examples">Code Examples</h3>
-<ul>
-<li><strong>Sentence Transformers Examples</strong>: <a href="https://www.sbert.net/examples/applications/semantic-search/README.html" target="_blank">https://www.sbert.net/examples/applications/semantic-search/README.html</a></li>
-<li><strong>FAISS Tutorial</strong>: <a href="https://github.com/facebookresearch/faiss/wiki/Getting-started" target="_blank">https://github.com/facebookresearch/faiss/wiki/Getting-started</a></li>
-<li><strong>RAG Tutorial</strong>: <a href="https://huggingface.co/docs/transformers/model_doc/rag" target="_blank">https://huggingface.co/docs/transformers/model_doc/rag</a></li>
-</ul>
-<h3 id="datasets">Datasets</h3>
-<ul>
-<li><strong>HuggingFace Datasets Hub</strong>: <a href="https://huggingface.co/datasets" target="_blank">https://huggingface.co/datasets</a>
-<ul>
-<li>Search for: "customer support", "FAQ", "helpdesk"</li>
-</ul>
-</li>
-<li><strong>Banking77</strong>: <a href="https://huggingface.co/datasets/banking77" target="_blank">https://huggingface.co/datasets/banking77</a></li>
-<li><strong>MS MARCO</strong> (optional, for retrieval practice): <a href="https://microsoft.github.io/msmarco/" target="_blank">https://microsoft.github.io/msmarco/</a></li>
-</ul>
-<h3 id="tools-and-libraries">Tools and Libraries</h3>
-<ul>
-<li><strong>Gradio</strong> (for UI): <a href="https://gradio.app/" target="_blank">https://gradio.app/</a></li>
-<li><strong>Streamlit</strong> (for UI): <a href="https://streamlit.io/" target="_blank">https://streamlit.io/</a></li>
-<li><strong>Weights & Biases</strong> (for experiment tracking): <a href="https://wandb.ai/" target="_blank">https://wandb.ai/</a></li>
-</ul>
-<h3 id="additional-reading">Additional Reading</h3>
-<ul>
-<li>"Building Chatbots with Python" - Sumit Raj</li>
-<li>"Natural Language Processing with Transformers" - Lewis Tunstall et al.</li>
-<li>"Speech and Language Processing" (Chapter on Question Answering) - Jurafsky & Martin</li>
-</ul>
-<h3 id="related-techniques">Related Techniques</h3>
-<ul>
-<li><strong>Hybrid Search</strong>: Combining dense and sparse retrieval</li>
-<li><strong>Query Expansion</strong>: Enhancing queries with related terms</li>
-<li><strong>Pseudo-Relevance Feedback</strong>: Using top results to refine queries</li>
-<li><strong>Learning to Rank</strong>: ML approaches to re-ranking results</li>
-</ul>
-<h2 id="submission-guidelines">Submission Guidelines</h2>
-<h3 id="github-classroom-submission">GitHub Classroom Submission</h3>
-<p>This assignment is submitted via <strong>GitHub Classroom</strong>. Follow these steps:</p>
-<ol>
-<li><strong>Accept the assignment</strong>: Click the assignment link provided in Canvas or by your instructor
-<ul>
-<li>Repository: <a href="https://github.com/ContextLab/customer-service-bot-llm-course" target="_blank">github.com/ContextLab/customer-service-bot-llm-course</a></li>
-<li>This creates your own private repository for the assignment</li>
-</ul>
-</li>
-<li><strong>Clone your repository</strong>: </li>
-</ol>
-<pre><code class="language-bash">   git clone https://github.com/ContextLab/customer-service-bot-llm-course-YOUR_USERNAME.git</code></pre>
-<ol>
-<li><strong>Complete your work</strong>: 
-<ul>
-<li>Work in Google Colab, Jupyter, or your preferred environment</li>
-<li>Save your notebook to the repository</li>
-</ul>
-</li>
-<li><strong>Commit and push your changes</strong>:</li>
-</ol>
-<pre><code class="language-bash">   git add .
-   git commit -m "Complete customer service chatbot assignment"
-   git push</code></pre>
-<ol>
-<li><strong>Verify submission</strong>: Check that your latest commit appears in your GitHub repository before the deadline</li>
-</ol>
-<strong>Deadline</strong>: February 9, 2026 at 11:59 PM EST
-<h3 id="notebook-requirements">Notebook Requirements</h3>
-<ol>
-<li><strong>Runtime</strong>: The notebook must run from start to finish without errors</li>
-<li><strong>Permissions</strong>: Ensure the notebook is accessible (include in your GitHub repository)</li>
-<li><strong>Dependencies</strong>: All required packages should be installed in the notebook</li>
-<li><strong>Data</strong>: Include code to automatically download any required datasets</li>
-<li><strong>Output</strong>: Keep cell outputs visible in your submission</li>
-</ol>
-<h3 id="before-submission-checklist">Before Submission Checklist</h3>
-<ul>
-<li><input type="checkbox" class="task-checkbox"> Notebook runs completely in a fresh Colab session</li>
-<li><input type="checkbox" class="task-checkbox"> All required sections are included with markdown explanations</li>
-<li><input type="checkbox" class="task-checkbox"> Code is well-commented and organized</li>
-<li><input type="checkbox" class="task-checkbox"> Evaluation metrics are properly implemented and visualized</li>
-<li><input type="checkbox" class="task-checkbox"> At least 10 diverse examples are included</li>
-<li><input type="checkbox" class="task-checkbox"> Multi-turn conversation demo is working</li>
-<li><input type="checkbox" class="task-checkbox"> Baseline comparison is complete with statistical analysis</li>
-<li><input type="checkbox" class="task-checkbox"> All visualizations are clear and properly labeled</li>
-<li><input type="checkbox" class="task-checkbox"> No hardcoded paths (use relative paths or automatic downloads)</li>
-<li><input type="checkbox" class="task-checkbox"> Cell outputs are visible and meaningful</li>
-</ul>
-<h2 id="academic-integrity">Academic Integrity</h2>
-You are encouraged to:
-<ul>
-<li>Use generative AI tools (ChatGPT, Claude, Copilot) to help write code</li>
-<li>Collaborate with classmates on understanding concepts</li>
-<li>Search for tutorials and examples online</li>
-<li>Ask questions in class or office hours</li>
-</ul>
-You must:
-<ul>
-<li>Write your own analysis and explanations</li>
-<li>Understand every line of code you submit</li>
-<li>Cite any significant code you use from external sources</li>
-<li>Submit your own original work</li>
-</ul>
-Violations of academic integrity will result in a failing grade for the assignment and potential course-level consequences.
+<strong>Deadline:</strong> February 16, 2026 at 11:59 PM EST
 <h2 id="questions">Questions?</h2>
-If you have questions about the assignment:
 <ol>
-<li>Check this README thoroughly</li>
-<li>Review the resources and references section</li>
-<li>Post questions in the course forum</li>
+<li>Check this README and notebook markdown cells</li>
+<li>Review Lecture 17 slides</li>
+<li>Post in the course Discord</li>
 <li>Attend office hours</li>
-<li>Email the instructor/TA with specific questions</li>
 </ol>
-Good luck, and have fun building your customer service chatbot!
-<hr>
-<p><em>This assignment is designed to give you hands-on experience with modern NLP techniques used in production systems. The skills you develop here—semantic search, RAG, and evaluation—are directly applicable to real-world AI applications.</em></p>
     </main>
 
     <footer>
