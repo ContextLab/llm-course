@@ -30,11 +30,11 @@ Winter 2026
 
 # Announcements
 
-<div class="important-box" data-title="Assignment 3 due this week">
+<div class="important-box" data-title="Assignment 3 due today!">
 
-**Wikipedia Embeddings** assignment is due **Thursday, February 6 at 11:59 PM EST**.
+**Wikipedia Embeddings** assignment is due **today, Friday, February 6 at 11:59 PM EST**.
 
-Submit via GitHub Classroom.
+Submit via pull request after accepting assignment in GitHub Classroom.
 
 </div>
 
