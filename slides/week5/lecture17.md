@@ -21,9 +21,8 @@ Winter 2026
 
 1. Explain why language models need external knowledge
 2. Describe the RAG pipeline: retrieve, augment, generate
-3. Understand how embeddings enable semantic retrieval
-4. Implement a basic RAG system in Python
-5. Evaluate tradeoffs between RAG and fine-tuning
+3. Implement a basic RAG system in Python using free, open-source tools
+4. Evaluate tradeoffs between RAG and fine-tuning
 
 </div>
 
@@ -59,23 +58,11 @@ Due: **February 16 at 11:59 PM EST**.
 
 </div>
 
-<div class="tip-box" data-title="Analogy">
-
-Parametric knowledge is like what you remember from studying. Non-parametric knowledge is like having your textbook open during an exam — you can look things up when you need them.
-
-</div>
-
----
-
-# Why parametric knowledge falls short
-
-<div class="warning-box" data-title="Limitations of relying only on model parameters">
+<div class="warning-box" data-title="Why parametric knowledge falls short">
 
 1. **Hallucination**: The model confidently generates plausible-sounding but incorrect information
-2. **Stale data**: The model's knowledge is frozen at training time — it doesn't know about events after its cutoff date
-3. **No citations**: The model can't tell you *where* it learned something, making it hard to verify claims
-4. **Costly updates**: Retraining or fine-tuning to add new knowledge is expensive and slow
-5. **Long tail**: Rare or specialized facts are poorly represented in pre-training data
+2. **Stale data**: Knowledge is frozen at training time — the model doesn't know about recent events
+3. **No citations**: The model can't tell you *where* it learned something, making claims hard to verify
 
 </div>
 
@@ -99,15 +86,10 @@ Instead of trying to store all knowledge in the model's parameters, we let the m
 
 # The RAG pipeline
 
-<div class="definition-box" data-title="Five steps">
-
-1. **Query**: The user asks a question
-2. **Embed**: Convert the query into a vector using an embedding model
-3. **Retrieve**: Find the most similar document chunks in a vector database
-4. **Augment**: Insert the retrieved chunks into the prompt as context
-5. **Generate**: The language model generates an answer grounded in the retrieved context
-
-</div>
+```flow
+[Query:blue] --> [Embed:teal] --> [Retrieve:green] --> [Augment:orange] --> [Generate:violet]
+```
+<!-- caption: The five stages of retrieval augmented generation -->
 
 <div class="tip-box" data-title="The big picture">
 
@@ -121,65 +103,28 @@ where $q$ is the query and $\mathcal{D}$ is the document collection.
 
 # Embeddings for retrieval
 
-<div class="definition-box" data-title="Connecting to lectures 11-15">
+<div class="note-box" data-title="Connecting to lectures 11-12">
 
-Remember embeddings? In lectures 11-14, we learned that embeddings map text to vectors where **semantic similarity corresponds to geometric proximity**:
-
-$$\text{similar meaning} \Leftrightarrow \text{nearby vectors}$$
-
-RAG uses this property for retrieval: embed the query and the documents into the same vector space, then find the documents closest to the query.
+You already know that embeddings map text to vectors where **semantic similarity corresponds to geometric proximity**. RAG exploits this: embed the query and documents into the same vector space, then find the documents closest to the query using cosine similarity.
 
 </div>
 
-<div class="note-box" data-title="Which embedding model?">
+<div class="tip-box" data-title="Which embedding model?">
 
-For RAG, we typically use **sentence embedding** models (not word-level) that produce a single vector for an entire passage:
+For RAG, we use **sentence embedding** models (not word-level) that produce a single vector for an entire passage. All of these are free and open-source:
 - **Sentence-BERT** (all-MiniLM-L6-v2): Fast, good quality, 384 dimensions
-- **OpenAI text-embedding-3-small**: API-based, 1536 dimensions
-- **BGE, E5, GTE**: Open-source alternatives with strong performance
+- **BGE** (BAAI/bge-small-en-v1.5): State-of-the-art for retrieval
+- **E5, GTE**: Strong open-source alternatives
 
 </div>
 
 ---
 
-# Vector similarity
-
-<div class="definition-box" data-title="Measuring how similar two texts are">
-
-Given embedding vectors $a$ and $b$, we compute **cosine similarity**:
-
-$$\text{sim}(a, b) = \frac{a \cdot b}{\|a\| \|b\|} = \frac{\sum_i a_i b_i}{\sqrt{\sum_i a_i^2} \cdot \sqrt{\sum_i b_i^2}}$$
-
-- $\text{sim} = 1$: Identical meaning
-- $\text{sim} = 0$: Unrelated
-- $\text{sim} = -1$: Opposite meaning
-
-</div>
-
-<div class="example-box" data-title="Example">
-
-```python
-from sentence_transformers import SentenceTransformer, util
-
-model = SentenceTransformer("all-MiniLM-L6-v2")
-
-query = model.encode("What causes rain?")
-doc1 = model.encode("Precipitation occurs when water vapor condenses.")
-doc2 = model.encode("The stock market closed higher today.")
-
-print(util.cos_sim(query, doc1))  # ~0.72 (relevant!)
-print(util.cos_sim(query, doc2))  # ~0.05 (irrelevant)
-```
-
-</div>
-
----
-
-# Why do we need chunking?
+# Document chunking
 
 <div class="definition-box" data-title="Breaking documents into pieces">
 
-Real documents are long — hundreds or thousands of pages. We can't embed an entire book as a single vector (too much information is lost). Instead, we split documents into smaller **chunks** and embed each chunk separately.
+Real documents are long. We can't embed an entire book as a single vector (too much information is lost). Instead, we split documents into smaller **chunks** and embed each chunk separately.
 
 </div>
 
@@ -192,27 +137,9 @@ Real documents are long — hundreds or thousands of pages. We can't embed an en
 
 </div>
 
----
+<div class="warning-box" data-title="Size tradeoffs">
 
-# Chunk size tradeoffs
-
-<div class="warning-box" data-title="Getting the chunk size right matters">
-
-**Too small** (e.g., individual sentences):
-- Loses surrounding context
-- May not contain enough information to answer the question
-- Retrieves many fragments that are hard to piece together
-
-**Too large** (e.g., entire chapters):
-- Embedding quality degrades — too much information in one vector
-- Includes irrelevant content alongside relevant content
-- Uses up the language model's context window
-
-</div>
-
-<div class="tip-box" data-title="Rules of thumb">
-
-A good starting point is **256-512 tokens** per chunk with **50-100 token overlap** between adjacent chunks. This ensures each chunk has enough context and important information at chunk boundaries isn't lost.
+Too small = loses context. Too large = dilutes relevance. Start with **256-512 tokens** per chunk with **50-100 token overlap** between adjacent chunks.
 
 </div>
 
@@ -232,38 +159,25 @@ Brute-force search over $n$ vectors takes $O(n)$ time. For 10 million chunks, th
 
 </div>
 
----
+<div class="tip-box" data-title="For this course">
 
-# Popular vector databases
-
-<div class="note-box" data-title="Options for different use cases">
-
-| Database | Type | Best for |
-|----------|------|----------|
-| **FAISS** | Library (Meta) | Research, local experiments |
-| **ChromaDB** | Embedded DB | Prototyping, small-medium scale |
-| **Pinecone** | Managed cloud | Production, no-ops |
-| **Weaviate** | Self-hosted | Full-featured, hybrid search |
-| **Qdrant** | Self-hosted | Performance-focused |
-
-For this course, **ChromaDB** or **FAISS** are the easiest to get started with — no server or API key needed.
+We'll use **ChromaDB** — no server setup, no API key, just `pip install chromadb`. For production scale, see also FAISS (Meta) and Pinecone (cloud).
 
 </div>
 
 ---
-<!-- _class: scale-90 -->
+<!-- _class: scale-85 -->
 
-# Python: embedding documents
+# Python: embed and retrieve
 
-<div class="example-box" data-title="Step 1: embed your knowledge base">
+<div class="example-box" data-title="Steps 1-2: embed your knowledge base and find relevant documents">
 
 ```python
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, util
 
-# Load embedding model
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
-# Your knowledge base (in practice, loaded from files)
+# Knowledge base (in practice, loaded from files)
 documents = [
     "The transformer was introduced by Vaswani et al. in 2017.",
     "BERT uses bidirectional attention for language understanding.",
@@ -271,47 +185,15 @@ documents = [
     "Attention mechanisms allow models to focus on relevant context.",
     "Fine-tuning adapts a pre-trained model to a specific task.",
 ]
-
-# Embed all documents
 doc_embeddings = embedder.encode(documents, convert_to_tensor=True)
-print(doc_embeddings.shape)  # (5, 384) — 5 docs, 384 dims each
-```
 
-</div>
-
----
-<!-- _class: scale-90 -->
-
-# Python: retrieval
-
-<div class="example-box" data-title="Step 2: find relevant documents">
-
-```python
-from sentence_transformers import util
-
-def retrieve(query, documents, doc_embeddings, top_k=3):
-    """Find the top_k most relevant documents for a query."""
-    # Embed the query
-    query_embedding = embedder.encode(query, convert_to_tensor=True)
-
-    # Compute cosine similarity against all documents
-    scores = util.cos_sim(query_embedding, doc_embeddings)[0]
-
-    # Get top-k results
-    top_indices = scores.argsort(descending=True)[:top_k]
-
-    results = []
-    for idx in top_indices:
-        results.append({
-            "text": documents[idx],
-            "score": scores[idx].item()
-        })
-    return results
-
-# Example query
-results = retrieve("How do transformers work?", documents, doc_embeddings)
-for r in results:
-    print(f"  [{r['score']:.3f}] {r['text']}")
+# Retrieve: embed query, find nearest documents
+query = "How do transformers work?"
+query_emb = embedder.encode(query, convert_to_tensor=True)
+scores = util.cos_sim(query_emb, doc_embeddings)[0]
+top_indices = scores.argsort(descending=True)[:3]
+for idx in top_indices:
+    print(f"  [{scores[idx]:.3f}] {documents[idx]}")
 ```
 
 </div>
@@ -321,44 +203,42 @@ for r in results:
 
 # Python: generation with context
 
-<div class="example-box" data-title="Step 3: augment the prompt and generate">
+<div class="example-box" data-title="Step 3: augment the prompt and generate (free, no API key)">
 
 ```python
-from openai import OpenAI  # or any LLM API
+from transformers import pipeline
 
-client = OpenAI()
+# Load a free, local text generation model
+generator = pipeline("text2text-generation", model="google/flan-t5-base")
 
-def rag_answer(query, documents, doc_embeddings):
+def rag_answer(query, documents, doc_embeddings, top_k=3):
     """Answer a question using RAG."""
-    # Step 1: Retrieve relevant context
-    context_docs = retrieve(query, documents, doc_embeddings, top_k=3)
-    context = "\n".join([doc["text"] for doc in context_docs])
+    # Retrieve relevant context
+    query_emb = embedder.encode(query, convert_to_tensor=True)
+    scores = util.cos_sim(query_emb, doc_embeddings)[0]
+    top_idx = scores.argsort(descending=True)[:top_k]
+    context = "\n".join([documents[i] for i in top_idx])
 
-    # Step 2: Build the augmented prompt
-    prompt = f"""Answer the question based on the provided context.
-If the context doesn't contain the answer, say "I don't know."
-
-Context:
-{context}
-
+    # Build augmented prompt and generate
+    prompt = f"""Answer based on the context. Say "I don't know" if unsure.
+Context: {context}
 Question: {query}
 Answer:"""
+    return generator(prompt, max_new_tokens=128)[0]["generated_text"]
 
-    # Step 3: Generate with the LLM
-    response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content
-
-answer = rag_answer("What is BERT?", documents, doc_embeddings)
-print(answer)
+print(rag_answer("What is BERT?", documents, doc_embeddings))
 ```
 
 </div>
 
+<div class="tip-box" data-title="No API key needed">
+
+FLAN-T5 runs locally in Colab. For better quality, try `google/flan-t5-large` (requires GPU).
+
+</div>
+
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-80 -->
 
 # End-to-end RAG with ChromaDB
 
@@ -366,13 +246,13 @@ print(answer)
 
 ```python
 import chromadb
-from sentence_transformers import SentenceTransformer
+from transformers import pipeline
 
-# Set up ChromaDB (persistent storage)
+# Set up ChromaDB (handles embedding automatically)
 client = chromadb.Client()
 collection = client.create_collection("course_notes")
 
-# Add documents (ChromaDB handles embedding automatically)
+# Add documents
 collection.add(
     documents=[
         "The transformer uses self-attention to process sequences in parallel.",
@@ -382,11 +262,14 @@ collection.add(
     ids=["doc1", "doc2", "doc3"]
 )
 
-# Query — ChromaDB embeds the query and finds nearest neighbors
+# Retrieve relevant documents
 results = collection.query(query_texts=["How does attention work?"], n_results=2)
-print(results["documents"])
-# [['The transformer uses self-attention to process sequences in parallel.',
-#   'RAG combines retrieval with generation for knowledge-grounded answers.']]
+context = "\n".join(results["documents"][0])
+
+# Generate answer using retrieved context
+generator = pipeline("text2text-generation", model="google/flan-t5-base")
+prompt = f"Answer based on context.\nContext: {context}\nQuestion: How does attention work?\nAnswer:"
+print(generator(prompt, max_new_tokens=128)[0]["generated_text"])
 ```
 
 </div>
@@ -416,37 +299,21 @@ Many production systems use *both*: fine-tune the model for the domain's style a
 
 ---
 
-# Advanced RAG techniques
+# Beyond basic RAG
 
-<div class="note-box" data-title="Beyond basic RAG">
+<div class="note-box" data-title="Advanced techniques">
 
 1. **Re-ranking**: After initial retrieval, use a cross-encoder model to re-score and re-order results for better precision
-
 2. **Hybrid search**: Combine vector similarity (semantic) with keyword matching (BM25) for more robust retrieval
-
 3. **Query expansion**: Rewrite or expand the user's query using an LLM before retrieval to improve recall
-
-4. **Multi-hop retrieval**: For complex questions, retrieve → generate an intermediate answer → retrieve again with new context
-
-5. **Contextual compression**: Summarize retrieved chunks to fit more information into the context window
 
 </div>
 
----
+<div class="warning-box" data-title="Limitations to keep in mind">
 
-# Limitations of RAG
-
-<div class="warning-box" data-title="RAG is not a silver bullet">
-
-**Retrieval quality**: If the retriever fails to find relevant documents, the generator can't produce a good answer — garbage in, garbage out.
-
-**Context window limits**: Even with RAG, there's a limit to how much retrieved text fits in the prompt. Long documents may need aggressive chunking or summarization.
-
-**Latency**: The retrieval step adds time. For real-time applications, this overhead matters.
-
-**Reasoning over multiple sources**: RAG is great for finding a specific fact, but struggles when the answer requires synthesizing information across many documents.
-
-**Embedding quality**: The retriever is only as good as the embedding model. Domain-specific queries may need domain-specific embeddings.
+1. **Retrieval quality**: If the retriever fails to find relevant documents, the generator can't produce a good answer — garbage in, garbage out
+2. **Context window limits**: There's a limit to how much retrieved text fits in the prompt, requiring aggressive chunking or summarization
+3. **Multi-source reasoning**: RAG is great for finding a specific fact, but struggles when answers require synthesizing information across many documents
 
 </div>
 
@@ -472,7 +339,7 @@ Many production systems use *both*: fine-tune the model for the domain's style a
 
 Explore our interactive RAG demo to see retrieval augmented generation in action:
 
-[**RAG System Demo**](https://contextlab.github.io/llm-course/demos/rag/) — Upload documents, ask questions, and see how the system retrieves relevant passages and generates grounded answers.
+[**RAG System Demo**](https://contextlab.github.io/llm-course/demos/rag/) — Search 2,000 Wikipedia articles, configure chunking strategies, compare RAG vs. non-RAG answers, and visualize embedding spaces — all in your browser with no API keys required.
 
 </div>
 
@@ -484,26 +351,13 @@ Your next assignment asks you to build a **Customer Service Chatbot** that uses 
 
 ---
 
-# Discussion: RAG applications
+# Discussion: RAG in practice
 
 <div class="tip-box" data-title="Questions to consider">
 
 1. What kinds of applications benefit most from RAG? Where would fine-tuning be better?
-2. A company wants to build a chatbot that answers questions about their internal documents. What are the privacy implications of using RAG vs. fine-tuning?
-3. How would you evaluate whether a RAG system is working well? What metrics matter?
-4. If the retrieved documents contain contradictory information, how should the system handle that?
-
-</div>
-
----
-
-# Discussion: the future of knowledge-grounded generation
-
-<div class="tip-box" data-title="Questions to consider">
-
-1. Will RAG eventually be unnecessary if models get large enough to memorize everything?
-2. How does RAG change the economics of AI — who controls the knowledge base controls the answers?
-3. Could RAG be used to make language models more "honest" about what they know vs. don't know?
+2. A company wants to build a chatbot using internal documents. What are the privacy implications of RAG vs. fine-tuning?
+3. Will RAG eventually be unnecessary if models get large enough to memorize everything?
 4. What happens when the retrieved documents themselves contain misinformation?
 
 </div>
@@ -545,6 +399,6 @@ Your next assignment asks you to build a **Customer Service Chatbot** that uses 
 
 <div class="tip-box" data-title="Up next...">
 
-Week 6: BERT and encoder models — bidirectional attention and masked language modeling!
+Week 6: BERT deep dive — bidirectional attention, masked language modeling, and the pre-train/fine-tune paradigm!
 
 </div>

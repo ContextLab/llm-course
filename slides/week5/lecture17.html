@@ -705,8 +705,7 @@ Winter 2026</p>
 <ol>
 <li>Explain why language models need external knowledge</li>
 <li>Describe the RAG pipeline: retrieve, augment, generate</li>
-<li>Understand how embeddings enable semantic retrieval</li>
-<li>Implement a basic RAG system in Python</li>
+<li>Implement a basic RAG system in Python using free, open-source tools</li>
 <li>Evaluate tradeoffs between RAG and fine-tuning</li>
 </ol>
 </div>
@@ -728,23 +727,15 @@ Winter 2026</p>
 <p><strong>Parametric knowledge</strong>: Facts stored <em>inside</em> the model's parameters during training. The model &quot;knows&quot; things because it memorized patterns from its training data.</p>
 <p><strong>Non-parametric knowledge</strong>: Facts stored <em>outside</em> the model in documents, databases, or APIs. The model accesses this knowledge at inference time.</p>
 </div>
-<div class="tip-box" data-title="Analogy">
-<p>Parametric knowledge is like what you remember from studying. Non-parametric knowledge is like having your textbook open during an exam — you can look things up when you need them.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="why-parametric-knowledge-falls-short">Why parametric knowledge falls short</h1>
-<div class="warning-box" data-title="Limitations of relying only on model parameters">
+<div class="warning-box" data-title="Why parametric knowledge falls short">
 <ol>
 <li><strong>Hallucination</strong>: The model confidently generates plausible-sounding but incorrect information</li>
-<li><strong>Stale data</strong>: The model's knowledge is frozen at training time — it doesn't know about events after its cutoff date</li>
-<li><strong>No citations</strong>: The model can't tell you <em>where</em> it learned something, making it hard to verify claims</li>
-<li><strong>Costly updates</strong>: Retraining or fine-tuning to add new knowledge is expensive and slow</li>
-<li><strong>Long tail</strong>: Rare or specialized facts are poorly represented in pre-training data</li>
+<li><strong>Stale data</strong>: Knowledge is frozen at training time — the model doesn't know about recent events</li>
+<li><strong>No citations</strong>: The model can't tell you <em>where</em> it learned something, making claims hard to verify</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="what-is-rag">What is RAG?</h1>
 <div class="definition-box" data-title="Retrieval Augmented Generation">
 <p><strong>RAG</strong> is a technique that gives language models access to external knowledge by <em>retrieving</em> relevant documents and <em>including</em> them in the prompt. The model generates its response based on both its parametric knowledge and the retrieved context.</p>
@@ -753,95 +744,65 @@ Winter 2026</p>
 <p>Instead of trying to store all knowledge in the model's parameters, we let the model <em>look things up</em> in a knowledge base at inference time. This separates <em>what the model knows how to do</em> (reasoning, language) from <em>what facts it has access to</em> (documents, data).</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-rag-pipeline">The RAG pipeline</h1>
-<div class="definition-box" data-title="Five steps">
-<ol>
-<li><strong>Query</strong>: The user asks a question</li>
-<li><strong>Embed</strong>: Convert the query into a vector using an embedding model</li>
-<li><strong>Retrieve</strong>: Find the most similar document chunks in a vector database</li>
-<li><strong>Augment</strong>: Insert the retrieved chunks into the prompt as context</li>
-<li><strong>Generate</strong>: The language model generates an answer grounded in the retrieved context</li>
-</ol>
+<div class="diagram-container">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1344 120">
+  <defs>
+    <symbol id="flow-arrow" viewBox="0 0 76.41 27.12">
+      <path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor" />
+    </symbol>
+  </defs>
+  <rect x="25" y="25" width="173" height="70" rx="12" ry="12"
+        fill="rgba(38, 122, 186, 0.15)" stroke="#267aba" stroke-width="3" />
+  <text x="111" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#003c73" text-anchor="middle">Query</text>
+  <use href="#flow-arrow" x="208" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="268" y="25" width="173" height="70" rx="12" ry="12"
+        fill="rgba(0, 128, 128, 0.15)" stroke="#008080" stroke-width="3" />
+  <text x="354" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#006666" text-anchor="middle">Embed</text>
+  <use href="#flow-arrow" x="451" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="511" y="25" width="229" height="70" rx="12" ry="12"
+        fill="rgba(0, 105, 62, 0.15)" stroke="#00693e" stroke-width="3" />
+  <text x="625" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#00693e" text-anchor="middle">Retrieve</text>
+  <use href="#flow-arrow" x="750" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="810" y="25" width="210" height="70" rx="12" ry="12"
+        fill="rgba(255, 160, 15, 0.15)" stroke="#ffa00f" stroke-width="3" />
+  <text x="915" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#d94415" text-anchor="middle">Augment</text>
+  <use href="#flow-arrow" x="1030" y="46" width="50" height="28" style="color: #0a2518" />
+  <rect x="1090" y="25" width="229" height="70" rx="12" ry="12"
+        fill="rgba(138, 105, 150, 0.15)" stroke="#8a6996" stroke-width="3" />
+  <text x="1204" y="67" font-family="'Avenir LT Std', Avenir, 'Avenir Next', sans-serif" font-size="22"
+        font-weight="600" fill="#6a4d7a" text-anchor="middle">Generate</text>
+</svg>
 </div>
+<div class="diagram-caption">The five stages of retrieval augmented generation</div>
 <div class="tip-box" data-title="The big picture">
 <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>RAG</mtext><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mo>=</mo><mtext>LLM</mtext><mo stretchy="false">(</mo><mi>q</mi><mo>+</mo><mtext>retrieve</mtext><mo stretchy="false">(</mo><mi>q</mi><mo separator="true">,</mo><mi mathvariant="script">D</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{RAG}(q) = \text{LLM}(q + \text{retrieve}(q, \mathcal{D}))
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">RAG</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">LLM</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">retrieve</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathcal" style="margin-right:0.02778em;">D</span><span class="mclose">))</span></span></span></span></span></p><p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span></span></span></span> is the query and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">D</mi></mrow><annotation encoding="application/x-tex">\mathcal{D}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathcal" style="margin-right:0.02778em;">D</span></span></span></span> is the document collection.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="embeddings-for-retrieval">Embeddings for retrieval</h1>
-<div class="definition-box" data-title="Connecting to lectures 11-15">
-<p>Remember embeddings? In lectures 11-14, we learned that embeddings map text to vectors where <strong>semantic similarity corresponds to geometric proximity</strong>:</p>
-<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>similar meaning</mtext><mo>⇔</mo><mtext>nearby vectors</mtext></mrow><annotation encoding="application/x-tex">\text{similar meaning} \Leftrightarrow \text{nearby vectors}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">similar meaning</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇔</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">nearby vectors</span></span></span></span></span></span></p><p>RAG uses this property for retrieval: embed the query and the documents into the same vector space, then find the documents closest to the query.</p>
+<div class="note-box" data-title="Connecting to lectures 11-12">
+<p>You already know that embeddings map text to vectors where <strong>semantic similarity corresponds to geometric proximity</strong>. RAG exploits this: embed the query and documents into the same vector space, then find the documents closest to the query using cosine similarity.</p>
 </div>
-<div class="note-box" data-title="Which embedding model?">
-<p>For RAG, we typically use <strong>sentence embedding</strong> models (not word-level) that produce a single vector for an entire passage:</p>
+<div class="tip-box" data-title="Which embedding model?">
+<p>For RAG, we use <strong>sentence embedding</strong> models (not word-level) that produce a single vector for an entire passage. All of these are free and open-source:</p>
 <ul>
 <li><strong>Sentence-BERT</strong> (all-MiniLM-L6-v2): Fast, good quality, 384 dimensions</li>
-<li><strong>OpenAI text-embedding-3-small</strong>: API-based, 1536 dimensions</li>
-<li><strong>BGE, E5, GTE</strong>: Open-source alternatives with strong performance</li>
+<li><strong>BGE</strong> (BAAI/bge-small-en-v1.5): State-of-the-art for retrieval</li>
+<li><strong>E5, GTE</strong>: Strong open-source alternatives</li>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="vector-similarity">Vector similarity</h1>
-<div class="definition-box" data-title="Measuring how similar two texts are">
-<p>Given embedding vectors <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span>, we compute <strong>cosine similarity</strong>:</p>
-<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>sim</mtext><mo stretchy="false">(</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>a</mi><mo>⋅</mo><mi>b</mi></mrow><mrow><mi mathvariant="normal">∥</mi><mi>a</mi><mi mathvariant="normal">∥</mi><mi mathvariant="normal">∥</mi><mi>b</mi><mi mathvariant="normal">∥</mi></mrow></mfrac><mo>=</mo><mfrac><mrow><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>a</mi><mi>i</mi></msub><msub><mi>b</mi><mi>i</mi></msub></mrow><mrow><msqrt><mrow><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mi>a</mi><mi>i</mi><mn>2</mn></msubsup></mrow></msqrt><mo>⋅</mo><msqrt><mrow><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mi>b</mi><mi>i</mi><mn>2</mn></msubsup></mrow></msqrt></mrow></mfrac></mrow><annotation encoding="application/x-tex">\text{sim}(a, b) = \frac{a \cdot b}{\|a\| \|b\|} = \frac{\sum_i a_i b_i}{\sqrt{\sum_i a_i^2} \cdot \sqrt{\sum_i b_i^2}}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">sim</span></span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.3074em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">∥</span><span class="mord mathnormal">a</span><span class="mord">∥∥</span><span class="mord mathnormal">b</span><span class="mord">∥</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal">b</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.5697em;vertical-align:-1.13em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4397em;"><span style="top:-2.1769em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9331em;"><span class="svg-align" style="top:-3.2em;"><span class="pstrut" style="height:3.2em;"></span><span class="mord" style="padding-left:1em;"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.162em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7959em;"><span style="top:-2.4231em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.0448em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.8931em;"><span class="pstrut" style="height:3.2em;"></span><span class="hide-tail" style="min-width:1.02em;height:1.28em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.28em" viewBox="0 0 400000 1296" preserveAspectRatio="xMinYMin slice"><path d="M263,681c0.7,0,18,39.7,52,119
-c34,79.3,68.167,158.7,102.5,238c34.3,79.3,51.8,119.3,52.5,120
-c340,-704.7,510.7,-1060.3,512,-1067
-l0 -0
-c4.7,-7.3,11,-11,19,-11
-H40000v40H1012.3
-s-271.3,567,-271.3,567c-38.7,80.7,-84,175,-136,283c-52,108,-89.167,185.3,-111.5,232
-c-22.3,46.7,-33.8,70.3,-34.5,71c-4.7,4.7,-12.3,7,-23,7s-12,-1,-12,-1
-s-109,-253,-109,-253c-72.7,-168,-109.3,-252,-110,-252c-10.7,8,-22,16.7,-34,26
-c-22,17.3,-33.3,26,-34,26s-26,-26,-26,-26s76,-59,76,-59s76,-60,76,-60z
-M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3069em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9331em;"><span class="svg-align" style="top:-3.2em;"><span class="pstrut" style="height:3.2em;"></span><span class="mord" style="padding-left:1em;"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.162em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">b</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7959em;"><span style="top:-2.4231em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.0448em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.8931em;"><span class="pstrut" style="height:3.2em;"></span><span class="hide-tail" style="min-width:1.02em;height:1.28em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.28em" viewBox="0 0 400000 1296" preserveAspectRatio="xMinYMin slice"><path d="M263,681c0.7,0,18,39.7,52,119
-c34,79.3,68.167,158.7,102.5,238c34.3,79.3,51.8,119.3,52.5,120
-c340,-704.7,510.7,-1060.3,512,-1067
-l0 -0
-c4.7,-7.3,11,-11,19,-11
-H40000v40H1012.3
-s-271.3,567,-271.3,567c-38.7,80.7,-84,175,-136,283c-52,108,-89.167,185.3,-111.5,232
-c-22.3,46.7,-33.8,70.3,-34.5,71c-4.7,4.7,-12.3,7,-23,7s-12,-1,-12,-1
-s-109,-253,-109,-253c-72.7,-168,-109.3,-252,-110,-252c-10.7,8,-22,16.7,-34,26
-c-22,17.3,-33.3,26,-34,26s-26,-26,-26,-26s76,-59,76,-59s76,-60,76,-60z
-M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3069em;"><span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.6897em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.162em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">b</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.13em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p><ul>
-<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>sim</mtext><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\text{sim} = 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6679em;"></span><span class="mord text"><span class="mord">sim</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>: Identical meaning</li>
-<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>sim</mtext><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\text{sim} = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6679em;"></span><span class="mord text"><span class="mord">sim</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>: Unrelated</li>
-<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>sim</mtext><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\text{sim} = -1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6679em;"></span><span class="mord text"><span class="mord">sim</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord">1</span></span></span></span>: Opposite meaning</li>
-</ul>
-</div>
-<div class="example-box" data-title="Example">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from sentence_transformers import SentenceTransformer, util</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">model = SentenceTransformer(&quot;all-MiniLM-L6-v2&quot;)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">query = model.encode(&quot;What causes rain?&quot;)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">doc1 = model.encode(&quot;Precipitation occurs when water vapor condenses.&quot;)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">doc2 = model.encode(&quot;The stock market closed higher today.&quot;)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="vector-similarity-1">Vector similarity</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="9">
-<span class="line"><span class="line-num">9</span><span class="line-code">print(util.cos_sim(query, doc1))  # ~0.72 (relevant!)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">print(util.cos_sim(query, doc2))  # ~0.05 (irrelevant)</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="why-do-we-need-chunking">Why do we need chunking?</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="document-chunking">Document chunking</h1>
 <div class="definition-box" data-title="Breaking documents into pieces">
-<p>Real documents are long — hundreds or thousands of pages. We can't embed an entire book as a single vector (too much information is lost). Instead, we split documents into smaller <strong>chunks</strong> and embed each chunk separately.</p>
+<p>Real documents are long. We can't embed an entire book as a single vector (too much information is lost). Instead, we split documents into smaller <strong>chunks</strong> and embed each chunk separately.</p>
 </div>
 <div class="tip-box" data-title="Chunking strategies">
 <ul>
@@ -851,28 +812,11 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <li><strong>Recursive</strong>: Split on paragraphs first, then sentences if chunks are still too long</li>
 </ul>
 </div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="chunk-size-tradeoffs">Chunk size tradeoffs</h1>
-<div class="warning-box" data-title="Getting the chunk size right matters">
-<p><strong>Too small</strong> (e.g., individual sentences):</p>
-<ul>
-<li>Loses surrounding context</li>
-<li>May not contain enough information to answer the question</li>
-<li>Retrieves many fragments that are hard to piece together</li>
-</ul>
-<p><strong>Too large</strong> (e.g., entire chapters):</p>
-<ul>
-<li>Embedding quality degrades — too much information in one vector</li>
-<li>Includes irrelevant content alongside relevant content</li>
-<li>Uses up the language model's context window</li>
-</ul>
-</div>
-<div class="tip-box" data-title="Rules of thumb">
-<p>A good starting point is <strong>256-512 tokens</strong> per chunk with <strong>50-100 token overlap</strong> between adjacent chunks. This ensures each chunk has enough context and important information at chunk boundaries isn't lost.</p>
+<div class="warning-box" data-title="Size tradeoffs">
+<p>Too small = loses context. Too large = dilutes relevance. Start with <strong>256-512 tokens</strong> per chunk with <strong>50-100 token overlap</strong> between adjacent chunks.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="vector-databases">Vector databases</h1>
 <div class="definition-box" data-title="Specialized storage for embeddings">
 <p>A <strong>vector database</strong> stores embedding vectors and provides fast <strong>approximate nearest neighbor</strong> (ANN) search. Instead of comparing a query to every document (slow for millions of documents), vector databases use indexing structures to find the most similar vectors in milliseconds.</p>
@@ -880,205 +824,137 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <div class="note-box" data-title="Why not just use a list?">
 <p>Brute-force search over <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> vectors takes <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> time. For 10 million chunks, that's 10 million cosine similarity computations per query. Vector databases use techniques like HNSW (Hierarchical Navigable Small World graphs) to reduce this to roughly <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>log</mi><mo>⁡</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(\log n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>.</p>
 </div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="popular-vector-databases">Popular vector databases</h1>
-<div class="note-box" data-title="Options for different use cases">
-<table>
-<thead>
-<tr>
-<th>Database</th>
-<th>Type</th>
-<th>Best for</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>FAISS</strong></td>
-<td>Library (Meta)</td>
-<td>Research, local experiments</td>
-</tr>
-<tr>
-<td><strong>ChromaDB</strong></td>
-<td>Embedded DB</td>
-<td>Prototyping, small-medium scale</td>
-</tr>
-<tr>
-<td><strong>Pinecone</strong></td>
-<td>Managed cloud</td>
-<td>Production, no-ops</td>
-</tr>
-<tr>
-<td><strong>Weaviate</strong></td>
-<td>Self-hosted</td>
-<td>Full-featured, hybrid search</td>
-</tr>
-<tr>
-<td><strong>Qdrant</strong></td>
-<td>Self-hosted</td>
-<td>Performance-focused</td>
-</tr>
-</tbody>
-</table>
-<p>For this course, <strong>ChromaDB</strong> or <strong>FAISS</strong> are the easiest to get started with — no server or API key needed.</p>
+<div class="tip-box" data-title="For this course">
+<p>We'll use <strong>ChromaDB</strong> — no server setup, no API key, just <code>pip install chromadb</code>. For production scale, see also FAISS (Meta) and Pinecone (cloud).</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="python-embedding-documents">Python: embedding documents</h1>
-<div class="example-box" data-title="Step 1: embed your knowledge base">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="python-embed-and-retrieve">Python: embed and retrieve</h1>
+<div class="example-box" data-title="Steps 1-2: embed your knowledge base and find relevant documents">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from sentence_transformers import SentenceTransformer</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span><span class="hl-w"> </span><span class="hl-nn">sentence_transformers</span><span class="hl-w"> </span><span class="hl-kn">import</span> <span class="hl-n">SentenceTransformer</span><span class="hl-p">,</span> <span class="hl-n">util</span></span></span>
 <span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"># Load embedding model</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">embedder = SentenceTransformer(&quot;all-MiniLM-L6-v2&quot;)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># Your knowledge base (in practice, loaded from files)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">documents = [</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    &quot;The transformer was introduced by Vaswani et al. in 2017.&quot;,</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    &quot;BERT uses bidirectional attention for language understanding.&quot;,</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">    &quot;GPT models use autoregressive (left-to-right) generation.&quot;,</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">    &quot;Attention mechanisms allow models to focus on relevant context.&quot;,</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">    &quot;Fine-tuning adapts a pre-trained model to a specific task.&quot;,</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">]</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="python-embedding-documents-1">Python: embedding documents</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="15">
-<span class="line"><span class="line-num">15</span><span class="line-code"># Embed all documents</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">doc_embeddings = embedder.encode(documents, convert_to_tensor=True)</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code">print(doc_embeddings.shape)  # (5, 384) — 5 docs, 384 dims each</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="python-retrieval">Python: retrieval</h1>
-<div class="example-box" data-title="Step 2: find relevant documents">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from sentence_transformers import util</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">def retrieve(query, documents, doc_embeddings, top_k=3):</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">    &quot;&quot;&quot;Find the top_k most relevant documents for a query.&quot;&quot;&quot;</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">    # Embed the query</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">    query_embedding = embedder.encode(query, convert_to_tensor=True)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    # Compute cosine similarity against all documents</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    scores = util.cos_sim(query_embedding, doc_embeddings)[0]</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">    # Get top-k results</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">    top_indices = scores.argsort(descending=True)[:top_k]</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"></span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="python-retrieval-1">Python: retrieval</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="14">
-<span class="line"><span class="line-num">14</span><span class="line-code">    results = []</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code">    for idx in top_indices:</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">        results.append({</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code">            &quot;text&quot;: documents[idx],</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code">            &quot;score&quot;: scores[idx].item()</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code">        })</span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code">    return results</span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code"># Example query</span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code">results = retrieve(&quot;How do transformers work?&quot;, documents, doc_embeddings)</span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code">for r in results:</span></span>
-<span class="line"><span class="line-num">25</span><span class="line-code">    print(f&quot;  [{r[&#x27;score&#x27;]:.3f}] {r[&#x27;text&#x27;]}&quot;)</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="python-generation-with-context">Python: generation with context</h1>
-<div class="example-box" data-title="Step 3: augment the prompt and generate">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from openai import OpenAI  # or any LLM API</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">client = OpenAI()</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"><span class="hl-n">embedder</span> <span class="hl-o">=</span> <span class="hl-n">SentenceTransformer</span><span class="hl-p">(</span><span class="hl-s2">&quot;all-MiniLM-L6-v2&quot;</span><span class="hl-p">)</span></span></span>
 <span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">def rag_answer(query, documents, doc_embeddings):</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">    &quot;&quot;&quot;Answer a question using RAG.&quot;&quot;&quot;</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">    # Step 1: Retrieve relevant context</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    context_docs = retrieve(query, documents, doc_embeddings, top_k=3)</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    context = &quot;\n&quot;.join([doc[&quot;text&quot;] for doc in context_docs])</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">    # Step 2: Build the augmented prompt</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">    prompt = f&quot;&quot;&quot;Answer the question based on the provided context.</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"><span class="hl-c1"># Knowledge base (in practice, loaded from files)</span></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"><span class="hl-n">documents</span> <span class="hl-o">=</span> <span class="hl-p">[</span></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">    <span class="hl-s2">&quot;The transformer was introduced by Vaswani et al. in 2017.&quot;</span><span class="hl-p">,</span></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    <span class="hl-s2">&quot;BERT uses bidirectional attention for language understanding.&quot;</span><span class="hl-p">,</span></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    <span class="hl-s2">&quot;GPT models use autoregressive (left-to-right) generation.&quot;</span><span class="hl-p">,</span></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    <span class="hl-s2">&quot;Attention mechanisms allow models to focus on relevant context.&quot;</span><span class="hl-p">,</span></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">    <span class="hl-s2">&quot;Fine-tuning adapts a pre-trained model to a specific task.&quot;</span><span class="hl-p">,</span></span></span>
 </code></pre>
 <div class="code-continued-indicator">continued...</div>
+</div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="python-generation-with-context-1">Python: generation with context</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="13">
-<span class="line"><span class="line-num">13</span><span class="line-code">If the context doesn&#x27;t contain the answer, say &quot;I don&#x27;t know.&quot;</span></span>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="python-embed-and-retrieve-1">Python: embed and retrieve</h1>
+<div class="example-box" data-title="Steps 1-2: embed your knowledge base and find relevant documents">
+<pre><code class="language-python has-line-numbers" data-start-line="12">
+<span class="line"><span class="line-num">12</span><span class="line-code"><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code"><span class="hl-n">doc_embeddings</span> <span class="hl-o">=</span> <span class="hl-n">embedder</span><span class="hl-o">.</span><span class="hl-n">encode</span><span class="hl-p">(</span><span class="hl-n">documents</span><span class="hl-p">,</span> <span class="hl-n">convert_to_tensor</span><span class="hl-o">=</span><span class="hl-kc">True</span><span class="hl-p">)</span></span></span>
 <span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code">Context:</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">{context}</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code">Question: {query}</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code">Answer:&quot;&quot;&quot;</span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code">    # Step 3: Generate with the LLM</span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code">    response = client.chat.completions.create(</span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code">        model=&quot;gpt-4&quot;,</span></span>
-<span class="line"><span class="line-num">24</span><span class="line-code">        messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: prompt}]</span></span>
-</code></pre>
-<div class="code-continued-indicator">...continued...</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="python-generation-with-context-2">Python: generation with context</h1>
-<pre><code class="language-python has-line-numbers" data-start-line="25">
-<span class="line"><span class="line-num">25</span><span class="line-code">    )</span></span>
-<span class="line"><span class="line-num">26</span><span class="line-code">    return response.choices[0].message.content</span></span>
-<span class="line"><span class="line-num">27</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">28</span><span class="line-code">answer = rag_answer(&quot;What is BERT?&quot;, documents, doc_embeddings)</span></span>
-<span class="line"><span class="line-num">29</span><span class="line-code">print(answer)</span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code"><span class="hl-c1"># Retrieve: embed query, find nearest documents</span></span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"><span class="hl-n">query</span> <span class="hl-o">=</span> <span class="hl-s2">&quot;How do transformers work?&quot;</span></span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code"><span class="hl-n">query_emb</span> <span class="hl-o">=</span> <span class="hl-n">embedder</span><span class="hl-o">.</span><span class="hl-n">encode</span><span class="hl-p">(</span><span class="hl-n">query</span><span class="hl-p">,</span> <span class="hl-n">convert_to_tensor</span><span class="hl-o">=</span><span class="hl-kc">True</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code"><span class="hl-n">scores</span> <span class="hl-o">=</span> <span class="hl-n">util</span><span class="hl-o">.</span><span class="hl-n">cos_sim</span><span class="hl-p">(</span><span class="hl-n">query_emb</span><span class="hl-p">,</span> <span class="hl-n">doc_embeddings</span><span class="hl-p">)[</span><span class="hl-mi">0</span><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code"><span class="hl-n">top_indices</span> <span class="hl-o">=</span> <span class="hl-n">scores</span><span class="hl-o">.</span><span class="hl-n">argsort</span><span class="hl-p">(</span><span class="hl-n">descending</span><span class="hl-o">=</span><span class="hl-kc">True</span><span class="hl-p">)[:</span><span class="hl-mi">3</span><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code"><span class="hl-k">for</span> <span class="hl-n">idx</span> <span class="hl-ow">in</span> <span class="hl-n">top_indices</span><span class="hl-p">:</span></span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code">    <span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-sa">f</span><span class="hl-s2">&quot;  [</span><span class="hl-si">{</span><span class="hl-n">scores</span><span class="hl-p">[</span><span class="hl-n">idx</span><span class="hl-p">]</span><span class="hl-si">:</span><span class="hl-s2">.3f</span><span class="hl-si">}</span><span class="hl-s2">] </span><span class="hl-si">{</span><span class="hl-n">documents</span><span class="hl-p">[</span><span class="hl-n">idx</span><span class="hl-p">]</span><span class="hl-si">}</span><span class="hl-s2">&quot;</span><span class="hl-p">)</span></span></span>
 </code></pre>
 <div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="python-generation-with-context">Python: generation with context</h1>
+<div class="example-box" data-title="Step 3: augment the prompt and generate (free, no API key)">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">from</span><span class="hl-w"> </span><span class="hl-nn">transformers</span><span class="hl-w"> </span><span class="hl-kn">import</span> <span class="hl-n">pipeline</span></span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"><span class="hl-c1"># Load a free, local text generation model</span></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-n">generator</span> <span class="hl-o">=</span> <span class="hl-n">pipeline</span><span class="hl-p">(</span><span class="hl-s2">&quot;text2text-generation&quot;</span><span class="hl-p">,</span> <span class="hl-n">model</span><span class="hl-o">=</span><span class="hl-s2">&quot;google/flan-t5-base&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"><span class="hl-k">def</span><span class="hl-w"> </span><span class="hl-nf">rag_answer</span><span class="hl-p">(</span><span class="hl-n">query</span><span class="hl-p">,</span> <span class="hl-n">documents</span><span class="hl-p">,</span> <span class="hl-n">doc_embeddings</span><span class="hl-p">,</span> <span class="hl-n">top_k</span><span class="hl-o">=</span><span class="hl-mi">3</span><span class="hl-p">):</span></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"><span class="hl-w">    </span><span class="hl-sd">&quot;&quot;&quot;Answer a question using RAG.&quot;&quot;&quot;</span></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    <span class="hl-c1"># Retrieve relevant context</span></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    <span class="hl-n">query_emb</span> <span class="hl-o">=</span> <span class="hl-n">embedder</span><span class="hl-o">.</span><span class="hl-n">encode</span><span class="hl-p">(</span><span class="hl-n">query</span><span class="hl-p">,</span> <span class="hl-n">convert_to_tensor</span><span class="hl-o">=</span><span class="hl-kc">True</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    <span class="hl-n">scores</span> <span class="hl-o">=</span> <span class="hl-n">util</span><span class="hl-o">.</span><span class="hl-n">cos_sim</span><span class="hl-p">(</span><span class="hl-n">query_emb</span><span class="hl-p">,</span> <span class="hl-n">doc_embeddings</span><span class="hl-p">)[</span><span class="hl-mi">0</span><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">    <span class="hl-n">top_idx</span> <span class="hl-o">=</span> <span class="hl-n">scores</span><span class="hl-o">.</span><span class="hl-n">argsort</span><span class="hl-p">(</span><span class="hl-n">descending</span><span class="hl-o">=</span><span class="hl-kc">True</span><span class="hl-p">)[:</span><span class="hl-n">top_k</span><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">    <span class="hl-n">context</span> <span class="hl-o">=</span> <span class="hl-s2">&quot;</span><span class="hl-se">\n</span><span class="hl-s2">&quot;</span><span class="hl-o">.</span><span class="hl-n">join</span><span class="hl-p">([</span><span class="hl-n">documents</span><span class="hl-p">[</span><span class="hl-n">i</span><span class="hl-p">]</span> <span class="hl-k">for</span> <span class="hl-n">i</span> <span class="hl-ow">in</span> <span class="hl-n">top_idx</span><span class="hl-p">])</span></span></span>
+</code></pre>
+<div class="code-continued-indicator">continued...</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="python-generation-with-context-1">Python: generation with context</h1>
+<div class="example-box" data-title="Step 3: augment the prompt and generate (free, no API key)">
+<pre><code class="language-python has-line-numbers" data-start-line="13">
+<span class="line"><span class="line-num">13</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    <span class="hl-c1"># Build augmented prompt and generate</span></span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">    <span class="hl-n">prompt</span> <span class="hl-o">=</span> <span class="hl-sa">f</span><span class="hl-s2">&quot;&quot;&quot;Answer based on the context. Say &quot;I don&#39;t know&quot; if unsure.</span></span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"><span class="hl-n">Context</span><span class="hl-p">:</span> <span class="hl-p">{</span><span class="hl-n">context</span><span class="hl-p">}</span></span></span>
+<span class="line"><span class="line-num">17</span><span class="line-code"><span class="hl-n">Question</span><span class="hl-p">:</span> <span class="hl-p">{</span><span class="hl-n">query</span><span class="hl-p">}</span></span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code"><span class="hl-n">Answer</span><span class="hl-p">:</span><span class="hl-s2">&quot;&quot;&quot;</span></span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code">    <span class="hl-k">return</span> <span class="hl-n">generator</span><span class="hl-p">(</span><span class="hl-n">prompt</span><span class="hl-p">,</span> <span class="hl-n">max_new_tokens</span><span class="hl-o">=</span><span class="hl-mi">128</span><span class="hl-p">)[</span><span class="hl-mi">0</span><span class="hl-p">][</span><span class="hl-s2">&quot;generated_text&quot;</span><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-n">rag_answer</span><span class="hl-p">(</span><span class="hl-s2">&quot;What is BERT?&quot;</span><span class="hl-p">,</span> <span class="hl-n">documents</span><span class="hl-p">,</span> <span class="hl-n">doc_embeddings</span><span class="hl-p">))</span></span></span>
+</code></pre>
+<div class="code-continued-indicator-last">...continued</div>
+</div>
+<div class="tip-box" data-title="No API key needed">
+<p>FLAN-T5 runs locally in Colab. For better quality, try <code>google/flan-t5-large</code> (requires GPU).</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="end-to-end-rag-with-chromadb">End-to-end RAG with ChromaDB</h1>
 <div class="example-box" data-title="A complete mini RAG system">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">import chromadb</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">from sentence_transformers import SentenceTransformer</span></span>
+<span class="line"><span class="line-num">1</span><span class="line-code"><span class="hl-kn">import</span><span class="hl-w"> </span><span class="hl-nn">chromadb</span></span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"><span class="hl-kn">from</span><span class="hl-w"> </span><span class="hl-nn">transformers</span><span class="hl-w"> </span><span class="hl-kn">import</span> <span class="hl-n">pipeline</span></span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Set up ChromaDB (persistent storage)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">client = chromadb.Client()</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">collection = client.create_collection(&quot;course_notes&quot;)</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code"><span class="hl-c1"># Set up ChromaDB (handles embedding automatically)</span></span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"><span class="hl-n">client</span> <span class="hl-o">=</span> <span class="hl-n">chromadb</span><span class="hl-o">.</span><span class="hl-n">Client</span><span class="hl-p">()</span></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"><span class="hl-n">collection</span> <span class="hl-o">=</span> <span class="hl-n">client</span><span class="hl-o">.</span><span class="hl-n">create_collection</span><span class="hl-p">(</span><span class="hl-s2">&quot;course_notes&quot;</span><span class="hl-p">)</span></span></span>
 <span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"># Add documents (ChromaDB handles embedding automatically)</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">collection.add(</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">    documents=[</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">        &quot;The transformer uses self-attention to process sequences in parallel.&quot;,</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"><span class="hl-c1"># Add documents</span></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"><span class="hl-n">collection</span><span class="hl-o">.</span><span class="hl-n">add</span><span class="hl-p">(</span></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    <span class="hl-n">documents</span><span class="hl-o">=</span><span class="hl-p">[</span></span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">        <span class="hl-s2">&quot;The transformer uses self-attention to process sequences in parallel.&quot;</span><span class="hl-p">,</span></span></span>
 </code></pre>
 <div class="code-continued-indicator">continued...</div>
+</div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="end-to-end-rag-with-chromadb-1">End-to-end RAG with ChromaDB</h1>
+<div class="example-box" data-title="A complete mini RAG system">
 <pre><code class="language-python has-line-numbers" data-start-line="12">
-<span class="line"><span class="line-num">12</span><span class="line-code">        &quot;Cross-entropy loss measures prediction error for classification.&quot;,</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">        &quot;RAG combines retrieval with generation for knowledge-grounded answers.&quot;,</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code">    ],</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code">    ids=[&quot;doc1&quot;, &quot;doc2&quot;, &quot;doc3&quot;]</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">        <span class="hl-s2">&quot;Cross-entropy loss measures prediction error for classification.&quot;</span><span class="hl-p">,</span></span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">        <span class="hl-s2">&quot;RAG combines retrieval with generation for knowledge-grounded answers.&quot;</span><span class="hl-p">,</span></span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    <span class="hl-p">],</span></span></span>
+<span class="line"><span class="line-num">15</span><span class="line-code">    <span class="hl-n">ids</span><span class="hl-o">=</span><span class="hl-p">[</span><span class="hl-s2">&quot;doc1&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;doc2&quot;</span><span class="hl-p">,</span> <span class="hl-s2">&quot;doc3&quot;</span><span class="hl-p">]</span></span></span>
+<span class="line"><span class="line-num">16</span><span class="line-code"><span class="hl-p">)</span></span></span>
 <span class="line"><span class="line-num">17</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code"># Query — ChromaDB embeds the query and finds nearest neighbors</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code">results = collection.query(query_texts=[&quot;How does attention work?&quot;], n_results=2)</span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code">print(results[&quot;documents&quot;])</span></span>
-<span class="line"><span class="line-num">21</span><span class="line-code"># [[&#x27;The transformer uses self-attention to process sequences in parallel.&#x27;,</span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code">#   &#x27;RAG combines retrieval with generation for knowledge-grounded answers.&#x27;]]</span></span>
+<span class="line"><span class="line-num">18</span><span class="line-code"><span class="hl-c1"># Retrieve relevant documents</span></span></span>
+<span class="line"><span class="line-num">19</span><span class="line-code"><span class="hl-n">results</span> <span class="hl-o">=</span> <span class="hl-n">collection</span><span class="hl-o">.</span><span class="hl-n">query</span><span class="hl-p">(</span><span class="hl-n">query_texts</span><span class="hl-o">=</span><span class="hl-p">[</span><span class="hl-s2">&quot;How does attention work?&quot;</span><span class="hl-p">],</span> <span class="hl-n">n_results</span><span class="hl-o">=</span><span class="hl-mi">2</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">20</span><span class="line-code"><span class="hl-n">context</span> <span class="hl-o">=</span> <span class="hl-s2">&quot;</span><span class="hl-se">\n</span><span class="hl-s2">&quot;</span><span class="hl-o">.</span><span class="hl-n">join</span><span class="hl-p">(</span><span class="hl-n">results</span><span class="hl-p">[</span><span class="hl-s2">&quot;documents&quot;</span><span class="hl-p">][</span><span class="hl-mi">0</span><span class="hl-p">])</span></span></span>
+<span class="line"><span class="line-num">21</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">22</span><span class="line-code"><span class="hl-c1"># Generate answer using retrieved context</span></span></span>
+</code></pre>
+<div class="code-continued-indicator">...continued...</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="end-to-end-rag-with-chromadb-2">End-to-end RAG with ChromaDB</h1>
+<div class="example-box" data-title="A complete mini RAG system">
+<pre><code class="language-python has-line-numbers" data-start-line="23">
+<span class="line"><span class="line-num">23</span><span class="line-code"><span class="hl-n">generator</span> <span class="hl-o">=</span> <span class="hl-n">pipeline</span><span class="hl-p">(</span><span class="hl-s2">&quot;text2text-generation&quot;</span><span class="hl-p">,</span> <span class="hl-n">model</span><span class="hl-o">=</span><span class="hl-s2">&quot;google/flan-t5-base&quot;</span><span class="hl-p">)</span></span></span>
+<span class="line"><span class="line-num">24</span><span class="line-code"><span class="hl-n">prompt</span> <span class="hl-o">=</span> <span class="hl-sa">f</span><span class="hl-s2">&quot;Answer based on context.</span><span class="hl-se">\n</span><span class="hl-s2">Context: </span><span class="hl-si">{</span><span class="hl-n">context</span><span class="hl-si">}</span><span class="hl-se">\n</span><span class="hl-s2">Question: How does attention work?</span><span class="hl-se">\n</span><span class="hl-s2">Answer:&quot;</span></span></span>
+<span class="line"><span class="line-num">25</span><span class="line-code"><span class="hl-nb">print</span><span class="hl-p">(</span><span class="hl-n">generator</span><span class="hl-p">(</span><span class="hl-n">prompt</span><span class="hl-p">,</span> <span class="hl-n">max_new_tokens</span><span class="hl-o">=</span><span class="hl-mi">128</span><span class="hl-p">)[</span><span class="hl-mi">0</span><span class="hl-p">][</span><span class="hl-s2">&quot;generated_text&quot;</span><span class="hl-p">])</span></span></span>
 </code></pre>
 <div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="rag-vs-fine-tuning">RAG vs fine-tuning</h1>
 <div class="tip-box" data-title="When to use which">
 <table>
@@ -1127,39 +1003,24 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <p>Many production systems use <em>both</em>: fine-tune the model for the domain's style and behavior, then use RAG for up-to-date factual knowledge.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="advanced-rag-techniques">Advanced RAG techniques</h1>
-<div class="note-box" data-title="Beyond basic RAG">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="beyond-basic-rag">Beyond basic RAG</h1>
+<div class="note-box" data-title="Advanced techniques">
 <ol>
-<li>
-<p><strong>Re-ranking</strong>: After initial retrieval, use a cross-encoder model to re-score and re-order results for better precision</p>
-</li>
-<li>
-<p><strong>Hybrid search</strong>: Combine vector similarity (semantic) with keyword matching (BM25) for more robust retrieval</p>
-</li>
-<li>
-<p><strong>Query expansion</strong>: Rewrite or expand the user's query using an LLM before retrieval to improve recall</p>
-</li>
-<li>
-<p><strong>Multi-hop retrieval</strong>: For complex questions, retrieve → generate an intermediate answer → retrieve again with new context</p>
-</li>
-<li>
-<p><strong>Contextual compression</strong>: Summarize retrieved chunks to fit more information into the context window</p>
-</li>
+<li><strong>Re-ranking</strong>: After initial retrieval, use a cross-encoder model to re-score and re-order results for better precision</li>
+<li><strong>Hybrid search</strong>: Combine vector similarity (semantic) with keyword matching (BM25) for more robust retrieval</li>
+<li><strong>Query expansion</strong>: Rewrite or expand the user's query using an LLM before retrieval to improve recall</li>
+</ol>
+</div>
+<div class="warning-box" data-title="Limitations to keep in mind">
+<ol>
+<li><strong>Retrieval quality</strong>: If the retriever fails to find relevant documents, the generator can't produce a good answer — garbage in, garbage out</li>
+<li><strong>Context window limits</strong>: There's a limit to how much retrieved text fits in the prompt, requiring aggressive chunking or summarization</li>
+<li><strong>Multi-source reasoning</strong>: RAG is great for finding a specific fact, but struggles when answers require synthesizing information across many documents</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="limitations-of-rag">Limitations of RAG</h1>
-<div class="warning-box" data-title="RAG is not a silver bullet">
-<p><strong>Retrieval quality</strong>: If the retriever fails to find relevant documents, the generator can't produce a good answer — garbage in, garbage out.</p>
-<p><strong>Context window limits</strong>: Even with RAG, there's a limit to how much retrieved text fits in the prompt. Long documents may need aggressive chunking or summarization.</p>
-<p><strong>Latency</strong>: The retrieval step adds time. For real-time applications, this overhead matters.</p>
-<p><strong>Reasoning over multiple sources</strong>: RAG is great for finding a specific fact, but struggles when the answer requires synthesizing information across many documents.</p>
-<p><strong>Embedding quality</strong>: The retriever is only as good as the embedding model. Domain-specific queries may need domain-specific embeddings.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="best-practices">Best practices</h1>
 <div class="tip-box" data-title="Making RAG work well">
 <ol>
@@ -1171,39 +1032,28 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="try-it-yourself">Try it yourself</h1>
 <div class="note-box" data-title="Interactive demo">
 <p>Explore our interactive RAG demo to see retrieval augmented generation in action:</p>
-<p><a href="https://contextlab.github.io/llm-course/demos/rag/"><strong>RAG System Demo</strong></a> — Upload documents, ask questions, and see how the system retrieves relevant passages and generates grounded answers.</p>
+<p><a href="https://contextlab.github.io/llm-course/demos/rag/"><strong>RAG System Demo</strong></a> — Search 2,000 Wikipedia articles, configure chunking strategies, compare RAG vs. non-RAG answers, and visualize embedding spaces — all in your browser with no API keys required.</p>
 </div>
 <div class="tip-box" data-title="Assignment 4 connection">
 <p>Your next assignment asks you to build a <strong>Customer Service Chatbot</strong> that uses retrieval and generation techniques. The RAG concepts from today's lecture are directly applicable!</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="discussion-rag-applications">Discussion: RAG applications</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="discussion-rag-in-practice">Discussion: RAG in practice</h1>
 <div class="tip-box" data-title="Questions to consider">
 <ol>
 <li>What kinds of applications benefit most from RAG? Where would fine-tuning be better?</li>
-<li>A company wants to build a chatbot that answers questions about their internal documents. What are the privacy implications of using RAG vs. fine-tuning?</li>
-<li>How would you evaluate whether a RAG system is working well? What metrics matter?</li>
-<li>If the retrieved documents contain contradictory information, how should the system handle that?</li>
-</ol>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="discussion-the-future-of-knowledge-grounded-generation">Discussion: the future of knowledge-grounded generation</h1>
-<div class="tip-box" data-title="Questions to consider">
-<ol>
+<li>A company wants to build a chatbot using internal documents. What are the privacy implications of RAG vs. fine-tuning?</li>
 <li>Will RAG eventually be unnecessary if models get large enough to memorize everything?</li>
-<li>How does RAG change the economics of AI — who controls the knowledge base controls the answers?</li>
-<li>Could RAG be used to make language models more &quot;honest&quot; about what they know vs. don't know?</li>
 <li>What happens when the retrieved documents themselves contain misinformation?</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="31" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="references">References</h1>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://arxiv.org/abs/2005.11401"><strong>Lewis et al. (2020, <em>NeurIPS</em>)</strong></a> &quot;Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks&quot; — The original RAG paper.</p>
@@ -1212,7 +1062,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <p><a href="https://docs.trychroma.com/"><strong>ChromaDB Documentation</strong></a> — Getting started with vector databases for RAG.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="32" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
@@ -1229,7 +1079,7 @@ M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
   </div>
 </div>
 <div class="tip-box" data-title="Up next...">
-<p>Week 6: BERT and encoder models — bidirectional attention and masked language modeling!</p>
+<p>Week 6: BERT deep dive — bidirectional attention, masked language modeling, and the pre-train/fine-tune paradigm!</p>
 </div>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();
