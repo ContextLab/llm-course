@@ -199,7 +199,7 @@ for idx in top_indices:
 </div>
 
 ---
-<!-- _class: scale-75 -->
+<!-- _class: scale-80 -->
 
 # Python: generation with context
 
@@ -207,20 +207,15 @@ for idx in top_indices:
 
 ```python
 from transformers import pipeline
-
-# Load a free, local text generation model
 generator = pipeline("text2text-generation", model="google/flan-t5-base")
 
 def rag_answer(query, documents, doc_embeddings, top_k=3):
     """Answer a question using RAG."""
-    # Retrieve relevant context
     query_emb = embedder.encode(query, convert_to_tensor=True)
     scores = util.cos_sim(query_emb, doc_embeddings)[0]
     top_idx = scores.argsort(descending=True)[:top_k]
     context = "\n".join([documents[i] for i in top_idx])
-
-    # Build augmented prompt and generate
-    prompt = f"""Answer based on the context. Say "I don't know" if unsure.
+    prompt = f"""Answer based on context. Say "I don't know" if unsure.
 Context: {context}
 Question: {query}
 Answer:"""
