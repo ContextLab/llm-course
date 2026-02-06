@@ -43,6 +43,10 @@
                 </div>
                 <p id="init-status" class="status status-info">Initializing...</p>
             </div>
+            <div id="model-status" class="status status-success" style="display: none; margin-top: 16px;">
+                <strong>Generator Model:</strong> <span id="model-name">-</span> 
+                <span class="badge" id="model-device" style="margin-left: 8px;">-</span>
+            </div>
         </div>
 
         <!-- Document Management Section -->
@@ -340,6 +344,17 @@
 
                 initStatus.className = 'status status-success';
                 initStatus.textContent = 'RAG Pipeline initialized successfully!';
+
+                // Show model status
+                const modelStatus = document.getElementById('model-status');
+                const modelName = document.getElementById('model-name');
+                const modelDevice = document.getElementById('model-device');
+                if (ragPipeline.currentModel) {
+                    modelName.textContent = ragPipeline.currentModel.displayName;
+                    modelDevice.textContent = ragPipeline.device.toUpperCase();
+                    modelDevice.className = ragPipeline.device === 'webgpu' ? 'badge badge-success' : 'badge badge-primary';
+                    modelStatus.style.display = 'block';
+                }
 
                 // Show next sections
                 setTimeout(() => {

@@ -19,8 +19,8 @@ class VectorStore {
         try {
             console.log('Initializing embedding model...');
 
-            // Use a small, efficient embedding model
-            const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1');
+            // Use a small, efficient embedding model (v3 for WebGPU support)
+            const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3');
 
             // Create feature extraction pipeline for embeddings
             this.embeddingModel = await pipeline(
