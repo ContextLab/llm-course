@@ -44,8 +44,8 @@ class RAGPipeline {
         this.device = 'wasm';
         
         this.models = [
-            { name: 'onnx-community/SmolLM2-135M-Instruct', displayName: 'SmolLM2 135M', dtype: 'q4', wasmMinMB: 500, minRAM: 2 },
-            { name: 'onnx-community/SmolLM2-360M-Instruct', displayName: 'SmolLM2 360M', dtype: 'q4', wasmMinMB: 900, minRAM: 4 }
+            { name: 'onnx-community/SmolLM2-135M-Instruct-ONNX', displayName: 'SmolLM2 135M', dtype: 'q4', wasmMinMB: 500, minRAM: 2 },
+            { name: 'onnx-community/SmolLM2-360M-Instruct-ONNX', displayName: 'SmolLM2 360M', dtype: 'q4', wasmMinMB: 900, minRAM: 4 }
         ];
     }
 
