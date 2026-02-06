@@ -3,7 +3,6 @@
  * Using Collapsed Gibbs Sampling
  */
 
-// Common English stopwords
 const STOPWORDS = new Set([
     'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from',
     'has', 'he', 'in', 'is', 'it', 'its', 'of', 'on', 'that', 'the',
@@ -13,7 +12,40 @@ const STOPWORDS = new Set([
     'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 'can', 'just',
     'should', 'now', 'i', 'you', 'we', 'or', 'been', 'their', 'them', 'also',
     'am', 'me', 'my', 'our', 'us', 'do', 'does', 'did', 'doing', 'if', 'no',
-    'yes', 'any', 'may', 'might', 'must', 'shall', 'would', 'could'
+    'yes', 'any', 'may', 'might', 'must', 'shall', 'would', 'could',
+    'his', 'her', 'she', 'him', 'hers', 'herself', 'himself', 'itself',
+    'one', 'two', 'three', 'four', 'five', 'first', 'second', 'third',
+    'new', 'old', 'many', 'much', 'about', 'into', 'over', 'after', 'before',
+    'between', 'under', 'again', 'further', 'then', 'once', 'here', 'there',
+    'these', 'those', 'being', 'having', 'during', 'through', 'against',
+    'while', 'until', 'within', 'without', 'since', 'another', 'because',
+    'however', 'although', 'though', 'either', 'neither', 'whether',
+    'your', 'yours', 'yourself', 'yourselves', 'themselves', 'ourselves',
+    'get', 'got', 'getting', 'make', 'made', 'making', 'take', 'took', 'taking',
+    'come', 'came', 'coming', 'go', 'went', 'going', 'say', 'said', 'saying',
+    'see', 'saw', 'seen', 'seeing', 'know', 'knew', 'known', 'knowing',
+    'think', 'thought', 'thinking', 'want', 'wanted', 'wanting',
+    'use', 'used', 'using', 'find', 'found', 'finding',
+    'give', 'gave', 'given', 'giving', 'tell', 'told', 'telling',
+    'become', 'became', 'becoming', 'begin', 'began', 'begun', 'beginning',
+    'seem', 'seemed', 'seeming', 'leave', 'left', 'leaving',
+    'call', 'called', 'calling', 'keep', 'kept', 'keeping',
+    'let', 'put', 'show', 'showed', 'shown', 'showing',
+    'try', 'tried', 'trying', 'ask', 'asked', 'asking',
+    'need', 'needed', 'needing', 'feel', 'felt', 'feeling',
+    'way', 'ways', 'even', 'well', 'back', 'still', 'always', 'never',
+    'also', 'often', 'ever', 'really', 'already', 'almost', 'probably',
+    'actually', 'usually', 'perhaps', 'certainly', 'likely', 'simply',
+    'something', 'anything', 'everything', 'nothing', 'someone', 'anyone',
+    'everyone', 'no one', 'nobody', 'somebody', 'anybody', 'everybody',
+    'part', 'parts', 'place', 'places', 'case', 'cases', 'thing', 'things',
+    'people', 'person', 'year', 'years', 'time', 'times', 'day', 'days',
+    'work', 'works', 'working', 'worked', 'world', 'life', 'hand', 'hands',
+    'end', 'ends', 'point', 'points', 'home', 'side', 'sides',
+    'high', 'long', 'little', 'small', 'large', 'great', 'good', 'bad',
+    'right', 'left', 'next', 'last', 'early', 'late', 'young', 'later',
+    'able', 'different', 'important', 'possible', 'certain', 'following',
+    'known', 'several', 'including', 'according', 'based', 'along', 'rather'
 ]);
 
 // Simple Porter Stemmer (basic rules)

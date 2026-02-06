@@ -289,32 +289,48 @@ export class InteractivePlot {
     }
 
     /**
+     * Get theme-aware colors for Plotly
+     */
+    getThemeColors() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        return {
+            paper: isDark ? '#1a1a2e' : 'white',
+            plot: isDark ? 'rgba(30, 30, 50, 0.8)' : 'rgba(240, 240, 240, 0.5)',
+            text: isDark ? '#e0e0e0' : '#333',
+            grid: isDark ? '#444' : '#ddd',
+            axis: isDark ? '#2a2a4a' : 'white'
+        };
+    }
+
+    /**
      * Create layout configuration
      */
     createLayout(is3D, colorBy) {
+        const colors = this.getThemeColors();
+        
         const layout = {
             title: {
                 text: `Text Embeddings Visualization (colored by ${colorBy})`,
-                font: { size: 16, color: '#333' }
+                font: { size: 16, color: colors.text }
             },
             showlegend: true,
             legend: {
                 x: 1.02,
                 y: 1,
                 orientation: 'v',
-                font: { size: 10 }
+                font: { size: 10, color: colors.text }
             },
             margin: { l: 0, r: 0, b: 0, t: 40 },
             hovermode: 'closest',
-            paper_bgcolor: 'white',
-            plot_bgcolor: 'rgba(240, 240, 240, 0.5)'
+            paper_bgcolor: colors.paper,
+            plot_bgcolor: colors.plot
         };
 
         if (is3D) {
             layout.scene = {
-                xaxis: { title: 'Component 1', backgroundcolor: 'white', gridcolor: '#ddd' },
-                yaxis: { title: 'Component 2', backgroundcolor: 'white', gridcolor: '#ddd' },
-                zaxis: { title: 'Component 3', backgroundcolor: 'white', gridcolor: '#ddd' },
+                xaxis: { title: 'Component 1', backgroundcolor: colors.axis, gridcolor: colors.grid, color: colors.text },
+                yaxis: { title: 'Component 2', backgroundcolor: colors.axis, gridcolor: colors.grid, color: colors.text },
+                zaxis: { title: 'Component 3', backgroundcolor: colors.axis, gridcolor: colors.grid, color: colors.text },
                 camera: {
                     eye: { x: 1.5, y: 1.5, z: 1.5 }
                 }
@@ -323,12 +339,14 @@ export class InteractivePlot {
             layout.xaxis = {
                 title: 'Component 1',
                 zeroline: false,
-                gridcolor: '#ddd'
+                gridcolor: colors.grid,
+                color: colors.text
             };
             layout.yaxis = {
                 title: 'Component 2',
                 zeroline: false,
-                gridcolor: '#ddd'
+                gridcolor: colors.grid,
+                color: colors.text
             };
         }
 

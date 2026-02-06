@@ -252,7 +252,7 @@ class ComparisonApp {
             const results = await this.benchmarkTasks.runCategorizationTest(items, numCategories, modelIds);
 
             this.visualization.displayCategorizationResults(results);
-            this.visualization.updateLeaderboard(results, 'similarity');
+            this.visualization.updateLeaderboard(results, 'silhouetteScore');
             this.visualization.plotRadarChart(results);
             this.visualization.plotTradeoffChart(results);
 

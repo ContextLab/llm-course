@@ -329,9 +329,12 @@ class Architecture3D {
 
         this.scene.add(mesh);
 
-        // Create text label
-        const labelSprite = this.createTextLabel(label);
-        labelSprite.position.set(x + width/2 + 1, y, z);
+        const isLayerNorm = type === 'layernorm';
+        const labelSprite = this.createTextLabel(label, isLayerNorm);
+        
+        const xOffset = width/2 + 1.5;
+        labelSprite.position.set(x + xOffset, y, z);
+        labelSprite.visible = false;
         this.scene.add(labelSprite);
 
         // Store component data
@@ -351,31 +354,54 @@ class Architecture3D {
         return component;
     }
 
-    createTextLabel(text) {
+    createTextLabel(text, isSmall = false) {
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
         canvas.width = 512;
-        canvas.height = 128;
+        canvas.height = 64;
 
-        context.fillStyle = 'rgba(26, 26, 46, 0.8)';
-        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = 'rgba(26, 26, 46, 0.9)';
+        this.roundRect(context, 0, 0, canvas.width, canvas.height, 8);
+        context.fill();
 
-        context.font = 'Bold 32px Arial';
+        const fontSize = isSmall ? 20 : 24;
+        context.font = `Bold ${fontSize}px Arial`;
         context.fillStyle = '#ffffff';
         context.textAlign = 'left';
         context.textBaseline = 'middle';
-        context.fillText(text, 10, canvas.height / 2);
+        
+        let displayText = text;
+        if (text.length > 30) {
+            displayText = text.substring(0, 28) + '...';
+        }
+        context.fillText(displayText, 8, canvas.height / 2);
 
         const texture = new THREE.CanvasTexture(canvas);
         const material = new THREE.SpriteMaterial({
             map: texture,
             transparent: true,
-            opacity: 0.9
+            opacity: 0.85,
+            depthTest: false,
+            depthWrite: false
         });
         const sprite = new THREE.Sprite(material);
-        sprite.scale.set(4, 1, 1);
+        sprite.scale.set(2.5, 0.5, 1);
 
         return sprite;
+    }
+
+    roundRect(ctx, x, y, width, height, radius) {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
     }
 
     createConnections() {
@@ -511,19 +537,23 @@ class Architecture3D {
         const meshes = this.components.map(c => c.mesh);
         const intersects = this.raycaster.intersectObjects(meshes);
 
-        // Reset previous hover
         if (this.selectedObject && (!intersects.length || intersects[0].object !== this.selectedObject)) {
             this.selectedObject.material.emissive = new THREE.Color(0x000000);
+            if (this.selectedObject.userData && this.selectedObject.userData.label) {
+                this.selectedObject.userData.label.visible = false;
+            }
             this.selectedObject = null;
             document.body.style.cursor = 'default';
         }
 
-        // Highlight hovered object
         if (intersects.length > 0) {
             const object = intersects[0].object;
             if (object !== this.selectedObject) {
                 this.selectedObject = object;
                 object.material.emissive = new THREE.Color(0x444444);
+                if (object.userData && object.userData.label) {
+                    object.userData.label.visible = true;
+                }
                 document.body.style.cursor = 'pointer';
             }
         }

@@ -174,6 +174,15 @@ export class EmbeddingVisualizer {
             return;
         }
 
+        // Fully purge any existing Plotly state before recreating container
+        try {
+            if (container._fullLayout) {
+                Plotly.purge(container);
+            }
+        } catch (e) {
+            // Ignore purge errors - we're recreating the container anyway
+        }
+
         // Recreate container to fully clear Plotly state (purge alone doesn't remove 3D camera)
         const parent = container.parentNode;
         const newContainer = document.createElement('div');
@@ -212,7 +221,6 @@ export class EmbeddingVisualizer {
         const methodName = mode.includes('pca') ? 'PCA' : 't-SNE';
         const dimName = is3D ? '3D' : '2D';
 
-        // Build trace object conditionally to avoid Plotly confusion with undefined z
         const trace = {
             x: projected.map(p => p[0]),
             y: projected.map(p => p[1]),
@@ -264,9 +272,11 @@ export class EmbeddingVisualizer {
             displayModeBar: true
         };
 
-        // Purge any existing plot to avoid state conflicts (e.g., 3D camera state)
-        Plotly.purge(container);
-        Plotly.newPlot(container, [trace], layout, config);
+        try {
+            Plotly.purge(container);
+        } catch (e) {}
+        
+        await Plotly.newPlot(container, [trace], layout, config);
     }
 
     /**

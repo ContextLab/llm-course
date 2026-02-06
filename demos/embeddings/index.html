@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../shared/css/demo-styles.css">
     <link rel="stylesheet" href="css/embeddings.css">
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1"></script>
 </head>
 <body>
     <nav class="demo-nav">
@@ -24,10 +23,7 @@
     </div>
 
     <div class="container">
-        <div class="demo-warning-banner">
-            <strong>Work in Progress</strong>
-            <p>This demo is under development and may contain bugs or incomplete features.</p>
-        </div>
+
 
         <div class="main-layout">
             <!-- Left Sidebar: Controls -->
@@ -273,15 +269,15 @@
     </div>
 
     <!-- Scripts -->
-    <script type="module" src="js/embedding-loader.js"></script>
-    <script type="module" src="js/dimension-reducer.js"></script>
-    <script type="module" src="js/clustering.js"></script>
-    <script type="module" src="js/interactive-plot.js"></script>
+    <script type="module" src="js/embedding-loader.js?v=2"></script>
+    <script type="module" src="js/dimension-reducer.js?v=2"></script>
+    <script type="module" src="js/clustering.js?v=2"></script>
+    <script type="module" src="js/interactive-plot.js?v=2"></script>
     <script type="module">
-        import { EmbeddingLoader } from './js/embedding-loader.js';
-        import { DimensionReducer } from './js/dimension-reducer.js';
-        import { ClusteringEngine } from './js/clustering.js';
-        import { InteractivePlot } from './js/interactive-plot.js';
+        import { EmbeddingLoader } from './js/embedding-loader.js?v=2';
+        import { DimensionReducer } from './js/dimension-reducer.js?v=2';
+        import { ClusteringEngine } from './js/clustering.js?v=2';
+        import { InteractivePlot } from './js/interactive-plot.js?v=2';
 
         // Initialize application
         const app = {
@@ -710,6 +706,24 @@
                 html.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
                 updateThemeIcon(newTheme);
+                
+                // Re-render Plotly chart with new theme colors
+                if (window.app && window.app.plot && window.app.reducedData) {
+                    const colorBy = document.getElementById('color-by').value;
+                    const showLabels = document.getElementById('show-labels').checked;
+                    const showConnections = document.getElementById('show-connections').checked;
+                    const plotData = {
+                        points: window.app.reducedData,
+                        texts: window.app.currentData.texts,
+                        labels: window.app.currentData.labels,
+                        clusters: window.app.currentData.clusters,
+                        colorBy,
+                        showLabels,
+                        showConnections,
+                        is3D: window.app.reducedData[0].length === 3
+                    };
+                    window.app.plot.render(plotData);
+                }
             });
         }
     </script>

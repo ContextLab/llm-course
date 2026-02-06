@@ -106,7 +106,8 @@ export class Visualization {
             const score = document.createElement('div');
             score.className = 'leaderboard-score';
             const scoreValue = result[metric] || result.confidence || result.avgSimilarity || 0;
-            score.textContent = scoreValue.toFixed(3);
+            const isPercentageMetric = scoreValue <= 1 && scoreValue >= -1;
+            score.textContent = isPercentageMetric ? `${(scoreValue * 100).toFixed(1)}%` : scoreValue.toFixed(3);
 
             item.appendChild(rank);
             item.appendChild(name);

@@ -22,10 +22,7 @@
             <p class="hero-subtitle">Interactive word embeddings with vector arithmetic and similarity search</p>
         </div>
     </div>
-    <div class="demo-warning-banner">
-        <strong>Work in Progress</strong>
-        <p>This demo is under development and may contain bugs or incomplete features.</p>
-    </div>
+
     <div class="container">
 
         <div class="main-layout">
@@ -202,13 +199,10 @@
     </div>
 
     <!-- Scripts -->
-    <script type="module" src="js/embeddings.js"></script>
-    <script type="module" src="js/visualization.js"></script>
-    <script type="module" src="data/sample-embeddings.js"></script>
     <script type="module">
-        import { EmbeddingModel } from './js/embeddings.js';
-        import { EmbeddingVisualizer } from './js/visualization.js';
-        import { SAMPLE_EMBEDDINGS } from './data/sample-embeddings.js';
+        import { EmbeddingModel } from './js/embeddings.js?v=2';
+        import { EmbeddingVisualizer } from './js/visualization.js?v=2';
+        import { SAMPLE_EMBEDDINGS } from './data/sample-embeddings.js?v=2';
 
         const app = {
             model: null,

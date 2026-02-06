@@ -873,93 +873,105 @@
 
 .plate-diagram {
     display: flex;
-    align-items: flex-start;
-    gap: 40px;
-    padding: 20px;
+    align-items: center;
+    gap: 0;
+    padding: 30px 20px;
     justify-content: center;
 }
 
 .plate {
     border: 2px solid var(--border-color);
     border-radius: 8px;
-    padding: 20px;
+    padding: 30px 25px;
     position: relative;
 }
 
 .outer-plate {
-    background: rgba(99, 102, 241, 0.05);
+    background: rgba(99, 102, 241, 0.08);
     border-color: var(--primary-color);
 }
 
 .inner-plate {
-    background: rgba(168, 85, 247, 0.05);
+    background: rgba(168, 85, 247, 0.08);
     border-color: var(--secondary-color);
     margin-top: 15px;
 }
 
 .plate-label {
     position: absolute;
-    bottom: -10px;
-    right: 10px;
+    bottom: -12px;
+    right: 15px;
     background: var(--surface-color);
-    padding: 2px 8px;
+    padding: 4px 12px;
     font-size: 0.85em;
     color: var(--text-secondary);
     font-style: italic;
-}
-
-.plate-label-small {
-    font-size: 0.8em;
-    color: var(--text-secondary);
-    font-style: italic;
-    margin-top: 5px;
+    border-radius: 4px;
 }
 
 .plate-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
+}
+
+.k-topics-plate {
+    border: 2px dashed #f59e0b;
+    border-radius: 8px;
+    padding: 20px 25px;
+    background: rgba(245, 158, 11, 0.08);
+    position: relative;
+}
+
+.k-topics-plate .plate-label {
+    bottom: -12px;
+    right: 10px;
+    color: #f59e0b;
 }
 
 .node {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     background: var(--surface-color);
     transition: var(--topic-transition);
+    padding: 8px;
 }
 
 .node:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
     box-shadow: var(--topic-shadow-lg);
 }
 
 .node.observed {
-    background: var(--text-secondary);
-    border-color: var(--text-secondary);
+    background: #64748b;
+    border-color: #64748b;
 }
 
 .node.observed .node-symbol,
 .node.observed .node-label {
-    color: var(--surface-color);
+    color: white;
 }
 
 .node-symbol {
-    font-size: 1.3em;
+    font-size: 1.6em;
     font-weight: 700;
     color: var(--primary-color);
+    line-height: 1.2;
 }
 
 .node-label {
-    font-size: 0.65em;
+    font-size: 0.55em;
     color: var(--text-secondary);
     margin-top: 2px;
+    white-space: nowrap;
+    letter-spacing: -0.3px;
 }
 
 .theta-node {
@@ -987,67 +999,85 @@
 }
 
 .arrow-down {
-    width: 2px;
-    height: 20px;
-    background: var(--border-color);
+    width: 3px;
+    height: 30px;
+    background: #64748b;
     position: relative;
 }
 
 .arrow-down::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: -4px;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 8px solid var(--border-color);
+    bottom: -1px;
+    left: -5px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 10px solid #64748b;
 }
 
 .arrow-right {
-    width: 30px;
-    height: 2px;
-    background: var(--border-color);
+    width: 40px;
+    height: 3px;
+    background: #64748b;
     position: relative;
+    flex-shrink: 0;
 }
 
 .arrow-right::after {
     content: '';
     position: absolute;
-    right: 0;
-    top: -4px;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 8px solid var(--border-color);
+    right: -1px;
+    top: -5px;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 10px solid #64748b;
 }
 
-.hyperparams {
+.hyperparams-left {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding-right: 5px;
+    height: 100%;
+    min-height: 200px;
     padding-top: 30px;
+}
+
+.hyperparams-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding-left: 5px;
+    height: 100%;
+    min-height: 200px;
+    padding-bottom: 60px;
 }
 
 .hyperparam {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 5px;
 }
 
 .hyperparam .node-symbol {
-    font-size: 1.5em;
+    font-size: 2em;
     font-weight: 700;
     color: var(--warning-color);
+    min-width: 35px;
+    text-align: center;
 }
 
 .alpha-param {
-    margin-top: 20px;
+    margin-bottom: 0;
 }
 
 .beta-param {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 15px;
+    gap: 5px;
 }
 
 .lda-concepts .concept-grid {
