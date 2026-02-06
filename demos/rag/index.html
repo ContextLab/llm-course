@@ -18,7 +18,7 @@
     <div class="hero-header">
         <div class="container">
             <h1 class="hero-title">Retrieval Augmented Generation (RAG)</h1>
-            <p class="hero-subtitle">Interactive demonstration using 2000 real Wikipedia articles - document retrieval and context-aware generation</p>
+            <p class="hero-subtitle">Interactive demonstration using real Wikipedia articles - document retrieval and context-aware generation</p>
         </div>
     </div>
     <div class="demo-warning-banner">
@@ -30,9 +30,9 @@
         <!-- Initialization Section -->
         <div class="card" id="init-section">
             <h2>1. Initialize RAG Pipeline</h2>
-            <p>Load the embedding model, retriever, generator, and 2000 Wikipedia articles. This may take a moment due to the large dataset.</p>
+            <p>Load the embedding model, retriever, generator, and Wikipedia articles. This may take a moment.</p>
             <div class="status status-info" style="margin-bottom: 16px;">
-                <strong>Note:</strong> Loading 2000 real Wikipedia articles (approximately 5MB of data). Please wait for initialization to complete.
+                <strong>Note:</strong> Loading 100 Wikipedia articles for faster demo experience. Full dataset of 2000 articles available in the JSON file.
             </div>
             <button id="init-btn" class="btn btn-primary">
                 <span>Initialize System & Load Wikipedia Articles</span>
@@ -50,7 +50,7 @@
             <h2>2. Document Collection</h2>
 
             <div class="status status-success" style="margin-bottom: 20px;">
-                <strong>Dataset Loaded:</strong> 2000 real Wikipedia articles across diverse topics
+                <strong>Dataset Loaded:</strong> <span id="loaded-article-count">100</span> real Wikipedia articles across diverse topics
             </div>
 
             <div class="tabs">
@@ -59,7 +59,7 @@
             </div>
 
             <div class="tab-content active" id="sample-docs">
-                <p>Loaded 2000 real Wikipedia articles from various topics including science, history, arts, technology, and more. These articles provide a rich knowledge base for testing RAG capabilities.</p>
+                <p>Loaded Wikipedia articles from various topics including science, history, arts, technology, and more. These articles provide a rich knowledge base for testing RAG capabilities.</p>
                 <div id="document-stats" class="stats-grid" style="margin: 20px 0;">
                     <div class="stat-card">
                         <div class="stat-value" id="doc-count">-</div>
@@ -358,10 +358,12 @@
         function displayDocuments() {
             const docList = document.getElementById('document-list');
             const docCount = document.getElementById('doc-count');
+            const loadedArticleCount = document.getElementById('loaded-article-count');
             const docs = ragPipeline.documents;
 
-            // Update document count
+            // Update document counts
             docCount.textContent = docs.length;
+            if (loadedArticleCount) loadedArticleCount.textContent = docs.length;
 
             // Display first 20 articles as a preview
             const previewDocs = docs.slice(0, 20);
@@ -634,6 +636,7 @@
                 // Update visualization with query
                 visualizeEmbeddings(currentView, query);
             } catch (error) {
+                console.error('Error executing query:', error);
                 alert('Error executing query: ' + error.message);
                 progressDiv.style.display = 'none';
             }

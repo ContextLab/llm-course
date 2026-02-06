@@ -70,14 +70,19 @@ class RAGPipeline {
 
     /**
      * Load Wikipedia articles from JSON file
+     * By default loads 100 articles for faster demo experience
+     * Full 2000 articles available but takes 10+ minutes to index
      */
-    async loadSampleDocuments() {
+    async loadSampleDocuments(maxArticles = 100) {
         try {
             const response = await fetch('data/wikipedia-articles.json');
             const rawArticles = await response.json();
 
+            // Limit articles for faster demo (can be overridden)
+            const articlesToLoad = rawArticles.slice(0, maxArticles);
+
             // Transform Wikipedia articles to match expected document format
-            this.documents = rawArticles.map((article, index) => ({
+            this.documents = articlesToLoad.map((article, index) => ({
                 id: `wiki-${index}`,
                 title: article.title,
                 content: article.content,
@@ -90,7 +95,7 @@ class RAGPipeline {
             }));
 
             this.retriever.loadDocuments(this.documents);
-            console.log(`Loaded ${this.documents.length} Wikipedia articles`);
+            console.log(`Loaded ${this.documents.length} Wikipedia articles (of ${rawArticles.length} available)`);
         } catch (error) {
             console.error('Error loading Wikipedia articles:', error);
             throw error;

@@ -168,11 +168,19 @@ export class EmbeddingVisualizer {
      * Render embedding space visualization
      */
     async renderEmbeddingSpace(model, mode, numWords, showLabels) {
-        const container = document.getElementById('embedding-plot');
+        let container = document.getElementById('embedding-plot');
         if (!container) {
             console.error('Embedding plot container not found');
             return;
         }
+
+        // Recreate container to fully clear Plotly state (purge alone doesn't remove 3D camera)
+        const parent = container.parentNode;
+        const newContainer = document.createElement('div');
+        newContainer.id = 'embedding-plot';
+        newContainer.className = container.className;
+        parent.replaceChild(newContainer, container);
+        container = newContainer;
 
         // Get random subset of words
         const words = model.getRandomWords(Math.min(numWords, model.vocabularySize));
@@ -201,11 +209,13 @@ export class EmbeddingVisualizer {
         }
 
         const is3D = mode.includes('3d');
+        const methodName = mode.includes('pca') ? 'PCA' : 't-SNE';
+        const dimName = is3D ? '3D' : '2D';
 
+        // Build trace object conditionally to avoid Plotly confusion with undefined z
         const trace = {
             x: projected.map(p => p[0]),
             y: projected.map(p => p[1]),
-            z: is3D ? projected.map(p => p[2]) : undefined,
             mode: showLabels ? 'markers+text' : 'markers',
             type: is3D ? 'scatter3d' : 'scatter',
             text: words,
@@ -219,22 +229,31 @@ export class EmbeddingVisualizer {
                     width: 1
                 }
             },
-            hovertemplate: '<b>%{text}</b><br>x: %{x:.3f}<br>y: %{y:.3f}' +
-                          (is3D ? '<br>z: %{z:.3f}' : '') + '<extra></extra>'
+            hovertemplate: is3D 
+                ? '<b>%{text}</b><br>x: %{x:.3f}<br>y: %{y:.3f}<br>z: %{z:.3f}<extra></extra>'
+                : '<b>%{text}</b><br>x: %{x:.3f}<br>y: %{y:.3f}<extra></extra>'
         };
 
-        const methodName = mode.includes('pca') ? 'PCA' : 't-SNE';
-        const dimName = is3D ? '3D' : '2D';
+        // Only add z for 3D mode - do NOT include z property at all for 2D
+        if (is3D) {
+            trace.z = projected.map(p => p[2]);
+        }
 
-        const layout = {
+        // Build layout conditionally - 2D and 3D have completely different structures
+        const layout = is3D ? {
             title: `Embedding Space Visualization (${methodName} ${dimName})`,
-            xaxis: { title: 'Component 1', zeroline: false },
-            yaxis: { title: 'Component 2', zeroline: false },
-            scene: is3D ? {
+            scene: {
                 xaxis: { title: 'Component 1' },
                 yaxis: { title: 'Component 2' },
                 zaxis: { title: 'Component 3' }
-            } : undefined,
+            },
+            height: 600,
+            hovermode: 'closest',
+            showlegend: false
+        } : {
+            title: `Embedding Space Visualization (${methodName} ${dimName})`,
+            xaxis: { title: 'Component 1', zeroline: false },
+            yaxis: { title: 'Component 2', zeroline: false },
             height: 600,
             hovermode: 'closest',
             showlegend: false
@@ -245,6 +264,8 @@ export class EmbeddingVisualizer {
             displayModeBar: true
         };
 
+        // Purge any existing plot to avoid state conflicts (e.g., 3D camera state)
+        Plotly.purge(container);
         Plotly.newPlot(container, [trace], layout, config);
     }
 

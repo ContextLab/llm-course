@@ -38,10 +38,12 @@ class VectorStore {
     }
 
     /**
-     * Add chunks to the vector store
+     * Add chunks to the vector store with batched processing
+     * Yields to UI thread periodically to prevent freezing
      */
     async addChunks(chunks, onProgress = null) {
         const newEmbeddings = [];
+        const BATCH_SIZE = 5;
 
         for (let i = 0; i < chunks.length; i++) {
             const chunk = chunks[i];
@@ -50,13 +52,15 @@ class VectorStore {
                 onProgress(i + 1, chunks.length);
             }
 
-            // Generate embedding for the chunk
             const embedding = await this.embed(chunk.text);
-
             newEmbeddings.push(embedding);
+
+            // Yield to UI thread every BATCH_SIZE chunks to prevent freezing
+            if ((i + 1) % BATCH_SIZE === 0) {
+                await new Promise(resolve => setTimeout(resolve, 0));
+            }
         }
 
-        // Add to store
         this.chunks.push(...chunks);
         this.embeddings.push(...newEmbeddings);
 
