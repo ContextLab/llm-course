@@ -66,8 +66,10 @@ class RAGPipeline {
 
     /**
      * Initialize the RAG pipeline
+     * @param {function} onProgress - Progress callback (message, percent)
+     * @param {number} maxArticles - Maximum number of Wikipedia articles to load (default 100)
      */
-    async initialize(onProgress = null) {
+    async initialize(onProgress = null, maxArticles = 100) {
         try {
             if (onProgress) onProgress('Initializing vector store...', 0);
 
@@ -85,10 +87,10 @@ class RAGPipeline {
             // Initialize generator
             await this.initializeGenerator();
 
-            if (onProgress) onProgress('Loading Wikipedia articles...', 80);
+            if (onProgress) onProgress(`Loading ${maxArticles} Wikipedia articles...`, 80);
 
             // Load Wikipedia articles
-            await this.loadSampleDocuments();
+            await this.loadSampleDocuments(maxArticles);
 
             if (onProgress) onProgress('Ready!', 100);
 

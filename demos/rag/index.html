@@ -31,8 +31,13 @@
         <div class="card" id="init-section">
             <h2>1. Initialize RAG Pipeline</h2>
             <p>Load the embedding model, retriever, generator, and Wikipedia articles. This may take a moment.</p>
-            <div class="status status-info" style="margin-bottom: 16px;">
-                <strong>Note:</strong> Loading 100 Wikipedia articles for faster demo experience. Full dataset of 2000 articles available in the JSON file.
+            <div style="margin-bottom: 16px;">
+                <label for="article-count" style="display: block; margin-bottom: 8px; font-weight: 500;">Wikipedia Articles to Load:</label>
+                <select id="article-count" class="form-control" style="max-width: 300px;">
+                    <option value="100" selected>100 articles (faster, recommended)</option>
+                    <option value="500">500 articles (moderate)</option>
+                    <option value="2000">2000 articles (slower, more comprehensive)</option>
+                </select>
             </div>
             <button id="init-btn" class="btn btn-primary">
                 <span>Initialize System & Load Wikipedia Articles</span>
@@ -64,20 +69,6 @@
 
             <div class="tab-content active" id="sample-docs">
                 <p>Loaded Wikipedia articles from various topics including science, history, arts, technology, and more. These articles provide a rich knowledge base for testing RAG capabilities.</p>
-                <div id="document-stats" class="stats-grid" style="margin: 20px 0;">
-                    <div class="stat-card">
-                        <div class="stat-value" id="doc-count">-</div>
-                        <div class="stat-label">Total Articles</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">Wikipedia</div>
-                        <div class="stat-label">Source</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">Real Data</div>
-                        <div class="stat-label">Dataset Type</div>
-                    </div>
-                </div>
                 <details style="margin-top: 20px;">
                     <summary style="cursor: pointer; font-weight: 600; padding: 10px; background: var(--bg-color); border-radius: 8px;">
                         View Sample Articles (Click to expand)
@@ -90,7 +81,7 @@
                 <div class="file-upload" id="file-upload-area">
                     <input type="file" id="file-input" accept=".txt,.json" multiple>
                     <p>Click to upload text or JSON files</p>
-                    <p style="font-size: 0.9em; color: var(--text-secondary);">Or use the 2000 Wikipedia articles</p>
+                    <p style="font-size: 0.9em; color: var(--text-secondary);">Or use the 100 Wikipedia articles</p>
                 </div>
             </div>
         </div>
@@ -289,34 +280,34 @@
         <!-- Sample Queries -->
         <div class="card" id="sample-queries-section" style="display: none;">
             <h3>Sample Queries to Try</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 16px;">Try these queries against the 2000 Wikipedia articles to see RAG in action:</p>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">Try these queries against the Wikipedia articles to see RAG in action:</p>
             <div class="grid grid-2">
                 <button class="btn btn-secondary sample-query-btn" data-query="Who is Stef Chura?">
                     Who is Stef Chura?
                 </button>
-                <button class="btn btn-secondary sample-query-btn" data-query="Tell me about the history of artificial intelligence">
-                    Tell me about AI history
+                <button class="btn btn-secondary sample-query-btn" data-query="What is buoyancy?">
+                    What is buoyancy?
                 </button>
-                <button class="btn btn-secondary sample-query-btn" data-query="What are some famous landmarks?">
-                    What are some famous landmarks?
+                <button class="btn btn-secondary sample-query-btn" data-query="What is inpainting?">
+                    What is inpainting?
                 </button>
-                <button class="btn btn-secondary sample-query-btn" data-query="Explain quantum physics">
-                    Explain quantum physics
+                <button class="btn btn-secondary sample-query-btn" data-query="Tell me about the history of Allahabad">
+                    History of Allahabad
                 </button>
-                <button class="btn btn-secondary sample-query-btn" data-query="What is machine learning?">
-                    What is machine learning?
+                <button class="btn btn-secondary sample-query-btn" data-query="What is a Sōryū-class submarine?">
+                    Sōryū-class submarine
                 </button>
-                <button class="btn btn-secondary sample-query-btn" data-query="Tell me about space exploration">
-                    Tell me about space exploration
+                <button class="btn btn-secondary sample-query-btn" data-query="Who was Stephen E. Ambrose?">
+                    Who was Stephen E. Ambrose?
                 </button>
             </div>
         </div>
     </div>
 
     <!-- JavaScript Modules -->
-    <script src="js/vector-store.js?v=2"></script>
-    <script src="js/retriever.js?v=2"></script>
-    <script src="js/rag-pipeline.js?v=2"></script>
+    <script src="js/vector-store.js?v=6"></script>
+    <script src="js/retriever.js?v=6"></script>
+    <script src="js/rag-pipeline.js?v=6"></script>
 
     <!-- Main Application Script -->
     <script>
@@ -331,16 +322,18 @@
             const initFill = document.getElementById('init-progress-fill');
 
             initBtn.disabled = true;
+            document.getElementById('article-count').disabled = true;
             initProgress.style.display = 'block';
 
             try {
                 ragPipeline = new RAGPipeline();
+                const articleCount = parseInt(document.getElementById('article-count').value);
 
                 await ragPipeline.initialize((message, progress) => {
                     initStatus.textContent = message;
                     initFill.style.width = progress + '%';
                     initFill.textContent = Math.round(progress) + '%';
-                });
+                }, articleCount);
 
                 initStatus.className = 'status status-success';
                 initStatus.textContent = 'RAG Pipeline initialized successfully!';
@@ -372,12 +365,10 @@
         // Display loaded documents
         function displayDocuments() {
             const docList = document.getElementById('document-list');
-            const docCount = document.getElementById('doc-count');
             const loadedArticleCount = document.getElementById('loaded-article-count');
             const docs = ragPipeline.documents;
 
-            // Update document counts
-            docCount.textContent = docs.length;
+            // Update document count in header
             if (loadedArticleCount) loadedArticleCount.textContent = docs.length;
 
             // Display first 20 articles as a preview
@@ -524,7 +515,7 @@
                 hovertemplate: '<b>%{text}</b><extra></extra>',
                 marker: {
                     size: 8,
-                    color: data.chunks.map(chunk => chunk.documentId.charCodeAt(3)),
+                    color: data.chunks.map(chunk => parseInt(chunk.documentId.split('-')[1]) || 0),
                     colorscale: 'Viridis',
                     showscale: true,
                     colorbar: {
@@ -573,8 +564,13 @@
             const layout = {
                 title: `Document Embeddings in ${dimensions.toUpperCase()} Space`,
                 height: 480,
-                margin: { t: 40, b: 40, l: 40, r: 40 },
-                hovermode: 'closest'
+                margin: { t: 40, b: 40, l: 40, r: 120 },
+                hovermode: 'closest',
+                legend: {
+                    x: 1.15,
+                    y: 0.5,
+                    xanchor: 'left'
+                }
             };
 
             if (dimensions === '3d') {

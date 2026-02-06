@@ -7,7 +7,7 @@ An interactive demonstration of a complete Retrieval Augmented Generation pipeli
 ## Features
 
 ### 1. Document Management
-- **Real Wikipedia Dataset**: 2000 authentic Wikipedia articles covering diverse topics (science, history, arts, technology, and more)
+- **Real Wikipedia Dataset**: Choose from 100, 500, or 2000 Wikipedia articles covering diverse topics (science, history, arts, technology, and more)
 - **Custom Upload**: Support for uploading custom text or JSON documents
 - **Document Browser**: View loaded articles with links to original Wikipedia sources
 
@@ -30,7 +30,9 @@ An interactive demonstration of a complete Retrieval Augmented Generation pipeli
 - **Context Formatting**: Automatically format retrieved chunks for the generator
 
 ### 5. Context-Aware Generation
-- **FLAN-T5 Model**: Uses lightweight but capable text generation model
+- **SmolLM2 Model**: Uses HuggingFace's SmolLM2 (135M or 360M parameters) for text generation
+- **Auto Model Selection**: Automatically selects model size based on device RAM
+- **WebGPU/WASM Support**: Runs via WebGPU when available, falls back to WASM
 - **Prompt Engineering**: Automatically constructs prompts with retrieved context
 - **Citation Support**: Links answers to source documents
 
@@ -48,11 +50,11 @@ An interactive demonstration of a complete Retrieval Augmented Generation pipeli
 ### 8. Sample Queries
 Pre-configured example queries against the Wikipedia dataset:
 - "Who is Stef Chura?"
-- "Tell me about the history of artificial intelligence"
-- "What are some famous landmarks?"
-- "Explain quantum physics"
-- "What is machine learning?"
-- "Tell me about space exploration"
+- "What is buoyancy?"
+- "What is inpainting?"
+- "Tell me about the history of Allahabad"
+- "What is a Sōryū-class submarine?"
+- "Who was Stephen E. Ambrose?"
 
 ## Technical Implementation
 
@@ -109,10 +111,10 @@ Display with Sources
 ## Usage Instructions
 
 ### 1. Initialize the System
-Click "Initialize System & Load Wikipedia Articles" to load the embedding model, retriever, generator, and 2000 Wikipedia articles. This takes 30-45 seconds on first load due to the large dataset (models and data are cached).
+Select the number of Wikipedia articles to load (100 recommended for faster demo, up to 2000 for more comprehensive coverage). Click "Initialize System & Load Wikipedia Articles" to load the embedding model, retriever, generator, and articles.
 
 ### 2. Review Documents
-Browse the 2000 Wikipedia articles (first 20 shown as preview) or upload your own text files.
+Browse the loaded Wikipedia articles (first 20 shown as preview) or upload your own text files.
 
 ### 3. Configure Chunking
 Select a chunking strategy and parameters:
@@ -141,24 +143,26 @@ View your document chunks in 2D or 3D vector space. Points that are close togeth
 
 ## Example Workflow
 
-1. Initialize system → Wait for models and Wikipedia articles to load
-2. Review Wikipedia articles → See the diverse knowledge base (2000 articles)
+1. Select 100 articles (default) and initialize system
+2. Review loaded Wikipedia articles
 3. Set chunking to "Fixed size", 200 words, 50 overlap → Click process
-4. View 2D visualization → Understand document distribution across 2000 articles
+4. View 2D visualization → Understand document distribution
 5. Ask: "Who is Stef Chura?" → Compare both modes
 6. Observe that RAG retrieves and cites the specific Wikipedia article
-7. Try different chunking strategies → See impact on retrieval quality with real data
+7. Try different chunking strategies → See impact on retrieval quality
 
 ## Performance Considerations
 
-- **First Load**: 30-45 seconds (downloading models + loading 5MB Wikipedia dataset)
-- **Subsequent Loads**: <10 seconds (cached models, but still parsing Wikipedia data)
-- **Query Processing**: 2-5 seconds typical
-- **Embedding Generation**: ~0.5 seconds per chunk (with 2000 articles, chunking creates ~4000-10000 chunks)
+- **Model Loading**: 15-30 seconds first time (models cached after)
+- **100 articles**: Fast demo experience (~5 seconds to load, ~300 chunks)
+- **500 articles**: Moderate (~10 seconds, ~1500 chunks)
+- **2000 articles**: Comprehensive but slower (~30 seconds, ~6000 chunks)
+- **Query Processing**: 30-120 seconds depending on model and device
 - **Data Sizes**:
-  - Wikipedia articles: ~5MB JSON
+  - Wikipedia articles: ~5MB JSON (full dataset)
   - Embedding model: ~25MB
-  - Generation model: ~150MB
+  - SmolLM2 135M: ~170MB
+  - SmolLM2 360M: ~370MB
 
 ## Educational Value
 
@@ -179,11 +183,12 @@ This demo teaches:
 
 ## Limitations
 
-- Uses smaller models (FLAN-T5-small) for browser compatibility
+- Uses smaller models (SmolLM2 135M/360M) for browser compatibility
 - Simplified PCA for visualization (not true UMAP/t-SNE)
-- In-memory vector store (handles 2000 Wikipedia articles well, ~4000-10000 chunks)
+- In-memory vector store (handles up to 2000 articles, ~6000 chunks)
 - No persistent storage (refreshing resets everything)
 - Wikipedia dataset is static (not dynamically updated)
+- Generation can be slow (30-120 seconds per query)
 
 ## Extensions & Improvements
 
