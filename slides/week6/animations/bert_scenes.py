@@ -67,22 +67,28 @@ class BaseScene(Scene):
             tr_input.append([Tex("\\vdots") for _ in range(len(tr_input[-1]))])
         return MobjectMatrix(tr_input)
 
-    def _make_row_labels(self, matrix, labels, color=GREEN_E, dir=LEFT):
+    def _make_row_labels(self, matrix, labels, color=GREEN_E, dir=LEFT,
+                         font_size=20, buff_mult=1.5):
+        """Row labels with configurable spacing. Smaller defaults than week5
+        to accommodate 6-token sequences on 1920×1080 canvas."""
         rows = matrix.get_rows()
         text_objs = []
         for row, label in zip(rows, labels):
             text_objs.append(
-                Text(label, font_size=24).next_to(row, dir * 3).set_color(color)
+                Text(label, font_size=font_size)
+                .next_to(row, dir * buff_mult)
+                .set_color(color)
             )
         return VGroup(*text_objs)
 
-    def _make_col_labels(self, matrix, labels, dir=DOWN, color=GREEN_E):
+    def _make_col_labels(self, matrix, labels, dir=DOWN, color=GREEN_E,
+                         font_size=20, buff_mult=1.5):
         cols = matrix.get_columns()
         text_objs = []
         for col, label in zip(cols, labels):
             text_objs.append(
-                Text(label, font_size=24)
-                .next_to(col, dir * 3)
+                Text(label, font_size=font_size)
+                .next_to(col, dir * buff_mult)
                 .set_color(color)
                 .rotate(-PI / 2)
             )
@@ -143,8 +149,6 @@ ATTN_BERT = softmax(ATTN_SCORES_RAW, axis=1)
 
 
 # ── Scene 1: BertVsGptAttention ──
-# Style: Two side-by-side attention matrices like SelfAttn in lecture 15.
-# Uses MobjectMatrix with row/col labels, highlights, and equations below.
 
 
 class BertVsGptAttention(BaseScene):
@@ -159,7 +163,7 @@ class BertVsGptAttention(BaseScene):
         title = Title("Causal vs Bidirectional Attention")
         self.add(title)
 
-        scale = 0.45
+        scale = 0.38  # smaller to fit two 6×6 matrices side by side
 
         # ── Build GPT attention matrix (with -inf in upper triangle) ──
         gpt_data = ATTN_GPT.copy()
@@ -168,50 +172,54 @@ class BertVsGptAttention(BaseScene):
             row = []
             for j in range(T):
                 if j > i:
-                    row.append(Tex("$-\\infty$", font_size=28).set_color(GREY_C))
+                    row.append(Tex("$-\\infty$", font_size=24).set_color(GREY_C))
                 else:
-                    row.append(Tex(f"{gpt_data[i, j]:.2f}", font_size=28))
+                    row.append(Tex(f"{gpt_data[i, j]:.2f}", font_size=24))
             gpt_rows.append(row)
         gpt_matrix = MobjectMatrix(gpt_rows).scale(scale)
 
         gpt_title = MathTex(
-            r"\text{GPT (Causal)}", font_size=32, color=MAROON_E
-        ).next_to(gpt_matrix, UP, buff=0.3)
+            r"\text{GPT (Causal)}", font_size=28, color=MAROON_E
+        ).next_to(gpt_matrix, UP, buff=0.2)
 
         gpt_eq = MathTex(
             r"A = \text{softmax}\!\left(\frac{QK^T}{\sqrt{H}} + M\right)",
-            font_size=26,
-        ).next_to(gpt_matrix, DOWN, buff=0.4)
+            font_size=22,
+        ).next_to(gpt_matrix, DOWN, buff=0.3)
 
-        gpt_row_labels = self._make_row_labels(gpt_matrix, TOKENS, color=GREEN_E)
+        gpt_row_labels = self._make_row_labels(
+            gpt_matrix, TOKENS, color=GREEN_E, font_size=16, buff_mult=1.2
+        )
         gpt_group = VGroup(gpt_matrix, gpt_title, gpt_eq, gpt_row_labels)
 
         # ── Build BERT attention matrix (no mask) ──
         bert_data = ATTN_BERT.copy()
         bert_rows = []
         for i in range(T):
-            row = [Tex(f"{bert_data[i, j]:.2f}", font_size=28) for j in range(T)]
+            row = [Tex(f"{bert_data[i, j]:.2f}", font_size=24) for j in range(T)]
             bert_rows.append(row)
         bert_matrix = MobjectMatrix(bert_rows).scale(scale)
 
         bert_title = MathTex(
-            r"\text{BERT (Bidirectional)}", font_size=32, color=BLUE_E
-        ).next_to(bert_matrix, UP, buff=0.3)
+            r"\text{BERT (Bidirectional)}", font_size=28, color=BLUE_E
+        ).next_to(bert_matrix, UP, buff=0.2)
 
         bert_eq = MathTex(
             r"A = \text{softmax}\!\left(\frac{QK^T}{\sqrt{H}}\right)",
-            font_size=26,
-        ).next_to(bert_matrix, DOWN, buff=0.4)
+            font_size=22,
+        ).next_to(bert_matrix, DOWN, buff=0.3)
 
-        bert_row_labels = self._make_row_labels(bert_matrix, TOKENS, color=GREEN_E)
+        bert_row_labels = self._make_row_labels(
+            bert_matrix, TOKENS, color=GREEN_E, font_size=16, buff_mult=1.2
+        )
         bert_group = VGroup(bert_matrix, bert_title, bert_eq, bert_row_labels)
 
-        # ── Position side by side with generous spacing ──
-        gpt_group.shift(LEFT * 3.8)
-        bert_group.shift(RIGHT * 3.8)
+        # ── Position side by side — tighter spacing ──
+        gpt_group.shift(LEFT * 3.0)
+        bert_group.shift(RIGHT * 3.0)
 
-        # "vs" label goes ABOVE the matrices, centered
-        vs_text = Text("vs.", font_size=32, color=GREY_E).move_to(UP * 2.8)
+        # "vs" label centered above
+        vs_text = Text("vs.", font_size=28, color=GREY_E).move_to(UP * 2.5)
 
         # ── Animate: GPT first ──
         self.play(FadeIn(gpt_matrix, gpt_title, gpt_row_labels))
@@ -223,7 +231,7 @@ class BertVsGptAttention(BaseScene):
             for j in range(T):
                 if j > i:
                     cell = gpt_matrix.get_rows()[i][j]
-                    rect = SurroundingRectangle(cell, color=RED_E, buff=0.05)
+                    rect = SurroundingRectangle(cell, color=RED_E, buff=0.03)
                     mask_highlights.append(rect)
         self.play(*[Create(r) for r in mask_highlights], run_time=0.8)
         self.play(FadeIn(gpt_eq))
@@ -242,24 +250,24 @@ class BertVsGptAttention(BaseScene):
         # Left context (before [MASK]): red
         left_highlights = []
         for j in range(mask_row_idx):
-            rect = SurroundingRectangle(bert_mask_row[j], color=PURE_RED, buff=0.05)
+            rect = SurroundingRectangle(bert_mask_row[j], color=PURE_RED, buff=0.03)
             left_highlights.append(rect)
 
         # Right context (after [MASK]): blue
         right_highlights = []
         for j in range(mask_row_idx + 1, T):
-            rect = SurroundingRectangle(bert_mask_row[j], color=PURE_BLUE, buff=0.05)
+            rect = SurroundingRectangle(bert_mask_row[j], color=PURE_BLUE, buff=0.03)
             right_highlights.append(rect)
 
-        # Annotation text below the BERT matrix
+        # Annotation text below the BERT equation
         annotation = VGroup(
-            Text("[MASK] attends to ALL tokens", font_size=20, color=BLUE_E),
+            Text("[MASK] attends to ALL tokens", font_size=18, color=BLUE_E),
             VGroup(
-                Text("left context", font_size=16, color=PURE_RED),
-                Text(" + ", font_size=16, color=BLACK),
-                Text("right context", font_size=16, color=PURE_BLUE),
+                Text("left context", font_size=14, color=PURE_RED),
+                Text(" + ", font_size=14, color=BLACK),
+                Text("right context", font_size=14, color=PURE_BLUE),
             ).arrange(RIGHT, buff=0.08),
-        ).arrange(DOWN, buff=0.1).next_to(bert_eq, DOWN, buff=0.3)
+        ).arrange(DOWN, buff=0.08).next_to(bert_eq, DOWN, buff=0.25)
 
         self.play(
             *[Create(r) for r in left_highlights],
@@ -271,8 +279,6 @@ class BertVsGptAttention(BaseScene):
 
 
 # ── Scene 2: BertInputRepresentation ──
-# Style: Like PreparingEmbeddings in lecture 15 — two matrices with + sign
-# collapsing into one combined matrix with BraceLabel dimensions.
 
 
 class BertInputRepresentation(BaseScene):
@@ -296,45 +302,39 @@ class BertInputRepresentation(BaseScene):
         title = Title("BERT Input Representation")
         self.add(title)
 
-        scale = 0.7
+        scale = 0.5  # smaller to fit 3 matrices + labels
 
         # Build three embedding arrays
         tok_embs = [TOKEN_EMB[t] for t in TOKENS]
         seg_embs = [SEG_EMB["A"]] * T
         pos_embs = [POS_EMB[str(i)] for i in range(T)]
 
-        # Build three matrices (matching week5 style)
+        # Build three matrices
         tok_matrix = self._make_sum_matrix(tok_embs)
         seg_matrix = self._make_sum_matrix(seg_embs)
         pos_matrix = self._make_sum_matrix(pos_embs)
 
-        # Row labels for each
-        tok_row_labels = self._make_row_labels(tok_matrix, TOKENS, color=GREEN_E)
-        seg_row_labels = self._make_row_labels(
-            seg_matrix, ["A"] * T, color=BLUE_E
+        # Row labels — use SHORT labels to save space
+        short_tokens = ["CLS", "the", "rob", "MSK", "pan", "SEP"]
+        tok_row_labels = self._make_row_labels(
+            tok_matrix, short_tokens, color=GREEN_E, font_size=14, buff_mult=1.0
         )
+        seg_labels = ["A"] * T
+        seg_row_labels = self._make_row_labels(
+            seg_matrix, seg_labels, color=BLUE_E, font_size=14, buff_mult=1.0
+        )
+        pos_labels = [str(i) for i in range(T)]
         pos_row_labels = self._make_row_labels(
-            pos_matrix, [str(i) for i in range(T)], color=GOLD
+            pos_matrix, pos_labels, color=GOLD, font_size=14, buff_mult=1.0
         )
 
         # Titles above each matrix
-        tok_title = VGroup(
-            Tex("Token embeddings").set_color(GREEN_E),
-            MathTex("T \\times C"),
-        ).arrange(DOWN, buff=0.05)
+        tok_title = Tex("Token", font_size=24).set_color(GREEN_E)
+        seg_title = Tex("Segment", font_size=24).set_color(BLUE_E)
+        pos_title = Tex("Position", font_size=24).set_color(GOLD)
 
-        seg_title = VGroup(
-            Tex("Segment embeddings").set_color(BLUE_E),
-            MathTex("T \\times C"),
-        ).arrange(DOWN, buff=0.05)
-
-        pos_title = VGroup(
-            Tex("Position embeddings").set_color(GOLD),
-            MathTex("T \\times C"),
-        ).arrange(DOWN, buff=0.05)
-
-        plus1 = MathTex("+", font_size=36)
-        plus2 = MathTex("+", font_size=36)
+        plus1 = MathTex("+", font_size=32)
+        plus2 = MathTex("+", font_size=32)
 
         # Arrange: [tok + labels] + [seg + labels] + [pos + labels]
         matrix_group = VGroup(
@@ -344,15 +344,17 @@ class BertInputRepresentation(BaseScene):
             plus2,
             VGroup(pos_matrix, pos_row_labels),
         )
-        matrix_group.arrange(RIGHT, buff=0.5).scale(scale)
+        matrix_group.arrange(RIGHT, buff=0.3).scale(scale)
 
-        tok_title.next_to(tok_matrix, UP, buff=0.2).scale(scale)
-        seg_title.next_to(seg_matrix, UP, buff=0.2).scale(scale)
-        pos_title.next_to(pos_matrix, UP, buff=0.2).scale(scale)
+        tok_title.next_to(tok_matrix, UP, buff=0.15).scale(scale)
+        seg_title.next_to(seg_matrix, UP, buff=0.15).scale(scale)
+        pos_title.next_to(pos_matrix, UP, buff=0.15).scale(scale)
 
-        self.add(tok_row_labels)
-        self.add(seg_row_labels)
-        self.add(pos_row_labels)
+        # Shift everything up a bit to leave room for equation at bottom
+        all_content = VGroup(matrix_group, tok_title, seg_title, pos_title)
+        all_content.shift(UP * 0.5)
+
+        self.add(tok_row_labels, seg_row_labels, pos_row_labels)
 
         # Animate token embeddings first
         self.play(FadeIn(tok_matrix, tok_title))
@@ -369,10 +371,6 @@ class BertInputRepresentation(BaseScene):
         # ── Sum into combined matrix ──
         combined = np.array(tok_embs) + np.array(seg_embs) + np.array(pos_embs)
         combined_matrix = self._make_sum_matrix(combined)
-
-        result_label = VGroup(
-            Tex("$T \\times C$ \\; matrix").scale(0.7),
-        ).next_to(combined_matrix, UP)
 
         eq_label = MathTex(
             "E_{\\text{input}} = E_{\\text{token}} + E_{\\text{segment}} + E_{\\text{position}}",
@@ -391,15 +389,13 @@ class BertInputRepresentation(BaseScene):
                 matrix_group, tok_title, seg_title, pos_title,
                 tok_row_labels, seg_row_labels, pos_row_labels,
             ),
-            FadeIn(combined_matrix, result_label, dim_brace, t_brace, eq_label),
+            FadeIn(combined_matrix, dim_brace, t_brace, eq_label),
         )
 
         self.wait(4)
 
 
 # ── Scene 3: SegmentEmbeddings ──
-# Style: Clear sentence pair with color-coded boxes (like word embedding
-# boxes in lecture 15), then show the E_A/E_B assignment with arrows.
 
 
 class SegmentEmbeddings(BaseScene):
@@ -424,22 +420,22 @@ class SegmentEmbeddings(BaseScene):
         token_boxes = VGroup()
         for i, token in enumerate(all_tokens):
             color = BLUE_E if segments[i] == "A" else ORANGE
-            txt = Text(token, font_size=22, color=color)
-            box = SurroundingRectangle(txt, color=color, buff=0.08)
+            txt = Text(token, font_size=20, color=color)
+            box = SurroundingRectangle(txt, color=color, buff=0.06)
             token_boxes.add(VGroup(txt, box))
-        token_boxes.arrange(RIGHT, buff=0.15).to_edge(UP, buff=0.6).scale(0.9)
+        token_boxes.arrange(RIGHT, buff=0.12).to_edge(UP, buff=0.5).scale(0.85)
 
         # Sentence labels
         a_group = VGroup(*token_boxes[: len(sent_a_tokens)])
         b_group = VGroup(*token_boxes[len(sent_a_tokens) :])
 
-        a_brace = Brace(a_group, DOWN, buff=0.1).set_color(BLUE_E)
-        b_brace = Brace(b_group, DOWN, buff=0.1).set_color(ORANGE)
-        sent_a_label = Text("Sentence A", font_size=22, color=BLUE_E).next_to(
-            a_brace, DOWN, buff=0.1
+        a_brace = Brace(a_group, DOWN, buff=0.08).set_color(BLUE_E)
+        b_brace = Brace(b_group, DOWN, buff=0.08).set_color(ORANGE)
+        sent_a_label = Text("Sentence A", font_size=20, color=BLUE_E).next_to(
+            a_brace, DOWN, buff=0.08
         )
-        sent_b_label = Text("Sentence B", font_size=22, color=ORANGE).next_to(
-            b_brace, DOWN, buff=0.1
+        sent_b_label = Text("Sentence B", font_size=20, color=ORANGE).next_to(
+            b_brace, DOWN, buff=0.08
         )
 
         self.play(*[FadeIn(t) for t in token_boxes])
@@ -449,53 +445,52 @@ class SegmentEmbeddings(BaseScene):
         )
         self.wait()
 
-        # ── Show segment embedding vectors (like TwoColumnMapping) ──
+        # ── Show segment embedding vectors ──
         seg_a_row = VGroup(
-            MathTex("E_A", font_size=32, color=BLUE_E),
-            Arrow(start=LEFT * 0.4, end=RIGHT * 0.4, color=BLACK),
-            Tex("[0.10, 0.20, \\dots, 0.30, 0.40]", font_size=24),
-        ).arrange(RIGHT, buff=0.15)
+            MathTex("E_A", font_size=28, color=BLUE_E),
+            Arrow(start=LEFT * 0.3, end=RIGHT * 0.3, color=BLACK),
+            Tex("[0.10, 0.20, \\dots, 0.30, 0.40]", font_size=22),
+        ).arrange(RIGHT, buff=0.12)
 
         seg_b_row = VGroup(
-            MathTex("E_B", font_size=32, color=ORANGE),
-            Arrow(start=LEFT * 0.4, end=RIGHT * 0.4, color=BLACK),
-            Tex("[0.90, 0.80, \\dots, 0.70, 0.60]", font_size=24),
-        ).arrange(RIGHT, buff=0.15)
+            MathTex("E_B", font_size=28, color=ORANGE),
+            Arrow(start=LEFT * 0.3, end=RIGHT * 0.3, color=BLACK),
+            Tex("[0.90, 0.80, \\dots, 0.70, 0.60]", font_size=22),
+        ).arrange(RIGHT, buff=0.12)
 
-        seg_vecs = VGroup(seg_a_row, seg_b_row).arrange(DOWN, buff=0.3).shift(DOWN * 0.3)
+        seg_vecs = VGroup(seg_a_row, seg_b_row).arrange(DOWN, buff=0.25).shift(DOWN * 0.2)
         note = Text(
-            "Only 2 learned vectors — one per segment", font_size=20
-        ).next_to(seg_vecs, DOWN, buff=0.25)
+            "Only 2 learned vectors — one per segment", font_size=18
+        ).next_to(seg_vecs, DOWN, buff=0.2)
 
         self.play(FadeIn(seg_vecs))
         self.play(Write(note))
         self.wait(2)
 
         # ── Show assignment: which tokens get which segment embedding ──
-        # Two rows: Sent A tokens → E_A, Sent B tokens → E_B
         assignment_a = VGroup()
         for token in sent_a_tokens:
             row = VGroup(
-                Text(token, font_size=20, color=BLUE_E),
-                MathTex("\\rightarrow", font_size=24),
-                MathTex("E_A", font_size=24, color=BLUE_E),
-            ).arrange(RIGHT, buff=0.1)
+                Text(token, font_size=18, color=BLUE_E),
+                MathTex("\\rightarrow", font_size=22),
+                MathTex("E_A", font_size=22, color=BLUE_E),
+            ).arrange(RIGHT, buff=0.08)
             assignment_a.add(row)
-        assignment_a.arrange(RIGHT, buff=0.5)
+        assignment_a.arrange(RIGHT, buff=0.4)
 
         assignment_b = VGroup()
         for token in sent_b_tokens:
             row = VGroup(
-                Text(token, font_size=20, color=ORANGE),
-                MathTex("\\rightarrow", font_size=24),
-                MathTex("E_B", font_size=24, color=ORANGE),
-            ).arrange(RIGHT, buff=0.1)
+                Text(token, font_size=18, color=ORANGE),
+                MathTex("\\rightarrow", font_size=22),
+                MathTex("E_B", font_size=22, color=ORANGE),
+            ).arrange(RIGHT, buff=0.08)
             assignment_b.add(row)
-        assignment_b.arrange(RIGHT, buff=0.5)
+        assignment_b.arrange(RIGHT, buff=0.4)
 
         assignments = VGroup(assignment_a, assignment_b).arrange(
-            DOWN, buff=0.25
-        ).shift(DOWN * 0.3)
+            DOWN, buff=0.2
+        ).shift(DOWN * 0.2)
 
         self.play(
             FadeOut(seg_vecs, note),
@@ -506,23 +501,21 @@ class SegmentEmbeddings(BaseScene):
 
         # ── NSP head from [CLS] ──
         nsp_box = VGroup(
-            Text("[CLS] output", font_size=22),
-            MathTex("\\rightarrow", font_size=28),
+            Text("[CLS] output", font_size=20),
+            MathTex("\\rightarrow", font_size=26),
             VGroup(
-                Text("IsNext?", font_size=22, color=MAROON_E),
+                Text("IsNext?", font_size=20, color=MAROON_E),
                 SurroundingRectangle(
-                    Text("IsNext?", font_size=22), color=MAROON_E, buff=0.1
+                    Text("IsNext?", font_size=20), color=MAROON_E, buff=0.08
                 ),
             ),
-        ).arrange(RIGHT, buff=0.2).to_edge(DOWN, buff=0.4)
+        ).arrange(RIGHT, buff=0.15).to_edge(DOWN, buff=0.5)
 
         self.play(FadeIn(nsp_box))
         self.wait(3)
 
 
 # ── Scene 4: MaskedLanguageModeling ──
-# Style: Step-by-step with clear labels (like the matmul walkthrough in
-# QueryKeyValue scene from lecture 15).
 
 
 class MaskedLanguageModeling(BaseScene):
@@ -541,14 +534,14 @@ class MaskedLanguageModeling(BaseScene):
         original_tokens = TOKENS_UNMASKED
         token_boxes = VGroup()
         for token in original_tokens:
-            txt = Text(token, font_size=28)
-            box = SurroundingRectangle(txt, color=YELLOW_E, buff=0.12)
+            txt = Text(token, font_size=26)
+            box = SurroundingRectangle(txt, color=YELLOW_E, buff=0.10)
             token_boxes.add(VGroup(txt, box))
-        token_boxes.arrange(RIGHT, buff=0.3).to_edge(UP, buff=1.0)
+        token_boxes.arrange(RIGHT, buff=0.25).shift(UP * 1.5)
 
         step1 = Text(
-            "Step 1: Original sentence", font_size=24, color=GREEN_E
-        ).next_to(token_boxes, UP, buff=0.25)
+            "Step 1: Original sentence", font_size=22, color=GREEN_E
+        ).next_to(token_boxes, UP, buff=0.2)
 
         self.play(Write(step1), *[FadeIn(t) for t in token_boxes])
         self.wait()
@@ -556,57 +549,58 @@ class MaskedLanguageModeling(BaseScene):
         # ── Step 2: Select 15% for prediction ──
         select_idx = 3  # "flipped"
         select_rect = SurroundingRectangle(
-            token_boxes[select_idx], color=MAROON_E, buff=0.05
+            token_boxes[select_idx], color=MAROON_E, buff=0.04
         )
         step2 = Text(
-            'Step 2: Select ~15% of tokens', font_size=24, color=GREEN_E
-        ).next_to(token_boxes, DOWN, buff=0.4)
+            'Step 2: Select ~15% of tokens', font_size=22, color=GREEN_E
+        ).next_to(token_boxes, DOWN, buff=0.35)
         pct_label = Text(
-            '("flipped" selected — 1 of 6 ≈ 15%)', font_size=18
-        ).next_to(step2, DOWN, buff=0.1)
+            '("flipped" selected — 1 of 6 ≈ 15%)', font_size=16
+        ).next_to(step2, DOWN, buff=0.08)
 
         self.play(Write(step2), Write(pct_label), Create(select_rect))
         self.wait()
 
         # ── Step 3: Apply 80/10/10 strategy ──
+        # Position step3 text in a NEW location below, don't reuse step2 position
         step3 = Text(
-            "Step 3: Apply 80/10/10 strategy", font_size=24, color=GREEN_E
-        ).move_to(step2)
+            "Step 3: Apply 80/10/10 strategy", font_size=22, color=GREEN_E
+        ).next_to(pct_label, DOWN, buff=0.3)
 
         branch_80 = VGroup(
-            Text("80%", font_size=22, color=MAROON_E),
-            MathTex("\\rightarrow", font_size=24),
-            Text("[MASK]", font_size=22, color=MAROON_E),
-        ).arrange(RIGHT, buff=0.15)
+            Text("80%", font_size=20, color=MAROON_E),
+            MathTex("\\rightarrow", font_size=22),
+            Text("[MASK]", font_size=20, color=MAROON_E),
+        ).arrange(RIGHT, buff=0.12)
 
         branch_10a = VGroup(
-            Text("10%", font_size=22, color=TEAL_E),
-            MathTex("\\rightarrow", font_size=24),
-            Text("random word", font_size=22, color=TEAL_E),
-        ).arrange(RIGHT, buff=0.15)
+            Text("10%", font_size=20, color=TEAL_E),
+            MathTex("\\rightarrow", font_size=22),
+            Text("random word", font_size=20, color=TEAL_E),
+        ).arrange(RIGHT, buff=0.12)
 
         branch_10b = VGroup(
-            Text("10%", font_size=22, color=GREY_E),
-            MathTex("\\rightarrow", font_size=24),
-            Text("keep original", font_size=22, color=GREY_E),
-        ).arrange(RIGHT, buff=0.15)
+            Text("10%", font_size=20, color=GREY_E),
+            MathTex("\\rightarrow", font_size=22),
+            Text("keep original", font_size=20, color=GREY_E),
+        ).arrange(RIGHT, buff=0.12)
 
         branches = VGroup(branch_80, branch_10a, branch_10b).arrange(
-            DOWN, buff=0.2, aligned_edge=LEFT
-        ).next_to(step3, DOWN, buff=0.25)
+            DOWN, buff=0.15, aligned_edge=LEFT
+        ).next_to(step3, DOWN, buff=0.2)
 
         self.play(FadeOut(step2, pct_label), Write(step3))
         self.play(LaggedStart(*[FadeIn(b) for b in branches], lag_ratio=0.3))
         self.wait()
 
         # ── Animate the replacement: "flipped" → [MASK] ──
-        highlight_rect = SurroundingRectangle(branch_80, color=MAROON_E, buff=0.05)
+        highlight_rect = SurroundingRectangle(branch_80, color=MAROON_E, buff=0.04)
         self.play(Create(highlight_rect))
 
         old_token = token_boxes[select_idx][0]
         old_box = token_boxes[select_idx][1]
-        new_token = Text("[MASK]", font_size=28, color=MAROON_E).move_to(old_token)
-        new_box = SurroundingRectangle(new_token, color=MAROON_E, buff=0.12)
+        new_token = Text("[MASK]", font_size=26, color=MAROON_E).move_to(old_token)
+        new_box = SurroundingRectangle(new_token, color=MAROON_E, buff=0.10)
 
         self.play(
             FadeOut(old_token),
@@ -621,20 +615,20 @@ class MaskedLanguageModeling(BaseScene):
         self.play(FadeOut(step3, branches, highlight_rect))
 
         step4 = Text(
-            "Step 4: Model predicts original token", font_size=24, color=GREEN_E
-        ).shift(DOWN * 0.2)
+            "Step 4: Model predicts original token", font_size=22, color=GREEN_E
+        ).shift(DOWN * 0.3)
 
         # Target labels
         labels = ["-1", "-1", "-1", '"flipped"', "-1", "-1"]
         label_objs = VGroup()
         for i, (label, tbox) in enumerate(zip(labels, token_boxes)):
             color = MAROON_E if i == select_idx else GREY_C
-            lbl = Text(label, font_size=20, color=color).next_to(tbox, DOWN, buff=0.7)
+            lbl = Text(label, font_size=18, color=color).next_to(tbox, DOWN, buff=0.6)
             label_objs.add(lbl)
 
         target_label = Text(
-            "labels (only compute loss at masked positions)", font_size=18
-        ).next_to(label_objs, DOWN, buff=0.2)
+            "labels (only compute loss at masked positions)", font_size=16
+        ).next_to(label_objs, DOWN, buff=0.15)
 
         self.play(Write(step4))
         self.play(
@@ -646,14 +640,14 @@ class MaskedLanguageModeling(BaseScene):
         # ── Show prediction arrow from [MASK] ──
         pred_arrow = Arrow(
             start=label_objs[select_idx].get_bottom(),
-            end=label_objs[select_idx].get_bottom() + DOWN * 0.8,
+            end=label_objs[select_idx].get_bottom() + DOWN * 0.6,
             color=MAROON_E,
         )
         pred_text = VGroup(
-            Text("P(", font_size=22),
-            Text('"flipped"', font_size=22, color=MAROON_E),
-            Text(" | context) → high!", font_size=22),
-        ).arrange(RIGHT, buff=0.05).next_to(pred_arrow, DOWN, buff=0.1)
+            Text("P(", font_size=20),
+            Text('"flipped"', font_size=20, color=MAROON_E),
+            Text(" | context) → high!", font_size=20),
+        ).arrange(RIGHT, buff=0.04).next_to(pred_arrow, DOWN, buff=0.08)
 
         self.play(Create(pred_arrow), Write(pred_text))
 
@@ -661,8 +655,6 @@ class MaskedLanguageModeling(BaseScene):
 
 
 # ── Scene 5: BertPredictionHead ──
-# Style: Like the Prediction scene in lecture 15 — output matrix with
-# highlighted row, arrow to vocab projection, probability bars.
 
 
 class BertPredictionHead(BaseScene):
@@ -677,20 +669,20 @@ class BertPredictionHead(BaseScene):
         title = Title("BERT Prediction Head")
         self.add(title)
 
-        scale = 0.6
+        scale = 0.55
 
         # ── Show output matrix (T x C) ──
         output_data = X.copy()
         output_matrix = self._make_matrix(output_data, actual_w=768).scale(scale)
         output_row_labels = self._make_row_labels(
-            output_matrix, TOKENS, color=GREEN_E
+            output_matrix, TOKENS, color=GREEN_E, font_size=16, buff_mult=1.2
         )
         output_title = MathTex(
-            "\\text{BERT output}\\; (T \\times C)", font_size=28
-        ).next_to(output_matrix, UP, buff=0.3)
+            "\\text{BERT output}\\; (T \\times C)", font_size=26
+        ).next_to(output_matrix, UP, buff=0.25)
 
         output_group = VGroup(output_matrix, output_row_labels, output_title)
-        output_group.shift(LEFT * 3)
+        output_group.shift(LEFT * 2.5)  # less offset than before
 
         self.play(FadeIn(output_group))
         self.wait()
@@ -709,13 +701,13 @@ class BertPredictionHead(BaseScene):
                 dim_anims.append(label.animate.set_opacity(0.2))
 
         mask_row_rect = SurroundingRectangle(
-            output_matrix.get_rows()[mask_row_idx], color=MAROON_E, buff=0.05
+            output_matrix.get_rows()[mask_row_idx], color=MAROON_E, buff=0.04
         )
 
         contrast_note = Text(
             "GPT: last token's row\nBERT: [MASK] token's row",
-            font_size=18,
-        ).next_to(output_matrix, DOWN, buff=0.5)
+            font_size=16,
+        ).next_to(output_matrix, DOWN, buff=0.4)
 
         self.play(*dim_anims, Create(mask_row_rect), Write(contrast_note))
         self.wait()
@@ -723,7 +715,7 @@ class BertPredictionHead(BaseScene):
         # ── Extract [MASK] row as 1 x C vector ──
         mask_vec_label = MathTex(
             "\\mathbf{h}_{[\\text{MASK}]}\\;(1 \\times C)",
-            font_size=26,
+            font_size=24,
             color=MAROON_E,
         ).shift(RIGHT * 2.5 + UP * 2)
 
@@ -731,7 +723,7 @@ class BertPredictionHead(BaseScene):
             start=mask_row_rect.get_right(),
             end=mask_vec_label.get_left(),
             color=MAROON_E,
-            buff=0.15,
+            buff=0.12,
         )
 
         self.play(Create(extract_arrow), Write(mask_vec_label))
@@ -740,13 +732,13 @@ class BertPredictionHead(BaseScene):
         # ── Multiply by vocab weight matrix → softmax ──
         operation = MathTex(
             r"\times W_{\text{vocab}}\;(C \times V)",
-            font_size=24,
-        ).next_to(mask_vec_label, DOWN, buff=0.25)
+            font_size=22,
+        ).next_to(mask_vec_label, DOWN, buff=0.2)
 
         softmax_label = MathTex(
             r"\xrightarrow{\text{softmax}}",
-            font_size=24,
-        ).next_to(operation, DOWN, buff=0.25)
+            font_size=22,
+        ).next_to(operation, DOWN, buff=0.2)
 
         self.play(Write(operation))
         self.play(Write(softmax_label))
@@ -762,41 +754,39 @@ class BertPredictionHead(BaseScene):
         for word, prob, plabel, color in zip(
             vocab_words, vocab_probs, prob_labels, prob_colors
         ):
-            word_text = Text(word, font_size=18, color=color)
-            bar_width = max(prob / 25, 0.1)
+            word_text = Text(word, font_size=16, color=color)
+            bar_width = max(prob / 30, 0.08)
             bar = Rectangle(
                 width=bar_width,
-                height=0.2,
+                height=0.18,
                 fill_color=color,
                 fill_opacity=0.7,
                 stroke_color=color,
             )
-            label_text = Text(plabel, font_size=16, color=color)
-            bar_row = VGroup(word_text, bar, label_text).arrange(RIGHT, buff=0.1)
+            label_text = Text(plabel, font_size=14, color=color)
+            bar_row = VGroup(word_text, bar, label_text).arrange(RIGHT, buff=0.08)
             prob_bars.add(bar_row)
 
-        prob_bars.arrange(DOWN, buff=0.1, aligned_edge=LEFT).next_to(
-            softmax_label, DOWN, buff=0.25
+        prob_bars.arrange(DOWN, buff=0.08, aligned_edge=LEFT).next_to(
+            softmax_label, DOWN, buff=0.2
         )
 
         self.play(LaggedStart(*[FadeIn(b) for b in prob_bars], lag_ratio=0.15))
 
         # Highlight winner
-        winner_rect = SurroundingRectangle(prob_bars[0], color=MAROON_E, buff=0.05)
+        winner_rect = SurroundingRectangle(prob_bars[0], color=MAROON_E, buff=0.04)
         self.play(Create(winner_rect))
 
         self.wait(4)
 
 
 # ── Scene 6: FineTuningTransfer ──
-# Style: Flow diagram with boxes and arrows (similar to TransformerFunc
-# in lecture 15 but showing the pre-train → fine-tune paradigm).
 
 
 class FineTuningTransfer(BaseScene):
     """The pre-train once, fine-tune many paradigm as a flow diagram."""
 
-    def _make_block(self, label, color=BLACK, font_size=22):
+    def _make_block(self, label, color=BLACK, font_size=20):
         label_obj = Text(label, font_size=font_size).set_color(color)
         box = SurroundingRectangle(
             label_obj, buff=MED_SMALL_BUFF, corner_radius=0.1
@@ -814,35 +804,35 @@ class FineTuningTransfer(BaseScene):
 
         # ── Pre-training section (left) ──
         corpus_block = self._make_block(
-            "BooksCorpus +\nWikipedia\n(3.3B words)", color=GREY_E, font_size=18
+            "BooksCorpus +\nWikipedia\n(3.3B words)", color=GREY_E, font_size=16
         )
-        corpus_block.shift(LEFT * 4.5 + UP * 1)
+        corpus_block.shift(LEFT * 4 + UP * 0.8)
 
         bert_block = self._make_block(
-            "BERT\n(12 layers)", color=BLUE_E, font_size=20
+            "BERT\n(12 layers)", color=BLUE_E, font_size=18
         )
-        bert_block.shift(LEFT * 1.5 + UP * 1)
+        bert_block.shift(LEFT * 1 + UP * 0.8)
 
         arrow1 = Arrow(
-            corpus_block.get_right(), bert_block.get_left(), color=BLACK, buff=0.15
+            corpus_block.get_right(), bert_block.get_left(), color=BLACK, buff=0.12
         )
 
-        mlm_label = Text("MLM + NSP", font_size=16, color=MAROON_E).next_to(
-            arrow1, UP, buff=0.05
+        mlm_label = Text("MLM + NSP", font_size=14, color=MAROON_E).next_to(
+            arrow1, UP, buff=0.04
         )
 
-        time_label = Text("~4 days on TPUs", font_size=16, color=GREY_E).next_to(
-            bert_block, DOWN, buff=0.2
+        time_label = Text("~4 days on TPUs", font_size=14, color=GREY_E).next_to(
+            bert_block, DOWN, buff=0.15
         )
 
         pretrain_group = VGroup(
             corpus_block, arrow1, bert_block, mlm_label, time_label
         )
 
-        pretrain_brace = Brace(pretrain_group, UP, buff=0.1).set_color(BLUE_E)
+        pretrain_brace = Brace(pretrain_group, UP, buff=0.08).set_color(BLUE_E)
         pretrain_title = Text(
-            "Pre-training (done once)", font_size=20, color=BLUE_E
-        ).next_to(pretrain_brace, UP, buff=0.1)
+            "Pre-training (done once)", font_size=18, color=BLUE_E
+        ).next_to(pretrain_brace, UP, buff=0.08)
 
         self.play(
             LaggedStart(
@@ -869,27 +859,27 @@ class FineTuningTransfer(BaseScene):
         ft_labels = VGroup()
 
         for i, (task_name, color) in enumerate(task_data):
-            block = self._make_block(task_name, color=color, font_size=16)
-            y_offset = (i - 1) * 1.8
-            block.shift(RIGHT * 3.5 + DOWN * y_offset)
+            block = self._make_block(task_name, color=color, font_size=14)
+            y_offset = (i - 1) * 1.6
+            block.shift(RIGHT * 3 + DOWN * y_offset)
             ft_blocks.add(block)
 
             arrow = Arrow(
-                bert_block.get_right(), block.get_left(), color=color, buff=0.15
+                bert_block.get_right(), block.get_left(), color=color, buff=0.12
             )
             ft_arrows.add(arrow)
 
-            label = Text("hours on 1 GPU", font_size=14, color=GREY_E).next_to(
-                block, DOWN, buff=0.1
+            label = Text("hours on 1 GPU", font_size=12, color=GREY_E).next_to(
+                block, DOWN, buff=0.08
             )
             ft_labels.add(label)
 
         ft_brace = Brace(
-            VGroup(ft_blocks, ft_labels), RIGHT, buff=0.2
+            VGroup(ft_blocks, ft_labels), RIGHT, buff=0.15
         ).set_color(GREEN_E)
         ft_title = Text(
-            "Fine-tuning\n(per task)", font_size=18, color=GREEN_E
-        ).next_to(ft_brace, RIGHT, buff=0.1)
+            "Fine-tuning\n(per task)", font_size=16, color=GREEN_E
+        ).next_to(ft_brace, RIGHT, buff=0.08)
 
         self.play(
             LaggedStart(
@@ -906,9 +896,9 @@ class FineTuningTransfer(BaseScene):
         # Key insight
         insight = Text(
             "Same pre-trained model → 3 different tasks",
-            font_size=22,
+            font_size=20,
             color=BLUE_E,
-        ).to_edge(DOWN, buff=0.5)
+        ).to_edge(DOWN, buff=0.4)
 
         self.play(Write(insight))
 
