@@ -1,0 +1,13 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/429858703_1869917060_2687137646.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/4129186542_2934989943_384313221.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/4129186542_2373171459_4231430600.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/4129186542_2934989943_3668710442.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/4129186542_372348233_4054268367.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/4129186542_2934989943_3459918611.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/4129186542_2514364283_3352239880.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/4129186542_1351358131_3103287071.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/4129186542_2934989943_1668762760.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/4129186542_402555053_3384852489.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/4129186542_1226449_639738781.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertPredictionHead/4129186542_4257824416_1394597705.mp4'

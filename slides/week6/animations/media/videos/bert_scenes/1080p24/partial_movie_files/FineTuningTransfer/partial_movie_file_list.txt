@@ -1,0 +1,9 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/FineTuningTransfer/429858703_2659135853_399249380.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/FineTuningTransfer/4129186542_3129178506_3136175720.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/FineTuningTransfer/4129186542_2934989943_4188920307.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/FineTuningTransfer/4129186542_4242389200_3156648277.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/FineTuningTransfer/4129186542_328898515_1186142603.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/FineTuningTransfer/4129186542_2934989943_3663142187.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/FineTuningTransfer/4129186542_4003083125_3877794660.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/FineTuningTransfer/4129186542_4257824416_761087458.mp4'

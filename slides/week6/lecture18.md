@@ -19,11 +19,31 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. Explain why bidirectional context matters for language understanding
+1. Explain why bidirectional context matters (e.g., predicting `[MASK]` in "The robot `[MASK]` pancakes")
 2. Describe the masked language modeling (MLM) training objective and the 80/10/10 strategy
 3. Compare BERT-Base and BERT-Large architectures
 4. Understand the pre-train then fine-tune paradigm
 5. Demonstrate how contextual embeddings handle polysemy
+
+</div>
+
+---
+
+# Where we left off
+
+<div class="note-box" data-title="Recap from lectures 15–16">
+
+In lecture 15, we built up the full transformer architecture step by step: tokenization → embeddings → Q/K/V → attention → feed-forward → prediction. The key idea was $\text{Transformer}(X, \theta) \rightarrow Y$, predicting the *next* token from previous tokens.
+
+That was a **decoder-only** (GPT-style) transformer with **causal masking** — each token could only attend to tokens *before* it.
+
+</div>
+
+<div class="tip-box" data-title="Today's running example">
+
+"The robot `[MASK]` pancakes"
+
+What word goes in the blank? You probably guessed something like "flipped" or "cooked" — but only because you could read *both sides*. That's exactly what BERT does!
 
 </div>
 
@@ -39,9 +59,67 @@ The key innovation is **Masked Language Modeling (MLM)**: randomly mask tokens i
 
 </div>
 
-<div class="tip-box" data-title="Analogy">
+<div class="example-box" data-title="Why bidirectional matters for our example">
 
-Traditional language models read a sentence like filling in the end of a sentence. BERT is more like a fill-in-the-blank test — you can use clues from both sides.
+- **GPT** sees: "The robot ___" → could be *anything*: "destroyed", "ate", "purchased", "analyzed"...
+- **BERT** sees: "The robot ___ pancakes" → "flipped" or "cooked" — the right context narrows it dramatically!
+
+</div>
+
+---
+<!-- _class: scale-80 -->
+
+# Causal vs. bidirectional attention
+
+<div class="definition-box" data-title="The key difference is one line of math">
+
+Recall from lecture 15 that attention scores are:
+
+$$A = \text{softmax}\left(\frac{QK^T}{\sqrt{H}}\right)$$
+
+**GPT** adds a causal mask $M$ before softmax, where $M_{ij} = -\infty$ if $j > i$:
+
+$$A_{\text{GPT}} = \text{softmax}\left(\frac{QK^T}{\sqrt{H}} + M_{\text{causal}}\right)$$
+
+**BERT** simply removes the mask — all positions attend to all positions:
+
+$$A_{\text{BERT}} = \text{softmax}\left(\frac{QK^T}{\sqrt{H}}\right)$$
+
+</div>
+
+<div class="warning-box" data-title="Trade-off">
+
+Removing the causal mask means BERT **cannot generate text** autoregressively — it sees the future! But it excels at *understanding* tasks.
+
+</div>
+
+---
+
+# Causal vs. bidirectional attention
+
+![height:500](animations/gifs/bertvsgptattention.gif)
+
+---
+
+# Why bidirectionality matters
+
+<div class="example-box" data-title="Walking through our example">
+
+"The robot `[MASK]` pancakes"
+
+| Direction | Context available | Likely predictions |
+|-----------|------------------|--------------------|
+| Left only (GPT) | "The robot ___" | destroyed, ate, purchased, built, analyzed, ... |
+| Right only | "___ pancakes" | flipped, stacked, burned, decorated, ... |
+| Both (BERT) | "The robot ___ pancakes" | **flipped**, cooked, made — much more constrained! |
+
+</div>
+
+<div class="tip-box" data-title="Encoder vs. decoder">
+
+- **Encoder-only** (BERT) → *understanding* tasks: classification, NER, question answering
+- **Decoder-only** (GPT) → *generation* tasks: text completion, dialogue, code generation
+- **Encoder-decoder** (T5, BART) → *sequence-to-sequence*: translation, summarization
 
 </div>
 
@@ -66,117 +144,13 @@ Traditional language models read a sentence like filling in the end of a sentenc
 
 ---
 
-# Masked language modeling
-
-<div class="definition-box" data-title="BERT's primary pre-training objective">
-
-**Training procedure:**
-1. Take a sentence from the training corpus
-2. Randomly select 15% of tokens for prediction
-3. Of those selected tokens:
-   - **80%** are replaced with `[MASK]`
-   - **10%** are replaced with a random word
-   - **10%** are kept unchanged
-4. Train the model to predict the original tokens
-
-</div>
-
-<div class="tip-box" data-title="Why the 80/10/10 split?">
-
-If we always used `[MASK]`, the model would learn to only pay attention when it sees `[MASK]` — but `[MASK]` never appears in real text during fine-tuning. The random replacement and unchanged tokens force the model to maintain good representations for *all* tokens, not just masked ones.
-
-</div>
-
----
-<!-- _class: scale-90 -->
-
-# MLM step by step
-
-<div class="example-box" data-title="Walkthrough: masking 'The quick brown fox jumps over the lazy dog'">
-
-```python
-# Step 1: Select tokens for prediction (15% of 9 tokens ≈ 1-2)
-tokens = ["The", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"]
-# Randomly select: "quick" (idx 1) and "over" (idx 5)
-
-# Step 2: Apply the 80/10/10 strategy
-# "quick" → 80% chance → replaced with [MASK]
-# "over"  → 10% chance → replaced with random word "under"
-
-# Step 3: Create training example
-input:  "The [MASK] brown fox jumps under the lazy dog"
-labels: [-1,  "quick", -1,  -1,  -1, "over", -1,   -1,   -1]
-# -1 means no loss computed at this position
-
-# Step 4: Model predicts
-P("quick" | context) → high (adjective slot between "The" and "brown")
-P("over"  | context) → high (preposition slot between "jumps" and "the")
-```
-
-</div>
-
-<div class="note-box" data-title="Key insight">
-
-The model must understand both syntax and semantics to predict masked words — it learns deep language representations as a side effect of this objective.
-
-</div>
-
----
-
-# Next sentence prediction
-
-<div class="definition-box" data-title="BERT's second pre-training objective">
-
-**Task:** Given two sentences A and B, predict whether B actually follows A in the original text.
-
-- **50% of the time:** B is the real next sentence (label: `IsNext`)
-- **50% of the time:** B is a random sentence from the corpus (label: `NotNext`)
-
-The `[CLS]` token representation is used for this binary classification.
-
-</div>
-
-<div class="warning-box" data-title="NSP is controversial">
-
-Later work (RoBERTa, 2019) showed that removing NSP actually *improves* performance. The task may be too easy — distinguishing topic is simpler than understanding sentence relationships. ALBERT replaced NSP with the harder **Sentence Order Prediction** (SOP) task.
-
-</div>
-
----
-
-# BERT architecture variants
-
-<div class="note-box" data-title="Two model sizes">
-
-| Component | BERT-Base | BERT-Large |
-|-----------|-----------|------------|
-| Transformer layers | 12 | 24 |
-| Hidden size | 768 | 1024 |
-| Attention heads | 12 | 16 |
-| Feed-forward size | 3072 | 4096 |
-| Total parameters | 110M | 340M |
-| Max sequence length | 512 tokens | 512 tokens |
-| Vocabulary | 30,000 (WordPiece) | 30,000 (WordPiece) |
-
-</div>
-
-<div class="note-box" data-title="Special tokens">
-
-- **[CLS]**: Classification token (first position, used for sequence-level tasks)
-- **[SEP]**: Separator token (between sentence pairs)
-- **[MASK]**: Mask token (for MLM pre-training)
-- **[PAD]**: Padding token (for batching variable-length sequences)
-
-</div>
-
----
-<!-- _class: scale-90 -->
-
 # BERT input representation
 
 <div class="definition-box" data-title="Three embeddings summed together">
 
-BERT's input is the element-wise sum of three embedding types, each producing a 768-dimensional vector:
+BERT's input is the element-wise sum of three embedding types, each producing a vector of size $C$:
+
+$$E_{\text{input}} = E_{\text{token}} + E_{\text{segment}} + E_{\text{position}}$$
 
 1. **Token embeddings**: WordPiece vocabulary lookup (30K learned vectors)
 2. **Segment embeddings**: Which sentence — A or B? (2 learned vectors)
@@ -184,21 +158,71 @@ BERT's input is the element-wise sum of three embedding types, each producing a 
 
 </div>
 
-<div class="example-box" data-title="Input representation for a sentence pair">
+<div class="note-box" data-title="Compare with lecture 15">
+
+GPT uses only token + position embeddings. BERT adds **segment embeddings** to handle sentence-pair tasks like question answering and natural language inference.
+
+</div>
+
+---
+
+# BERT input representation
+
+![height:500](animations/gifs/bertinputrepresentation.gif)
+
+---
+<!-- _class: scale-90 -->
+
+# BERT input representation for our example
+
+<div class="example-box" data-title="Input representation for our running example">
 
 ```python
-sentence_a = "My dog is cute"
-sentence_b = "He likes playing"
-
-tokens      = ["[CLS]", "my", "dog", "is", "cute", "[SEP]", "he", "likes", "playing", "[SEP]"]
-token_emb   = [E_CLS,   E_my, E_dog, E_is, E_cute, E_SEP,  E_he, E_likes, E_playing, E_SEP]
-segment_emb = [E_A,     E_A,  E_A,   E_A,  E_A,    E_A,    E_B,  E_B,     E_B,       E_B  ]
-position_emb= [E_0,     E_1,  E_2,   E_3,  E_4,    E_5,    E_6,  E_7,     E_8,       E_9  ]
+tokens      = ["[CLS]", "the", "robot", "[MASK]", "pancakes", "[SEP]"]
+token_emb   = [E_CLS,   E_the, E_robot, E_MASK,   E_pancakes, E_SEP]
+segment_emb = [E_A,     E_A,   E_A,     E_A,      E_A,        E_A  ]
+position_emb= [E_0,     E_1,   E_2,     E_3,      E_4,        E_5  ]
 
 # Final input = token_emb + segment_emb + position_emb (element-wise)
 ```
 
 </div>
+
+<div class="note-box" data-title="Dimensions">
+
+Each embedding vector has size $C = 768$ (for BERT-Base). With $T = 6$ tokens, the combined input matrix is $T \times C = 6 \times 768$.
+
+</div>
+
+---
+
+# Segment embeddings
+
+<div class="definition-box" data-title="Handling sentence pairs">
+
+For tasks involving two sentences (e.g., question answering, natural language inference), BERT needs to know which tokens belong to which sentence. **Segment embeddings** solve this:
+
+- All tokens in **Sentence A** get embedding vector $E_A$
+- All tokens in **Sentence B** get embedding vector $E_B$
+- Only 2 learned vectors — extremely parameter-efficient!
+
+</div>
+
+<div class="example-box" data-title="Sentence pair example">
+
+Sentence A: "The robot flipped pancakes" &nbsp;&nbsp; Sentence B: "They were delicious"
+
+| Token | [CLS] | the | robot | flipped | pancakes | [SEP] | they | were | delicious | [SEP] |
+|-------|-------|-----|-------|---------|----------|-------|------|------|-----------|-------|
+| Segment | A | A | A | A | A | A | B | B | B | B |
+
+</div>
+
+---
+
+# Segment embeddings
+
+![height:500](animations/gifs/segmentembeddings.gif)
 
 ---
 
@@ -230,6 +254,170 @@ tokenizer.tokenize("ChatGPT is transformative")
 - **Morphological awareness**: Learns prefixes, suffixes, and stems (e.g., "un-" + "believab-" + "-ly")
 - **Compact vocabulary**: 30K tokens cover virtually all English text
 - **Trade-off**: Rare words consume more tokens, increasing sequence length
+
+</div>
+
+---
+
+# Masked language modeling
+
+<div class="definition-box" data-title="BERT's primary pre-training objective">
+
+**Training procedure:**
+1. Take a sentence from the training corpus
+2. Randomly select 15% of tokens for prediction
+3. Of those selected tokens:
+   - **80%** are replaced with `[MASK]`
+   - **10%** are replaced with a random word
+   - **10%** are kept unchanged
+4. Train the model to predict the original tokens
+
+</div>
+
+<div class="tip-box" data-title="Why the 80/10/10 split?">
+
+If we always used `[MASK]`, the model would learn to only pay attention when it sees `[MASK]` — but `[MASK]` never appears in real text during fine-tuning. The random replacement and unchanged tokens force the model to maintain good representations for *all* tokens, not just masked ones.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# MLM step by step
+
+<div class="example-box" data-title="Walkthrough with our running example">
+
+```python
+# Step 1: Start with the original sentence
+tokens = ["[CLS]", "the", "robot", "flipped", "pancakes", "[SEP]"]
+# Select "flipped" (idx 3) for prediction (1 of 6 tokens ≈ 15%)
+
+# Step 2: Apply the 80/10/10 strategy
+# "flipped" → 80% chance → replaced with [MASK]
+
+# Step 3: Create training example
+input:  "[CLS] the robot [MASK] pancakes [SEP]"
+labels: [-1,   -1,  -1,    "flipped", -1,       -1]
+# -1 means no loss computed at this position
+
+# Step 4: Model predicts
+P("flipped" | "the robot ___ pancakes") → high!
+# Both left ("the robot") and right ("pancakes") context help
+```
+
+</div>
+
+<div class="note-box" data-title="Key insight">
+
+The model must understand both syntax and semantics to predict masked words — it learns deep language representations as a side effect of this objective.
+
+</div>
+
+---
+
+# Masked language modeling
+
+![height:500](animations/gifs/maskedlanguagemodeling.gif)
+
+---
+
+# MLM loss function
+
+<div class="definition-box" data-title="Formally...">
+
+The masked language modeling loss is the negative log-likelihood of predicting the original tokens at masked positions:
+
+$$\mathcal{L}_{\text{MLM}} = -\sum_{i \in \mathcal{M}} \log P(x_i \mid \mathbf{x}_{\backslash \mathcal{M}}; \theta)$$
+
+where:
+- $\mathcal{M}$ = set of masked positions
+- $\mathbf{x}_{\backslash \mathcal{M}}$ = input with masked tokens
+- $\theta$ = model parameters
+- Only masked positions contribute to the loss (the $-1$ labels are ignored)
+
+</div>
+
+<div class="tip-box" data-title="Prediction at each masked position">
+
+$$P(x_i = w \mid \mathbf{x}_{\backslash \mathcal{M}}) = \text{softmax}(\mathbf{h}_i \cdot W_{\text{vocab}} + b)_w$$
+
+where $\mathbf{h}_i$ is BERT's output hidden state at position $i$.
+
+</div>
+
+---
+
+# Next sentence prediction
+
+<div class="definition-box" data-title="BERT's second pre-training objective">
+
+**Task:** Given two sentences A and B, predict whether B actually follows A in the original text.
+
+- **50% of the time:** B is the real next sentence (label: `IsNext`)
+- **50% of the time:** B is a random sentence from the corpus (label: `NotNext`)
+
+The `[CLS]` token representation is used for this binary classification.
+
+</div>
+
+<div class="warning-box" data-title="NSP is controversial">
+
+Later work (RoBERTa, 2019) showed that removing NSP actually *improves* performance. The task may be too easy — distinguishing topic is simpler than understanding sentence relationships. ALBERT replaced NSP with the harder **Sentence Order Prediction** (SOP) task.
+
+</div>
+
+---
+
+# BERT making predictions
+
+<div class="definition-box" data-title="Predicting from [MASK], not from the last token">
+
+Recall from lecture 15: GPT uses the **last token's** output vector to predict the next word.
+
+BERT is different — it predicts from **each masked position's** output vector:
+
+$$P(\text{"flipped"} \mid \text{context}) = \text{softmax}(\mathbf{h}_{[\text{MASK}]} \cdot W_{\text{vocab}} + b)$$
+
+The output hidden state $\mathbf{h}_{[\text{MASK}]}$ at the `[MASK]` position encodes information from *all* surrounding tokens (both left and right).
+
+</div>
+
+<div class="tip-box" data-title="For classification tasks">
+
+For sentence-level tasks (sentiment, NLI), BERT uses the `[CLS]` token's output instead — this token is trained to aggregate information across the whole sequence.
+
+</div>
+
+---
+
+# BERT making predictions
+
+![height:500](animations/gifs/bertpredictionhead.gif)
+
+---
+
+# BERT architecture variants
+
+<div class="note-box" data-title="Two model sizes">
+
+| Component | BERT-Base | BERT-Large |
+|-----------|-----------|------------|
+| Transformer layers | 12 | 24 |
+| Hidden size | 768 | 1024 |
+| Attention heads | 12 | 16 |
+| Feed-forward size | 3072 | 4096 |
+| Total parameters | 110M | 340M |
+| Max sequence length | 512 tokens | 512 tokens |
+| Vocabulary | 30,000 (WordPiece) | 30,000 (WordPiece) |
+
+</div>
+
+<div class="note-box" data-title="Special tokens">
+
+- **[CLS]**: Classification token (first position, used for sequence-level tasks)
+- **[SEP]**: Separator token (between sentence pairs)
+- **[MASK]**: Mask token (for MLM pre-training)
+- **[PAD]**: Padding token (for batching variable-length sequences)
 
 </div>
 
@@ -284,6 +472,12 @@ Pre-training learns *general language understanding* that transfers to many down
 Pre-training captures syntax, semantics, and world knowledge from massive text. Fine-tuning teaches the model to *apply* that knowledge to a specific task format — with very little task-specific data.
 
 </div>
+
+---
+
+# The pre-train then fine-tune paradigm
+
+![height:500](animations/gifs/finetuningtransfer.gif)
 
 ---
 <!-- _class: scale-90 -->
@@ -375,7 +569,7 @@ print(f"Similarity: {similarity:.3f}")  # ~0.3–0.5 (low! different meanings)
 
 ---
 
-# Static vs contextual embeddings
+# Static vs. contextual embeddings
 
 <div class="note-box" data-title="BERT captures meaning differences that static embeddings miss">
 

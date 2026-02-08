@@ -1,0 +1,12 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p12/partial_movie_files/BertVsGptAttention/845450558_3359671537_2687137646.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p12/partial_movie_files/BertVsGptAttention/2593767676_2934989943_147900339.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p12/partial_movie_files/BertVsGptAttention/2593767676_3563553170_3804871187.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p12/partial_movie_files/BertVsGptAttention/2593767676_3863993299_2681388161.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p12/partial_movie_files/BertVsGptAttention/2593767676_2934989943_4114679999.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p12/partial_movie_files/BertVsGptAttention/2593767676_2023353112_3738443456.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p12/partial_movie_files/BertVsGptAttention/2593767676_1888790332_3767891290.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p12/partial_movie_files/BertVsGptAttention/2593767676_2632212253_1229867491.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p12/partial_movie_files/BertVsGptAttention/2593767676_2934989943_3123000331.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p12/partial_movie_files/BertVsGptAttention/2593767676_4005107832_2784964876.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p12/partial_movie_files/BertVsGptAttention/2593767676_4257824416_2032881108.mp4'
