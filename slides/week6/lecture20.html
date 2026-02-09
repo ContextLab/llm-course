@@ -704,14 +704,26 @@ Winter 2026</p>
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 <ol>
 <li>Apply BERT to real-world NLP tasks: classification, NER, QA, and semantic similarity</li>
-<li>Explain how BERT improved Google Search</li>
-<li>Connect transformer representations to cognitive neuroscience findings</li>
-<li>Evaluate the &quot;understanding vs pattern matching&quot; debate</li>
-<li>Identify limitations and biases in deployed language models</li>
+<li>Explain how BERT improved Google Search and reshaped the NLP industry</li>
+<li>Connect encoder representations to brain-imaging findings (fMRI encoding)</li>
+<li>Evaluate whether language models &quot;understand&quot; or merely pattern-match</li>
+<li>Describe systematic approaches to measuring bias in language models</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="recall-and-roadmap">Recall and roadmap</h1>
+<div class="note-box" data-title="From earlier lectures">
+<p>We introduced BERT's architecture in Lecture 12, explored what BERT actually learns in Lecture 18, and compared BERT variants (RoBERTa, ALBERT, DistilBERT, ELECTRA) in Lecture 19.</p>
+</div>
+<div class="tip-box" data-title="Today's focus">
+<p>Today: how encoder models are <em>used</em> — in industry, in neuroscience, and in the ongoing debate about whether any of this counts as &quot;understanding.&quot;</p>
+</div>
+<div class="tip-box" data-title="Companion notebook">
+<p><img class="emoji" draggable="false" alt="📓" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4d3.svg" data-marp-twemoji=""/> <a href="https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/encoder_applications_demo.ipynb">Companion Notebook</a> — hands-on with classification, NER, QA, and sentence similarity</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="where-bert-excels">Where BERT excels</h1>
 <div class="note-box" data-title="BERT powers a wide range of understanding tasks">
 <p><strong>Classification tasks:</strong> Sentiment analysis, topic classification, spam detection, intent recognition</p>
@@ -723,7 +735,7 @@ Winter 2026</p>
 <p>BERT powers Google Search (understanding queries), customer service chatbots, content moderation systems, and document understanding pipelines at companies worldwide.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="case-study-google-search">Case study: Google Search</h1>
 <div class="definition-box" data-title="BERT revolutionized search in 2019">
 <p>Before BERT, search engines primarily matched keywords. BERT enabled Google to understand <em>how words relate to each other</em> — especially prepositions, negations, and context words.</p>
@@ -770,7 +782,7 @@ Winter 2026</p>
 <p>Google reported BERT improved 1 in 10 English searches.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="question-answering-with-bert">Question answering with BERT</h1>
 <div class="example-box" data-title="Extractive QA: find the answer span in a passage">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -792,7 +804,7 @@ Winter 2026</p>
 <p>BERT predicts two things for each token in the passage: the probability that it's the <strong>start</strong> of the answer, and the probability that it's the <strong>end</strong> of the answer. The answer span is the highest-scoring (start, end) pair.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="named-entity-recognition">Named entity recognition</h1>
 <div class="example-box" data-title="Token-level classification with BERT">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -818,31 +830,6 @@ Winter 2026</p>
 <li><strong>O</strong>: Outside any entity</li>
 <li>Entity types: PER (person), ORG (organization), LOC (location), MISC (miscellaneous)</li>
 </ul>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="sentiment-analysis">Sentiment analysis</h1>
-<div class="example-box" data-title="Sequence classification with BERT">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">sentiment = pipeline(&quot;sentiment-analysis&quot;,</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">                     model=&quot;distilbert-base-uncased-finetuned-sst-2-english&quot;)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">texts = [</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">    &quot;This movie was absolutely amazing!&quot;,</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    &quot;The product broke after one week.&quot;,</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    &quot;The weather is cloudy today.&quot;</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">]</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">for text in texts:</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">    result = sentiment(text)[0]</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code">    print(f&quot;{text}&quot;)</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code">    print(f&quot;  → {result[&#x27;label&#x27;]} (confidence: {result[&#x27;score&#x27;]:.2f})&quot;)</span></span>
-</code></pre>
-</div>
-<div class="tip-box" data-title="Applications">
-<p>Sentiment analysis powers customer review analysis, social media monitoring, brand reputation tracking, and financial market sentiment indicators.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -880,75 +867,52 @@ Winter 2026</p>
 <div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="cognitive-neuroscience-perspective">Cognitive neuroscience perspective</h1>
-<div class="definition-box" data-title="How do brains and models process language?">
-<p>Both biological brains and transformer models process language through <strong>predictive processing</strong> — constantly anticipating upcoming input based on context.</p>
-<p><strong>In the brain:</strong></p>
-<ul>
-<li>The N400 ERP component reflects surprise at unexpected words</li>
-<li>Left inferior frontal gyrus (IFG) handles syntax</li>
-<li>Left superior temporal gyrus (STG/MTG) handles semantics</li>
-<li>Prediction errors drive learning and adaptation</li>
-</ul>
-<p><strong>In transformer models:</strong></p>
-<ul>
-<li>Cross-entropy loss measures surprise at each token</li>
-<li>Lower layers encode syntax, upper layers encode semantics</li>
-<li>Gradient descent optimizes predictions</li>
-<li>Both systems are hierarchical, context-sensitive, and predictive</li>
-</ul>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="prediction-in-brains-vs-language-models">Prediction in brains vs language models</h1>
-<div class="note-box" data-title="Parallels between neural and artificial systems">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="encoders-in-industry-2025">Encoders in industry (2025)</h1>
+<div class="note-box" data-title="Encoder models are everywhere — even if you don't see them">
+<p>The NLP market reached <strong>$7.73 billion</strong> in 2025. Most of that is powered by encoder models, not chatbots:</p>
 <table>
 <thead>
 <tr>
-<th>Phenomenon</th>
-<th>Human brain</th>
-<th>Transformer models</th>
+<th>Application</th>
+<th>Scale</th>
+<th>Architecture</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Surprise</strong></td>
-<td>N400 amplitude (EEG)</td>
-<td>Cross-entropy loss</td>
+<td>Google Search</td>
+<td>8.5B queries/day</td>
+<td>BERT → MUM</td>
 </tr>
 <tr>
-<td><strong>Hierarchy</strong></td>
-<td>Sounds → words → sentences</td>
-<td>Tokens → phrases → meaning</td>
+<td>Sentence-BERT</td>
+<td>700K+ downloads/day</td>
+<td>Bi-encoder</td>
 </tr>
 <tr>
-<td><strong>Context</strong></td>
-<td>Prior discourse + world knowledge</td>
-<td>Self-attention over sequence</td>
+<td>Microsoft Bing</td>
+<td>Billions of queries</td>
+<td>DeBERTa-based</td>
 </tr>
 <tr>
-<td><strong>Representation</strong></td>
-<td>Population coding (neurons)</td>
-<td>Distributed embeddings (vectors)</td>
+<td>E5 / NV-Embed</td>
+<td>Leading retrieval benchmarks</td>
+<td>Encoder embeddings</td>
+</tr>
+<tr>
+<td>Content moderation</td>
+<td>Billions of posts/day</td>
+<td>Fine-tuned RoBERTa</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="example-box" data-title="The N400 / surprisal parallel">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">sentence_a = &quot;I take my coffee with cream and sugar&quot;   # Expected</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">sentence_b = &quot;I take my coffee with cream and socks&quot;   # Surprising!</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Brain: N400 amplitude much higher for &quot;socks&quot;</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># Model: Higher cross-entropy loss for &quot;socks&quot;</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">surprisal = -np.log(model.predict_prob(&quot;socks&quot;, context))</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"># Surprisal correlates with N400 amplitude in EEG studies!</span></span>
-</code></pre>
+<div class="important-box" data-title="Why not just use GPT-4?">
+<p>GPT-4 costs ~$30/M tokens and takes ~500ms per request. A fine-tuned DistilBERT handles classification at ~$0.01/M tokens and ~5ms per request. For high-volume, single-task workloads, encoders are <strong>3,000× cheaper</strong> and <strong>100× faster</strong>.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="neural-encoding-with-language-models">Neural encoding with language models</h1>
 <div class="example-box" data-title="Can we predict brain activity from BERT representations?">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -966,7 +930,7 @@ Winter 2026</p>
 <div class="code-continued-indicator">continued...</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="neural-encoding-with-language-models-1">Neural encoding with language models</h1>
 <div class="example-box" data-title="Can we predict brain activity from BERT representations?">
 <pre><code class="language-python has-line-numbers" data-start-line="11">
@@ -984,7 +948,7 @@ Winter 2026</p>
 <div class="code-continued-indicator">...continued...</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="neural-encoding-with-language-models-2">Neural encoding with language models</h1>
 <div class="example-box" data-title="Can we predict brain activity from BERT representations?">
 <pre><code class="language-python has-line-numbers" data-start-line="21">
@@ -996,23 +960,34 @@ Winter 2026</p>
 </div>
 <p><strong>Key finding:</strong> BERT layer 8 best predicts semantic brain areas; layers 2–4 predict phonological areas.</p>
 </section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="brain-llm-alignment-frontiers">Brain-LLM alignment frontiers</h1>
+<div class="note-box" data-title="The relationship between LLMs and brains is deeper than expected">
+<p><a href="https://doi.org/10.1038/s42003-022-03036-1"><strong>Caucheteux &amp; King (2022)</strong></a>: LLM activations predict brain activity in a <strong>layer-specific</strong> way — early model layers map to auditory cortex, deeper layers to high-level language areas. Published in <em>Communications Biology</em>.</p>
+<p><a href="https://doi.org/10.1038/s43588-024-00752-6"><strong>Gao et al. (2025, <em>Nature Computational Science</em>)</strong></a>: &quot;Brain-like&quot; artificial neurons emerge in LLMs trained only on text — units that encode syntax, semantics, and even spatial concepts, mirroring brain organization.</p>
+</div>
+<div class="definition-box" data-title="Mind's Transformer (Aw et al., 2026, ICLR)">
+<p><a href="https://openreview.net/forum?id=PgIlCCNxdB">The Mind's Transformer</a>: Proposes that the brain implements a <strong>Transformer-like</strong> algorithm — not just analogous representations, but analogous <em>computation</em>. Attention-like gating and residual-stream-like updates appear across cortical circuits.</p>
+<p><strong>Why this matters:</strong> If the brain and LLMs converge on similar computational strategies, it suggests these are <em>good solutions</em> for processing sequential, context-dependent information — not just engineering coincidences.</p>
+</div>
+</section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="understanding-vs-pattern-matching">Understanding vs pattern matching</h1>
-<div class="tip-box" data-title="Questions to consider">
+<div class="tip-box" data-title="The core philosophical question">
 <p><strong>Evidence FOR understanding:</strong></p>
 <ul>
 <li>Captures syntax and semantics automatically</li>
 <li>Resolves lexical ambiguity based on context</li>
-<li>Handles long-range dependencies</li>
 <li>Generalizes to unseen examples</li>
-<li>Predicts brain activity patterns</li>
+<li>Predicts human brain activity patterns</li>
+<li>Layer structure mirrors human language processing hierarchy</li>
 </ul>
 <p><strong>Evidence AGAINST understanding:</strong></p>
 <ul>
 <li>No grounding in the physical world</li>
 <li>No sensory or social experience</li>
 <li>Brittle to adversarial examples</li>
-<li>No common sense reasoning</li>
+<li>No causal reasoning</li>
 <li>Might be &quot;just&quot; sophisticated pattern matching</li>
 </ul>
 <p><strong>The key question:</strong> Is there a meaningful difference between &quot;understanding&quot; and &quot;very good pattern matching&quot;? Does it matter for applications?</p>
@@ -1048,89 +1023,34 @@ Winter 2026</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="bias-in-language-models">Bias in language models</h1>
-<div class="warning-box" data-title="Models reflect and amplify societal biases">
-<p>BERT inherits biases from its training data (books and Wikipedia contain historical biases):</p>
-<ul>
-<li>Gender bias in occupations: &quot;The doctor said [MASK] would be late&quot; → &quot;he&quot; (62%) vs &quot;she&quot; (18%)</li>
-<li>&quot;The nurse said [MASK] would be late&quot; → &quot;she&quot; (71%) vs &quot;he&quot; (15%)</li>
-<li>Racial bias in sentiment: Different confidence scores for identical sentences with different names</li>
-</ul>
+<h1 id="measuring-bias-systematically">Measuring bias systematically</h1>
+<div class="note-box" data-title="Moving beyond anecdotes to systematic measurement">
+<p>Recall from Lecture 11 that word embeddings encode societal biases (e.g., &quot;doctor&quot; closer to &quot;man,&quot; &quot;nurse&quot; closer to &quot;woman&quot;). BERT inherits these same biases from its training data. But how do we measure bias <em>systematically</em> across thousands of contexts?</p>
 </div>
-<div class="note-box" data-title="Mitigation strategies">
+<div class="definition-box" data-title="SAGED: systematic bias evaluation (Jiang et al., COLING 2025)">
+<p><a href="https://aclanthology.org/2025.coling-main.202.pdf">SAGED</a> proposes a five-step pipeline for measuring bias in language models:</p>
 <ol>
-<li><strong>Data-level</strong>: Balanced training corpora, counterfactual data augmentation</li>
-<li><strong>Model-level</strong>: Debiasing loss functions, fine-tuning on balanced datasets</li>
-<li><strong>Output-level</strong>: Post-hoc filtering, human review for sensitive applications</li>
-<li><strong>Evaluation</strong>: Regular bias audits using standardized benchmarks (WinoBias, StereoSet)</li>
+<li><strong>S</strong>elect social groups (e.g., gender, race, age)</li>
+<li><strong>A</strong>ssemble evaluation contexts (template sentences)</li>
+<li><strong>G</strong>enerate model outputs for each group × context</li>
+<li><strong>E</strong>valuate using statistical tests (not cherry-picked examples)</li>
+<li><strong>D</strong>ocument findings with effect sizes and confidence intervals</li>
 </ol>
+<p><strong>Key insight:</strong> Individual examples (like doctor/nurse) are compelling but misleading. Systematic evaluation across thousands of contexts reveals that biases are <em>real but more nuanced</em> than anecdotes suggest.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="limitations-of-current-encoder-models">Limitations of current encoder models</h1>
 <div class="warning-box" data-title="Despite impressive performance, significant limitations remain">
-<p><strong>Quadratic complexity</strong>: Self-attention scales as <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> with sequence length, limiting context to 512–4096 tokens.</p>
+<p><strong>Quadratic complexity</strong>: Self-attention scales as <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> with sequence length, limiting context to 512–4096 tokens. (ModernBERT pushes this to 8,192 with Flash Attention.)</p>
 <p><strong>No generation capability</strong>: BERT is designed for understanding, not producing text. For generation tasks, use decoder models (GPT) or encoder-decoder models (T5, BART).</p>
 <p><strong>Data hunger</strong>: Pre-training requires billions of words. Humans learn language with orders of magnitude less data.</p>
 <p><strong>No world model</strong>: BERT learns statistical patterns in text but has no grounding in physical reality, sensory experience, or causal reasoning.</p>
-<p><strong>Fragility</strong>: Small input perturbations can cause large output changes, making models unreliable in adversarial settings.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="practical-deployment-tips">Practical deployment tips</h1>
-<div class="tip-box" data-title="Making BERT work in production">
-<p><strong>Start with pre-trained models</strong> — never train from scratch. Use HuggingFace Model Hub.</p>
-<p><strong>Fine-tuning best practices:</strong></p>
-<ul>
-<li>Learning rate: 1e-5 to 5e-5 (much lower than pre-training)</li>
-<li>Warmup steps: 6–10% of total training steps</li>
-<li>Monitor for overfitting; freeze early layers if data is limited</li>
-<li>3–5 epochs is usually sufficient</li>
-</ul>
-<p><strong>Optimization for speed:</strong></p>
-<ul>
-<li>Use DistilBERT for 60% faster inference with 97% quality</li>
-<li>Quantization (INT8) gives 2–4× speedup with minimal quality loss</li>
-<li>Export to ONNX Runtime for production serving</li>
-<li>Use FlashAttention when available</li>
-</ul>
-</div>
-<div class="note-box" data-title="Optimization results">
-<table>
-<thead>
-<tr>
-<th>Optimization</th>
-<th>Size</th>
-<th>Latency</th>
-<th>Quality</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Original (FP32)</td>
-<td>420MB</td>
-<td>50ms</td>
-<td>100%</td>
-</tr>
-<tr>
-<td>Quantized (INT8)</td>
-<td>110MB</td>
-<td>25ms</td>
-<td>99.5%</td>
-</tr>
-<tr>
-<td>DistilBERT + ONNX</td>
-<td>65MB</td>
-<td>12ms</td>
-<td>97%</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="encoder-vs-decoder-looking-ahead">Encoder vs decoder: looking ahead</h1>
-<div class="note-box" data-title="Different architectures for different tasks">
+<h1 id="encoder-vs-decoder-the-2026-landscape">Encoder vs decoder: the 2026 landscape</h1>
+<div class="note-box" data-title="The architecture divide is narrowing">
 <table>
 <thead>
 <tr>
@@ -1156,44 +1076,53 @@ Winter 2026</p>
 <td>Generation tasks</td>
 </tr>
 <tr>
-<td><strong>Examples</strong></td>
-<td>Classification, NER, QA, similarity</td>
-<td>Text completion, dialogue, creative writing</td>
+<td><strong>Cost</strong></td>
+<td>$0.01/M tokens</td>
+<td>$1-30/M tokens</td>
+</tr>
+<tr>
+<td><strong>Latency</strong></td>
+<td>~5ms</td>
+<td>~500ms</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Interesting trend:</strong> Decoder-only models (GPT-3, LLaMA) can also do classification via prompting. &quot;In-context learning&quot; blurs the distinction between understanding and generation architectures. The field is moving toward unified decoder-only models.</p>
+</div>
+<div class="tip-box" data-title="Where things are headed">
+<p><strong>Convergence:</strong> Decoder-only models (GPT-4, Claude) now do classification via prompting. Meanwhile, encoder-decoder hybrids (T5, UL2) blur the distinction further. The field is converging toward flexible architectures that can handle both understanding and generation — but cost and speed still favor purpose-built encoders for production.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="discussion">Discussion</h1>
 <div class="tip-box" data-title="Questions to consider">
 <ol>
 <li>
-<p><strong>Understanding vs pattern matching:</strong> Where do you draw the line? Is there a test for &quot;true&quot; understanding? Does it matter if the application works?</p>
+<p><strong>Understanding vs pattern matching:</strong> If a model predicts brain activity, resolves ambiguity, and handles novel inputs — but has no physical experience — does it &quot;understand&quot;? What evidence would change your mind?</p>
 </li>
 <li>
-<p><strong>Brain-model parallels:</strong> How useful are comparisons between transformers and the brain? What can neuroscience learn from AI, and vice versa?</p>
+<p><strong>The measurement problem:</strong> SAGED shows bias is more nuanced than individual examples suggest. Does this make bias <em>less</em> concerning, or <em>more</em> concerning (because it's harder to detect)?</p>
 </li>
 <li>
-<p><strong>Bias and fairness:</strong> Who is responsible for addressing bias in language models? Can we ever have completely unbiased models? How do we balance accuracy and fairness?</p>
+<p><strong>Brain-model convergence:</strong> If brains and LLMs independently converge on similar representations and computations, what does that tell us about the nature of language processing? Is there only one way to solve it?</p>
 </li>
 <li>
-<p><strong>The future of encoder models:</strong> Will BERT-style encoders remain relevant as GPT-style decoders get better at everything? Or do understanding and generation require fundamentally different approaches?</p>
+<p><strong>The cost-quality tradeoff:</strong> GPT-4 can do anything an encoder can — but at 3,000× the cost. When does &quot;good enough and cheap&quot; beat &quot;best and expensive&quot;?</p>
 </li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="references">References</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="further-reading">Further reading</h1>
 <div class="note-box" data-title="Further reading">
-<p><a href="https://aclanthology.org/N19-1423/"><strong>Devlin et al. (2019, <em>NAACL</em>)</strong></a> &quot;BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding&quot;</p>
-<p><a href="https://doi.org/10.1038/s41467-022-28236-3"><strong>Caucheteux &amp; King (2022, <em>Nature Communications</em>)</strong></a> &quot;Brains and algorithms partially converge in natural language processing&quot;</p>
-<p><a href="https://doi.org/10.1080/23273798.2015.1102299"><strong>Kuperberg &amp; Jaeger (2016, <em>Language, Cognition and Neuroscience</em>)</strong></a> &quot;What do we mean by prediction in language comprehension?&quot;</p>
-<p><a href="https://aclanthology.org/2020.acl-main.463/"><strong>Bender &amp; Koller (2020, <em>ACL</em>)</strong></a> &quot;Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data&quot;</p>
+<p><a href="https://aclanthology.org/N19-1423/"><strong>Devlin et al. (2019, <em>NAACL</em>)</strong></a> &quot;BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding&quot; — The original BERT paper.</p>
+<p><a href="https://doi.org/10.1038/s42003-022-03036-1"><strong>Caucheteux &amp; King (2022, <em>Communications Biology</em>)</strong></a> &quot;Brains and algorithms partially converge in natural language processing&quot; — Layer-specific brain-LLM alignment.</p>
+<p><a href="https://openreview.net/forum?id=PgIlCCNxdB"><strong>Aw et al. (2026, <em>ICLR</em>)</strong></a> &quot;The Mind's Transformer&quot; — Evidence that the brain implements Transformer-like computation.</p>
+<p><a href="https://doi.org/10.1038/s43588-024-00752-6"><strong>Gao et al. (2025, <em>Nature Computational Science</em>)</strong></a> &quot;Brain-like artificial neurons in LLMs&quot; — Emergent brain-like units in language models.</p>
+<p><a href="https://aclanthology.org/2025.coling-main.202.pdf"><strong>Jiang et al. (2025, <em>COLING</em>)</strong></a> &quot;SAGED&quot; — Systematic bias evaluation pipeline for language models.</p>
+<p><a href="https://aclanthology.org/2020.acl-main.463/"><strong>Bender &amp; Koller (2020, <em>ACL</em>)</strong></a> &quot;Climbing towards NLU&quot; — The &quot;understanding&quot; debate.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
@@ -1210,7 +1139,7 @@ Winter 2026</p>
   </div>
 </div>
 <div class="tip-box" data-title="Up next...">
-<p>Week 7: GPT and autoregressive generation — from decoder architecture to text generation</p>
+<p>Week 7: GPT and autoregressive generation — from decoder architecture to scaling laws</p>
 </div>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();

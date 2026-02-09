@@ -702,14 +702,16 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="learning-objectives">Learning objectives</h1>
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
-<ul>
+<ol>
 <li>Define what an <strong>LLM agent</strong> is and how it differs from a chatbot</li>
-<li>Explain <strong>function calling</strong> and how LLMs interact with external tools</li>
-<li>Describe the <strong>ReAct framework</strong> (Yao et al., 2023) and its reasoning-action loop</li>
-<li>Explain how <strong>Toolformer</strong> (Schick et al., 2023) teaches models to use tools autonomously</li>
-<li>Implement a <strong>simple agent loop</strong> with tool dispatch in Python</li>
-<li>Discuss the opportunities and risks of <strong>autonomous AI agents</strong></li>
-</ul>
+<li>Explain <strong>function calling</strong>, <strong>MCP</strong>, and how LLMs interact with external tools</li>
+<li>Describe the <strong>ReAct framework</strong> and its reasoning-action loop</li>
+<li>Explain how agentic coding tools (Claude Code, Cursor) are changing software development</li>
+<li>Evaluate the <strong>safety implications</strong> of giving LLMs the ability to act in the world</li>
+</ol>
+</div>
+<div class="tip-box" data-title="Companion notebook">
+<p><img class="emoji" draggable="false" alt="📓" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4d3.svg" data-marp-twemoji=""/> <a href="https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/agents_demo.ipynb">Companion Notebook</a> — build a simple agent with tool dispatch</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1042,42 +1044,79 @@ Winter 2026</p>
 <p>The agent <strong>decomposed</strong> the task, <strong>gathered data</strong> with search, <strong>computed</strong> the ratio with a calculator, and <strong>synthesized</strong> a final answer.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="autonomous-agents">Autonomous agents</h1>
-<div class="definition-box" data-title="Agents that operate with minimal human oversight">
-<p><strong>Autonomous agents</strong> extend the basic agent loop to handle long-running, complex tasks with multiple sub-goals. Key additional capabilities include:</p>
-<ul>
-<li><strong>Planning</strong>: Break complex goals into sub-tasks</li>
-<li><strong>Memory</strong>: Maintain context across many steps (beyond context window)</li>
-<li><strong>Self-reflection</strong>: Evaluate and correct their own work</li>
-<li><strong>Delegation</strong>: Spawn sub-agents for parallel tasks</li>
-</ul>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="model-context-protocol-mcp">Model Context Protocol (MCP)</h1>
+<div class="definition-box" data-title="A universal standard for tool integration (Anthropic, 2024)">
+<p><a href="https://modelcontextprotocol.io">MCP</a> is an open protocol that standardizes how LLMs connect to external tools and data sources. Think of it as <strong>USB for AI</strong> — any MCP-compatible tool works with any MCP-compatible model.</p>
 </div>
-<div class="note-box" data-title="Notable autonomous agent systems">
-<ul>
-<li><strong>AutoGPT</strong> (2023): Goal-driven agent that creates and manages sub-tasks</li>
-<li><strong>BabyAGI</strong> (2023): Task-driven autonomous agent with prioritized task list</li>
-<li><strong>Voyager</strong> (2023): Minecraft agent that writes code to acquire new skills</li>
-<li><strong>SWE-Agent</strong> (2024): Autonomously fixes GitHub issues by writing code</li>
-</ul>
+<div class="note-box" data-title="Why MCP matters">
+<table>
+<thead>
+<tr>
+<th>Before MCP</th>
+<th>With MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Each model has its own tool format</td>
+<td>Universal JSON-RPC protocol</td>
+</tr>
+<tr>
+<td>Custom integration per tool × model</td>
+<td>Write once, works everywhere</td>
+</tr>
+<tr>
+<td>Tools tightly coupled to specific APIs</td>
+<td>Tools are portable across models</td>
+</tr>
+<tr>
+<td>Hard to share tool implementations</td>
+<td>Open ecosystem of shared tools</td>
+</tr>
+</tbody>
+</table>
+<p>MCP servers provide tools (functions the model can call), resources (data the model can read), and prompts (templates for common tasks). Any model that speaks MCP can use any MCP server.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="planning-and-decomposition">Planning and decomposition</h1>
-<div class="note-box" data-title="How agents handle complex goals">
-<p>Complex tasks require the agent to <strong>plan</strong> before acting. Common planning strategies:</p>
-<p><strong>Task decomposition</strong>: Break a goal into ordered sub-tasks</p>
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">Goal: &quot;Write a research report on climate change impacts in NH&quot;</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">→ Sub-task 1: Search for recent climate data for New Hampshire</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">→ Sub-task 2: Find specific impact studies (agriculture, tourism, wildlife)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">→ Sub-task 3: Synthesize findings into a structured report</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">→ Sub-task 4: Add citations and format</span></span>
-</code></pre>
-<p><strong>Reflection and replanning</strong>: After each step, evaluate progress and adjust the plan if needed.</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="computer-use-and-agentic-coding">Computer Use and agentic coding</h1>
+<div class="note-box" data-title="LLMs that can see and control your screen">
+<p><a href="https://docs.anthropic.com/en/docs/agents-and-tools/computer-use">Computer Use</a> (Anthropic, 2024) gives Claude the ability to see screenshots, move the mouse, click buttons, and type — interacting with <em>any</em> software, not just tools with APIs.</p>
 </div>
-<div class="tip-box" data-title="Questions to consider">
-<p>Human experts naturally decompose problems, monitor progress, and adjust plans. How closely do current agent planning strategies mirror human cognitive processes? Where do they fall short?</p>
+<div class="definition-box" data-title="Agentic coding: LLMs that write and debug software">
+<table>
+<thead>
+<tr>
+<th>System</th>
+<th>What it does</th>
+<th>Benchmark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a></td>
+<td>Terminal-based coding agent</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="https://cursor.com">Cursor</a></td>
+<td>IDE with integrated AI agent</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="https://github.com/All-Hands-AI/OpenHands">OpenHands</a></td>
+<td>Open-source software agent</td>
+<td><a href="https://arxiv.org/abs/2310.06770">SWE-bench</a>: 53%</td>
+</tr>
+<tr>
+<td><a href="https://github.com/openai/codex">Codex CLI</a></td>
+<td>OpenAI's terminal agent</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>These tools don't just <em>suggest</em> code — they read files, run tests, debug errors, and iterate autonomously. Software engineering is becoming one of the first domains where agents approach human-level competence.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1120,29 +1159,24 @@ Winter 2026</p>
 <p>Memory management is one of the hardest problems in agent design. Too little context and the agent forgets its plan. Too much context and it becomes slow, expensive, and confused by irrelevant information.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="safety-and-control">Safety and control</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="agent-safety-the-principal-agent-problem">Agent safety: the principal-agent problem</h1>
 <div class="warning-box" data-title="Risks of agentic AI systems">
 <ul>
 <li><strong>Unintended actions</strong>: An agent told to &quot;clean up my email&quot; might delete important messages</li>
 <li><strong>Goal misalignment</strong>: An agent optimizing a metric might find harmful shortcuts</li>
+<li><strong>Prompt injection</strong>: A malicious website could hijack an agent browsing the web</li>
 <li><strong>Cascading errors</strong>: One bad tool call can lead to a chain of incorrect actions</li>
-<li><strong>Resource exhaustion</strong>: Autonomous agents can run up large API bills</li>
-<li><strong>Security</strong>: Agents with code execution can potentially access sensitive systems</li>
+<li><strong>Capability overhang</strong>: Agents may have more power than their operators realize</li>
 </ul>
 </div>
-<div class="note-box" data-title="Mitigation strategies">
-<ul>
-<li><strong>Human-in-the-loop</strong>: Require approval for irreversible actions</li>
-<li><strong>Sandboxing</strong>: Run code in isolated environments with no network access</li>
-<li><strong>Budget limits</strong>: Cap API calls, compute time, and token usage</li>
-<li><strong>Audit logging</strong>: Record every action for review</li>
-<li><strong>Capability restrictions</strong>: Only grant tools the agent actually needs</li>
-</ul>
+<div class="definition-box" data-title="The principal-agent problem (Hagendorff, 2025)">
+<p><a href="https://arxiv.org/abs/2508.04039">Hagendorff (2025)</a> tested LLM agents on safety benchmarks and found a <strong>97.14% attack success rate</strong> — agents routinely executed harmful actions when cleverly prompted. The core challenge: how do you <em>verify</em> that an agent is doing what you intended when its actions are opaque and its reasoning is complex?</p>
+<p>Mitigations: human-in-the-loop for irreversible actions, sandboxed execution, budget limits, audit logging, and minimal capability grants.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-broader-landscape">The broader landscape</h1>
+<h1 id="the-agent-spectrum">The agent spectrum</h1>
 <div class="note-box" data-title="How agents fit into the LLM ecosystem">
 <table>
 <thead>
@@ -1166,7 +1200,7 @@ Winter 2026</p>
 <tr>
 <td>Tool-using LLM</td>
 <td>Call functions on demand</td>
-<td>ChatGPT with plugins</td>
+<td>ChatGPT with MCP tools</td>
 </tr>
 <tr>
 <td>ReAct agent</td>
@@ -1174,45 +1208,49 @@ Winter 2026</p>
 <td>Research assistant</td>
 </tr>
 <tr>
-<td>Autonomous agent</td>
-<td>Plan + execute complex goals</td>
-<td>SWE-Agent, Devin</td>
+<td>Coding agent</td>
+<td>Write, test, debug software</td>
+<td>Claude Code, OpenHands</td>
 </tr>
 <tr>
 <td>Multi-agent system</td>
 <td>Multiple LLMs collaborating</td>
-<td>Debate, code review</td>
+<td>Debate, code review, delegation</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="tip-box" data-title="Questions to consider">
-<p>We have moved from models that <em>generate text</em> (GPT-1) to models that <em>take actions</em> (agents). What are the implications of this shift for how we think about AI alignment and safety?</p>
+<div class="tip-box" data-title="The key insight">
+<p>We have moved from models that <em>generate text</em> (GPT-1) to models that <em>take actions</em> (agents). Each step up the spectrum gives the LLM more autonomy — and more potential for both benefit and harm.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="key-takeaways">Key takeaways</h1>
-<div class="important-box" data-title="Core concepts from this lecture">
+<h1 id="discussion">Discussion</h1>
+<div class="tip-box" data-title="Questions to consider">
 <ol>
-<li><strong>Agents</strong> extend LLMs beyond text generation by adding reasoning, tool use, and iterative action</li>
-<li><strong>Function calling</strong> lets LLMs generate structured tool requests that systems execute</li>
-<li><strong>ReAct</strong> (Yao et al., 2023) interleaves reasoning and acting for grounded problem-solving</li>
-<li><strong>Toolformer</strong> (Schick et al., 2023) trains models to decide when and how to use tools autonomously</li>
-<li>The <strong>agent loop</strong> (prompt → parse → execute → observe → repeat) is the universal pattern</li>
-<li><strong>Safety</strong> requires human oversight, sandboxing, budgets, and careful capability restrictions</li>
+<li>
+<p><strong>The automation frontier:</strong> Coding agents can now fix real GitHub issues. What does this mean for software engineering as a career? Is this different from how compilers automated assembly language?</p>
+</li>
+<li>
+<p><strong>Trust and verification:</strong> Hagendorff found 97% attack success on safety benchmarks. How do you build trust in systems that act on your behalf? Is &quot;human-in-the-loop&quot; scalable?</p>
+</li>
+<li>
+<p><strong>MCP and the tool ecosystem:</strong> MCP standardizes tool access for any model. If tools are interchangeable and models are interchangeable, where does the value lie? Who benefits most from open standards?</p>
+</li>
+<li>
+<p><strong>The principal-agent problem:</strong> When you delegate a task to an AI agent, how do you verify it did what you wanted — especially when its reasoning is opaque? How is this different from delegating to a human?</p>
+</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="further-reading">Further reading</h1>
-<div class="note-box" data-title="References">
-<ul>
-<li><strong>Yao et al. (2023)</strong> -- &quot;ReAct: Synergizing Reasoning and Acting in Language Models&quot; <a href="https://arxiv.org/abs/2210.03629">[arXiv]</a></li>
-<li><strong>Schick et al. (2023)</strong> -- &quot;Toolformer: Language Models Can Teach Themselves to Use Tools&quot; <a href="https://arxiv.org/abs/2302.04761">[arXiv]</a></li>
-<li><strong>Wei et al. (2022)</strong> -- &quot;Chain-of-Thought Prompting Elicits Reasoning in Large Language Models&quot; <a href="https://arxiv.org/abs/2201.11903">[arXiv]</a></li>
-<li><strong>Wang et al. (2024)</strong> -- &quot;A Survey on Large Language Model based Autonomous Agents&quot; <a href="https://arxiv.org/abs/2308.11432">[arXiv]</a></li>
-<li><strong>OpenAI Function Calling</strong> -- <a href="https://platform.openai.com/docs/guides/function-calling">[Documentation]</a></li>
-</ul>
+<div class="note-box" data-title="Further reading">
+<p><a href="https://arxiv.org/abs/2210.03629"><strong>Yao et al. (2023, <em>ICLR</em>)</strong></a> &quot;ReAct: Synergizing Reasoning and Acting in Language Models&quot; — The ReAct framework (+34% on ALFWorld, +10% on WebShop).</p>
+<p><a href="https://arxiv.org/abs/2302.04761"><strong>Schick et al. (2023, <em>NeurIPS</em>)</strong></a> &quot;Toolformer: Language Models Can Teach Themselves to Use Tools&quot; — Self-taught tool use.</p>
+<p><a href="https://modelcontextprotocol.io"><strong>Anthropic (2024)</strong></a> &quot;Model Context Protocol&quot; — Open standard for LLM-tool integration.</p>
+<p><a href="https://arxiv.org/abs/2310.06770"><strong>Jimenez et al. (2024, <em>ICLR</em>)</strong></a> &quot;SWE-bench: Can Language Models Resolve Real-World GitHub Issues?&quot; — The benchmark for coding agents.</p>
+<p><a href="https://arxiv.org/abs/2508.04039"><strong>Hagendorff (2025, <em>arXiv</em>)</strong></a> &quot;AI Agent Safety&quot; — 97.14% attack success rate on agent safety benchmarks.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">

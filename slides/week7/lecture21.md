@@ -20,12 +20,11 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-- Explain the **generative pre-training** paradigm and why it was revolutionary
-- Describe the **transformer decoder** architecture used in GPT
-- Implement **masked (causal) self-attention** and explain why it is needed
-- Distinguish between **pre-training** and **fine-tuning** stages
-- Compare GPT's **autoregressive** approach with BERT's **bidirectional** approach
-- Understand GPT-1's strengths, limitations, and historical significance
+1. Explain the **generative pre-training** paradigm and why it was revolutionary
+2. Describe the **transformer decoder** architecture used in GPT
+3. Distinguish between **pre-training** and **fine-tuning** stages
+4. Compare GPT's **autoregressive** approach with BERT's **bidirectional** approach
+5. Identify how the decoder stack has evolved from GPT-1 to modern LLMs (2024)
 
 </div>
 
@@ -80,7 +79,7 @@ GPT introduced a two-stage approach that changed NLP forever:
 
 - **Before GPT**: Train task-specific models from scratch, needing large labeled datasets for each task
 - **After GPT**: Learn general language representations once, then adapt cheaply to any task
-- This is **transfer learning** for NLP -- the same idea that transformed computer vision with ImageNet
+- This is **transfer learning** for NLP — the same idea that transformed computer vision with ImageNet
 
 </div>
 
@@ -90,7 +89,7 @@ GPT introduced a two-stage approach that changed NLP forever:
 
 <div class="definition-box" data-title="GPT's architecture">
 
-GPT uses only the **decoder** half of the original transformer (Vaswani et al., 2017). The data flows through:
+GPT uses only the **decoder** half of the original transformer ([Vaswani et al., 2017](https://arxiv.org/abs/1706.03762)). The data flows through:
 
 1. **Token embeddings**: Map each token to a 768-dimensional vector
 2. **Position embeddings**: Add learned positional information
@@ -101,7 +100,7 @@ GPT uses only the **decoder** half of the original transformer (Vaswani et al., 
 
 <div class="warning-box" data-title="Key difference from the full transformer">
 
-The original transformer has both an encoder and a decoder with cross-attention between them. GPT removes the encoder entirely and removes cross-attention -- it only uses **masked self-attention** within the decoder.
+The original transformer has both an encoder and a decoder with cross-attention between them. GPT removes the encoder entirely and removes cross-attention — it only uses **masked self-attention** within the decoder.
 
 </div>
 
@@ -109,9 +108,9 @@ The original transformer has both an encoder and a decoder with cross-attention 
 
 # Masked (causal) self-attention
 
-<div class="definition-box" data-title="The core mechanism">
+<div class="definition-box" data-title="Recall from Lecture 15">
 
-In standard self-attention, every token attends to every other token. In **causal** (masked) self-attention, each token can only attend to tokens at **earlier positions** (and itself). This prevents the model from "peeking" at future tokens during training.
+In standard self-attention (Lecture 15), every token attends to every other token. In **causal** (masked) self-attention, each token can only attend to tokens at **earlier positions** (and itself). This prevents the model from "peeking" at future tokens during training.
 
 </div>
 
@@ -124,179 +123,7 @@ In standard self-attention, every token attends to every other token. In **causa
 | **sat** | 0.2 | 0.3 | 0.5 | -inf |
 | **on** | 0.1 | 0.2 | 0.3 | 0.4 |
 
-The `-inf` entries become 0 after softmax, ensuring no information flows from future tokens.
-
-</div>
-
----
-
-# Why causal masking matters
-
-<div class="note-box" data-title="Three benefits of the causal mask">
-
-1. **Autoregressive property**: The model generates text left-to-right, one token at a time. Each prediction depends only on previous tokens -- exactly matching how generation works at inference time.
-
-2. **No information leakage**: During training, the model cannot cheat by looking ahead at the answer. This forces it to learn genuine predictive representations.
-
-3. **Parallel training**: Despite the left-to-right constraint, all positions can be trained simultaneously using the mask. The model computes predictions for every position in one forward pass.
-
-</div>
-
-<div class="tip-box" data-title="Contrast with BERT">
-
-BERT's masked language model sees context in *both* directions but can only predict ~15% of tokens per pass. GPT predicts *every* token per pass but sees context in only one direction.
-
-</div>
-
----
-
-# Implementing the causal mask
-
-<div class="example-box" data-title="Creating a causal mask in PyTorch">
-
-```python
-import torch
-
-def create_causal_mask(seq_len):
-    """Create lower-triangular mask for causal attention."""
-    mask = torch.ones(seq_len, seq_len)
-    mask = torch.tril(mask)  # Keep lower triangle (including diagonal)
-    return mask
-
-mask = create_causal_mask(4)
-# tensor([[1., 0., 0., 0.],
-#         [1., 1., 0., 0.],
-#         [1., 1., 1., 0.],
-#         [1., 1., 1., 1.]])
-```
-
-</div>
-
-<div class="note-box" data-title="How the mask is applied">
-
-In the attention computation, positions where `mask == 0` are set to `-inf` **before** softmax. After softmax, those entries become 0, blocking attention to future positions:
-
-`scores = scores.masked_fill(mask == 0, float('-inf'))`
-
-</div>
-
----
-
-# Position embeddings
-
-<div class="definition-box" data-title="Why position information is needed">
-
-Self-attention is **permutation invariant** -- it treats tokens as a *set*, not a *sequence*. Without position information, "The cat sat on the mat" and "mat the on sat cat The" would produce identical representations.
-
-</div>
-
-<div class="note-box" data-title="GPT's approach: learned position embeddings">
-
-- Each position (0 to max_length - 1) gets a **learnable** embedding vector
-- Added element-wise to token embeddings: `embedding = token_emb + pos_emb`
-- Maximum sequence length: **512 tokens** (GPT-1)
-- The model learns position patterns during training (e.g., that position 0 is often a sentence start)
-
-</div>
-
-<div class="tip-box" data-title="Alternative: sinusoidal encodings">
-
-The original transformer used fixed sinusoidal functions. GPT chose learned embeddings for greater flexibility, though this limits generalization to unseen sequence lengths.
-
-</div>
-
----
-
-# GPT embedding layer in code
-
-<div class="example-box" data-title="Token + position embeddings">
-
-```python
-import torch
-import torch.nn as nn
-
-class GPTEmbedding(nn.Module):
-    def __init__(self, vocab_size, d_model, max_seq_len):
-        super().__init__()
-        self.token_embed = nn.Embedding(vocab_size, d_model)
-        self.pos_embed = nn.Embedding(max_seq_len, d_model)
-
-    def forward(self, x):
-        seq_len = x.size(1)
-        positions = torch.arange(seq_len, device=x.device)
-        return self.token_embed(x) + self.pos_embed(positions)
-
-# Usage
-embed = GPTEmbedding(vocab_size=40000, d_model=768, max_seq_len=512)
-tokens = torch.tensor([[101, 2054, 2003]])  # "The cat sat"
-embeddings = embed(tokens)  # Shape: (1, 3, 768)
-```
-
-</div>
-
----
-
-# The GPT transformer block
-
-<div class="definition-box" data-title="Pre-norm transformer block">
-
-Each GPT block applies two sub-layers with **residual connections** and **layer normalization**:
-
-1. **LayerNorm** → **Masked multi-head attention** → **Add residual**
-2. **LayerNorm** → **Feed-forward network** (expand 4x, GELU, project back) → **Add residual**
-
-</div>
-
-<div class="example-box" data-title="GPT block implementation">
-
-```python
-class GPTBlock(nn.Module):
-    def __init__(self, d_model, n_heads):
-        super().__init__()
-        self.norm1 = nn.LayerNorm(d_model)
-        self.attention = MaskedMultiHeadAttention(d_model, n_heads)
-        self.norm2 = nn.LayerNorm(d_model)
-        self.ffn = nn.Sequential(
-            nn.Linear(d_model, 4 * d_model),
-            nn.GELU(),  # GPT uses GELU, not ReLU
-            nn.Linear(4 * d_model, d_model)
-        )
-
-    def forward(self, x):
-        x = x + self.attention(self.norm1(x))  # Pre-norm + residual
-        x = x + self.ffn(self.norm2(x))        # Pre-norm + residual
-        return x
-```
-
-</div>
-
----
-
-# Complete GPT model
-
-<div class="example-box" data-title="Putting it all together">
-
-```python
-class GPT(nn.Module):
-    def __init__(self, vocab_size, d_model, n_layers, n_heads, max_len):
-        super().__init__()
-        self.token_embed = nn.Embedding(vocab_size, d_model)
-        self.pos_embed = nn.Embedding(max_len, d_model)
-        self.blocks = nn.ModuleList([
-            GPTBlock(d_model, n_heads) for _ in range(n_layers)
-        ])
-        self.norm = nn.LayerNorm(d_model)
-        self.head = nn.Linear(d_model, vocab_size)
-
-    def forward(self, x):
-        seq_len = x.size(1)
-        positions = torch.arange(seq_len, device=x.device)
-        x = self.token_embed(x) + self.pos_embed(positions)
-        for block in self.blocks:
-            x = block(x)
-        x = self.norm(x)
-        return self.head(x)  # (batch, seq_len, vocab_size)
-```
+The `-inf` entries become 0 after softmax, ensuring no information flows from future tokens. The causal mask enables both parallel training (all positions in one pass) and autoregressive generation (left-to-right, one token at a time).
 
 </div>
 
@@ -315,7 +142,7 @@ class GPT(nn.Module):
 | Attention heads | 12 |
 | Max sequence length | 512 tokens |
 | Vocabulary size | 40,000 (BPE) |
-| Feed-forward size | 3,072 (4 x 768) |
+| Feed-forward size | 3,072 (4 × 768) |
 | Total parameters | ~117 million |
 
 </div>
@@ -376,39 +203,14 @@ The auxiliary LM loss ($\lambda = 0.5$) improves generalization and speeds conve
 
 </div>
 
-<div class="note-box" data-title="Fine-tuning hyperparameters">
+<div class="note-box" data-title="Task formatting">
 
-- **Learning rate**: 6.25e-5 (much lower than pre-training!)
-- **Batch size**: 32
-- **Epochs**: 3
-- **LR schedule**: Linear warmup then linear decay to 0
+All tasks become text completion: `[START] text [DELIM]` → predict label. Classification, entailment, similarity, and QA all use the same architecture with different input formats. This unifying insight — every NLP task as text completion — is why pre-training transfers so effectively.
 
 </div>
 
 ---
-
-# Task formatting for fine-tuning
-
-<div class="note-box" data-title="How GPT handles different tasks">
-
-All tasks are converted to a sequence format using special delimiter tokens:
-
-| Task | Input format |
-|------|-------------|
-| Classification | `[START] text [DELIM]` → predict label |
-| Entailment | `[START] premise [DELIM] hypothesis [DELIM]` → predict relation |
-| Similarity | `[START] text_A [DELIM] text_B [DELIM]` → predict score |
-| QA / Reading comprehension | `[START] context [DELIM] question [DELIM]` → predict answer |
-
-</div>
-
-<div class="important-box" data-title="The unifying insight">
-
-Every NLP task can be reformulated as **text completion**. The model reads a formatted input and produces an output -- the same thing it learned to do during pre-training. This is why pre-training transfers so effectively.
-
-</div>
-
----
+<!-- _class: scale-85 -->
 
 # Fine-tuning example: sentiment classification
 
@@ -438,27 +240,6 @@ loss = cross_entropy(logits, label_id)  # label_id = 0 (positive)
 
 ---
 
-# What does GPT learn at each layer?
-
-<div class="note-box" data-title="Progressive abstraction through layers">
-
-| Layers | What is learned | Example |
-|--------|----------------|---------|
-| 1--3 | Word order, basic grammar | "The cat" vs. "cat The" |
-| 4--6 | Syntactic structure | Subject-verb agreement |
-| 7--9 | Semantic relationships | "bank" (river) vs. "bank" (financial) |
-| 10--12 | World knowledge, reasoning | "Paris is the capital of ..." → "France" |
-
-</div>
-
-<div class="tip-box" data-title="Questions to consider">
-
-This progressive abstraction mirrors findings in both computer vision (Zeiler & Fergus, 2014) and neuroscience (Fedorenko et al., 2024). Why might hierarchical representations emerge across such different systems?
-
-</div>
-
----
-
 # GPT-1 results
 
 <div class="note-box" data-title="Performance on standard benchmarks">
@@ -476,7 +257,7 @@ GPT-1 achieved state-of-the-art on **9 out of 12** benchmark tasks.
 
 <div class="important-box" data-title="The key finding">
 
-The largest improvements came on tasks with **less training data**. Pre-training provided a strong prior that compensated for limited labeled examples -- exactly the promise of transfer learning.
+The largest improvements came on tasks with **less training data**. Pre-training provided a strong prior that compensated for limited labeled examples — exactly the promise of transfer learning.
 
 </div>
 
@@ -487,7 +268,7 @@ The largest improvements came on tasks with **less training data**. Pre-training
 <div class="definition-box" data-title="Learning without (much) fine-tuning">
 
 - **Zero-shot**: No task-specific examples. The model must generalize purely from its pre-training.
-- **Few-shot**: A small number of examples (1--10) provided as context in the prompt.
+- **Few-shot**: A small number of examples (1–10) provided as context in the prompt.
 - **Fine-tuning**: Full supervised training on a task-specific dataset.
 
 </div>
@@ -500,7 +281,7 @@ GPT-1's zero-shot performance was **weak**. The model had learned rich language 
 
 ---
 
-# GPT vs. BERT: a comparison
+# GPT vs BERT
 
 <div class="note-box" data-title="Head-to-head comparison">
 
@@ -515,15 +296,83 @@ GPT-1's zero-shot performance was **weak**. The model had learned rich language 
 
 </div>
 
-<div class="tip-box" data-title="Questions to consider">
+<div class="tip-box" data-title="The scalability argument">
 
-BERT dominated understanding benchmarks in 2018--2019, but GPT's autoregressive approach proved more scalable and versatile. The ability to *generate* text opened up entirely new capabilities that bidirectional models could not easily match.
+BERT dominated understanding benchmarks in 2018–2019, but GPT's autoregressive approach proved more scalable. Why? Predicting *every* token gives 6.7× more training signal per pass, and generation is a superset of understanding — a model that can *write* coherent text implicitly *understands* it.
 
 </div>
 
 ---
 
-# Limitations of GPT-1
+# The modern decoder stack (2024)
+
+<div class="note-box" data-title="Every component has been upgraded since GPT-1">
+
+| Component | GPT-1 (2018) | Modern LLMs (2024) | Why the change |
+|-----------|-------------|-------------------|---------------|
+| Normalization | [LayerNorm](https://arxiv.org/abs/1607.06450) | [RMSNorm](https://arxiv.org/abs/1910.07467) | 10–15% faster, no mean computation |
+| Position encoding | Learned absolute | [RoPE](https://arxiv.org/abs/2104.09864) | Extrapolates to unseen lengths |
+| Activation | GELU | [SwiGLU](https://arxiv.org/abs/2002.05202) | ~1% better across benchmarks |
+| Attention | Multi-head (MHA) | [Grouped-query (GQA)](https://arxiv.org/abs/2305.13245) | 2× faster inference, same quality |
+
+</div>
+
+<div class="important-box" data-title="The takeaway">
+
+The *conceptual* architecture is the same: token embeddings → causal attention → FFN → output head. But every piece has been systematically optimized. Modern LLMs like LLaMA 3, Gemma 2, and Mistral all use this upgraded stack.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Multi-token prediction
+
+<div class="definition-box" data-title="Predicting more than one token at a time (Meta/FAIR, 2024)">
+
+Standard GPT predicts one token ahead. [Multi-token prediction](https://arxiv.org/abs/2404.19737) trains the model to predict the **next 2–4 tokens simultaneously** using independent output heads sharing the same backbone.
+
+</div>
+
+<div class="note-box" data-title="Why this matters">
+
+| Benefit | Explanation |
+|---------|-------------|
+| **Better representations** | Forces the model to plan ahead, not just match local patterns |
+| **Faster inference** | Can decode 2–4× faster with speculative decoding |
+| **Stronger coding** | 12% improvement on code generation (HumanEval), where planning matters most |
+
+</div>
+
+<div class="tip-box" data-title="The connection to how humans process language">
+
+Humans don't process language one word at a time — we predict upcoming words *in chunks*. The N400 response (Lecture 18) peaks ~400ms before a surprising word appears, suggesting multi-word predictive processing. Multi-token prediction may be a step toward more brain-like language models.
+
+</div>
+
+---
+
+# Hybrid architectures: attention meets state-space models
+
+<div class="definition-box" data-title="Not everything needs to be a transformer">
+
+[Jamba](https://arxiv.org/abs/2403.19887) (AI21, 2024) interleaves Transformer attention layers with [Mamba](https://arxiv.org/abs/2312.00752) state-space layers:
+
+- **Attention layers**: Good at precise retrieval ("what was the third item?")
+- **Mamba layers**: Good at long-range compression and fast inference ($O(n)$ vs $O(n^2)$)
+- **Hybrid**: Gets the best of both — 256K context at 3× the throughput of pure Transformers
+
+</div>
+
+<div class="tip-box" data-title="Questions to consider">
+
+The Transformer has dominated since 2017. But Jamba, Mamba-2, and RWKV suggest that the optimal architecture may be a *hybrid*. What does it mean that different computational primitives (attention vs. recurrence) excel at different aspects of language?
+
+</div>
+
+---
+
+# Limitations of GPT-1 and the path forward
 
 <div class="warning-box" data-title="What GPT-1 could not do well">
 
@@ -531,42 +380,50 @@ BERT dominated understanding benchmarks in 2018--2019, but GPT's autoregressive 
 - **Small model**: 117M parameters (small by modern standards)
 - **Limited data**: Trained on ~5B tokens from BooksCorpus only
 - **Short context**: Maximum sequence length of 512 tokens
-- **Inconsistent generation**: Output could be incoherent over long passages
 - **Hallucinations**: Confidently stated incorrect facts
 
 </div>
 
 <div class="note-box" data-title="The path forward">
 
-Each limitation suggested a clear direction: bigger models, more data, longer contexts, better training. GPT-2 and GPT-3 would systematically address these limitations through **scale**.
+Each limitation suggested a clear direction: bigger models, more data, longer contexts, better training. GPT-2 and GPT-3 would systematically address these limitations through **scale** — but as we'll see in the next lecture, scale alone brings its own surprises and controversies.
 
 </div>
 
 ---
 
-# Key takeaways
+# Discussion
 
-<div class="important-box" data-title="Core concepts from this lecture">
+<div class="tip-box" data-title="Questions to consider">
 
-1. **Generative pre-training** introduced the pre-train → fine-tune paradigm for NLP
-2. GPT uses a **transformer decoder** with **masked (causal) self-attention**
-3. The causal mask ensures each token only attends to **previous** tokens
-4. **Pre-training** learns general language patterns; **fine-tuning** adapts to specific tasks
-5. All tasks can be reformulated as **text completion** with delimiter tokens
-6. GPT-1 proved transfer learning works for NLP, but required fine-tuning for each task
+1. **Autoregressive vs bidirectional:** GPT predicts left-to-right; BERT sees both directions. Humans process language incrementally (left-to-right in English) but with rich top-down expectations. Which model is more "brain-like"?
+
+2. **The generation advantage:** GPT can *generate* text, BERT cannot. Is generation a prerequisite for understanding? Can you truly understand language if you can't produce it?
+
+3. **Component upgrades:** Every piece of GPT-1 has been replaced (LayerNorm→RMSNorm, learned PE→RoPE, etc.) but the architecture is "the same." At what point does a ship become a different ship? (Theseus's paradox for neural networks.)
+
+4. **Hybrid architectures:** Jamba mixes attention and state-space layers. If the "optimal" architecture is task-dependent, does this undermine the transformer's claim to universality?
 
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
 # Further reading
 
-<div class="note-box" data-title="References">
+<div class="note-box" data-title="Further reading">
 
-- **Radford et al. (2018)** -- "Improving Language Understanding by Generative Pre-Training" [[PDF]](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)
-- **Vaswani et al. (2017)** -- "Attention is All You Need" [[arXiv]](https://arxiv.org/abs/1706.03762)
-- **Devlin et al. (2018)** -- "BERT: Pre-training of Deep Bidirectional Transformers" [[arXiv]](https://arxiv.org/abs/1810.04805)
-- **The Illustrated GPT-2** by Jay Alammar [[Blog]](https://jalammar.github.io/illustrated-gpt2/)
+[**Radford et al. (2018)**](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf) "Improving Language Understanding by Generative Pre-Training" — The original GPT paper.
+
+[**Radford et al. (2019)**](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) "Language Models are Unsupervised Multitask Learners" — GPT-2: larger models, zero-shot transfer.
+
+[**Su et al. (2024, *Neurocomputing*)**](https://arxiv.org/abs/2104.09864) "RoFormer: Enhanced Transformer with Rotary Position Embedding" — RoPE, now standard in most LLMs.
+
+[**Ainslie et al. (2023, *EMNLP*)**](https://arxiv.org/abs/2305.13245) "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints" — Grouped-query attention.
+
+[**Gloeckle et al. (2024, *arXiv*)**](https://arxiv.org/abs/2404.19737) "Better & Faster Large Language Models via Multi-token Prediction" — Meta/FAIR multi-token prediction.
+
+[**Lieber et al. (2024, *arXiv*)**](https://arxiv.org/abs/2403.19887) "Jamba: A Hybrid Transformer-Mamba Language Model" — Hybrid attention + SSM architecture.
 
 </div>
 
@@ -591,6 +448,6 @@ Each limitation suggested a clear direction: bigger models, more data, longer co
 
 <div class="tip-box" data-title="Up next...">
 
-Scaling up: from GPT-1 to GPT-3, scaling laws, and the path to ChatGPT
+Scaling up: from GPT-2 to GPT-4, emergent abilities, reasoning, and the path to ChatGPT
 
 </div>

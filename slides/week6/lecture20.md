@@ -20,10 +20,32 @@ Winter 2026
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
 1. Apply BERT to real-world NLP tasks: classification, NER, QA, and semantic similarity
-2. Explain how BERT improved Google Search
-3. Connect transformer representations to cognitive neuroscience findings
-4. Evaluate the "understanding vs pattern matching" debate
-5. Identify limitations and biases in deployed language models
+2. Explain how BERT improved Google Search and reshaped the NLP industry
+3. Connect encoder representations to brain-imaging findings (fMRI encoding)
+4. Evaluate whether language models "understand" or merely pattern-match
+5. Describe systematic approaches to measuring bias in language models
+
+</div>
+
+---
+
+# Recall and roadmap
+
+<div class="note-box" data-title="From earlier lectures">
+
+We introduced BERT's architecture in Lecture 12, explored what BERT actually learns in Lecture 18, and compared BERT variants (RoBERTa, ALBERT, DistilBERT, ELECTRA) in Lecture 19.
+
+</div>
+
+<div class="tip-box" data-title="Today's focus">
+
+Today: how encoder models are *used* — in industry, in neuroscience, and in the ongoing debate about whether any of this counts as "understanding."
+
+</div>
+
+<div class="tip-box" data-title="Companion notebook">
+
+📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/encoder_applications_demo.ipynb) — hands-on with classification, NER, QA, and sentence similarity
 
 </div>
 
@@ -154,39 +176,6 @@ for e in entities:
 ---
 <!-- _class: scale-85 -->
 
-# Sentiment analysis
-
-<div class="example-box" data-title="Sequence classification with BERT">
-
-```python
-from transformers import pipeline
-
-sentiment = pipeline("sentiment-analysis",
-                     model="distilbert-base-uncased-finetuned-sst-2-english")
-
-texts = [
-    "This movie was absolutely amazing!",
-    "The product broke after one week.",
-    "The weather is cloudy today."
-]
-
-for text in texts:
-    result = sentiment(text)[0]
-    print(f"{text}")
-    print(f"  → {result['label']} (confidence: {result['score']:.2f})")
-```
-
-</div>
-
-<div class="tip-box" data-title="Applications">
-
-Sentiment analysis powers customer review analysis, social media monitoring, brand reputation tracking, and financial market sentiment indicators.
-
-</div>
-
----
-<!-- _class: scale-85 -->
-
 # Semantic similarity
 
 <div class="example-box" data-title="Measuring sentence similarity with BERT embeddings">
@@ -217,53 +206,25 @@ print(f"Unrelated similarity:  {F.cosine_similarity(emb1, emb3).item():.3f}")  #
 
 ---
 
-# Cognitive neuroscience perspective
+# Encoders in industry (2025)
 
-<div class="definition-box" data-title="How do brains and models process language?">
+<div class="note-box" data-title="Encoder models are everywhere — even if you don't see them">
 
-Both biological brains and transformer models process language through **predictive processing** — constantly anticipating upcoming input based on context.
+The NLP market reached **$7.73 billion** in 2025. Most of that is powered by encoder models, not chatbots:
 
-**In the brain:**
-- The N400 ERP component reflects surprise at unexpected words
-- Left inferior frontal gyrus (IFG) handles syntax
-- Left superior temporal gyrus (STG/MTG) handles semantics
-- Prediction errors drive learning and adaptation
-
-**In transformer models:**
-- Cross-entropy loss measures surprise at each token
-- Lower layers encode syntax, upper layers encode semantics
-- Gradient descent optimizes predictions
-- Both systems are hierarchical, context-sensitive, and predictive
+| Application | Scale | Architecture |
+|-------------|-------|-------------|
+| Google Search | 8.5B queries/day | BERT → MUM |
+| Sentence-BERT | 700K+ downloads/day | Bi-encoder |
+| Microsoft Bing | Billions of queries | DeBERTa-based |
+| E5 / NV-Embed | Leading retrieval benchmarks | Encoder embeddings |
+| Content moderation | Billions of posts/day | Fine-tuned RoBERTa |
 
 </div>
 
----
+<div class="important-box" data-title="Why not just use GPT-4?">
 
-# Prediction in brains vs language models
-
-<div class="note-box" data-title="Parallels between neural and artificial systems">
-
-| Phenomenon | Human brain | Transformer models |
-|------------|-------------|-------------------|
-| **Surprise** | N400 amplitude (EEG) | Cross-entropy loss |
-| **Hierarchy** | Sounds → words → sentences | Tokens → phrases → meaning |
-| **Context** | Prior discourse + world knowledge | Self-attention over sequence |
-| **Representation** | Population coding (neurons) | Distributed embeddings (vectors) |
-
-</div>
-
-<div class="example-box" data-title="The N400 / surprisal parallel">
-
-```python
-sentence_a = "I take my coffee with cream and sugar"   # Expected
-sentence_b = "I take my coffee with cream and socks"   # Surprising!
-
-# Brain: N400 amplitude much higher for "socks"
-# Model: Higher cross-entropy loss for "socks"
-
-surprisal = -np.log(model.predict_prob("socks", context))
-# Surprisal correlates with N400 amplitude in EEG studies!
-```
+GPT-4 costs ~$30/M tokens and takes ~500ms per request. A fine-tuned DistilBERT handles classification at ~$0.01/M tokens and ~5ms per request. For high-volume, single-task workloads, encoders are **3,000× cheaper** and **100× faster**.
 
 </div>
 
@@ -306,22 +267,42 @@ correlation = np.corrcoef(predictions.flat, brain_activity[80:].flat)[0,1]
 
 ---
 
+# Brain-LLM alignment frontiers
+
+<div class="note-box" data-title="The relationship between LLMs and brains is deeper than expected">
+
+[**Caucheteux & King (2022)**](https://doi.org/10.1038/s42003-022-03036-1): LLM activations predict brain activity in a **layer-specific** way — early model layers map to auditory cortex, deeper layers to high-level language areas. Published in *Communications Biology*.
+
+[**Gao et al. (2025, *Nature Computational Science*)**](https://doi.org/10.1038/s43588-024-00752-6): "Brain-like" artificial neurons emerge in LLMs trained only on text — units that encode syntax, semantics, and even spatial concepts, mirroring brain organization.
+
+</div>
+
+<div class="definition-box" data-title="Mind's Transformer (Aw et al., 2026, ICLR)">
+
+[The Mind's Transformer](https://openreview.net/forum?id=PgIlCCNxdB): Proposes that the brain implements a **Transformer-like** algorithm — not just analogous representations, but analogous *computation*. Attention-like gating and residual-stream-like updates appear across cortical circuits.
+
+**Why this matters:** If the brain and LLMs converge on similar computational strategies, it suggests these are *good solutions* for processing sequential, context-dependent information — not just engineering coincidences.
+
+</div>
+
+---
+
 # Understanding vs pattern matching
 
-<div class="tip-box" data-title="Questions to consider">
+<div class="tip-box" data-title="The core philosophical question">
 
 **Evidence FOR understanding:**
 - Captures syntax and semantics automatically
 - Resolves lexical ambiguity based on context
-- Handles long-range dependencies
 - Generalizes to unseen examples
-- Predicts brain activity patterns
+- Predicts human brain activity patterns
+- Layer structure mirrors human language processing hierarchy
 
 **Evidence AGAINST understanding:**
 - No grounding in the physical world
 - No sensory or social experience
 - Brittle to adversarial examples
-- No common sense reasoning
+- No causal reasoning
 - Might be "just" sophisticated pattern matching
 
 **The key question:** Is there a meaningful difference between "understanding" and "very good pattern matching"? Does it matter for applications?
@@ -365,24 +346,25 @@ classifier("The food was ok")    # → NEGATIVE (0.51)  # Flipped!
 
 ---
 
-# Bias in language models
+# Measuring bias systematically
 
-<div class="warning-box" data-title="Models reflect and amplify societal biases">
+<div class="note-box" data-title="Moving beyond anecdotes to systematic measurement">
 
-BERT inherits biases from its training data (books and Wikipedia contain historical biases):
-
-- Gender bias in occupations: "The doctor said [MASK] would be late" → "he" (62%) vs "she" (18%)
-- "The nurse said [MASK] would be late" → "she" (71%) vs "he" (15%)
-- Racial bias in sentiment: Different confidence scores for identical sentences with different names
+Recall from Lecture 11 that word embeddings encode societal biases (e.g., "doctor" closer to "man," "nurse" closer to "woman"). BERT inherits these same biases from its training data. But how do we measure bias *systematically* across thousands of contexts?
 
 </div>
 
-<div class="note-box" data-title="Mitigation strategies">
+<div class="definition-box" data-title="SAGED: systematic bias evaluation (Jiang et al., COLING 2025)">
 
-1. **Data-level**: Balanced training corpora, counterfactual data augmentation
-2. **Model-level**: Debiasing loss functions, fine-tuning on balanced datasets
-3. **Output-level**: Post-hoc filtering, human review for sensitive applications
-4. **Evaluation**: Regular bias audits using standardized benchmarks (WinoBias, StereoSet)
+[SAGED](https://aclanthology.org/2025.coling-main.202.pdf) proposes a five-step pipeline for measuring bias in language models:
+
+1. **S**elect social groups (e.g., gender, race, age)
+2. **A**ssemble evaluation contexts (template sentences)
+3. **G**enerate model outputs for each group × context
+4. **E**valuate using statistical tests (not cherry-picked examples)
+5. **D**ocument findings with effect sizes and confidence intervals
+
+**Key insight:** Individual examples (like doctor/nurse) are compelling but misleading. Systematic evaluation across thousands of contexts reveals that biases are *real but more nuanced* than anecdotes suggest.
 
 </div>
 
@@ -392,7 +374,7 @@ BERT inherits biases from its training data (books and Wikipedia contain histori
 
 <div class="warning-box" data-title="Despite impressive performance, significant limitations remain">
 
-**Quadratic complexity**: Self-attention scales as $O(n^2)$ with sequence length, limiting context to 512–4096 tokens.
+**Quadratic complexity**: Self-attention scales as $O(n^2)$ with sequence length, limiting context to 512–4096 tokens. (ModernBERT pushes this to 8,192 with Flash Attention.)
 
 **No generation capability**: BERT is designed for understanding, not producing text. For generation tasks, use decoder models (GPT) or encoder-decoder models (T5, BART).
 
@@ -400,56 +382,27 @@ BERT inherits biases from its training data (books and Wikipedia contain histori
 
 **No world model**: BERT learns statistical patterns in text but has no grounding in physical reality, sensory experience, or causal reasoning.
 
-**Fragility**: Small input perturbations can cause large output changes, making models unreliable in adversarial settings.
-
 </div>
 
 ---
 
-# Practical deployment tips
+# Encoder vs decoder: the 2026 landscape
 
-<div class="tip-box" data-title="Making BERT work in production">
-
-**Start with pre-trained models** — never train from scratch. Use HuggingFace Model Hub.
-
-**Fine-tuning best practices:**
-- Learning rate: 1e-5 to 5e-5 (much lower than pre-training)
-- Warmup steps: 6–10% of total training steps
-- Monitor for overfitting; freeze early layers if data is limited
-- 3–5 epochs is usually sufficient
-
-**Optimization for speed:**
-- Use DistilBERT for 60% faster inference with 97% quality
-- Quantization (INT8) gives 2–4× speedup with minimal quality loss
-- Export to ONNX Runtime for production serving
-- Use FlashAttention when available
-
-</div>
-
-<div class="note-box" data-title="Optimization results">
-
-| Optimization | Size | Latency | Quality |
-|-------------|------|---------|---------|
-| Original (FP32) | 420MB | 50ms | 100% |
-| Quantized (INT8) | 110MB | 25ms | 99.5% |
-| DistilBERT + ONNX | 65MB | 12ms | 97% |
-
-</div>
-
----
-
-# Encoder vs decoder: looking ahead
-
-<div class="note-box" data-title="Different architectures for different tasks">
+<div class="note-box" data-title="The architecture divide is narrowing">
 
 | | Encoder (BERT) | Decoder (GPT) |
 |---|---|---|
 | **Training** | Masked language modeling | Autoregressive next-token |
 | **Context** | Bidirectional | Left-to-right (causal) |
 | **Best for** | Understanding tasks | Generation tasks |
-| **Examples** | Classification, NER, QA, similarity | Text completion, dialogue, creative writing |
+| **Cost** | $0.01/M tokens | $1-30/M tokens |
+| **Latency** | ~5ms | ~500ms |
 
-**Interesting trend:** Decoder-only models (GPT-3, LLaMA) can also do classification via prompting. "In-context learning" blurs the distinction between understanding and generation architectures. The field is moving toward unified decoder-only models.
+</div>
+
+<div class="tip-box" data-title="Where things are headed">
+
+**Convergence:** Decoder-only models (GPT-4, Claude) now do classification via prompting. Meanwhile, encoder-decoder hybrids (T5, UL2) blur the distinction further. The field is converging toward flexible architectures that can handle both understanding and generation — but cost and speed still favor purpose-built encoders for production.
 
 </div>
 
@@ -459,29 +412,34 @@ BERT inherits biases from its training data (books and Wikipedia contain histori
 
 <div class="tip-box" data-title="Questions to consider">
 
-1. **Understanding vs pattern matching:** Where do you draw the line? Is there a test for "true" understanding? Does it matter if the application works?
+1. **Understanding vs pattern matching:** If a model predicts brain activity, resolves ambiguity, and handles novel inputs — but has no physical experience — does it "understand"? What evidence would change your mind?
 
-2. **Brain-model parallels:** How useful are comparisons between transformers and the brain? What can neuroscience learn from AI, and vice versa?
+2. **The measurement problem:** SAGED shows bias is more nuanced than individual examples suggest. Does this make bias *less* concerning, or *more* concerning (because it's harder to detect)?
 
-3. **Bias and fairness:** Who is responsible for addressing bias in language models? Can we ever have completely unbiased models? How do we balance accuracy and fairness?
+3. **Brain-model convergence:** If brains and LLMs independently converge on similar representations and computations, what does that tell us about the nature of language processing? Is there only one way to solve it?
 
-4. **The future of encoder models:** Will BERT-style encoders remain relevant as GPT-style decoders get better at everything? Or do understanding and generation require fundamentally different approaches?
+4. **The cost-quality tradeoff:** GPT-4 can do anything an encoder can — but at 3,000× the cost. When does "good enough and cheap" beat "best and expensive"?
 
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
-# References
+# Further reading
 
 <div class="note-box" data-title="Further reading">
 
-[**Devlin et al. (2019, *NAACL*)**](https://aclanthology.org/N19-1423/) "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
+[**Devlin et al. (2019, *NAACL*)**](https://aclanthology.org/N19-1423/) "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding" — The original BERT paper.
 
-[**Caucheteux & King (2022, *Nature Communications*)**](https://doi.org/10.1038/s41467-022-28236-3) "Brains and algorithms partially converge in natural language processing"
+[**Caucheteux & King (2022, *Communications Biology*)**](https://doi.org/10.1038/s42003-022-03036-1) "Brains and algorithms partially converge in natural language processing" — Layer-specific brain-LLM alignment.
 
-[**Kuperberg & Jaeger (2016, *Language, Cognition and Neuroscience*)**](https://doi.org/10.1080/23273798.2015.1102299) "What do we mean by prediction in language comprehension?"
+[**Aw et al. (2026, *ICLR*)**](https://openreview.net/forum?id=PgIlCCNxdB) "The Mind's Transformer" — Evidence that the brain implements Transformer-like computation.
 
-[**Bender & Koller (2020, *ACL*)**](https://aclanthology.org/2020.acl-main.463/) "Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data"
+[**Gao et al. (2025, *Nature Computational Science*)**](https://doi.org/10.1038/s43588-024-00752-6) "Brain-like artificial neurons in LLMs" — Emergent brain-like units in language models.
+
+[**Jiang et al. (2025, *COLING*)**](https://aclanthology.org/2025.coling-main.202.pdf) "SAGED" — Systematic bias evaluation pipeline for language models.
+
+[**Bender & Koller (2020, *ACL*)**](https://aclanthology.org/2020.acl-main.463/) "Climbing towards NLU" — The "understanding" debate.
 
 </div>
 
@@ -506,6 +464,6 @@ BERT inherits biases from its training data (books and Wikipedia contain histori
 
 <div class="tip-box" data-title="Up next...">
 
-Week 7: GPT and autoregressive generation — from decoder architecture to text generation
+Week 7: GPT and autoregressive generation — from decoder architecture to scaling laws
 
 </div>

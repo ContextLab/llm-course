@@ -203,21 +203,37 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture18.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture18.html)
 
 **Wednesday (Lecture 19):** BERT Variants
-- RoBERTa, DistilBERT, ALBERT
+- RoBERTa, ALBERT, DistilBERT, ELECTRA, DeBERTa, ModernBERT
+- Training recipe improvements, parameter sharing, knowledge distillation, replaced token detection
+- Are encoder models still relevant in the era of GPT-4?
 - Reading: [Liu et al. (2019)](https://arxiv.org/abs/1907.11692) - RoBERTa
 - Reading: [Sanh et al. (2019)](https://arxiv.org/abs/1910.01108) - DistilBERT
+- Reading: [Clark et al. (2020)](https://arxiv.org/abs/2003.10555) - ELECTRA
+- Reading: [Warner et al. (2024)](https://arxiv.org/abs/2412.13663) - ModernBERT
+- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/bert_variants_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture19.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture19.html)
 
 **Friday (Lecture 20):** Applications of Encoder Models
+- Classification, NER, question answering, semantic similarity
+- BERT in Google Search, industry adoption ($7.73B NLP market)
+- Brain-LLM alignment: neural encoding with language model representations
+- Systematic bias measurement (SAGED pipeline)
+- Reading: [Caucheteux & King (2022)](https://doi.org/10.1038/s42003-022-03036-1) - Brain-LLM alignment
+- Reading: [Aw et al. (2026)](https://openreview.net/forum?id=PgIlCCNxdB) - The Mind's Transformer (ICLR 2026)
+- Reading: [Jiang et al. (2025)](https://aclanthology.org/2025.coling-main.202.pdf) - SAGED bias evaluation
+- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/encoder_applications_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html)
 ---
 
 ## Week 7: Decoder Models & GPT
 
 **Monday (Lecture 21):** GPT Architecture
-- Autoregressive generation
+- Autoregressive generation, causal masking, the decoder stack
+- Modern decoder innovations: RMSNorm, SwiGLU, RoPE, GQA
+- Multi-token prediction and hybrid architectures (Jamba)
 - Reading: [Radford et al. (2018)](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf) - GPT-1
 - Reading: [Radford et al. (2019)](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) - GPT-2
+- Reading: [Gloeckle et al. (2024)](https://arxiv.org/abs/2404.19737) - Multi-token prediction
 - **📝 Assignment 4 Due (Feb 16, 11:59 PM EST)**
 - **Final Project Released:** [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) (Due: Mar 9, 11:59 PM EST)
 - **Assignment 5 Available (Optional/Extra Credit):** [Build GPT](https://contextlab.github.io/llm-course/assignments/assignment-5/)
@@ -225,12 +241,22 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture21.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture21.html)
 
 **Wednesday (Lecture 22):** Scaling Up to GPT-3 and Beyond
+- From GPT-1 to GPT-4: the scaling journey
+- Beyond RLHF: DPO and GRPO alignment methods
+- Reasoning models (o1, o3, DeepSeek-R1) and emergent abilities debate
 - Reading: [Brown et al. (2020)](https://arxiv.org/abs/2005.14165) - GPT-3
-- Reading: [OpenAI (2023)](https://arxiv.org/abs/2303.08774) - GPT-4 Technical Report
+- Reading: [Rafailov et al. (2023)](https://arxiv.org/abs/2305.18290) - DPO
+- Reading: [Schaeffer et al. (2023)](https://arxiv.org/abs/2304.15004) - Are Emergent Abilities a Mirage?
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture22.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture22.html)
 
 **Friday (Lecture 23):** Implementing GPT from Scratch
+- Build a complete mini-GPT (~30M params) in PyTorch
+- Tokenization, embeddings, masked attention, transformer blocks, training loop
+- Text generation: greedy, temperature, top-k, nucleus sampling
+- KV caching and FlashAttention for efficient inference
 - Tutorial: [Let's build GPT (Karpathy)](https://www.youtube.com/watch?v=kCc8FmEb1nY)
+- Reading: [Dao et al. (2022)](https://arxiv.org/abs/2205.14135) - FlashAttention
+- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/gpt_from_scratch_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture23.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture23.html)
 ---
 
@@ -244,19 +270,36 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ## Week 9: Advanced Topics
 
 **Monday (Lecture 24):** Agents and Tool Use
-- Function calling, ReAct framework, autonomous agents
+- From chatbots to agents: function calling, ReAct framework, Toolformer
+- Model Context Protocol (MCP): universal standard for tool integration
+- Computer Use and agentic coding (Claude Code, Cursor, OpenHands)
+- Agent safety: the principal-agent problem (97% attack success rate)
 - Reading: [Yao et al. (2023)](https://arxiv.org/abs/2210.03629) - ReAct: Synergizing Reasoning and Acting
 - Reading: [Schick et al. (2023)](https://arxiv.org/abs/2302.04761) - Toolformer
+- Reading: [Hagendorff (2025)](https://arxiv.org/abs/2508.04039) - AI Agent Safety
+- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/agents_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture24.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture24.html)
 
 **Wednesday (Lecture 25):** Mixture of Experts & Efficiency
-- MoE architecture, Mixtral
-- Reading: [Fedus et al. (2022)](https://arxiv.org/abs/2101.03961) - Switch Transformers
+- Dense vs sparse models, MoE architecture, routing and load balancing
+- Mixtral 8x7B, DeepSeek-V3 ($5.5M frontier model), small language models
+- Quantization, speculative decoding, state-space models (Mamba)
+- The democratization paradox: efficiency enables access but also misuse
 - Reading: [Jiang et al. (2024)](https://arxiv.org/abs/2401.04088) - Mixtral
+- Reading: [DeepSeek-AI (2025)](https://arxiv.org/abs/2412.19437) - DeepSeek-V3
+- Reading: [Gu & Dao (2023)](https://arxiv.org/abs/2312.00752) - Mamba
+- Reading: [Patterson et al. (2021)](https://arxiv.org/abs/2104.10350) - Carbon Emissions and Large Neural Network Training
+- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/moe_efficiency_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture25.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture25.html)
 
 **Friday (Lecture 26):** Ethics, Bias, and Safety
+- EU AI Act (2024), AI and the 2024 elections, deepfakes and misinformation
+- Strategic dishonesty: alignment faking and deceptive behavior in AI
+- Copyright and intellectual property (80+ lawsuits, NYT v OpenAI)
+- Building your own ethics framework for AI development
 - Reading: [Bender et al. (2021)](https://dl.acm.org/doi/10.1145/3442188.3445922) - Stochastic Parrots
+- Reading: [Greenblatt et al. (2024)](https://arxiv.org/abs/2412.14093) - Alignment Faking
+- Reading: [Scheurer et al. (2025)](https://arxiv.org/abs/2311.07590) - Strategic Deception in AI
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture26.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture26.html)
 ---
 

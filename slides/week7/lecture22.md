@@ -20,76 +20,33 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-- Describe how **GPT-2** demonstrated zero-shot task transfer through scale
-- Explain how **GPT-3** enabled **few-shot learning** without fine-tuning
-- State the key findings of **scaling laws** (Kaplan et al., 2020) and **Chinchilla** (Hoffmann et al., 2022)
-- Outline the **RLHF** pipeline that transformed GPT-3 into ChatGPT
-- Compare **open** vs. **closed** model ecosystems and their tradeoffs
-- Apply **prompting techniques** including few-shot and chain-of-thought
+1. Describe how **GPT-2** demonstrated zero-shot task transfer through scale
+2. Explain how **GPT-3** enabled **few-shot learning** without fine-tuning
+3. Outline the alignment pipeline from RLHF to DPO to GRPO
+4. Explain how **reasoning models** (o1, DeepSeek-R1) work and why they matter
+5. Critically evaluate the debate over **emergent abilities** in LLMs
 
 </div>
 
 ---
 
-# GPT-2: language models are unsupervised multitask learners
+# GPT-2: unsupervised multitask learning
 
-<div class="definition-box" data-title="The 10x scale-up">
+<div class="definition-box" data-title="The 10× scale-up">
 
-GPT-2 (Radford et al., 2019) scaled GPT-1 by an order of magnitude and discovered that **larger models can perform tasks without any fine-tuning**.
+[GPT-2](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) (Radford et al., 2019) scaled GPT-1 by an order of magnitude and discovered that **larger models can perform tasks without any fine-tuning**.
 
 | | GPT-1 (2018) | GPT-2 (2019) |
 |---|---|---|
-| Parameters | 117M | 1.5B (13x) |
-| Training data | BooksCorpus (5B tokens) | WebText (40GB, ~8x) |
+| Parameters | 117M | 1.5B (13×) |
+| Training data | BooksCorpus (5B tokens) | WebText (40GB, ~8×) |
 | Fine-tuning needed? | Yes | **No** (zero-shot transfer) |
 
 </div>
 
 <div class="important-box" data-title="The key claim">
 
-"Language models are unsupervised multitask learners" -- a single model trained on next-token prediction implicitly learns to translate, summarize, answer questions, and more.
-
-</div>
-
----
-
-# The WebText dataset
-
-<div class="note-box" data-title="Curated web scraping as training data">
-
-GPT-2 introduced a new data curation strategy:
-
-1. Scrape all outbound links from Reddit posts with **3+ karma** (community quality signal)
-2. Filter for quality and diversity
-3. Remove Wikipedia (to avoid test set contamination)
-4. Result: **40GB of text** from ~8 million documents
-
-</div>
-
-<div class="tip-box" data-title="Why Reddit karma works as a quality filter">
-
-Reddit's upvote system acts as human curation at scale. Links that receive 3+ karma have been judged interesting or valuable by at least a few people, filtering out spam and low-quality content without manual review.
-
-</div>
-
----
-
-# GPT-2 model sizes
-
-<div class="note-box" data-title="Four progressively released models">
-
-| Model | Parameters | Layers | Hidden size |
-|-------|------------|--------|-------------|
-| Small | 117M | 12 | 768 |
-| Medium | 345M | 24 | 1,024 |
-| Large | 762M | 36 | 1,280 |
-| XL | 1.5B | 48 | 1,600 |
-
-</div>
-
-<div class="warning-box" data-title="Staged release for safety">
-
-OpenAI released GPT-2 over 9 months (Feb--Nov 2019), starting with the smallest model, due to concerns about potential misuse for generating disinformation. This was one of the first high-profile cases of responsible AI release practices.
+"Language models are unsupervised multitask learners" — a single model trained on next-token prediction implicitly learns to translate, summarize, answer questions, and more. OpenAI staged the release over 9 months due to disinformation concerns — one of the first high-profile responsible AI releases.
 
 </div>
 
@@ -99,7 +56,7 @@ OpenAI released GPT-2 over 9 months (Feb--Nov 2019), starting with the smallest 
 
 <div class="definition-box" data-title="Performing tasks without fine-tuning">
 
-GPT-2 can perform tasks it was never explicitly trained for, simply by being prompted with the right text format. This works because the model encountered similar patterns in its diverse training data.
+GPT-2 can perform tasks it was never explicitly trained for, simply by prompting with the right text format. This works because the model encountered similar patterns in its diverse training data.
 
 </div>
 
@@ -111,161 +68,24 @@ GPT-2 can perform tasks it was never explicitly trained for, simply by being pro
 
 **Summarization**: `"[Long article]\n\nTL;DR:"` → generates a summary
 
-The model learned these formats from web text where such patterns naturally occur (bilingual pages, Q&A forums, Reddit TL;DR summaries).
+The model learned these formats from web text where such patterns naturally occur (bilingual pages, Q&A forums, Reddit TL;DR summaries). Performance was far behind fine-tuned SOTA, but the fact that it worked *at all* was groundbreaking.
 
 </div>
 
 ---
 
-# GPT-2 zero-shot performance
-
-<div class="note-box" data-title="Benchmark results (no fine-tuning)">
-
-| Task | Fine-tuned SOTA | GPT-2 (zero-shot) |
-|------|-----------------|-------------------|
-| Translation (En→Fr) | 45.6 BLEU | 11.5 |
-| Summarization | 40.2 ROUGE | 29.3 |
-| Question answering | 89.4% | 63.1% |
-| Reading comprehension | 91.8 F1 | 55.0 |
-
-</div>
-
-<div class="note-box" data-title="Interpretation">
-
-GPT-2's zero-shot performance was far behind fine-tuned models, but the fact that it worked **at all** was groundbreaking. Performance improved consistently with model size, suggesting that further scaling might close the gap.
-
-</div>
-
----
-
-# GPT-2 text generation quality
-
-<div class="example-box" data-title="The unicorn sample that went viral">
-
-**Prompt**: "In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains."
-
-**GPT-2 continued**: "Even more surprising to the researchers was the fact that the unicorns spoke perfect English. The scientist named the population, after their distinctive horn, Ovid's Unicorn. These four-horned, silver-white unicorns were previously unknown to science..."
-
-</div>
-
-<div class="warning-box" data-title="Key observations">
-
-- **Coherent and fluent** across multiple paragraphs
-- **Maintains context** and narrative style
-- **Completely fabricated** -- confident hallucination of non-existent facts
-- This dual nature (fluent but unreliable) remains a core challenge for all LLMs
-
-</div>
-
----
-
-# GPT-3: the 175 billion parameter model
+# GPT-3: few-shot learning at scale
 
 <div class="definition-box" data-title="Brown et al. (2020): 'Language Models are Few-Shot Learners'">
 
-GPT-3 scaled up another **100x** and discovered that at sufficient scale, models develop **in-context learning** -- the ability to learn new tasks from just a few examples in the prompt.
-
-| Model | Parameters | Scale relative to GPT-1 |
-|-------|------------|------------------------|
-| GPT-1 | 117M | 1x |
-| GPT-2 | 1.5B | 13x |
-| GPT-3 | 175B | **1,500x** |
+[GPT-3](https://arxiv.org/abs/2005.14165) scaled up another **100×** (175B parameters, 300B tokens, ~$4.6M) and discovered **in-context learning** — the ability to learn new tasks from just a few examples in the prompt, with no gradient updates.
 
 </div>
 
-<div class="important-box" data-title="The central finding">
-
-New capabilities *emerged* at this scale that were absent in smaller models -- arithmetic, basic reasoning, code generation, and robust few-shot learning across dozens of tasks.
-
-</div>
-
----
-
-<!-- _class: scale-90 -->
-
-# GPT-3 specifications
-
-<div class="note-box" data-title="Model architecture">
-
-| Component | Value |
-|-----------|-------|
-| Transformer layers | 96 |
-| Hidden size (d_model) | 12,288 |
-| Attention heads | 96 |
-| Context window | 2,048 tokens |
-| Vocabulary size | 50,257 (BPE) |
-| Total parameters | 175 billion |
-
-</div>
-
-<div class="note-box" data-title="Training details">
-
-| Detail | Value |
-|--------|-------|
-| Training tokens | 300 billion |
-| Training data | 570GB filtered (Common Crawl, WebText2, Books, Wikipedia) |
-| Training compute | ~3,640 petaflop-days |
-| Estimated cost | ~$4.6M |
-
-</div>
-
----
-
-# GPT-3 training data composition
-
-<div class="note-box" data-title="A carefully balanced mixture">
-
-| Dataset | Tokens | Weight in training |
-|---------|--------|--------------------|
-| Common Crawl (filtered) | 410B | 60% |
-| WebText2 | 19B | 22% |
-| Books1 | 12B | 8% |
-| Books2 | 55B | 8% |
-| Wikipedia | 3B | 3% |
-
-</div>
-
-<div class="tip-box" data-title="Questions to consider">
-
-Notice that high-quality sources (WebText2, Books, Wikipedia) are sampled **more frequently** than their token count would suggest. Why might oversampling quality data improve performance even when more data is available?
-
-</div>
-
----
-
-# Few-shot learning: learning from examples in the prompt
-
-<div class="definition-box" data-title="Three learning paradigms">
-
-- **Zero-shot**: Task description only -- no examples
-- **One-shot**: One input-output example provided
-- **Few-shot**: Multiple examples (typically 3--100) provided in the prompt
-
-Critically, **no gradient updates occur** -- the model's weights remain frozen. All "learning" happens through pattern recognition in the prompt context.
-
-</div>
-
-<div class="example-box" data-title="Few-shot translation">
+<div class="example-box" data-title="Few-shot sentiment classification">
 
 ```text
-dog -> chien
-cat -> chat
-bird -> oiseau
-I love AI ->
-```
-
-GPT-3 output: `"J'aime l'IA"`
-
-</div>
-
----
-
-# Few-shot sentiment classification
-
-<div class="example-box" data-title="Classifying reviews with 3 examples">
-
-```python
-prompt = """Classify each review as Positive or Negative.
+Classify each review as Positive or Negative.
 
 Review: "This movie was amazing, I loved every minute!"
 Sentiment: Positive
@@ -273,94 +93,33 @@ Sentiment: Positive
 Review: "Terrible film, complete waste of time."
 Sentiment: Negative
 
-Review: "A masterpiece of modern cinema."
-Sentiment: Positive
-
 Review: "The acting was wooden and the plot made no sense."
-Sentiment:"""
-
-# GPT-3 output: "Negative"
+Sentiment:
 ```
 
-The model recognizes the pattern from examples and applies it to the new input -- no weight updates, no fine-tuning, pure inference.
+GPT-3 output: `"Negative"` — no weight updates, no fine-tuning, pure pattern recognition.
 
 </div>
 
 ---
 
-# Emergent abilities
+# Scaling laws recap
 
-<div class="definition-box" data-title="Wei et al. (2022)">
+<div class="note-box" data-title="Recall from Lecture 16">
 
-**Emergent abilities** are capabilities that appear only above a certain model scale and are essentially absent in smaller models. They cannot be predicted by extrapolating from smaller models.
-
-</div>
-
-<div class="note-box" data-title="Examples of emergent capabilities">
-
-| Capability | Approximate emergence threshold |
-|------------|-------------------------------|
-| Multi-digit arithmetic | ~10B parameters |
-| Code generation | ~10B parameters |
-| Multi-step reasoning | ~100B parameters |
-| Chain-of-thought reasoning | ~100B parameters |
-| Analogical reasoning | ~100B parameters |
+We covered scaling laws in detail in Lecture 16: [Kaplan et al. (2020)](https://arxiv.org/abs/2001.08361) showed power-law improvement with scale, and [Chinchilla (Hoffmann et al., 2022)](https://arxiv.org/abs/2203.15556) showed that GPT-3 was *undertrained* — optimal is ~20 tokens per parameter.
 
 </div>
 
-<div class="warning-box" data-title="Caveat">
-
-Recent work has questioned whether emergence is real or an artifact of evaluation metrics (Schaeffer et al., 2023). The debate continues.
-
-</div>
-
----
-
-# Scaling laws
-
-<div class="definition-box" data-title="Kaplan et al. (2020): 'Scaling Laws for Neural Language Models'">
-
-Model performance (measured by cross-entropy loss) scales as a **power law** with three factors:
-
-$$L(N) \approx \left(\frac{N_c}{N}\right)^{\alpha_N}$$
-
-where $N$ is the number of parameters, $N_c$ is a constant, and $\alpha_N \approx 0.076$.
-
-</div>
-
-<div class="note-box" data-title="Key findings">
-
-1. Performance improves **smoothly and predictably** with scale
-2. Model **shape** (depth vs. width) matters surprisingly little
-3. 10x more parameters → ~15% lower loss
-4. The three scaling axes (parameters, data, compute) can substitute for each other to some extent
-
-</div>
-
----
-
-# Chinchilla scaling laws
-
-<div class="important-box" data-title="Hoffmann et al. (2022): 'Training Compute-Optimal Large Language Models'">
-
-Previous models were **over-parameterized and under-trained**. For a given compute budget, the optimal allocation is approximately **20 tokens per parameter**.
-
-</div>
-
-<div class="note-box" data-title="GPT-3 was undertrained">
+<div class="important-box" data-title="The practical impact">
 
 | Model | Parameters | Training tokens | Tokens/parameter |
 |-------|------------|----------------|-----------------|
-| GPT-3 | 175B | 300B | 1.7 (far below optimal) |
+| GPT-3 | 175B | 300B | 1.7 (undertrained) |
 | Chinchilla | 70B | 1.4T | 20 (optimal) |
+| LLaMA 3 | 70B | 15T | 214 (overtrained for inference) |
 
-**Result**: Chinchilla (70B) **outperformed** GPT-3 (175B) despite being 2.5x smaller, because it was trained on 4.7x more data.
-
-</div>
-
-<div class="tip-box" data-title="Impact on the field">
-
-Chinchilla scaling directly influenced Llama 2, Mistral, and other modern models that prioritize longer training over larger parameter counts.
+Chinchilla (70B) **outperformed** GPT-3 (175B) at 2.5× smaller. But the latest trend goes further: **overtrain** smaller models to minimize *inference* cost, since you deploy billions of times but train only once.
 
 </div>
 
@@ -373,151 +132,34 @@ Chinchilla scaling directly influenced Llama 2, Mistral, and other modern models
 | Stage | Model | Key innovation |
 |-------|-------|----------------|
 | 1 | GPT-3 (2020) | Next-token prediction at massive scale |
-| 2 | InstructGPT (2022) | **Instruction tuning** on human-written responses |
+| 2 | [InstructGPT](https://arxiv.org/abs/2203.02155) (2022) | **Instruction tuning** on human-written responses |
 | 3 | ChatGPT (Nov 2022) | **RLHF** for helpful, harmless conversation |
 
 </div>
 
-<div class="definition-box" data-title="What is instruction tuning?">
+<div class="definition-box" data-title="RLHF in brief">
 
-Fine-tune the model on (instruction, response) pairs so it learns to **follow commands** rather than merely continue text. Before instruction tuning, asking GPT-3 to "Write a haiku about AI" might produce an essay *about* haiku writing. After instruction tuning, it actually writes the haiku.
-
-</div>
-
----
-
-# RLHF: reinforcement learning from human feedback
-
-<div class="note-box" data-title="The three-step RLHF pipeline (Ouyang et al., 2022)">
-
-**Step 1 -- Supervised fine-tuning (SFT)**: Train on human-written example responses to learn basic instruction-following.
-
-**Step 2 -- Reward model training**: Generate multiple responses to the same prompt, have humans rank them, and train a model to predict human preferences.
-
-**Step 3 -- RL optimization (PPO)**: Use the reward model as a scoring function and optimize the language model's policy to maximize predicted human preference scores.
-
-</div>
-
-<div class="important-box" data-title="Why RLHF matters">
-
-RLHF aligns the model's objective with **what humans actually want** (helpful, honest, harmless) rather than just next-token likelihood. This is what made ChatGPT feel qualitatively different from GPT-3.
+Recall from Lecture 16: RLHF trains a **reward model** from human preference rankings, then optimizes the LLM to maximize that reward. This aligns the model's objective with **what humans actually want** — helpful, honest, harmless — rather than just next-token likelihood. ChatGPT reached 100M users in 2 months, the fastest-growing consumer app in history.
 
 </div>
 
 ---
 
-# RLHF in practice
+# Beyond RLHF: DPO and GRPO
 
-<div class="example-box" data-title="Training the reward model">
+<div class="definition-box" data-title="Simpler, cheaper alternatives to RLHF">
 
-```text
-Prompt: "How do I make a cake?"
+RLHF requires training a separate reward model and running PPO — complex and unstable. Two alternatives have emerged:
 
-Response A (human rank: 1st):
-"Here's a simple recipe: Preheat oven to 350F.
- Mix 2 cups flour, 1.5 cups sugar..."
+[**DPO**](https://arxiv.org/abs/2305.18290) (Rafailov et al., NeurIPS 2023): **Direct Preference Optimization** skips the reward model entirely. It directly optimizes the LLM to prefer winning responses over losing ones using a simple classification loss. Same quality as RLHF, ~3× less compute.
 
-Response B (human rank: 2nd):
-"Cake is a type of dessert that originated in
- ancient civilizations..."
-
-Response C (human rank: 3rd):
-"I cannot help with that request."
-```
-
-The reward model learns: direct, helpful answers score highest; tangential information scores lower; unhelpful refusals score lowest.
+[**GRPO**](https://arxiv.org/abs/2402.03300) (Shao et al., 2024): **Group Relative Policy Optimization** from DeepSeekMath. Instead of human rankings, it generates multiple responses and uses a *verifiable reward* (e.g., "is the math answer correct?") to rank them. No humans needed for domains with checkable answers.
 
 </div>
 
----
+<div class="important-box" data-title="The trend">
 
-# ChatGPT's impact
-
-<div class="note-box" data-title="The fastest-growing consumer application in history">
-
-- Launched **November 30, 2022**
-- **1 million users** in 5 days
-- **100 million users** in 2 months
-- Brought LLMs into mainstream public consciousness
-
-</div>
-
-<div class="tip-box" data-title="Questions to consider">
-
-ChatGPT's architecture (GPT-3.5 + RLHF) was not dramatically different from what researchers had been building. Why did *this particular release* capture public attention so completely? What role did the conversational interface play vs. the underlying capabilities?
-
-</div>
-
----
-
-# The modern LLM landscape
-
-<div class="note-box" data-title="Key milestones after GPT-3 (2020--2025)">
-
-| Year | Milestone |
-|------|-----------|
-| 2022 | ChatGPT launched (OpenAI) |
-| 2023 | GPT-4 -- multimodal, improved reasoning |
-| 2023 | Llama 2 -- open weights from Meta (70B) |
-| 2023 | Claude 2 (Anthropic), Gemini (Google) |
-| 2024 | Claude 3.5, GPT-4o, Llama 3, Mistral Large |
-| 2024--25 | Smaller efficient models (Phi, Qwen, Gemma) |
-
-</div>
-
-<div class="note-box" data-title="Five key trends">
-
-1. **Multimodal** capabilities (text + vision + audio)
-2. **Longer context windows** (100K+ tokens)
-3. **Better reasoning** (chain-of-thought, tool use)
-4. **Open-source alternatives** approaching closed-model quality
-5. **Efficiency gains** -- smaller models matching larger predecessors
-
-</div>
-
----
-
-# Open vs. closed models
-
-<div class="note-box" data-title="The ongoing debate">
-
-| Dimension | Closed (GPT-4, Claude) | Open (Llama, Mistral) |
-|-----------|----------------------|---------------------|
-| Safety control | Centralized moderation | Community-dependent |
-| Transparency | Low (proprietary) | High (weights available) |
-| Customization | Limited (API only) | Full (fine-tune, modify) |
-| Cost model | Per-token API fees | One-time compute cost |
-| Cutting-edge performance | Usually ahead | Rapidly closing gap |
-| Misuse risk | Lower (gated access) | Higher (unrestricted) |
-
-</div>
-
-<div class="tip-box" data-title="Questions to consider">
-
-Is AI safety better served by keeping models closed (preventing misuse) or open (enabling public scrutiny of flaws)? What lessons can we draw from open-source software?
-
-</div>
-
----
-
-# Prompting techniques
-
-<div class="note-box" data-title="Practical strategies for getting better outputs">
-
-**Zero-shot with clear instructions**:
-```text
-Classify the following text as spam or not spam.
-Respond with only "spam" or "not spam".
-Text: "Congratulations! You've won $1,000,000!"
-```
-
-**Few-shot with examples**:
-```text
-"Meeting at 3pm tomorrow" -> not spam
-"URGENT: Send money now!" -> spam
-"Can you review this document?" -> not spam
-"You've been selected for a prize!" ->
-```
+Alignment is getting **cheaper, simpler, and more automated**. This democratizes the ability to create instruction-following models — but also lowers the barrier for misuse.
 
 </div>
 
@@ -525,9 +167,9 @@ Text: "Congratulations! You've won $1,000,000!"
 
 # Chain-of-thought prompting
 
-<div class="definition-box" data-title="Wei et al. (2022)">
+<div class="definition-box" data-title="Wei et al. (2022); Kojima et al. (2022)">
 
-**Chain-of-thought (CoT)** prompting asks the model to show its reasoning step by step before giving a final answer. This dramatically improves performance on reasoning tasks, especially math and logic problems.
+**Chain-of-thought (CoT)** prompting asks the model to show its reasoning step by step before giving a final answer. This dramatically improves performance on reasoning tasks.
 
 </div>
 
@@ -545,7 +187,76 @@ Let's think step by step:
 A: 11
 ```
 
-Simply adding **"Let's think step by step"** can improve accuracy on math word problems from ~18% to ~79% (Kojima et al., 2022).
+Simply adding **"Let's think step by step"** improves accuracy on GSM8K math problems from **17.7% to 78.7%** ([Kojima et al., 2022](https://arxiv.org/abs/2205.11916)). The model "knows" how to reason — it just needs permission to show its work.
+
+</div>
+
+---
+
+# Reasoning models: thinking before answering
+
+<div class="definition-box" data-title="A new paradigm: test-time compute scaling">
+
+Instead of making models bigger (training-time scaling), **reasoning models** spend more compute at inference time by generating an internal chain-of-thought before answering.
+
+</div>
+
+<div class="note-box" data-title="Key reasoning models">
+
+| Model | Organization | Key innovation |
+|-------|-------------|---------------|
+| [o1](https://arxiv.org/abs/2412.16720) (2024) | OpenAI | Hidden chain-of-thought, trained with RL to "think" |
+| [o3](https://openai.com/index/deliberative-alignment/) (2025) | OpenAI | Extended reasoning, SOTA on ARC-AGI |
+| [DeepSeek-R1](https://arxiv.org/abs/2501.12948) (2025) | DeepSeek | Open-weight, trained with GRPO, reasoning emerges from RL alone |
+
+</div>
+
+<div class="important-box" data-title="DeepSeek-R1's surprising finding">
+
+R1 was trained with *pure RL* — no supervised reasoning examples. Yet it spontaneously developed chain-of-thought, self-correction, and even metacognition ("wait, let me reconsider..."). Then R1's reasoning was **distilled** into smaller models (Llama-70B, Qwen-32B), giving them reasoning abilities at a fraction of the cost.
+
+</div>
+
+---
+
+# Are emergent abilities real?
+
+<div class="definition-box" data-title="The debate">
+
+[**Wei et al. (2022)**](https://arxiv.org/abs/2206.07682) claimed that abilities like arithmetic and reasoning *emerge* suddenly at certain scales — absent in small models, present in large ones.
+
+[**Schaeffer et al. (2023, NeurIPS)**](https://arxiv.org/abs/2304.15004) challenged this: they showed that "emergence" disappears when you switch from **nonlinear metrics** (exact-match accuracy) to **linear metrics** (token-level accuracy). The abilities were developing gradually all along — the metric just couldn't detect partial progress.
+
+</div>
+
+<div class="tip-box" data-title="Why this matters for science">
+
+If emergence is real, it means we can't predict what larger models will do — they might develop unexpected and potentially dangerous capabilities. If it's a measurement artifact, then scaling is *predictable* and we can plan for it. The answer has profound implications for AI safety policy.
+
+</div>
+
+---
+
+# The modern LLM landscape (2025)
+
+<div class="note-box" data-title="The field moves fast">
+
+| Year | Milestone |
+|------|-----------|
+| 2022 | ChatGPT launched (OpenAI) — 100M users in 2 months |
+| 2023 | GPT-4 (multimodal), Llama 2 (open weights), Claude 2 |
+| 2024 | Claude 3.5, GPT-4o, Llama 3, Mistral Large, Gemini 1.5 |
+| 2024–25 | Reasoning models (o1, o3, R1), small efficient models (Phi-4, Gemma 2) |
+
+</div>
+
+<div class="note-box" data-title="Five key trends">
+
+1. **Reasoning at inference time** — spending more compute when thinking, not just when training
+2. **Longer context windows** — 128K–1M+ tokens (Gemini 1.5 Pro)
+3. **Open weight models** — LLaMA, Mistral, DeepSeek approaching frontier quality
+4. **Multimodal** — text + vision + audio in a single model
+5. **Efficiency** — smaller models matching larger predecessors (Phi-4 14B ≈ GPT-3.5 175B)
 
 </div>
 
@@ -556,7 +267,7 @@ Simply adding **"Let's think step by step"** can improve accuracy on math word p
 <div class="warning-box" data-title="What LLMs still struggle with">
 
 - **Hallucinations**: Confidently generate false statements with no awareness of uncertainty
-- **Reasoning depth**: Multi-step logic and mathematical proofs remain unreliable
+- **Reasoning depth**: Multi-step logic and mathematical proofs remain unreliable (even reasoning models have limits)
 - **Knowledge currency**: Training data has a cutoff date; no access to real-time information
 - **Consistency**: May give different answers to the same question across runs
 - **Prompt sensitivity**: Small wording changes can dramatically alter outputs
@@ -565,37 +276,44 @@ Simply adding **"Let's think step by step"** can improve accuracy on math word p
 
 <div class="note-box" data-title="Active areas of research">
 
-Each limitation has spawned research directions: RAG for knowledge currency (Lecture 17), tool use for grounding (Lecture 24), constitutional AI for alignment, and formal verification for reasoning reliability.
+Each limitation has spawned research directions: RAG for knowledge currency (Lecture 17), tool use and agents for grounding (Lecture 24), constitutional AI for alignment, reasoning models for reliability, and formal verification for correctness guarantees.
 
 </div>
 
 ---
 
-# Key takeaways
+# Discussion
 
-<div class="important-box" data-title="Core concepts from this lecture">
+<div class="tip-box" data-title="Questions to consider">
 
-1. **GPT-2** showed that scale enables zero-shot task transfer without fine-tuning
-2. **GPT-3** (175B) demonstrated few-shot in-context learning and emergent abilities
-3. **Scaling laws** predict smooth power-law improvement with more parameters, data, and compute
-4. **Chinchilla scaling** showed models should be trained longer on more data, not just made bigger
-5. **RLHF** aligned GPT-3 with human preferences to create ChatGPT
-6. **Chain-of-thought prompting** dramatically improves reasoning by eliciting step-by-step thinking
+1. **Emergent abilities:** If Schaeffer is right that "emergence" is a measurement artifact, does that make scaling *more* or *less* concerning? What if Wei is right?
+
+2. **Reasoning models:** DeepSeek-R1 developed chain-of-thought reasoning through pure RL — no human examples. Does this constitute "learning to think"? How is this different from how children learn to reason?
+
+3. **The alignment tax:** DPO and GRPO make alignment cheaper and more accessible. Is this good (more aligned models) or dangerous (easier to create models aligned to harmful objectives)?
+
+4. **Open vs closed:** DeepSeek-R1 is fully open. OpenAI's o1 is closed. If open models reach frontier quality, can safety-through-secrecy still work? Should it?
 
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
 # Further reading
 
-<div class="note-box" data-title="References">
+<div class="note-box" data-title="Further reading">
 
-- **Radford et al. (2019)** -- "Language Models are Unsupervised Multitask Learners" (GPT-2) [[PDF]](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
-- **Brown et al. (2020)** -- "Language Models are Few-Shot Learners" (GPT-3) [[arXiv]](https://arxiv.org/abs/2005.14165)
-- **Kaplan et al. (2020)** -- "Scaling Laws for Neural Language Models" [[arXiv]](https://arxiv.org/abs/2001.08361)
-- **Hoffmann et al. (2022)** -- "Training Compute-Optimal Large Language Models" (Chinchilla) [[arXiv]](https://arxiv.org/abs/2203.15556)
-- **Ouyang et al. (2022)** -- "Training language models to follow instructions" (InstructGPT) [[arXiv]](https://arxiv.org/abs/2203.02155)
-- **Wei et al. (2022)** -- "Emergent Abilities of Large Language Models" [[arXiv]](https://arxiv.org/abs/2206.07682)
+[**Brown et al. (2020, *NeurIPS*)**](https://arxiv.org/abs/2005.14165) "Language Models are Few-Shot Learners" — GPT-3: in-context learning at scale.
+
+[**Rafailov et al. (2023, *NeurIPS*)**](https://arxiv.org/abs/2305.18290) "Direct Preference Optimization" — RLHF without the RL.
+
+[**DeepSeek-AI (2025, *arXiv*)**](https://arxiv.org/abs/2501.12948) "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning" — Open-weight reasoning model.
+
+[**Schaeffer et al. (2023, *NeurIPS*)**](https://arxiv.org/abs/2304.15004) "Are Emergent Abilities of Large Language Models a Mirage?" — The metric artifact hypothesis.
+
+[**Kojima et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2205.11916) "Large Language Models are Zero-Shot Reasoners" — "Let's think step by step."
+
+[**OpenAI (2024, *arXiv*)**](https://arxiv.org/abs/2412.16720) "o1 System Card" — Reasoning via test-time compute scaling.
 
 </div>
 

@@ -702,14 +702,13 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="learning-objectives">Learning objectives</h1>
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
-<ul>
+<ol>
 <li>Explain the <strong>generative pre-training</strong> paradigm and why it was revolutionary</li>
 <li>Describe the <strong>transformer decoder</strong> architecture used in GPT</li>
-<li>Implement <strong>masked (causal) self-attention</strong> and explain why it is needed</li>
 <li>Distinguish between <strong>pre-training</strong> and <strong>fine-tuning</strong> stages</li>
 <li>Compare GPT's <strong>autoregressive</strong> approach with BERT's <strong>bidirectional</strong> approach</li>
-<li>Understand GPT-1's strengths, limitations, and historical significance</li>
-</ul>
+<li>Identify how the decoder stack has evolved from GPT-1 to modern LLMs (2024)</li>
+</ol>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -749,14 +748,14 @@ Winter 2026</p>
 <ul>
 <li><strong>Before GPT</strong>: Train task-specific models from scratch, needing large labeled datasets for each task</li>
 <li><strong>After GPT</strong>: Learn general language representations once, then adapt cheaply to any task</li>
-<li>This is <strong>transfer learning</strong> for NLP -- the same idea that transformed computer vision with ImageNet</li>
+<li>This is <strong>transfer learning</strong> for NLP — the same idea that transformed computer vision with ImageNet</li>
 </ul>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-transformer-decoder">The transformer decoder</h1>
 <div class="definition-box" data-title="GPT's architecture">
-<p>GPT uses only the <strong>decoder</strong> half of the original transformer (Vaswani et al., 2017). The data flows through:</p>
+<p>GPT uses only the <strong>decoder</strong> half of the original transformer (<a href="https://arxiv.org/abs/1706.03762">Vaswani et al., 2017</a>). The data flows through:</p>
 <ol>
 <li><strong>Token embeddings</strong>: Map each token to a 768-dimensional vector</li>
 <li><strong>Position embeddings</strong>: Add learned positional information</li>
@@ -765,13 +764,13 @@ Winter 2026</p>
 </ol>
 </div>
 <div class="warning-box" data-title="Key difference from the full transformer">
-<p>The original transformer has both an encoder and a decoder with cross-attention between them. GPT removes the encoder entirely and removes cross-attention -- it only uses <strong>masked self-attention</strong> within the decoder.</p>
+<p>The original transformer has both an encoder and a decoder with cross-attention between them. GPT removes the encoder entirely and removes cross-attention — it only uses <strong>masked self-attention</strong> within the decoder.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="masked-causal-self-attention">Masked (causal) self-attention</h1>
-<div class="definition-box" data-title="The core mechanism">
-<p>In standard self-attention, every token attends to every other token. In <strong>causal</strong> (masked) self-attention, each token can only attend to tokens at <strong>earlier positions</strong> (and itself). This prevents the model from &quot;peeking&quot; at future tokens during training.</p>
+<div class="definition-box" data-title="Recall from Lecture 15">
+<p>In standard self-attention (Lecture 15), every token attends to every other token. In <strong>causal</strong> (masked) self-attention, each token can only attend to tokens at <strong>earlier positions</strong> (and itself). This prevents the model from &quot;peeking&quot; at future tokens during training.</p>
 </div>
 <div class="example-box" data-title="Attention pattern for 'The cat sat on'">
 <table>
@@ -815,178 +814,10 @@ Winter 2026</p>
 </tr>
 </tbody>
 </table>
-<p>The <code>-inf</code> entries become 0 after softmax, ensuring no information flows from future tokens.</p>
+<p>The <code>-inf</code> entries become 0 after softmax, ensuring no information flows from future tokens. The causal mask enables both parallel training (all positions in one pass) and autoregressive generation (left-to-right, one token at a time).</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="why-causal-masking-matters">Why causal masking matters</h1>
-<div class="note-box" data-title="Three benefits of the causal mask">
-<ol>
-<li>
-<p><strong>Autoregressive property</strong>: The model generates text left-to-right, one token at a time. Each prediction depends only on previous tokens -- exactly matching how generation works at inference time.</p>
-</li>
-<li>
-<p><strong>No information leakage</strong>: During training, the model cannot cheat by looking ahead at the answer. This forces it to learn genuine predictive representations.</p>
-</li>
-<li>
-<p><strong>Parallel training</strong>: Despite the left-to-right constraint, all positions can be trained simultaneously using the mask. The model computes predictions for every position in one forward pass.</p>
-</li>
-</ol>
-</div>
-<div class="tip-box" data-title="Contrast with BERT">
-<p>BERT's masked language model sees context in <em>both</em> directions but can only predict ~15% of tokens per pass. GPT predicts <em>every</em> token per pass but sees context in only one direction.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="implementing-the-causal-mask">Implementing the causal mask</h1>
-<div class="example-box" data-title="Creating a causal mask in PyTorch">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">import torch</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">def create_causal_mask(seq_len):</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">    &quot;&quot;&quot;Create lower-triangular mask for causal attention.&quot;&quot;&quot;</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">    mask = torch.ones(seq_len, seq_len)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">    mask = torch.tril(mask)  # Keep lower triangle (including diagonal)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">    return mask</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">mask = create_causal_mask(4)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"># tensor([[1., 0., 0., 0.],</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">#         [1., 1., 0., 0.],</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">#         [1., 1., 1., 0.],</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">#         [1., 1., 1., 1.]])</span></span>
-</code></pre>
-</div>
-<div class="note-box" data-title="How the mask is applied">
-<p>In the attention computation, positions where <code>mask == 0</code> are set to <code>-inf</code> <strong>before</strong> softmax. After softmax, those entries become 0, blocking attention to future positions:</p>
-<p><code>scores = scores.masked_fill(mask == 0, float('-inf'))</code></p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="position-embeddings">Position embeddings</h1>
-<div class="definition-box" data-title="Why position information is needed">
-<p>Self-attention is <strong>permutation invariant</strong> -- it treats tokens as a <em>set</em>, not a <em>sequence</em>. Without position information, &quot;The cat sat on the mat&quot; and &quot;mat the on sat cat The&quot; would produce identical representations.</p>
-</div>
-<div class="note-box" data-title="GPT's approach: learned position embeddings">
-<ul>
-<li>Each position (0 to max_length - 1) gets a <strong>learnable</strong> embedding vector</li>
-<li>Added element-wise to token embeddings: <code>embedding = token_emb + pos_emb</code></li>
-<li>Maximum sequence length: <strong>512 tokens</strong> (GPT-1)</li>
-<li>The model learns position patterns during training (e.g., that position 0 is often a sentence start)</li>
-</ul>
-</div>
-<div class="tip-box" data-title="Alternative: sinusoidal encodings">
-<p>The original transformer used fixed sinusoidal functions. GPT chose learned embeddings for greater flexibility, though this limits generalization to unseen sequence lengths.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-embedding-layer-in-code">GPT embedding layer in code</h1>
-<div class="example-box" data-title="Token + position embeddings">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">import torch</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">import torch.nn as nn</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">class GPTEmbedding(nn.Module):</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">    def __init__(self, vocab_size, d_model, max_seq_len):</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">        super().__init__()</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">        self.token_embed = nn.Embedding(vocab_size, d_model)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">        self.pos_embed = nn.Embedding(max_seq_len, d_model)</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">    def forward(self, x):</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">        seq_len = x.size(1)</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">        positions = torch.arange(seq_len, device=x.device)</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">        return self.token_embed(x) + self.pos_embed(positions)</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"># Usage</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-embedding-layer-in-code-1">GPT embedding layer in code</h1>
-<div class="example-box" data-title="Token + position embeddings">
-<pre><code class="language-python has-line-numbers" data-start-line="16">
-<span class="line"><span class="line-num">16</span><span class="line-code">embed = GPTEmbedding(vocab_size=40000, d_model=768, max_seq_len=512)</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code">tokens = torch.tensor([[101, 2054, 2003]])  # &quot;The cat sat&quot;</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code">embeddings = embed(tokens)  # Shape: (1, 3, 768)</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-gpt-transformer-block">The GPT transformer block</h1>
-<div class="definition-box" data-title="Pre-norm transformer block">
-<p>Each GPT block applies two sub-layers with <strong>residual connections</strong> and <strong>layer normalization</strong>:</p>
-<ol>
-<li><strong>LayerNorm</strong> → <strong>Masked multi-head attention</strong> → <strong>Add residual</strong></li>
-<li><strong>LayerNorm</strong> → <strong>Feed-forward network</strong> (expand 4x, GELU, project back) → <strong>Add residual</strong></li>
-</ol>
-</div>
-<div class="example-box" data-title="GPT block implementation">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">class GPTBlock(nn.Module):</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">    def __init__(self, d_model, n_heads):</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">        super().__init__()</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">        self.norm1 = nn.LayerNorm(d_model)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">        self.attention = MaskedMultiHeadAttention(d_model, n_heads)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">        self.norm2 = nn.LayerNorm(d_model)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">        self.ffn = nn.Sequential(</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">            nn.Linear(d_model, 4 * d_model),</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-gpt-transformer-block-1">The GPT transformer block</h1>
-<div class="example-box" data-title="GPT block implementation">
-<pre><code class="language-python has-line-numbers" data-start-line="9">
-<span class="line"><span class="line-num">9</span><span class="line-code">            nn.GELU(),  # GPT uses GELU, not ReLU</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">            nn.Linear(4 * d_model, d_model)</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">        )</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">    def forward(self, x):</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code">        x = x + self.attention(self.norm1(x))  # Pre-norm + residual</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code">        x = x + self.ffn(self.norm2(x))        # Pre-norm + residual</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">        return x</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="complete-gpt-model">Complete GPT model</h1>
-<div class="example-box" data-title="Putting it all together">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">class GPT(nn.Module):</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">    def __init__(self, vocab_size, d_model, n_layers, n_heads, max_len):</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">        super().__init__()</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">        self.token_embed = nn.Embedding(vocab_size, d_model)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">        self.pos_embed = nn.Embedding(max_len, d_model)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">        self.blocks = nn.ModuleList([</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">            GPTBlock(d_model, n_heads) for _ in range(n_layers)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">        ])</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">        self.norm = nn.LayerNorm(d_model)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">        self.head = nn.Linear(d_model, vocab_size)</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">    def forward(self, x):</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">        seq_len = x.size(1)</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="complete-gpt-model-1">Complete GPT model</h1>
-<div class="example-box" data-title="Putting it all together">
-<pre><code class="language-python has-line-numbers" data-start-line="14">
-<span class="line"><span class="line-num">14</span><span class="line-code">        positions = torch.arange(seq_len, device=x.device)</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code">        x = self.token_embed(x) + self.pos_embed(positions)</span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">        for block in self.blocks:</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code">            x = block(x)</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code">        x = self.norm(x)</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code">        return self.head(x)  # (batch, seq_len, vocab_size)</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="gpt-1-specifications">GPT-1 specifications</h1>
 <div class="note-box" data-title="Model architecture">
 <table>
@@ -1019,7 +850,7 @@ Winter 2026</p>
 </tr>
 <tr>
 <td>Feed-forward size</td>
-<td>3,072 (4 x 768)</td>
+<td>3,072 (4 × 768)</td>
 </tr>
 <tr>
 <td>Total parameters</td>
@@ -1057,7 +888,7 @@ Winter 2026</p>
 </table>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="stage-1-pre-training">Stage 1: Pre-training</h1>
 <div class="definition-box" data-title="The pre-training objective">
 <p>Maximize the likelihood of each token given all preceding tokens:</p>
@@ -1075,7 +906,7 @@ Winter 2026</p>
 <p>Every text passage provides training signal at every token position.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="stage-2-fine-tuning">Stage 2: Fine-tuning</h1>
 <div class="definition-box" data-title="Adapting to downstream tasks">
 <p>After pre-training, GPT is adapted to specific tasks by:</p>
@@ -1087,51 +918,11 @@ Winter 2026</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="script">L</mi><mtext>fine-tune</mtext></msub><mo>=</mo><msub><mi mathvariant="script">L</mi><mtext>task</mtext></msub><mo>+</mo><mi>λ</mi><mo>⋅</mo><msub><mi mathvariant="script">L</mi><mtext>LM</mtext></msub></mrow><annotation encoding="application/x-tex">\mathcal{L}_{\text{fine-tune}} = \mathcal{L}_{\text{task}} + \lambda \cdot \mathcal{L}_{\text{LM}}
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">fine-tune</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">task</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">λ</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">LM</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p><p>The auxiliary LM loss (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">\lambda = 0.5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">λ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.5</span></span></span></span>) improves generalization and speeds convergence.</p>
 </div>
-<div class="note-box" data-title="Fine-tuning hyperparameters">
-<ul>
-<li><strong>Learning rate</strong>: 6.25e-5 (much lower than pre-training!)</li>
-<li><strong>Batch size</strong>: 32</li>
-<li><strong>Epochs</strong>: 3</li>
-<li><strong>LR schedule</strong>: Linear warmup then linear decay to 0</li>
-</ul>
+<div class="note-box" data-title="Task formatting">
+<p>All tasks become text completion: <code>[START] text [DELIM]</code> → predict label. Classification, entailment, similarity, and QA all use the same architecture with different input formats. This unifying insight — every NLP task as text completion — is why pre-training transfers so effectively.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="task-formatting-for-fine-tuning">Task formatting for fine-tuning</h1>
-<div class="note-box" data-title="How GPT handles different tasks">
-<p>All tasks are converted to a sequence format using special delimiter tokens:</p>
-<table>
-<thead>
-<tr>
-<th>Task</th>
-<th>Input format</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Classification</td>
-<td><code>[START] text [DELIM]</code> → predict label</td>
-</tr>
-<tr>
-<td>Entailment</td>
-<td><code>[START] premise [DELIM] hypothesis [DELIM]</code> → predict relation</td>
-</tr>
-<tr>
-<td>Similarity</td>
-<td><code>[START] text_A [DELIM] text_B [DELIM]</code> → predict score</td>
-</tr>
-<tr>
-<td>QA / Reading comprehension</td>
-<td><code>[START] context [DELIM] question [DELIM]</code> → predict answer</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="important-box" data-title="The unifying insight">
-<p>Every NLP task can be reformulated as <strong>text completion</strong>. The model reads a formatted input and produces an output -- the same thing it learned to do during pre-training. This is why pre-training transfers so effectively.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="fine-tuning-example-sentiment-classification">Fine-tuning example: sentiment classification</h1>
 <div class="example-box" data-title="Classifying movie reviews">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -1154,7 +945,7 @@ Winter 2026</p>
 <div class="code-continued-indicator">continued...</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="fine-tuning-example-sentiment-classification-1">Fine-tuning example: sentiment classification</h1>
 <div class="example-box" data-title="Classifying movie reviews">
 <pre><code class="language-python has-line-numbers" data-start-line="16">
@@ -1164,46 +955,7 @@ Winter 2026</p>
 <div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="what-does-gpt-learn-at-each-layer">What does GPT learn at each layer?</h1>
-<div class="note-box" data-title="Progressive abstraction through layers">
-<table>
-<thead>
-<tr>
-<th>Layers</th>
-<th>What is learned</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1--3</td>
-<td>Word order, basic grammar</td>
-<td>&quot;The cat&quot; vs. &quot;cat The&quot;</td>
-</tr>
-<tr>
-<td>4--6</td>
-<td>Syntactic structure</td>
-<td>Subject-verb agreement</td>
-</tr>
-<tr>
-<td>7--9</td>
-<td>Semantic relationships</td>
-<td>&quot;bank&quot; (river) vs. &quot;bank&quot; (financial)</td>
-</tr>
-<tr>
-<td>10--12</td>
-<td>World knowledge, reasoning</td>
-<td>&quot;Paris is the capital of ...&quot; → &quot;France&quot;</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="tip-box" data-title="Questions to consider">
-<p>This progressive abstraction mirrors findings in both computer vision (Zeiler &amp; Fergus, 2014) and neuroscience (Fedorenko et al., 2024). Why might hierarchical representations emerge across such different systems?</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="gpt-1-results">GPT-1 results</h1>
 <div class="note-box" data-title="Performance on standard benchmarks">
 <table>
@@ -1240,15 +992,15 @@ Winter 2026</p>
 <p>GPT-1 achieved state-of-the-art on <strong>9 out of 12</strong> benchmark tasks.</p>
 </div>
 <div class="important-box" data-title="The key finding">
-<p>The largest improvements came on tasks with <strong>less training data</strong>. Pre-training provided a strong prior that compensated for limited labeled examples -- exactly the promise of transfer learning.</p>
+<p>The largest improvements came on tasks with <strong>less training data</strong>. Pre-training provided a strong prior that compensated for limited labeled examples — exactly the promise of transfer learning.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="zero-shot-and-few-shot-learning">Zero-shot and few-shot learning</h1>
 <div class="definition-box" data-title="Learning without (much) fine-tuning">
 <ul>
 <li><strong>Zero-shot</strong>: No task-specific examples. The model must generalize purely from its pre-training.</li>
-<li><strong>Few-shot</strong>: A small number of examples (1--10) provided as context in the prompt.</li>
+<li><strong>Few-shot</strong>: A small number of examples (1–10) provided as context in the prompt.</li>
 <li><strong>Fine-tuning</strong>: Full supervised training on a task-specific dataset.</li>
 </ul>
 </div>
@@ -1256,8 +1008,8 @@ Winter 2026</p>
 <p>GPT-1's zero-shot performance was <strong>weak</strong>. The model had learned rich language representations but struggled to apply them without explicit task formatting. This motivated the development of GPT-2 and GPT-3, which aimed to make models that could perform tasks <em>without</em> fine-tuning.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-vs-bert-a-comparison">GPT vs. BERT: a comparison</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="gpt-vs-bert">GPT vs BERT</h1>
 <div class="note-box" data-title="Head-to-head comparison">
 <table>
 <thead>
@@ -1301,51 +1053,147 @@ Winter 2026</p>
 </tbody>
 </table>
 </div>
-<div class="tip-box" data-title="Questions to consider">
-<p>BERT dominated understanding benchmarks in 2018--2019, but GPT's autoregressive approach proved more scalable and versatile. The ability to <em>generate</em> text opened up entirely new capabilities that bidirectional models could not easily match.</p>
+<div class="tip-box" data-title="The scalability argument">
+<p>BERT dominated understanding benchmarks in 2018–2019, but GPT's autoregressive approach proved more scalable. Why? Predicting <em>every</em> token gives 6.7× more training signal per pass, and generation is a superset of understanding — a model that can <em>write</em> coherent text implicitly <em>understands</em> it.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="limitations-of-gpt-1">Limitations of GPT-1</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="the-modern-decoder-stack-2024">The modern decoder stack (2024)</h1>
+<div class="note-box" data-title="Every component has been upgraded since GPT-1">
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>GPT-1 (2018)</th>
+<th>Modern LLMs (2024)</th>
+<th>Why the change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Normalization</td>
+<td><a href="https://arxiv.org/abs/1607.06450">LayerNorm</a></td>
+<td><a href="https://arxiv.org/abs/1910.07467">RMSNorm</a></td>
+<td>10–15% faster, no mean computation</td>
+</tr>
+<tr>
+<td>Position encoding</td>
+<td>Learned absolute</td>
+<td><a href="https://arxiv.org/abs/2104.09864">RoPE</a></td>
+<td>Extrapolates to unseen lengths</td>
+</tr>
+<tr>
+<td>Activation</td>
+<td>GELU</td>
+<td><a href="https://arxiv.org/abs/2002.05202">SwiGLU</a></td>
+<td>~1% better across benchmarks</td>
+</tr>
+<tr>
+<td>Attention</td>
+<td>Multi-head (MHA)</td>
+<td><a href="https://arxiv.org/abs/2305.13245">Grouped-query (GQA)</a></td>
+<td>2× faster inference, same quality</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="important-box" data-title="The takeaway">
+<p>The <em>conceptual</em> architecture is the same: token embeddings → causal attention → FFN → output head. But every piece has been systematically optimized. Modern LLMs like LLaMA 3, Gemma 2, and Mistral all use this upgraded stack.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="multi-token-prediction">Multi-token prediction</h1>
+<div class="definition-box" data-title="Predicting more than one token at a time (Meta/FAIR, 2024)">
+<p>Standard GPT predicts one token ahead. <a href="https://arxiv.org/abs/2404.19737">Multi-token prediction</a> trains the model to predict the <strong>next 2–4 tokens simultaneously</strong> using independent output heads sharing the same backbone.</p>
+</div>
+<div class="note-box" data-title="Why this matters">
+<table>
+<thead>
+<tr>
+<th>Benefit</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Better representations</strong></td>
+<td>Forces the model to plan ahead, not just match local patterns</td>
+</tr>
+<tr>
+<td><strong>Faster inference</strong></td>
+<td>Can decode 2–4× faster with speculative decoding</td>
+</tr>
+<tr>
+<td><strong>Stronger coding</strong></td>
+<td>12% improvement on code generation (HumanEval), where planning matters most</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tip-box" data-title="The connection to how humans process language">
+<p>Humans don't process language one word at a time — we predict upcoming words <em>in chunks</em>. The N400 response (Lecture 18) peaks ~400ms before a surprising word appears, suggesting multi-word predictive processing. Multi-token prediction may be a step toward more brain-like language models.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="hybrid-architectures-attention-meets-state-space-models">Hybrid architectures: attention meets state-space models</h1>
+<div class="definition-box" data-title="Not everything needs to be a transformer">
+<p><a href="https://arxiv.org/abs/2403.19887">Jamba</a> (AI21, 2024) interleaves Transformer attention layers with <a href="https://arxiv.org/abs/2312.00752">Mamba</a> state-space layers:</p>
+<ul>
+<li><strong>Attention layers</strong>: Good at precise retrieval (&quot;what was the third item?&quot;)</li>
+<li><strong>Mamba layers</strong>: Good at long-range compression and fast inference (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> vs <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>)</li>
+<li><strong>Hybrid</strong>: Gets the best of both — 256K context at 3× the throughput of pure Transformers</li>
+</ul>
+</div>
+<div class="tip-box" data-title="Questions to consider">
+<p>The Transformer has dominated since 2017. But Jamba, Mamba-2, and RWKV suggest that the optimal architecture may be a <em>hybrid</em>. What does it mean that different computational primitives (attention vs. recurrence) excel at different aspects of language?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="limitations-of-gpt-1-and-the-path-forward">Limitations of GPT-1 and the path forward</h1>
 <div class="warning-box" data-title="What GPT-1 could not do well">
 <ul>
 <li><strong>Weak zero-shot performance</strong>: Required fine-tuning for each new task</li>
 <li><strong>Small model</strong>: 117M parameters (small by modern standards)</li>
 <li><strong>Limited data</strong>: Trained on ~5B tokens from BooksCorpus only</li>
 <li><strong>Short context</strong>: Maximum sequence length of 512 tokens</li>
-<li><strong>Inconsistent generation</strong>: Output could be incoherent over long passages</li>
 <li><strong>Hallucinations</strong>: Confidently stated incorrect facts</li>
 </ul>
 </div>
 <div class="note-box" data-title="The path forward">
-<p>Each limitation suggested a clear direction: bigger models, more data, longer contexts, better training. GPT-2 and GPT-3 would systematically address these limitations through <strong>scale</strong>.</p>
+<p>Each limitation suggested a clear direction: bigger models, more data, longer contexts, better training. GPT-2 and GPT-3 would systematically address these limitations through <strong>scale</strong> — but as we'll see in the next lecture, scale alone brings its own surprises and controversies.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="key-takeaways">Key takeaways</h1>
-<div class="important-box" data-title="Core concepts from this lecture">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="discussion">Discussion</h1>
+<div class="tip-box" data-title="Questions to consider">
 <ol>
-<li><strong>Generative pre-training</strong> introduced the pre-train → fine-tune paradigm for NLP</li>
-<li>GPT uses a <strong>transformer decoder</strong> with <strong>masked (causal) self-attention</strong></li>
-<li>The causal mask ensures each token only attends to <strong>previous</strong> tokens</li>
-<li><strong>Pre-training</strong> learns general language patterns; <strong>fine-tuning</strong> adapts to specific tasks</li>
-<li>All tasks can be reformulated as <strong>text completion</strong> with delimiter tokens</li>
-<li>GPT-1 proved transfer learning works for NLP, but required fine-tuning for each task</li>
+<li>
+<p><strong>Autoregressive vs bidirectional:</strong> GPT predicts left-to-right; BERT sees both directions. Humans process language incrementally (left-to-right in English) but with rich top-down expectations. Which model is more &quot;brain-like&quot;?</p>
+</li>
+<li>
+<p><strong>The generation advantage:</strong> GPT can <em>generate</em> text, BERT cannot. Is generation a prerequisite for understanding? Can you truly understand language if you can't produce it?</p>
+</li>
+<li>
+<p><strong>Component upgrades:</strong> Every piece of GPT-1 has been replaced (LayerNorm→RMSNorm, learned PE→RoPE, etc.) but the architecture is &quot;the same.&quot; At what point does a ship become a different ship? (Theseus's paradox for neural networks.)</p>
+</li>
+<li>
+<p><strong>Hybrid architectures:</strong> Jamba mixes attention and state-space layers. If the &quot;optimal&quot; architecture is task-dependent, does this undermine the transformer's claim to universality?</p>
+</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="further-reading">Further reading</h1>
-<div class="note-box" data-title="References">
-<ul>
-<li><strong>Radford et al. (2018)</strong> -- &quot;Improving Language Understanding by Generative Pre-Training&quot; <a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">[PDF]</a></li>
-<li><strong>Vaswani et al. (2017)</strong> -- &quot;Attention is All You Need&quot; <a href="https://arxiv.org/abs/1706.03762">[arXiv]</a></li>
-<li><strong>Devlin et al. (2018)</strong> -- &quot;BERT: Pre-training of Deep Bidirectional Transformers&quot; <a href="https://arxiv.org/abs/1810.04805">[arXiv]</a></li>
-<li><strong>The Illustrated GPT-2</strong> by Jay Alammar <a href="https://jalammar.github.io/illustrated-gpt2/">[Blog]</a></li>
-</ul>
+<div class="note-box" data-title="Further reading">
+<p><a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf"><strong>Radford et al. (2018)</strong></a> &quot;Improving Language Understanding by Generative Pre-Training&quot; — The original GPT paper.</p>
+<p><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"><strong>Radford et al. (2019)</strong></a> &quot;Language Models are Unsupervised Multitask Learners&quot; — GPT-2: larger models, zero-shot transfer.</p>
+<p><a href="https://arxiv.org/abs/2104.09864"><strong>Su et al. (2024, <em>Neurocomputing</em>)</strong></a> &quot;RoFormer: Enhanced Transformer with Rotary Position Embedding&quot; — RoPE, now standard in most LLMs.</p>
+<p><a href="https://arxiv.org/abs/2305.13245"><strong>Ainslie et al. (2023, <em>EMNLP</em>)</strong></a> &quot;GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints&quot; — Grouped-query attention.</p>
+<p><a href="https://arxiv.org/abs/2404.19737"><strong>Gloeckle et al. (2024, <em>arXiv</em>)</strong></a> &quot;Better &amp; Faster Large Language Models via Multi-token Prediction&quot; — Meta/FAIR multi-token prediction.</p>
+<p><a href="https://arxiv.org/abs/2403.19887"><strong>Lieber et al. (2024, <em>arXiv</em>)</strong></a> &quot;Jamba: A Hybrid Transformer-Mamba Language Model&quot; — Hybrid attention + SSM architecture.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
@@ -1362,7 +1210,7 @@ Winter 2026</p>
   </div>
 </div>
 <div class="tip-box" data-title="Up next...">
-<p>Scaling up: from GPT-1 to GPT-3, scaling laws, and the path to ChatGPT</p>
+<p>Scaling up: from GPT-2 to GPT-4, emergent abilities, reasoning, and the path to ChatGPT</p>
 </div>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();

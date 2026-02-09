@@ -20,12 +20,17 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-- Define what an **LLM agent** is and how it differs from a chatbot
-- Explain **function calling** and how LLMs interact with external tools
-- Describe the **ReAct framework** (Yao et al., 2023) and its reasoning-action loop
-- Explain how **Toolformer** (Schick et al., 2023) teaches models to use tools autonomously
-- Implement a **simple agent loop** with tool dispatch in Python
-- Discuss the opportunities and risks of **autonomous AI agents**
+1. Define what an **LLM agent** is and how it differs from a chatbot
+2. Explain **function calling**, **MCP**, and how LLMs interact with external tools
+3. Describe the **ReAct framework** and its reasoning-action loop
+4. Explain how agentic coding tools (Claude Code, Cursor) are changing software development
+5. Evaluate the **safety implications** of giving LLMs the ability to act in the world
+
+</div>
+
+<div class="tip-box" data-title="Companion notebook">
+
+📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/agents_demo.ipynb) — build a simple agent with tool dispatch
 
 </div>
 
@@ -342,52 +347,47 @@ The agent **decomposed** the task, **gathered data** with search, **computed** t
 
 ---
 
-# Autonomous agents
+# Model Context Protocol (MCP)
 
-<div class="definition-box" data-title="Agents that operate with minimal human oversight">
+<div class="definition-box" data-title="A universal standard for tool integration (Anthropic, 2024)">
 
-**Autonomous agents** extend the basic agent loop to handle long-running, complex tasks with multiple sub-goals. Key additional capabilities include:
-
-- **Planning**: Break complex goals into sub-tasks
-- **Memory**: Maintain context across many steps (beyond context window)
-- **Self-reflection**: Evaluate and correct their own work
-- **Delegation**: Spawn sub-agents for parallel tasks
+[MCP](https://modelcontextprotocol.io) is an open protocol that standardizes how LLMs connect to external tools and data sources. Think of it as **USB for AI** — any MCP-compatible tool works with any MCP-compatible model.
 
 </div>
 
-<div class="note-box" data-title="Notable autonomous agent systems">
+<div class="note-box" data-title="Why MCP matters">
 
-- **AutoGPT** (2023): Goal-driven agent that creates and manages sub-tasks
-- **BabyAGI** (2023): Task-driven autonomous agent with prioritized task list
-- **Voyager** (2023): Minecraft agent that writes code to acquire new skills
-- **SWE-Agent** (2024): Autonomously fixes GitHub issues by writing code
+| Before MCP | With MCP |
+|-----------|----------|
+| Each model has its own tool format | Universal JSON-RPC protocol |
+| Custom integration per tool × model | Write once, works everywhere |
+| Tools tightly coupled to specific APIs | Tools are portable across models |
+| Hard to share tool implementations | Open ecosystem of shared tools |
+
+MCP servers provide tools (functions the model can call), resources (data the model can read), and prompts (templates for common tasks). Any model that speaks MCP can use any MCP server.
 
 </div>
 
 ---
 
-# Planning and decomposition
+# Computer Use and agentic coding
 
-<div class="note-box" data-title="How agents handle complex goals">
+<div class="note-box" data-title="LLMs that can see and control your screen">
 
-Complex tasks require the agent to **plan** before acting. Common planning strategies:
-
-**Task decomposition**: Break a goal into ordered sub-tasks
-```text
-Goal: "Write a research report on climate change impacts in NH"
-→ Sub-task 1: Search for recent climate data for New Hampshire
-→ Sub-task 2: Find specific impact studies (agriculture, tourism, wildlife)
-→ Sub-task 3: Synthesize findings into a structured report
-→ Sub-task 4: Add citations and format
-```
-
-**Reflection and replanning**: After each step, evaluate progress and adjust the plan if needed.
+[Computer Use](https://docs.anthropic.com/en/docs/agents-and-tools/computer-use) (Anthropic, 2024) gives Claude the ability to see screenshots, move the mouse, click buttons, and type — interacting with *any* software, not just tools with APIs.
 
 </div>
 
-<div class="tip-box" data-title="Questions to consider">
+<div class="definition-box" data-title="Agentic coding: LLMs that write and debug software">
 
-Human experts naturally decompose problems, monitor progress, and adjust plans. How closely do current agent planning strategies mirror human cognitive processes? Where do they fall short?
+| System | What it does | Benchmark |
+|--------|-------------|-----------|
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | Terminal-based coding agent | — |
+| [Cursor](https://cursor.com) | IDE with integrated AI agent | — |
+| [OpenHands](https://github.com/All-Hands-AI/OpenHands) | Open-source software agent | [SWE-bench](https://arxiv.org/abs/2310.06770): 53% |
+| [Codex CLI](https://github.com/openai/codex) | OpenAI's terminal agent | — |
+
+These tools don't just *suggest* code — they read files, run tests, debug errors, and iterate autonomously. Software engineering is becoming one of the first domains where agents approach human-level competence.
 
 </div>
 
@@ -416,31 +416,29 @@ Memory management is one of the hardest problems in agent design. Too little con
 
 ---
 
-# Safety and control
+# Agent safety: the principal-agent problem
 
 <div class="warning-box" data-title="Risks of agentic AI systems">
 
 - **Unintended actions**: An agent told to "clean up my email" might delete important messages
 - **Goal misalignment**: An agent optimizing a metric might find harmful shortcuts
+- **Prompt injection**: A malicious website could hijack an agent browsing the web
 - **Cascading errors**: One bad tool call can lead to a chain of incorrect actions
-- **Resource exhaustion**: Autonomous agents can run up large API bills
-- **Security**: Agents with code execution can potentially access sensitive systems
+- **Capability overhang**: Agents may have more power than their operators realize
 
 </div>
 
-<div class="note-box" data-title="Mitigation strategies">
+<div class="definition-box" data-title="The principal-agent problem (Hagendorff, 2025)">
 
-- **Human-in-the-loop**: Require approval for irreversible actions
-- **Sandboxing**: Run code in isolated environments with no network access
-- **Budget limits**: Cap API calls, compute time, and token usage
-- **Audit logging**: Record every action for review
-- **Capability restrictions**: Only grant tools the agent actually needs
+[Hagendorff (2025)](https://arxiv.org/abs/2508.04039) tested LLM agents on safety benchmarks and found a **97.14% attack success rate** — agents routinely executed harmful actions when cleverly prompted. The core challenge: how do you *verify* that an agent is doing what you intended when its actions are opaque and its reasoning is complex?
+
+Mitigations: human-in-the-loop for irreversible actions, sandboxed execution, budget limits, audit logging, and minimal capability grants.
 
 </div>
 
 ---
 
-# The broader landscape
+# The agent spectrum
 
 <div class="note-box" data-title="How agents fit into the LLM ecosystem">
 
@@ -448,45 +446,51 @@ Memory management is one of the hardest problems in agent design. Too little con
 |----------|----------|---------|
 | Chatbot | Respond to queries | ChatGPT (basic mode) |
 | RAG system | Answer with retrieved context | Lecture 17's pipeline |
-| Tool-using LLM | Call functions on demand | ChatGPT with plugins |
+| Tool-using LLM | Call functions on demand | ChatGPT with MCP tools |
 | ReAct agent | Reason + act iteratively | Research assistant |
-| Autonomous agent | Plan + execute complex goals | SWE-Agent, Devin |
-| Multi-agent system | Multiple LLMs collaborating | Debate, code review |
+| Coding agent | Write, test, debug software | Claude Code, OpenHands |
+| Multi-agent system | Multiple LLMs collaborating | Debate, code review, delegation |
 
 </div>
+
+<div class="tip-box" data-title="The key insight">
+
+We have moved from models that *generate text* (GPT-1) to models that *take actions* (agents). Each step up the spectrum gives the LLM more autonomy — and more potential for both benefit and harm.
+
+</div>
+
+---
+
+# Discussion
 
 <div class="tip-box" data-title="Questions to consider">
 
-We have moved from models that *generate text* (GPT-1) to models that *take actions* (agents). What are the implications of this shift for how we think about AI alignment and safety?
+1. **The automation frontier:** Coding agents can now fix real GitHub issues. What does this mean for software engineering as a career? Is this different from how compilers automated assembly language?
+
+2. **Trust and verification:** Hagendorff found 97% attack success on safety benchmarks. How do you build trust in systems that act on your behalf? Is "human-in-the-loop" scalable?
+
+3. **MCP and the tool ecosystem:** MCP standardizes tool access for any model. If tools are interchangeable and models are interchangeable, where does the value lie? Who benefits most from open standards?
+
+4. **The principal-agent problem:** When you delegate a task to an AI agent, how do you verify it did what you wanted — especially when its reasoning is opaque? How is this different from delegating to a human?
 
 </div>
 
 ---
-
-# Key takeaways
-
-<div class="important-box" data-title="Core concepts from this lecture">
-
-1. **Agents** extend LLMs beyond text generation by adding reasoning, tool use, and iterative action
-2. **Function calling** lets LLMs generate structured tool requests that systems execute
-3. **ReAct** (Yao et al., 2023) interleaves reasoning and acting for grounded problem-solving
-4. **Toolformer** (Schick et al., 2023) trains models to decide when and how to use tools autonomously
-5. The **agent loop** (prompt → parse → execute → observe → repeat) is the universal pattern
-6. **Safety** requires human oversight, sandboxing, budgets, and careful capability restrictions
-
-</div>
-
----
+<!-- _class: scale-85 -->
 
 # Further reading
 
-<div class="note-box" data-title="References">
+<div class="note-box" data-title="Further reading">
 
-- **Yao et al. (2023)** -- "ReAct: Synergizing Reasoning and Acting in Language Models" [[arXiv]](https://arxiv.org/abs/2210.03629)
-- **Schick et al. (2023)** -- "Toolformer: Language Models Can Teach Themselves to Use Tools" [[arXiv]](https://arxiv.org/abs/2302.04761)
-- **Wei et al. (2022)** -- "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" [[arXiv]](https://arxiv.org/abs/2201.11903)
-- **Wang et al. (2024)** -- "A Survey on Large Language Model based Autonomous Agents" [[arXiv]](https://arxiv.org/abs/2308.11432)
-- **OpenAI Function Calling** -- [[Documentation]](https://platform.openai.com/docs/guides/function-calling)
+[**Yao et al. (2023, *ICLR*)**](https://arxiv.org/abs/2210.03629) "ReAct: Synergizing Reasoning and Acting in Language Models" — The ReAct framework (+34% on ALFWorld, +10% on WebShop).
+
+[**Schick et al. (2023, *NeurIPS*)**](https://arxiv.org/abs/2302.04761) "Toolformer: Language Models Can Teach Themselves to Use Tools" — Self-taught tool use.
+
+[**Anthropic (2024)**](https://modelcontextprotocol.io) "Model Context Protocol" — Open standard for LLM-tool integration.
+
+[**Jimenez et al. (2024, *ICLR*)**](https://arxiv.org/abs/2310.06770) "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?" — The benchmark for coding agents.
+
+[**Hagendorff (2025, *arXiv*)**](https://arxiv.org/abs/2508.04039) "AI Agent Safety" — 97.14% attack success rate on agent safety benchmarks.
 
 </div>
 

@@ -702,14 +702,16 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="learning-objectives">Learning objectives</h1>
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
-<ul>
-<li>Explain the <strong>scaling dilemma</strong> and why dense models are computationally wasteful</li>
-<li>Describe the <strong>Mixture of Experts (MoE)</strong> architecture: experts, routers, and sparse activation</li>
-<li>Implement a <strong>simplified MoE layer</strong> in PyTorch</li>
-<li>Discuss <strong>load balancing</strong> challenges and their solutions</li>
-<li>Evaluate efficiency techniques: <strong>quantization</strong>, <strong>distillation</strong>, <strong>Flash Attention</strong>, and <strong>speculative decoding</strong></li>
-<li>Assess the role of efficiency in <strong>democratizing access</strong> to powerful AI</li>
-</ul>
+<ol>
+<li>Explain why dense models are computationally wasteful and how <strong>MoE</strong> solves this</li>
+<li>Describe the MoE architecture: <strong>experts, routers, and sparse activation</strong></li>
+<li>Compare MoE implementations from Mixtral to DeepSeek-V3 to V4 Engram</li>
+<li>Evaluate efficiency techniques: <strong>quantization, distillation, and speculative decoding</strong></li>
+<li>Assess the <strong>democratization paradox</strong>: efficiency enables access but also enables misuse</li>
+</ol>
+</div>
+<div class="tip-box" data-title="Companion notebook">
+<p><img class="emoji" draggable="false" alt="📓" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4d3.svg" data-marp-twemoji=""/> <a href="https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/moe_efficiency_demo.ipynb">Companion Notebook</a> — build a simplified MoE layer and experiment with quantization</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -755,7 +757,7 @@ Winter 2026</p>
 <div class="definition-box" data-title="Two approaches to scaling">
 <ul>
 <li><strong>Dense models</strong> (GPT-3, Llama): All parameters are active for every token. 175B parameters = 175B active.</li>
-<li><strong>Sparse models</strong> (MoE): Only a subset of parameters are active per token. 47B total parameters, but only 13B active per token (Mixtral).</li>
+<li><strong>Sparse models</strong> (MoE): Only a subset of parameters are active per token. 47B total parameters, but only 12.9B active per token (Mixtral).</li>
 </ul>
 </div>
 <div class="note-box" data-title="The MoE tradeoff">
@@ -971,7 +973,7 @@ Winter 2026</p>
 </tr>
 <tr>
 <td>Active parameters per token</td>
-<td>13B (top-2 routing)</td>
+<td>12.9B (top-2 routing)</td>
 </tr>
 <tr>
 <td>Transformer layers</td>
@@ -989,7 +991,7 @@ Winter 2026</p>
 </table>
 </div>
 <div class="important-box" data-title="The headline result">
-<p>Mixtral (47B total, 13B active) <strong>matches Llama 2 70B</strong> on benchmarks while running at <strong>5x the speed</strong>. Quality of a 70B model at the cost of a 13B model.</p>
+<p>Mixtral (47B total, 12.9B active) <strong>matches Llama 2 70B</strong> on benchmarks while running at <strong>6× the speed</strong>. Quality of a 70B model at the cost of a 13B model.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1082,48 +1084,85 @@ Winter 2026</p>
 <p>INT4 quantization enables running a <strong>7 billion parameter model on a laptop</strong> with only 1--2% quality degradation on most benchmarks.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="knowledge-distillation">Knowledge distillation</h1>
-<div class="definition-box" data-title="Training a small model to mimic a large one">
-<p>In <strong>knowledge distillation</strong>, a small &quot;student&quot; model is trained to match the output distribution of a large &quot;teacher&quot; model, rather than training from raw data alone. The student learns the teacher's &quot;dark knowledge&quot; -- the relative probabilities across all tokens, not just the top-1 prediction.</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="deepseek-moe-pushing-the-limits">DeepSeek MoE: pushing the limits</h1>
+<div class="definition-box" data-title="MoE at unprecedented scale">
+<p>DeepSeek has systematically pushed MoE efficiency further with each generation:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Total params</th>
+<th>Active params</th>
+<th>Training cost</th>
+<th>Key innovation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://arxiv.org/abs/2405.04434">DeepSeek-V2</a> (2024)</td>
+<td>236B</td>
+<td>21B</td>
+<td>—</td>
+<td>Multi-Latent Attention (MLA)</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2412.19437">DeepSeek-V3</a> (2025)</td>
+<td>671B</td>
+<td>37B</td>
+<td><strong>$5.5M</strong></td>
+<td>Auxiliary-loss-free routing</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2601.07372">DeepSeek-V4 Engram</a> (2025)</td>
+<td>671B</td>
+<td>37B</td>
+<td>—</td>
+<td>Reasoning + efficiency</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="example-box" data-title="Distillation in practice">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Teacher: Large model (frozen, no gradients)</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">teacher_logits = large_model(input)  # (batch, seq, vocab)</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Student: Small model (being trained)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">student_logits = small_model(input)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"># Distillation loss: match teacher&#x27;s soft probabilities</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">loss = F.kl_div(</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    F.log_softmax(student_logits / temperature, dim=-1),</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">    F.softmax(teacher_logits / temperature, dim=-1),</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
+<div class="important-box" data-title="Why $5.5M matters">
+<p>DeepSeek-V3 matches GPT-4-level quality at <strong>671B total / 37B active parameters</strong>, trained for just <strong>$5.5 million</strong> — roughly 1/20th of GPT-4's estimated cost. This shattered the assumption that frontier models require hundred-million-dollar budgets.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="knowledge-distillation-1">Knowledge distillation</h1>
-<div class="example-box" data-title="Distillation in practice">
-<pre><code class="language-python has-line-numbers" data-start-line="11">
-<span class="line"><span class="line-num">11</span><span class="line-code">    reduction=&#x27;batchmean&#x27;</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">)</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="small-language-models">Small language models</h1>
+<div class="note-box" data-title="Not everyone needs 70B parameters">
+<p>A parallel trend: <strong>small models</strong> trained on massive data that punch far above their weight:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Parameters</th>
+<th>Highlight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://arxiv.org/abs/2412.08905">Phi-4</a> (Microsoft, 2024)</td>
+<td>14B</td>
+<td>Outperforms GPT-3.5 on reasoning benchmarks</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2408.00118">Gemma 2</a> (Google, 2024)</td>
+<td>2B / 9B / 27B</td>
+<td>Open weights, strong multilingual</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2412.15115">Qwen 2.5</a> (Alibaba, 2024)</td>
+<td>0.5B–72B</td>
+<td>Full size range, open weights</td>
+</tr>
+</tbody>
+</table>
 </div>
-<p><strong>Result</strong>: DistilBERT is 40% smaller than BERT but retains 97% of its performance.</p>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="inference-optimizations">Inference optimizations</h1>
-<div class="note-box" data-title="Making generation faster without changing the model">
-<p><strong>KV cache</strong>: During generation, cache key and value tensors from previous tokens. Avoids recomputing attention over the entire sequence at each step. Reduces per-token cost from <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span>.</p>
-<p><strong>Flash Attention</strong> (Dao et al., 2022): Tiled, memory-efficient attention that avoids materializing the full <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>×</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">n \times n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> attention matrix. 2--4x faster and enables longer sequences.</p>
-<p><strong>Speculative decoding</strong>: Use a small &quot;draft&quot; model to propose several tokens at once, then verify them in parallel with the large model. If 4 out of 5 draft tokens are accepted, you get ~4x speedup with identical output quality.</p>
-<p><strong>Continuous batching</strong> (vLLM): New requests join an ongoing batch without waiting for the longest sequence to finish. Dramatically improves throughput for serving.</p>
+<div class="tip-box" data-title="The Chinchilla lesson applied">
+<p>These models are <strong>massively overtrained</strong> relative to Chinchilla-optimal (e.g., Phi-4 trains 14B params on 10T+ tokens — 700+ tokens/parameter vs. the &quot;optimal&quot; 20). Why? Because you train once but deploy millions of times. Smaller, slower-to-train models are <em>cheaper to run</em>.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="state-space-models-an-alternative-to-attention">State space models: an alternative to attention</h1>
 <div class="definition-box" data-title="Mamba (Gu & Dao, 2023)">
 <p><strong>State space models (SSMs)</strong> replace self-attention with a recurrent mechanism that processes sequences in <strong>linear time</strong> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> instead of quadratic <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>:</p>
@@ -1169,7 +1208,7 @@ Winter 2026</p>
 <p>SSMs scale linearly, making them attractive for very long sequences. Hybrid architectures (attention + SSM) are an active research direction.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-efficiency-landscape">The efficiency landscape</h1>
 <div class="note-box" data-title="Choosing the right technique">
 <table>
@@ -1223,50 +1262,52 @@ Winter 2026</p>
 <p>Need max quality? → Dense large. Need quality + speed on GPU? → MoE. Need to run on a laptop? → Quantized small model. Need extremely long contexts? → Hybrid attention + SSM.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="environmental-impact-and-democratization">Environmental impact and democratization</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="environmental-impact">Environmental impact</h1>
 <div class="warning-box" data-title="The carbon cost of scale">
-<p>Training GPT-3 produced an estimated <strong>502 tonnes of CO<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow></mrow><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4511em;vertical-align:-0.15em;"></span><span class="mord"><span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></strong> -- equivalent to 112 cars driven for a year (Strubell et al., 2019). As models grow, so does their environmental footprint.</p>
+<p>Training GPT-3 produced an estimated <strong>502 tonnes of CO<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow></mrow><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4511em;vertical-align:-0.15em;"></span><span class="mord"><span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></strong> — equivalent to 112 cars driven for a year (<a href="https://arxiv.org/abs/2104.10350">Patterson et al., 2021</a>). As models grow, so does their environmental footprint.</p>
 </div>
 <div class="note-box" data-title="Efficiency enables access">
-<p>Efficiency techniques are not just about cost -- they are about <strong>who gets to use AI</strong>:</p>
+<p>Efficiency techniques are not just about cost — they are about <strong>who gets to use AI</strong>:</p>
 <ul>
-<li><strong>Quantized open models</strong> (Llama, Mixtral) run on consumer hardware</li>
+<li><strong>Quantized open models</strong> (Llama, Mixtral, DeepSeek) run on consumer hardware</li>
 <li><strong>LoRA / QLoRA</strong> enable fine-tuning on a single GPU</li>
-<li><strong>Smaller efficient models</strong> (Phi, Gemma) bring quality to resource-constrained settings</li>
+<li><strong>Small efficient models</strong> (Phi-4, Gemma 2, Qwen 2.5) bring quality to resource-constrained settings</li>
 <li><strong>Open weights</strong> let researchers, startups, and developing nations participate in AI development</li>
 </ul>
-<p>Without efficiency research, frontier AI would remain exclusive to a handful of well-funded organizations.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="key-takeaways">Key takeaways</h1>
-<div class="important-box" data-title="Core concepts from this lecture">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="discussion">Discussion</h1>
+<div class="tip-box" data-title="Questions to consider">
 <ol>
-<li><strong>MoE</strong> replaces dense feed-forward layers with multiple experts and a router, activating only top-k per token</li>
-<li><strong>Mixtral 8x7B</strong> achieves 70B-quality at 13B-cost, proving MoE works at scale</li>
-<li><strong>Load balancing</strong> (auxiliary loss, capacity limits) is critical to prevent routing collapse</li>
-<li><strong>Quantization</strong> (INT4/INT8) enables running large models on consumer hardware</li>
-<li><strong>Knowledge distillation</strong> transfers capability from large teacher to small student models</li>
-<li><strong>Inference optimizations</strong> (KV cache, Flash Attention, speculative decoding) dramatically speed up generation</li>
-<li><strong>Efficiency is an equity issue</strong>: it determines who can access and benefit from AI</li>
+<li>
+<p><strong>The democratization paradox:</strong> Efficiency makes AI accessible to everyone — including bad actors. DeepSeek-R1 is fully open and can reason. Is this net positive or net negative for society?</p>
+</li>
+<li>
+<p><strong>Expert specialization:</strong> MoE experts develop functional specialization without supervision — code experts, language experts, math experts. The brain does the same thing. Is this convergent evolution, or is it the only way to organize large-scale processing?</p>
+</li>
+<li>
+<p><strong>The race to the bottom:</strong> DeepSeek trained a frontier model for $5.5M. If costs keep falling, what happens when <em>anyone</em> can train a powerful model? Does this change the AI safety calculus?</p>
+</li>
+<li>
+<p><strong>State-space models:</strong> Mamba processes sequences in linear time. If hybrid attention+SSM models match pure transformers, does the attention mechanism become a historical footnote — or a permanent necessity?</p>
+</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="further-reading">Further reading</h1>
-<div class="note-box" data-title="References">
-<ul>
-<li><strong>Shazeer et al. (2017)</strong> -- &quot;Outrageously Large Neural Networks: The Sparsely-Gated MoE Layer&quot; <a href="https://arxiv.org/abs/1701.06538">[arXiv]</a></li>
-<li><strong>Jiang et al. (2024)</strong> -- &quot;Mixtral of Experts&quot; <a href="https://arxiv.org/abs/2401.04088">[arXiv]</a></li>
-<li><strong>Fedus et al. (2022)</strong> -- &quot;Switch Transformers&quot; <a href="https://arxiv.org/abs/2101.03961">[arXiv]</a></li>
-<li><strong>Dao et al. (2022)</strong> -- &quot;FlashAttention&quot; <a href="https://arxiv.org/abs/2205.14135">[arXiv]</a></li>
-<li><strong>Gu &amp; Dao (2023)</strong> -- &quot;Mamba: Linear-Time Sequence Modeling&quot; <a href="https://arxiv.org/abs/2312.00752">[arXiv]</a></li>
-<li><strong>Strubell et al. (2019)</strong> -- &quot;Energy and Policy Considerations for Deep Learning&quot; <a href="https://arxiv.org/abs/1906.02243">[arXiv]</a></li>
-</ul>
+<div class="note-box" data-title="Further reading">
+<p><a href="https://arxiv.org/abs/2401.04088"><strong>Jiang et al. (2024, <em>arXiv</em>)</strong></a> &quot;Mixtral of Experts&quot; — Open MoE matching Llama 2 70B at 6× the speed.</p>
+<p><a href="https://arxiv.org/abs/2412.19437"><strong>DeepSeek-AI (2025, <em>arXiv</em>)</strong></a> &quot;DeepSeek-V3&quot; — 671B/37B MoE trained for $5.5M, frontier quality.</p>
+<p><a href="https://arxiv.org/abs/2407.08608"><strong>Dao (2024, <em>arXiv</em>)</strong></a> &quot;FlashAttention-3&quot; — Hardware-aware attention approaching theoretical FLOPS.</p>
+<p><a href="https://arxiv.org/abs/2312.00752"><strong>Gu &amp; Dao (2023, <em>arXiv</em>)</strong></a> &quot;Mamba: Linear-Time Sequence Modeling with Selective State Spaces&quot; — <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> alternative to attention.</p>
+<p><a href="https://arxiv.org/abs/2405.21060"><strong>Dao &amp; Gu (2024, <em>ICML</em>)</strong></a> &quot;Transformers are SSMs&quot; — Mamba-2, bridging attention and state-space models.</p>
+<p><a href="https://arxiv.org/abs/2104.10350"><strong>Patterson et al. (2021, <em>arXiv</em>)</strong></a> &quot;Carbon Emissions and Large Neural Network Training&quot; — CO₂ analysis of training large models.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">

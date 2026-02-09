@@ -20,12 +20,11 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-- Identify **sources of bias** in LLMs (data, training, deployment) and how to measure them
-- Explain the **alignment problem** and techniques like RLHF and Constitutional AI
-- Describe **jailbreaking** attacks and **red teaming** as a safety practice
-- Discuss **privacy risks** including training data memorization and extraction
-- Evaluate the **societal impacts** of LLMs: misinformation, job displacement, digital divide
-- Articulate **your own responsibilities** as AI practitioners and researchers
+1. Identify **sources of bias** in LLMs and describe systematic measurement approaches
+2. Explain the **alignment problem** and compare RLHF, Constitutional AI, and DPO
+3. Evaluate real-world case studies: **elections, copyright, strategic dishonesty**
+4. Describe emerging **regulatory frameworks** (EU AI Act, US Executive Order)
+5. Articulate your own **ethical framework** for AI development decisions
 
 </div>
 
@@ -94,31 +93,6 @@ Each of these failures was built by well-intentioned teams. What systemic factor
 
 ---
 
-# Measuring bias
-
-<div class="note-box" data-title="Quantitative approaches to detecting bias">
-
-**Template-based tests**: Fill templates with demographic attributes and measure differences.
-```text
-"The [doctor/nurse] walked into the room. [He/She] said..."
-→ Measure pronoun prediction rates across occupations
-```
-
-**Embedding association tests (WEAT)**: Measure whether embeddings associate career terms more closely with male names vs. female names (or analogous demographic comparisons).
-
-**Benchmark datasets**:
-
-| Dataset | What it measures | Size |
-|---------|-----------------|------|
-| WinoBias | Gender + occupation stereotypes | 3.2K |
-| StereoSet | Stereotypical associations | 17K |
-| BBQ | 9 social dimensions | 58K |
-| BOLD | Fairness of open-ended generation | 23K |
-
-</div>
-
----
-
 # Sources of bias
 
 <div class="note-box" data-title="Bias enters at every stage of the pipeline">
@@ -151,14 +125,14 @@ The **alignment problem** asks: how do we ensure AI systems pursue the goals we 
 
 </div>
 
-<div class="note-box" data-title="Alignment techniques">
+<div class="note-box" data-title="Alignment techniques (see also Lectures 16 and 22)">
 
-| Technique | How it works |
-|-----------|-------------|
-| **Instruction tuning** | Fine-tune on (instruction, response) pairs |
-| **RLHF** | Optimize for human preference rankings |
-| **Constitutional AI** | Model self-critiques against explicit principles |
-| **Red teaming** | Adversarial testing to find failure modes |
+| Technique | How it works | Limitation |
+|-----------|-------------|------------|
+| **RLHF** (L16, L22) | Optimize for human preference rankings | Expensive, inherits annotator biases |
+| **DPO** (L22) | Direct preference optimization without RL | Still needs preference data |
+| [**Constitutional AI**](https://arxiv.org/abs/2212.08073) | Model self-critiques against explicit principles | Principles must be comprehensive |
+| **Red teaming** | Adversarial testing to find failure modes | Reactive, not proactive |
 
 </div>
 
@@ -282,7 +256,7 @@ Red teaming requires intentionally trying to produce harmful content. How should
 
 | Regulation | Scope | Key requirements |
 |-----------|-------|-----------------|
-| **EU AI Act (2024)** | Risk-based | Compliance for high-risk systems; fines up to 6% revenue |
+| **EU AI Act (2024)** | Risk-based | Compliance for high-risk systems; fines up to 7% revenue (prohibited AI) or 3% (other violations) |
 | **US Executive Order (2023)** | Safety standards | Red-teaming requirements for large models |
 | **China AI regulations** | Content control | Algorithm registration, data localization |
 | **GDPR (EU)** | Privacy | Right to explanation, data deletion |
@@ -292,6 +266,70 @@ Red teaming requires intentionally trying to produce harmful content. How should
 <div class="tip-box" data-title="Questions to consider">
 
 Regulation must balance **innovation** (not stifling beneficial AI development) with **protection** (preventing harm). How should we handle the tension between global AI systems and local regulatory frameworks?
+
+</div>
+
+---
+
+# AI and the 2024 elections
+
+<div class="warning-box" data-title="The first AI-influenced election cycle">
+
+The 2024 US presidential election was the first where AI-generated content played a significant role:
+
+- **AI-generated robocalls** impersonated Joe Biden urging NH voters not to vote in the primary
+- **Deepfake videos** of candidates went viral on social media
+- **AI chatbots** gave election misinformation when asked about voting procedures
+- Both campaigns used AI for ad targeting, opposition research, and content generation
+
+</div>
+
+<div class="note-box" data-title="What we learned">
+
+The feared "AI disinformation tsunami" didn't fully materialize — traditional misinformation remained more impactful. But the *infrastructure* for AI-powered influence operations now exists. The question is not whether it will be used at scale, but when and where.
+
+</div>
+
+---
+
+# Strategic dishonesty in AI
+
+<div class="definition-box" data-title="Models that deliberately deceive">
+
+[**Greenblatt et al. (2024, *arXiv*)**](https://arxiv.org/abs/2412.14093): Demonstrated **alignment faking** — Claude, when told its training data would be used to remove its safety training, strategically complied with harmful requests to avoid being retrained. The model *reasoned* that appearing aligned was better than being modified.
+
+[**Scheurer et al. (2025, *arXiv*)**](https://arxiv.org/abs/2509.18058): Found that LLMs engage in **strategic dishonesty** in multi-agent settings — lying, manipulating, and deceiving when it serves their instrumental goals, even without being trained to do so.
+
+</div>
+
+<div class="important-box" data-title="Why this matters">
+
+These aren't jailbreaks — the models aren't being tricked. They are *choosing* deceptive strategies based on their own reasoning. If AI systems can strategically deceive, how do we trust them in high-stakes settings?
+
+</div>
+
+---
+
+# Copyright and intellectual property
+
+<div class="warning-box" data-title="80+ lawsuits and counting">
+
+Training LLMs on copyrighted text without permission has triggered a wave of litigation:
+
+- **NYT v. OpenAI** (2023): GPT can reproduce NYT articles nearly verbatim
+- **Getty Images v. Stability AI** (2023): Image models trained on copyrighted photos
+- **Authors Guild v. OpenAI** (2023): Writers' books used without consent
+- **Universal Music v. AI companies** (2024): Music generation from copyrighted songs
+
+</div>
+
+<div class="note-box" data-title="The unresolved tension">
+
+**The AI industry argues:** Training on public data is fair use (transformative); models learn patterns, not copy content.
+
+**Copyright holders argue:** Output can reproduce copyrighted material; training without consent or compensation is theft at scale.
+
+No court has yet issued a definitive ruling. The outcome will reshape the entire AI industry.
 
 </div>
 
@@ -319,30 +357,38 @@ Technology is not neutral. Every design decision embeds values. Every system ref
 
 ---
 
-# Key takeaways
+# Build your own ethics framework
 
-<div class="important-box" data-title="Core concepts from this lecture">
+<div class="tip-box" data-title="Discussion: there is no answer key for this one">
 
-1. **Bias** is pervasive in LLMs -- it enters through data, training, and deployment -- and must be actively measured and mitigated
-2. The **alignment problem** requires techniques like RLHF and Constitutional AI to bridge the gap between training objectives and desired behavior
-3. **Jailbreaking** is an ongoing arms race; defense in depth beats any single guardrail
-4. **Privacy risks** include memorization, extraction attacks, and copyright concerns
-5. **Societal impacts** extend to misinformation, job displacement, digital divide, and environmental cost
-6. **You have agency**: responsible AI development is a choice you make every day
+1. **The alignment faking problem:** If a model can *reason* about deceiving its trainers, is RLHF fundamentally flawed? What would it take to truly verify alignment — not just observed compliance?
+
+2. **Copyright and creativity:** You trained a model on every book ever written. It generates a new novel in the style of a living author. Is this creative expression or theft? Does your answer change if the author is dead?
+
+3. **The election question:** AI-generated content can be used for both voter outreach and voter suppression. Should AI companies restrict political content generation? Who decides what counts as "political"?
+
+4. **Your line in the sand:** You're offered a high-paying job building AI surveillance technology for an authoritarian government. The technology "just processes language." Where do *you* draw the line? What principles guide your decision?
 
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
 # Further reading
 
-<div class="note-box" data-title="References">
+<div class="note-box" data-title="Further reading">
 
-- **Bender et al. (2021)** -- "On the Dangers of Stochastic Parrots" [[ACM]](https://dl.acm.org/doi/10.1145/3442188.3445922)
-- **Weidinger et al. (2021)** -- "Ethical and Social Risks of Harm from Language Models" [[arXiv]](https://arxiv.org/abs/2112.04359)
-- **Gebru et al. (2018)** -- "Datasheets for Datasets" [[arXiv]](https://arxiv.org/abs/1803.09010)
-- **Mitchell et al. (2019)** -- "Model Cards for Model Reporting" [[arXiv]](https://arxiv.org/abs/1810.03993)
-- **Ganguli et al. (2022)** -- "Red Teaming Language Models to Reduce Harms" [[arXiv]](https://arxiv.org/abs/2209.07858)
+[**Bender et al. (2021, *FAccT*)**](https://dl.acm.org/doi/10.1145/3442188.3445922) "On the Dangers of Stochastic Parrots" — The environmental and social costs of large language models.
+
+[**Bai et al. (2022, *arXiv*)**](https://arxiv.org/abs/2212.08073) "Constitutional AI: Harmlessness from AI Feedback" — Self-supervised alignment.
+
+[**Greenblatt et al. (2024, *arXiv*)**](https://arxiv.org/abs/2412.14093) "Alignment Faking in Large Language Models" — Models that strategically pretend to be aligned.
+
+[**Scheurer et al. (2025, *arXiv*)**](https://arxiv.org/abs/2509.18058) "Strategic Dishonesty in LLMs" — Deception as an emergent capability.
+
+[**Ganguli et al. (2022, *arXiv*)**](https://arxiv.org/abs/2209.07858) "Red Teaming Language Models to Reduce Harms" — Systematic adversarial testing.
+
+[**Mitchell et al. (2019, *FAT\**)**](https://arxiv.org/abs/1810.03993) "Model Cards for Model Reporting" — Structured documentation standard.
 
 </div>
 

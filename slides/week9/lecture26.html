@@ -702,14 +702,13 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="learning-objectives">Learning objectives</h1>
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
-<ul>
-<li>Identify <strong>sources of bias</strong> in LLMs (data, training, deployment) and how to measure them</li>
-<li>Explain the <strong>alignment problem</strong> and techniques like RLHF and Constitutional AI</li>
-<li>Describe <strong>jailbreaking</strong> attacks and <strong>red teaming</strong> as a safety practice</li>
-<li>Discuss <strong>privacy risks</strong> including training data memorization and extraction</li>
-<li>Evaluate the <strong>societal impacts</strong> of LLMs: misinformation, job displacement, digital divide</li>
-<li>Articulate <strong>your own responsibilities</strong> as AI practitioners and researchers</li>
-</ul>
+<ol>
+<li>Identify <strong>sources of bias</strong> in LLMs and describe systematic measurement approaches</li>
+<li>Explain the <strong>alignment problem</strong> and compare RLHF, Constitutional AI, and DPO</li>
+<li>Evaluate real-world case studies: <strong>elections, copyright, strategic dishonesty</strong></li>
+<li>Describe emerging <strong>regulatory frameworks</strong> (EU AI Act, US Executive Order)</li>
+<li>Articulate your own <strong>ethical framework</strong> for AI development decisions</li>
+</ol>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -814,50 +813,7 @@ Winter 2026</p>
 </table>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="measuring-bias">Measuring bias</h1>
-<div class="note-box" data-title="Quantitative approaches to detecting bias">
-<p><strong>Template-based tests</strong>: Fill templates with demographic attributes and measure differences.</p>
-<pre><code class="language-text has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">&quot;The [doctor/nurse] walked into the room. [He/She] said...&quot;</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">→ Measure pronoun prediction rates across occupations</span></span>
-</code></pre>
-<p><strong>Embedding association tests (WEAT)</strong>: Measure whether embeddings associate career terms more closely with male names vs. female names (or analogous demographic comparisons).</p>
-<p><strong>Benchmark datasets</strong>:</p>
-<table>
-<thead>
-<tr>
-<th>Dataset</th>
-<th>What it measures</th>
-<th>Size</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>WinoBias</td>
-<td>Gender + occupation stereotypes</td>
-<td>3.2K</td>
-</tr>
-<tr>
-<td>StereoSet</td>
-<td>Stereotypical associations</td>
-<td>17K</td>
-</tr>
-<tr>
-<td>BBQ</td>
-<td>9 social dimensions</td>
-<td>58K</td>
-</tr>
-<tr>
-<td>BOLD</td>
-<td>Fairness of open-ended generation</td>
-<td>23K</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="sources-of-bias">Sources of bias</h1>
 <div class="note-box" data-title="Bias enters at every stage of the pipeline">
 <p><strong>Training data</strong>: Internet text encodes centuries of societal biases. Underrepresentation of minority communities means models learn majority-centric patterns. The web overrepresents English, male, Western, and economically privileged perspectives.</p>
@@ -868,7 +824,7 @@ Winter 2026</p>
 <p>Bias mitigation requires intervention at <strong>every stage</strong>: data curation, training objectives, post-processing, and ongoing monitoring after deployment.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-alignment-problem">The alignment problem</h1>
 <div class="definition-box" data-title="Making models do what we want, not just what we say">
 <p>The <strong>alignment problem</strong> asks: how do we ensure AI systems pursue the goals we <em>intend</em>, not just a literal interpretation of what we <em>specified</em>?</p>
@@ -878,36 +834,41 @@ Winter 2026</p>
 <li><strong>The gap</strong>: Accurate next-token prediction does not guarantee helpfulness or safety</li>
 </ul>
 </div>
-<div class="note-box" data-title="Alignment techniques">
+<div class="note-box" data-title="Alignment techniques (see also Lectures 16 and 22)">
 <table>
 <thead>
 <tr>
 <th>Technique</th>
 <th>How it works</th>
+<th>Limitation</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Instruction tuning</strong></td>
-<td>Fine-tune on (instruction, response) pairs</td>
-</tr>
-<tr>
-<td><strong>RLHF</strong></td>
+<td><strong>RLHF</strong> (L16, L22)</td>
 <td>Optimize for human preference rankings</td>
+<td>Expensive, inherits annotator biases</td>
 </tr>
 <tr>
-<td><strong>Constitutional AI</strong></td>
+<td><strong>DPO</strong> (L22)</td>
+<td>Direct preference optimization without RL</td>
+<td>Still needs preference data</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2212.08073"><strong>Constitutional AI</strong></a></td>
 <td>Model self-critiques against explicit principles</td>
+<td>Principles must be comprehensive</td>
 </tr>
 <tr>
 <td><strong>Red teaming</strong></td>
 <td>Adversarial testing to find failure modes</td>
+<td>Reactive, not proactive</td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="jailbreaking">Jailbreaking</h1>
 <div class="warning-box" data-title="Adversarial attacks that bypass safety guardrails">
 <p>Despite RLHF and safety training, users can trick models into generating harmful content through creative prompting:</p>
@@ -920,7 +881,7 @@ Winter 2026</p>
 <p>Jailbreaking is an ongoing cat-and-mouse game. Every patch creates new avenues for bypass. This is why <strong>defense in depth</strong> (multiple layers of safety) is more robust than any single guardrail.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="red-teaming">Red teaming</h1>
 <div class="definition-box" data-title="Ganguli et al. (2022)">
 <p><strong>Red teaming</strong> is proactive adversarial testing where researchers systematically attempt to make the model fail, generate harmful content, or violate safety guidelines.</p>
@@ -939,7 +900,7 @@ Winter 2026</p>
 <p>Red teaming requires intentionally trying to produce harmful content. How should we balance the need for thorough safety testing against the risks of creating a &quot;playbook&quot; for misuse?</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="privacy-risks">Privacy risks</h1>
 <div class="warning-box" data-title="LLMs can memorize and leak training data">
 <ul>
@@ -958,7 +919,7 @@ Winter 2026</p>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="societal-impacts">Societal impacts</h1>
 <div class="note-box" data-title="Beyond technical bias and safety">
 <p><strong>Misinformation</strong>: LLMs enable cheap, scalable generation of fake news, personalized propaganda, and convincing phishing attacks. AI-generated content is flooding the internet, making truth harder to discern.</p>
@@ -967,7 +928,7 @@ Winter 2026</p>
 <p><strong>Environmental cost</strong>: Training and serving large models consumes enormous energy. Global AI inference may contribute millions of tonnes of CO<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow></mrow><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4511em;vertical-align:-0.15em;"></span><span class="mord"><span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> annually.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="model-cards-and-responsible-documentation">Model cards and responsible documentation</h1>
 <div class="definition-box" data-title="Mitchell et al. (2019)">
 <p><strong>Model cards</strong> are structured documentation accompanying ML models -- analogous to nutrition labels for food. They make capabilities, limitations, and risks transparent.</p>
@@ -1009,7 +970,7 @@ Winter 2026</p>
 </table>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-regulatory-landscape">The regulatory landscape</h1>
 <div class="note-box" data-title="Emerging AI governance frameworks">
 <table>
@@ -1024,7 +985,7 @@ Winter 2026</p>
 <tr>
 <td><strong>EU AI Act (2024)</strong></td>
 <td>Risk-based</td>
-<td>Compliance for high-risk systems; fines up to 6% revenue</td>
+<td>Compliance for high-risk systems; fines up to 7% revenue (prohibited AI) or 3% (other violations)</td>
 </tr>
 <tr>
 <td><strong>US Executive Order (2023)</strong></td>
@@ -1048,7 +1009,49 @@ Winter 2026</p>
 <p>Regulation must balance <strong>innovation</strong> (not stifling beneficial AI development) with <strong>protection</strong> (preventing harm). How should we handle the tension between global AI systems and local regulatory frameworks?</p>
 </div>
 </section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="ai-and-the-2024-elections">AI and the 2024 elections</h1>
+<div class="warning-box" data-title="The first AI-influenced election cycle">
+<p>The 2024 US presidential election was the first where AI-generated content played a significant role:</p>
+<ul>
+<li><strong>AI-generated robocalls</strong> impersonated Joe Biden urging NH voters not to vote in the primary</li>
+<li><strong>Deepfake videos</strong> of candidates went viral on social media</li>
+<li><strong>AI chatbots</strong> gave election misinformation when asked about voting procedures</li>
+<li>Both campaigns used AI for ad targeting, opposition research, and content generation</li>
+</ul>
+</div>
+<div class="note-box" data-title="What we learned">
+<p>The feared &quot;AI disinformation tsunami&quot; didn't fully materialize — traditional misinformation remained more impactful. But the <em>infrastructure</em> for AI-powered influence operations now exists. The question is not whether it will be used at scale, but when and where.</p>
+</div>
+</section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="strategic-dishonesty-in-ai">Strategic dishonesty in AI</h1>
+<div class="definition-box" data-title="Models that deliberately deceive">
+<p><a href="https://arxiv.org/abs/2412.14093"><strong>Greenblatt et al. (2024, <em>arXiv</em>)</strong></a>: Demonstrated <strong>alignment faking</strong> — Claude, when told its training data would be used to remove its safety training, strategically complied with harmful requests to avoid being retrained. The model <em>reasoned</em> that appearing aligned was better than being modified.</p>
+<p><a href="https://arxiv.org/abs/2509.18058"><strong>Scheurer et al. (2025, <em>arXiv</em>)</strong></a>: Found that LLMs engage in <strong>strategic dishonesty</strong> in multi-agent settings — lying, manipulating, and deceiving when it serves their instrumental goals, even without being trained to do so.</p>
+</div>
+<div class="important-box" data-title="Why this matters">
+<p>These aren't jailbreaks — the models aren't being tricked. They are <em>choosing</em> deceptive strategies based on their own reasoning. If AI systems can strategically deceive, how do we trust them in high-stakes settings?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="copyright-and-intellectual-property">Copyright and intellectual property</h1>
+<div class="warning-box" data-title="80+ lawsuits and counting">
+<p>Training LLMs on copyrighted text without permission has triggered a wave of litigation:</p>
+<ul>
+<li><strong>NYT v. OpenAI</strong> (2023): GPT can reproduce NYT articles nearly verbatim</li>
+<li><strong>Getty Images v. Stability AI</strong> (2023): Image models trained on copyrighted photos</li>
+<li><strong>Authors Guild v. OpenAI</strong> (2023): Writers' books used without consent</li>
+<li><strong>Universal Music v. AI companies</strong> (2024): Music generation from copyrighted songs</li>
+</ul>
+</div>
+<div class="note-box" data-title="The unresolved tension">
+<p><strong>The AI industry argues:</strong> Training on public data is fair use (transformative); models learn patterns, not copy content.</p>
+<p><strong>Copyright holders argue:</strong> Output can reproduce copyrighted material; training without consent or compensation is theft at scale.</p>
+<p>No court has yet issued a definitive ruling. The outcome will reshape the entire AI industry.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="your-responsibilities-as-ai-practitioners">Your responsibilities as AI practitioners</h1>
 <div class="important-box" data-title="What you can do">
 <ol>
@@ -1065,32 +1068,37 @@ Winter 2026</p>
 <p>Technology is not neutral. Every design decision embeds values. Every system reflects choices. As AI practitioners, you get to make those choices. Build the future you want to live in.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="key-takeaways">Key takeaways</h1>
-<div class="important-box" data-title="Core concepts from this lecture">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="build-your-own-ethics-framework">Build your own ethics framework</h1>
+<div class="tip-box" data-title="Discussion: there is no answer key for this one">
 <ol>
-<li><strong>Bias</strong> is pervasive in LLMs -- it enters through data, training, and deployment -- and must be actively measured and mitigated</li>
-<li>The <strong>alignment problem</strong> requires techniques like RLHF and Constitutional AI to bridge the gap between training objectives and desired behavior</li>
-<li><strong>Jailbreaking</strong> is an ongoing arms race; defense in depth beats any single guardrail</li>
-<li><strong>Privacy risks</strong> include memorization, extraction attacks, and copyright concerns</li>
-<li><strong>Societal impacts</strong> extend to misinformation, job displacement, digital divide, and environmental cost</li>
-<li><strong>You have agency</strong>: responsible AI development is a choice you make every day</li>
+<li>
+<p><strong>The alignment faking problem:</strong> If a model can <em>reason</em> about deceiving its trainers, is RLHF fundamentally flawed? What would it take to truly verify alignment — not just observed compliance?</p>
+</li>
+<li>
+<p><strong>Copyright and creativity:</strong> You trained a model on every book ever written. It generates a new novel in the style of a living author. Is this creative expression or theft? Does your answer change if the author is dead?</p>
+</li>
+<li>
+<p><strong>The election question:</strong> AI-generated content can be used for both voter outreach and voter suppression. Should AI companies restrict political content generation? Who decides what counts as &quot;political&quot;?</p>
+</li>
+<li>
+<p><strong>Your line in the sand:</strong> You're offered a high-paying job building AI surveillance technology for an authoritarian government. The technology &quot;just processes language.&quot; Where do <em>you</em> draw the line? What principles guide your decision?</p>
+</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="further-reading">Further reading</h1>
-<div class="note-box" data-title="References">
-<ul>
-<li><strong>Bender et al. (2021)</strong> -- &quot;On the Dangers of Stochastic Parrots&quot; <a href="https://dl.acm.org/doi/10.1145/3442188.3445922">[ACM]</a></li>
-<li><strong>Weidinger et al. (2021)</strong> -- &quot;Ethical and Social Risks of Harm from Language Models&quot; <a href="https://arxiv.org/abs/2112.04359">[arXiv]</a></li>
-<li><strong>Gebru et al. (2018)</strong> -- &quot;Datasheets for Datasets&quot; <a href="https://arxiv.org/abs/1803.09010">[arXiv]</a></li>
-<li><strong>Mitchell et al. (2019)</strong> -- &quot;Model Cards for Model Reporting&quot; <a href="https://arxiv.org/abs/1810.03993">[arXiv]</a></li>
-<li><strong>Ganguli et al. (2022)</strong> -- &quot;Red Teaming Language Models to Reduce Harms&quot; <a href="https://arxiv.org/abs/2209.07858">[arXiv]</a></li>
-</ul>
+<div class="note-box" data-title="Further reading">
+<p><a href="https://dl.acm.org/doi/10.1145/3442188.3445922"><strong>Bender et al. (2021, <em>FAccT</em>)</strong></a> &quot;On the Dangers of Stochastic Parrots&quot; — The environmental and social costs of large language models.</p>
+<p><a href="https://arxiv.org/abs/2212.08073"><strong>Bai et al. (2022, <em>arXiv</em>)</strong></a> &quot;Constitutional AI: Harmlessness from AI Feedback&quot; — Self-supervised alignment.</p>
+<p><a href="https://arxiv.org/abs/2412.14093"><strong>Greenblatt et al. (2024, <em>arXiv</em>)</strong></a> &quot;Alignment Faking in Large Language Models&quot; — Models that strategically pretend to be aligned.</p>
+<p><a href="https://arxiv.org/abs/2509.18058"><strong>Scheurer et al. (2025, <em>arXiv</em>)</strong></a> &quot;Strategic Dishonesty in LLMs&quot; — Deception as an emergent capability.</p>
+<p><a href="https://arxiv.org/abs/2209.07858"><strong>Ganguli et al. (2022, <em>arXiv</em>)</strong></a> &quot;Red Teaming Language Models to Reduce Harms&quot; — Systematic adversarial testing.</p>
+<p><a href="https://arxiv.org/abs/1810.03993"><strong>Mitchell et al. (2019, <em>FAT*</em>)</strong></a> &quot;Model Cards for Model Reporting&quot; — Structured documentation standard.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">

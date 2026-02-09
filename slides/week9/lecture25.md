@@ -20,12 +20,17 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-- Explain the **scaling dilemma** and why dense models are computationally wasteful
-- Describe the **Mixture of Experts (MoE)** architecture: experts, routers, and sparse activation
-- Implement a **simplified MoE layer** in PyTorch
-- Discuss **load balancing** challenges and their solutions
-- Evaluate efficiency techniques: **quantization**, **distillation**, **Flash Attention**, and **speculative decoding**
-- Assess the role of efficiency in **democratizing access** to powerful AI
+1. Explain why dense models are computationally wasteful and how **MoE** solves this
+2. Describe the MoE architecture: **experts, routers, and sparse activation**
+3. Compare MoE implementations from Mixtral to DeepSeek-V3 to V4 Engram
+4. Evaluate efficiency techniques: **quantization, distillation, and speculative decoding**
+5. Assess the **democratization paradox**: efficiency enables access but also enables misuse
+
+</div>
+
+<div class="tip-box" data-title="Companion notebook">
+
+📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/moe_efficiency_demo.ipynb) — build a simplified MoE layer and experiment with quantization
 
 </div>
 
@@ -56,7 +61,7 @@ In a dense model like GPT-3, **every parameter is active for every input token**
 <div class="definition-box" data-title="Two approaches to scaling">
 
 - **Dense models** (GPT-3, Llama): All parameters are active for every token. 175B parameters = 175B active.
-- **Sparse models** (MoE): Only a subset of parameters are active per token. 47B total parameters, but only 13B active per token (Mixtral).
+- **Sparse models** (MoE): Only a subset of parameters are active per token. 47B total parameters, but only 12.9B active per token (Mixtral).
 
 </div>
 
@@ -217,7 +222,7 @@ Despite these challenges, MoE models are becoming the default for frontier model
 | Specification | Value |
 |--------------|-------|
 | Total parameters | 47B (8 experts x 7B, minus shared layers) |
-| Active parameters per token | 13B (top-2 routing) |
+| Active parameters per token | 12.9B (top-2 routing) |
 | Transformer layers | 32 |
 | Context window | 32K tokens |
 | License | Apache 2.0 (fully open) |
@@ -226,7 +231,7 @@ Despite these challenges, MoE models are becoming the default for frontier model
 
 <div class="important-box" data-title="The headline result">
 
-Mixtral (47B total, 13B active) **matches Llama 2 70B** on benchmarks while running at **5x the speed**. Quality of a 70B model at the cost of a 13B model.
+Mixtral (47B total, 12.9B active) **matches Llama 2 70B** on benchmarks while running at **6× the speed**. Quality of a 70B model at the cost of a 13B model.
 
 </div>
 
@@ -279,48 +284,45 @@ INT4 quantization enables running a **7 billion parameter model on a laptop** wi
 
 ---
 
-# Knowledge distillation
+# DeepSeek MoE: pushing the limits
 
-<div class="definition-box" data-title="Training a small model to mimic a large one">
+<div class="definition-box" data-title="MoE at unprecedented scale">
 
-In **knowledge distillation**, a small "student" model is trained to match the output distribution of a large "teacher" model, rather than training from raw data alone. The student learns the teacher's "dark knowledge" -- the relative probabilities across all tokens, not just the top-1 prediction.
+DeepSeek has systematically pushed MoE efficiency further with each generation:
+
+| Model | Total params | Active params | Training cost | Key innovation |
+|-------|-------------|--------------|---------------|---------------|
+| [DeepSeek-V2](https://arxiv.org/abs/2405.04434) (2024) | 236B | 21B | — | Multi-Latent Attention (MLA) |
+| [DeepSeek-V3](https://arxiv.org/abs/2412.19437) (2025) | 671B | 37B | **$5.5M** | Auxiliary-loss-free routing |
+| [DeepSeek-V4 Engram](https://arxiv.org/abs/2601.07372) (2025) | 671B | 37B | — | Reasoning + efficiency |
 
 </div>
 
-<div class="example-box" data-title="Distillation in practice">
+<div class="important-box" data-title="Why $5.5M matters">
 
-```python
-# Teacher: Large model (frozen, no gradients)
-teacher_logits = large_model(input)  # (batch, seq, vocab)
-
-# Student: Small model (being trained)
-student_logits = small_model(input)
-
-# Distillation loss: match teacher's soft probabilities
-loss = F.kl_div(
-    F.log_softmax(student_logits / temperature, dim=-1),
-    F.softmax(teacher_logits / temperature, dim=-1),
-    reduction='batchmean'
-)
-```
-
-**Result**: DistilBERT is 40% smaller than BERT but retains 97% of its performance.
+DeepSeek-V3 matches GPT-4-level quality at **671B total / 37B active parameters**, trained for just **$5.5 million** — roughly 1/20th of GPT-4's estimated cost. This shattered the assumption that frontier models require hundred-million-dollar budgets.
 
 </div>
 
 ---
 
-# Inference optimizations
+# Small language models
 
-<div class="note-box" data-title="Making generation faster without changing the model">
+<div class="note-box" data-title="Not everyone needs 70B parameters">
 
-**KV cache**: During generation, cache key and value tensors from previous tokens. Avoids recomputing attention over the entire sequence at each step. Reduces per-token cost from $O(n)$ to $O(1)$.
+A parallel trend: **small models** trained on massive data that punch far above their weight:
 
-**Flash Attention** (Dao et al., 2022): Tiled, memory-efficient attention that avoids materializing the full $n \times n$ attention matrix. 2--4x faster and enables longer sequences.
+| Model | Parameters | Highlight |
+|-------|-----------|-----------|
+| [Phi-4](https://arxiv.org/abs/2412.08905) (Microsoft, 2024) | 14B | Outperforms GPT-3.5 on reasoning benchmarks |
+| [Gemma 2](https://arxiv.org/abs/2408.00118) (Google, 2024) | 2B / 9B / 27B | Open weights, strong multilingual |
+| [Qwen 2.5](https://arxiv.org/abs/2412.15115) (Alibaba, 2024) | 0.5B–72B | Full size range, open weights |
 
-**Speculative decoding**: Use a small "draft" model to propose several tokens at once, then verify them in parallel with the large model. If 4 out of 5 draft tokens are accepted, you get ~4x speedup with identical output quality.
+</div>
 
-**Continuous batching** (vLLM): New requests join an ongoing batch without waiting for the longest sequence to finish. Dramatically improves throughput for serving.
+<div class="tip-box" data-title="The Chinchilla lesson applied">
+
+These models are **massively overtrained** relative to Chinchilla-optimal (e.g., Phi-4 trains 14B params on 10T+ tokens — 700+ tokens/parameter vs. the "optimal" 20). Why? Because you train once but deploy millions of times. Smaller, slower-to-train models are *cheaper to run*.
 
 </div>
 
@@ -380,40 +382,38 @@ Need max quality? → Dense large. Need quality + speed on GPU? → MoE. Need to
 
 ---
 
-# Environmental impact and democratization
+# Environmental impact
 
 <div class="warning-box" data-title="The carbon cost of scale">
 
-Training GPT-3 produced an estimated **502 tonnes of CO$_2$** -- equivalent to 112 cars driven for a year (Strubell et al., 2019). As models grow, so does their environmental footprint.
+Training GPT-3 produced an estimated **502 tonnes of CO$_2$** — equivalent to 112 cars driven for a year ([Patterson et al., 2021](https://arxiv.org/abs/2104.10350)). As models grow, so does their environmental footprint.
 
 </div>
 
 <div class="note-box" data-title="Efficiency enables access">
 
-Efficiency techniques are not just about cost -- they are about **who gets to use AI**:
+Efficiency techniques are not just about cost — they are about **who gets to use AI**:
 
-- **Quantized open models** (Llama, Mixtral) run on consumer hardware
+- **Quantized open models** (Llama, Mixtral, DeepSeek) run on consumer hardware
 - **LoRA / QLoRA** enable fine-tuning on a single GPU
-- **Smaller efficient models** (Phi, Gemma) bring quality to resource-constrained settings
+- **Small efficient models** (Phi-4, Gemma 2, Qwen 2.5) bring quality to resource-constrained settings
 - **Open weights** let researchers, startups, and developing nations participate in AI development
-
-Without efficiency research, frontier AI would remain exclusive to a handful of well-funded organizations.
 
 </div>
 
 ---
 
-# Key takeaways
+# Discussion
 
-<div class="important-box" data-title="Core concepts from this lecture">
+<div class="tip-box" data-title="Questions to consider">
 
-1. **MoE** replaces dense feed-forward layers with multiple experts and a router, activating only top-k per token
-2. **Mixtral 8x7B** achieves 70B-quality at 13B-cost, proving MoE works at scale
-3. **Load balancing** (auxiliary loss, capacity limits) is critical to prevent routing collapse
-4. **Quantization** (INT4/INT8) enables running large models on consumer hardware
-5. **Knowledge distillation** transfers capability from large teacher to small student models
-6. **Inference optimizations** (KV cache, Flash Attention, speculative decoding) dramatically speed up generation
-7. **Efficiency is an equity issue**: it determines who can access and benefit from AI
+1. **The democratization paradox:** Efficiency makes AI accessible to everyone — including bad actors. DeepSeek-R1 is fully open and can reason. Is this net positive or net negative for society?
+
+2. **Expert specialization:** MoE experts develop functional specialization without supervision — code experts, language experts, math experts. The brain does the same thing. Is this convergent evolution, or is it the only way to organize large-scale processing?
+
+3. **The race to the bottom:** DeepSeek trained a frontier model for $5.5M. If costs keep falling, what happens when *anyone* can train a powerful model? Does this change the AI safety calculus?
+
+4. **State-space models:** Mamba processes sequences in linear time. If hybrid attention+SSM models match pure transformers, does the attention mechanism become a historical footnote — or a permanent necessity?
 
 </div>
 
@@ -421,14 +421,19 @@ Without efficiency research, frontier AI would remain exclusive to a handful of 
 
 # Further reading
 
-<div class="note-box" data-title="References">
+<div class="note-box" data-title="Further reading">
 
-- **Shazeer et al. (2017)** -- "Outrageously Large Neural Networks: The Sparsely-Gated MoE Layer" [[arXiv]](https://arxiv.org/abs/1701.06538)
-- **Jiang et al. (2024)** -- "Mixtral of Experts" [[arXiv]](https://arxiv.org/abs/2401.04088)
-- **Fedus et al. (2022)** -- "Switch Transformers" [[arXiv]](https://arxiv.org/abs/2101.03961)
-- **Dao et al. (2022)** -- "FlashAttention" [[arXiv]](https://arxiv.org/abs/2205.14135)
-- **Gu & Dao (2023)** -- "Mamba: Linear-Time Sequence Modeling" [[arXiv]](https://arxiv.org/abs/2312.00752)
-- **Strubell et al. (2019)** -- "Energy and Policy Considerations for Deep Learning" [[arXiv]](https://arxiv.org/abs/1906.02243)
+[**Jiang et al. (2024, *arXiv*)**](https://arxiv.org/abs/2401.04088) "Mixtral of Experts" — Open MoE matching Llama 2 70B at 6× the speed.
+
+[**DeepSeek-AI (2025, *arXiv*)**](https://arxiv.org/abs/2412.19437) "DeepSeek-V3" — 671B/37B MoE trained for $5.5M, frontier quality.
+
+[**Dao (2024, *arXiv*)**](https://arxiv.org/abs/2407.08608) "FlashAttention-3" — Hardware-aware attention approaching theoretical FLOPS.
+
+[**Gu & Dao (2023, *arXiv*)**](https://arxiv.org/abs/2312.00752) "Mamba: Linear-Time Sequence Modeling with Selective State Spaces" — $O(n)$ alternative to attention.
+
+[**Dao & Gu (2024, *ICML*)**](https://arxiv.org/abs/2405.21060) "Transformers are SSMs" — Mamba-2, bridging attention and state-space models.
+
+[**Patterson et al. (2021, *arXiv*)**](https://arxiv.org/abs/2104.10350) "Carbon Emissions and Large Neural Network Training" — CO₂ analysis of training large models.
 
 </div>
 

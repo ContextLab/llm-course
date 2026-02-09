@@ -19,37 +19,47 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. Identify the key limitations of the original BERT training procedure
-2. Explain how RoBERTa, ALBERT, DistilBERT, and ELECTRA each address different BERT limitations
+1. Identify key limitations of the original BERT training procedure
+2. Explain how RoBERTa, ALBERT, DistilBERT, ELECTRA, and DeBERTa each address different limitations
 3. Compare parameter efficiency, training efficiency, and inference speed across variants
-4. Select the appropriate BERT variant for a given task and constraint
-5. Use HuggingFace to load and swap between different BERT variants
+4. Select the appropriate variant for a given task and resource constraint
+5. Argue whether encoder models remain relevant in the era of GPT-4
 
 </div>
 
 ---
 
-# BERT's limitations
+# Recall: what BERT does
 
-<div class="warning-box" data-title="What could be improved?">
+<div class="note-box" data-title="From lectures 12 and 18">
 
-**Training procedure:**
-- Next Sentence Prediction (NSP) may not be useful
-- Static masking — same masks are reused every epoch
-- Some hyperparameter choices seemed arbitrary
+We covered BERT's architecture (MLM + NSP, bidirectional attention) in Lecture 12, and explored what BERT actually *learns* (attention patterns, layer probing, neuroscience connections) in Lecture 18.
 
-**Model size:**
-- 110M (Base) or 340M (Large) parameters
-- Large memory footprint for deployment
-- Slow inference for real-time applications
+</div>
 
-**Training efficiency:**
-- Only 15% of tokens provide a training signal (the masked ones)
-- 85% of computation is "wasted" on non-masked positions
+<div class="tip-box" data-title="Today's focus">
 
-**Data and compute:**
-- Trained on only 3.3B words — modern datasets are much larger
-- Could benefit from more training steps and larger batches
+Today: how researchers improved on BERT's original recipe, and whether encoder models still matter in 2026.
+
+</div>
+
+<div class="tip-box" data-title="Companion notebook">
+
+📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/bert_variants_demo.ipynb) — try different BERT variants hands-on
+
+</div>
+
+---
+
+# What could be improved?
+
+<div class="warning-box" data-title="BERT's key limitations">
+
+**Training procedure:** NSP may hurt performance; static masking reuses the same masks every epoch; only 15% of tokens provide training signal.
+
+**Scale:** Trained on only 3.3B words with 100K steps — modern datasets are 100x larger.
+
+**Efficiency:** 110M parameters are all active for every input. Large memory footprint for deployment.
 
 </div>
 
@@ -59,7 +69,7 @@ Winter 2026
 
 <div class="definition-box" data-title="Key idea: better training = better performance">
 
-RoBERTa (Liu et al., 2019) keeps BERT's architecture but fixes the training recipe:
+[RoBERTa](https://arxiv.org/abs/1907.11692) (Liu et al., 2019) keeps BERT's architecture but fixes the training recipe:
 
 1. **Remove NSP** — Next Sentence Prediction hurt performance. Use only MLM with full sentences.
 2. **Dynamic masking** — Generate a new masking pattern every time a sequence is seen, instead of reusing the same mask.
@@ -126,7 +136,7 @@ Training procedure matters as much as architecture. RoBERTa shows that BERT was 
 
 <div class="definition-box" data-title="Key idea: parameter sharing for efficiency">
 
-ALBERT (Lan et al., 2019) dramatically reduces BERT's parameter count through two innovations:
+[ALBERT](https://arxiv.org/abs/1909.11942) (Lan et al., 2019) dramatically reduces BERT's parameter count through two innovations:
 
 **1. Factorized embedding parameters:**
 - BERT: vocabulary (30K) × hidden size (768) = 23M parameters
@@ -222,7 +232,7 @@ ALBERT has 89% fewer parameters but the **same compute cost** — it still perfo
 
 <div class="definition-box" data-title="Key idea: train a small model to mimic a large model">
 
-Knowledge distillation (Sanh et al., 2019) compresses BERT into a smaller, faster model:
+[Knowledge distillation](https://arxiv.org/abs/1910.01108) (Sanh et al., 2019) compresses BERT into a smaller, faster model:
 
 - **Teacher**: Full BERT-base (12 layers, frozen)
 - **Student**: DistilBERT (6 layers, trainable)
@@ -280,7 +290,7 @@ for batch in training_data:
 
 <div class="definition-box" data-title="Key idea: learn from 100% of tokens, not just 15%">
 
-ELECTRA (Clark et al., 2020) uses a **generator-discriminator** setup:
+[ELECTRA](https://arxiv.org/abs/2003.10555) (Clark et al., 2020) uses a **generator-discriminator** setup:
 
 1. A small **generator** (like a mini-BERT) fills in masked tokens with plausible replacements
 2. A **discriminator** classifies *every* token as original or replaced
@@ -358,13 +368,13 @@ ELECTRA is ideal when you have limited compute budget:
 
 <div class="note-box" data-title="The BERT family keeps growing">
 
-**DeBERTa** (Microsoft, 2020): Disentangled attention separates content and position representations. Enhanced mask decoder. State-of-the-art on SuperGLUE.
+[**DeBERTa**](https://arxiv.org/abs/2006.03654) (Microsoft, 2020): Disentangled attention separates content and position representations. Enhanced mask decoder. State-of-the-art on SuperGLUE.
 
-**SpanBERT** (Facebook, 2019): Masks random contiguous *spans* instead of individual tokens. Span boundary objective. Better for extractive tasks (QA, coreference).
+[**SpanBERT**](https://arxiv.org/abs/1907.10529) (Facebook, 2019): Masks random contiguous *spans* instead of individual tokens. Span boundary objective. Better for extractive tasks (QA, coreference).
 
-**ERNIE** (Baidu, 2019): Entity-level and phrase-level masking. Knowledge-enhanced pre-training. Strong on Chinese NLP tasks.
+[**ERNIE**](https://arxiv.org/abs/1904.09223) (Baidu, 2019): Entity-level and phrase-level masking. Knowledge-enhanced pre-training. Strong on Chinese NLP tasks.
 
-**BART** (Facebook, 2019): Encoder-decoder architecture (not encoder-only). Denoising autoencoder with various corruption strategies. Excellent for generation tasks.
+[**BART**](https://arxiv.org/abs/1910.13461) (Facebook, 2019): Encoder-decoder architecture (not encoder-only). Denoising autoencoder with various corruption strategies. Excellent for generation tasks.
 
 </div>
 
@@ -465,35 +475,77 @@ for name, model_id in models.items():
 
 ---
 
-# Discussion
+# Architecture evolution
 
-<div class="tip-box" data-title="Questions to consider">
+<div class="note-box" data-title="From BERT to ModernBERT: 6 years of progress">
 
-1. **Training vs architecture:** RoBERTa shows that training matters enormously. Is architecture innovation overrated? How much can we improve just by training longer and better?
-
-2. **Parameter efficiency:** ALBERT shares all layers and still works well. Why? What does this tell us about what different layers learn? Is there a "sweet spot" for sharing?
-
-3. **Knowledge distillation:** Why does the student learn *better* from the teacher's soft probabilities than from hard labels? What information is encoded in the teacher's distribution over wrong answers?
-
-4. **Model selection in practice:** How do you decide which variant to use for a real project? Is it worth fine-tuning multiple variants and comparing?
+| Model | Year | Key innovation | Quality vs BERT |
+|-------|------|---------------|----------------|
+| BERT | 2018 | MLM + NSP | Baseline |
+| RoBERTa | 2019 | Better training recipe | +3-11 pts |
+| ALBERT | 2019 | Parameter sharing | 89% fewer params |
+| DistilBERT | 2019 | Knowledge distillation | 97% quality, 60% faster |
+| ELECTRA | 2020 | Learn from all tokens | 4x less compute |
+| DeBERTa | 2020 | Disentangled attention | SOTA on SuperGLUE |
+| [ModernBERT](https://arxiv.org/abs/2412.13663) | 2024 | Modern training + RoPE + Flash Attention | SOTA on GLUE, retrieval |
 
 </div>
 
 ---
 
-# References
+# Is the encoder dead?
+
+<div class="tip-box" data-title="Discussion: GPT-4 can classify text via prompting. Do we still need encoders?">
+
+**The case for "yes, encoders are obsolete":**
+- Decoder-only models (GPT-4, Claude) can do classification, NER, QA via prompting
+- One model for all tasks vs. fine-tuning separate models
+- In-context learning eliminates the need for task-specific architectures
+
+**The case for "no, encoders still matter":**
+- [ModernBERT](https://arxiv.org/abs/2412.13663) (Dec 2024): encoder with modern techniques (RoPE, Flash Attention, 8192 context) achieves SOTA on retrieval and classification — faster and cheaper than any decoder
+- [Gemma Encoder](https://arxiv.org/abs/2503.02656) (2025): Google releases encoder-only Gemma, proving the architecture still has legs
+- Encoders are 10-100x cheaper to run than decoder models for classification tasks
+- Most production search and retrieval systems still use encoders (Sentence-BERT, E5, NV-Embed)
+
+**The real answer:** It depends on your constraints. Encoders win on cost and latency. Decoders win on flexibility.
+
+</div>
+
+---
+
+# Discussion
+
+<div class="tip-box" data-title="Questions to consider">
+
+1. **Training vs architecture:** RoBERTa shows that training matters enormously. How much of BERT's "limitations" were really just undertrained models?
+
+2. **The distillation paradox:** Why does a student model learn *better* from soft probability distributions than from hard labels? What "dark knowledge" is in the teacher's mistakes?
+
+3. **Encoders in 2026:** Google, Hugging Face, and others are *still* releasing encoder models. If decoders can do everything, why? What does this tell us about the efficiency-flexibility tradeoff?
+
+4. **Parameter sharing (ALBERT):** All 12 layers share the same weights and it still works. What does this imply about what transformer layers actually learn?
+
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# Further reading
 
 <div class="note-box" data-title="Further reading">
 
-[**Liu et al. (2019, *arXiv*)**](https://arxiv.org/abs/1907.11692) "RoBERTa: A Robustly Optimized BERT Pretraining Approach"
+[**Liu et al. (2019, *arXiv*)**](https://arxiv.org/abs/1907.11692) "RoBERTa: A Robustly Optimized BERT Pretraining Approach" — Better training recipe, same architecture.
 
-[**Lan et al. (2019, *ICLR*)**](https://arxiv.org/abs/1909.11942) "ALBERT: A Lite BERT for Self-supervised Learning of Language Representations"
+[**Lan et al. (2019, *ICLR*)**](https://arxiv.org/abs/1909.11942) "ALBERT: A Lite BERT" — 89% parameter reduction via sharing.
 
-[**Sanh et al. (2019, *NeurIPS Workshop*)**](https://arxiv.org/abs/1910.01108) "DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter"
+[**Sanh et al. (2019, *NeurIPS Workshop*)**](https://arxiv.org/abs/1910.01108) "DistilBERT" — Knowledge distillation for 60% speedup.
 
-[**Clark et al. (2020, *ICLR*)**](https://arxiv.org/abs/2003.10555) "ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators"
+[**Clark et al. (2020, *ICLR*)**](https://arxiv.org/abs/2003.10555) "ELECTRA" — Learn from all tokens, not just masked ones.
 
-[**He et al. (2020, *ICLR*)**](https://arxiv.org/abs/2006.03654) "DeBERTa: Decoding-enhanced BERT with Disentangled Attention"
+[**He et al. (2020, *ICLR*)**](https://arxiv.org/abs/2006.03654) "DeBERTa" — Disentangled attention, SOTA on SuperGLUE.
+
+[**Warner et al. (2024, *arXiv*)**](https://arxiv.org/abs/2412.13663) "ModernBERT" — Modern encoder with RoPE + Flash Attention.
 
 </div>
 
@@ -518,6 +570,6 @@ for name, model_id in models.items():
 
 <div class="tip-box" data-title="Up next...">
 
-Applications of encoder models: from Google Search to cognitive neuroscience
+Applications of encoder models: industry, neuroscience, and the "understanding" debate
 
 </div>
