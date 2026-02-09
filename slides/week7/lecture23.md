@@ -22,9 +22,9 @@ Winter 2026
 
 1. Implement a **complete GPT model** from scratch in PyTorch (~30M parameters)
 2. Build each component: **embeddings**, **masked attention**, **transformer block**, **LM head**
-3. Write a **training loop** with AdamW, gradient clipping, and LR scheduling
-4. Implement **text generation** with temperature, top-k, and nucleus sampling
-5. Explain how **KV caching** and **FlashAttention** make modern LLMs practical
+3. Write a **training loop** with AdamW, gradient clipping, and **gradient accumulation**
+4. Apply **mixed precision training** and **learning rate scheduling** for efficient training
+5. Implement **text generation** with temperature, top-k, and nucleus sampling
 
 </div>
 
@@ -52,12 +52,12 @@ There are **no classes February 23–27** (instructor away). Use this time to wo
 
 We will implement every component of a GPT language model from scratch — small enough to train on a laptop, but architecturally identical to GPT-2:
 
-1. **Tokenization** with tiktoken (GPT-2's BPE tokenizer — see Lecture 6)
+1. **Tokenization** with tiktoken (GPT-2's BPE tokenizer)
 2. **Token + position embeddings**
-3. **Masked multi-head attention** (causal mask — see Lecture 21)
+3. **Masked multi-head attention** (causal mask)
 4. **Transformer decoder blocks** (pre-norm with residual connections)
-5. **Language model head** for next-token prediction
-6. **Training loop** with AdamW and gradient clipping
+5. **Language model head** with weight tying
+6. **Training loop** with AdamW, gradient accumulation, and mixed precision
 7. **Text generation** with multiple sampling strategies
 
 </div>
@@ -173,9 +173,9 @@ class Embeddings(nn.Module):
 
 </div>
 
-<div class="note-box" data-title="Two sources of information combined">
+<div class="note-box" data-title="Token identity + position combined">
 
-**Token embeddings** encode *what* each token means. **Position embeddings** encode *where* each token sits in the sequence. Their sum gives the model both word identity and word order.
+Token embeddings encode *what*; position embeddings encode *where*. Their sum gives the model both word identity and word order (Lecture 15).
 
 </div>
 
@@ -373,6 +373,125 @@ for epoch in range(config['num_epochs']):
         total_loss += loss.item()
     print(f"Epoch {epoch+1}, Loss: {total_loss / len(dataloader):.4f}")
 ```
+
+</div>
+
+---
+
+# Weight tying
+
+<div class="example-box" data-title="Sharing embeddings between input and output layers">
+
+```python
+class GPT(nn.Module):
+    def __init__(self, vocab_size, d_model, n_layers, n_heads, max_seq_len, dropout):
+        super().__init__()
+        self.embeddings = Embeddings(vocab_size, d_model, max_seq_len, dropout)
+        # ... blocks, ln_f as before ...
+        self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
+
+        # Tie weights: lm_head uses same matrix as token embeddings
+        self.lm_head.weight = self.embeddings.token_embed.weight
+        # Saves ~20% parameters for large vocabularies!
+```
+
+</div>
+
+<div class="note-box" data-title="Why it works">
+
+Both layers map between token IDs and embedding space — just in opposite directions. Tying them forces consistent representations. Used in GPT-2, LLaMA, and most modern LLMs (Lecture 21).
+
+</div>
+
+---
+
+# Gradient accumulation
+
+<div class="example-box" data-title="Simulating large batches with limited memory">
+
+```python
+accumulation_steps = 8  # Simulate 8x larger batch
+optimizer.zero_grad()
+
+for i, (x, y) in enumerate(dataloader):
+    x, y = x.to(device), y.to(device)
+    logits, loss = model(x, targets=y)
+    loss = loss / accumulation_steps  # Normalize
+    loss.backward()
+
+    if (i + 1) % accumulation_steps == 0:
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        optimizer.step()
+        optimizer.zero_grad()
+```
+
+</div>
+
+<div class="note-box" data-title="Why this matters">
+
+Can't fit `batch_size=256`? Use `batch_size=32` with 8 accumulation steps. **Mathematically equivalent gradients**, 8× less memory. Essential for training on consumer GPUs.
+
+</div>
+
+---
+
+# Learning rate scheduling
+
+<div class="example-box" data-title="Linear warmup + cosine decay (the standard recipe)">
+
+```python
+import math
+
+def get_lr(step, warmup_steps=1000, max_steps=50000, max_lr=3e-4, min_lr=3e-5):
+    if step < warmup_steps:
+        return max_lr * step / warmup_steps          # Linear warmup
+    decay_ratio = (step - warmup_steps) / (max_steps - warmup_steps)
+    return min_lr + 0.5 * (max_lr - min_lr) * (1 + math.cos(math.pi * decay_ratio))
+
+# Usage in training loop
+for step in range(max_steps):
+    lr = get_lr(step)
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
+    # ... training step ...
+```
+
+</div>
+
+<div class="note-box" data-title="Why warmup + cosine decay?">
+
+Warmup prevents early instability (random weights → wild gradients). Cosine decay gives diminishing returns gracefully. This is the schedule used by GPT-3, LLaMA, and most modern LLMs.
+
+</div>
+
+---
+
+# Mixed precision training
+
+<div class="example-box" data-title="Half the memory, double the throughput">
+
+```python
+scaler = torch.amp.GradScaler()
+
+for x, y in dataloader:
+    x, y = x.to(device), y.to(device)
+
+    with torch.amp.autocast(device_type='cuda', dtype=torch.bfloat16):
+        logits, loss = model(x, targets=y)
+
+    scaler.scale(loss).backward()
+    scaler.unscale_(optimizer)
+    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+    scaler.step(optimizer)
+    scaler.update()
+    optimizer.zero_grad()
+```
+
+</div>
+
+<div class="note-box" data-title="Why bfloat16?">
+
+`bfloat16` halves memory and doubles throughput on modern GPUs with minimal quality loss. The `GradScaler` handles numerical stability automatically. All serious training runs (nanoGPT, LLaMA, etc.) use mixed precision.
 
 </div>
 
@@ -609,6 +728,30 @@ self.pos_embed = None  # RoPE applied inside attention (extrapolates to any leng
 <div class="tip-box" data-title="The takeaway">
 
 Our mini-GPT is *architecturally* identical to GPT-2. To reach LLaMA-class performance, swap in RMSNorm, SwiGLU, RoPE, and GQA — all incremental changes to the same basic structure. The conceptual framework you built today is the same one powering frontier models.
+
+</div>
+
+---
+
+# How our mini-GPT compares to nanoGPT
+
+<div class="note-box" data-title="From toy model to real model">
+
+| Feature | Our mini-GPT | nanoGPT | GPT-2 (124M) |
+|---------|-------------|---------|--------------|
+| Parameters | ~30M | ~124M | 124M |
+| Context length | 256 | 1024 | 1024 |
+| Training data | Shakespeare | OpenWebText | WebText |
+| Attention | Standard | FlashAttention | Standard |
+| Precision | float32 | bfloat16 | float32 |
+| Weight tying | Yes (add it!) | Yes | Yes |
+| Time to train | ~1 hour (GPU) | ~4 hours (A100) | Days (256 TPUs) |
+
+</div>
+
+<div class="tip-box" data-title="The takeaway">
+
+Our mini-GPT is *architecturally identical* to GPT-2. To reach nanoGPT-class performance: scale up `d_model` to 768 and `n_layers` to 12, add FlashAttention, use mixed precision, and train on a larger corpus. The conceptual framework you built today is the same one powering frontier models — just smaller.
 
 </div>
 

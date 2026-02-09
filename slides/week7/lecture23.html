@@ -705,9 +705,9 @@ Winter 2026</p>
 <ol>
 <li>Implement a <strong>complete GPT model</strong> from scratch in PyTorch (~30M parameters)</li>
 <li>Build each component: <strong>embeddings</strong>, <strong>masked attention</strong>, <strong>transformer block</strong>, <strong>LM head</strong></li>
-<li>Write a <strong>training loop</strong> with AdamW, gradient clipping, and LR scheduling</li>
+<li>Write a <strong>training loop</strong> with AdamW, gradient clipping, and <strong>gradient accumulation</strong></li>
+<li>Apply <strong>mixed precision training</strong> and <strong>learning rate scheduling</strong> for efficient training</li>
 <li>Implement <strong>text generation</strong> with temperature, top-k, and nucleus sampling</li>
-<li>Explain how <strong>KV caching</strong> and <strong>FlashAttention</strong> make modern LLMs practical</li>
 </ol>
 </div>
 </section>
@@ -725,12 +725,12 @@ Winter 2026</p>
 <div class="definition-box" data-title="A complete mini-GPT">
 <p>We will implement every component of a GPT language model from scratch — small enough to train on a laptop, but architecturally identical to GPT-2:</p>
 <ol>
-<li><strong>Tokenization</strong> with tiktoken (GPT-2's BPE tokenizer — see Lecture 6)</li>
+<li><strong>Tokenization</strong> with tiktoken (GPT-2's BPE tokenizer)</li>
 <li><strong>Token + position embeddings</strong></li>
-<li><strong>Masked multi-head attention</strong> (causal mask — see Lecture 21)</li>
+<li><strong>Masked multi-head attention</strong> (causal mask)</li>
 <li><strong>Transformer decoder blocks</strong> (pre-norm with residual connections)</li>
-<li><strong>Language model head</strong> for next-token prediction</li>
-<li><strong>Training loop</strong> with AdamW and gradient clipping</li>
+<li><strong>Language model head</strong> with weight tying</li>
+<li><strong>Training loop</strong> with AdamW, gradient accumulation, and mixed precision</li>
 <li><strong>Text generation</strong> with multiple sampling strategies</li>
 </ol>
 </div>
@@ -844,8 +844,8 @@ Winter 2026</p>
 <span class="line"><span class="line-num">12</span><span class="line-code">        return self.dropout(tok_emb + pos_emb)               # Broadcasting adds positions</span></span>
 </code></pre>
 </div>
-<div class="note-box" data-title="Two sources of information combined">
-<p><strong>Token embeddings</strong> encode <em>what</em> each token means. <strong>Position embeddings</strong> encode <em>where</em> each token sits in the sequence. Their sum gives the model both word identity and word order.</p>
+<div class="note-box" data-title="Token identity + position combined">
+<p>Token embeddings encode <em>what</em>; position embeddings encode <em>where</em>. Their sum gives the model both word identity and word order (Lecture 15).</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1067,7 +1067,98 @@ Winter 2026</p>
 <div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="weight-tying">Weight tying</h1>
+<div class="example-box" data-title="Sharing embeddings between input and output layers">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">class GPT(nn.Module):</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">    def __init__(self, vocab_size, d_model, n_layers, n_heads, max_seq_len, dropout):</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">        super().__init__()</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">        self.embeddings = Embeddings(vocab_size, d_model, max_seq_len, dropout)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">        # ... blocks, ln_f as before ...</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">        self.lm_head = nn.Linear(d_model, vocab_size, bias=False)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">        # Tie weights: lm_head uses same matrix as token embeddings</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">        self.lm_head.weight = self.embeddings.token_embed.weight</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">        # Saves ~20% parameters for large vocabularies!</span></span>
+</code></pre>
+</div>
+<div class="note-box" data-title="Why it works">
+<p>Both layers map between token IDs and embedding space — just in opposite directions. Tying them forces consistent representations. Used in GPT-2, LLaMA, and most modern LLMs (Lecture 21).</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="gradient-accumulation">Gradient accumulation</h1>
+<div class="example-box" data-title="Simulating large batches with limited memory">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">accumulation_steps = 8  # Simulate 8x larger batch</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">optimizer.zero_grad()</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">for i, (x, y) in enumerate(dataloader):</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">    x, y = x.to(device), y.to(device)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">    logits, loss = model(x, targets=y)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">    loss = loss / accumulation_steps  # Normalize</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">    loss.backward()</span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    if (i + 1) % accumulation_steps == 0:</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">        optimizer.step()</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">        optimizer.zero_grad()</span></span>
+</code></pre>
+</div>
+<div class="note-box" data-title="Why this matters">
+<p>Can't fit <code>batch_size=256</code>? Use <code>batch_size=32</code> with 8 accumulation steps. <strong>Mathematically equivalent gradients</strong>, 8× less memory. Essential for training on consumer GPUs.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="learning-rate-scheduling">Learning rate scheduling</h1>
+<div class="example-box" data-title="Linear warmup + cosine decay (the standard recipe)">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">import math</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">def get_lr(step, warmup_steps=1000, max_steps=50000, max_lr=3e-4, min_lr=3e-5):</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">    if step &lt; warmup_steps:</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">        return max_lr * step / warmup_steps          # Linear warmup</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">    decay_ratio = (step - warmup_steps) / (max_steps - warmup_steps)</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">    return min_lr + 0.5 * (max_lr - min_lr) * (1 + math.cos(math.pi * decay_ratio))</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code"># Usage in training loop</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">for step in range(max_steps):</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">    lr = get_lr(step)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">    for param_group in optimizer.param_groups:</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">        param_group[&#x27;lr&#x27;] = lr</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    # ... training step ...</span></span>
+</code></pre>
+</div>
+<div class="note-box" data-title="Why warmup + cosine decay?">
+<p>Warmup prevents early instability (random weights → wild gradients). Cosine decay gives diminishing returns gracefully. This is the schedule used by GPT-3, LLaMA, and most modern LLMs.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="mixed-precision-training">Mixed precision training</h1>
+<div class="example-box" data-title="Half the memory, double the throughput">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">scaler = torch.amp.GradScaler()</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">for x, y in dataloader:</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">    x, y = x.to(device), y.to(device)</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code">    with torch.amp.autocast(device_type=&#x27;cuda&#x27;, dtype=torch.bfloat16):</span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">        logits, loss = model(x, targets=y)</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">9</span><span class="line-code">    scaler.scale(loss).backward()</span></span>
+<span class="line"><span class="line-num">10</span><span class="line-code">    scaler.unscale_(optimizer)</span></span>
+<span class="line"><span class="line-num">11</span><span class="line-code">    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)</span></span>
+<span class="line"><span class="line-num">12</span><span class="line-code">    scaler.step(optimizer)</span></span>
+<span class="line"><span class="line-num">13</span><span class="line-code">    scaler.update()</span></span>
+<span class="line"><span class="line-num">14</span><span class="line-code">    optimizer.zero_grad()</span></span>
+</code></pre>
+</div>
+<div class="note-box" data-title="Why bfloat16?">
+<p><code>bfloat16</code> halves memory and doubles throughput on modern GPUs with minimal quality loss. The <code>GradScaler</code> handles numerical stability automatically. All serious training runs (nanoGPT, LLaMA, etc.) use mixed precision.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="training-best-practices">Training best practices</h1>
 <div class="note-box" data-title="Five key techniques for stable GPT training">
 <table>
@@ -1105,7 +1196,7 @@ Winter 2026</p>
 <p>If loss is not decreasing: check learning rate (try 1e-4 to 3e-4), verify data pipeline outputs correct input/target pairs, and watch for NaN values. If you run out of memory: reduce batch size or sequence length first, then try gradient accumulation.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="greedy-decoding">Greedy decoding</h1>
 <div class="example-box" data-title="Generating text by always picking the most likely token">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -1129,7 +1220,7 @@ Winter 2026</p>
 <p>Always picking <code>argmax</code> produces the same output every time and tends to get stuck in repetitive loops. Real applications use <strong>sampling</strong> to introduce controlled randomness.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="sampling-strategies">Sampling strategies</h1>
 <div class="definition-box" data-title="Three ways to add controlled randomness">
 <ul>
@@ -1172,7 +1263,7 @@ Winter 2026</p>
 </table>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="implementing-sampling">Implementing sampling</h1>
 <div class="example-box" data-title="Top-k and nucleus sampling in PyTorch">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -1196,7 +1287,7 @@ Winter 2026</p>
 <div class="code-continued-indicator">continued...</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="31" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="implementing-sampling-1">Implementing sampling</h1>
 <div class="example-box" data-title="Top-k and nucleus sampling in PyTorch">
 <pre><code class="language-python has-line-numbers" data-start-line="17">
@@ -1206,7 +1297,7 @@ Winter 2026</p>
 <div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="32" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="complete-generation-function">Complete generation function</h1>
 <div class="example-box" data-title="Putting it all together">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -1228,7 +1319,7 @@ Winter 2026</p>
 <div class="code-continued-indicator">continued...</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="33" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="complete-generation-function-1">Complete generation function</h1>
 <div class="example-box" data-title="Putting it all together">
 <pre><code class="language-python has-line-numbers" data-start-line="15">
@@ -1241,7 +1332,7 @@ Winter 2026</p>
 <div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="34" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="debugging-and-common-issues">Debugging and common issues</h1>
 <div class="warning-box" data-title="Problems you will encounter">
 <table>
@@ -1282,7 +1373,7 @@ Winter 2026</p>
 </table>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="31" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="35" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="kv-cache-fast-generation">KV cache: fast generation</h1>
 <div class="definition-box" data-title="Avoiding redundant computation during generation">
 <p>Without caching, generating token <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> requires recomputing attention over <em>all</em> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> previous tokens. The <strong>KV cache</strong> stores previously computed key/value tensors and only computes Q/K/V for the <em>new</em> token.</p>
@@ -1304,7 +1395,7 @@ Winter 2026</p>
 <p>KV caching makes generation <strong>10–50× faster</strong> for long sequences. It's the reason ChatGPT responds in seconds, not minutes. The tradeoff is memory: the cache grows linearly with sequence length.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="32" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="36" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="flashattention-memory-efficient-attention">FlashAttention: memory-efficient attention</h1>
 <div class="definition-box" data-title="Dao et al. (2022, 2023); Dao (2024)">
 <p>Standard attention materializes the full <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>×</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">N \times N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> attention matrix in GPU memory — <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>N</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(N^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> memory. <a href="https://arxiv.org/abs/2205.14135">FlashAttention</a> computes attention in <strong>tiled blocks</strong> that fit in fast SRAM, never materializing the full matrix.</p>
@@ -1344,7 +1435,7 @@ Winter 2026</p>
 <p><a href="https://arxiv.org/abs/2407.08608">FlashAttention-3</a> adds hardware-aware pipelining for H100 GPUs, approaching 75% of theoretical FLOPS.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="33" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="37" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="gpt-2-vs-modern-decoders">GPT-2 vs modern decoders</h1>
 <div class="note-box" data-title="Upgrading our mini-GPT to a modern architecture (see Lecture 21)">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -1366,7 +1457,69 @@ Winter 2026</p>
 <p>Our mini-GPT is <em>architecturally</em> identical to GPT-2. To reach LLaMA-class performance, swap in RMSNorm, SwiGLU, RoPE, and GQA — all incremental changes to the same basic structure. The conceptual framework you built today is the same one powering frontier models.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="34" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="38" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="how-our-mini-gpt-compares-to-nanogpt">How our mini-GPT compares to nanoGPT</h1>
+<div class="note-box" data-title="From toy model to real model">
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Our mini-GPT</th>
+<th>nanoGPT</th>
+<th>GPT-2 (124M)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Parameters</td>
+<td>~30M</td>
+<td>~124M</td>
+<td>124M</td>
+</tr>
+<tr>
+<td>Context length</td>
+<td>256</td>
+<td>1024</td>
+<td>1024</td>
+</tr>
+<tr>
+<td>Training data</td>
+<td>Shakespeare</td>
+<td>OpenWebText</td>
+<td>WebText</td>
+</tr>
+<tr>
+<td>Attention</td>
+<td>Standard</td>
+<td>FlashAttention</td>
+<td>Standard</td>
+</tr>
+<tr>
+<td>Precision</td>
+<td>float32</td>
+<td>bfloat16</td>
+<td>float32</td>
+</tr>
+<tr>
+<td>Weight tying</td>
+<td>Yes (add it!)</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Time to train</td>
+<td>~1 hour (GPU)</td>
+<td>~4 hours (A100)</td>
+<td>Days (256 TPUs)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tip-box" data-title="The takeaway">
+<p>Our mini-GPT is <em>architecturally identical</em> to GPT-2. To reach nanoGPT-class performance: scale up <code>d_model</code> to 768 and <code>n_layers</code> to 12, add FlashAttention, use mixed precision, and train on a larger corpus. The conceptual framework you built today is the same one powering frontier models — just smaller.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="39" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="further-reading">Further reading</h1>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://www.youtube.com/watch?v=kCc8FmEb1nY"><strong>Karpathy, &quot;Let's build GPT&quot;</strong></a> Step-by-step video tutorial (2h) — the inspiration for this lecture.</p>
@@ -1376,7 +1529,7 @@ Winter 2026</p>
 <p><a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf"><strong>Radford et al. (2018)</strong></a> &quot;Improving Language Understanding by Generative Pre-Training&quot; — The original GPT paper.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="35" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="40" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">

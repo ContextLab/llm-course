@@ -714,42 +714,13 @@ Winter 2026</p>
 <p><img class="emoji" draggable="false" alt="📓" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4d3.svg" data-marp-twemoji=""/> <a href="https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/moe_efficiency_demo.ipynb">Companion Notebook</a> — build a simplified MoE layer and experiment with quantization</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-scaling-dilemma">The scaling dilemma</h1>
-<div class="note-box" data-title="Bigger models perform better, but at enormous cost">
-<table>
-<thead>
-<tr>
-<th>Model</th>
-<th>Parameters</th>
-<th>Estimated training cost</th>
-<th>CO<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow></mrow><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4511em;vertical-align:-0.15em;"></span><span class="mord"><span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> equivalent</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GPT-1</td>
-<td>117M</td>
-<td>~$10K</td>
-<td>Negligible</td>
-</tr>
-<tr>
-<td>GPT-3</td>
-<td>175B</td>
-<td>~$4.6M</td>
-<td>112 cars for 1 year</td>
-</tr>
-<tr>
-<td>GPT-4</td>
-<td>~1.8T (est.)</td>
-<td>~$100M+</td>
-<td>Unknown</td>
-</tr>
-</tbody>
-</table>
+<div class="important-box" data-title="Dense models are wasteful">
+<p>In a dense model like GPT-3 (175B parameters, ~$4.6M to train), <strong>every parameter is active for every input token</strong>. But a math question doesn't require the same circuitry as a French translation. Can we activate only the relevant parameters?</p>
 </div>
-<div class="important-box" data-title="The key insight">
-<p>In a dense model like GPT-3, <strong>every parameter is active for every input token</strong>. But not all parameters need to be active for every input. A math question does not require the same circuitry as a French translation. <strong>Can we activate only the relevant parameters?</strong></p>
+<div class="tip-box" data-title="Questions to consider">
+<p>The brain uses only ~1–2% of neurons for any given task — the rest are inhibited. Is MoE's sparse activation the same principle? What does this suggest about the computational tradeoffs of intelligence?</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1158,8 +1129,8 @@ Winter 2026</p>
 </tbody>
 </table>
 </div>
-<div class="tip-box" data-title="The Chinchilla lesson applied">
-<p>These models are <strong>massively overtrained</strong> relative to Chinchilla-optimal (e.g., Phi-4 trains 14B params on 10T+ tokens — 700+ tokens/parameter vs. the &quot;optimal&quot; 20). Why? Because you train once but deploy millions of times. Smaller, slower-to-train models are <em>cheaper to run</em>.</p>
+<div class="tip-box" data-title="The inference-optimal paradigm">
+<p>These models are <strong>massively overtrained</strong> relative to Chinchilla-optimal (Lecture 22): Phi-4 uses 700+ tokens/parameter vs. the &quot;optimal&quot; 20. The logic: train once, deploy millions of times. Smaller models are <em>cheaper to run</em>.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">

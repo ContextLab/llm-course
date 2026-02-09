@@ -775,11 +775,11 @@ Winter 2026</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="what-is-bias-in-llms">What is bias in LLMs?</h1>
-<div class="definition-box" data-title="Systematic unfairness encoded in model behavior">
-<p><strong>Bias</strong> in LLMs refers to systematic patterns where the model treats certain groups or individuals unfairly, often reflecting and amplifying societal prejudices present in training data.</p>
+<h1 id="bias-in-llms-beyond-word-embeddings">Bias in LLMs: beyond word embeddings</h1>
+<div class="definition-box" data-title="From static bias (Lecture 11) to dynamic bias">
+<p>In Lecture 11, we saw that word embeddings encode societal biases (&quot;doctor&quot; → male). LLMs inherit these biases <em>and</em> amplify them through generation — they don't just associate, they <em>produce</em> biased text at scale.</p>
 </div>
-<div class="note-box" data-title="Four types of bias">
+<div class="note-box" data-title="Four types of LLM-specific bias">
 <table>
 <thead>
 <tr>
@@ -796,8 +796,8 @@ Winter 2026</p>
 </tr>
 <tr>
 <td><strong>Representation bias</strong></td>
-<td>Stereotypical associations</td>
-<td>&quot;Doctor&quot; → male pronouns; &quot;nurse&quot; → female pronouns</td>
+<td>Stereotypical associations in generation</td>
+<td>GPT generates male doctors and female nurses by default</td>
 </tr>
 <tr>
 <td><strong>Allocation bias</strong></td>
@@ -805,9 +805,9 @@ Winter 2026</p>
 <td>Higher error rates for African American Vernacular English</td>
 </tr>
 <tr>
-<td><strong>Interaction bias</strong></td>
-<td>Feedback loops amplify bias</td>
-<td>RLHF inherits annotator biases</td>
+<td><strong>Sycophancy bias</strong></td>
+<td>Models agree with the user regardless of truth</td>
+<td>RLHF optimizes for user satisfaction, not accuracy</td>
 </tr>
 </tbody>
 </table>
@@ -827,14 +827,9 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-alignment-problem">The alignment problem</h1>
 <div class="definition-box" data-title="Making models do what we want, not just what we say">
-<p>The <strong>alignment problem</strong> asks: how do we ensure AI systems pursue the goals we <em>intend</em>, not just a literal interpretation of what we <em>specified</em>?</p>
-<ul>
-<li><strong>Training objective</strong>: Predict the next token accurately</li>
-<li><strong>Desired behavior</strong>: Be helpful, honest, and harmless</li>
-<li><strong>The gap</strong>: Accurate next-token prediction does not guarantee helpfulness or safety</li>
-</ul>
+<p>The <strong>alignment problem</strong> asks: how do we ensure AI systems pursue the goals we <em>intend</em>, not just a literal interpretation of what we <em>specified</em>? Accurate next-token prediction does not guarantee helpfulness or safety.</p>
 </div>
-<div class="note-box" data-title="Alignment techniques (see also Lectures 16 and 22)">
+<div class="note-box" data-title="Alignment techniques beyond RLHF and DPO (Lectures 16, 22)">
 <table>
 <thead>
 <tr>
@@ -845,16 +840,6 @@ Winter 2026</p>
 </thead>
 <tbody>
 <tr>
-<td><strong>RLHF</strong> (L16, L22)</td>
-<td>Optimize for human preference rankings</td>
-<td>Expensive, inherits annotator biases</td>
-</tr>
-<tr>
-<td><strong>DPO</strong> (L22)</td>
-<td>Direct preference optimization without RL</td>
-<td>Still needs preference data</td>
-</tr>
-<tr>
 <td><a href="https://arxiv.org/abs/2212.08073"><strong>Constitutional AI</strong></a></td>
 <td>Model self-critiques against explicit principles</td>
 <td>Principles must be comprehensive</td>
@@ -864,8 +849,19 @@ Winter 2026</p>
 <td>Adversarial testing to find failure modes</td>
 <td>Reactive, not proactive</td>
 </tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2310.01405"><strong>Representation engineering</strong></a> (2023)</td>
+<td>Directly edit model internals to enforce honesty</td>
+<td>Nascent, hard to verify</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2312.09390"><strong>Weak-to-strong generalization</strong></a> (OpenAI, 2023)</td>
+<td>Weaker model supervises stronger model</td>
+<td>Alignment may not transfer fully</td>
+</tr>
 </tbody>
 </table>
+<p>The trend: moving from <em>behavioral</em> alignment (training outputs) toward <em>mechanistic</em> alignment (understanding internals).</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">

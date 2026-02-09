@@ -38,19 +38,15 @@ Winter 2026
 
 # The scaling dilemma
 
-<div class="note-box" data-title="Bigger models perform better, but at enormous cost">
+<div class="important-box" data-title="Dense models are wasteful">
 
-| Model | Parameters | Estimated training cost | CO$_2$ equivalent |
-|-------|------------|------------------------|-------------------|
-| GPT-1 | 117M | ~$10K | Negligible |
-| GPT-3 | 175B | ~$4.6M | 112 cars for 1 year |
-| GPT-4 | ~1.8T (est.) | ~$100M+ | Unknown |
+In a dense model like GPT-3 (175B parameters, ~$4.6M to train), **every parameter is active for every input token**. But a math question doesn't require the same circuitry as a French translation. Can we activate only the relevant parameters?
 
 </div>
 
-<div class="important-box" data-title="The key insight">
+<div class="tip-box" data-title="Questions to consider">
 
-In a dense model like GPT-3, **every parameter is active for every input token**. But not all parameters need to be active for every input. A math question does not require the same circuitry as a French translation. **Can we activate only the relevant parameters?**
+The brain uses only ~1–2% of neurons for any given task — the rest are inhibited. Is MoE's sparse activation the same principle? What does this suggest about the computational tradeoffs of intelligence?
 
 </div>
 
@@ -320,9 +316,9 @@ A parallel trend: **small models** trained on massive data that punch far above 
 
 </div>
 
-<div class="tip-box" data-title="The Chinchilla lesson applied">
+<div class="tip-box" data-title="The inference-optimal paradigm">
 
-These models are **massively overtrained** relative to Chinchilla-optimal (e.g., Phi-4 trains 14B params on 10T+ tokens — 700+ tokens/parameter vs. the "optimal" 20). Why? Because you train once but deploy millions of times. Smaller, slower-to-train models are *cheaper to run*.
+These models are **massively overtrained** relative to Chinchilla-optimal (Lecture 22): Phi-4 uses 700+ tokens/parameter vs. the "optimal" 20. The logic: train once, deploy millions of times. Smaller models are *cheaper to run*.
 
 </div>
 

@@ -704,10 +704,10 @@ Winter 2026</p>
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 <ol>
 <li>Explain the <strong>generative pre-training</strong> paradigm and why it was revolutionary</li>
-<li>Describe the <strong>transformer decoder</strong> architecture used in GPT</li>
+<li>Evaluate the <strong>ethical implications</strong> of GPT-1's training data (BooksCorpus)</li>
 <li>Distinguish between <strong>pre-training</strong> and <strong>fine-tuning</strong> stages</li>
 <li>Compare GPT's <strong>autoregressive</strong> approach with BERT's <strong>bidirectional</strong> approach</li>
-<li>Identify how the decoder stack has evolved from GPT-1 to modern LLMs (2024)</li>
+<li>Identify how the decoder stack has evolved from GPT-1 to open-weight LLMs (2025)</li>
 </ol>
 </div>
 </section>
@@ -724,18 +724,6 @@ Winter 2026</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="from-bert-to-gpt">From BERT to GPT</h1>
-<div class="definition-box" data-title="Two philosophies of language modeling">
-<ul>
-<li><strong>BERT</strong> (encoder): Mask random tokens, predict them using <strong>bidirectional</strong> context. Best for <em>understanding</em> tasks (classification, NER, QA).</li>
-<li><strong>GPT</strong> (decoder): Predict the <strong>next token</strong> using only <strong>left-to-right</strong> context. Natural for <em>generation</em> tasks, but also capable of understanding.</li>
-</ul>
-</div>
-<div class="tip-box" data-title="Questions to consider">
-<p>Both models were published in 2018. BERT initially dominated benchmarks, but GPT's approach proved more scalable. Why might autoregressive modeling have a higher ceiling?</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-generative-pre-training-paradigm">The generative pre-training paradigm</h1>
 <div class="note-box" data-title="Radford et al. (2018): 'Improving Language Understanding by Generative Pre-Training'">
 <p>GPT introduced a two-stage approach that changed NLP forever:</p>
@@ -752,72 +740,7 @@ Winter 2026</p>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-transformer-decoder">The transformer decoder</h1>
-<div class="definition-box" data-title="GPT's architecture">
-<p>GPT uses only the <strong>decoder</strong> half of the original transformer (<a href="https://arxiv.org/abs/1706.03762">Vaswani et al., 2017</a>). The data flows through:</p>
-<ol>
-<li><strong>Token embeddings</strong>: Map each token to a 768-dimensional vector</li>
-<li><strong>Position embeddings</strong>: Add learned positional information</li>
-<li><strong>N transformer blocks</strong>: Each contains masked self-attention + feed-forward network</li>
-<li><strong>Output head</strong>: Project back to vocabulary size for next-token prediction</li>
-</ol>
-</div>
-<div class="warning-box" data-title="Key difference from the full transformer">
-<p>The original transformer has both an encoder and a decoder with cross-attention between them. GPT removes the encoder entirely and removes cross-attention — it only uses <strong>masked self-attention</strong> within the decoder.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="masked-causal-self-attention">Masked (causal) self-attention</h1>
-<div class="definition-box" data-title="Recall from Lecture 15">
-<p>In standard self-attention (Lecture 15), every token attends to every other token. In <strong>causal</strong> (masked) self-attention, each token can only attend to tokens at <strong>earlier positions</strong> (and itself). This prevents the model from &quot;peeking&quot; at future tokens during training.</p>
-</div>
-<div class="example-box" data-title="Attention pattern for 'The cat sat on'">
-<table>
-<thead>
-<tr>
-<th></th>
-<th>The</th>
-<th>cat</th>
-<th>sat</th>
-<th>on</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>The</strong></td>
-<td>1.0</td>
-<td>-inf</td>
-<td>-inf</td>
-<td>-inf</td>
-</tr>
-<tr>
-<td><strong>cat</strong></td>
-<td>0.3</td>
-<td>0.7</td>
-<td>-inf</td>
-<td>-inf</td>
-</tr>
-<tr>
-<td><strong>sat</strong></td>
-<td>0.2</td>
-<td>0.3</td>
-<td>0.5</td>
-<td>-inf</td>
-</tr>
-<tr>
-<td><strong>on</strong></td>
-<td>0.1</td>
-<td>0.2</td>
-<td>0.3</td>
-<td>0.4</td>
-</tr>
-</tbody>
-</table>
-<p>The <code>-inf</code> entries become 0 after softmax, ensuring no information flows from future tokens. The causal mask enables both parallel training (all positions in one pass) and autoregressive generation (left-to-right, one token at a time).</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="gpt-1-specifications">GPT-1 specifications</h1>
 <div class="note-box" data-title="Model architecture">
 <table>
@@ -888,25 +811,25 @@ Winter 2026</p>
 </table>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="stage-1-pre-training">Stage 1: Pre-training</h1>
-<div class="definition-box" data-title="The pre-training objective">
-<p>Maximize the likelihood of each token given all preceding tokens:</p>
-<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="script">L</mi><mtext>pre-train</mtext></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><mi>log</mi><mo>⁡</mo><mi>P</mi><mo stretchy="false">(</mo><msub><mi>t</mi><mi>i</mi></msub><mo>∣</mo><msub><mi>t</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>t</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>t</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">;</mo><mi mathvariant="normal">Θ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{L}_{\text{pre-train}} = \sum_{i=1}^{N} \log P(t_i \mid t_1, t_2, \ldots, t_{i-1}; \Theta)
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">pre-train</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.106em;vertical-align:-1.2777em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Θ</span><span class="mclose">)</span></span></span></span></span></p><p>This is simply <strong>next token prediction</strong> over a large corpus. No labels needed.</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="the-bookscorpus-controversy">The BooksCorpus controversy</h1>
+<div class="warning-box" data-title="Where did GPT-1's training data come from?">
+<p>GPT-1 was trained on <strong>BooksCorpus</strong> — approximately 7,000 unpublished books scraped from Smashwords.com, a self-publishing platform. The authors were never asked for consent, and the dataset was <strong>taken offline in 2020</strong> after complaints from writers who discovered their work had been used.</p>
 </div>
-<div class="example-box" data-title="Training on 'The quick brown fox jumps'">
-<p>The model learns from every position simultaneously:</p>
-<ul>
-<li>Input: <code>&quot;The&quot;</code> → Target: <code>&quot;quick&quot;</code></li>
-<li>Input: <code>&quot;The quick&quot;</code> → Target: <code>&quot;brown&quot;</code></li>
-<li>Input: <code>&quot;The quick brown&quot;</code> → Target: <code>&quot;fox&quot;</code></li>
-<li>Input: <code>&quot;The quick brown fox&quot;</code> → Target: <code>&quot;jumps&quot;</code></li>
-</ul>
-<p>Every text passage provides training signal at every token position.</p>
+<div class="tip-box" data-title="Questions to consider">
+<p>BooksCorpus was just the beginning. Later datasets — <strong>Books3</strong> (196,000 books), <strong>The Pile</strong>, <strong>Common Crawl</strong> — sparked lawsuits and a global debate about data rights. If your unpublished novel helped train GPT-1, should you have been informed? Compensated? Given the right to opt out?</p>
+<p>This tension between <strong>data access</strong> (enabling research) and <strong>creator rights</strong> (protecting authors) remains unresolved in 2026.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="pre-training-objective">Pre-training objective</h1>
+<div class="definition-box" data-title="Next token prediction">
+<p>Maximize the likelihood of each token given all preceding tokens:</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="script">L</mi><mtext>pre-train</mtext></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><mi>log</mi><mo>⁡</mo><mi>P</mi><mo stretchy="false">(</mo><msub><mi>t</mi><mi>i</mi></msub><mo>∣</mo><msub><mi>t</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>t</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>t</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">;</mo><mi mathvariant="normal">Θ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{L}_{\text{pre-train}} = \sum_{i=1}^{N} \log P(t_i \mid t_1, t_2, \ldots, t_{i-1}; \Theta)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">pre-train</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.106em;vertical-align:-1.2777em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Θ</span><span class="mclose">)</span></span></span></span></span></p><p>This is simply <strong>next token prediction</strong> over a large corpus. No labels needed. The causal attention mask (Lecture 15) ensures each token only attends to previous positions, enabling parallel training over all positions simultaneously.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="stage-2-fine-tuning">Stage 2: Fine-tuning</h1>
 <div class="definition-box" data-title="Adapting to downstream tasks">
 <p>After pre-training, GPT is adapted to specific tasks by:</p>
@@ -922,7 +845,7 @@ Winter 2026</p>
 <p>All tasks become text completion: <code>[START] text [DELIM]</code> → predict label. Classification, entailment, similarity, and QA all use the same architecture with different input formats. This unifying insight — every NLP task as text completion — is why pre-training transfers so effectively.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="fine-tuning-example-sentiment-classification">Fine-tuning example: sentiment classification</h1>
 <div class="example-box" data-title="Classifying movie reviews">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -945,7 +868,7 @@ Winter 2026</p>
 <div class="code-continued-indicator">continued...</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="fine-tuning-example-sentiment-classification-1">Fine-tuning example: sentiment classification</h1>
 <div class="example-box" data-title="Classifying movie reviews">
 <pre><code class="language-python has-line-numbers" data-start-line="16">
@@ -955,7 +878,7 @@ Winter 2026</p>
 <div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="gpt-1-results">GPT-1 results</h1>
 <div class="note-box" data-title="Performance on standard benchmarks">
 <table>
@@ -995,7 +918,7 @@ Winter 2026</p>
 <p>The largest improvements came on tasks with <strong>less training data</strong>. Pre-training provided a strong prior that compensated for limited labeled examples — exactly the promise of transfer learning.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="zero-shot-and-few-shot-learning">Zero-shot and few-shot learning</h1>
 <div class="definition-box" data-title="Learning without (much) fine-tuning">
 <ul>
@@ -1008,56 +931,21 @@ Winter 2026</p>
 <p>GPT-1's zero-shot performance was <strong>weak</strong>. The model had learned rich language representations but struggled to apply them without explicit task formatting. This motivated the development of GPT-2 and GPT-3, which aimed to make models that could perform tasks <em>without</em> fine-tuning.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="gpt-vs-bert">GPT vs BERT</h1>
-<div class="note-box" data-title="Head-to-head comparison">
-<table>
-<thead>
-<tr>
-<th>Aspect</th>
-<th>BERT (encoder)</th>
-<th>GPT (decoder)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Training objective</td>
-<td>Masked language model</td>
-<td>Autoregressive LM</td>
-</tr>
-<tr>
-<td>Context direction</td>
-<td>Bidirectional</td>
-<td>Left-to-right</td>
-</tr>
-<tr>
-<td>Best suited for</td>
-<td>Understanding (NER, QA, classification)</td>
-<td>Generation (text, code, dialogue)</td>
-</tr>
-<tr>
-<td>Fine-tuning approach</td>
-<td>Task-specific heads</td>
-<td>Unified sequence format</td>
-</tr>
-<tr>
-<td>Base parameters</td>
-<td>110M</td>
-<td>117M</td>
-</tr>
-<tr>
-<td>Tokens predicted per pass</td>
-<td>~15% (masked only)</td>
-<td>100% (every position)</td>
-</tr>
-</tbody>
-</table>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="weight-tying">Weight tying</h1>
+<div class="definition-box" data-title="Sharing parameters between input and output layers">
+<p>Modern GPT models share weights between the <strong>token embedding</strong> layer and the <strong>output (lm_head)</strong> layer (<a href="https://arxiv.org/abs/1608.09916">Press &amp; Wolf, 2017</a>):</p>
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">self.token_embed = nn.Embedding(vocab_size, d_model)</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">self.lm_head = nn.Linear(d_model, vocab_size, bias=False)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">self.lm_head.weight = self.token_embed.weight  # Tied!</span></span>
+</code></pre>
 </div>
-<div class="tip-box" data-title="The scalability argument">
-<p>BERT dominated understanding benchmarks in 2018–2019, but GPT's autoregressive approach proved more scalable. Why? Predicting <em>every</em> token gives 6.7× more training signal per pass, and generation is a superset of understanding — a model that can <em>write</em> coherent text implicitly <em>understands</em> it.</p>
+<div class="note-box" data-title="Why this works">
+<p>Both layers map between <strong>token space</strong> and <strong>embedding space</strong> — just in opposite directions. The embedding layer converts token IDs → vectors; the lm_head converts vectors → token probabilities. Tying them forces consistent representations and <strong>saves ~20% of total parameters</strong> in vocabulary-heavy models. Used in GPT-2, LLaMA, and most modern LLMs.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-modern-decoder-stack-2024">The modern decoder stack (2024)</h1>
 <div class="note-box" data-title="Every component has been upgraded since GPT-1">
 <table>
@@ -1099,6 +987,99 @@ Winter 2026</p>
 </div>
 <div class="important-box" data-title="The takeaway">
 <p>The <em>conceptual</em> architecture is the same: token embeddings → causal attention → FFN → output head. But every piece has been systematically optimized. Modern LLMs like LLaMA 3, Gemma 2, and Mistral all use this upgraded stack.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="open-weight-decoders-the-llama-revolution">Open-weight decoders: the LLaMA revolution</h1>
+<div class="definition-box" data-title="From closed to open">
+<p>For years, cutting-edge decoders were <strong>closed</strong> — GPT-3 and GPT-4 were API-only. Meta's <a href="https://arxiv.org/abs/2302.13971">LLaMA</a> (Feb 2023) changed everything by releasing model weights publicly.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Date</th>
+<th>Sizes</th>
+<th>Key contribution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLaMA 1</td>
+<td>Feb 2023</td>
+<td>7–65B</td>
+<td>Leaked, then open. Proved open models competitive.</td>
+</tr>
+<tr>
+<td>LLaMA 2</td>
+<td>Jul 2023</td>
+<td>7–70B</td>
+<td>Official open release with commercial license</td>
+</tr>
+<tr>
+<td>Mistral 7B</td>
+<td>Dec 2023</td>
+<td>7B</td>
+<td>Small open model matching LLaMA 2 13B</td>
+</tr>
+<tr>
+<td>LLaMA 3</td>
+<td>Apr 2024</td>
+<td>8–405B</td>
+<td>Matched GPT-4 class on many benchmarks</td>
+</tr>
+<tr>
+<td>LLaMA 4</td>
+<td>Apr 2025</td>
+<td>MoE</td>
+<td>Mixture-of-experts architecture</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="important-box" data-title="Impact">
+<p>Open weights enabled academic research, spawned thousands of fine-tuned variants, and <strong>democratized decoder research</strong>. Before LLaMA, only a few labs could study frontier models. After LLaMA, anyone with a GPU could.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="test-time-compute-and-inference-scaling">Test-time compute and inference scaling</h1>
+<div class="definition-box" data-title="A new scaling paradigm">
+<p>Traditional scaling: more parameters + more training data. <strong>Inference scaling</strong>: spend more compute at <em>test time</em> by letting the model &quot;think longer.&quot;</p>
+</div>
+<div class="note-box" data-title="How it works">
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Example</th>
+<th>Mechanism</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chain-of-thought</strong></td>
+<td>GPT-4, Claude</td>
+<td>Prompting the model to reason step-by-step</td>
+</tr>
+<tr>
+<td><strong>Thinking tokens</strong></td>
+<td>OpenAI o1/o3</td>
+<td>Model generates internal reasoning traces before answering</td>
+</tr>
+<tr>
+<td><strong>Open reasoning</strong></td>
+<td>DeepSeek-R1</td>
+<td>Open-source reasoning model with visible thinking process</td>
+</tr>
+<tr>
+<td><strong>Search + verify</strong></td>
+<td>AlphaProof</td>
+<td>Generate candidates, verify with external tools</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tip-box" data-title="Why this matters">
+<p>Inference scaling means you don't need to retrain a model to make it better at hard problems — just give it more time to think. This shifts the cost curve: training is fixed, but inference quality scales with compute budget. We'll explore reasoning models in detail in Lecture 22.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1168,16 +1149,16 @@ Winter 2026</p>
 <div class="tip-box" data-title="Questions to consider">
 <ol>
 <li>
-<p><strong>Autoregressive vs bidirectional:</strong> GPT predicts left-to-right; BERT sees both directions. Humans process language incrementally (left-to-right in English) but with rich top-down expectations. Which model is more &quot;brain-like&quot;?</p>
+<p><strong>Training data ethics:</strong> GPT-1 trained on books scraped without consent; later models used even larger datasets with similar issues. Where should the line be drawn between research progress and creator rights? Is opt-out sufficient, or should training require opt-in?</p>
+</li>
+<li>
+<p><strong>Open vs closed:</strong> LLaMA democratized decoder research but also enabled misuse (fine-tuning for harmful purposes). Is openness a net positive? Should frontier models be open?</p>
 </li>
 <li>
 <p><strong>The generation advantage:</strong> GPT can <em>generate</em> text, BERT cannot. Is generation a prerequisite for understanding? Can you truly understand language if you can't produce it?</p>
 </li>
 <li>
-<p><strong>Component upgrades:</strong> Every piece of GPT-1 has been replaced (LayerNorm→RMSNorm, learned PE→RoPE, etc.) but the architecture is &quot;the same.&quot; At what point does a ship become a different ship? (Theseus's paradox for neural networks.)</p>
-</li>
-<li>
-<p><strong>Hybrid architectures:</strong> Jamba mixes attention and state-space layers. If the &quot;optimal&quot; architecture is task-dependent, does this undermine the transformer's claim to universality?</p>
+<p><strong>Inference scaling:</strong> If models can &quot;think harder&quot; by spending more compute, does this change what we mean by intelligence? Is a model that takes 10 minutes to solve a math problem &quot;smarter&quot; than one that fails instantly?</p>
 </li>
 </ol>
 </div>
@@ -1187,8 +1168,8 @@ Winter 2026</p>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf"><strong>Radford et al. (2018)</strong></a> &quot;Improving Language Understanding by Generative Pre-Training&quot; — The original GPT paper.</p>
 <p><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"><strong>Radford et al. (2019)</strong></a> &quot;Language Models are Unsupervised Multitask Learners&quot; — GPT-2: larger models, zero-shot transfer.</p>
-<p><a href="https://arxiv.org/abs/2104.09864"><strong>Su et al. (2024, <em>Neurocomputing</em>)</strong></a> &quot;RoFormer: Enhanced Transformer with Rotary Position Embedding&quot; — RoPE, now standard in most LLMs.</p>
-<p><a href="https://arxiv.org/abs/2305.13245"><strong>Ainslie et al. (2023, <em>EMNLP</em>)</strong></a> &quot;GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints&quot; — Grouped-query attention.</p>
+<p><a href="https://arxiv.org/abs/2302.13971"><strong>Touvron et al. (2023, <em>arXiv</em>)</strong></a> &quot;LLaMA: Open and Efficient Foundation Language Models&quot; — The paper that opened decoder research.</p>
+<p><a href="https://arxiv.org/abs/1608.09916"><strong>Press &amp; Wolf (2017, <em>EACL</em>)</strong></a> &quot;Using the Output Embedding to Improve Language Models&quot; — Weight tying between input and output embeddings.</p>
 <p><a href="https://arxiv.org/abs/2404.19737"><strong>Gloeckle et al. (2024, <em>arXiv</em>)</strong></a> &quot;Better &amp; Faster Large Language Models via Multi-token Prediction&quot; — Meta/FAIR multi-token prediction.</p>
 <p><a href="https://arxiv.org/abs/2403.19887"><strong>Lieber et al. (2024, <em>arXiv</em>)</strong></a> &quot;Jamba: A Hybrid Transformer-Mamba Language Model&quot; — Hybrid attention + SSM architecture.</p>
 </div>

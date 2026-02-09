@@ -711,31 +711,19 @@ Winter 2026</p>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="recall-and-roadmap">Recall and roadmap</h1>
-<div class="note-box" data-title="From earlier lectures">
-<p>We introduced BERT's architecture in Lecture 12, explored what BERT actually learns in Lecture 18, and compared BERT variants (RoBERTa, ALBERT, DistilBERT, ELECTRA) in Lecture 19.</p>
-</div>
-<div class="tip-box" data-title="Today's focus">
-<p>Today: how encoder models are <em>used</em> — in industry, in neuroscience, and in the ongoing debate about whether any of this counts as &quot;understanding.&quot;</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="novel-encoder-applications-beyond-nlp">Novel encoder applications beyond NLP</h1>
+<div class="note-box" data-title="Encoders power specialized domains where decoders are overkill">
+<p><strong>Clinical NLP:</strong> De-identification of medical records, ICD code prediction, adverse drug event detection. <a href="https://arxiv.org/abs/1901.08746">BioBERT</a> and <a href="https://arxiv.org/abs/2007.15779">PubMedBERT</a> process millions of clinical notes daily.</p>
+<p><strong>Legal tech:</strong> Contract clause extraction, case law search, regulatory compliance checking. Fine-tuned encoders scan thousands of documents in seconds.</p>
+<p><strong>Financial NER:</strong> Extracting company names, monetary amounts, and dates from earnings calls and SEC filings. Bloomberg's internal models process billions of financial documents.</p>
+<p><strong>Scientific literature:</strong> <a href="https://arxiv.org/abs/2010.09885">ChemBERTa</a> predicts molecular properties from SMILES strings. <a href="https://arxiv.org/abs/1903.10676">SciBERT</a> powers semantic search across 100M+ papers.</p>
 </div>
 <div class="tip-box" data-title="Companion notebook">
 <p><img class="emoji" draggable="false" alt="📓" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4d3.svg" data-marp-twemoji=""/> <a href="https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/encoder_applications_demo.ipynb">Companion Notebook</a> — hands-on with classification, NER, QA, and sentence similarity</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="where-bert-excels">Where BERT excels</h1>
-<div class="note-box" data-title="BERT powers a wide range of understanding tasks">
-<p><strong>Classification tasks:</strong> Sentiment analysis, topic classification, spam detection, intent recognition</p>
-<p><strong>Token-level tasks:</strong> Named entity recognition (NER), part-of-speech tagging, word sense disambiguation</p>
-<p><strong>Span-level tasks:</strong> Question answering, extractive summarization, information extraction</p>
-<p><strong>Sentence-pair tasks:</strong> Semantic similarity, natural language inference, paraphrase detection</p>
-</div>
-<div class="important-box" data-title="Industry impact">
-<p>BERT powers Google Search (understanding queries), customer service chatbots, content moderation systems, and document understanding pipelines at companies worldwide.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="case-study-google-search">Case study: Google Search</h1>
 <div class="definition-box" data-title="BERT revolutionized search in 2019">
 <p>Before BERT, search engines primarily matched keywords. BERT enabled Google to understand <em>how words relate to each other</em> — especially prepositions, negations, and context words.</p>
@@ -782,7 +770,7 @@ Winter 2026</p>
 <p>Google reported BERT improved 1 in 10 English searches.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="question-answering-with-bert">Question answering with BERT</h1>
 <div class="example-box" data-title="Extractive QA: find the answer span in a passage">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -804,7 +792,7 @@ Winter 2026</p>
 <p>BERT predicts two things for each token in the passage: the probability that it's the <strong>start</strong> of the answer, and the probability that it's the <strong>end</strong> of the answer. The answer span is the highest-scoring (start, end) pair.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="named-entity-recognition">Named entity recognition</h1>
 <div class="example-box" data-title="Token-level classification with BERT">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -832,7 +820,7 @@ Winter 2026</p>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="semantic-similarity">Semantic similarity</h1>
 <div class="example-box" data-title="Measuring sentence similarity with BERT embeddings">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
@@ -852,7 +840,7 @@ Winter 2026</p>
 <div class="code-continued-indicator">continued...</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="semantic-similarity-1">Semantic similarity</h1>
 <div class="example-box" data-title="Measuring sentence similarity with BERT embeddings">
 <pre><code class="language-python has-line-numbers" data-start-line="13">
@@ -865,6 +853,27 @@ Winter 2026</p>
 <span class="line"><span class="line-num">19</span><span class="line-code">print(f&quot;Unrelated similarity:  {F.cosine_similarity(emb1, emb3).item():.3f}&quot;)  # Low</span></span>
 </code></pre>
 <div class="code-continued-indicator-last">...continued</div>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="sentence-bert-and-modern-retrieval">Sentence-BERT and modern retrieval</h1>
+<div class="definition-box" data-title="Scaling sentence similarity to millions of documents">
+<p>Using BERT's [CLS] token for sentence similarity requires passing <strong>both sentences through BERT together</strong> — <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> comparisons for <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> sentences. <a href="https://arxiv.org/abs/1908.10084">Sentence-BERT</a> (Reimers &amp; Gurevych, 2019) uses a <strong>siamese architecture</strong> that encodes sentences <strong>independently</strong>, then compares with cosine similarity.</p>
+</div>
+<div class="example-box" data-title="Practical sentence embeddings">
+<pre><code class="language-python has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">from sentence_transformers import SentenceTransformer</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">model = SentenceTransformer(&#x27;all-MiniLM-L6-v2&#x27;)</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">sentences = [&quot;The cat sat on the mat&quot;, &quot;A feline rested on the rug&quot;]</span></span>
+<span class="line"><span class="line-num">5</span><span class="line-code">embeddings = model.encode(sentences)</span></span>
+<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
+<span class="line"><span class="line-num">7</span><span class="line-code">from sklearn.metrics.pairwise import cosine_similarity</span></span>
+<span class="line"><span class="line-num">8</span><span class="line-code">sim = cosine_similarity([embeddings[0]], [embeddings[1]])  # ~0.82</span></span>
+</code></pre>
+</div>
+<div class="note-box" data-title="The evolution of text embeddings">
+<p>Sentence-BERT (2019) → <a href="https://arxiv.org/abs/2212.03533">E5</a> (2022) → <a href="https://arxiv.org/abs/2405.17428">NV-Embed</a> (2024). The <a href="https://huggingface.co/spaces/mteb/leaderboard">MTEB benchmark</a> now ranks 200+ embedding models. Sentence embeddings power semantic search, RAG retrieval (Lecture 17), and recommendation systems at scale.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1025,7 +1034,7 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="measuring-bias-systematically">Measuring bias systematically</h1>
 <div class="note-box" data-title="Moving beyond anecdotes to systematic measurement">
-<p>Recall from Lecture 11 that word embeddings encode societal biases (e.g., &quot;doctor&quot; closer to &quot;man,&quot; &quot;nurse&quot; closer to &quot;woman&quot;). BERT inherits these same biases from its training data. But how do we measure bias <em>systematically</em> across thousands of contexts?</p>
+<p>Word embeddings encode societal biases — &quot;doctor&quot; closer to &quot;man,&quot; &quot;nurse&quot; closer to &quot;woman&quot; (Lecture 11). BERT inherits these same biases from its training data. But how do we measure bias <em>systematically</em> across thousands of contexts?</p>
 </div>
 <div class="definition-box" data-title="SAGED: systematic bias evaluation (Jiang et al., COLING 2025)">
 <p><a href="https://aclanthology.org/2025.coling-main.202.pdf">SAGED</a> proposes a five-step pipeline for measuring bias in language models:</p>
@@ -1048,48 +1057,37 @@ Winter 2026</p>
 <p><strong>No world model</strong>: BERT learns statistical patterns in text but has no grounding in physical reality, sensory experience, or causal reasoning.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="encoder-vs-decoder-the-2026-landscape">Encoder vs decoder: the 2026 landscape</h1>
-<div class="note-box" data-title="The architecture divide is narrowing">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="the-cost-argument-for-encoders">The cost argument for encoders</h1>
+<div class="important-box" data-title="Why encoders survive in 2026">
+<p>GPT-4 can do <em>anything</em> an encoder can — classification, NER, QA — via prompting. But at what cost?</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th>Encoder (BERT)</th>
-<th>Decoder (GPT)</th>
+<th>Metric</th>
+<th>Fine-tuned DistilBERT</th>
+<th>GPT-4 via prompting</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Training</strong></td>
-<td>Masked language modeling</td>
-<td>Autoregressive next-token</td>
-</tr>
-<tr>
-<td><strong>Context</strong></td>
-<td>Bidirectional</td>
-<td>Left-to-right (causal)</td>
-</tr>
-<tr>
-<td><strong>Best for</strong></td>
-<td>Understanding tasks</td>
-<td>Generation tasks</td>
-</tr>
-<tr>
 <td><strong>Cost</strong></td>
-<td>$0.01/M tokens</td>
-<td>$1-30/M tokens</td>
+<td>~$0.01/M tokens</td>
+<td>~$30/M tokens</td>
 </tr>
 <tr>
 <td><strong>Latency</strong></td>
 <td>~5ms</td>
 <td>~500ms</td>
 </tr>
+<tr>
+<td><strong>Quality (SST-2)</strong></td>
+<td>91.3%</td>
+<td>~95%</td>
+</tr>
 </tbody>
 </table>
-</div>
-<div class="tip-box" data-title="Where things are headed">
-<p><strong>Convergence:</strong> Decoder-only models (GPT-4, Claude) now do classification via prompting. Meanwhile, encoder-decoder hybrids (T5, UL2) blur the distinction further. The field is converging toward flexible architectures that can handle both understanding and generation — but cost and speed still favor purpose-built encoders for production.</p>
+<p>For high-volume, single-task workloads (content moderation, search ranking, NER pipelines), encoders are <strong>3,000× cheaper</strong> and <strong>100× faster</strong>. The field is converging toward flexible architectures, but production economics still favor purpose-built encoders.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1119,6 +1117,7 @@ Winter 2026</p>
 <p><a href="https://openreview.net/forum?id=PgIlCCNxdB"><strong>Aw et al. (2026, <em>ICLR</em>)</strong></a> &quot;The Mind's Transformer&quot; — Evidence that the brain implements Transformer-like computation.</p>
 <p><a href="https://doi.org/10.1038/s43588-024-00752-6"><strong>Gao et al. (2025, <em>Nature Computational Science</em>)</strong></a> &quot;Brain-like artificial neurons in LLMs&quot; — Emergent brain-like units in language models.</p>
 <p><a href="https://aclanthology.org/2025.coling-main.202.pdf"><strong>Jiang et al. (2025, <em>COLING</em>)</strong></a> &quot;SAGED&quot; — Systematic bias evaluation pipeline for language models.</p>
+<p><a href="https://arxiv.org/abs/1908.10084"><strong>Reimers &amp; Gurevych (2019, <em>EMNLP</em>)</strong></a> &quot;Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks&quot; — Enabled practical semantic search.</p>
 <p><a href="https://aclanthology.org/2020.acl-main.463/"><strong>Bender &amp; Koller (2020, <em>ACL</em>)</strong></a> &quot;Climbing towards NLU&quot; — The &quot;understanding&quot; debate.</p>
 </div>
 </section>

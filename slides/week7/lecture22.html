@@ -779,12 +779,9 @@ Winter 2026</p>
 <p>GPT-3 output: <code>&quot;Negative&quot;</code> — no weight updates, no fine-tuning, pure pattern recognition.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="scaling-laws-recap">Scaling laws recap</h1>
-<div class="note-box" data-title="Recall from Lecture 16">
-<p>We covered scaling laws in detail in Lecture 16: <a href="https://arxiv.org/abs/2001.08361">Kaplan et al. (2020)</a> showed power-law improvement with scale, and <a href="https://arxiv.org/abs/2203.15556">Chinchilla (Hoffmann et al., 2022)</a> showed that GPT-3 was <em>undertrained</em> — optimal is ~20 tokens per parameter.</p>
-</div>
-<div class="important-box" data-title="The practical impact">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="beyond-chinchilla-the-overtraining-era">Beyond Chinchilla: the overtraining era</h1>
+<div class="important-box" data-title="From Lecture 16's scaling laws to modern practice">
 <table>
 <thead>
 <tr>
@@ -792,6 +789,7 @@ Winter 2026</p>
 <th>Parameters</th>
 <th>Training tokens</th>
 <th>Tokens/parameter</th>
+<th>Strategy</th>
 </tr>
 </thead>
 <tbody>
@@ -799,23 +797,33 @@ Winter 2026</p>
 <td>GPT-3</td>
 <td>175B</td>
 <td>300B</td>
-<td>1.7 (undertrained)</td>
+<td>1.7</td>
+<td>Undertrained</td>
 </tr>
 <tr>
 <td>Chinchilla</td>
 <td>70B</td>
 <td>1.4T</td>
-<td>20 (optimal)</td>
+<td>20</td>
+<td>Compute-optimal</td>
 </tr>
 <tr>
 <td>LLaMA 3</td>
 <td>70B</td>
 <td>15T</td>
-<td>214 (overtrained for inference)</td>
+<td>214</td>
+<td>Inference-optimal</td>
+</tr>
+<tr>
+<td>Phi-4</td>
+<td>14B</td>
+<td>10T+</td>
+<td>700+</td>
+<td>Extreme overtraining</td>
 </tr>
 </tbody>
 </table>
-<p>Chinchilla (70B) <strong>outperformed</strong> GPT-3 (175B) at 2.5× smaller. But the latest trend goes further: <strong>overtrain</strong> smaller models to minimize <em>inference</em> cost, since you deploy billions of times but train only once.</p>
+<p>The field has moved past Chinchilla-optimal. Since you train once but deploy billions of times, <strong>overtraining</strong> smaller models minimizes total cost. Phi-4 (14B) matches GPT-3.5 (175B) through massive overtraining on curated data.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -843,13 +851,13 @@ Winter 2026</p>
 <tr>
 <td>3</td>
 <td>ChatGPT (Nov 2022)</td>
-<td><strong>RLHF</strong> for helpful, harmless conversation</td>
+<td><strong>RLHF</strong> (Lecture 16) for helpful, harmless conversation</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="definition-box" data-title="RLHF in brief">
-<p>Recall from Lecture 16: RLHF trains a <strong>reward model</strong> from human preference rankings, then optimizes the LLM to maximize that reward. This aligns the model's objective with <strong>what humans actually want</strong> — helpful, honest, harmless — rather than just next-token likelihood. ChatGPT reached 100M users in 2 months, the fastest-growing consumer app in history.</p>
+<div class="important-box" data-title="Why ChatGPT mattered">
+<p>ChatGPT reached <strong>100M users in 2 months</strong> — the fastest-growing consumer app in history. The key innovation wasn't the model (GPT-3.5) but the <strong>alignment</strong>: RLHF transformed a next-token predictor into a conversational assistant that <em>felt</em> helpful. This revealed that alignment technique matters as much as model scale.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">

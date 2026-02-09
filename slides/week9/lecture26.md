@@ -72,22 +72,22 @@ Each of these failures was built by well-intentioned teams. What systemic factor
 
 ---
 
-# What is bias in LLMs?
+# Bias in LLMs: beyond word embeddings
 
-<div class="definition-box" data-title="Systematic unfairness encoded in model behavior">
+<div class="definition-box" data-title="From static bias (Lecture 11) to dynamic bias">
 
-**Bias** in LLMs refers to systematic patterns where the model treats certain groups or individuals unfairly, often reflecting and amplifying societal prejudices present in training data.
+In Lecture 11, we saw that word embeddings encode societal biases ("doctor" → male). LLMs inherit these biases *and* amplify them through generation — they don't just associate, they *produce* biased text at scale.
 
 </div>
 
-<div class="note-box" data-title="Four types of bias">
+<div class="note-box" data-title="Four types of LLM-specific bias">
 
 | Type | Description | Example |
 |------|-------------|---------|
 | **Data bias** | Training data reflects historical inequalities | Internet text overrepresents English, male, Western perspectives |
-| **Representation bias** | Stereotypical associations | "Doctor" → male pronouns; "nurse" → female pronouns |
+| **Representation bias** | Stereotypical associations in generation | GPT generates male doctors and female nurses by default |
 | **Allocation bias** | Unequal quality across groups | Higher error rates for African American Vernacular English |
-| **Interaction bias** | Feedback loops amplify bias | RLHF inherits annotator biases |
+| **Sycophancy bias** | Models agree with the user regardless of truth | RLHF optimizes for user satisfaction, not accuracy |
 
 </div>
 
@@ -117,22 +117,20 @@ Bias mitigation requires intervention at **every stage**: data curation, trainin
 
 <div class="definition-box" data-title="Making models do what we want, not just what we say">
 
-The **alignment problem** asks: how do we ensure AI systems pursue the goals we *intend*, not just a literal interpretation of what we *specified*?
-
-- **Training objective**: Predict the next token accurately
-- **Desired behavior**: Be helpful, honest, and harmless
-- **The gap**: Accurate next-token prediction does not guarantee helpfulness or safety
+The **alignment problem** asks: how do we ensure AI systems pursue the goals we *intend*, not just a literal interpretation of what we *specified*? Accurate next-token prediction does not guarantee helpfulness or safety.
 
 </div>
 
-<div class="note-box" data-title="Alignment techniques (see also Lectures 16 and 22)">
+<div class="note-box" data-title="Alignment techniques beyond RLHF and DPO (Lectures 16, 22)">
 
 | Technique | How it works | Limitation |
 |-----------|-------------|------------|
-| **RLHF** (L16, L22) | Optimize for human preference rankings | Expensive, inherits annotator biases |
-| **DPO** (L22) | Direct preference optimization without RL | Still needs preference data |
 | [**Constitutional AI**](https://arxiv.org/abs/2212.08073) | Model self-critiques against explicit principles | Principles must be comprehensive |
 | **Red teaming** | Adversarial testing to find failure modes | Reactive, not proactive |
+| [**Representation engineering**](https://arxiv.org/abs/2310.01405) (2023) | Directly edit model internals to enforce honesty | Nascent, hard to verify |
+| [**Weak-to-strong generalization**](https://arxiv.org/abs/2312.09390) (OpenAI, 2023) | Weaker model supervises stronger model | Alignment may not transfer fully |
+
+The trend: moving from *behavioral* alignment (training outputs) toward *mechanistic* alignment (understanding internals).
 
 </div>
 

@@ -29,37 +29,21 @@ Winter 2026
 
 ---
 
-# Recall: what BERT does
+# What could be improved?
 
-<div class="note-box" data-title="From lectures 12 and 18">
+<div class="warning-box" data-title="BERT's key limitations (from Lecture 18)">
 
-We covered BERT's architecture (MLM + NSP, bidirectional attention) in Lecture 12, and explored what BERT actually *learns* (attention patterns, layer probing, neuroscience connections) in Lecture 18.
+**Training procedure:** NSP may hurt performance; static masking reuses the same masks every epoch; only 15% of tokens provide training signal.
 
-</div>
+**Scale:** Trained on only 3.3B words with 100K steps — modern datasets are 100× larger.
 
-<div class="tip-box" data-title="Today's focus">
-
-Today: how researchers improved on BERT's original recipe, and whether encoder models still matter in 2026.
+**Efficiency:** 110M parameters are all active for every input. Large memory footprint for deployment.
 
 </div>
 
 <div class="tip-box" data-title="Companion notebook">
 
 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/bert_variants_demo.ipynb) — try different BERT variants hands-on
-
-</div>
-
----
-
-# What could be improved?
-
-<div class="warning-box" data-title="BERT's key limitations">
-
-**Training procedure:** NSP may hurt performance; static masking reuses the same masks every epoch; only 15% of tokens provide training signal.
-
-**Scale:** Trained on only 3.3B words with 100K steps — modern datasets are 100x larger.
-
-**Efficiency:** 110M parameters are all active for every input. Large memory footprint for deployment.
 
 </div>
 
@@ -86,23 +70,17 @@ Training procedure matters as much as architecture. RoBERTa shows that BERT was 
 
 ---
 
-# Dynamic vs static masking
+# Dynamic masking
 
-<div class="note-box" data-title="How masking patterns are generated">
+<div class="note-box" data-title="RoBERTa's key innovation">
 
-**Static masking (BERT):**
-- Mask tokens once during preprocessing
-- Same masks reused every epoch
-- Example: "My [MASK] is cute" → same every time
-- Risk: model memorizes mask positions
+BERT used **static masking** — the same mask positions every epoch, risking memorization. RoBERTa generates **new masks on-the-fly** during training:
 
-**Dynamic masking (RoBERTa):**
-- Generate new masks on-the-fly during training
-- Different masks each time the same sequence is seen
 - Epoch 1: "My [MASK] is cute"
 - Epoch 2: "My dog [MASK] cute"
 - Epoch 3: "My dog is [MASK]"
-- Result: more diverse training signal, better generalization
+
+More diverse training signal → better generalization. Combined with removing NSP and training longer on more data, this alone accounts for most of RoBERTa's gains.
 
 </div>
 
@@ -322,11 +300,7 @@ discriminator(corrupted)
 
 <div class="note-box" data-title="Learning from every token">
 
-**BERT:** Learns from 15% of tokens (masked ones only) — 85% of compute generates no training signal.
-
-**ELECTRA:** Learns from 100% of tokens (all get a real/replaced label) — every position contributes to learning.
-
-**Result:** ELECTRA reaches BERT-level performance with **4× less compute**.
+ELECTRA learns from **100% of tokens** (every position gets a real/replaced label), compared to BERT's 15%. This 6.7× increase in training signal means ELECTRA reaches BERT-level performance with **4× less compute**.
 
 </div>
 
@@ -482,12 +456,74 @@ for name, model_id in models.items():
 | Model | Year | Key innovation | Quality vs BERT |
 |-------|------|---------------|----------------|
 | BERT | 2018 | MLM + NSP | Baseline |
-| RoBERTa | 2019 | Better training recipe | +3-11 pts |
+| RoBERTa | 2019 | Better training recipe | +3–11 pts |
 | ALBERT | 2019 | Parameter sharing | 89% fewer params |
 | DistilBERT | 2019 | Knowledge distillation | 97% quality, 60% faster |
-| ELECTRA | 2020 | Learn from all tokens | 4x less compute |
+| ELECTRA | 2020 | Learn from all tokens | 4× less compute |
 | DeBERTa | 2020 | Disentangled attention | SOTA on SuperGLUE |
-| [ModernBERT](https://arxiv.org/abs/2412.13663) | 2024 | Modern training + RoPE + Flash Attention | SOTA on GLUE, retrieval |
+| ModernBERT | 2024 | Modern training + RoPE + Flash Attention | SOTA on GLUE, retrieval |
+
+</div>
+
+---
+
+# ModernBERT deep dive
+
+<div class="definition-box" data-title="Warner et al. (Dec 2024): bringing modern LLM techniques to encoders">
+
+[ModernBERT](https://arxiv.org/abs/2412.13663) applies 6 years of decoder innovations to the encoder architecture:
+
+| Innovation | BERT (2018) | ModernBERT (2024) |
+|-----------|-------------|-------------------|
+| Position encoding | Learned absolute (512 max) | **RoPE** (8,192 tokens) |
+| Attention | Full quadratic | **Flash Attention** + alternating global/local |
+| Padding | Processes pad tokens | **Unpadding** (only real tokens) |
+| Training data | 3.3B words | **2 trillion tokens** (600× more) |
+| Code understanding | None | Trained on code corpora |
+
+</div>
+
+<div class="important-box" data-title="Results">
+
+SOTA on GLUE, retrieval (MTEB), and code understanding benchmarks. Available as `answerdotai/ModernBERT-base` and `answerdotai/ModernBERT-large` on HuggingFace. Proves that encoder architecture still has room to grow when given modern training techniques.
+
+</div>
+
+---
+
+# Gemma Encoder and the encoder renaissance
+
+<div class="note-box" data-title="Google bets on encoders again (2025)">
+
+[Gemma Encoder](https://arxiv.org/abs/2503.02656) (2025): Google's first encoder-only model since BERT, built by repurposing Gemma decoder weights for bidirectional encoding. Competitive with ModernBERT on sentence embedding tasks.
+
+</div>
+
+<div class="tip-box" data-title="Why this matters">
+
+If Google — a company betting heavily on decoder-only models (Gemini) — still releases an encoder model, it signals that encoders serve a purpose decoders can't efficiently fill. The encoder isn't dead; it's being **modernized**.
+
+</div>
+
+---
+
+# Production deployment patterns
+
+<div class="note-box" data-title="Getting encoders from prototype to production">
+
+| Optimization | Speedup | Memory savings | Quality loss |
+|-------------|---------|----------------|-------------|
+| **ONNX Runtime** | 2–5× | Moderate | None |
+| **TensorRT** (NVIDIA) | 5–10× | Moderate | None |
+| **INT8 quantization** | 2–4× | **4× smaller** | <1% |
+| **Distillation** (→ DistilBERT) | 1.6× | 40% smaller | ~3% |
+| **Full pipeline** (distill → quantize) | 10–20× | **8× smaller** | ~4% |
+
+</div>
+
+<div class="important-box" data-title="The cost argument">
+
+DistilBERT + INT8 quantization handles classification at ~$0.001/M tokens and ~2ms per request. GPT-4 costs ~$30/M tokens at ~500ms per request. For high-volume single-task workloads, optimized encoders are **30,000× cheaper** and **250× faster**.
 
 </div>
 
@@ -503,9 +539,9 @@ for name, model_id in models.items():
 - In-context learning eliminates the need for task-specific architectures
 
 **The case for "no, encoders still matter":**
-- [ModernBERT](https://arxiv.org/abs/2412.13663) (Dec 2024): encoder with modern techniques (RoPE, Flash Attention, 8192 context) achieves SOTA on retrieval and classification — faster and cheaper than any decoder
-- [Gemma Encoder](https://arxiv.org/abs/2503.02656) (2025): Google releases encoder-only Gemma, proving the architecture still has legs
-- Encoders are 10-100x cheaper to run than decoder models for classification tasks
+- ModernBERT (2024) achieves SOTA on retrieval and classification — faster and cheaper than any decoder
+- Gemma Encoder (2025) proves Google still sees value in the architecture
+- Encoders are 10–100× cheaper to run than decoder models for classification tasks
 - Most production search and retrieval systems still use encoders (Sentence-BERT, E5, NV-Embed)
 
 **The real answer:** It depends on your constraints. Encoders win on cost and latency. Decoders win on flexibility.
@@ -546,6 +582,8 @@ for name, model_id in models.items():
 [**He et al. (2020, *ICLR*)**](https://arxiv.org/abs/2006.03654) "DeBERTa" — Disentangled attention, SOTA on SuperGLUE.
 
 [**Warner et al. (2024, *arXiv*)**](https://arxiv.org/abs/2412.13663) "ModernBERT" — Modern encoder with RoPE + Flash Attention.
+
+[**Google (2025, *arXiv*)**](https://arxiv.org/abs/2503.02656) "Gemma Encoder" — Encoder-only Gemma for sentence embeddings.
 
 </div>
 

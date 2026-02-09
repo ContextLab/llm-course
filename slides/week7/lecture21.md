@@ -21,10 +21,10 @@ Winter 2026
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
 1. Explain the **generative pre-training** paradigm and why it was revolutionary
-2. Describe the **transformer decoder** architecture used in GPT
+2. Evaluate the **ethical implications** of GPT-1's training data (BooksCorpus)
 3. Distinguish between **pre-training** and **fine-tuning** stages
 4. Compare GPT's **autoregressive** approach with BERT's **bidirectional** approach
-5. Identify how the decoder stack has evolved from GPT-1 to modern LLMs (2024)
+5. Identify how the decoder stack has evolved from GPT-1 to open-weight LLMs (2025)
 
 </div>
 
@@ -47,23 +47,6 @@ Winter 2026
 
 ---
 
-# From BERT to GPT
-
-<div class="definition-box" data-title="Two philosophies of language modeling">
-
-- **BERT** (encoder): Mask random tokens, predict them using **bidirectional** context. Best for *understanding* tasks (classification, NER, QA).
-- **GPT** (decoder): Predict the **next token** using only **left-to-right** context. Natural for *generation* tasks, but also capable of understanding.
-
-</div>
-
-<div class="tip-box" data-title="Questions to consider">
-
-Both models were published in 2018. BERT initially dominated benchmarks, but GPT's approach proved more scalable. Why might autoregressive modeling have a higher ceiling?
-
-</div>
-
----
-
 # The generative pre-training paradigm
 
 <div class="note-box" data-title="Radford et al. (2018): 'Improving Language Understanding by Generative Pre-Training'">
@@ -80,50 +63,6 @@ GPT introduced a two-stage approach that changed NLP forever:
 - **Before GPT**: Train task-specific models from scratch, needing large labeled datasets for each task
 - **After GPT**: Learn general language representations once, then adapt cheaply to any task
 - This is **transfer learning** for NLP — the same idea that transformed computer vision with ImageNet
-
-</div>
-
----
-
-# The transformer decoder
-
-<div class="definition-box" data-title="GPT's architecture">
-
-GPT uses only the **decoder** half of the original transformer ([Vaswani et al., 2017](https://arxiv.org/abs/1706.03762)). The data flows through:
-
-1. **Token embeddings**: Map each token to a 768-dimensional vector
-2. **Position embeddings**: Add learned positional information
-3. **N transformer blocks**: Each contains masked self-attention + feed-forward network
-4. **Output head**: Project back to vocabulary size for next-token prediction
-
-</div>
-
-<div class="warning-box" data-title="Key difference from the full transformer">
-
-The original transformer has both an encoder and a decoder with cross-attention between them. GPT removes the encoder entirely and removes cross-attention — it only uses **masked self-attention** within the decoder.
-
-</div>
-
----
-
-# Masked (causal) self-attention
-
-<div class="definition-box" data-title="Recall from Lecture 15">
-
-In standard self-attention (Lecture 15), every token attends to every other token. In **causal** (masked) self-attention, each token can only attend to tokens at **earlier positions** (and itself). This prevents the model from "peeking" at future tokens during training.
-
-</div>
-
-<div class="example-box" data-title="Attention pattern for 'The cat sat on'">
-
-| | The | cat | sat | on |
-|---------|------|------|------|------|
-| **The** | 1.0 | -inf | -inf | -inf |
-| **cat** | 0.3 | 0.7 | -inf | -inf |
-| **sat** | 0.2 | 0.3 | 0.5 | -inf |
-| **on** | 0.1 | 0.2 | 0.3 | 0.4 |
-
-The `-inf` entries become 0 after softmax, ensuring no information flows from future tokens. The causal mask enables both parallel training (all positions in one pass) and autoregressive generation (left-to-right, one token at a time).
 
 </div>
 
@@ -160,28 +99,33 @@ The `-inf` entries become 0 after softmax, ensuring no information flows from fu
 
 ---
 
-# Stage 1: Pre-training
+# The BooksCorpus controversy
 
-<div class="definition-box" data-title="The pre-training objective">
+<div class="warning-box" data-title="Where did GPT-1's training data come from?">
+
+GPT-1 was trained on **BooksCorpus** — approximately 7,000 unpublished books scraped from Smashwords.com, a self-publishing platform. The authors were never asked for consent, and the dataset was **taken offline in 2020** after complaints from writers who discovered their work had been used.
+
+</div>
+
+<div class="tip-box" data-title="Questions to consider">
+
+BooksCorpus was just the beginning. Later datasets — **Books3** (196,000 books), **The Pile**, **Common Crawl** — sparked lawsuits and a global debate about data rights. If your unpublished novel helped train GPT-1, should you have been informed? Compensated? Given the right to opt out?
+
+This tension between **data access** (enabling research) and **creator rights** (protecting authors) remains unresolved in 2026.
+
+</div>
+
+---
+
+# Pre-training objective
+
+<div class="definition-box" data-title="Next token prediction">
 
 Maximize the likelihood of each token given all preceding tokens:
 
 $$\mathcal{L}_{\text{pre-train}} = \sum_{i=1}^{N} \log P(t_i \mid t_1, t_2, \ldots, t_{i-1}; \Theta)$$
 
-This is simply **next token prediction** over a large corpus. No labels needed.
-
-</div>
-
-<div class="example-box" data-title="Training on 'The quick brown fox jumps'">
-
-The model learns from every position simultaneously:
-
-- Input: `"The"` → Target: `"quick"`
-- Input: `"The quick"` → Target: `"brown"`
-- Input: `"The quick brown"` → Target: `"fox"`
-- Input: `"The quick brown fox"` → Target: `"jumps"`
-
-Every text passage provides training signal at every token position.
+This is simply **next token prediction** over a large corpus. No labels needed. The causal attention mask (Lecture 15) ensures each token only attends to previous positions, enabling parallel training over all positions simultaneously.
 
 </div>
 
@@ -281,24 +225,23 @@ GPT-1's zero-shot performance was **weak**. The model had learned rich language 
 
 ---
 
-# GPT vs BERT
+# Weight tying
 
-<div class="note-box" data-title="Head-to-head comparison">
+<div class="definition-box" data-title="Sharing parameters between input and output layers">
 
-| Aspect | BERT (encoder) | GPT (decoder) |
-|--------|---------------|--------------|
-| Training objective | Masked language model | Autoregressive LM |
-| Context direction | Bidirectional | Left-to-right |
-| Best suited for | Understanding (NER, QA, classification) | Generation (text, code, dialogue) |
-| Fine-tuning approach | Task-specific heads | Unified sequence format |
-| Base parameters | 110M | 117M |
-| Tokens predicted per pass | ~15% (masked only) | 100% (every position) |
+Modern GPT models share weights between the **token embedding** layer and the **output (lm_head)** layer ([Press & Wolf, 2017](https://arxiv.org/abs/1608.09916)):
+
+```python
+self.token_embed = nn.Embedding(vocab_size, d_model)
+self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
+self.lm_head.weight = self.token_embed.weight  # Tied!
+```
 
 </div>
 
-<div class="tip-box" data-title="The scalability argument">
+<div class="note-box" data-title="Why this works">
 
-BERT dominated understanding benchmarks in 2018–2019, but GPT's autoregressive approach proved more scalable. Why? Predicting *every* token gives 6.7× more training signal per pass, and generation is a superset of understanding — a model that can *write* coherent text implicitly *understands* it.
+Both layers map between **token space** and **embedding space** — just in opposite directions. The embedding layer converts token IDs → vectors; the lm_head converts vectors → token probabilities. Tying them forces consistent representations and **saves ~20% of total parameters** in vocabulary-heavy models. Used in GPT-2, LLaMA, and most modern LLMs.
 
 </div>
 
@@ -320,6 +263,57 @@ BERT dominated understanding benchmarks in 2018–2019, but GPT's autoregressive
 <div class="important-box" data-title="The takeaway">
 
 The *conceptual* architecture is the same: token embeddings → causal attention → FFN → output head. But every piece has been systematically optimized. Modern LLMs like LLaMA 3, Gemma 2, and Mistral all use this upgraded stack.
+
+</div>
+
+---
+
+# Open-weight decoders: the LLaMA revolution
+
+<div class="definition-box" data-title="From closed to open">
+
+For years, cutting-edge decoders were **closed** — GPT-3 and GPT-4 were API-only. Meta's [LLaMA](https://arxiv.org/abs/2302.13971) (Feb 2023) changed everything by releasing model weights publicly.
+
+| Model | Date | Sizes | Key contribution |
+|-------|------|-------|-----------------|
+| LLaMA 1 | Feb 2023 | 7–65B | Leaked, then open. Proved open models competitive. |
+| LLaMA 2 | Jul 2023 | 7–70B | Official open release with commercial license |
+| Mistral 7B | Dec 2023 | 7B | Small open model matching LLaMA 2 13B |
+| LLaMA 3 | Apr 2024 | 8–405B | Matched GPT-4 class on many benchmarks |
+| LLaMA 4 | Apr 2025 | MoE | Mixture-of-experts architecture |
+
+</div>
+
+<div class="important-box" data-title="Impact">
+
+Open weights enabled academic research, spawned thousands of fine-tuned variants, and **democratized decoder research**. Before LLaMA, only a few labs could study frontier models. After LLaMA, anyone with a GPU could.
+
+</div>
+
+---
+
+# Test-time compute and inference scaling
+
+<div class="definition-box" data-title="A new scaling paradigm">
+
+Traditional scaling: more parameters + more training data. **Inference scaling**: spend more compute at *test time* by letting the model "think longer."
+
+</div>
+
+<div class="note-box" data-title="How it works">
+
+| Approach | Example | Mechanism |
+|----------|---------|-----------|
+| **Chain-of-thought** | GPT-4, Claude | Prompting the model to reason step-by-step |
+| **Thinking tokens** | OpenAI o1/o3 | Model generates internal reasoning traces before answering |
+| **Open reasoning** | DeepSeek-R1 | Open-source reasoning model with visible thinking process |
+| **Search + verify** | AlphaProof | Generate candidates, verify with external tools |
+
+</div>
+
+<div class="tip-box" data-title="Why this matters">
+
+Inference scaling means you don't need to retrain a model to make it better at hard problems — just give it more time to think. This shifts the cost curve: training is fixed, but inference quality scales with compute budget. We'll explore reasoning models in detail in Lecture 22.
 
 </div>
 
@@ -396,13 +390,13 @@ Each limitation suggested a clear direction: bigger models, more data, longer co
 
 <div class="tip-box" data-title="Questions to consider">
 
-1. **Autoregressive vs bidirectional:** GPT predicts left-to-right; BERT sees both directions. Humans process language incrementally (left-to-right in English) but with rich top-down expectations. Which model is more "brain-like"?
+1. **Training data ethics:** GPT-1 trained on books scraped without consent; later models used even larger datasets with similar issues. Where should the line be drawn between research progress and creator rights? Is opt-out sufficient, or should training require opt-in?
 
-2. **The generation advantage:** GPT can *generate* text, BERT cannot. Is generation a prerequisite for understanding? Can you truly understand language if you can't produce it?
+2. **Open vs closed:** LLaMA democratized decoder research but also enabled misuse (fine-tuning for harmful purposes). Is openness a net positive? Should frontier models be open?
 
-3. **Component upgrades:** Every piece of GPT-1 has been replaced (LayerNorm→RMSNorm, learned PE→RoPE, etc.) but the architecture is "the same." At what point does a ship become a different ship? (Theseus's paradox for neural networks.)
+3. **The generation advantage:** GPT can *generate* text, BERT cannot. Is generation a prerequisite for understanding? Can you truly understand language if you can't produce it?
 
-4. **Hybrid architectures:** Jamba mixes attention and state-space layers. If the "optimal" architecture is task-dependent, does this undermine the transformer's claim to universality?
+4. **Inference scaling:** If models can "think harder" by spending more compute, does this change what we mean by intelligence? Is a model that takes 10 minutes to solve a math problem "smarter" than one that fails instantly?
 
 </div>
 
@@ -417,9 +411,9 @@ Each limitation suggested a clear direction: bigger models, more data, longer co
 
 [**Radford et al. (2019)**](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) "Language Models are Unsupervised Multitask Learners" — GPT-2: larger models, zero-shot transfer.
 
-[**Su et al. (2024, *Neurocomputing*)**](https://arxiv.org/abs/2104.09864) "RoFormer: Enhanced Transformer with Rotary Position Embedding" — RoPE, now standard in most LLMs.
+[**Touvron et al. (2023, *arXiv*)**](https://arxiv.org/abs/2302.13971) "LLaMA: Open and Efficient Foundation Language Models" — The paper that opened decoder research.
 
-[**Ainslie et al. (2023, *EMNLP*)**](https://arxiv.org/abs/2305.13245) "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints" — Grouped-query attention.
+[**Press & Wolf (2017, *EACL*)**](https://arxiv.org/abs/1608.09916) "Using the Output Embedding to Improve Language Models" — Weight tying between input and output embeddings.
 
 [**Gloeckle et al. (2024, *arXiv*)**](https://arxiv.org/abs/2404.19737) "Better & Faster Large Language Models via Multi-token Prediction" — Meta/FAIR multi-token prediction.
 

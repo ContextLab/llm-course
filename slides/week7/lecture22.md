@@ -103,23 +103,18 @@ GPT-3 output: `"Negative"` — no weight updates, no fine-tuning, pure pattern r
 
 ---
 
-# Scaling laws recap
+# Beyond Chinchilla: the overtraining era
 
-<div class="note-box" data-title="Recall from Lecture 16">
+<div class="important-box" data-title="From Lecture 16's scaling laws to modern practice">
 
-We covered scaling laws in detail in Lecture 16: [Kaplan et al. (2020)](https://arxiv.org/abs/2001.08361) showed power-law improvement with scale, and [Chinchilla (Hoffmann et al., 2022)](https://arxiv.org/abs/2203.15556) showed that GPT-3 was *undertrained* — optimal is ~20 tokens per parameter.
+| Model | Parameters | Training tokens | Tokens/parameter | Strategy |
+|-------|------------|----------------|-----------------|----------|
+| GPT-3 | 175B | 300B | 1.7 | Undertrained |
+| Chinchilla | 70B | 1.4T | 20 | Compute-optimal |
+| LLaMA 3 | 70B | 15T | 214 | Inference-optimal |
+| Phi-4 | 14B | 10T+ | 700+ | Extreme overtraining |
 
-</div>
-
-<div class="important-box" data-title="The practical impact">
-
-| Model | Parameters | Training tokens | Tokens/parameter |
-|-------|------------|----------------|-----------------|
-| GPT-3 | 175B | 300B | 1.7 (undertrained) |
-| Chinchilla | 70B | 1.4T | 20 (optimal) |
-| LLaMA 3 | 70B | 15T | 214 (overtrained for inference) |
-
-Chinchilla (70B) **outperformed** GPT-3 (175B) at 2.5× smaller. But the latest trend goes further: **overtrain** smaller models to minimize *inference* cost, since you deploy billions of times but train only once.
+The field has moved past Chinchilla-optimal. Since you train once but deploy billions of times, **overtraining** smaller models minimizes total cost. Phi-4 (14B) matches GPT-3.5 (175B) through massive overtraining on curated data.
 
 </div>
 
@@ -133,13 +128,13 @@ Chinchilla (70B) **outperformed** GPT-3 (175B) at 2.5× smaller. But the latest 
 |-------|-------|----------------|
 | 1 | GPT-3 (2020) | Next-token prediction at massive scale |
 | 2 | [InstructGPT](https://arxiv.org/abs/2203.02155) (2022) | **Instruction tuning** on human-written responses |
-| 3 | ChatGPT (Nov 2022) | **RLHF** for helpful, harmless conversation |
+| 3 | ChatGPT (Nov 2022) | **RLHF** (Lecture 16) for helpful, harmless conversation |
 
 </div>
 
-<div class="definition-box" data-title="RLHF in brief">
+<div class="important-box" data-title="Why ChatGPT mattered">
 
-Recall from Lecture 16: RLHF trains a **reward model** from human preference rankings, then optimizes the LLM to maximize that reward. This aligns the model's objective with **what humans actually want** — helpful, honest, harmless — rather than just next-token likelihood. ChatGPT reached 100M users in 2 months, the fastest-growing consumer app in history.
+ChatGPT reached **100M users in 2 months** — the fastest-growing consumer app in history. The key innovation wasn't the model (GPT-3.5) but the **alignment**: RLHF transformed a next-token predictor into a conversational assistant that *felt* helpful. This revealed that alignment technique matters as much as model scale.
 
 </div>
 

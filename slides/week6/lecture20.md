@@ -29,45 +29,23 @@ Winter 2026
 
 ---
 
-# Recall and roadmap
+# Novel encoder applications beyond NLP
 
-<div class="note-box" data-title="From earlier lectures">
+<div class="note-box" data-title="Encoders power specialized domains where decoders are overkill">
 
-We introduced BERT's architecture in Lecture 12, explored what BERT actually learns in Lecture 18, and compared BERT variants (RoBERTa, ALBERT, DistilBERT, ELECTRA) in Lecture 19.
+**Clinical NLP:** De-identification of medical records, ICD code prediction, adverse drug event detection. [BioBERT](https://arxiv.org/abs/1901.08746) and [PubMedBERT](https://arxiv.org/abs/2007.15779) process millions of clinical notes daily.
 
-</div>
+**Legal tech:** Contract clause extraction, case law search, regulatory compliance checking. Fine-tuned encoders scan thousands of documents in seconds.
 
-<div class="tip-box" data-title="Today's focus">
+**Financial NER:** Extracting company names, monetary amounts, and dates from earnings calls and SEC filings. Bloomberg's internal models process billions of financial documents.
 
-Today: how encoder models are *used* — in industry, in neuroscience, and in the ongoing debate about whether any of this counts as "understanding."
+**Scientific literature:** [ChemBERTa](https://arxiv.org/abs/2010.09885) predicts molecular properties from SMILES strings. [SciBERT](https://arxiv.org/abs/1903.10676) powers semantic search across 100M+ papers.
 
 </div>
 
 <div class="tip-box" data-title="Companion notebook">
 
 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/encoder_applications_demo.ipynb) — hands-on with classification, NER, QA, and sentence similarity
-
-</div>
-
----
-
-# Where BERT excels
-
-<div class="note-box" data-title="BERT powers a wide range of understanding tasks">
-
-**Classification tasks:** Sentiment analysis, topic classification, spam detection, intent recognition
-
-**Token-level tasks:** Named entity recognition (NER), part-of-speech tagging, word sense disambiguation
-
-**Span-level tasks:** Question answering, extractive summarization, information extraction
-
-**Sentence-pair tasks:** Semantic similarity, natural language inference, paraphrase detection
-
-</div>
-
-<div class="important-box" data-title="Industry impact">
-
-BERT powers Google Search (understanding queries), customer service chatbots, content moderation systems, and document understanding pipelines at companies worldwide.
 
 </div>
 
@@ -201,6 +179,37 @@ emb1, emb2, emb3 = [get_sentence_embedding(s) for s in [sent1, sent2, sent3]]
 print(f"Paraphrase similarity: {F.cosine_similarity(emb1, emb2).item():.3f}")  # High
 print(f"Unrelated similarity:  {F.cosine_similarity(emb1, emb3).item():.3f}")  # Low
 ```
+
+</div>
+
+---
+
+# Sentence-BERT and modern retrieval
+
+<div class="definition-box" data-title="Scaling sentence similarity to millions of documents">
+
+Using BERT's [CLS] token for sentence similarity requires passing **both sentences through BERT together** — $O(n^2)$ comparisons for $n$ sentences. [Sentence-BERT](https://arxiv.org/abs/1908.10084) (Reimers & Gurevych, 2019) uses a **siamese architecture** that encodes sentences **independently**, then compares with cosine similarity.
+
+</div>
+
+<div class="example-box" data-title="Practical sentence embeddings">
+
+```python
+from sentence_transformers import SentenceTransformer
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+sentences = ["The cat sat on the mat", "A feline rested on the rug"]
+embeddings = model.encode(sentences)
+
+from sklearn.metrics.pairwise import cosine_similarity
+sim = cosine_similarity([embeddings[0]], [embeddings[1]])  # ~0.82
+```
+
+</div>
+
+<div class="note-box" data-title="The evolution of text embeddings">
+
+Sentence-BERT (2019) → [E5](https://arxiv.org/abs/2212.03533) (2022) → [NV-Embed](https://arxiv.org/abs/2405.17428) (2024). The [MTEB benchmark](https://huggingface.co/spaces/mteb/leaderboard) now ranks 200+ embedding models. Sentence embeddings power semantic search, RAG retrieval (Lecture 17), and recommendation systems at scale.
 
 </div>
 
@@ -350,7 +359,7 @@ classifier("The food was ok")    # → NEGATIVE (0.51)  # Flipped!
 
 <div class="note-box" data-title="Moving beyond anecdotes to systematic measurement">
 
-Recall from Lecture 11 that word embeddings encode societal biases (e.g., "doctor" closer to "man," "nurse" closer to "woman"). BERT inherits these same biases from its training data. But how do we measure bias *systematically* across thousands of contexts?
+Word embeddings encode societal biases — "doctor" closer to "man," "nurse" closer to "woman" (Lecture 11). BERT inherits these same biases from its training data. But how do we measure bias *systematically* across thousands of contexts?
 
 </div>
 
@@ -386,23 +395,19 @@ Recall from Lecture 11 that word embeddings encode societal biases (e.g., "docto
 
 ---
 
-# Encoder vs decoder: the 2026 landscape
+# The cost argument for encoders
 
-<div class="note-box" data-title="The architecture divide is narrowing">
+<div class="important-box" data-title="Why encoders survive in 2026">
 
-| | Encoder (BERT) | Decoder (GPT) |
-|---|---|---|
-| **Training** | Masked language modeling | Autoregressive next-token |
-| **Context** | Bidirectional | Left-to-right (causal) |
-| **Best for** | Understanding tasks | Generation tasks |
-| **Cost** | $0.01/M tokens | $1-30/M tokens |
+GPT-4 can do *anything* an encoder can — classification, NER, QA — via prompting. But at what cost?
+
+| Metric | Fine-tuned DistilBERT | GPT-4 via prompting |
+|--------|----------------------|---------------------|
+| **Cost** | ~$0.01/M tokens | ~$30/M tokens |
 | **Latency** | ~5ms | ~500ms |
+| **Quality (SST-2)** | 91.3% | ~95% |
 
-</div>
-
-<div class="tip-box" data-title="Where things are headed">
-
-**Convergence:** Decoder-only models (GPT-4, Claude) now do classification via prompting. Meanwhile, encoder-decoder hybrids (T5, UL2) blur the distinction further. The field is converging toward flexible architectures that can handle both understanding and generation — but cost and speed still favor purpose-built encoders for production.
+For high-volume, single-task workloads (content moderation, search ranking, NER pipelines), encoders are **3,000× cheaper** and **100× faster**. The field is converging toward flexible architectures, but production economics still favor purpose-built encoders.
 
 </div>
 
@@ -438,6 +443,8 @@ Recall from Lecture 11 that word embeddings encode societal biases (e.g., "docto
 [**Gao et al. (2025, *Nature Computational Science*)**](https://doi.org/10.1038/s43588-024-00752-6) "Brain-like artificial neurons in LLMs" — Emergent brain-like units in language models.
 
 [**Jiang et al. (2025, *COLING*)**](https://aclanthology.org/2025.coling-main.202.pdf) "SAGED" — Systematic bias evaluation pipeline for language models.
+
+[**Reimers & Gurevych (2019, *EMNLP*)**](https://arxiv.org/abs/1908.10084) "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks" — Enabled practical semantic search.
 
 [**Bender & Koller (2020, *ACL*)**](https://aclanthology.org/2020.acl-main.463/) "Climbing towards NLU" — The "understanding" debate.
 

@@ -843,45 +843,35 @@ Winter 2026</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="react-vs-chain-of-thought">ReAct vs. chain-of-thought</h1>
-<div class="note-box" data-title="Comparison of reasoning approaches">
+<div class="note-box" data-title="Where grounding matters">
+<p>Chain-of-thought (Lecture 22) improves reasoning but can hallucinate facts. ReAct adds <strong>grounding</strong>: the model checks its reasoning against real tool outputs.</p>
 <table>
 <thead>
 <tr>
 <th>Approach</th>
 <th>Reasoning</th>
-<th>Tool use</th>
-<th>Strengths</th>
-<th>Weaknesses</th>
+<th>Grounded</th>
+<th>Best for</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Standard prompting</td>
-<td>None</td>
-<td>None</td>
-<td>Simple</td>
-<td>No reasoning, no grounding</td>
-</tr>
-<tr>
 <td>Chain-of-thought</td>
 <td>Yes</td>
-<td>None</td>
-<td>Better reasoning</td>
-<td>Can hallucinate facts</td>
+<td>No</td>
+<td>Math, logic</td>
 </tr>
 <tr>
 <td>Act-only</td>
-<td>None</td>
+<td>No</td>
 <td>Yes</td>
-<td>Grounded in tool results</td>
-<td>May call wrong tools</td>
+<td>Simple lookups</td>
 </tr>
 <tr>
 <td><strong>ReAct</strong></td>
 <td><strong>Yes</strong></td>
 <td><strong>Yes</strong></td>
-<td><strong>Grounded reasoning</strong></td>
-<td>More complex, more tokens</td>
+<td><strong>Complex, factual tasks</strong></td>
 </tr>
 </tbody>
 </table>
@@ -1122,7 +1112,7 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="agent-memory">Agent memory</h1>
 <div class="note-box" data-title="Overcoming the context window limitation">
-<p>LLM context windows are finite (4K--128K tokens). Long-running agents need additional memory:</p>
+<p>LLM context windows are finite (4K–128K tokens). Long-running agents need additional memory:</p>
 <table>
 <thead>
 <tr>
@@ -1144,7 +1134,7 @@ Winter 2026</p>
 </tr>
 <tr>
 <td><strong>Long-term</strong></td>
-<td>Vector database (RAG)</td>
+<td>Vector database (Lecture 17)</td>
 <td>Past experiences, learned procedures</td>
 </tr>
 <tr>
@@ -1156,7 +1146,7 @@ Winter 2026</p>
 </table>
 </div>
 <div class="important-box" data-title="The memory bottleneck">
-<p>Memory management is one of the hardest problems in agent design. Too little context and the agent forgets its plan. Too much context and it becomes slow, expensive, and confused by irrelevant information.</p>
+<p>Memory management is one of the hardest problems in agent design. Too little context and the agent forgets its plan. Too much context and it becomes slow, expensive, and confused by irrelevant information. Current research focuses on <strong>hierarchical memory</strong> — agents that compress old context rather than discarding it.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1177,51 +1167,41 @@ Winter 2026</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-agent-spectrum">The agent spectrum</h1>
-<div class="note-box" data-title="How agents fit into the LLM ecosystem">
+<div class="note-box" data-title="Increasing autonomy, increasing risk">
 <table>
 <thead>
 <tr>
 <th>Paradigm</th>
-<th>LLM role</th>
+<th>Autonomy level</th>
 <th>Example</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Chatbot</td>
-<td>Respond to queries</td>
-<td>ChatGPT (basic mode)</td>
-</tr>
-<tr>
-<td>RAG system</td>
-<td>Answer with retrieved context</td>
-<td>Lecture 17's pipeline</td>
-</tr>
-<tr>
 <td>Tool-using LLM</td>
-<td>Call functions on demand</td>
-<td>ChatGPT with MCP tools</td>
+<td>Low — calls functions on demand</td>
+<td>ChatGPT with plugins</td>
 </tr>
 <tr>
 <td>ReAct agent</td>
-<td>Reason + act iteratively</td>
+<td>Medium — reasons + acts iteratively</td>
 <td>Research assistant</td>
 </tr>
 <tr>
 <td>Coding agent</td>
-<td>Write, test, debug software</td>
+<td>High — writes, tests, debugs software</td>
 <td>Claude Code, OpenHands</td>
 </tr>
 <tr>
 <td>Multi-agent system</td>
-<td>Multiple LLMs collaborating</td>
-<td>Debate, code review, delegation</td>
+<td>Very high — LLMs collaborating/debating</td>
+<td>Code review, delegation</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="tip-box" data-title="The key insight">
-<p>We have moved from models that <em>generate text</em> (GPT-1) to models that <em>take actions</em> (agents). Each step up the spectrum gives the LLM more autonomy — and more potential for both benefit and harm.</p>
+<p>Each step up the spectrum gives the LLM more autonomy — and more potential for both benefit and harm. The field is moving rapidly toward high-autonomy agents: OpenAI's &quot;deep research&quot; agent, Anthropic's Claude Code, and Google's Project Mariner can all operate for hours without human intervention.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">

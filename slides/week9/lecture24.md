@@ -195,14 +195,15 @@ Each **Thought** is the model reasoning; each **Action** is a tool call; each **
 
 # ReAct vs. chain-of-thought
 
-<div class="note-box" data-title="Comparison of reasoning approaches">
+<div class="note-box" data-title="Where grounding matters">
 
-| Approach | Reasoning | Tool use | Strengths | Weaknesses |
-|----------|-----------|----------|-----------|------------|
-| Standard prompting | None | None | Simple | No reasoning, no grounding |
-| Chain-of-thought | Yes | None | Better reasoning | Can hallucinate facts |
-| Act-only | None | Yes | Grounded in tool results | May call wrong tools |
-| **ReAct** | **Yes** | **Yes** | **Grounded reasoning** | More complex, more tokens |
+Chain-of-thought (Lecture 22) improves reasoning but can hallucinate facts. ReAct adds **grounding**: the model checks its reasoning against real tool outputs.
+
+| Approach | Reasoning | Grounded | Best for |
+|----------|-----------|----------|----------|
+| Chain-of-thought | Yes | No | Math, logic |
+| Act-only | No | Yes | Simple lookups |
+| **ReAct** | **Yes** | **Yes** | **Complex, factual tasks** |
 
 </div>
 
@@ -397,20 +398,20 @@ These tools don't just *suggest* code — they read files, run tests, debug erro
 
 <div class="note-box" data-title="Overcoming the context window limitation">
 
-LLM context windows are finite (4K--128K tokens). Long-running agents need additional memory:
+LLM context windows are finite (4K–128K tokens). Long-running agents need additional memory:
 
 | Memory type | Implementation | Use case |
 |-------------|---------------|----------|
 | **Short-term** | Conversation history in context | Recent steps and observations |
 | **Working memory** | Scratchpad / notepad tool | Intermediate results, running totals |
-| **Long-term** | Vector database (RAG) | Past experiences, learned procedures |
+| **Long-term** | Vector database (Lecture 17) | Past experiences, learned procedures |
 | **Episodic** | Structured logs | What worked/failed in previous runs |
 
 </div>
 
 <div class="important-box" data-title="The memory bottleneck">
 
-Memory management is one of the hardest problems in agent design. Too little context and the agent forgets its plan. Too much context and it becomes slow, expensive, and confused by irrelevant information.
+Memory management is one of the hardest problems in agent design. Too little context and the agent forgets its plan. Too much context and it becomes slow, expensive, and confused by irrelevant information. Current research focuses on **hierarchical memory** — agents that compress old context rather than discarding it.
 
 </div>
 
@@ -440,22 +441,20 @@ Mitigations: human-in-the-loop for irreversible actions, sandboxed execution, bu
 
 # The agent spectrum
 
-<div class="note-box" data-title="How agents fit into the LLM ecosystem">
+<div class="note-box" data-title="Increasing autonomy, increasing risk">
 
-| Paradigm | LLM role | Example |
-|----------|----------|---------|
-| Chatbot | Respond to queries | ChatGPT (basic mode) |
-| RAG system | Answer with retrieved context | Lecture 17's pipeline |
-| Tool-using LLM | Call functions on demand | ChatGPT with MCP tools |
-| ReAct agent | Reason + act iteratively | Research assistant |
-| Coding agent | Write, test, debug software | Claude Code, OpenHands |
-| Multi-agent system | Multiple LLMs collaborating | Debate, code review, delegation |
+| Paradigm | Autonomy level | Example |
+|----------|---------------|---------|
+| Tool-using LLM | Low — calls functions on demand | ChatGPT with plugins |
+| ReAct agent | Medium — reasons + acts iteratively | Research assistant |
+| Coding agent | High — writes, tests, debugs software | Claude Code, OpenHands |
+| Multi-agent system | Very high — LLMs collaborating/debating | Code review, delegation |
 
 </div>
 
 <div class="tip-box" data-title="The key insight">
 
-We have moved from models that *generate text* (GPT-1) to models that *take actions* (agents). Each step up the spectrum gives the LLM more autonomy — and more potential for both benefit and harm.
+Each step up the spectrum gives the LLM more autonomy — and more potential for both benefit and harm. The field is moving rapidly toward high-autonomy agents: OpenAI's "deep research" agent, Anthropic's Claude Code, and Google's Project Mariner can all operate for hours without human intervention.
 
 </div>
 
