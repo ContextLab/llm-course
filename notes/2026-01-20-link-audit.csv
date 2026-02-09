@@ -1,0 +1,37 @@
+id,citation,current_url,status,correct_url,notes
+1,Fedorenko et al. (2024),https://www.nature.com/articles/s41586-024-07522-w,valid,,Language is primarily a tool for communication - Nature 2024
+2,Lupyan et al. (2020),https://doi.org/10.1016/j.tics.2020.08.005,valid,,Effects of Language on Visual Perception - TICS 2020
+3,Weizenbaum (1966),https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf,valid,,ELIZA paper - Stanford PDF works
+4,Colby et al. (1971),https://doi.org/10.1016/S0004-3702(71)80014-6,fixed,https://doi.org/10.1016/0004-3702(71)90002-6,PARRY paper - DOI corrected in both README and syllabus
+5,ALICE/AIML Foundation,https://www.alicebot.org/,valid,,Reference site - redirects to https://alicebot.org/ (200 OK)
+6,Sennrich et al. (2016),https://aclanthology.org/P16-1162/,valid,,Neural MT Rare Words with Subword Units - ACL 2016
+7,Kudo & Richardson (2018),https://aclanthology.org/D18-2012/,valid,,SentencePiece - verified
+8,HuggingFace Ch 2.4,https://huggingface.co/learn/nlp-course/chapter2/4,valid,,Tokenizers - verified
+9,HuggingFace Ch 6,https://huggingface.co/learn/nlp-course/chapter6,valid,,Tokenizers deep dive - verified
+10,Linzen et al. (2016),https://aclanthology.org/Q16-1037/,valid,,Assessing LSTMs Learn Syntax-Sensitive Dependencies - TACL 2016
+11,HuggingFace Ch 7.2,https://huggingface.co/learn/nlp-course/chapter7/2,valid,,Token classification - verified
+12,Deerwester et al. (1990),http://wordvec.colorado.edu/papers/Deerwester_1990.pdf,valid,,LSA paper - verified
+13,Blei et al. (2003),https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf,valid,,LDA paper - verified
+14,Mikolov et al. (2013),https://arxiv.org/abs/1301.3781,valid,,Efficient Estimation of Word Representations - arXiv
+15,Pennington et al. (2014),https://aclanthology.org/D14-1162/,valid,,GloVe - verified
+16,Bojanowski et al. (2017),https://arxiv.org/abs/1607.04606,valid,,FastText - verified
+17,Peters et al. (2018),https://aclanthology.org/N18-1202/,valid,,ELMo - verified
+18,Cer et al. (2018),https://arxiv.org/abs/1803.11175,valid,,Universal Sentence Encoder - verified
+19,McInnes & Healy (2018),https://arxiv.org/pdf/1802.03426,valid,,UMAP - verified
+20,Anderson et al. (2016),https://www.jneurosci.org/content/36/45/11444,valid,,Cognitive semantic representation - 403 to bots but valid
+21,Bahdanau et al. (2015),https://arxiv.org/abs/1409.0473,valid,,Attention mechanism - verified
+22,Vaswani et al. (2017),https://arxiv.org/abs/1706.03762,valid,,Transformer - verified
+23,HuggingFace Ch 3,https://huggingface.co/learn/nlp-course/chapter3,valid,,Fine-tuning - verified
+24,Devlin et al. (2019),https://aclanthology.org/N19-1423/,valid,,BERT - verified
+25,HuggingFace Ch 4,https://huggingface.co/learn/nlp-course/chapter4,valid,,Using/sharing models - verified
+26,Liu et al. (2019),https://arxiv.org/abs/1907.11692,valid,,RoBERTa - verified
+27,Sanh et al. (2019),https://arxiv.org/abs/1910.01108,valid,,DistilBERT - verified
+28,Radford et al. (2018),https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf,valid,,GPT-1 - verified (200 OK)
+29,Radford et al. (2019),https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf,valid,,GPT-2 - verified (200 OK)
+30,Brown et al. (2020),https://arxiv.org/abs/2005.14165,valid,,GPT-3 Language Models are Few-Shot Learners - verified
+31,OpenAI (2023),https://arxiv.org/abs/2303.08774,valid,,GPT-4 Technical Report - verified
+32,Karpathy GPT Tutorial,https://www.youtube.com/watch?v=kCc8FmEb1nY,valid,,Let's build GPT - YouTube
+33,Lewis et al. (2020),https://arxiv.org/abs/2005.11401,valid,,RAG paper - verified
+34,Fedus et al. (2022),https://arxiv.org/abs/2101.03961,valid,,Switch Transformers - verified
+35,Jiang et al. (2024),https://arxiv.org/abs/2401.04088,valid,,Mixtral of Experts - verified
+36,Bender et al. (2021),https://dl.acm.org/doi/10.1145/3442188.3445922,valid,,Stochastic Parrots - 403 to bots but DOI is correct
