@@ -103,7 +103,7 @@ async function runTests() {
     // ==================== Test Group 2: Tokenization ====================
     console.log('\n--- Test Group 2: Tokenization Edge Cases (12 tests) ---\n');
 
-    const lda2 = new LDAModel();
+    const lda2 = new LDAModel({ removeStopwords: false });
 
     // Basic tokenization
     const text1 = "The quick brown fox jumps over the lazy dog";
