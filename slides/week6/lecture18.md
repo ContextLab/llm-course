@@ -136,8 +136,8 @@ A left-to-right model processes "it" before seeing "big" vs "small" — it must 
 Pronoun resolution challenges that test real-world understanding. Originally proposed by [Winograd (1972)](https://doi.org/10.1016/0010-0285(72)90002-3), formalized as a benchmark by [Levesque et al. (2012)](https://cdn.aaai.org/ocs/4492/4492-21843-1-PB.pdf).
 
 **Ambiguous pronouns**:
-- "The city councilmen refused the demonstrators a permit because **they** feared violence." (they = councilmen)
-- "The city councilmen refused the demonstrators a permit because **they** advocated violence." (they = demonstrators)
+- "The delivery workers couldn't fit the packages into the lockers because **they** were too [large/small]." (they = packages or lockers)
+- "The teachers gave the students extra time because **they** were [struggling/generous]." (they = students or teachers)
 
 </div>
 
