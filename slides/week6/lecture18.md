@@ -343,7 +343,7 @@ Does BERT "understand" language like we do? Probably not — but it may have dis
 
 <div class="example-box" data-title="Exploring BERT interactively">
 
-Check out this lecture's [companion notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/xhour_bert_demo.ipynb):
+Check out this lecture's [companion notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/bert_demo.ipynb):
 1. **Fill-in-the-blank predictions** — Probe BERT's world knowledge and uncover gender biases
 2. **Attention visualization** — See which tokens attend to which across layers and heads
 3. **Layer-by-layer embeddings** — Watch word senses diverge from surface form to semantics

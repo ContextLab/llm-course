@@ -22,7 +22,7 @@ Fixed 6 Manim animations, reduced slides 37→24, updated running example to "ro
 
 ### Key Decisions
 - Remove ALL 6 animations (redundant with L12)
-- Add companion notebook: `xhour_bert_demo.ipynb`
+- Add companion notebook: `bert_demo.ipynb`
 - Notebook link appears ONCE (final slide only)
 - New focus: Winograd schemas, attention specialization, bias, layer probing, brain parallels
 

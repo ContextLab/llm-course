@@ -199,7 +199,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Clark et al. (2019)](https://aclanthology.org/W19-4828/) - What Does BERT Look At?
 - HuggingFace: [Chapter 1](https://huggingface.co/learn/nlp-course/chapter1)
 - 🎮 **Try it:** [BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/bert-mlm/)
-- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/xhour_bert_demo.ipynb)
+- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/bert_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture18.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture18.html)
 
 **Wednesday (Lecture 19):** BERT Variants
