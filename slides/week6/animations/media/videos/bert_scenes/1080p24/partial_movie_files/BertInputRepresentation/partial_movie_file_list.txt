@@ -1,9 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertInputRepresentation/429858703_2384594247_655701808.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertInputRepresentation/4129186542_2934989943_1060456023.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertInputRepresentation/4129186542_2748848750_478090245.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertInputRepresentation/4129186542_2934989943_1548598840.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertInputRepresentation/4129186542_484842339_1719530006.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertInputRepresentation/4129186542_3422690374_2311597254.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertInputRepresentation/4129186542_1127641872_2694853588.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week6/animations/media/videos/bert_scenes/1080p24/partial_movie_files/BertInputRepresentation/4129186542_4257824416_666229413.mp4'

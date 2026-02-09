@@ -193,10 +193,13 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ## Week 6: Encoder Models (BERT)
 
 **Monday (Lecture 18):** BERT Deep Dive
-- Bidirectional attention and masked language modeling
+- Why bidirectionality matters, what BERT learns, attention patterns, layer probing
 - Reading: [Devlin et al. (2019)](https://aclanthology.org/N19-1423/) - BERT
-- HuggingFace: [Chapter 4](https://huggingface.co/learn/nlp-course/chapter4)
+- Reading: [Tenney et al. (2019)](https://aclanthology.org/P19-1452/) - BERT Rediscovers the Classical NLP Pipeline
+- Reading: [Clark et al. (2019)](https://aclanthology.org/W19-4828/) - What Does BERT Look At?
+- HuggingFace: [Chapter 1](https://huggingface.co/learn/nlp-course/chapter1)
 - 🎮 **Try it:** [BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/bert-mlm/)
+- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/xhour_bert_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture18.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture18.html)
 
 **Wednesday (Lecture 19):** BERT Variants

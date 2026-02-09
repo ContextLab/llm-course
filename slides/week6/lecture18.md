@@ -19,665 +19,343 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. Explain why bidirectional context matters (e.g., predicting `[MASK]` in "The robot `[MASK]` pancakes")
-2. Describe the masked language modeling (MLM) training objective and the 80/10/10 strategy
-3. Compare BERT-Base and BERT-Large architectures
-4. Understand the pre-train then fine-tune paradigm
-5. Demonstrate how contextual embeddings handle polysemy
+1. Explain the ONE architectural change that makes BERT bidirectional
+2. Analyze concrete examples where unidirectional models fail
+3. Describe what different BERT layers and attention heads learn
+4. Run BERT code to explore masked predictions and attention patterns
+5. Connect BERT's design to cognitive and linguistic insights
 
 </div>
 
 ---
 
-# Where we left off
+# What you already know
 
-<div class="note-box" data-title="Recap from lectures 15–16">
+<div class="note-box" data-title="Recap from lectures 12 and 15">
 
-In lecture 15, we built up the full transformer architecture step by step: tokenization → embeddings → Q/K/V → attention → feed-forward → prediction. The key idea was $\text{Transformer}(X, \theta) \rightarrow Y$, predicting the *next* token from previous tokens.
-
-That was a **decoder-only** (GPT-style) transformer with **causal masking** — each token could only attend to tokens *before* it.
-
-</div>
-
-<div class="tip-box" data-title="Today's running example">
-
-"The robot `[MASK]` pancakes"
-
-What word goes in the blank? You probably guessed something like "flipped" or "cooked" — but only because you could read *both sides*. That's exactly what BERT does!
+In lecture 12, we introduced BERT basics: Masked Language Modeling (MLM) with the 80/10/10 strategy, Next Sentence Prediction (NSP), and the input representation (token + segment + position embeddings). In lecture 15, we built the full transformer architecture, including Q/K/V attention and causal masking. Today we go deeper into WHY these design choices matter and WHAT BERT actually learns.
 
 </div>
 
 ---
 
-# What is BERT?
+# Breaking the causal mask
 
-<div class="definition-box" data-title="Bidirectional Encoder Representations from Transformers">
+<div class="definition-box" data-title="The key difference is the mask">
 
-**BERT** is an **encoder-only transformer** that reads text in both directions simultaneously. Unlike autoregressive models (GPT), BERT sees the full context — both left and right — when processing each token.
+Recall that attention scores are calculated as:
+- GPT: $A_{\text{GPT}} = \text{softmax}\left(\frac{QK^T}{\sqrt{H}} + M_{\text{causal}}\right)$
+- BERT: $A_{\text{BERT}} = \text{softmax}\left(\frac{QK^T}{\sqrt{H}}\right)$
 
-The key innovation is **Masked Language Modeling (MLM)**: randomly mask tokens in the input and train the model to predict them from surrounding context.
-
-</div>
-
-<div class="example-box" data-title="Why bidirectional matters for our example">
-
-- **GPT** sees: "The robot ___" → could be *anything*: "destroyed", "ate", "purchased", "analyzed"...
-- **BERT** sees: "The robot ___ pancakes" → "flipped" or "cooked" — the right context narrows it dramatically!
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# Causal vs. bidirectional attention
-
-<div class="definition-box" data-title="The key difference is one line of math">
-
-Recall from lecture 15 that attention scores are:
-
-$$A = \text{softmax}\left(\frac{QK^T}{\sqrt{H}}\right)$$
-
-**GPT** adds a causal mask $M$ before softmax, where $M_{ij} = -\infty$ if $j > i$:
-
-$$A_{\text{GPT}} = \text{softmax}\left(\frac{QK^T}{\sqrt{H}} + M_{\text{causal}}\right)$$
-
-**BERT** simply removes the mask — all positions attend to all positions:
-
-$$A_{\text{BERT}} = \text{softmax}\left(\frac{QK^T}{\sqrt{H}}\right)$$
+**Bidirectionality**: One line of math — removing the causal mask — transforms a next-word predictor into a bidirectional understanding machine.
 
 </div>
 
 <div class="warning-box" data-title="Trade-off">
 
-Removing the causal mask means BERT **cannot generate text** autoregressively — it sees the future! But it excels at *understanding* tasks.
+BERT cannot generate text autoregressively because it "sees the future" during processing. It is an encoder, not a decoder.
 
 </div>
 
 ---
-
-# Causal vs. bidirectional attention
-
-![height:500](animations/gifs/bertvsgptattention.gif)
-
----
+<!-- _class: scale-85 -->
 
 # Why bidirectionality matters
 
-<div class="example-box" data-title="Walking through our example">
+<div class="example-box" data-title="Contextual ambiguity">
 
-"The robot `[MASK]` pancakes"
-
-| Direction | Context available | Likely predictions |
-|-----------|------------------|--------------------|
-| Left only (GPT) | "The robot ___" | destroyed, ate, purchased, built, analyzed, ... |
-| Right only | "___ pancakes" | flipped, stacked, burned, decorated, ... |
-| Both (BERT) | "The robot ___ pancakes" | **flipped**, cooked, made — much more constrained! |
+Consider these Winograd-style examples where left-context alone is insufficient:
+- "The trophy didn't fit in the suitcase because **it** was too [big/small]" — "it" refers to trophy or suitcase depending on the final word.
+- "The animal didn't cross the street because **it** was too [wide/tired]" — need right context to resolve "it".
 
 </div>
 
-<div class="tip-box" data-title="Encoder vs. decoder">
+<div class="tip-box" data-title="The BERT advantage">
 
-- **Encoder-only** (BERT) → *understanding* tasks: classification, NER, question answering
-- **Decoder-only** (GPT) → *generation* tasks: text completion, dialogue, code generation
-- **Encoder-decoder** (T5, BART) → *sequence-to-sequence*: translation, summarization
+A left-to-right model processes "it" before seeing "big" vs "small" — it must guess. BERT reads both directions and never has to guess.
 
 </div>
 
 ---
 
-# Why BERT was revolutionary
+# The Winograd schema challenge
 
-<div class="important-box" data-title="BERT changed everything about NLP (2018)">
+<div class="definition-box" data-title="Winograd schemas">
 
-**Before BERT:**
-- Feature-based approaches (Word2Vec/GloVe as fixed features)
-- Task-specific architectures for each problem
-- Limited transfer learning — models trained from scratch
-- Unidirectional or shallow bidirectional models (ELMo)
+Pronoun resolution challenges that test real-world understanding. Originally proposed by Terry Winograd (1972), formalized as a benchmark by Levesque et al. (2012).
 
-**BERT's contributions:**
-1. **Deep bidirectionality** — true bidirectional context at every layer, not just concatenating left-to-right and right-to-left
-2. **Pre-train + fine-tune paradigm** — one pre-trained model adapted to many tasks with minimal changes
-3. **State-of-the-art results** — beat previous best on 11 NLP benchmarks, sometimes by 10+ points
+**Ambiguous pronouns**:
+- "The city councilmen refused the demonstrators a permit because **they** feared violence." (they = councilmen)
+- "The city councilmen refused the demonstrators a permit because **they** advocated violence." (they = demonstrators)
+
+</div>
+
+<div class="note-box" data-title="Performance">
+
+BERT-large was among the first models to approach human performance on Winograd schemas.
 
 </div>
 
 ---
 
-# BERT input representation
+# What fill-in-the-blank teaches
 
-<div class="definition-box" data-title="Three embeddings summed together">
+<div class="definition-box" data-title="Intuition for MLM">
 
-BERT's input is the element-wise sum of three embedding types, each producing a vector of size $C$:
-
-$$E_{\text{input}} = E_{\text{token}} + E_{\text{segment}} + E_{\text{position}}$$
-
-1. **Token embeddings**: WordPiece vocabulary lookup (30K learned vectors)
-2. **Segment embeddings**: Which sentence — A or B? (2 learned vectors)
-3. **Position embeddings**: Learned position encoding for positions 0–511
+Filling in blanks forces BERT to learn grammar ("The [MASK] barked" → dog), semantics ("She [MASK] the exam" → passed/failed), and world knowledge ("The capital of France is [MASK]" → Paris).
 
 </div>
 
-<div class="note-box" data-title="Compare with lecture 15">
+<div class="tip-box" data-title="Self-supervised curriculum">
 
-GPT uses only token + position embeddings. BERT adds **segment embeddings** to handle sentence-pair tasks like question answering and natural language inference.
+Think of MLM as a self-supervised curriculum: every masked position is a test question, and the surrounding text is the study material.
 
 </div>
 
 ---
 
-# BERT input representation
+# Try it: what does BERT predict?
 
-![height:500](animations/gifs/bertinputrepresentation.gif)
-
----
-<!-- _class: scale-90 -->
-
-# BERT input representation for our example
-
-<div class="example-box" data-title="Input representation for our running example">
+<div class="example-box" data-title="Code example">
 
 ```python
-tokens      = ["[CLS]", "the", "robot", "[MASK]", "pancakes", "[SEP]"]
-token_emb   = [E_CLS,   E_the, E_robot, E_MASK,   E_pancakes, E_SEP]
-segment_emb = [E_A,     E_A,   E_A,     E_A,      E_A,        E_A  ]
-position_emb= [E_0,     E_1,   E_2,     E_3,      E_4,        E_5  ]
+from transformers import pipeline
+fill_mask = pipeline("fill-mask", model="bert-base-uncased")
+fill_mask("The [MASK] barked at the mailman.")
+# → [{'token_str': 'dog', 'score': 0.65}, ...]
 
-# Final input = token_emb + segment_emb + position_emb (element-wise)
+fill_mask("The capital of Japan is [MASK].")
+# → [{'token_str': 'tokyo', 'score': 0.85}, ...]
 ```
 
 </div>
 
-<div class="note-box" data-title="Dimensions">
-
-Each embedding vector has size $C = 768$ (for BERT-Base). With $T = 6$ tokens, the combined input matrix is $T \times C = 6 \times 768$.
-
-</div>
-
 ---
 
-# Segment embeddings
+# BERT reveals its biases
 
-<div class="definition-box" data-title="Handling sentence pairs">
-
-For tasks involving two sentences (e.g., question answering, natural language inference), BERT needs to know which tokens belong to which sentence. **Segment embeddings** solve this:
-
-- All tokens in **Sentence A** get embedding vector $E_A$
-- All tokens in **Sentence B** get embedding vector $E_B$
-- Only 2 learned vectors — extremely parameter-efficient!
-
-</div>
-
-<div class="example-box" data-title="Sentence pair example">
-
-Sentence A: "The robot flipped pancakes" &nbsp;&nbsp; Sentence B: "They were delicious"
-
-| Token | [CLS] | the | robot | flipped | pancakes | [SEP] | they | were | delicious | [SEP] |
-|-------|-------|-----|-------|---------|----------|-------|------|------|-----------|-------|
-| Segment | A | A | A | A | A | A | B | B | B | B |
-
-</div>
-
----
-
-# Segment embeddings
-
-![height:500](animations/gifs/segmentembeddings.gif)
-
----
-
-# WordPiece tokenization
-
-<div class="example-box" data-title="How BERT handles unknown words">
+<div class="important-box" data-title="Exposing training data biases">
 
 ```python
-from transformers import BertTokenizer
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-
-# Common words stay intact
-tokenizer.tokenize("The cat sat on the mat")
-# → ['the', 'cat', 'sat', 'on', 'the', 'mat']
-
-# Rare words get split into subwords
-tokenizer.tokenize("unbelievably")
-# → ['un', '##believable', '##ly']  # "##" means continuation
-
-tokenizer.tokenize("ChatGPT is transformative")
-# → ['chat', '##g', '##pt', 'is', 'transform', '##ative']
+fill_mask("The nurse said [MASK] would be right back.")
+# → 'she' (0.58), 'he' (0.25), 'i' (0.06)
+fill_mask("The doctor said [MASK] would be right back.")
+# → 'he' (0.55), 'she' (0.22), 'i' (0.08)
 ```
 
 </div>
 
-<div class="note-box" data-title="Why WordPiece?">
+<div class="warning-box" data-title="Feature and bug">
 
-- **No out-of-vocabulary problem**: Any word can be represented as subword pieces
-- **Morphological awareness**: Learns prefixes, suffixes, and stems (e.g., "un-" + "believab-" + "-ly")
-- **Compact vocabulary**: 30K tokens cover virtually all English text
-- **Trade-off**: Rare words consume more tokens, increasing sequence length
+BERT learned gender stereotypes from its training data. This is useful for studying bias, but dangerous if deployed uncritically.
 
 </div>
 
 ---
 
-# Masked language modeling
+# What attention heads specialize in
 
-<div class="definition-box" data-title="BERT's primary pre-training objective">
+<div class="definition-box" data-title="Linguistic specialization">
 
-**Training procedure:**
-1. Take a sentence from the training corpus
-2. Randomly select 15% of tokens for prediction
-3. Of those selected tokens:
-   - **80%** are replaced with `[MASK]`
-   - **10%** are replaced with a random word
-   - **10%** are kept unchanged
-4. Train the model to predict the original tokens
+Clark et al. (2019) discovered that specific BERT attention heads specialize in linguistic relations:
+- **Head 8-10**: Direct objects (verb → object)
+- **Head 7-6**: Possessive pronouns (noun → its/his/her)
+- **Head 5-4**: Coreference (pronoun → antecedent)
 
 </div>
 
-<div class="tip-box" data-title="Why the 80/10/10 split?">
+<div class="note-box" data-title="Emergent properties">
 
-If we always used `[MASK]`, the model would learn to only pay attention when it sees `[MASK]` — but `[MASK]` never appears in real text during fine-tuning. The random replacement and unchanged tokens force the model to maintain good representations for *all* tokens, not just masked ones.
-
-</div>
-
----
-<!-- _class: scale-90 -->
-
-# MLM step by step
-
-<div class="example-box" data-title="Walkthrough with our running example">
-
-```python
-# Step 1: Start with the original sentence
-tokens = ["[CLS]", "the", "robot", "flipped", "pancakes", "[SEP]"]
-# Select "flipped" (idx 3) for prediction (1 of 6 tokens ≈ 15%)
-
-# Step 2: Apply the 80/10/10 strategy
-# "flipped" → 80% chance → replaced with [MASK]
-
-# Step 3: Create training example
-input:  "[CLS] the robot [MASK] pancakes [SEP]"
-labels: [-1,   -1,  -1,    "flipped", -1,       -1]
-# -1 means no loss computed at this position
-
-# Step 4: Model predicts
-P("flipped" | "the robot ___ pancakes") → high!
-# Both left ("the robot") and right ("pancakes") context help
-```
-
-</div>
-
-<div class="note-box" data-title="Key insight">
-
-The model must understand both syntax and semantics to predict masked words — it learns deep language representations as a side effect of this objective.
+No one programmed these specializations — they emerged from masked language modeling alone.
 
 </div>
 
 ---
 
-# Masked language modeling
+# BERT learns a linguistic pipeline
 
-![height:500](animations/gifs/maskedlanguagemodeling.gif)
+<div class="definition-box" data-title="Layer-wise processing">
 
----
-
-# MLM loss function
-
-<div class="definition-box" data-title="Formally...">
-
-The masked language modeling loss is the negative log-likelihood of predicting the original tokens at masked positions:
-
-$$\mathcal{L}_{\text{MLM}} = -\sum_{i \in \mathcal{M}} \log P(x_i \mid \mathbf{x}_{\backslash \mathcal{M}}; \theta)$$
-
-where:
-- $\mathcal{M}$ = set of masked positions
-- $\mathbf{x}_{\backslash \mathcal{M}}$ = input with masked tokens
-- $\theta$ = model parameters
-- Only masked positions contribute to the loss (the $-1$ labels are ignored)
+Tenney et al. (2019) showed BERT's layers form a processing pipeline:
+1. **Lower layers (1–4)**: Surface features — POS tags, word boundaries
+2. **Middle layers (5–8)**: Syntax — parse trees, dependency relations
+3. **Upper layers (9–12)**: Semantics — word sense disambiguation, coreference
 
 </div>
 
-<div class="tip-box" data-title="Prediction at each masked position">
+<div class="tip-box" data-title="Classical NLP">
 
-$$P(x_i = w \mid \mathbf{x}_{\backslash \mathcal{M}}) = \text{softmax}(\mathbf{h}_i \cdot W_{\text{vocab}} + b)_w$$
-
-where $\mathbf{h}_i$ is BERT's output hidden state at position $i$.
+This mirrors the classical NLP pipeline that used to require separate hand-crafted systems for each level.
 
 </div>
 
 ---
 
-# Next sentence prediction
+# Embeddings change across layers
 
-<div class="definition-box" data-title="BERT's second pre-training objective">
+<div class="example-box" data-title="Word sense transformation">
 
-**Task:** Given two sentences A and B, predict whether B actually follows A in the original text.
-
-- **50% of the time:** B is the real next sentence (label: `IsNext`)
-- **50% of the time:** B is a random sentence from the corpus (label: `NotNext`)
-
-The `[CLS]` token representation is used for this binary classification.
+Consider the word "cells" in: "The cells in the prison..." vs "The cells in the body..."
+- **Layer 1**: Both "cells" have similar representations (surface form).
+- **Layer 6**: Syntactic context starts differentiating them.
+- **Layer 12**: Completely different vectors (prison vs biology).
 
 </div>
 
-<div class="warning-box" data-title="NSP is controversial">
+<div class="note-box" data-title="Measurement">
 
-Later work (RoBERTa, 2019) showed that removing NSP actually *improves* performance. The task may be too easy — distinguishing topic is simpler than understanding sentence relationships. ALBERT replaced NSP with the harder **Sentence Order Prediction** (SOP) task.
-
-</div>
-
----
-
-# BERT making predictions
-
-<div class="definition-box" data-title="Predicting from [MASK], not from the last token">
-
-Recall from lecture 15: GPT uses the **last token's** output vector to predict the next word.
-
-BERT is different — it predicts from **each masked position's** output vector:
-
-$$P(\text{"flipped"} \mid \text{context}) = \text{softmax}(\mathbf{h}_{[\text{MASK}]} \cdot W_{\text{vocab}} + b)$$
-
-The output hidden state $\mathbf{h}_{[\text{MASK}]}$ at the `[MASK]` position encodes information from *all* surrounding tokens (both left and right).
-
-</div>
-
-<div class="tip-box" data-title="For classification tasks">
-
-For sentence-level tasks (sentiment, NLI), BERT uses the `[CLS]` token's output instead — this token is trained to aggregate information across the whole sequence.
+Cosine similarity between the two "cells" vectors drops from ~0.95 (layer 1) to ~0.45 (layer 12).
 
 </div>
 
 ---
 
-# BERT making predictions
+# Visualizing attention patterns
 
-![height:500](animations/gifs/bertpredictionhead.gif)
+<div class="example-box" data-title="Bertviz exploration">
+
+In the companion notebook, you'll use `bertviz` to see attention patterns. These visualizations show how tokens attend to each other across different heads and layers. Try sentences with pronouns — which attention head links "it" to its antecedent?
+
+</div>
+
+<div class="note-box" data-title="Attention maps">
+
+Attention maps often show "ribbon" diagrams or heatmaps where lines connect tokens, indicating the strength of the attention weights.
+
+</div>
 
 ---
 
-# BERT architecture variants
+# BERT-base vs BERT-large
 
-<div class="note-box" data-title="Two model sizes">
+<div class="note-box" data-title="Architecture comparison">
 
-| Component | BERT-Base | BERT-Large |
+| Component | BERT-base | BERT-large |
 |-----------|-----------|------------|
-| Transformer layers | 12 | 24 |
+| Layers | 12 | 24 |
 | Hidden size | 768 | 1024 |
 | Attention heads | 12 | 16 |
-| Feed-forward size | 3072 | 4096 |
-| Total parameters | 110M | 340M |
-| Max sequence length | 512 tokens | 512 tokens |
-| Vocabulary | 30,000 (WordPiece) | 30,000 (WordPiece) |
+| Parameters | 110M | 340M |
+| Max sequence | 512 | 512 |
 
 </div>
 
-<div class="note-box" data-title="Special tokens">
+<div class="tip-box" data-title="Usage">
 
-- **[CLS]**: Classification token (first position, used for sequence-level tasks)
-- **[SEP]**: Separator token (between sentence pairs)
-- **[MASK]**: Mask token (for MLM pre-training)
-- **[PAD]**: Padding token (for batching variable-length sequences)
+BERT-base fits on a single GPU and runs in seconds. BERT-large is ~3x slower but excels on complex reasoning tasks like Winograd schemas.
 
 </div>
 
 ---
 
-# BERT pre-training
+# The pre-training data question
 
-<div class="note-box" data-title="Massive-scale pre-training on unlabeled text">
+<div class="warning-box" data-title="What's in the data?">
 
-**Pre-training data:**
-- **BooksCorpus**: 800M words (11,038 unpublished books)
-- **English Wikipedia**: 2,500M words (text only, no tables/lists/headers)
-- **Total**: 3.3 billion words of diverse, high-quality text
-
-**Training details:**
-- Batch size: 256 sequences (128,000 tokens per batch)
-- Training steps: 1 million
-- Optimizer: Adam (lr = 1e-4, warmup over first 10K steps)
-- Hardware: 4–16 Cloud TPUs
-- Training time: ~4 days for BERT-Base
+BERT was trained on 3.3B words of BooksCorpus + Wikipedia:
+- Primarily English, formal writing.
+- Over-represents certain demographics and viewpoints.
+- No social media, no conversations, no code.
+- Cutoff: 2018 (no knowledge of recent events).
 
 </div>
 
-<div class="tip-box" data-title="Key insight">
+<div class="important-box" data-title="Data shapes the model">
 
-Pre-training learns *general language understanding* that transfers to many downstream tasks. The enormous cost is paid once — fine-tuning is cheap!
+BERT "knows" what its training data contained. Its biases, gaps, and capabilities all trace back to these 3.3 billion words.
 
 </div>
 
 ---
 
-# The pre-train then fine-tune paradigm
+# From understanding to doing
 
-<div class="definition-box" data-title="Two-stage training">
+<div class="definition-box" data-title="Pre-train then fine-tune">
 
-**Stage 1 — Pre-training** (done once, expensive):
-- Data: 3.3B words of unlabeled text
-- Objective: MLM + NSP
-- Cost: Days on TPU clusters
-- Result: General-purpose language representations
-
-**Stage 2 — Fine-tuning** (per task, cheap):
-- Data: 1K–100K labeled examples for your specific task
-- Objective: Task-specific loss (e.g., cross-entropy for classification)
-- Cost: Hours on a single GPU
-- Result: Task-specialized model with strong performance
+- **Pre-training**: Expensive, one-time, learns general language understanding.
+- **Fine-tuning**: Cheap, per-task, adds a task-specific head.
 
 </div>
 
-<div class="note-box" data-title="Why this works">
+<div class="tip-box" data-title="Transfer learning">
 
-Pre-training captures syntax, semantics, and world knowledge from massive text. Fine-tuning teaches the model to *apply* that knowledge to a specific task format — with very little task-specific data.
+The key insight: language understanding transfers. A model that can fill in blanks has learned enough about language to excel at classification, QA, NER, and more.
 
 </div>
 
 ---
 
-# The pre-train then fine-tune paradigm
+# Fine-tuning in 5 lines
 
-![height:500](animations/gifs/finetuningtransfer.gif)
-
----
-<!-- _class: scale-90 -->
-
-# Fine-tuning for different tasks
-
-<div class="note-box" data-title="Minimal architecture changes needed">
-
-| Task type | Input format | Output | Example |
-|-----------|-------------|--------|---------|
-| Single sentence classification | [CLS] sentence [SEP] | [CLS] → classifier | Sentiment analysis |
-| Sentence pair classification | [CLS] sent-A [SEP] sent-B [SEP] | [CLS] → classifier | Natural language inference |
-| Question answering | [CLS] question [SEP] passage [SEP] | Token-level start/end positions | SQuAD |
-| Token classification | [CLS] sentence [SEP] | Each token → classifier | Named entity recognition |
-
-The same pre-trained BERT is used for all tasks — only a simple output layer is added on top.
-
-</div>
-
----
-<!-- _class: scale-85 -->
-
-# Fine-tuning BERT in Python
-
-<div class="example-box" data-title="Using HuggingFace Transformers for sentiment classification">
+<div class="example-box" data-title="Sentiment analysis pipeline">
 
 ```python
-from transformers import BertForSequenceClassification, Trainer, TrainingArguments
-
-# Load pre-trained BERT with a classification head
-model = BertForSequenceClassification.from_pretrained(
-    'bert-base-uncased',
-    num_labels=2  # Binary classification (positive/negative)
-)
-
-# Define training arguments
-training_args = TrainingArguments(
-    output_dir='./results',
-    num_train_epochs=3,
-    per_device_train_batch_size=16,
-    learning_rate=2e-5,       # Much lower than pre-training!
-    warmup_steps=500,
-)
-
-# Train
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=train_dataset,
-    eval_dataset=eval_dataset,
-)
-trainer.train()
+from transformers import pipeline
+classifier = pipeline("sentiment-analysis")
+classifier("This movie was absolutely wonderful!")
+# → [{'label': 'POSITIVE', 'score': 0.9998}]
+classifier("The plot was confusing and dull.")
+# → [{'label': 'NEGATIVE', 'score': 0.9987}]
 ```
 
 </div>
 
----
-<!-- _class: scale-85 -->
+<div class="note-box" data-title="Abstraction">
 
-# Contextual embeddings in action
-
-<div class="example-box" data-title="The word 'bank' gets different embeddings depending on context">
-
-```python
-from transformers import BertTokenizer, BertModel
-import torch
-
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertModel.from_pretrained('bert-base-uncased')
-
-sent1 = "I deposited money at the bank"   # Financial institution
-sent2 = "We sat by the river bank"         # Riverbank
-
-def get_embedding(sentence, target_word):
-    inputs = tokenizer(sentence, return_tensors='pt')
-    outputs = model(**inputs)
-    tokens = tokenizer.tokenize(sentence)
-    idx = tokens.index(target_word) + 1    # +1 for [CLS]
-    return outputs.last_hidden_state[0, idx, :]
-
-emb1 = get_embedding(sent1, "bank")  # Financial context
-emb2 = get_embedding(sent2, "bank")  # River context
-
-similarity = torch.cosine_similarity(emb1, emb2, dim=0)
-print(f"Similarity: {similarity:.3f}")  # ~0.3–0.5 (low! different meanings)
-```
+Under the hood, this is a BERT model fine-tuned on sentiment data. The pipeline abstracts away tokenization, model loading, and inference.
 
 </div>
 
 ---
 
-# Static vs. contextual embeddings
+# BERT's lasting impact
 
-<div class="note-box" data-title="BERT captures meaning differences that static embeddings miss">
+<div class="note-box" data-title="Historical timeline">
 
-| Word pair | Word2Vec similarity | BERT similarity |
-|-----------|---------------------|-----------------|
-| bank (financial) vs bank (river) | 1.00 (same vector!) | ~0.42 |
-| bank (financial) vs money | 0.65 | ~0.78 |
-| bank (river) vs shore | 0.52 | ~0.81 |
-
-</div>
-
-<div class="tip-box" data-title="Why this matters">
-
-Word2Vec and GloVe assign a *single* vector to each word, regardless of context. BERT generates a *different* vector for each occurrence of a word, shaped by its surrounding context. This is why BERT excels at tasks requiring disambiguation — it actually "sees" the difference between financial banks and riverbanks.
+- **2013**: Word2Vec — static word embeddings
+- **2018 Feb**: ELMo — contextual, but RNN-based
+- **2018 Oct**: BERT — bidirectional transformers
+- **2019+**: RoBERTa, ALBERT, DistilBERT, ELECTRA, DeBERTa
 
 </div>
 
----
+<div class="important-box" data-title="The paradigm shift">
 
-# BERT's benchmark results
-
-<div class="note-box" data-title="State-of-the-art on 11 NLP tasks when released (2018)">
-
-| Task | Metric | Previous SOTA | BERT-Large |
-|------|--------|---------------|------------|
-| SQuAD 2.0 (question answering) | F1 | 66.3 | 83.1 |
-| MNLI (natural language inference) | Accuracy | 80.6 | 86.7 |
-| SST-2 (sentiment analysis) | Accuracy | 93.2 | 94.9 |
-| CoNLL-2003 (named entity recognition) | F1 | 92.6 | 92.8 |
-
-**Key observations:**
-- Largest gains on tasks requiring deep understanding (QA, NLI)
-- Improvements even on well-studied, heavily-optimized benchmarks
-- BERT-Large consistently outperforms BERT-Base
-
-</div>
-
-<div class="important-box" data-title="Impact">
-
-BERT made pre-trained transformers the default starting point in NLP. Nearly all subsequent models — RoBERTa, ALBERT, DistilBERT, GPT-2 — build on ideas BERT popularized.
+BERT established the "pre-train then fine-tune" paradigm that now dominates NLP. Even GPT-4 and Claude use this approach — they just use different architectures and much more data.
 
 </div>
 
 ---
 
-# What does BERT learn?
+# BERT and the brain
 
-<div class="definition-box" data-title="Probing BERT's internal representations">
+<div class="definition-box" data-title="Neural parallels">
 
-Research has shown that BERT's layers form a linguistic processing pipeline:
+Neuroscience studies have found striking parallels between BERT's internal representations and human brain activity during language processing.
 
-1. **Lower layers (1–4)**: Surface features — part-of-speech tags, word boundaries, morphology
-2. **Middle layers (5–8)**: Syntactic structure — parse trees, dependency relations, subject-verb agreement
-3. **Upper layers (9–12)**: Semantics and pragmatics — word sense disambiguation, coreference, entity types
-4. **Final layers**: Task-specific representations that emerge during fine-tuning
-
-</div>
-
-<div class="tip-box" data-title="Analogy to vision">
-
-This is similar to how convolutional neural networks learn: early layers detect edges, middle layers detect shapes, and later layers detect objects. BERT does the same thing with language — from characters to meaning.
+**Cognitive insights**:
+- BERT's layer progression mirrors the temporal cascade of language processing in the brain.
+- Middle BERT layers best predict fMRI activity in language regions.
+- The N400 ERP component correlates with BERT's prediction confidence.
 
 </div>
 
----
-<!-- _class: scale-90 -->
+<div class="tip-box" data-title="Computational solutions">
 
-# Layer analysis with probing
-
-<div class="example-box" data-title="Extracting representations from different layers">
-
-```python
-from transformers import BertModel
-
-model = BertModel.from_pretrained('bert-base-uncased', output_hidden_states=True)
-outputs = model(**inputs)
-hidden_states = outputs.hidden_states  # 13 tensors: embedding + 12 layers
-
-# Results from probing studies (Tenney et al., 2019):
-layer_specialization = {
-    "Layers 0-2":  ["POS tagging", "Word boundaries"],        # Surface
-    "Layers 3-6":  ["Parse trees", "Dependencies"],            # Syntax
-    "Layers 7-9":  ["Semantic roles", "Coreference"],          # Semantics
-    "Layers 10-12": ["Task-specific representations"],         # Task
-}
-```
-
-</div>
-
-<div class="note-box" data-title="Practical implication">
-
-For feature extraction (without fine-tuning), different layers work best for different tasks. Semantic similarity tasks benefit most from layers 7–9, while POS tagging works best with layers 1–3.
+Does BERT "understand" language like we do? Probably not — but it may have discovered similar computational solutions to the same problem.
 
 </div>
 
 ---
 
-# Discussion
+# Questions to think about
 
-<div class="tip-box" data-title="Questions to consider">
+<div class="tip-box" data-title="Discussion questions">
 
-1. **MLM vs autoregressive modeling**: Why is MLM better for *understanding* tasks? Could BERT generate text like GPT? What are the trade-offs?
-
-2. **The 80/10/10 masking strategy**: Why not use 100% `[MASK]` replacement? What problem does the random word replacement solve? Could we improve this strategy?
-
-3. **Pre-training data choices**: Why use books and Wikipedia? Would social media text work as well? How does data quality affect what BERT learns?
-
-4. **Fine-tuning efficiency**: Why does fine-tuning work so well with so little data? When might it fail? How much labeled data do we actually need?
+1. Why can't BERT generate text like GPT? Is understanding fundamentally different from generation?
+2. If BERT learns linguistic structure from fill-in-the-blank alone, what does that tell us about how much structure is in language itself?
+3. Could you train a BERT-like model on music, images, or DNA sequences? What would "masking" mean in those domains?
+4. BERT reveals gender biases. Should we fix the model, fix the data, or both?
 
 </div>
 
@@ -687,15 +365,13 @@ For feature extraction (without fine-tuning), different layers work best for dif
 
 <div class="note-box" data-title="Further reading">
 
-[**Devlin et al. (2019, *NAACL*)**](https://aclanthology.org/N19-1423/) "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding" — The original BERT paper.
-
-[**Tenney et al. (2019, *ACL*)**](https://aclanthology.org/P19-1452/) "BERT Rediscovers the Classical NLP Pipeline" — Layer-by-layer analysis of what BERT learns.
-
-[**Clark et al. (2019, *BlackboxNLP*)**](https://aclanthology.org/W19-4828/) "What Does BERT Look At? An Analysis of BERT's Attention" — Attention pattern analysis.
-
-[**HuggingFace Course, Chapter 1**](https://huggingface.co/learn/nlp-course/chapter1) — Practical introduction to transformer models.
-
-[**Jay Alammar: The Illustrated BERT**](https://jalammar.github.io/illustrated-bert/) — Visual walkthrough of BERT's architecture.
+- Devlin et al. (2019, NAACL) — BERT original paper
+- Tenney et al. (2019, ACL) — "BERT rediscovers the classical NLP pipeline"
+- Clark et al. (2019, BlackboxNLP) — "What does BERT look at?"
+- Levesque et al. (2012) — Winograd Schema Challenge
+- Schrimpf et al. (2021, PNAS) — Neural language models and the brain
+- HuggingFace Course, Chapter 1 — Practical introduction
+- Jay Alammar: The Illustrated BERT
 
 </div>
 
@@ -720,6 +396,6 @@ For feature extraction (without fine-tuning), different layers work best for dif
 
 <div class="tip-box" data-title="Up next...">
 
-BERT variants: how RoBERTa, ALBERT, DistilBERT, and ELECTRA improved on the original
+BERT variants: how RoBERTa, ALBERT, DistilBERT, and ELECTRA improved on the original. 📓 [Companion notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/xhour_bert_demo.ipynb)
 
 </div>
