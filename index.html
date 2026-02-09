@@ -870,6 +870,7 @@
                     const link = parseLink(line);
                     if (link) {
                         currentLecture.notebook = link.url;
+                        currentLecture.notebookLabel = link.text || 'Companion Notebook';
                     }
                     continue;
                 }
@@ -999,7 +1000,7 @@
                 // Notebook
                 if (lecture.notebook) {
                     html += '<div class="resource-group"><div class="resource-label">Materials</div><div class="resource-links">';
-                    html += '<a href="' + escapeHtml(lecture.notebook) + '" class="resource-link"><span class="icon"><i class="fa-solid fa-book-open"></i></span> X-hour Notebook</a>';
+                    html += '<a href="' + escapeHtml(lecture.notebook) + '" class="resource-link"><span class="icon"><i class="fa-solid fa-book-open"></i></span> ' + escapeHtml(lecture.notebookLabel || 'Companion Notebook') + '</a>';
                     html += '</div></div>';
                 }
 
