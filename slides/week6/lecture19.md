@@ -33,9 +33,9 @@ Winter 2026
 
 <div class="warning-box" data-title="BERT's key limitations (from Lecture 18)">
 
-**Training procedure:** NSP may hurt performance; static masking reuses the same masks every epoch; only 15% of tokens provide training signal.
+**Training procedure:** NSP may hurt performance; static masking reuses the same masks every epoch; only 15% of tokens provide training signal (recall the 80/10/10 MLM procedure).
 
-**Scale:** Trained on only 3.3B words with 100K steps — modern datasets are 100× larger.
+**Scale:** Trained on only 3.3B words with 100K steps — modern datasets are 100× larger (and often train for much longer).
 
 **Efficiency:** 110M parameters are all active for every input. Large memory footprint for deployment.
 
@@ -85,17 +85,24 @@ More diverse training signal → better generalization. Combined with removing N
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
 # RoBERTa results
 
 <div class="note-box" data-title="Consistent improvements over BERT">
 
-| Task | BERT-Large | RoBERTa | Improvement |
+| Task (metric) | BERT-Large | RoBERTa | Improvement |
 |------|-----------|---------|-------------|
-| SQuAD 2.0 | 83.1 | 89.4 | +6.3 |
-| MNLI | 86.7 | 90.2 | +3.5 |
-| SST-2 | 94.9 | 96.4 | +1.5 |
-| RACE | 72.0 | 83.2 | +11.2 |
+| [SQuAD 2.0](https://rajpurkar.github.io/SQuAD-explorer/) (F1) | 83.1 | **89.4** | +6.3 |
+| [MNLI](https://cims.nyu.edu/~sbowman/multinli/) (accuracy) | 86.7 | **90.2** | +3.5 |
+| [SST-2](https://nlp.stanford.edu/sentiment/index.html) (accuracy) | 94.9 | **96.4** | +1.5 |
+| [RACE](https://www.cs.cmu.edu/~glai1/data/race/) (accuracy) | 72.0 | **83.2** | +11.2 |
+
+</div>
+
+<div class="tip-box" data-title="Understanding the benchmarks">
+
+**SQuAD 2.0**: reading comprehension + unanswerable questions (human F1: 89.5 — RoBERTa essentially matches humans). **MNLI**: natural language inference across 10 genres (human: 92.0%, random: 33.3%). **SST-2**: binary sentiment classification (human: ~97%, random: 50%). **RACE**: multiple-choice reading comprehension from English exams (human: 92.2%, random: 25%). The RACE gain (+11.2 pts) is especially striking because it requires multi-sentence reasoning — exactly the capability that better training unlocks.
 
 </div>
 
@@ -109,12 +116,13 @@ More diverse training signal → better generalization. Combined with removing N
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
 # ALBERT: a lite BERT
 
 <div class="definition-box" data-title="Key idea: parameter sharing for efficiency">
 
-[ALBERT](https://arxiv.org/abs/1909.11942) (Lan et al., 2019) dramatically reduces BERT's parameter count through two innovations:
+[ALBERT](https://arxiv.org/abs/1909.11942) (Lan et al., 2019) dramatically reduces BERT's parameter count through three innovations:
 
 **1. Factorized embedding parameters:**
 - BERT: vocabulary (30K) × hidden size (768) = 23M parameters
@@ -127,17 +135,36 @@ More diverse training signal → better generalization. Combined with removing N
 - **89% fewer transformer parameters**
 
 **3. Sentence Order Prediction (SOP):**
-- Replaces NSP with a harder task: are sentences A, B in correct order or swapped?
+- Replaces NSP with a harder task: are sentences A, B in the correct order?
 - Forces the model to learn discourse coherence, not just topic matching
 
 </div>
 
 ---
-<!-- _class: scale-90 -->
+
+# Factorized embedding parameters
+
+<div class="note-box" data-title="Decomposing a large matrix into two small ones">
+
+BERT embeds each token directly into the hidden dimension $C = 768$. ALBERT introduces a bottleneck $E = 128 \ll C$:
+
+$$\underbrace{V \times C}_{\text{BERT: 30K} \times \text{768}} \quad\longrightarrow\quad \underbrace{V \times E}_{\text{30K} \times \text{128}} \;\times\; \underbrace{E \times C}_{\text{128} \times \text{768}}$$
+
+This factorization applies to the **token embeddings**, which dominate the parameter count. Positional ($512 \times E$) and segment ($2 \times E$) embeddings also use $E$, but they're tiny. All three are summed in $E$-space, then projected to $C$ with a single linear layer.
+
+</div>
+
+<div class="tip-box" data-title="Why this works">
+
+The vocabulary matrix is low-rank — tokens cluster into a much smaller subspace than $C = 768$. Embeddings only need to encode **token identity**; the projection layer handles the mapping to hidden space. Result: **83% fewer embedding parameters** (23M → 3.9M).
+
+</div>
+
+---
 
 # ALBERT parameter efficiency
 
-<div class="note-box" data-title="Dramatic parameter reduction">
+<div class="note-box" data-title="Per-model parameter counts">
 
 | Model | Layers | Hidden size | Parameters |
 |-------|--------|-------------|------------|
@@ -149,7 +176,11 @@ More diverse training signal → better generalization. Combined with removing N
 
 </div>
 
-<div class="example-box" data-title="Factorized embedding in code">
+---
+
+# Factorized embedding in Python
+
+<div class="example-box" data-title="Try it yourself!">
 
 ```python
 import torch.nn as nn
@@ -168,9 +199,9 @@ albert_project = nn.Linear(128, 768)
 ---
 <!-- _class: scale-85 -->
 
-# Cross-layer parameter sharing
+# Cross-layer parameter sharing: BERT vs ALBERT
 
-<div class="example-box" data-title="BERT vs ALBERT layer structure">
+<div class="example-box" data-title="BERT layer structure">
 
 ```python
 class BERT:
@@ -183,7 +214,18 @@ class BERT:
         for layer in self.layers:
             x = layer(x)   # Different weights each time
         return x
+```
 
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# Cross-layer parameter sharing: BERT vs ALBERT
+
+<div class="example-box" data-title="ALBERT layer structure">
+
+```python
 class ALBERT:
     def __init__(self):
         # Single shared layer
@@ -205,10 +247,11 @@ ALBERT has 89% fewer parameters but the **same compute cost** — it still perfo
 </div>
 
 ---
+<!-- _class: scale-75 -->
 
 # DistilBERT: knowledge distillation
 
-<div class="definition-box" data-title="Key idea: train a small model to mimic a large model">
+<div class="example-box" data-title="Key idea: train a small model to mimic a large model">
 
 [Knowledge distillation](https://arxiv.org/abs/1910.01108) (Sanh et al., 2019) compresses BERT into a smaller, faster model:
 
@@ -226,17 +269,24 @@ The teacher's "wrong" predictions contain useful information — e.g., predictin
 |--------|-----------|------------|--------|
 | Parameters | 110M | 66M | 40% smaller |
 | Inference speed | 1× | 1.6× | 60% faster |
-| GLUE score | 79.6 | 77.0 | 97% retained |
+| [GLUE](https://gluebenchmark.com/) score | 79.6 | 77.0 | 97% retained |
+
+</div>
+
+<div class="definition-box" data-title="What is GLUE?">
+
+[GLUE](https://gluebenchmark.com/) (General Language Understanding Evaluation) is a benchmark suite of 9 tasks — including [MNLI](https://cims.nyu.edu/~sbowman/multinli/), [SST-2](https://nlp.stanford.edu/sentiment/index.html), and others — that tests grammar, sentiment, similarity, and inference. The score is an average across all tasks; human baseline is ~87.
 
 </div>
 
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-65 -->
 
-# DistilBERT training
+# DistilBERT training in Python
 
 <div class="example-box" data-title="Knowledge distillation training loop">
 
+<!-- split: 25 -->
 ```python
 teacher = BertModel.from_pretrained("bert-base")  # 12 layers, frozen
 student = DistilBertModel(num_layers=6)            # 6 layers, trainable
@@ -263,8 +313,9 @@ for batch in training_data:
 </div>
 
 ---
+<!-- _class: scale-95 -->
 
-# ELECTRA: efficient learning from all tokens
+# ELECTRA: efficient learning from *all* tokens
 
 <div class="definition-box" data-title="Key idea: learn from 100% of tokens, not just 15%">
 
@@ -276,23 +327,54 @@ for batch in training_data:
 
 </div>
 
-<div class="example-box" data-title="ELECTRA training example">
+<div class="tip-box" data-title="Why this is harder (and better) than MLM">
 
-```python
-sentence  = "The chef cooked a delicious meal"
-masked    = "The chef [MASK] a delicious meal"
-
-# Small generator fills in the mask
-generator_output = generator(masked)  # Predicts: "ate" (plausible but wrong)
-corrupted = "The chef ate a delicious meal"
-
-# Discriminator classifies EVERY token: original or replaced?
-discriminator(corrupted)
-# Output: [orig, orig, REPLACED, orig, orig, orig]
-# Loss computed on ALL 6 tokens (not just 1 masked token!)
-```
+BERT's MLM replaces tokens with `[MASK]` — an obvious tell that never appears in real text. The discriminator's task is harder: the generator produces *plausible* substitutions ("ate" for "cooked"), so the discriminator must understand the full context deeply enough to detect subtle semantic mismatches. This is closer to how humans process language — we don't spot blank slots, we notice when something *doesn't quite fit*.
 
 </div>
+
+---
+<!-- _class: scale-50 -->
+
+# ELECTRA in Python
+
+<div class="example-box" data-title="Complete example — paste into Colab and run!">
+
+<!-- split: 30 -->
+```python
+import torch
+from transformers import AutoTokenizer, AutoModelForMaskedLM, ElectraForPreTraining
+
+tokenizer = AutoTokenizer.from_pretrained("google/electra-small-generator")
+generator = AutoModelForMaskedLM.from_pretrained("google/electra-small-generator")
+discriminator = ElectraForPreTraining.from_pretrained("google/electra-small-discriminator")
+
+# Step 1: Mask a token and let the generator fill it in
+original = "The chef cooked a delicious meal"
+masked = "The chef [MASK] a delicious meal"
+inputs = tokenizer(masked, return_tensors="pt")
+
+with torch.no_grad():
+    gen_logits = generator(**inputs).logits
+
+mask_idx = (inputs.input_ids == tokenizer.mask_token_id).nonzero(as_tuple=True)[1]
+predicted_id = gen_logits[0, mask_idx].argmax(dim=-1)
+replacement = tokenizer.decode(predicted_id)
+print(f"Generator filled [MASK] → '{replacement}'")  # e.g., "prepared"
+
+# Step 2: Discriminator classifies EVERY token as original or replaced
+fake_ids = inputs.input_ids.clone()
+fake_ids[0, mask_idx] = predicted_id
+with torch.no_grad():
+    disc_logits = discriminator(fake_ids).logits
+
+predictions = (disc_logits.squeeze() > 0).long()  # positive logit = "fake"
+tokens = tokenizer.convert_ids_to_tokens(fake_ids[0])
+for tok, pred in zip(tokens, predictions):
+    print(f"  {tok:12s} → {'REPLACED' if pred else 'original'}")
+```
+
+
 
 ---
 
@@ -327,7 +409,10 @@ ELECTRA is ideal when you have limited compute budget:
 | **DistilBERT** | Knowledge distillation | Speed-critical production |
 | **ELECTRA** | Replaced token detection | Limited training budget |
 
-**General guidelines:**
+</div>
+
+<div class="tip-box" data-title="General guidelines">
+
 - **Best quality:** RoBERTa-Large
 - **Best efficiency:** DistilBERT
 - **Limited memory:** ALBERT
@@ -349,101 +434,6 @@ ELECTRA is ideal when you have limited compute budget:
 [**ERNIE**](https://arxiv.org/abs/1904.09223) (Baidu, 2019): Entity-level and phrase-level masking. Knowledge-enhanced pre-training. Strong on Chinese NLP tasks.
 
 [**BART**](https://arxiv.org/abs/1910.13461) (Facebook, 2019): Encoder-decoder architecture (not encoder-only). Denoising autoencoder with various corruption strategies. Excellent for generation tasks.
-
-</div>
-
----
-
-# Model selection guide
-
-<div class="tip-box" data-title="How to choose the right model for your task">
-
-**Step 1:** What are your constraints?
-- Need maximum quality? → **RoBERTa-Large**
-- Need fast inference? → **DistilBERT**
-- Need small memory footprint? → **ALBERT**
-- Limited training compute? → **ELECTRA**
-- Need text generation? → Consider **BART** or **GPT** instead
-
-**Step 2:** Consider your domain
-- Biomedical text? → **BioBERT**, **PubMedBERT**
-- Scientific text? → **SciBERT**
-- Legal text? → **LegalBERT**
-- Multilingual? → **mBERT**, **XLM-RoBERTa**
-
-**Step 3:** Start simple, iterate
-- Begin with `bert-base-uncased` as a baseline
-- Try RoBERTa-base for an easy quality boost
-- Optimize for speed/memory only if needed
-
-</div>
-
----
-<!-- _class: scale-85 -->
-
-# Using different variants with HuggingFace
-
-<div class="example-box" data-title="Easy model switching with AutoModel">
-
-```python
-from transformers import AutoModel, AutoTokenizer
-
-# All variants share the same API — just change the model name!
-
-# BERT
-model = AutoModel.from_pretrained("bert-base-uncased")
-tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-
-# RoBERTa
-model = AutoModel.from_pretrained("roberta-base")
-tokenizer = AutoTokenizer.from_pretrained("roberta-base")
-
-# ALBERT
-model = AutoModel.from_pretrained("albert-base-v2")
-tokenizer = AutoTokenizer.from_pretrained("albert-base-v2")
-
-# DistilBERT
-model = AutoModel.from_pretrained("distilbert-base-uncased")
-tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
-
-# ELECTRA
-model = AutoModel.from_pretrained("google/electra-base-discriminator")
-tokenizer = AutoTokenizer.from_pretrained("google/electra-base-discriminator")
-```
-
-</div>
-
----
-<!-- _class: scale-85 -->
-
-# Benchmarking variants
-
-<div class="example-box" data-title="Comparing models on sentiment analysis">
-
-```python
-import time
-from transformers import pipeline
-
-models = {
-    "bert-base": "textattack/bert-base-uncased-SST-2",
-    "distilbert": "distilbert-base-uncased-finetuned-sst-2-english",
-    "albert": "textattack/albert-base-v2-SST-2",
-}
-test_texts = ["This movie was fantastic!", "I hated every minute."] * 100
-
-for name, model_id in models.items():
-    pipe = pipeline("sentiment-analysis", model=model_id)
-    start = time.time()
-    results = pipe(test_texts)
-    elapsed = time.time() - start
-    print(f"{name}: {elapsed:.2f}s ({200/elapsed:.0f} samples/sec)")
-```
-
-| Model | Accuracy | Speed (samples/sec) | Memory |
-|-------|----------|---------------------|--------|
-| bert-base | 93.2% | ~45 | 420MB |
-| distilbert | 91.3% | ~85 | 250MB |
-| albert | 92.7% | ~38 | 45MB |
 
 </div>
 
