@@ -20,10 +20,16 @@ Winter 2026
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
 1. Identify key limitations of the original BERT training procedure
-2. Explain how RoBERTa, ALBERT, DistilBERT, ELECTRA, and DeBERTa each address different limitations
+2. Explain how RoBERTa, ALBERT, DistilBERT, ELECTRA, and ModernBERT each address different limitations
 3. Compare parameter efficiency, training efficiency, and inference speed across variants
 4. Select the appropriate variant for a given task and resource constraint
-5. Argue whether encoder models remain relevant in the era of GPT-4
+5. Argue whether encoder models remain relevant in the era of GPT-style decoders
+
+</div>
+
+<div class="tip-box" data-title="Try it out!">
+
+Play around with different BERT variants in our [companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/bert_variants_demo.ipynb)!
 
 </div>
 
@@ -38,12 +44,6 @@ Winter 2026
 **Scale:** Trained on only 3.3B words with 100K steps — modern datasets are 100× larger (and often train for much longer).
 
 **Efficiency:** 110M parameters are all active for every input. Large memory footprint for deployment.
-
-</div>
-
-<div class="tip-box" data-title="Companion notebook">
-
-📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/bert_variants_demo.ipynb) — try different BERT variants hands-on
 
 </div>
 
