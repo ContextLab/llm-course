@@ -216,14 +216,17 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/bert_variants_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture19.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture19.html)
 
-**Friday (Lecture 20):** Applications of Encoder Models
+**Friday (Lecture 20):** Encoders in the Real World
 - Novel applications: clinical NLP, legal tech, financial NER, scientific literature
 - Sentence-BERT and modern retrieval: from SBERT to E5 to NV-Embed (MTEB)
 - BERT in Google Search, industry adoption ($7.73B NLP market)
 - Brain-LLM alignment: neural encoding with language model representations
-- Systematic bias measurement (SAGED pipeline)
+- Language as brain-to-brain transmission: neural coupling and lossy compression
+- Societal consequences: fluency, classification-as-labor, measuring harm at scale
+- Discussion: is language a statistical phenomenon? The next decade of encoders
 - Reading: [Caucheteux & King (2022)](https://doi.org/10.1038/s42003-022-03036-1) - Brain-LLM alignment
 - Reading: [Aw et al. (2026)](https://openreview.net/forum?id=PgIlCCNxdB) - The Mind's Transformer (ICLR 2026)
+- Reading: [Stephens, Silbert & Hasson (2010)](https://doi.org/10.1073/pnas.1008662107) - Speaker-listener neural coupling
 - Reading: [Reimers & Gurevych (2019)](https://arxiv.org/abs/1908.10084) - Sentence-BERT
 - Reading: [Jiang et al. (2025)](https://aclanthology.org/2025.coling-main.202.pdf) - SAGED bias evaluation
 - 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/encoder_applications_demo.ipynb)

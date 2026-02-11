@@ -693,7 +693,7 @@
 
 </script>
 </head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="lecture-20-applications-of-encoder-models">Lecture 20: Applications of encoder models</h1>
+<h1 id="lecture-20-encoders-in-the-real-world">Lecture 20: Encoders in the real world</h1>
 <h3 id="psyc-5117-models-of-language-and-communication">PSYC 51.17: Models of language and communication</h3>
 <p>Jeremy R. Manning<br />
 Dartmouth College<br />
@@ -706,8 +706,8 @@ Winter 2026</p>
 <li>Apply BERT to real-world NLP tasks: classification, NER, QA, and semantic similarity</li>
 <li>Explain how BERT improved Google Search and reshaped the NLP industry</li>
 <li>Connect encoder representations to brain-imaging findings (fMRI encoding)</li>
-<li>Evaluate whether language models &quot;understand&quot; or merely pattern-match</li>
-<li>Describe systematic approaches to measuring bias in language models</li>
+<li>Analyze the societal consequences of cheap, accurate text classification at scale</li>
+<li>Evaluate what brain-model convergence implies about the nature of language itself</li>
 </ol>
 </div>
 </section>
@@ -980,136 +980,97 @@ Winter 2026</p>
 <p><strong>Why this matters:</strong> If the brain and LLMs converge on similar computational strategies, it suggests these are <em>good solutions</em> for processing sequential, context-dependent information — not just engineering coincidences.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="understanding-vs-pattern-matching">Understanding vs pattern matching</h1>
-<div class="tip-box" data-title="The core philosophical question">
-<p><strong>Evidence FOR understanding:</strong></p>
-<ul>
-<li>Captures syntax and semantics automatically</li>
-<li>Resolves lexical ambiguity based on context</li>
-<li>Generalizes to unseen examples</li>
-<li>Predicts human brain activity patterns</li>
-<li>Layer structure mirrors human language processing hierarchy</li>
-</ul>
-<p><strong>Evidence AGAINST understanding:</strong></p>
-<ul>
-<li>No grounding in the physical world</li>
-<li>No sensory or social experience</li>
-<li>Brittle to adversarial examples</li>
-<li>No causal reasoning</li>
-<li>Might be &quot;just&quot; sophisticated pattern matching</li>
-</ul>
-<p><strong>The key question:</strong> Is there a meaningful difference between &quot;understanding&quot; and &quot;very good pattern matching&quot;? Does it matter for applications?</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="what-language-actually-does">What language actually does</h1>
+<div class="note-box" data-title="Language is wireless brain activity transmission">
+<p>Your brain lives in your skull — a vat of bone filled with fluid that is essentially seawater. It can't directly connect with anything on the outside. Everything you know about the world comes through sensors that <em>construct</em> a representation of reality, not measure it (recall Lecture 1: language shapes what we literally <em>see</em>). In the most fundamental sense, we are brains floating in vats, always alone.</p>
+<p>Language breaks through that isolation. When you speak, you compress the electrical patterns across your hundred billion neurons into a few words per second — an extraordinarily lossy channel. The listener's brain unpacks those vibrations into neural activity of its own. <a href="https://doi.org/10.1073/pnas.1008662107">Stephens et al. (2010)</a> showed that successful communication literally <em>replicates the speaker's brain activity patterns in the listener's brain</em>, with the listener's responses temporally coupled to — and sometimes <em>anticipating</em> — the speaker's.</p>
+</div>
+<div class="tip-box" data-title="Why this reframes everything that follows">
+<p>If language is fundamentally about transmitting brain states through a lossy channel, then BERT's ability to capture those patterns isn't just an engineering trick — it's a compression algorithm that learned the same code brains use. The societal questions ahead aren't only about <em>technology</em>. They're about what happens when a machine can read and write in the language of human thought.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="adversarial-examples-and-brittleness">Adversarial examples and brittleness</h1>
-<div class="example-box" data-title="BERT can be fooled by simple tricks">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">classifier = pipeline(&quot;sentiment-analysis&quot;)</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Works correctly</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">classifier(&quot;This movie was absolutely wonderful!&quot;)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># → POSITIVE (0.9998)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"># Adding irrelevant negative words flips the prediction!</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">classifier(&quot;This movie was absolutely wonderful! [SEP] bad bad bad bad&quot;)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"># → NEGATIVE (0.9234)  # WRONG!</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"># Synonym substitution changes confidence</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">classifier(&quot;The food was good&quot;)  # → POSITIVE (0.99)</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code">classifier(&quot;The food was fine&quot;)  # → POSITIVE (0.72)  # Less confident</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code">classifier(&quot;The food was ok&quot;)    # → NEGATIVE (0.51)  # Flipped!</span></span>
-</code></pre>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="when-fluency-is-free">When fluency is free</h1>
+<div class="warning-box" data-title="What happens to institutions built on the assumption that writing is hard?">
+<p>A student submits a well-structured essay on Shakespeare's use of irony in <em>Othello</em>. The prose is clear, the argument is coherent, the citations are accurate. The student spent 45 seconds generating it with an encoder-powered writing assistant. A classmate spent 8 hours writing a messier but more original essay. They receive the same grade.</p>
 </div>
-<div class="warning-box" data-title="Implications for deployment">
-<ul>
-<li><strong>Adversarial attacks</strong>: Malicious users can manipulate model predictions</li>
-<li><strong>Robustness testing</strong>: Always test with perturbed inputs before deployment</li>
-<li><strong>Defense strategies</strong>: Adversarial training, input validation, ensemble methods</li>
-</ul>
+<div class="tip-box" data-title="Discussion: the purpose of writing">
+<p>The essay wasn't invented to produce text — it was invented to produce <em>thinking</em>. The struggle of organizing an argument, finding the right word, and revising a draft is where learning happens. If the output is indistinguishable but the process is absent, what did the student learn?</p>
+<p><strong>Consider:</strong> Is the problem that AI can write, or that we've been grading the <em>product</em> instead of the <em>process</em>? What would assessment look like if fluent text were free?</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="measuring-bias-systematically">Measuring bias systematically</h1>
-<div class="note-box" data-title="Moving beyond anecdotes to systematic measurement">
-<p>Word embeddings encode societal biases — &quot;doctor&quot; closer to &quot;man,&quot; &quot;nurse&quot; closer to &quot;woman&quot; (Lecture 11). BERT inherits these same biases from its training data. But how do we measure bias <em>systematically</em> across thousands of contexts?</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="classification-as-labor">Classification as labor</h1>
+<div class="note-box" data-title="Encoders are replacing human judgment at scale">
+<p>Content moderation at Meta employs thousands of human reviewers who screen posts for violence, hate speech, and self-harm — work linked to <a href="https://www.theverge.com/2019/2/25/18229714/cognizant-facebook-content-moderator-interviews-trauma-working-conditions-arizona">PTSD and psychological trauma</a>. Fine-tuned RoBERTa models now handle billions of these classifications daily.</p>
+<p><strong>Medical coding:</strong> Assigning ICD-10 codes to clinical notes was a $16B/year industry employing 300,000+ human coders. BERT-based systems achieve 92% accuracy on common codes — not perfect, but faster and cheaper.</p>
+<p><strong>Legal discovery:</strong> Reviewing documents for relevance in litigation once required armies of junior lawyers billing $200/hour. Encoder models scan millions of documents in hours.</p>
+</div>
+<div class="tip-box" data-title="Discussion: the 'good enough' threshold">
+<p>When is 91% accuracy acceptable? When is it dangerous? Content moderation at 91% means ~340 million misclassified posts per day on a platform with 3.7B daily posts. Who is accountable for the errors — the model, the deployer, or the person who decided 91% was &quot;good enough&quot;?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="measuring-harm-at-scale">Measuring harm at scale</h1>
+<div class="note-box" data-title="From anecdotes to methodology">
+<p>In Lecture 11, we saw that word embeddings encode bias (&quot;doctor&quot;→&quot;man,&quot; &quot;nurse&quot;→&quot;woman&quot;). In Lecture 18, we saw that BERT inherits these biases. But individual examples are <em>anecdotes</em>, not evidence. How do we measure bias <em>systematically</em>?</p>
 </div>
 <div class="definition-box" data-title="SAGED: systematic bias evaluation (Jiang et al., COLING 2025)">
-<p><a href="https://aclanthology.org/2025.coling-main.202.pdf">SAGED</a> proposes a five-step pipeline for measuring bias in language models:</p>
+<p><a href="https://aclanthology.org/2025.coling-main.202.pdf">SAGED</a> proposes a five-step pipeline:</p>
 <ol>
 <li><strong>S</strong>elect social groups (e.g., gender, race, age)</li>
-<li><strong>A</strong>ssemble evaluation contexts (template sentences)</li>
+<li><strong>A</strong>ssemble evaluation contexts (template sentences across domains)</li>
 <li><strong>G</strong>enerate model outputs for each group × context</li>
 <li><strong>E</strong>valuate using statistical tests (not cherry-picked examples)</li>
 <li><strong>D</strong>ocument findings with effect sizes and confidence intervals</li>
 </ol>
-<p><strong>Key insight:</strong> Individual examples (like doctor/nurse) are compelling but misleading. Systematic evaluation across thousands of contexts reveals that biases are <em>real but more nuanced</em> than anecdotes suggest.</p>
+</div>
+<div class="tip-box" data-title="Discussion: small bias × large scale">
+<p>Suppose an encoder-based hiring screener shows a 0.3% gender bias — barely detectable in any single decision. But the model processes 4 billion classifications per day. That's 12 million biased decisions <em>daily</em>. At what point does a &quot;negligible&quot; per-decision bias become a systemic problem?</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="limitations-of-current-encoder-models">Limitations of current encoder models</h1>
-<div class="warning-box" data-title="Despite impressive performance, significant limitations remain">
-<p><strong>Quadratic complexity</strong>: Self-attention scales as <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> with sequence length, limiting context to 512–4096 tokens. (ModernBERT pushes this to 8,192 with Flash Attention.)</p>
-<p><strong>No generation capability</strong>: BERT is designed for understanding, not producing text. For generation tasks, use decoder models (GPT) or encoder-decoder models (T5, BART).</p>
-<p><strong>Data hunger</strong>: Pre-training requires billions of words. Humans learn language with orders of magnitude less data.</p>
-<p><strong>No world model</strong>: BERT learns statistical patterns in text but has no grounding in physical reality, sensory experience, or causal reasoning.</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="is-language-a-statistical-phenomenon">Is language a statistical phenomenon?</h1>
+<div class="note-box" data-title="A question that wasn't possible before BERT">
+<p>In Lecture 1, we established that language and thought are separable. Earlier in this lecture, we saw that language is fundamentally a lossy compression channel for transmitting brain states — and that LLMs learn to capture those same patterns. But we've been treating brain-model convergence as a puzzle about <em>brains</em>. Here's the deeper question: what does it tell us about <em>language</em>?</p>
 </div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-cost-argument-for-encoders">The cost argument for encoders</h1>
-<div class="important-box" data-title="Why encoders survive in 2026">
-<p>GPT-4 can do <em>anything</em> an encoder can — classification, NER, QA — via prompting. But at what cost?</p>
-<table>
-<thead>
-<tr>
-<th>Metric</th>
-<th>Fine-tuned DistilBERT</th>
-<th>GPT-4 via prompting</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Cost</strong></td>
-<td>~$0.01/M tokens</td>
-<td>~$30/M tokens</td>
-</tr>
-<tr>
-<td><strong>Latency</strong></td>
-<td>~5ms</td>
-<td>~500ms</td>
-</tr>
-<tr>
-<td><strong>Quality (SST-2)</strong></td>
-<td>91.3%</td>
-<td>~95%</td>
-</tr>
-</tbody>
-</table>
-<p>For high-volume, single-task workloads (content moderation, search ranking, NER pipelines), encoders are <strong>3,000× cheaper</strong> and <strong>100× faster</strong>. The field is converging toward flexible architectures, but production economics still favor purpose-built encoders.</p>
+<div class="tip-box" data-title="Discussion: Universal Grammar vs Universal Statistics">
+<p>Chomsky argued that language requires an innate &quot;Universal Grammar&quot; — biological machinery that no statistical learner could replicate. But BERT learns syntactic structure, long-range dependencies, and even cross-linguistic patterns from raw text alone. <a href="https://arxiv.org/abs/2010.09885">ChemBERTa</a> learns molecular &quot;grammar&quot; from SMILES strings — a domain with no biological basis at all.</p>
+<p><strong>Two possibilities:</strong></p>
+<ol>
+<li>Language is <em>fundamentally statistical</em> — the patterns are so strong that any sufficiently powerful learner will converge on the same structure, no innate grammar required</li>
+<li>Language has <em>real structure</em> that both brains and models discover — the convergence tells us something about the structure of language itself, not just about the learners</li>
+</ol>
+<p><strong>Which do you find more compelling? What evidence would distinguish them?</strong></p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="discussion">Discussion</h1>
-<div class="tip-box" data-title="Questions to consider">
-<ol>
-<li>
-<p><strong>Understanding vs pattern matching:</strong> If a model predicts brain activity, resolves ambiguity, and handles novel inputs — but has no physical experience — does it &quot;understand&quot;? What evidence would change your mind?</p>
-</li>
-<li>
-<p><strong>The measurement problem:</strong> SAGED shows bias is more nuanced than individual examples suggest. Does this make bias <em>less</em> concerning, or <em>more</em> concerning (because it's harder to detect)?</p>
-</li>
-<li>
-<p><strong>Brain-model convergence:</strong> If brains and LLMs independently converge on similar representations and computations, what does that tell us about the nature of language processing? Is there only one way to solve it?</p>
-</li>
-<li>
-<p><strong>The cost-quality tradeoff:</strong> GPT-4 can do anything an encoder can — but at 3,000× the cost. When does &quot;good enough and cheap&quot; beat &quot;best and expensive&quot;?</p>
-</li>
-</ol>
+<h1 id="the-next-decade">The next decade</h1>
+<div class="note-box" data-title="The encoder/decoder boundary is dissolving">
+<p>ModernBERT (2024) borrows RoPE and Flash Attention from decoders. <a href="https://arxiv.org/abs/2402.09906">GritLM</a> (2024) unifies embedding and generation in a single model. <a href="https://arxiv.org/abs/2503.02656">Gemma Encoder</a> (2025) converts a decoder into an encoder. The architectural distinction that defined NLP since 2018 — &quot;BERT for understanding, GPT for generation&quot; — is collapsing.</p>
+</div>
+<div class="tip-box" data-title="Discussion: what was BERT's real contribution?">
+<p>If the encoder/decoder distinction fades, what survives from the BERT era? Was BERT's insight the <em>architecture</em> (bidirectional attention), the <em>training objective</em> (masked language modeling), or the <em>paradigm</em> (pre-train, then fine-tune)? Which of these ideas will still matter in 2035?</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="deep-discussion">Deep discussion</h1>
+<div class="tip-box" data-title="Part 1: language, authorship, and accountability">
+<p><strong>1. Authorship.</strong> If a student uses an encoder-powered tool to check grammar, that's acceptable. If they use it to restructure their argument, that's gray. If they use it to generate the essay, that's plagiarism. <em>Where exactly is the line, and who draws it?</em></p>
+<p><strong>2. Accountability at scale.</strong> A hospital deploys a BERT model for ICD coding. It's 92% accurate — better than the average human coder (89%). A patient is harmed by a coding error. Is the hospital <em>more</em> liable (because they trusted a machine), <em>less</em> liable (because the machine is statistically better), or <em>equally</em> liable? Does the answer change if the error rate is 85%?</p>
+<p><strong>3. The convergence puzzle.</strong> Brains evolved over 300 million years. BERT was trained in 4 days. They converge on similar representations. Does this mean language processing has a <em>unique optimal solution</em>, or that both systems found <em>one of many</em> solutions that happens to look similar from the outside?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="deep-discussion-continued">Deep discussion (continued)</h1>
+<div class="tip-box" data-title="Part 2: economics, meaning, and prediction">
+<p><strong>4. The &quot;good enough&quot; economy.</strong> A fine-tuned DistilBERT costs $0.01/M tokens. GPT-4 costs $30/M tokens but is more accurate. For content moderation, medical coding, and legal review, companies consistently choose the cheaper option. <em>What does it mean when &quot;good enough&quot; becomes the default for decisions that affect people's lives?</em></p>
+<p><strong>5. Language without intent.</strong> BERT produces representations that capture meaning, resolve ambiguity, and predict brain activity — but BERT has no <em>intent</em> to communicate. If meaning can exist without a speaker who means it, is communication defined by the <em>speaker's</em> intent or the <em>listener's</em> interpretation? (This is not a hypothetical — it affects how we regulate AI-generated content.)</p>
+<p><strong>6. Your prediction.</strong> It's 2036. What role do encoder models play? Are they everywhere and invisible (like TCP/IP)? Merged into hybrid architectures? Replaced entirely by something we haven't invented yet? <em>Justify your prediction with evidence from this course.</em></p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="further-reading">Further reading</h1>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://aclanthology.org/N19-1423/"><strong>Devlin et al. (2019, <em>NAACL</em>)</strong></a> &quot;BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding&quot; — The original BERT paper.</p>
@@ -1118,10 +1079,10 @@ Winter 2026</p>
 <p><a href="https://doi.org/10.1038/s43588-024-00752-6"><strong>Gao et al. (2025, <em>Nature Computational Science</em>)</strong></a> &quot;Brain-like artificial neurons in LLMs&quot; — Emergent brain-like units in language models.</p>
 <p><a href="https://aclanthology.org/2025.coling-main.202.pdf"><strong>Jiang et al. (2025, <em>COLING</em>)</strong></a> &quot;SAGED&quot; — Systematic bias evaluation pipeline for language models.</p>
 <p><a href="https://arxiv.org/abs/1908.10084"><strong>Reimers &amp; Gurevych (2019, <em>EMNLP</em>)</strong></a> &quot;Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks&quot; — Enabled practical semantic search.</p>
-<p><a href="https://aclanthology.org/2020.acl-main.463/"><strong>Bender &amp; Koller (2020, <em>ACL</em>)</strong></a> &quot;Climbing towards NLU&quot; — The &quot;understanding&quot; debate.</p>
+<p><a href="https://doi.org/10.1073/pnas.1008662107"><strong>Stephens, Silbert &amp; Hasson (2010, <em>PNAS</em>)</strong></a> &quot;Speaker–listener neural coupling underlies successful communication&quot; — Language as brain-to-brain transmission.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">

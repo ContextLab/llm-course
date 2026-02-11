@@ -6,7 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 20: Applications of encoder models
+# Lecture 20: Encoders in the real world
 ### PSYC 51.17: Models of language and communication
 
 Jeremy R. Manning
@@ -22,8 +22,8 @@ Winter 2026
 1. Apply BERT to real-world NLP tasks: classification, NER, QA, and semantic similarity
 2. Explain how BERT improved Google Search and reshaped the NLP industry
 3. Connect encoder representations to brain-imaging findings (fMRI encoding)
-4. Evaluate whether language models "understand" or merely pattern-match
-5. Describe systematic approaches to measuring bias in language models
+4. Analyze the societal consequences of cheap, accurate text classification at scale
+5. Evaluate what brain-model convergence implies about the nature of language itself
 
 </div>
 
@@ -295,135 +295,158 @@ correlation = np.corrcoef(predictions.flat, brain_activity[80:].flat)[0,1]
 </div>
 
 ---
+<!-- _class: scale-80 -->
 
-# Understanding vs pattern matching
+# What language actually does
 
-<div class="tip-box" data-title="The core philosophical question">
+<div class="note-box" data-title="Language is wireless brain activity transmission">
 
-**Evidence FOR understanding:**
-- Captures syntax and semantics automatically
-- Resolves lexical ambiguity based on context
-- Generalizes to unseen examples
-- Predicts human brain activity patterns
-- Layer structure mirrors human language processing hierarchy
+Your brain lives in your skull — a vat of bone filled with fluid that is essentially seawater. It can't directly connect with anything on the outside. Everything you know about the world comes through sensors that *construct* a representation of reality, not measure it (recall Lecture 1: language shapes what we literally *see*). In the most fundamental sense, we are brains floating in vats, always alone.
 
-**Evidence AGAINST understanding:**
-- No grounding in the physical world
-- No sensory or social experience
-- Brittle to adversarial examples
-- No causal reasoning
-- Might be "just" sophisticated pattern matching
+Language breaks through that isolation. When you speak, you compress the electrical patterns across your hundred billion neurons into a few words per second — an extraordinarily lossy channel. The listener's brain unpacks those vibrations into neural activity of its own. [Stephens et al. (2010)](https://doi.org/10.1073/pnas.1008662107) showed that successful communication literally *replicates the speaker's brain activity patterns in the listener's brain*, with the listener's responses temporally coupled to — and sometimes *anticipating* — the speaker's.
 
-**The key question:** Is there a meaningful difference between "understanding" and "very good pattern matching"? Does it matter for applications?
+</div>
+
+<div class="tip-box" data-title="Why this reframes everything that follows">
+
+If language is fundamentally about transmitting brain states through a lossy channel, then BERT's ability to capture those patterns isn't just an engineering trick — it's a compression algorithm that learned the same code brains use. The societal questions ahead aren't only about *technology*. They're about what happens when a machine can read and write in the language of human thought.
+
+</div>
+
+---
+
+# When fluency is free
+
+<div class="warning-box" data-title="What happens to institutions built on the assumption that writing is hard?">
+
+A student submits a well-structured essay on Shakespeare's use of irony in *Othello*. The prose is clear, the argument is coherent, the citations are accurate. The student spent 45 seconds generating it with an encoder-powered writing assistant. A classmate spent 8 hours writing a messier but more original essay. They receive the same grade.
+
+</div>
+
+<div class="tip-box" data-title="Discussion: the purpose of writing">
+
+The essay wasn't invented to produce text — it was invented to produce *thinking*. The struggle of organizing an argument, finding the right word, and revising a draft is where learning happens. If the output is indistinguishable but the process is absent, what did the student learn?
+
+**Consider:** Is the problem that AI can write, or that we've been grading the *product* instead of the *process*? What would assessment look like if fluent text were free?
 
 </div>
 
 ---
 <!-- _class: scale-85 -->
 
-# Adversarial examples and brittleness
+# Classification as labor
 
-<div class="example-box" data-title="BERT can be fooled by simple tricks">
+<div class="note-box" data-title="Encoders are replacing human judgment at scale">
 
-```python
-from transformers import pipeline
-classifier = pipeline("sentiment-analysis")
+Content moderation at Meta employs thousands of human reviewers who screen posts for violence, hate speech, and self-harm — work linked to [PTSD and psychological trauma](https://www.theverge.com/2019/2/25/18229714/cognizant-facebook-content-moderator-interviews-trauma-working-conditions-arizona). Fine-tuned RoBERTa models now handle billions of these classifications daily.
 
-# Works correctly
-classifier("This movie was absolutely wonderful!")
-# → POSITIVE (0.9998)
+**Medical coding:** Assigning ICD-10 codes to clinical notes was a $16B/year industry employing 300,000+ human coders. BERT-based systems achieve 92% accuracy on common codes — not perfect, but faster and cheaper.
 
-# Adding irrelevant negative words flips the prediction!
-classifier("This movie was absolutely wonderful! [SEP] bad bad bad bad")
-# → NEGATIVE (0.9234)  # WRONG!
-
-# Synonym substitution changes confidence
-classifier("The food was good")  # → POSITIVE (0.99)
-classifier("The food was fine")  # → POSITIVE (0.72)  # Less confident
-classifier("The food was ok")    # → NEGATIVE (0.51)  # Flipped!
-```
+**Legal discovery:** Reviewing documents for relevance in litigation once required armies of junior lawyers billing $200/hour. Encoder models scan millions of documents in hours.
 
 </div>
 
-<div class="warning-box" data-title="Implications for deployment">
+<div class="tip-box" data-title="Discussion: the 'good enough' threshold">
 
-- **Adversarial attacks**: Malicious users can manipulate model predictions
-- **Robustness testing**: Always test with perturbed inputs before deployment
-- **Defense strategies**: Adversarial training, input validation, ensemble methods
+When is 91% accuracy acceptable? When is it dangerous? Content moderation at 91% means ~340 million misclassified posts per day on a platform with 3.7B daily posts. Who is accountable for the errors — the model, the deployer, or the person who decided 91% was "good enough"?
 
 </div>
 
 ---
+<!-- _class: scale-90 -->
 
-# Measuring bias systematically
+# Measuring harm at scale
 
-<div class="note-box" data-title="Moving beyond anecdotes to systematic measurement">
+<div class="note-box" data-title="From anecdotes to methodology">
 
-Word embeddings encode societal biases — "doctor" closer to "man," "nurse" closer to "woman" (Lecture 11). BERT inherits these same biases from its training data. But how do we measure bias *systematically* across thousands of contexts?
+In Lecture 11, we saw that word embeddings encode bias ("doctor"→"man," "nurse"→"woman"). In Lecture 18, we saw that BERT inherits these biases. But individual examples are *anecdotes*, not evidence. How do we measure bias *systematically*?
 
 </div>
 
 <div class="definition-box" data-title="SAGED: systematic bias evaluation (Jiang et al., COLING 2025)">
 
-[SAGED](https://aclanthology.org/2025.coling-main.202.pdf) proposes a five-step pipeline for measuring bias in language models:
+[SAGED](https://aclanthology.org/2025.coling-main.202.pdf) proposes a five-step pipeline:
 
 1. **S**elect social groups (e.g., gender, race, age)
-2. **A**ssemble evaluation contexts (template sentences)
+2. **A**ssemble evaluation contexts (template sentences across domains)
 3. **G**enerate model outputs for each group × context
 4. **E**valuate using statistical tests (not cherry-picked examples)
 5. **D**ocument findings with effect sizes and confidence intervals
 
-**Key insight:** Individual examples (like doctor/nurse) are compelling but misleading. Systematic evaluation across thousands of contexts reveals that biases are *real but more nuanced* than anecdotes suggest.
+</div>
+
+<div class="tip-box" data-title="Discussion: small bias × large scale">
+
+Suppose an encoder-based hiring screener shows a 0.3% gender bias — barely detectable in any single decision. But the model processes 4 billion classifications per day. That's 12 million biased decisions *daily*. At what point does a "negligible" per-decision bias become a systemic problem?
+
+</div>
+
+---
+<!-- _class: scale-80 -->
+
+# Is language a statistical phenomenon?
+
+<div class="note-box" data-title="A question that wasn't possible before BERT">
+
+In Lecture 1, we established that language and thought are separable. Earlier in this lecture, we saw that language is fundamentally a lossy compression channel for transmitting brain states — and that LLMs learn to capture those same patterns. But we've been treating brain-model convergence as a puzzle about *brains*. Here's the deeper question: what does it tell us about *language*?
+
+</div>
+
+<div class="tip-box" data-title="Discussion: Universal Grammar vs Universal Statistics">
+
+Chomsky argued that language requires an innate "Universal Grammar" — biological machinery that no statistical learner could replicate. But BERT learns syntactic structure, long-range dependencies, and even cross-linguistic patterns from raw text alone. [ChemBERTa](https://arxiv.org/abs/2010.09885) learns molecular "grammar" from SMILES strings — a domain with no biological basis at all.
+
+**Two possibilities:**
+1. Language is *fundamentally statistical* — the patterns are so strong that any sufficiently powerful learner will converge on the same structure, no innate grammar required
+2. Language has *real structure* that both brains and models discover — the convergence tells us something about the structure of language itself, not just about the learners
+
+**Which do you find more compelling? What evidence would distinguish them?**
 
 </div>
 
 ---
 
-# Limitations of current encoder models
+# The next decade
 
-<div class="warning-box" data-title="Despite impressive performance, significant limitations remain">
+<div class="note-box" data-title="The encoder/decoder boundary is dissolving">
 
-**Quadratic complexity**: Self-attention scales as $O(n^2)$ with sequence length, limiting context to 512–4096 tokens. (ModernBERT pushes this to 8,192 with Flash Attention.)
+ModernBERT (2024) borrows RoPE and Flash Attention from decoders. [GritLM](https://arxiv.org/abs/2402.09906) (2024) unifies embedding and generation in a single model. [Gemma Encoder](https://arxiv.org/abs/2503.02656) (2025) converts a decoder into an encoder. The architectural distinction that defined NLP since 2018 — "BERT for understanding, GPT for generation" — is collapsing.
 
-**No generation capability**: BERT is designed for understanding, not producing text. For generation tasks, use decoder models (GPT) or encoder-decoder models (T5, BART).
+</div>
 
-**Data hunger**: Pre-training requires billions of words. Humans learn language with orders of magnitude less data.
+<div class="tip-box" data-title="Discussion: what was BERT's real contribution?">
 
-**No world model**: BERT learns statistical patterns in text but has no grounding in physical reality, sensory experience, or causal reasoning.
+If the encoder/decoder distinction fades, what survives from the BERT era? Was BERT's insight the *architecture* (bidirectional attention), the *training objective* (masked language modeling), or the *paradigm* (pre-train, then fine-tune)? Which of these ideas will still matter in 2035?
 
 </div>
 
 ---
+<!-- _class: scale-90 -->
 
-# The cost argument for encoders
+# Deep discussion
 
-<div class="important-box" data-title="Why encoders survive in 2026">
+<div class="tip-box" data-title="Part 1: language, authorship, and accountability">
 
-GPT-4 can do *anything* an encoder can — classification, NER, QA — via prompting. But at what cost?
+**1. Authorship.** If a student uses an encoder-powered tool to check grammar, that's acceptable. If they use it to restructure their argument, that's gray. If they use it to generate the essay, that's plagiarism. *Where exactly is the line, and who draws it?*
 
-| Metric | Fine-tuned DistilBERT | GPT-4 via prompting |
-|--------|----------------------|---------------------|
-| **Cost** | ~$0.01/M tokens | ~$30/M tokens |
-| **Latency** | ~5ms | ~500ms |
-| **Quality (SST-2)** | 91.3% | ~95% |
+**2. Accountability at scale.** A hospital deploys a BERT model for ICD coding. It's 92% accurate — better than the average human coder (89%). A patient is harmed by a coding error. Is the hospital *more* liable (because they trusted a machine), *less* liable (because the machine is statistically better), or *equally* liable? Does the answer change if the error rate is 85%?
 
-For high-volume, single-task workloads (content moderation, search ranking, NER pipelines), encoders are **3,000× cheaper** and **100× faster**. The field is converging toward flexible architectures, but production economics still favor purpose-built encoders.
+**3. The convergence puzzle.** Brains evolved over 300 million years. BERT was trained in 4 days. They converge on similar representations. Does this mean language processing has a *unique optimal solution*, or that both systems found *one of many* solutions that happens to look similar from the outside?
 
 </div>
 
 ---
+<!-- _class: scale-90 -->
 
-# Discussion
+# Deep discussion (continued)
 
-<div class="tip-box" data-title="Questions to consider">
+<div class="tip-box" data-title="Part 2: economics, meaning, and prediction">
 
-1. **Understanding vs pattern matching:** If a model predicts brain activity, resolves ambiguity, and handles novel inputs — but has no physical experience — does it "understand"? What evidence would change your mind?
+**4. The "good enough" economy.** A fine-tuned DistilBERT costs $0.01/M tokens. GPT-4 costs $30/M tokens but is more accurate. For content moderation, medical coding, and legal review, companies consistently choose the cheaper option. *What does it mean when "good enough" becomes the default for decisions that affect people's lives?*
 
-2. **The measurement problem:** SAGED shows bias is more nuanced than individual examples suggest. Does this make bias *less* concerning, or *more* concerning (because it's harder to detect)?
+**5. Language without intent.** BERT produces representations that capture meaning, resolve ambiguity, and predict brain activity — but BERT has no *intent* to communicate. If meaning can exist without a speaker who means it, is communication defined by the *speaker's* intent or the *listener's* interpretation? (This is not a hypothetical — it affects how we regulate AI-generated content.)
 
-3. **Brain-model convergence:** If brains and LLMs independently converge on similar representations and computations, what does that tell us about the nature of language processing? Is there only one way to solve it?
-
-4. **The cost-quality tradeoff:** GPT-4 can do anything an encoder can — but at 3,000× the cost. When does "good enough and cheap" beat "best and expensive"?
+**6. Your prediction.** It's 2036. What role do encoder models play? Are they everywhere and invisible (like TCP/IP)? Merged into hybrid architectures? Replaced entirely by something we haven't invented yet? *Justify your prediction with evidence from this course.*
 
 </div>
 
@@ -446,7 +469,7 @@ For high-volume, single-task workloads (content moderation, search ranking, NER 
 
 [**Reimers & Gurevych (2019, *EMNLP*)**](https://arxiv.org/abs/1908.10084) "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks" — Enabled practical semantic search.
 
-[**Bender & Koller (2020, *ACL*)**](https://aclanthology.org/2020.acl-main.463/) "Climbing towards NLU" — The "understanding" debate.
+[**Stephens, Silbert & Hasson (2010, *PNAS*)**](https://doi.org/10.1073/pnas.1008662107) "Speaker–listener neural coupling underlies successful communication" — Language as brain-to-brain transmission.
 
 </div>
 

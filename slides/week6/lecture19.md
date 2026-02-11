@@ -397,6 +397,52 @@ ELECTRA is ideal when you have limited compute budget:
 
 ---
 
+# ModernBERT: 6 years of decoder tricks, applied to encoders
+
+<div class="definition-box" data-title="Key idea: modernize the encoder with techniques from the GPT era">
+
+[ModernBERT](https://arxiv.org/abs/2412.13663) (Warner et al., 2024) asks: what if we rebuilt BERT from scratch using everything we've learned from training decoders?
+
+| Component | BERT (2018) | ModernBERT (2024) |
+|-----------|-------------|-------------------|
+| Position encoding | Learned absolute (512 max) | **RoPE** (8,192 tokens) |
+| Attention | Full quadratic | **Flash Attention** + alternating global/local |
+| Padding | Processes pad tokens | **Unpadding** (only real tokens) |
+| Training data | 3.3B words | **2 trillion tokens** (600×) |
+| Code understanding | None | Trained on code corpora |
+
+</div>
+
+<div class="note-box" data-title="Results">
+
+SOTA on [GLUE](https://gluebenchmark.com/), retrieval ([MTEB](https://huggingface.co/spaces/mteb/leaderboard)), and code understanding. Available as `answerdotai/ModernBERT-base` and `answerdotai/ModernBERT-large`. Proves that the encoder architecture still has room to grow.
+
+</div>
+
+---
+
+# ModernBERT key innovations
+
+<div class="definition-box" data-title="RoPE (Rotary Position Embeddings)">
+
+Instead of learning a fixed position embedding for each slot (BERT's approach, capped at 512 tokens), RoPE encodes position by **rotating** the query and key vectors in attention. Relative distances are captured by the angle between rotated vectors. This generalizes to sequences longer than training length — ModernBERT handles **8,192 tokens** vs BERT's 512.
+
+</div>
+
+<div class="definition-box" data-title="Flash Attention">
+
+Standard attention materializes the full $T \times T$ attention matrix in GPU memory ($O(T^2)$ space). Flash Attention computes attention **tile-by-tile** in fast on-chip SRAM, never storing the full matrix. Same exact result, but ~2–4× faster and uses $O(T)$ memory. ModernBERT alternates between global attention (every token sees every token) and local attention (sliding window) across layers.
+
+</div>
+
+<div class="definition-box" data-title="Unpadding">
+
+Batched inputs require padding shorter sequences to the same length. BERT wastes compute processing these pad tokens through every layer. Unpadding **strips** pad tokens before the transformer and **reinserts** them after, so the model only processes real tokens. In batches with variable-length inputs, this can save 20–30% of total compute.
+
+</div>
+
+---
+
 # Variant comparison summary
 
 <div class="note-box" data-title="Choosing the right BERT variant">
@@ -404,20 +450,21 @@ ELECTRA is ideal when you have limited compute budget:
 | Model | Key innovation | Best for |
 |-------|---------------|----------|
 | **BERT** | MLM + NSP | Baseline, well-understood |
-| **RoBERTa** | Better training recipe | Maximum quality |
+| **RoBERTa** | Better training recipe | Maximum quality (classic) |
 | **ALBERT** | Parameter sharing | Memory-constrained deployment |
 | **DistilBERT** | Knowledge distillation | Speed-critical production |
 | **ELECTRA** | Replaced token detection | Limited training budget |
+| **ModernBERT** | Modern training + RoPE + Flash Attention | Maximum quality (2024) |
 
 </div>
 
 <div class="tip-box" data-title="General guidelines">
 
-- **Best quality:** RoBERTa-Large
+- **Best quality (2024):** ModernBERT-Large
 - **Best efficiency:** DistilBERT
 - **Limited memory:** ALBERT
 - **Limited training budget:** ELECTRA
-- **Good default:** RoBERTa-Base or BERT-Base
+- **Good default:** RoBERTa-Base or ModernBERT-Base
 
 </div>
 
@@ -439,43 +486,21 @@ ELECTRA is ideal when you have limited compute budget:
 
 ---
 
-# Architecture evolution
+# The case against encoders
 
-<div class="note-box" data-title="From BERT to ModernBERT: 6 years of progress">
+<div class="warning-box" data-title="Why did people start saying 'the encoder is dead'?">
 
-| Model | Year | Key innovation | Quality vs BERT |
-|-------|------|---------------|----------------|
-| BERT | 2018 | MLM + NSP | Baseline |
-| RoBERTa | 2019 | Better training recipe | +3–11 pts |
-| ALBERT | 2019 | Parameter sharing | 89% fewer params |
-| DistilBERT | 2019 | Knowledge distillation | 97% quality, 60% faster |
-| ELECTRA | 2020 | Learn from all tokens | 4× less compute |
-| DeBERTa | 2020 | Disentangled attention | SOTA on SuperGLUE |
-| ModernBERT | 2024 | Modern training + RoPE + Flash Attention | SOTA on GLUE, retrieval |
+**2020 — In-context learning**: [GPT-3](https://arxiv.org/abs/2005.14165) (Brown et al.) showed that a single decoder model can perform classification, NLI, and QA via prompting — tasks that previously required fine-tuning separate BERT models for each.
+
+**2023 — Decoders match fine-tuned encoders**: [GPT-4](https://arxiv.org/abs/2303.08774) (OpenAI) matched or exceeded fine-tuned BERT/RoBERTa on many NLU benchmarks without any task-specific training.
+
+**2024 — Decoders do retrieval too**: [GritLM](https://arxiv.org/abs/2402.09906) (Muennighoff et al.) demonstrated a single decoder model that handles both generation *and* embedding at SOTA levels — the last domain where encoders had a clear advantage.
 
 </div>
 
----
+<div class="tip-box" data-title="The argument in one sentence">
 
-# ModernBERT deep dive
-
-<div class="definition-box" data-title="Warner et al. (Dec 2024): bringing modern LLM techniques to encoders">
-
-[ModernBERT](https://arxiv.org/abs/2412.13663) applies 6 years of decoder innovations to the encoder architecture:
-
-| Innovation | BERT (2018) | ModernBERT (2024) |
-|-----------|-------------|-------------------|
-| Position encoding | Learned absolute (512 max) | **RoPE** (8,192 tokens) |
-| Attention | Full quadratic | **Flash Attention** + alternating global/local |
-| Padding | Processes pad tokens | **Unpadding** (only real tokens) |
-| Training data | 3.3B words | **2 trillion tokens** (600× more) |
-| Code understanding | None | Trained on code corpora |
-
-</div>
-
-<div class="important-box" data-title="Results">
-
-SOTA on GLUE, retrieval (MTEB), and code understanding benchmarks. Available as `answerdotai/ModernBERT-base` and `answerdotai/ModernBERT-large` on HuggingFace. Proves that encoder architecture still has room to grow when given modern training techniques.
+Why fine-tune six BERT models for six tasks when one decoder does them all via prompting?
 
 </div>
 
@@ -483,97 +508,21 @@ SOTA on GLUE, retrieval (MTEB), and code understanding benchmarks. Available as 
 
 # Gemma Encoder and the encoder renaissance
 
+<div class="definition-box" data-title="What is Gemma?">
+
+[Gemma](https://arxiv.org/abs/2403.08295) (Google, 2024) is a family of open-weight **decoder-only** language models (2B and 7B parameters) built from the same research behind [Gemini](https://arxiv.org/abs/2312.11805). Outperforms similarly sized open models on 11/18 text benchmarks.
+
+</div>
+
 <div class="note-box" data-title="Google bets on encoders again (2025)">
 
-[Gemma Encoder](https://arxiv.org/abs/2503.02656) (2025): Google's first encoder-only model since BERT, built by repurposing Gemma decoder weights for bidirectional encoding. Competitive with ModernBERT on sentence embedding tasks.
+[Gemma Encoder](https://arxiv.org/abs/2503.02656) (2025) repurposes Gemma's decoder weights for **bidirectional** encoding — Google's first encoder-only model since BERT. Competitive with ModernBERT on sentence embedding tasks.
 
 </div>
 
 <div class="tip-box" data-title="Why this matters">
 
 If Google — a company betting heavily on decoder-only models (Gemini) — still releases an encoder model, it signals that encoders serve a purpose decoders can't efficiently fill. The encoder isn't dead; it's being **modernized**.
-
-</div>
-
----
-
-# Production deployment patterns
-
-<div class="note-box" data-title="Getting encoders from prototype to production">
-
-| Optimization | Speedup | Memory savings | Quality loss |
-|-------------|---------|----------------|-------------|
-| **ONNX Runtime** | 2–5× | Moderate | None |
-| **TensorRT** (NVIDIA) | 5–10× | Moderate | None |
-| **INT8 quantization** | 2–4× | **4× smaller** | <1% |
-| **Distillation** (→ DistilBERT) | 1.6× | 40% smaller | ~3% |
-| **Full pipeline** (distill → quantize) | 10–20× | **8× smaller** | ~4% |
-
-</div>
-
-<div class="important-box" data-title="The cost argument">
-
-DistilBERT + INT8 quantization handles classification at ~$0.001/M tokens and ~2ms per request. GPT-4 costs ~$30/M tokens at ~500ms per request. For high-volume single-task workloads, optimized encoders are **30,000× cheaper** and **250× faster**.
-
-</div>
-
----
-
-# Is the encoder dead?
-
-<div class="tip-box" data-title="Discussion: GPT-4 can classify text via prompting. Do we still need encoders?">
-
-**The case for "yes, encoders are obsolete":**
-- Decoder-only models (GPT-4, Claude) can do classification, NER, QA via prompting
-- One model for all tasks vs. fine-tuning separate models
-- In-context learning eliminates the need for task-specific architectures
-
-**The case for "no, encoders still matter":**
-- ModernBERT (2024) achieves SOTA on retrieval and classification — faster and cheaper than any decoder
-- Gemma Encoder (2025) proves Google still sees value in the architecture
-- Encoders are 10–100× cheaper to run than decoder models for classification tasks
-- Most production search and retrieval systems still use encoders (Sentence-BERT, E5, NV-Embed)
-
-**The real answer:** It depends on your constraints. Encoders win on cost and latency. Decoders win on flexibility.
-
-</div>
-
----
-
-# Discussion
-
-<div class="tip-box" data-title="Questions to consider">
-
-1. **Training vs architecture:** RoBERTa shows that training matters enormously. How much of BERT's "limitations" were really just undertrained models?
-
-2. **The distillation paradox:** Why does a student model learn *better* from soft probability distributions than from hard labels? What "dark knowledge" is in the teacher's mistakes?
-
-3. **Encoders in 2026:** Google, Hugging Face, and others are *still* releasing encoder models. If decoders can do everything, why? What does this tell us about the efficiency-flexibility tradeoff?
-
-4. **Parameter sharing (ALBERT):** All 12 layers share the same weights and it still works. What does this imply about what transformer layers actually learn?
-
-</div>
-
----
-<!-- _class: scale-85 -->
-
-# Further reading
-
-<div class="note-box" data-title="Further reading">
-
-[**Liu et al. (2019, *arXiv*)**](https://arxiv.org/abs/1907.11692) "RoBERTa: A Robustly Optimized BERT Pretraining Approach" — Better training recipe, same architecture.
-
-[**Lan et al. (2019, *ICLR*)**](https://arxiv.org/abs/1909.11942) "ALBERT: A Lite BERT" — 89% parameter reduction via sharing.
-
-[**Sanh et al. (2019, *NeurIPS Workshop*)**](https://arxiv.org/abs/1910.01108) "DistilBERT" — Knowledge distillation for 60% speedup.
-
-[**Clark et al. (2020, *ICLR*)**](https://arxiv.org/abs/2003.10555) "ELECTRA" — Learn from all tokens, not just masked ones.
-
-[**He et al. (2020, *ICLR*)**](https://arxiv.org/abs/2006.03654) "DeBERTa" — Disentangled attention, SOTA on SuperGLUE.
-
-[**Warner et al. (2024, *arXiv*)**](https://arxiv.org/abs/2412.13663) "ModernBERT" — Modern encoder with RoPE + Flash Attention.
-
-[**Google (2025, *arXiv*)**](https://arxiv.org/abs/2503.02656) "Gemma Encoder" — Encoder-only Gemma for sentence embeddings.
 
 </div>
 
@@ -598,6 +547,6 @@ DistilBERT + INT8 quantization handles classification at ~$0.001/M tokens and ~2
 
 <div class="tip-box" data-title="Up next...">
 
-Applications of encoder models: industry, neuroscience, and the "understanding" debate
+Encoder models in the real world — applications, brain-model convergence, and what it all means for language and society
 
 </div>
