@@ -6,7 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 20: Encoders in the real world
+# Lecture 20: Language, thought, and other brains
 ### PSYC 51.17: Models of language and communication
 
 Jeremy R. Manning
@@ -19,29 +19,60 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. Apply BERT to real-world NLP tasks: classification, NER, QA, and semantic similarity
-2. Explain how BERT improved Google Search and reshaped the NLP industry
-3. Connect encoder representations to brain-imaging findings (fMRI encoding)
-4. Analyze the societal consequences of cheap, accurate text classification at scale
-5. Evaluate what brain-model convergence implies about the nature of language itself
+1. Explain how language functions as a lossy compression channel for transmitting brain states between minds
+2. Evaluate what the convergence between LLMs and brain activity implies about the nature of language
+3. Articulate the case that understanding *is* prediction, and critique it
+4. Analyze whether LLMs have captured something real about meaning, or merely its statistical shadow
+5. Formulate your own position on what language models reveal about the human mind
+
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# Encoders in the real world (recap)
+
+<div class="note-box" data-title="What encoders do at scale">
+
+BERT and its variants power much of modern NLP infrastructure — often invisibly:
+
+| Domain | Application | Architecture |
+|--------|-------------|-------------|
+| Search | Google processes 8.5B queries/day | BERT → MUM |
+| Retrieval | Sentence-BERT: 700K+ downloads/day | Bi-encoder |
+| Clinical NLP | ICD coding, adverse event detection | [BioBERT](https://arxiv.org/abs/1901.08746), [PubMedBERT](https://arxiv.org/abs/2007.15779) |
+| Legal tech | Contract extraction, compliance | Fine-tuned encoders |
+| Moderation | Billions of posts/day screened | Fine-tuned RoBERTa |
+
+</div>
+
+<div class="important-box" data-title="Why not just use GPT-4?">
+
+GPT-4 costs ~$30/M tokens at ~500ms/request. A fine-tuned DistilBERT: ~$0.01/M tokens at ~5ms/request. For high-volume, single-task workloads, encoders are **3,000× cheaper** and **100× faster**.
 
 </div>
 
 ---
 
-# Novel encoder applications beyond NLP
+# Brain-LLM alignment
 
-<div class="note-box" data-title="Encoders power specialized domains where decoders are overkill">
+<div class="note-box" data-title="The relationship between LLMs and brains is deeper than expected">
 
-**Clinical NLP:** De-identification of medical records, ICD code prediction, adverse drug event detection. [BioBERT](https://arxiv.org/abs/1901.08746) and [PubMedBERT](https://arxiv.org/abs/2007.15779) process millions of clinical notes daily.
+[**Caucheteux & King (2022, *Communications Biology*)**](https://doi.org/10.1038/s42003-022-03036-1): LLM activations predict brain activity in a **layer-specific** way — early model layers map to auditory cortex, deeper layers to high-level language areas.
 
-**Legal tech:** Contract clause extraction, case law search, regulatory compliance checking. Fine-tuned encoders scan thousands of documents in seconds.
-
-**Financial NER:** Extracting company names, monetary amounts, and dates from earnings calls and SEC filings. Bloomberg's internal models process billions of financial documents.
-
-**Scientific literature:** [ChemBERTa](https://arxiv.org/abs/2010.09885) predicts molecular properties from SMILES strings. [SciBERT](https://arxiv.org/abs/1903.10676) powers semantic search across 100M+ papers.
+[**Gao et al. (2025, *Nature Computational Science*)**](https://doi.org/10.1038/s43588-025-00863-0): "Brain-like" artificial neurons emerge in LLMs trained only on text — units that encode syntax, semantics, and even spatial concepts, mirroring brain organization.
 
 </div>
+
+<div class="definition-box" data-title="Mind's Transformer (Aw et al., 2026, ICLR)">
+
+[The Mind's Transformer](https://openreview.net/forum?id=PgIlCCNxdB): The brain may implement a **Transformer-like** algorithm — not just analogous representations, but analogous *computation*. Attention-like gating and residual-stream-like updates appear across cortical circuits.
+
+If the brain and LLMs converge on similar computational strategies, these may be *good solutions* for processing sequential, context-dependent information — not engineering coincidences.
+
+</div>
+
+---
 
 <div class="tip-box" data-title="Companion notebook">
 
@@ -49,427 +80,294 @@ Winter 2026
 
 </div>
 
----
-<!-- _class: scale-90 -->
+<div class="note-box" data-title="The rest of today is a discussion">
 
-# Case study: Google Search
+We've spent two lectures on the engineering of encoder models. Today we step back and ask: **what do these models teach us about the nature of language, thought, and the connections between minds?**
 
-<div class="definition-box" data-title="BERT revolutionized search in 2019">
-
-Before BERT, search engines primarily matched keywords. BERT enabled Google to understand *how words relate to each other* — especially prepositions, negations, and context words.
-
-</div>
-
-<div class="example-box" data-title="Why word order matters">
-
-```python
-query = "2019 brazil traveler to usa need a visa"
-
-# Before BERT (keyword matching):
-# Matches both "US traveler to Brazil" AND "Brazil traveler to US"
-
-# With BERT (contextual understanding):
-# Understands "to USA" means the traveler's DESTINATION is the US
-# Correctly ranks: "Brazil citizen visa requirements for USA"
-```
-
-</div>
-
-<div class="note-box" data-title="More examples of context-sensitive queries">
-
-| Query | Before BERT | With BERT |
-|-------|-------------|-----------|
-| "can you get medicine for someone pharmacy" | Generic pharmacy results | Picking up prescriptions for others |
-| "do estheticians stand a lot at work" | Job listings | Physical demands of the job |
-| "parking on a hill with no curb" | Parking tickets | How to park safely without a curb |
-
-Google reported BERT improved 1 in 10 English searches.
+The following slides present ideas from neuroscience, cognitive science, and philosophy of mind — each followed by discussion prompts. There are no right answers. The goal is to develop your own informed position.
 
 </div>
 
 ---
-<!-- _class: scale-85 -->
-
-# Question answering with BERT
-
-<div class="example-box" data-title="Extractive QA: find the answer span in a passage">
-
-```python
-from transformers import pipeline
-
-qa = pipeline("question-answering",
-              model="bert-large-uncased-whole-word-masking-finetuned-squad")
-
-result = qa(
-    question="In what country is Normandy located?",
-    context="The Normans were the people who in the 10th and 11th centuries "
-            "gave their name to Normandy, a region in France."
-)
-print(result)
-# {'answer': 'France', 'score': 0.987, 'start': 134, 'end': 140}
-```
-
-</div>
-
-<div class="note-box" data-title="How it works">
-
-BERT predicts two things for each token in the passage: the probability that it's the **start** of the answer, and the probability that it's the **end** of the answer. The answer span is the highest-scoring (start, end) pair.
-
-</div>
-
----
-<!-- _class: scale-85 -->
-
-# Named entity recognition
-
-<div class="example-box" data-title="Token-level classification with BERT">
-
-```python
-from transformers import pipeline
-
-ner = pipeline("ner", model="dslim/bert-base-NER")
-
-text = "Apple Inc. is headquartered in Cupertino, California."
-entities = ner(text)
-
-for e in entities:
-    print(f"{e['word']}: {e['entity']} (score: {e['score']:.2f})")
-# Apple: B-ORG (0.99)
-# Inc:   I-ORG (0.99)
-# Cupertino:  B-LOC (0.99)
-# California: B-LOC (0.99)
-```
-
-</div>
-
-<div class="note-box" data-title="BIO tagging scheme">
-
-- **B-** prefix: Beginning of an entity
-- **I-** prefix: Inside (continuation) of an entity
-- **O**: Outside any entity
-- Entity types: PER (person), ORG (organization), LOC (location), MISC (miscellaneous)
-
-</div>
-
----
-<!-- _class: scale-85 -->
-
-# Semantic similarity
-
-<div class="example-box" data-title="Measuring sentence similarity with BERT embeddings">
-
-```python
-from transformers import BertTokenizer, BertModel
-import torch.nn.functional as F
-
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertModel.from_pretrained('bert-base-uncased')
-
-def get_sentence_embedding(sentence):
-    inputs = tokenizer(sentence, return_tensors='pt', padding=True, truncation=True)
-    outputs = model(**inputs)
-    return outputs.last_hidden_state[:, 0, :]  # [CLS] token
-
-sent1 = "The cat is sleeping on the couch"
-sent2 = "A feline is resting on the sofa"     # Paraphrase
-sent3 = "The weather is nice today"            # Unrelated
-
-emb1, emb2, emb3 = [get_sentence_embedding(s) for s in [sent1, sent2, sent3]]
-
-print(f"Paraphrase similarity: {F.cosine_similarity(emb1, emb2).item():.3f}")  # High
-print(f"Unrelated similarity:  {F.cosine_similarity(emb1, emb3).item():.3f}")  # Low
-```
-
-</div>
-
----
-
-# Sentence-BERT and modern retrieval
-
-<div class="definition-box" data-title="Scaling sentence similarity to millions of documents">
-
-Using BERT's [CLS] token for sentence similarity requires passing **both sentences through BERT together** — $O(n^2)$ comparisons for $n$ sentences. [Sentence-BERT](https://arxiv.org/abs/1908.10084) (Reimers & Gurevych, 2019) uses a **siamese architecture** that encodes sentences **independently**, then compares with cosine similarity.
-
-</div>
-
-<div class="example-box" data-title="Practical sentence embeddings">
-
-```python
-from sentence_transformers import SentenceTransformer
-model = SentenceTransformer('all-MiniLM-L6-v2')
-
-sentences = ["The cat sat on the mat", "A feline rested on the rug"]
-embeddings = model.encode(sentences)
-
-from sklearn.metrics.pairwise import cosine_similarity
-sim = cosine_similarity([embeddings[0]], [embeddings[1]])  # ~0.82
-```
-
-</div>
-
-<div class="note-box" data-title="The evolution of text embeddings">
-
-Sentence-BERT (2019) → [E5](https://arxiv.org/abs/2212.03533) (2022) → [NV-Embed](https://arxiv.org/abs/2405.17428) (2024). The [MTEB benchmark](https://huggingface.co/spaces/mteb/leaderboard) now ranks 200+ embedding models. Sentence embeddings power semantic search, RAG retrieval (Lecture 17), and recommendation systems at scale.
-
-</div>
-
----
-
-# Encoders in industry (2025)
-
-<div class="note-box" data-title="Encoder models are everywhere — even if you don't see them">
-
-The NLP market reached **$7.73 billion** in 2025. Most of that is powered by encoder models, not chatbots:
-
-| Application | Scale | Architecture |
-|-------------|-------|-------------|
-| Google Search | 8.5B queries/day | BERT → MUM |
-| Sentence-BERT | 700K+ downloads/day | Bi-encoder |
-| Microsoft Bing | Billions of queries | DeBERTa-based |
-| E5 / NV-Embed | Leading retrieval benchmarks | Encoder embeddings |
-| Content moderation | Billions of posts/day | Fine-tuned RoBERTa |
-
-</div>
-
-<div class="important-box" data-title="Why not just use GPT-4?">
-
-GPT-4 costs ~$30/M tokens and takes ~500ms per request. A fine-tuned DistilBERT handles classification at ~$0.01/M tokens and ~5ms per request. For high-volume, single-task workloads, encoders are **3,000× cheaper** and **100× faster**.
-
-</div>
-
----
-<!-- _class: scale-85 -->
-
-# Neural encoding with language models
-
-<div class="example-box" data-title="Can we predict brain activity from BERT representations?">
-
-```python
-# Neural encoding experiment workflow
-import numpy as np
-from transformers import BertModel
-
-# 1. Participant reads sentences while in fMRI scanner
-sentences = ["The dog chased the cat", "She opened the door", ...]
-brain_activity = fmri_scanner.record(sentences)  # (n_sentences, n_voxels)
-
-# 2. Extract BERT representations for same sentences
-bert = BertModel.from_pretrained("bert-base-uncased")
-bert_embeddings = []
-for sent in sentences:
-    outputs = bert(tokenizer(sent, return_tensors="pt"))
-    bert_embeddings.append(outputs.hidden_states[8].mean(dim=1))  # Layer 8
-
-# 3. Train encoding model: BERT representations → brain activity
-from sklearn.linear_model import Ridge
-encoder = Ridge().fit(bert_embeddings[:80], brain_activity[:80])
-
-# 4. Predict brain activity for held-out sentences
-predictions = encoder.predict(bert_embeddings[80:])
-correlation = np.corrcoef(predictions.flat, brain_activity[80:].flat)[0,1]
-# Correlation ~ 0.3–0.5 in language areas (statistically significant!)
-```
-
-**Key finding:** BERT layer 8 best predicts semantic brain areas; layers 2–4 predict phonological areas.
-
-</div>
-
----
-
-# Brain-LLM alignment frontiers
-
-<div class="note-box" data-title="The relationship between LLMs and brains is deeper than expected">
-
-[**Caucheteux & King (2022)**](https://doi.org/10.1038/s42003-022-03036-1): LLM activations predict brain activity in a **layer-specific** way — early model layers map to auditory cortex, deeper layers to high-level language areas. Published in *Communications Biology*.
-
-[**Gao et al. (2025, *Nature Computational Science*)**](https://doi.org/10.1038/s43588-024-00752-6): "Brain-like" artificial neurons emerge in LLMs trained only on text — units that encode syntax, semantics, and even spatial concepts, mirroring brain organization.
-
-</div>
-
-<div class="definition-box" data-title="Mind's Transformer (Aw et al., 2026, ICLR)">
-
-[The Mind's Transformer](https://openreview.net/forum?id=PgIlCCNxdB): Proposes that the brain implements a **Transformer-like** algorithm — not just analogous representations, but analogous *computation*. Attention-like gating and residual-stream-like updates appear across cortical circuits.
-
-**Why this matters:** If the brain and LLMs converge on similar computational strategies, it suggests these are *good solutions* for processing sequential, context-dependent information — not just engineering coincidences.
-
-</div>
-
----
-<!-- _class: scale-80 -->
 
 # What language actually does
 
 <div class="note-box" data-title="Language is wireless brain activity transmission">
 
-Your brain lives in your skull — a vat of bone filled with fluid that is essentially seawater. It can't directly connect with anything on the outside. Everything you know about the world comes through sensors that *construct* a representation of reality, not measure it (recall Lecture 1: language shapes what we literally *see*). In the most fundamental sense, we are brains floating in vats, always alone.
+Your brain lives in a sealed vault of bone, bathed in fluid that is essentially seawater. It has no direct contact with the outside world. Everything you know about reality is *constructed* by your neural circuits from noisy sensor data — you are, in the most literal sense, a brain floating in a vat.
 
-Language breaks through that isolation. When you speak, you compress the electrical patterns across your hundred billion neurons into a few words per second — an extraordinarily lossy channel. The listener's brain unpacks those vibrations into neural activity of its own. [Stephens et al. (2010)](https://doi.org/10.1073/pnas.1008662107) showed that successful communication literally *replicates the speaker's brain activity patterns in the listener's brain*, with the listener's responses temporally coupled to — and sometimes *anticipating* — the speaker's.
-
-</div>
-
-<div class="tip-box" data-title="Why this reframes everything that follows">
-
-If language is fundamentally about transmitting brain states through a lossy channel, then BERT's ability to capture those patterns isn't just an engineering trick — it's a compression algorithm that learned the same code brains use. The societal questions ahead aren't only about *technology*. They're about what happens when a machine can read and write in the language of human thought.
+Language breaks through that isolation. When you speak, you compress the electrical activity across your ~86 billion neurons into a handful of words per second — an extraordinarily lossy channel. The listener's brain decompresses those vibrations into neural activity of its own.
 
 </div>
 
----
+<div class="definition-box" data-title="Neural coupling (Stephens et al., 2010)">
 
-# When fluency is free
-
-<div class="warning-box" data-title="What happens to institutions built on the assumption that writing is hard?">
-
-A student submits a well-structured essay on Shakespeare's use of irony in *Othello*. The prose is clear, the argument is coherent, the citations are accurate. The student spent 45 seconds generating it with an encoder-powered writing assistant. A classmate spent 8 hours writing a messier but more original essay. They receive the same grade.
-
-</div>
-
-<div class="tip-box" data-title="Discussion: the purpose of writing">
-
-The essay wasn't invented to produce text — it was invented to produce *thinking*. The struggle of organizing an argument, finding the right word, and revising a draft is where learning happens. If the output is indistinguishable but the process is absent, what did the student learn?
-
-**Consider:** Is the problem that AI can write, or that we've been grading the *product* instead of the *process*? What would assessment look like if fluent text were free?
+[**Stephens, Silbert & Hasson (2010, *PNAS*)**](https://doi.org/10.1073/pnas.1008662107) recorded brain activity from speakers and listeners during natural storytelling. Successful communication literally **replicated the speaker's brain patterns in the listener's brain**, with the listener's responses temporally coupled to — and sometimes *anticipating* — the speaker's.
 
 </div>
 
 ---
 <!-- _class: scale-85 -->
 
-# Classification as labor
+# Language transfers memories between brains
 
-<div class="note-box" data-title="Encoders are replacing human judgment at scale">
+<div class="definition-box" data-title="Memory transfer through narrative (Zadbood et al., 2017)">
 
-Content moderation at Meta employs thousands of human reviewers who screen posts for violence, hate speech, and self-harm — work linked to [PTSD and psychological trauma](https://www.theverge.com/2019/2/25/18229714/cognizant-facebook-content-moderator-interviews-trauma-working-conditions-arizona). Fine-tuned RoBERTa models now handle billions of these classifications daily.
-
-**Medical coding:** Assigning ICD-10 codes to clinical notes was a $16B/year industry employing 300,000+ human coders. BERT-based systems achieve 92% accuracy on common codes — not perfect, but faster and cheaper.
-
-**Legal discovery:** Reviewing documents for relevance in litigation once required armies of junior lawyers billing $200/hour. Encoder models scan millions of documents in hours.
+[**Zadbood et al. (2017, *Cerebral Cortex*)**](https://doi.org/10.1093/cercor/bhw351) showed that when person A watches a movie and then *tells* person B the story, person B's brain activity during listening resembles person A's brain activity during *watching* — not during speaking. Language doesn't just transmit the speaker's verbal patterns. It reconstructs the speaker's **perceptual experience** in the listener's brain. You don't just hear a story — your brain *relives* it.
 
 </div>
 
-<div class="tip-box" data-title="Discussion: the 'good enough' threshold">
+<div class="note-box" data-title="It doesn't matter how the story arrives">
 
-When is 91% accuracy acceptable? When is it dangerous? Content moderation at 91% means ~340 million misclassified posts per day on a platform with 3.7B daily posts. Who is accountable for the errors — the model, the deployer, or the person who decided 91% was "good enough"?
+[**Regev, Honey & Hasson (2013, *Journal of Neuroscience*)**](https://doi.org/10.1523/JNEUROSCI.1580-13.2013): The brain constructs the same **amodal narrative representation** whether the story is read, heard, or watched as a movie. The neural patterns are modality-independent. Language isn't special because of sound or letters — it's special because it *programs a specific neural state* regardless of input channel.
+
+</div>
+
+<div class="tip-box" data-title="Discussion">
+
+If language reconstructs the speaker's perceptual experience in the listener's brain, is there a meaningful difference between "experiencing something" and "hearing a vivid enough description of it"? Where does the line fall?
 
 </div>
 
 ---
 <!-- _class: scale-90 -->
 
-# Measuring harm at scale
+# LLMs speak the brain's language
 
-<div class="note-box" data-title="From anecdotes to methodology">
+<div class="definition-box" data-title="GPT-2 predicts brain activity (Goldstein et al., 2022)">
 
-In Lecture 11, we saw that word embeddings encode bias ("doctor"→"man," "nurse"→"woman"). In Lecture 18, we saw that BERT inherits these biases. But individual examples are *anecdotes*, not evidence. How do we measure bias *systematically*?
-
-</div>
-
-<div class="definition-box" data-title="SAGED: systematic bias evaluation (Jiang et al., COLING 2025)">
-
-[SAGED](https://aclanthology.org/2025.coling-main.202.pdf) proposes a five-step pipeline:
-
-1. **S**elect social groups (e.g., gender, race, age)
-2. **A**ssemble evaluation contexts (template sentences across domains)
-3. **G**enerate model outputs for each group × context
-4. **E**valuate using statistical tests (not cherry-picked examples)
-5. **D**ocument findings with effect sizes and confidence intervals
+[**Goldstein et al. (2022, *Nature Neuroscience*)**](https://doi.org/10.1038/s41593-022-01026-4): GPT-2's next-word predictions correlate with neural activity recorded from electrodes implanted in human brains during natural speech comprehension. The model's internal states track the brain's processing in real time — not just at the level of semantics, but at the level of individual word surprisal.
 
 </div>
 
-<div class="tip-box" data-title="Discussion: small bias × large scale">
+<div class="definition-box" data-title="LLMs bridge two brains (Zada et al., 2024)">
 
-Suppose an encoder-based hiring screener shows a 0.3% gender bias — barely detectable in any single decision. But the model processes 4 billion classifications per day. That's 12 million biased decisions *daily*. At what point does a "negligible" per-decision bias become a systemic problem?
+[**Zada et al. (2024, *Neuron*)**](https://doi.org/10.1016/j.neuron.2024.06.025): LLM embedding spaces provide a **shared numerical coordinate system** for tracking speaker–listener neural alignment during conversation. The degree to which both brains converge in LLM-space predicts communication success. The model didn't evolve to do this — it learned it from text alone.
+
+</div>
+
+<div class="tip-box" data-title="Discussion">
+
+A model trained on text alone — with no ears, no body, no social experience — learns representations that track *both* brains during real human conversation. What does this tell us about what information is actually *in* language?
+
+</div>
+
+---
+
+# Understanding is prediction
+
+<div class="definition-box" data-title="Next-word prediction mirrors the brain (Schrimpf et al., 2021)">
+
+[**Schrimpf et al. (2021, *PNAS*)**](https://doi.org/10.1073/pnas.2105646118): Across dozens of language models, the single best predictor of how well a model matches human brain activity is its **next-word prediction accuracy**. Models that are better at predicting what comes next are better at predicting the brain. The brain's core language mechanism appears to be a prediction engine.
+
+</div>
+
+<div class="definition-box" data-title="Brains as prediction machines (Clark, 2013)">
+
+[**Clark (2013, *Behavioral and Brain Sciences*)**](https://doi.org/10.1017/S0140525X12000477): The "predictive processing" framework proposes that the brain is fundamentally a **prediction machine** — it constantly generates expectations about incoming input and updates based on prediction errors. BERT's masked language modeling (predicting missing words from context) is a concrete implementation of exactly this principle.
+
+</div>
+
+<div class="tip-box" data-title="Discussion">
+
+If the brain's language system is fundamentally a prediction engine, and LLMs are trained on prediction, is their convergence surprising — or inevitable? Does training on prediction *guarantee* learning something about meaning?
+
+</div>
+
+---
+
+# Language modeling is compression
+
+<div class="definition-box" data-title="Intelligence as compression (Delétang et al., 2024)">
+
+[**Delétang et al. (2024, *ICLR*)**](https://arxiv.org/abs/2309.10668): Language modeling and data compression are **mathematically equivalent** — a model that predicts the next token well can compress text efficiently, and vice versa. Better language models are literally better compressors. This isn't metaphor: Shannon's source coding theorem proves it.
+
+</div>
+
+<div class="note-box" data-title="Language itself is optimized for compression">
+
+[**Gibson et al. (2019, *Trends in Cognitive Sciences*)**](https://doi.org/10.1016/j.tics.2019.02.003): Languages across the world are structured to **minimize effort** while **maximizing robustness to noise** — exactly the engineering goals of a good compression codec. Frequent words are short. Ambiguity is tolerated where context resolves it. Redundancy is added where errors are costly. Human language is an evolved compression protocol.
+
+</div>
+
+<div class="tip-box" data-title="Discussion">
+
+If language is a compression protocol and LLMs are compression algorithms, then BERT's "understanding" of language is literally decompression. Does that make it *genuine* understanding, or is something still missing?
 
 </div>
 
 ---
 <!-- _class: scale-80 -->
 
-# Is language a statistical phenomenon?
+# Does prediction equal understanding?
 
-<div class="note-box" data-title="A question that wasn't possible before BERT">
+<div class="definition-box" data-title="Understanding IS predictive compression (Queloz & Beckmann, 2025)">
 
-In Lecture 1, we established that language and thought are separable. Earlier in this lecture, we saw that language is fundamentally a lossy compression channel for transmitting brain states — and that LLMs learn to capture those same patterns. But we've been treating brain-model convergence as a puzzle about *brains*. Here's the deeper question: what does it tell us about *language*?
-
-</div>
-
-<div class="tip-box" data-title="Discussion: Universal Grammar vs Universal Statistics">
-
-Chomsky argued that language requires an innate "Universal Grammar" — biological machinery that no statistical learner could replicate. But BERT learns syntactic structure, long-range dependencies, and even cross-linguistic patterns from raw text alone. [ChemBERTa](https://arxiv.org/abs/2010.09885) learns molecular "grammar" from SMILES strings — a domain with no biological basis at all.
-
-**Two possibilities:**
-1. Language is *fundamentally statistical* — the patterns are so strong that any sufficiently powerful learner will converge on the same structure, no innate grammar required
-2. Language has *real structure* that both brains and models discover — the convergence tells us something about the structure of language itself, not just about the learners
-
-**Which do you find more compelling? What evidence would distinguish them?**
+[**Queloz & Beckmann (2025, *PhilArchive*)**](https://philarchive.org/rec/QUEWWC-2): The traditional objection — "LLMs are just doing statistics, not real understanding" — collapses if understanding *is* predictive compression. A system that compresses language well must capture its structure, context dependencies, and meaning relations. The compression IS the understanding. There is no magical extra ingredient.
 
 </div>
 
----
+<div class="note-box" data-title="The opposing view: language ≠ thought">
 
-# The next decade
-
-<div class="note-box" data-title="The encoder/decoder boundary is dissolving">
-
-ModernBERT (2024) borrows RoPE and Flash Attention from decoders. [GritLM](https://arxiv.org/abs/2402.09906) (2024) unifies embedding and generation in a single model. [Gemma Encoder](https://arxiv.org/abs/2503.02656) (2025) converts a decoder into an encoder. The architectural distinction that defined NLP since 2018 — "BERT for understanding, GPT for generation" — is collapsing.
+[**Fedorenko et al. (2024, *Nature*)**](https://doi.org/10.1038/s41586-024-07522-w): The brain's language network is **anatomically and functionally distinct** from reasoning and problem-solving circuits. People with severe language impairments can still reason, plan, and do math. Language is a *communication module* — an interface for transmitting thoughts, not the medium of thought itself. If so, LLMs may have automated the *transmission* without touching the *thinking*.
 
 </div>
 
-<div class="tip-box" data-title="Discussion: what was BERT's real contribution?">
+<div class="tip-box" data-title="Discussion">
 
-If the encoder/decoder distinction fades, what survives from the BERT era? Was BERT's insight the *architecture* (bidirectional attention), the *training objective* (masked language modeling), or the *paradigm* (pre-train, then fine-tune)? Which of these ideas will still matter in 2035?
-
-</div>
-
----
-<!-- _class: scale-90 -->
-
-# Deep discussion
-
-<div class="tip-box" data-title="Part 1: language, authorship, and accountability">
-
-**1. Authorship.** If a student uses an encoder-powered tool to check grammar, that's acceptable. If they use it to restructure their argument, that's gray. If they use it to generate the essay, that's plagiarism. *Where exactly is the line, and who draws it?*
-
-**2. Accountability at scale.** A hospital deploys a BERT model for ICD coding. It's 92% accurate — better than the average human coder (89%). A patient is harmed by a coding error. Is the hospital *more* liable (because they trusted a machine), *less* liable (because the machine is statistically better), or *equally* liable? Does the answer change if the error rate is 85%?
-
-**3. The convergence puzzle.** Brains evolved over 300 million years. BERT was trained in 4 days. They converge on similar representations. Does this mean language processing has a *unique optimal solution*, or that both systems found *one of many* solutions that happens to look similar from the outside?
-
-</div>
-
----
-<!-- _class: scale-90 -->
-
-# Deep discussion (continued)
-
-<div class="tip-box" data-title="Part 2: economics, meaning, and prediction">
-
-**4. The "good enough" economy.** A fine-tuned DistilBERT costs $0.01/M tokens. GPT-4 costs $30/M tokens but is more accurate. For content moderation, medical coding, and legal review, companies consistently choose the cheaper option. *What does it mean when "good enough" becomes the default for decisions that affect people's lives?*
-
-**5. Language without intent.** BERT produces representations that capture meaning, resolve ambiguity, and predict brain activity — but BERT has no *intent* to communicate. If meaning can exist without a speaker who means it, is communication defined by the *speaker's* intent or the *listener's* interpretation? (This is not a hypothetical — it affects how we regulate AI-generated content.)
-
-**6. Your prediction.** It's 2036. What role do encoder models play? Are they everywhere and invisible (like TCP/IP)? Merged into hybrid architectures? Replaced entirely by something we haven't invented yet? *Justify your prediction with evidence from this course.*
+Queloz & Beckmann say compression IS understanding. Fedorenko et al. say language is separate from thought. Can both be right? Could LLMs genuinely "understand" language while having no capacity for thought?
 
 </div>
 
 ---
 <!-- _class: scale-85 -->
 
+# What LLMs have inside
+
+<div class="definition-box" data-title="Structured concept maps, not just statistics (Anthropic, 2024)">
+
+[**Anthropic (2024, *Transformer Circuits*)**](https://transformer-circuits.pub/2024/scaling-monosemanticity/): Mechanistic interpretability research on Claude revealed that LLMs contain **monosemantic features** — individual internal components that respond to specific, interpretable concepts (e.g., "Golden Gate Bridge," "code bugs," "deceptive reasoning"). These aren't statistical ghosts. They are structured, hierarchical concept maps that the model builds from text alone.
+
+</div>
+
+<div class="note-box" data-title="The grounding problem persists">
+
+[**LeCun (2022, *OpenReview*)**](https://openreview.net/forum?id=BZ5a1r-kVsf): No matter how rich the internal representations, LLMs lack **world models** — they have never seen, touched, or navigated anything. Their concept of "hot" comes from patterns in text about heat, not from the experience of burning. Are monosemantic features genuine concepts, or high-fidelity maps of *other people's* concepts?
+
+</div>
+
+<div class="tip-box" data-title="Discussion">
+
+Anthropic shows LLMs build structured concept maps. LeCun argues they lack grounding. Is a map of other people's concepts a form of understanding? Consider: you have never been to Jupiter, but you have a concept of it — also built from other people's descriptions.
+
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# Are LLMs "thinking" or "performing"?
+
+<div class="definition-box" data-title="LLMs as role-play engines (Shanahan, 2024)">
+
+[**Shanahan (2024, *Communications of the ACM*)**](https://doi.org/10.1145/3624724): LLMs are best understood as **"engines for role-play"** — they simulate the behavior of a plausible speaker, drawing on the vast repertoire of speakers in training data. When GPT writes a poem, it's not expressing itself — it's simulating someone who would write that poem. The performance can be indistinguishable from the real thing.
+
+</div>
+
+<div class="note-box" data-title="The attention schema theory">
+
+[**Farrell, Graziano et al. (2025, *arXiv*)**](https://arxiv.org/abs/2411.00983): LLMs have **attention** (the mechanism) but may lack an **attention schema** — an internal model of their own attentional states. Humans don't just attend to things; we are *aware that we are attending*. LLMs process information without modeling the fact that they're processing it. They are "looking" but not "aware of looking."
+
+</div>
+
+<div class="tip-box" data-title="Discussion">
+
+When you read a novel and feel sad for a character, are you "really" feeling sadness, or performing a simulation of sadness triggered by text? If it's genuine for you, what would make it not genuine for an LLM?
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# The deep questions
+
+<div class="important-box" data-title="Where we've arrived">
+
+We started this unit asking what BERT does. We've now arrived at much deeper territory:
+
+- Language is a lossy compression channel for neural states (Stephens, Zadbood)
+- LLMs learn the same code that brains use for this compression (Goldstein, Zada)
+- Better prediction = better brain alignment = possibly better "understanding" (Schrimpf, Clark)
+- But language and thought are separable in the brain (Fedorenko)
+- And LLMs may be performing rather than understanding (Shanahan)
+
+</div>
+
+---
+
+# Two frameworks, one question
+
+<div class="note-box" data-title="Framework A: understanding is compression">
+
+LLMs compress language better than any prior system. Compression requires capturing structure, context, and meaning. Therefore LLMs understand language — not metaphorically, but literally. The "statistics vs. understanding" distinction is incoherent (Queloz & Beckmann, 2025).
+
+</div>
+
+<div class="note-box" data-title="Framework B: language is just the interface">
+
+Language is a communication module, not a medium for thought (Fedorenko et al., 2024). LLMs have mastered the interface without accessing what lies behind it. Their "understanding" is like a phone that perfectly transmits voices but has no idea what a conversation is.
+
+</div>
+
+<div class="tip-box" data-title="Your task">
+
+Which framework you adopt determines your answer to every question on the next slides. Choose one — and be prepared to defend it.
+
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# Discussion
+
+<div class="tip-box" data-title="Part 1: what language reveals about minds">
+
+**1. The lossy channel.** Every thought you've ever communicated has been brutally compressed — most of your neural state is *lost* in translation. Yet communication works. Does this mean the "lost" information was never essential? Or do we just tolerate massive information loss because we have no alternative?
+
+**2. The alignment puzzle.** A model trained only on text, with no sensory experience, learns representations that track real-time human brain activity during conversation (Zada et al., 2024). How is this possible? What does it imply about how much of cognition is "in" language vs. "beyond" language?
+
+**3. The prediction test.** If understanding is prediction (Queloz & Beckmann), then a system that predicts language perfectly understands it perfectly. Do you accept this? If not, what *additional* capacity is needed — and can you define it without circular reasoning?
+
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# Discussion (continued)
+
+<div class="tip-box" data-title="Part 2: what brains reveal about LLMs">
+
+**4. The separation problem.** Language and thought are served by *different neural circuits* in the brain (Fedorenko et al., 2024). LLMs have only ever been trained on language. If language ≠ thought, what exactly have LLMs learned? Is it possible to master communication without any capacity for reasoning?
+
+**5. The experience question.** Zadbood et al. (2017) showed that language reconstructs the speaker's *perceptual experience* in the listener. LLMs have no perceptual experiences to reconstruct. When an LLM generates vivid text about a sunset, is it transmitting a "neural state" it never had, or constructing a plausible description from statistical patterns? Is there a difference?
+
+**6. Your framework.** State your position: are LLMs (a) genuinely understanding language, (b) performing an extremely convincing simulation of understanding, or (c) doing something we don't yet have the right words for? Defend your answer using at least two findings from today's lecture.
+
+</div>
+
+---
+<!-- _class: scale-75 -->
+
 # Further reading
 
 <div class="note-box" data-title="Further reading">
 
-[**Devlin et al. (2019, *NAACL*)**](https://aclanthology.org/N19-1423/) "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding" — The original BERT paper.
+[**Stephens, Silbert & Hasson (2010, *PNAS*)**](https://doi.org/10.1073/pnas.1008662107) "Speaker–listener neural coupling underlies successful communication" — Language replicates neural states across brains.
 
-[**Caucheteux & King (2022, *Communications Biology*)**](https://doi.org/10.1038/s42003-022-03036-1) "Brains and algorithms partially converge in natural language processing" — Layer-specific brain-LLM alignment.
+[**Zadbood et al. (2017, *Cerebral Cortex*)**](https://doi.org/10.1093/cercor/bhw351) "How we transmit memories to other brains" — Narrative reconstructs perceptual experience in the listener.
+
+[**Goldstein et al. (2022, *Nature Neuroscience*)**](https://doi.org/10.1038/s41593-022-01026-4) "Shared computational principles for language processing in humans and deep language models" — GPT-2 tracks real-time brain activity during speech.
+
+[**Zada et al. (2024, *Neuron*)**](https://doi.org/10.1016/j.neuron.2024.06.025) "A shared model-based linguistic space for transmitting our thoughts from brain to brain" — LLM embeddings bridge speaker and listener brains.
+
+[**Schrimpf et al. (2021, *PNAS*)**](https://doi.org/10.1073/pnas.2105646118) "The neural architecture of language" — Next-word prediction is the best predictor of brain alignment.
+
+[**Clark (2013, *BBS*)**](https://doi.org/10.1017/S0140525X12000477) "Whatever next? Predictive brains, situated agents, and the future of cognitive science" — The brain as a prediction machine.
+
+[**Delétang et al. (2024, *ICLR*)**](https://arxiv.org/abs/2309.10668) "Language modeling is compression" — Formal proof that prediction and compression are equivalent.
+
+[**Gibson et al. (2019, *TiCS*)**](https://doi.org/10.1016/j.tics.2019.02.003) "How efficiency shapes human language" — Languages optimize for compression and noise robustness.
+
+[**Queloz & Beckmann (2025, *PhilArchive*)**](https://philarchive.org/rec/QUEWWC-2) "What was ChatGPT's training really about?" — Understanding IS predictive compression.
+
+[**Fedorenko et al. (2024, *Nature*)**](https://doi.org/10.1038/s41586-024-07522-w) "Language is primarily a tool for communication rather than thought" — Language and thought are neurally separable.
+
+[**Shanahan (2024, *CACM*)**](https://doi.org/10.1145/3624724) "Talking about large language models" — LLMs as role-play engines.
+
+[**Anthropic (2024)**](https://transformer-circuits.pub/2024/scaling-monosemanticity/) "Scaling monosemanticity" — LLMs build structured, interpretable concept maps.
+
+[**Caucheteux & King (2022, *Communications Biology*)**](https://doi.org/10.1038/s42003-022-03036-1) "Brains and algorithms partially converge" — Layer-specific brain-LLM alignment.
 
 [**Aw et al. (2026, *ICLR*)**](https://openreview.net/forum?id=PgIlCCNxdB) "The Mind's Transformer" — Evidence that the brain implements Transformer-like computation.
-
-[**Gao et al. (2025, *Nature Computational Science*)**](https://doi.org/10.1038/s43588-024-00752-6) "Brain-like artificial neurons in LLMs" — Emergent brain-like units in language models.
-
-[**Jiang et al. (2025, *COLING*)**](https://aclanthology.org/2025.coling-main.202.pdf) "SAGED" — Systematic bias evaluation pipeline for language models.
-
-[**Reimers & Gurevych (2019, *EMNLP*)**](https://arxiv.org/abs/1908.10084) "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks" — Enabled practical semantic search.
-
-[**Stephens, Silbert & Hasson (2010, *PNAS*)**](https://doi.org/10.1073/pnas.1008662107) "Speaker–listener neural coupling underlies successful communication" — Language as brain-to-brain transmission.
 
 </div>
 

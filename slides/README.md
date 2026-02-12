@@ -216,19 +216,23 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/bert_variants_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture19.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture19.html)
 
-**Friday (Lecture 20):** Encoders in the Real World
-- Novel applications: clinical NLP, legal tech, financial NER, scientific literature
-- Sentence-BERT and modern retrieval: from SBERT to E5 to NV-Embed (MTEB)
-- BERT in Google Search, industry adoption ($7.73B NLP market)
-- Brain-LLM alignment: neural encoding with language model representations
-- Language as brain-to-brain transmission: neural coupling and lossy compression
-- Societal consequences: fluency, classification-as-labor, measuring harm at scale
-- Discussion: is language a statistical phenomenon? The next decade of encoders
-- Reading: [Caucheteux & King (2022)](https://doi.org/10.1038/s42003-022-03036-1) - Brain-LLM alignment
-- Reading: [Aw et al. (2026)](https://openreview.net/forum?id=PgIlCCNxdB) - The Mind's Transformer (ICLR 2026)
+**Friday (Lecture 20):** Language, Thought, and Other Brains
+- Encoder applications recap: industry scale, cost advantages over decoders
+- Brain-LLM alignment: layer-specific prediction of brain activity, Mind's Transformer
+- Language as wireless brain activity transmission: neural coupling (Stephens et al., 2010)
+- Memory transfer through narrative (Zadbood et al., 2017), LLMs bridging brains (Zada et al., 2024)
+- Understanding is prediction: next-word prediction mirrors the brain (Schrimpf et al., 2021)
+- Language modeling is compression (Delétang et al., 2024), languages optimize for compression (Gibson et al., 2019)
+- Does prediction equal understanding? Queloz & Beckmann (2025) vs. Fedorenko et al. (2024)
+- What LLMs have inside: monosemantic features (Anthropic, 2024) vs. grounding problem (LeCun, 2022)
+- Deep discussion: lossy channels, alignment puzzles, the prediction test, experience and simulation
 - Reading: [Stephens, Silbert & Hasson (2010)](https://doi.org/10.1073/pnas.1008662107) - Speaker-listener neural coupling
-- Reading: [Reimers & Gurevych (2019)](https://arxiv.org/abs/1908.10084) - Sentence-BERT
-- Reading: [Jiang et al. (2025)](https://aclanthology.org/2025.coling-main.202.pdf) - SAGED bias evaluation
+- Reading: [Goldstein et al. (2022)](https://doi.org/10.1038/s41593-022-01026-4) - GPT-2 predicts brain activity
+- Reading: [Schrimpf et al. (2021)](https://doi.org/10.1073/pnas.2105646118) - Neural architecture of language
+- Reading: [Delétang et al. (2024)](https://arxiv.org/abs/2309.10668) - Language modeling is compression
+- Reading: [Queloz & Beckmann (2025)](https://philarchive.org/rec/QUEWWC-2) - Understanding as predictive compression
+- Reading: [Fedorenko et al. (2024)](https://doi.org/10.1038/s41586-024-07522-w) - Language vs. thought
+- Reading: [Shanahan (2024)](https://doi.org/10.1145/3624724) - LLMs as role-play engines
 - 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/encoder_applications_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html)
 ---

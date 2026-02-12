@@ -693,7 +693,7 @@
 
 </script>
 </head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="lecture-20-encoders-in-the-real-world">Lecture 20: Encoders in the real world</h1>
+<h1 id="lecture-20-language-thought-and-other-brains">Lecture 20: Language, thought, and other brains</h1>
 <h3 id="psyc-5117-models-of-language-and-communication">PSYC 51.17: Models of language and communication</h3>
 <p>Jeremy R. Manning<br />
 Dartmouth College<br />
@@ -703,386 +703,234 @@ Winter 2026</p>
 <h1 id="learning-objectives">Learning objectives</h1>
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 <ol>
-<li>Apply BERT to real-world NLP tasks: classification, NER, QA, and semantic similarity</li>
-<li>Explain how BERT improved Google Search and reshaped the NLP industry</li>
-<li>Connect encoder representations to brain-imaging findings (fMRI encoding)</li>
-<li>Analyze the societal consequences of cheap, accurate text classification at scale</li>
-<li>Evaluate what brain-model convergence implies about the nature of language itself</li>
+<li>Explain how language functions as a lossy compression channel for transmitting brain states between minds</li>
+<li>Evaluate what the convergence between LLMs and brain activity implies about the nature of language</li>
+<li>Articulate the case that understanding <em>is</em> prediction, and critique it</li>
+<li>Analyze whether LLMs have captured something real about meaning, or merely its statistical shadow</li>
+<li>Formulate your own position on what language models reveal about the human mind</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="novel-encoder-applications-beyond-nlp">Novel encoder applications beyond NLP</h1>
-<div class="note-box" data-title="Encoders power specialized domains where decoders are overkill">
-<p><strong>Clinical NLP:</strong> De-identification of medical records, ICD code prediction, adverse drug event detection. <a href="https://arxiv.org/abs/1901.08746">BioBERT</a> and <a href="https://arxiv.org/abs/2007.15779">PubMedBERT</a> process millions of clinical notes daily.</p>
-<p><strong>Legal tech:</strong> Contract clause extraction, case law search, regulatory compliance checking. Fine-tuned encoders scan thousands of documents in seconds.</p>
-<p><strong>Financial NER:</strong> Extracting company names, monetary amounts, and dates from earnings calls and SEC filings. Bloomberg's internal models process billions of financial documents.</p>
-<p><strong>Scientific literature:</strong> <a href="https://arxiv.org/abs/2010.09885">ChemBERTa</a> predicts molecular properties from SMILES strings. <a href="https://arxiv.org/abs/1903.10676">SciBERT</a> powers semantic search across 100M+ papers.</p>
-</div>
-<div class="tip-box" data-title="Companion notebook">
-<p><img class="emoji" draggable="false" alt="📓" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4d3.svg" data-marp-twemoji=""/> <a href="https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/encoder_applications_demo.ipynb">Companion Notebook</a> — hands-on with classification, NER, QA, and sentence similarity</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="case-study-google-search">Case study: Google Search</h1>
-<div class="definition-box" data-title="BERT revolutionized search in 2019">
-<p>Before BERT, search engines primarily matched keywords. BERT enabled Google to understand <em>how words relate to each other</em> — especially prepositions, negations, and context words.</p>
-</div>
-<div class="example-box" data-title="Why word order matters">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">query = &quot;2019 brazil traveler to usa need a visa&quot;</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"># Before BERT (keyword matching):</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"># Matches both &quot;US traveler to Brazil&quot; AND &quot;Brazil traveler to US&quot;</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"># With BERT (contextual understanding):</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"># Understands &quot;to USA&quot; means the traveler&#x27;s DESTINATION is the US</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"># Correctly ranks: &quot;Brazil citizen visa requirements for USA&quot;</span></span>
-</code></pre>
-</div>
-<div class="note-box" data-title="More examples of context-sensitive queries">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="encoders-in-the-real-world-recap">Encoders in the real world (recap)</h1>
+<div class="note-box" data-title="What encoders do at scale">
+<p>BERT and its variants power much of modern NLP infrastructure — often invisibly:</p>
 <table>
 <thead>
 <tr>
-<th>Query</th>
-<th>Before BERT</th>
-<th>With BERT</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>&quot;can you get medicine for someone pharmacy&quot;</td>
-<td>Generic pharmacy results</td>
-<td>Picking up prescriptions for others</td>
-</tr>
-<tr>
-<td>&quot;do estheticians stand a lot at work&quot;</td>
-<td>Job listings</td>
-<td>Physical demands of the job</td>
-</tr>
-<tr>
-<td>&quot;parking on a hill with no curb&quot;</td>
-<td>Parking tickets</td>
-<td>How to park safely without a curb</td>
-</tr>
-</tbody>
-</table>
-<p>Google reported BERT improved 1 in 10 English searches.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="question-answering-with-bert">Question answering with BERT</h1>
-<div class="example-box" data-title="Extractive QA: find the answer span in a passage">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">qa = pipeline(&quot;question-answering&quot;,</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">              model=&quot;bert-large-uncased-whole-word-masking-finetuned-squad&quot;)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">result = qa(</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">    question=&quot;In what country is Normandy located?&quot;,</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    context=&quot;The Normans were the people who in the 10th and 11th centuries &quot;</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">            &quot;gave their name to Normandy, a region in France.&quot;</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">)</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code">print(result)</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"># {&#x27;answer&#x27;: &#x27;France&#x27;, &#x27;score&#x27;: 0.987, &#x27;start&#x27;: 134, &#x27;end&#x27;: 140}</span></span>
-</code></pre>
-</div>
-<div class="note-box" data-title="How it works">
-<p>BERT predicts two things for each token in the passage: the probability that it's the <strong>start</strong> of the answer, and the probability that it's the <strong>end</strong> of the answer. The answer span is the highest-scoring (start, end) pair.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="named-entity-recognition">Named entity recognition</h1>
-<div class="example-box" data-title="Token-level classification with BERT">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import pipeline</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">ner = pipeline(&quot;ner&quot;, model=&quot;dslim/bert-base-NER&quot;)</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">text = &quot;Apple Inc. is headquartered in Cupertino, California.&quot;</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">entities = ner(text)</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">for e in entities:</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    print(f&quot;{e[&#x27;word&#x27;]}: {e[&#x27;entity&#x27;]} (score: {e[&#x27;score&#x27;]:.2f})&quot;)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code"># Apple: B-ORG (0.99)</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"># Inc:   I-ORG (0.99)</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code"># Cupertino:  B-LOC (0.99)</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code"># California: B-LOC (0.99)</span></span>
-</code></pre>
-</div>
-<div class="note-box" data-title="BIO tagging scheme">
-<ul>
-<li><strong>B-</strong> prefix: Beginning of an entity</li>
-<li><strong>I-</strong> prefix: Inside (continuation) of an entity</li>
-<li><strong>O</strong>: Outside any entity</li>
-<li>Entity types: PER (person), ORG (organization), LOC (location), MISC (miscellaneous)</li>
-</ul>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="semantic-similarity">Semantic similarity</h1>
-<div class="example-box" data-title="Measuring sentence similarity with BERT embeddings">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from transformers import BertTokenizer, BertModel</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">import torch.nn.functional as F</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">tokenizer = BertTokenizer.from_pretrained(&#x27;bert-base-uncased&#x27;)</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">model = BertModel.from_pretrained(&#x27;bert-base-uncased&#x27;)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">def get_sentence_embedding(sentence):</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">    inputs = tokenizer(sentence, return_tensors=&#x27;pt&#x27;, padding=True, truncation=True)</span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code">    outputs = model(**inputs)</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">    return outputs.last_hidden_state[:, 0, :]  # [CLS] token</span></span>
-<span class="line"><span class="line-num">11</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">sent1 = &quot;The cat is sleeping on the couch&quot;</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="semantic-similarity-1">Semantic similarity</h1>
-<div class="example-box" data-title="Measuring sentence similarity with BERT embeddings">
-<pre><code class="language-python has-line-numbers" data-start-line="13">
-<span class="line"><span class="line-num">13</span><span class="line-code">sent2 = &quot;A feline is resting on the sofa&quot;     # Paraphrase</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code">sent3 = &quot;The weather is nice today&quot;            # Unrelated</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code">emb1, emb2, emb3 = [get_sentence_embedding(s) for s in [sent1, sent2, sent3]]</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code">print(f&quot;Paraphrase similarity: {F.cosine_similarity(emb1, emb2).item():.3f}&quot;)  # High</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code">print(f&quot;Unrelated similarity:  {F.cosine_similarity(emb1, emb3).item():.3f}&quot;)  # Low</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="sentence-bert-and-modern-retrieval">Sentence-BERT and modern retrieval</h1>
-<div class="definition-box" data-title="Scaling sentence similarity to millions of documents">
-<p>Using BERT's [CLS] token for sentence similarity requires passing <strong>both sentences through BERT together</strong> — <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> comparisons for <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> sentences. <a href="https://arxiv.org/abs/1908.10084">Sentence-BERT</a> (Reimers &amp; Gurevych, 2019) uses a <strong>siamese architecture</strong> that encodes sentences <strong>independently</strong>, then compares with cosine similarity.</p>
-</div>
-<div class="example-box" data-title="Practical sentence embeddings">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code">from sentence_transformers import SentenceTransformer</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">model = SentenceTransformer(&#x27;all-MiniLM-L6-v2&#x27;)</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code">sentences = [&quot;The cat sat on the mat&quot;, &quot;A feline rested on the rug&quot;]</span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code">embeddings = model.encode(sentences)</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">from sklearn.metrics.pairwise import cosine_similarity</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code">sim = cosine_similarity([embeddings[0]], [embeddings[1]])  # ~0.82</span></span>
-</code></pre>
-</div>
-<div class="note-box" data-title="The evolution of text embeddings">
-<p>Sentence-BERT (2019) → <a href="https://arxiv.org/abs/2212.03533">E5</a> (2022) → <a href="https://arxiv.org/abs/2405.17428">NV-Embed</a> (2024). The <a href="https://huggingface.co/spaces/mteb/leaderboard">MTEB benchmark</a> now ranks 200+ embedding models. Sentence embeddings power semantic search, RAG retrieval (Lecture 17), and recommendation systems at scale.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="encoders-in-industry-2025">Encoders in industry (2025)</h1>
-<div class="note-box" data-title="Encoder models are everywhere — even if you don't see them">
-<p>The NLP market reached <strong>$7.73 billion</strong> in 2025. Most of that is powered by encoder models, not chatbots:</p>
-<table>
-<thead>
-<tr>
+<th>Domain</th>
 <th>Application</th>
-<th>Scale</th>
 <th>Architecture</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Google Search</td>
-<td>8.5B queries/day</td>
+<td>Search</td>
+<td>Google processes 8.5B queries/day</td>
 <td>BERT → MUM</td>
 </tr>
 <tr>
-<td>Sentence-BERT</td>
-<td>700K+ downloads/day</td>
+<td>Retrieval</td>
+<td>Sentence-BERT: 700K+ downloads/day</td>
 <td>Bi-encoder</td>
 </tr>
 <tr>
-<td>Microsoft Bing</td>
-<td>Billions of queries</td>
-<td>DeBERTa-based</td>
+<td>Clinical NLP</td>
+<td>ICD coding, adverse event detection</td>
+<td><a href="https://arxiv.org/abs/1901.08746">BioBERT</a>, <a href="https://arxiv.org/abs/2007.15779">PubMedBERT</a></td>
 </tr>
 <tr>
-<td>E5 / NV-Embed</td>
-<td>Leading retrieval benchmarks</td>
-<td>Encoder embeddings</td>
+<td>Legal tech</td>
+<td>Contract extraction, compliance</td>
+<td>Fine-tuned encoders</td>
 </tr>
 <tr>
-<td>Content moderation</td>
-<td>Billions of posts/day</td>
+<td>Moderation</td>
+<td>Billions of posts/day screened</td>
 <td>Fine-tuned RoBERTa</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="important-box" data-title="Why not just use GPT-4?">
-<p>GPT-4 costs ~$30/M tokens and takes ~500ms per request. A fine-tuned DistilBERT handles classification at ~$0.01/M tokens and ~5ms per request. For high-volume, single-task workloads, encoders are <strong>3,000× cheaper</strong> and <strong>100× faster</strong>.</p>
+<p>GPT-4 costs ~$30/M tokens at ~500ms/request. A fine-tuned DistilBERT: ~$0.01/M tokens at ~5ms/request. For high-volume, single-task workloads, encoders are <strong>3,000× cheaper</strong> and <strong>100× faster</strong>.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="neural-encoding-with-language-models">Neural encoding with language models</h1>
-<div class="example-box" data-title="Can we predict brain activity from BERT representations?">
-<pre><code class="language-python has-line-numbers" data-start-line="1">
-<span class="line"><span class="line-num">1</span><span class="line-code"># Neural encoding experiment workflow</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">import numpy as np</span></span>
-<span class="line"><span class="line-num">3</span><span class="line-code">from transformers import BertModel</span></span>
-<span class="line"><span class="line-num">4</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">5</span><span class="line-code"># 1. Participant reads sentences while in fMRI scanner</span></span>
-<span class="line"><span class="line-num">6</span><span class="line-code">sentences = [&quot;The dog chased the cat&quot;, &quot;She opened the door&quot;, ...]</span></span>
-<span class="line"><span class="line-num">7</span><span class="line-code">brain_activity = fmri_scanner.record(sentences)  # (n_sentences, n_voxels)</span></span>
-<span class="line"><span class="line-num">8</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">9</span><span class="line-code"># 2. Extract BERT representations for same sentences</span></span>
-<span class="line"><span class="line-num">10</span><span class="line-code">bert = BertModel.from_pretrained(&quot;bert-base-uncased&quot;)</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="neural-encoding-with-language-models-1">Neural encoding with language models</h1>
-<div class="example-box" data-title="Can we predict brain activity from BERT representations?">
-<pre><code class="language-python has-line-numbers" data-start-line="11">
-<span class="line"><span class="line-num">11</span><span class="line-code">bert_embeddings = []</span></span>
-<span class="line"><span class="line-num">12</span><span class="line-code">for sent in sentences:</span></span>
-<span class="line"><span class="line-num">13</span><span class="line-code">    outputs = bert(tokenizer(sent, return_tensors=&quot;pt&quot;))</span></span>
-<span class="line"><span class="line-num">14</span><span class="line-code">    bert_embeddings.append(outputs.hidden_states[8].mean(dim=1))  # Layer 8</span></span>
-<span class="line"><span class="line-num">15</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">16</span><span class="line-code"># 3. Train encoding model: BERT representations → brain activity</span></span>
-<span class="line"><span class="line-num">17</span><span class="line-code">from sklearn.linear_model import Ridge</span></span>
-<span class="line"><span class="line-num">18</span><span class="line-code">encoder = Ridge().fit(bert_embeddings[:80], brain_activity[:80])</span></span>
-<span class="line"><span class="line-num">19</span><span class="line-code"></span></span>
-<span class="line"><span class="line-num">20</span><span class="line-code"># 4. Predict brain activity for held-out sentences</span></span>
-</code></pre>
-<div class="code-continued-indicator">...continued...</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="neural-encoding-with-language-models-2">Neural encoding with language models</h1>
-<div class="example-box" data-title="Can we predict brain activity from BERT representations?">
-<pre><code class="language-python has-line-numbers" data-start-line="21">
-<span class="line"><span class="line-num">21</span><span class="line-code">predictions = encoder.predict(bert_embeddings[80:])</span></span>
-<span class="line"><span class="line-num">22</span><span class="line-code">correlation = np.corrcoef(predictions.flat, brain_activity[80:].flat)[0,1]</span></span>
-<span class="line"><span class="line-num">23</span><span class="line-code"># Correlation ~ 0.3–0.5 in language areas (statistically significant!)</span></span>
-</code></pre>
-<div class="code-continued-indicator-last">...continued</div>
-</div>
-<p><strong>Key finding:</strong> BERT layer 8 best predicts semantic brain areas; layers 2–4 predict phonological areas.</p>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="brain-llm-alignment-frontiers">Brain-LLM alignment frontiers</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="brain-llm-alignment">Brain-LLM alignment</h1>
 <div class="note-box" data-title="The relationship between LLMs and brains is deeper than expected">
-<p><a href="https://doi.org/10.1038/s42003-022-03036-1"><strong>Caucheteux &amp; King (2022)</strong></a>: LLM activations predict brain activity in a <strong>layer-specific</strong> way — early model layers map to auditory cortex, deeper layers to high-level language areas. Published in <em>Communications Biology</em>.</p>
-<p><a href="https://doi.org/10.1038/s43588-024-00752-6"><strong>Gao et al. (2025, <em>Nature Computational Science</em>)</strong></a>: &quot;Brain-like&quot; artificial neurons emerge in LLMs trained only on text — units that encode syntax, semantics, and even spatial concepts, mirroring brain organization.</p>
+<p><a href="https://doi.org/10.1038/s42003-022-03036-1"><strong>Caucheteux &amp; King (2022, <em>Communications Biology</em>)</strong></a>: LLM activations predict brain activity in a <strong>layer-specific</strong> way — early model layers map to auditory cortex, deeper layers to high-level language areas.</p>
+<p><a href="https://doi.org/10.1038/s43588-025-00863-0"><strong>Gao et al. (2025, <em>Nature Computational Science</em>)</strong></a>: &quot;Brain-like&quot; artificial neurons emerge in LLMs trained only on text — units that encode syntax, semantics, and even spatial concepts, mirroring brain organization.</p>
 </div>
 <div class="definition-box" data-title="Mind's Transformer (Aw et al., 2026, ICLR)">
-<p><a href="https://openreview.net/forum?id=PgIlCCNxdB">The Mind's Transformer</a>: Proposes that the brain implements a <strong>Transformer-like</strong> algorithm — not just analogous representations, but analogous <em>computation</em>. Attention-like gating and residual-stream-like updates appear across cortical circuits.</p>
-<p><strong>Why this matters:</strong> If the brain and LLMs converge on similar computational strategies, it suggests these are <em>good solutions</em> for processing sequential, context-dependent information — not just engineering coincidences.</p>
+<p><a href="https://openreview.net/forum?id=PgIlCCNxdB">The Mind's Transformer</a>: The brain may implement a <strong>Transformer-like</strong> algorithm — not just analogous representations, but analogous <em>computation</em>. Attention-like gating and residual-stream-like updates appear across cortical circuits.</p>
+<p>If the brain and LLMs converge on similar computational strategies, these may be <em>good solutions</em> for processing sequential, context-dependent information — not engineering coincidences.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<div class="tip-box" data-title="Companion notebook">
+<p><img class="emoji" draggable="false" alt="📓" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4d3.svg" data-marp-twemoji=""/> <a href="https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/encoder_applications_demo.ipynb">Companion Notebook</a> — hands-on with classification, NER, QA, and sentence similarity</p>
+</div>
+<div class="note-box" data-title="The rest of today is a discussion">
+<p>We've spent two lectures on the engineering of encoder models. Today we step back and ask: <strong>what do these models teach us about the nature of language, thought, and the connections between minds?</strong></p>
+<p>The following slides present ideas from neuroscience, cognitive science, and philosophy of mind — each followed by discussion prompts. There are no right answers. The goal is to develop your own informed position.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="what-language-actually-does">What language actually does</h1>
+<div class="note-box" data-title="Language is wireless brain activity transmission">
+<p>Your brain lives in a sealed vault of bone, bathed in fluid that is essentially seawater. It has no direct contact with the outside world. Everything you know about reality is <em>constructed</em> by your neural circuits from noisy sensor data — you are, in the most literal sense, a brain floating in a vat.</p>
+<p>Language breaks through that isolation. When you speak, you compress the electrical activity across your ~86 billion neurons into a handful of words per second — an extraordinarily lossy channel. The listener's brain decompresses those vibrations into neural activity of its own.</p>
+</div>
+<div class="definition-box" data-title="Neural coupling (Stephens et al., 2010)">
+<p><a href="https://doi.org/10.1073/pnas.1008662107"><strong>Stephens, Silbert &amp; Hasson (2010, <em>PNAS</em>)</strong></a> recorded brain activity from speakers and listeners during natural storytelling. Successful communication literally <strong>replicated the speaker's brain patterns in the listener's brain</strong>, with the listener's responses temporally coupled to — and sometimes <em>anticipating</em> — the speaker's.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="language-transfers-memories-between-brains">Language transfers memories between brains</h1>
+<div class="definition-box" data-title="Memory transfer through narrative (Zadbood et al., 2017)">
+<p><a href="https://doi.org/10.1093/cercor/bhw351"><strong>Zadbood et al. (2017, <em>Cerebral Cortex</em>)</strong></a> showed that when person A watches a movie and then <em>tells</em> person B the story, person B's brain activity during listening resembles person A's brain activity during <em>watching</em> — not during speaking. Language doesn't just transmit the speaker's verbal patterns. It reconstructs the speaker's <strong>perceptual experience</strong> in the listener's brain. You don't just hear a story — your brain <em>relives</em> it.</p>
+</div>
+<div class="note-box" data-title="It doesn't matter how the story arrives">
+<p><a href="https://doi.org/10.1523/JNEUROSCI.1580-13.2013"><strong>Regev, Honey &amp; Hasson (2013, <em>Journal of Neuroscience</em>)</strong></a>: The brain constructs the same <strong>amodal narrative representation</strong> whether the story is read, heard, or watched as a movie. The neural patterns are modality-independent. Language isn't special because of sound or letters — it's special because it <em>programs a specific neural state</em> regardless of input channel.</p>
+</div>
+<div class="tip-box" data-title="Discussion">
+<p>If language reconstructs the speaker's perceptual experience in the listener's brain, is there a meaningful difference between &quot;experiencing something&quot; and &quot;hearing a vivid enough description of it&quot;? Where does the line fall?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="llms-speak-the-brains-language">LLMs speak the brain's language</h1>
+<div class="definition-box" data-title="GPT-2 predicts brain activity (Goldstein et al., 2022)">
+<p><a href="https://doi.org/10.1038/s41593-022-01026-4"><strong>Goldstein et al. (2022, <em>Nature Neuroscience</em>)</strong></a>: GPT-2's next-word predictions correlate with neural activity recorded from electrodes implanted in human brains during natural speech comprehension. The model's internal states track the brain's processing in real time — not just at the level of semantics, but at the level of individual word surprisal.</p>
+</div>
+<div class="definition-box" data-title="LLMs bridge two brains (Zada et al., 2024)">
+<p><a href="https://doi.org/10.1016/j.neuron.2024.06.025"><strong>Zada et al. (2024, <em>Neuron</em>)</strong></a>: LLM embedding spaces provide a <strong>shared numerical coordinate system</strong> for tracking speaker–listener neural alignment during conversation. The degree to which both brains converge in LLM-space predicts communication success. The model didn't evolve to do this — it learned it from text alone.</p>
+</div>
+<div class="tip-box" data-title="Discussion">
+<p>A model trained on text alone — with no ears, no body, no social experience — learns representations that track <em>both</em> brains during real human conversation. What does this tell us about what information is actually <em>in</em> language?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="understanding-is-prediction">Understanding is prediction</h1>
+<div class="definition-box" data-title="Next-word prediction mirrors the brain (Schrimpf et al., 2021)">
+<p><a href="https://doi.org/10.1073/pnas.2105646118"><strong>Schrimpf et al. (2021, <em>PNAS</em>)</strong></a>: Across dozens of language models, the single best predictor of how well a model matches human brain activity is its <strong>next-word prediction accuracy</strong>. Models that are better at predicting what comes next are better at predicting the brain. The brain's core language mechanism appears to be a prediction engine.</p>
+</div>
+<div class="definition-box" data-title="Brains as prediction machines (Clark, 2013)">
+<p><a href="https://doi.org/10.1017/S0140525X12000477"><strong>Clark (2013, <em>Behavioral and Brain Sciences</em>)</strong></a>: The &quot;predictive processing&quot; framework proposes that the brain is fundamentally a <strong>prediction machine</strong> — it constantly generates expectations about incoming input and updates based on prediction errors. BERT's masked language modeling (predicting missing words from context) is a concrete implementation of exactly this principle.</p>
+</div>
+<div class="tip-box" data-title="Discussion">
+<p>If the brain's language system is fundamentally a prediction engine, and LLMs are trained on prediction, is their convergence surprising — or inevitable? Does training on prediction <em>guarantee</em> learning something about meaning?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="language-modeling-is-compression">Language modeling is compression</h1>
+<div class="definition-box" data-title="Intelligence as compression (Delétang et al., 2024)">
+<p><a href="https://arxiv.org/abs/2309.10668"><strong>Delétang et al. (2024, <em>ICLR</em>)</strong></a>: Language modeling and data compression are <strong>mathematically equivalent</strong> — a model that predicts the next token well can compress text efficiently, and vice versa. Better language models are literally better compressors. This isn't metaphor: Shannon's source coding theorem proves it.</p>
+</div>
+<div class="note-box" data-title="Language itself is optimized for compression">
+<p><a href="https://doi.org/10.1016/j.tics.2019.02.003"><strong>Gibson et al. (2019, <em>Trends in Cognitive Sciences</em>)</strong></a>: Languages across the world are structured to <strong>minimize effort</strong> while <strong>maximizing robustness to noise</strong> — exactly the engineering goals of a good compression codec. Frequent words are short. Ambiguity is tolerated where context resolves it. Redundancy is added where errors are costly. Human language is an evolved compression protocol.</p>
+</div>
+<div class="tip-box" data-title="Discussion">
+<p>If language is a compression protocol and LLMs are compression algorithms, then BERT's &quot;understanding&quot; of language is literally decompression. Does that make it <em>genuine</em> understanding, or is something still missing?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="does-prediction-equal-understanding">Does prediction equal understanding?</h1>
+<div class="definition-box" data-title="Understanding IS predictive compression (Queloz & Beckmann, 2025)">
+<p><a href="https://philarchive.org/rec/QUEWWC-2"><strong>Queloz &amp; Beckmann (2025, <em>PhilArchive</em>)</strong></a>: The traditional objection — &quot;LLMs are just doing statistics, not real understanding&quot; — collapses if understanding <em>is</em> predictive compression. A system that compresses language well must capture its structure, context dependencies, and meaning relations. The compression IS the understanding. There is no magical extra ingredient.</p>
+</div>
+<div class="note-box" data-title="The opposing view: language ≠ thought">
+<p><a href="https://doi.org/10.1038/s41586-024-07522-w"><strong>Fedorenko et al. (2024, <em>Nature</em>)</strong></a>: The brain's language network is <strong>anatomically and functionally distinct</strong> from reasoning and problem-solving circuits. People with severe language impairments can still reason, plan, and do math. Language is a <em>communication module</em> — an interface for transmitting thoughts, not the medium of thought itself. If so, LLMs may have automated the <em>transmission</em> without touching the <em>thinking</em>.</p>
+</div>
+<div class="tip-box" data-title="Discussion">
+<p>Queloz &amp; Beckmann say compression IS understanding. Fedorenko et al. say language is separate from thought. Can both be right? Could LLMs genuinely &quot;understand&quot; language while having no capacity for thought?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="what-llms-have-inside">What LLMs have inside</h1>
+<div class="definition-box" data-title="Structured concept maps, not just statistics (Anthropic, 2024)">
+<p><a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/"><strong>Anthropic (2024, <em>Transformer Circuits</em>)</strong></a>: Mechanistic interpretability research on Claude revealed that LLMs contain <strong>monosemantic features</strong> — individual internal components that respond to specific, interpretable concepts (e.g., &quot;Golden Gate Bridge,&quot; &quot;code bugs,&quot; &quot;deceptive reasoning&quot;). These aren't statistical ghosts. They are structured, hierarchical concept maps that the model builds from text alone.</p>
+</div>
+<div class="note-box" data-title="The grounding problem persists">
+<p><a href="https://openreview.net/forum?id=BZ5a1r-kVsf"><strong>LeCun (2022, <em>OpenReview</em>)</strong></a>: No matter how rich the internal representations, LLMs lack <strong>world models</strong> — they have never seen, touched, or navigated anything. Their concept of &quot;hot&quot; comes from patterns in text about heat, not from the experience of burning. Are monosemantic features genuine concepts, or high-fidelity maps of <em>other people's</em> concepts?</p>
+</div>
+<div class="tip-box" data-title="Discussion">
+<p>Anthropic shows LLMs build structured concept maps. LeCun argues they lack grounding. Is a map of other people's concepts a form of understanding? Consider: you have never been to Jupiter, but you have a concept of it — also built from other people's descriptions.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="are-llms-thinking-or-performing">Are LLMs &quot;thinking&quot; or &quot;performing&quot;?</h1>
+<div class="definition-box" data-title="LLMs as role-play engines (Shanahan, 2024)">
+<p><a href="https://doi.org/10.1145/3624724"><strong>Shanahan (2024, <em>Communications of the ACM</em>)</strong></a>: LLMs are best understood as <strong>&quot;engines for role-play&quot;</strong> — they simulate the behavior of a plausible speaker, drawing on the vast repertoire of speakers in training data. When GPT writes a poem, it's not expressing itself — it's simulating someone who would write that poem. The performance can be indistinguishable from the real thing.</p>
+</div>
+<div class="note-box" data-title="The attention schema theory">
+<p><a href="https://arxiv.org/abs/2411.00983"><strong>Farrell, Graziano et al. (2025, <em>arXiv</em>)</strong></a>: LLMs have <strong>attention</strong> (the mechanism) but may lack an <strong>attention schema</strong> — an internal model of their own attentional states. Humans don't just attend to things; we are <em>aware that we are attending</em>. LLMs process information without modeling the fact that they're processing it. They are &quot;looking&quot; but not &quot;aware of looking.&quot;</p>
+</div>
+<div class="tip-box" data-title="Discussion">
+<p>When you read a novel and feel sad for a character, are you &quot;really&quot; feeling sadness, or performing a simulation of sadness triggered by text? If it's genuine for you, what would make it not genuine for an LLM?</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="the-deep-questions">The deep questions</h1>
+<div class="important-box" data-title="Where we've arrived">
+<p>We started this unit asking what BERT does. We've now arrived at much deeper territory:</p>
+<ul>
+<li>Language is a lossy compression channel for neural states (Stephens, Zadbood)</li>
+<li>LLMs learn the same code that brains use for this compression (Goldstein, Zada)</li>
+<li>Better prediction = better brain alignment = possibly better &quot;understanding&quot; (Schrimpf, Clark)</li>
+<li>But language and thought are separable in the brain (Fedorenko)</li>
+<li>And LLMs may be performing rather than understanding (Shanahan)</li>
+</ul>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="what-language-actually-does">What language actually does</h1>
-<div class="note-box" data-title="Language is wireless brain activity transmission">
-<p>Your brain lives in your skull — a vat of bone filled with fluid that is essentially seawater. It can't directly connect with anything on the outside. Everything you know about the world comes through sensors that <em>construct</em> a representation of reality, not measure it (recall Lecture 1: language shapes what we literally <em>see</em>). In the most fundamental sense, we are brains floating in vats, always alone.</p>
-<p>Language breaks through that isolation. When you speak, you compress the electrical patterns across your hundred billion neurons into a few words per second — an extraordinarily lossy channel. The listener's brain unpacks those vibrations into neural activity of its own. <a href="https://doi.org/10.1073/pnas.1008662107">Stephens et al. (2010)</a> showed that successful communication literally <em>replicates the speaker's brain activity patterns in the listener's brain</em>, with the listener's responses temporally coupled to — and sometimes <em>anticipating</em> — the speaker's.</p>
+<h1 id="two-frameworks-one-question">Two frameworks, one question</h1>
+<div class="note-box" data-title="Framework A: understanding is compression">
+<p>LLMs compress language better than any prior system. Compression requires capturing structure, context, and meaning. Therefore LLMs understand language — not metaphorically, but literally. The &quot;statistics vs. understanding&quot; distinction is incoherent (Queloz &amp; Beckmann, 2025).</p>
 </div>
-<div class="tip-box" data-title="Why this reframes everything that follows">
-<p>If language is fundamentally about transmitting brain states through a lossy channel, then BERT's ability to capture those patterns isn't just an engineering trick — it's a compression algorithm that learned the same code brains use. The societal questions ahead aren't only about <em>technology</em>. They're about what happens when a machine can read and write in the language of human thought.</p>
+<div class="note-box" data-title="Framework B: language is just the interface">
+<p>Language is a communication module, not a medium for thought (Fedorenko et al., 2024). LLMs have mastered the interface without accessing what lies behind it. Their &quot;understanding&quot; is like a phone that perfectly transmits voices but has no idea what a conversation is.</p>
+</div>
+<div class="tip-box" data-title="Your task">
+<p>Which framework you adopt determines your answer to every question on the next slides. Choose one — and be prepared to defend it.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="when-fluency-is-free">When fluency is free</h1>
-<div class="warning-box" data-title="What happens to institutions built on the assumption that writing is hard?">
-<p>A student submits a well-structured essay on Shakespeare's use of irony in <em>Othello</em>. The prose is clear, the argument is coherent, the citations are accurate. The student spent 45 seconds generating it with an encoder-powered writing assistant. A classmate spent 8 hours writing a messier but more original essay. They receive the same grade.</p>
-</div>
-<div class="tip-box" data-title="Discussion: the purpose of writing">
-<p>The essay wasn't invented to produce text — it was invented to produce <em>thinking</em>. The struggle of organizing an argument, finding the right word, and revising a draft is where learning happens. If the output is indistinguishable but the process is absent, what did the student learn?</p>
-<p><strong>Consider:</strong> Is the problem that AI can write, or that we've been grading the <em>product</em> instead of the <em>process</em>? What would assessment look like if fluent text were free?</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="discussion">Discussion</h1>
+<div class="tip-box" data-title="Part 1: what language reveals about minds">
+<p><strong>1. The lossy channel.</strong> Every thought you've ever communicated has been brutally compressed — most of your neural state is <em>lost</em> in translation. Yet communication works. Does this mean the &quot;lost&quot; information was never essential? Or do we just tolerate massive information loss because we have no alternative?</p>
+<p><strong>2. The alignment puzzle.</strong> A model trained only on text, with no sensory experience, learns representations that track real-time human brain activity during conversation (Zada et al., 2024). How is this possible? What does it imply about how much of cognition is &quot;in&quot; language vs. &quot;beyond&quot; language?</p>
+<p><strong>3. The prediction test.</strong> If understanding is prediction (Queloz &amp; Beckmann), then a system that predicts language perfectly understands it perfectly. Do you accept this? If not, what <em>additional</em> capacity is needed — and can you define it without circular reasoning?</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="classification-as-labor">Classification as labor</h1>
-<div class="note-box" data-title="Encoders are replacing human judgment at scale">
-<p>Content moderation at Meta employs thousands of human reviewers who screen posts for violence, hate speech, and self-harm — work linked to <a href="https://www.theverge.com/2019/2/25/18229714/cognizant-facebook-content-moderator-interviews-trauma-working-conditions-arizona">PTSD and psychological trauma</a>. Fine-tuned RoBERTa models now handle billions of these classifications daily.</p>
-<p><strong>Medical coding:</strong> Assigning ICD-10 codes to clinical notes was a $16B/year industry employing 300,000+ human coders. BERT-based systems achieve 92% accuracy on common codes — not perfect, but faster and cheaper.</p>
-<p><strong>Legal discovery:</strong> Reviewing documents for relevance in litigation once required armies of junior lawyers billing $200/hour. Encoder models scan millions of documents in hours.</p>
-</div>
-<div class="tip-box" data-title="Discussion: the 'good enough' threshold">
-<p>When is 91% accuracy acceptable? When is it dangerous? Content moderation at 91% means ~340 million misclassified posts per day on a platform with 3.7B daily posts. Who is accountable for the errors — the model, the deployer, or the person who decided 91% was &quot;good enough&quot;?</p>
+<h1 id="discussion-continued">Discussion (continued)</h1>
+<div class="tip-box" data-title="Part 2: what brains reveal about LLMs">
+<p><strong>4. The separation problem.</strong> Language and thought are served by <em>different neural circuits</em> in the brain (Fedorenko et al., 2024). LLMs have only ever been trained on language. If language ≠ thought, what exactly have LLMs learned? Is it possible to master communication without any capacity for reasoning?</p>
+<p><strong>5. The experience question.</strong> Zadbood et al. (2017) showed that language reconstructs the speaker's <em>perceptual experience</em> in the listener. LLMs have no perceptual experiences to reconstruct. When an LLM generates vivid text about a sunset, is it transmitting a &quot;neural state&quot; it never had, or constructing a plausible description from statistical patterns? Is there a difference?</p>
+<p><strong>6. Your framework.</strong> State your position: are LLMs (a) genuinely understanding language, (b) performing an extremely convincing simulation of understanding, or (c) doing something we don't yet have the right words for? Defend your answer using at least two findings from today's lecture.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="measuring-harm-at-scale">Measuring harm at scale</h1>
-<div class="note-box" data-title="From anecdotes to methodology">
-<p>In Lecture 11, we saw that word embeddings encode bias (&quot;doctor&quot;→&quot;man,&quot; &quot;nurse&quot;→&quot;woman&quot;). In Lecture 18, we saw that BERT inherits these biases. But individual examples are <em>anecdotes</em>, not evidence. How do we measure bias <em>systematically</em>?</p>
-</div>
-<div class="definition-box" data-title="SAGED: systematic bias evaluation (Jiang et al., COLING 2025)">
-<p><a href="https://aclanthology.org/2025.coling-main.202.pdf">SAGED</a> proposes a five-step pipeline:</p>
-<ol>
-<li><strong>S</strong>elect social groups (e.g., gender, race, age)</li>
-<li><strong>A</strong>ssemble evaluation contexts (template sentences across domains)</li>
-<li><strong>G</strong>enerate model outputs for each group × context</li>
-<li><strong>E</strong>valuate using statistical tests (not cherry-picked examples)</li>
-<li><strong>D</strong>ocument findings with effect sizes and confidence intervals</li>
-</ol>
-</div>
-<div class="tip-box" data-title="Discussion: small bias × large scale">
-<p>Suppose an encoder-based hiring screener shows a 0.3% gender bias — barely detectable in any single decision. But the model processes 4 billion classifications per day. That's 12 million biased decisions <em>daily</em>. At what point does a &quot;negligible&quot; per-decision bias become a systemic problem?</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="is-language-a-statistical-phenomenon">Is language a statistical phenomenon?</h1>
-<div class="note-box" data-title="A question that wasn't possible before BERT">
-<p>In Lecture 1, we established that language and thought are separable. Earlier in this lecture, we saw that language is fundamentally a lossy compression channel for transmitting brain states — and that LLMs learn to capture those same patterns. But we've been treating brain-model convergence as a puzzle about <em>brains</em>. Here's the deeper question: what does it tell us about <em>language</em>?</p>
-</div>
-<div class="tip-box" data-title="Discussion: Universal Grammar vs Universal Statistics">
-<p>Chomsky argued that language requires an innate &quot;Universal Grammar&quot; — biological machinery that no statistical learner could replicate. But BERT learns syntactic structure, long-range dependencies, and even cross-linguistic patterns from raw text alone. <a href="https://arxiv.org/abs/2010.09885">ChemBERTa</a> learns molecular &quot;grammar&quot; from SMILES strings — a domain with no biological basis at all.</p>
-<p><strong>Two possibilities:</strong></p>
-<ol>
-<li>Language is <em>fundamentally statistical</em> — the patterns are so strong that any sufficiently powerful learner will converge on the same structure, no innate grammar required</li>
-<li>Language has <em>real structure</em> that both brains and models discover — the convergence tells us something about the structure of language itself, not just about the learners</li>
-</ol>
-<p><strong>Which do you find more compelling? What evidence would distinguish them?</strong></p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-next-decade">The next decade</h1>
-<div class="note-box" data-title="The encoder/decoder boundary is dissolving">
-<p>ModernBERT (2024) borrows RoPE and Flash Attention from decoders. <a href="https://arxiv.org/abs/2402.09906">GritLM</a> (2024) unifies embedding and generation in a single model. <a href="https://arxiv.org/abs/2503.02656">Gemma Encoder</a> (2025) converts a decoder into an encoder. The architectural distinction that defined NLP since 2018 — &quot;BERT for understanding, GPT for generation&quot; — is collapsing.</p>
-</div>
-<div class="tip-box" data-title="Discussion: what was BERT's real contribution?">
-<p>If the encoder/decoder distinction fades, what survives from the BERT era? Was BERT's insight the <em>architecture</em> (bidirectional attention), the <em>training objective</em> (masked language modeling), or the <em>paradigm</em> (pre-train, then fine-tune)? Which of these ideas will still matter in 2035?</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="deep-discussion">Deep discussion</h1>
-<div class="tip-box" data-title="Part 1: language, authorship, and accountability">
-<p><strong>1. Authorship.</strong> If a student uses an encoder-powered tool to check grammar, that's acceptable. If they use it to restructure their argument, that's gray. If they use it to generate the essay, that's plagiarism. <em>Where exactly is the line, and who draws it?</em></p>
-<p><strong>2. Accountability at scale.</strong> A hospital deploys a BERT model for ICD coding. It's 92% accurate — better than the average human coder (89%). A patient is harmed by a coding error. Is the hospital <em>more</em> liable (because they trusted a machine), <em>less</em> liable (because the machine is statistically better), or <em>equally</em> liable? Does the answer change if the error rate is 85%?</p>
-<p><strong>3. The convergence puzzle.</strong> Brains evolved over 300 million years. BERT was trained in 4 days. They converge on similar representations. Does this mean language processing has a <em>unique optimal solution</em>, or that both systems found <em>one of many</em> solutions that happens to look similar from the outside?</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="deep-discussion-continued">Deep discussion (continued)</h1>
-<div class="tip-box" data-title="Part 2: economics, meaning, and prediction">
-<p><strong>4. The &quot;good enough&quot; economy.</strong> A fine-tuned DistilBERT costs $0.01/M tokens. GPT-4 costs $30/M tokens but is more accurate. For content moderation, medical coding, and legal review, companies consistently choose the cheaper option. <em>What does it mean when &quot;good enough&quot; becomes the default for decisions that affect people's lives?</em></p>
-<p><strong>5. Language without intent.</strong> BERT produces representations that capture meaning, resolve ambiguity, and predict brain activity — but BERT has no <em>intent</em> to communicate. If meaning can exist without a speaker who means it, is communication defined by the <em>speaker's</em> intent or the <em>listener's</em> interpretation? (This is not a hypothetical — it affects how we regulate AI-generated content.)</p>
-<p><strong>6. Your prediction.</strong> It's 2036. What role do encoder models play? Are they everywhere and invisible (like TCP/IP)? Merged into hybrid architectures? Replaced entirely by something we haven't invented yet? <em>Justify your prediction with evidence from this course.</em></p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-75" data-theme="cdl-theme" lang="C" class="scale-75" style="--class:scale-75;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="further-reading">Further reading</h1>
 <div class="note-box" data-title="Further reading">
-<p><a href="https://aclanthology.org/N19-1423/"><strong>Devlin et al. (2019, <em>NAACL</em>)</strong></a> &quot;BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding&quot; — The original BERT paper.</p>
-<p><a href="https://doi.org/10.1038/s42003-022-03036-1"><strong>Caucheteux &amp; King (2022, <em>Communications Biology</em>)</strong></a> &quot;Brains and algorithms partially converge in natural language processing&quot; — Layer-specific brain-LLM alignment.</p>
+<p><a href="https://doi.org/10.1073/pnas.1008662107"><strong>Stephens, Silbert &amp; Hasson (2010, <em>PNAS</em>)</strong></a> &quot;Speaker–listener neural coupling underlies successful communication&quot; — Language replicates neural states across brains.</p>
+<p><a href="https://doi.org/10.1093/cercor/bhw351"><strong>Zadbood et al. (2017, <em>Cerebral Cortex</em>)</strong></a> &quot;How we transmit memories to other brains&quot; — Narrative reconstructs perceptual experience in the listener.</p>
+<p><a href="https://doi.org/10.1038/s41593-022-01026-4"><strong>Goldstein et al. (2022, <em>Nature Neuroscience</em>)</strong></a> &quot;Shared computational principles for language processing in humans and deep language models&quot; — GPT-2 tracks real-time brain activity during speech.</p>
+<p><a href="https://doi.org/10.1016/j.neuron.2024.06.025"><strong>Zada et al. (2024, <em>Neuron</em>)</strong></a> &quot;A shared model-based linguistic space for transmitting our thoughts from brain to brain&quot; — LLM embeddings bridge speaker and listener brains.</p>
+<p><a href="https://doi.org/10.1073/pnas.2105646118"><strong>Schrimpf et al. (2021, <em>PNAS</em>)</strong></a> &quot;The neural architecture of language&quot; — Next-word prediction is the best predictor of brain alignment.</p>
+<p><a href="https://doi.org/10.1017/S0140525X12000477"><strong>Clark (2013, <em>BBS</em>)</strong></a> &quot;Whatever next? Predictive brains, situated agents, and the future of cognitive science&quot; — The brain as a prediction machine.</p>
+<p><a href="https://arxiv.org/abs/2309.10668"><strong>Delétang et al. (2024, <em>ICLR</em>)</strong></a> &quot;Language modeling is compression&quot; — Formal proof that prediction and compression are equivalent.</p>
+<p><a href="https://doi.org/10.1016/j.tics.2019.02.003"><strong>Gibson et al. (2019, <em>TiCS</em>)</strong></a> &quot;How efficiency shapes human language&quot; — Languages optimize for compression and noise robustness.</p>
+<p><a href="https://philarchive.org/rec/QUEWWC-2"><strong>Queloz &amp; Beckmann (2025, <em>PhilArchive</em>)</strong></a> &quot;What was ChatGPT's training really about?&quot; — Understanding IS predictive compression.</p>
+<p><a href="https://doi.org/10.1038/s41586-024-07522-w"><strong>Fedorenko et al. (2024, <em>Nature</em>)</strong></a> &quot;Language is primarily a tool for communication rather than thought&quot; — Language and thought are neurally separable.</p>
+<p><a href="https://doi.org/10.1145/3624724"><strong>Shanahan (2024, <em>CACM</em>)</strong></a> &quot;Talking about large language models&quot; — LLMs as role-play engines.</p>
+<p><a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/"><strong>Anthropic (2024)</strong></a> &quot;Scaling monosemanticity&quot; — LLMs build structured, interpretable concept maps.</p>
+<p><a href="https://doi.org/10.1038/s42003-022-03036-1"><strong>Caucheteux &amp; King (2022, <em>Communications Biology</em>)</strong></a> &quot;Brains and algorithms partially converge&quot; — Layer-specific brain-LLM alignment.</p>
 <p><a href="https://openreview.net/forum?id=PgIlCCNxdB"><strong>Aw et al. (2026, <em>ICLR</em>)</strong></a> &quot;The Mind's Transformer&quot; — Evidence that the brain implements Transformer-like computation.</p>
-<p><a href="https://doi.org/10.1038/s43588-024-00752-6"><strong>Gao et al. (2025, <em>Nature Computational Science</em>)</strong></a> &quot;Brain-like artificial neurons in LLMs&quot; — Emergent brain-like units in language models.</p>
-<p><a href="https://aclanthology.org/2025.coling-main.202.pdf"><strong>Jiang et al. (2025, <em>COLING</em>)</strong></a> &quot;SAGED&quot; — Systematic bias evaluation pipeline for language models.</p>
-<p><a href="https://arxiv.org/abs/1908.10084"><strong>Reimers &amp; Gurevych (2019, <em>EMNLP</em>)</strong></a> &quot;Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks&quot; — Enabled practical semantic search.</p>
-<p><a href="https://doi.org/10.1073/pnas.1008662107"><strong>Stephens, Silbert &amp; Hasson (2010, <em>PNAS</em>)</strong></a> &quot;Speaker–listener neural coupling underlies successful communication&quot; — Language as brain-to-brain transmission.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
