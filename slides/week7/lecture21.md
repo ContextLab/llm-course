@@ -6,8 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 21: GPT architecture
-
+# Lecture 21: Diffusion models
 ### PSYC 51.17: Models of language and communication
 
 Jeremy R. Manning
@@ -20,11 +19,11 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. Explain the **generative pre-training** paradigm and why it was revolutionary
-2. Evaluate the **ethical implications** of GPT-1's training data (BooksCorpus)
-3. Distinguish between **pre-training** and **fine-tuning** stages
-4. Compare GPT's **autoregressive** approach with BERT's **bidirectional** approach
-5. Identify how the decoder stack has evolved from GPT-1 to open-weight LLMs (2025)
+1. Explain the **forward diffusion process** and how it progressively destroys information
+2. Derive why the **reverse process** requires a learned neural network
+3. Describe the **U-Net architecture** for noise prediction with timestep conditioning
+4. Understand the **simplified DDPM training objective** and why it works
+5. Compare **DDPM** and **DDIM** sampling strategies and their tradeoffs
 
 </div>
 
@@ -47,342 +46,344 @@ Winter 2026
 
 ---
 
-# The generative pre-training paradigm
+# Why diffusion models?
 
-<div class="note-box" data-title="Radford et al. (2018): 'Improving Language Understanding by Generative Pre-Training'">
+<div class="definition-box" data-title="A different approach to generation">
 
-GPT introduced a two-stage approach that changed NLP forever:
-
-1. **Pre-train** on massive unlabeled text (unsupervised)
-2. **Fine-tune** on specific downstream tasks (supervised)
+So far in this course, we have focused on **autoregressive** models — transformers that generate one token at a time, left to right. Diffusion models take a fundamentally different approach: they generate **everything at once** through iterative refinement.
 
 </div>
 
-<div class="important-box" data-title="Why this was revolutionary">
+<div class="tip-box" data-title="The core idea">
 
-- **Before GPT**: Train task-specific models from scratch, needing large labeled datasets for each task
-- **After GPT**: Learn general language representations once, then adapt cheaply to any task
-- This is **transfer learning** for NLP — the same idea that transformed computer vision with ImageNet
+What if instead of building an output one piece at a time, we started with **pure noise** and gradually refined it into something meaningful? This is the intuition behind diffusion models — and it has produced some of the most stunning generative AI results to date (DALL-E, Stable Diffusion, Sora).
 
 </div>
 
 ---
 
-<!-- _class: scale-90 -->
+# The thermodynamic inspiration
 
-# GPT-1 specifications
+<div class="definition-box" data-title="Sohl-Dickstein et al. (2015)">
 
-<div class="note-box" data-title="Model architecture">
+Diffusion models are inspired by **non-equilibrium thermodynamics**. Imagine dropping a drop of ink into water:
+- **Forward process**: The ink disperses until the water is uniformly colored (order → disorder)
+- **Reverse process**: If we could reverse time, the uniform color would reconcentrate into the original drop
 
-| Component | Value |
-|-----------|-------|
-| Transformer layers | 12 |
-| Hidden size (d_model) | 768 |
-| Attention heads | 12 |
-| Max sequence length | 512 tokens |
-| Vocabulary size | 40,000 (BPE) |
-| Feed-forward size | 3,072 (4 × 768) |
-| Total parameters | ~117 million |
-
-</div>
-
-<div class="note-box" data-title="Training details">
-
-| Detail | Value |
-|--------|-------|
-| Training data | BooksCorpus (~7,000 books) |
-| Training tokens | ~5 billion |
-| Optimizer | Adam (lr = 2.5e-4) |
-| Training objective | Next token prediction (causal LM) |
+The key insight from [Sohl-Dickstein et al. (2015)](https://arxiv.org/abs/1503.03585): if the forward process is simple enough (small Gaussian noise at each step), then the reverse process is **also approximately Gaussian** — and we can learn it with a neural network.
 
 </div>
 
 ---
 
-# The BooksCorpus controversy
+# The forward diffusion process
 
-<div class="warning-box" data-title="Where did GPT-1's training data come from?">
+<div class="definition-box" data-title="Progressively adding noise">
 
-GPT-1 was trained on **BooksCorpus** — approximately 7,000 unpublished books scraped from Smashwords.com, a self-publishing platform. The authors were never asked for consent, and the dataset was **taken offline in 2020** after complaints from writers who discovered their work had been used.
+Given a clean data sample $\mathbf{x}_0$, the forward process adds a small amount of Gaussian noise at each timestep $t = 1, 2, \ldots, T$:
 
-</div>
+$$q(\mathbf{x}_t \mid \mathbf{x}_{t-1}) = \mathcal{N}(\mathbf{x}_t;\; \sqrt{1 - \beta_t}\,\mathbf{x}_{t-1},\; \beta_t \mathbf{I})$$
 
-<div class="tip-box" data-title="Questions to consider">
-
-BooksCorpus was just the beginning. Later datasets — **Books3** (196,000 books), **The Pile**, **Common Crawl** — sparked lawsuits and a global debate about data rights. If your unpublished novel helped train GPT-1, should you have been informed? Compensated? Given the right to opt out?
-
-This tension between **data access** (enabling research) and **creator rights** (protecting authors) remains unresolved in 2026.
+where $\beta_t$ is a small positive constant (the **noise schedule**) that controls how much noise is added at each step.
 
 </div>
 
----
+<div class="note-box" data-title="What this means">
 
-# Pre-training objective
-
-<div class="definition-box" data-title="Next token prediction">
-
-Maximize the likelihood of each token given all preceding tokens:
-
-$$\mathcal{L}_{\text{pre-train}} = \sum_{i=1}^{N} \log P(t_i \mid t_1, t_2, \ldots, t_{i-1}; \Theta)$$
-
-This is simply **next token prediction** over a large corpus. No labels needed. The causal attention mask (Lecture 15) ensures each token only attends to previous positions, enabling parallel training over all positions simultaneously.
+At each step, we slightly shrink the signal ($\sqrt{1 - \beta_t}$) and add a small amount of noise ($\beta_t$). After enough steps ($T \approx 1000$), the original data is completely destroyed — $\mathbf{x}_T$ is indistinguishable from pure Gaussian noise.
 
 </div>
 
 ---
 
-# Stage 2: Fine-tuning
+# The forward process
 
-<div class="definition-box" data-title="Adapting to downstream tasks">
-
-After pre-training, GPT is adapted to specific tasks by:
-
-1. **Reformatting** task inputs with special delimiter tokens
-2. **Adding** a small classification head (linear layer) on top
-3. **Training** with both task loss and a language modeling auxiliary loss
-
-$$\mathcal{L}_{\text{fine-tune}} = \mathcal{L}_{\text{task}} + \lambda \cdot \mathcal{L}_{\text{LM}}$$
-
-The auxiliary LM loss ($\lambda = 0.5$) improves generalization and speeds convergence.
-
-</div>
-
-<div class="note-box" data-title="Task formatting">
-
-All tasks become text completion: `[START] text [DELIM]` → predict label. Classification, entailment, similarity, and QA all use the same architecture with different input formats. This unifying insight — every NLP task as text completion — is why pre-training transfers so effectively.
-
-</div>
+![height:500](animations/gifs/forwarddiffusion.gif)
 
 ---
-<!-- _class: scale-85 -->
 
-# Fine-tuning example: sentiment classification
+# Noise schedules
 
-<div class="example-box" data-title="Classifying movie reviews">
+<div class="definition-box" data-title="How fast should we add noise?">
 
-```python
-# Format input for GPT
-text = "This movie was absolutely fantastic!"
-formatted = f"[START] {text} [DELIM]"
+The noise schedule $\{\beta_1, \beta_2, \ldots, \beta_T\}$ controls the rate of information destruction:
 
-# Tokenize and pass through GPT
-token_ids = tokenizer.encode(formatted)
-hidden_states = gpt_model(token_ids)  # (1, seq_len, 768)
+- **Linear schedule** ([Ho et al., 2020](https://arxiv.org/abs/2006.11239)): $\beta_t$ increases linearly from $\beta_1 = 10^{-4}$ to $\beta_T = 0.02$
+- **Cosine schedule** ([Nichol & Dhariwal, 2021](https://arxiv.org/abs/2102.09672)): Designed so that $\bar\alpha_t$ follows a cosine curve, preserving more signal at early timesteps
 
-# Take hidden state at the last (DELIM) position
-final_hidden = hidden_states[0, -1, :]  # (768,)
+</div>
 
-# Pass through classification head
-classification_head = nn.Linear(768, 2)  # 2 classes
-logits = classification_head(final_hidden)  # [pos_score, neg_score]
+<div class="important-box" data-title="Why the schedule matters">
 
-# Compute loss
-loss = cross_entropy(logits, label_id)  # label_id = 0 (positive)
-```
+A linear schedule destroys too much information too quickly in the early steps. The cosine schedule preserves fine details longer, leading to better sample quality — especially for high-resolution images.
 
 </div>
 
 ---
 
-# GPT-1 results
+# Noise schedules
 
-<div class="note-box" data-title="Performance on standard benchmarks">
+![height:500](animations/gifs/noiseschedule.gif)
 
-| Task | Previous SOTA | GPT-1 |
-|------|---------------|-------|
-| Question answering | 86.7 | **88.1** |
-| Semantic similarity | 85.0 | **85.8** |
-| Text classification | 93.0 | **94.2** |
-| Natural language inference | 80.6 | **82.1** |
+---
 
-GPT-1 achieved state-of-the-art on **9 out of 12** benchmark tasks.
+# The closed-form shortcut
+
+<div class="definition-box" data-title="Jumping directly to any timestep">
+
+We don't need to apply noise one step at a time. Define $\alpha_t = 1 - \beta_t$ and $\bar\alpha_t = \prod_{s=1}^{t} \alpha_s$. Then we can jump directly from $\mathbf{x}_0$ to any $\mathbf{x}_t$:
+
+$$q(\mathbf{x}_t \mid \mathbf{x}_0) = \mathcal{N}(\mathbf{x}_t;\; \sqrt{\bar\alpha_t}\,\mathbf{x}_0,\; (1 - \bar\alpha_t)\mathbf{I})$$
 
 </div>
 
-<div class="important-box" data-title="The key finding">
+<div class="example-box" data-title="Reparameterization trick">
 
-The largest improvements came on tasks with **less training data**. Pre-training provided a strong prior that compensated for limited labeled examples — exactly the promise of transfer learning.
+In practice, we sample $\mathbf{x}_t$ using:
+
+$$\mathbf{x}_t = \sqrt{\bar\alpha_t}\,\mathbf{x}_0 + \sqrt{1 - \bar\alpha_t}\,\boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$$
+
+This is essential for training — we can generate any noisy version of $\mathbf{x}_0$ in a single step, without iterating through all $t$ steps.
 
 </div>
 
 ---
 
-# Zero-shot and few-shot learning
+# The reverse process
 
-<div class="definition-box" data-title="Learning without (much) fine-tuning">
+<div class="definition-box" data-title="Learning to denoise">
 
-- **Zero-shot**: No task-specific examples. The model must generalize purely from its pre-training.
-- **Few-shot**: A small number of examples (1–10) provided as context in the prompt.
-- **Fine-tuning**: Full supervised training on a task-specific dataset.
+The reverse process starts from noise $\mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ and gradually removes noise to recover $\mathbf{x}_0$:
 
-</div>
+$$p_\theta(\mathbf{x}_{t-1} \mid \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1};\; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t),\; \sigma_t^2 \mathbf{I})$$
 
-<div class="warning-box" data-title="GPT-1's limitation">
-
-GPT-1's zero-shot performance was **weak**. The model had learned rich language representations but struggled to apply them without explicit task formatting. This motivated the development of GPT-2 and GPT-3, which aimed to make models that could perform tasks *without* fine-tuning.
+The mean $\boldsymbol{\mu}_\theta$ is parameterized by a neural network that takes the noisy input $\mathbf{x}_t$ and the timestep $t$, and predicts how to denoise it.
 
 </div>
 
----
+<div class="important-box" data-title="Why we need a neural network">
 
-# Weight tying
-
-<div class="definition-box" data-title="Sharing parameters between input and output layers">
-
-Modern GPT models share weights between the **token embedding** layer and the **output (lm_head)** layer ([Press & Wolf, 2017](https://arxiv.org/abs/1608.09916)):
-
-```python
-self.token_embed = nn.Embedding(vocab_size, d_model)
-self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
-self.lm_head.weight = self.token_embed.weight  # Tied!
-```
-
-</div>
-
-<div class="note-box" data-title="Why this works">
-
-Both layers map between **token space** and **embedding space** — just in opposite directions. The embedding layer converts token IDs → vectors; the lm_head converts vectors → token probabilities. Tying them forces consistent representations and **saves ~20% of total parameters** in vocabulary-heavy models. Used in GPT-2, LLaMA, and most modern LLMs.
+While the forward process has a known, fixed form (just add Gaussian noise), the reverse process requires knowing $q(\mathbf{x}_{t-1} \mid \mathbf{x}_t)$ — which depends on the **entire data distribution**. Since we don't know this distribution analytically, we approximate it with a learned model $p_\theta$.
 
 </div>
 
 ---
 
-# The modern decoder stack (2024)
+# The reverse process
 
-<div class="note-box" data-title="Every component has been upgraded since GPT-1">
+![height:500](animations/gifs/reverseprocess.gif)
 
-| Component | GPT-1 (2018) | Modern LLMs (2024) | Why the change |
-|-----------|-------------|-------------------|---------------|
-| Normalization | [LayerNorm](https://arxiv.org/abs/1607.06450) | [RMSNorm](https://arxiv.org/abs/1910.07467) | 10–15% faster, no mean computation |
-| Position encoding | Learned absolute | [RoPE](https://arxiv.org/abs/2104.09864) | Extrapolates to unseen lengths |
-| Activation | GELU | [SwiGLU](https://arxiv.org/abs/2002.05202) | ~1% better across benchmarks |
-| Attention | Multi-head (MHA) | [Grouped-query (GQA)](https://arxiv.org/abs/2305.13245) | 2× faster inference, same quality |
+---
+
+# U-Net: the noise prediction network
+
+<div class="definition-box" data-title="Architecture for predicting noise">
+
+The neural network $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$ that predicts noise uses a **U-Net** architecture ([Ronneberger et al., 2015](https://arxiv.org/abs/1505.04597)):
+
+- **Encoder** (downsampling path): Progressively compresses the spatial dimensions while increasing channels
+- **Bottleneck**: Processes the most compressed representation
+- **Decoder** (upsampling path): Progressively restores spatial resolution
+- **Skip connections**: Direct connections from encoder to decoder at each resolution level, preserving fine-grained details
 
 </div>
 
-<div class="important-box" data-title="The takeaway">
+<div class="note-box" data-title="Why U-Net?">
 
-The *conceptual* architecture is the same: token embeddings → causal attention → FFN → output head. But every piece has been systematically optimized. Modern LLMs like LLaMA 3, Gemma 2, and Mistral all use this upgraded stack.
+The U-shape is ideal for denoising because it captures both **global structure** (via the bottleneck) and **local details** (via skip connections). The network needs both to effectively remove noise while preserving meaningful content.
 
 </div>
 
 ---
 
-# Open-weight decoders: the LLaMA revolution
+# U-Net architecture
 
-<div class="definition-box" data-title="From closed to open">
+![height:500](animations/gifs/unetarchitecture.gif)
 
-For years, cutting-edge decoders were **closed** — GPT-3 and GPT-4 were API-only. Meta's [LLaMA](https://arxiv.org/abs/2302.13971) (Feb 2023) changed everything by releasing model weights publicly.
+---
 
-| Model | Date | Sizes | Key contribution |
-|-------|------|-------|-----------------|
-| LLaMA 1 | Feb 2023 | 7–65B | Leaked, then open. Proved open models competitive. |
-| LLaMA 2 | Jul 2023 | 7–70B | Official open release with commercial license |
-| Mistral 7B | Dec 2023 | 7B | Small open model matching LLaMA 2 13B |
-| LLaMA 3 | Apr 2024 | 8–405B | Matched GPT-4 class on many benchmarks |
-| LLaMA 4 | Apr 2025 | MoE | Mixture-of-experts architecture |
+# Timestep conditioning
 
-</div>
+<div class="definition-box" data-title="Telling the network what noise level to expect">
 
-<div class="important-box" data-title="Impact">
+The same U-Net must denoise at *every* timestep — from nearly clean ($t = 1$) to pure noise ($t = T$). It needs to know which timestep it's working at. The timestep $t$ is converted to a vector using **sinusoidal embeddings** (the same idea as positional embeddings in transformers, Lecture 15):
 
-Open weights enabled academic research, spawned thousands of fine-tuned variants, and **democratized decoder research**. Before LLaMA, only a few labs could study frontier models. After LLaMA, anyone with a GPU could.
+$$\text{emb}(t) = [\sin(t / 10000^{0/d}),\; \cos(t / 10000^{0/d}),\; \sin(t / 10000^{2/d}),\; \cos(t / 10000^{2/d}),\; \ldots]$$
+
+This embedding is then added to or concatenated with the intermediate features inside the U-Net.
 
 </div>
 
 ---
 
-# Test-time compute and inference scaling
+# Timestep embedding
 
-<div class="definition-box" data-title="A new scaling paradigm">
-
-Traditional scaling: more parameters + more training data. **Inference scaling**: spend more compute at *test time* by letting the model "think longer."
-
-</div>
-
-<div class="note-box" data-title="How it works">
-
-| Approach | Example | Mechanism |
-|----------|---------|-----------|
-| **Chain-of-thought** | GPT-4, Claude | Prompting the model to reason step-by-step |
-| **Thinking tokens** | OpenAI o1/o3 | Model generates internal reasoning traces before answering |
-| **Open reasoning** | DeepSeek-R1 | Open-source reasoning model with visible thinking process |
-| **Search + verify** | AlphaProof | Generate candidates, verify with external tools |
-
-</div>
-
-<div class="tip-box" data-title="Why this matters">
-
-Inference scaling means you don't need to retrain a model to make it better at hard problems — just give it more time to think. This shifts the cost curve: training is fixed, but inference quality scales with compute budget. We'll explore reasoning models in detail in Lecture 22.
-
-</div>
+![height:500](animations/gifs/timestepembedding.gif)
 
 ---
 <!-- _class: scale-90 -->
 
-# Multi-token prediction
+# The training objective
 
-<div class="definition-box" data-title="Predicting more than one token at a time (Meta/FAIR, 2024)">
+<div class="definition-box" data-title="Ho et al. (2020): predict the noise">
 
-Standard GPT predicts one token ahead. [Multi-token prediction](https://arxiv.org/abs/2404.19737) trains the model to predict the **next 2–4 tokens simultaneously** using independent output heads sharing the same backbone.
+Instead of predicting $\mathbf{x}_0$ or $\boldsymbol{\mu}_\theta$ directly, [Ho et al. (2020)](https://arxiv.org/abs/2006.11239) found it more effective to train the network to predict **the noise that was added**:
 
-</div>
-
-<div class="note-box" data-title="Why this matters">
-
-| Benefit | Explanation |
-|---------|-------------|
-| **Better representations** | Forces the model to plan ahead, not just match local patterns |
-| **Faster inference** | Can decode 2–4× faster with speculative decoding |
-| **Stronger coding** | 12% improvement on code generation (HumanEval), where planning matters most |
+1. Sample a clean image $\mathbf{x}_0$ from the training data
+2. Sample a random timestep $t \sim \text{Uniform}(1, T)$
+3. Sample noise $\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$
+4. Create the noisy version: $\mathbf{x}_t = \sqrt{\bar\alpha_t}\,\mathbf{x}_0 + \sqrt{1 - \bar\alpha_t}\,\boldsymbol{\epsilon}$
+5. Train the network to predict $\boldsymbol{\epsilon}$ from $\mathbf{x}_t$ and $t$
 
 </div>
 
-<div class="tip-box" data-title="The connection to how humans process language">
+<div class="important-box" data-title="The key insight">
 
-Humans don't process language one word at a time — we predict upcoming words *in chunks*. The N400 response (Lecture 18) peaks ~400ms before a surprising word appears, suggesting multi-word predictive processing. Multi-token prediction may be a step toward more brain-like language models.
+The network doesn't learn to generate images — it learns to **identify and remove noise**. Generation happens by applying this denoising repeatedly, starting from pure noise.
 
 </div>
 
 ---
 
-# Hybrid architectures: attention meets state-space models
+# The training loop
 
-<div class="definition-box" data-title="Not everything needs to be a transformer">
+![height:500](animations/gifs/trainingobjective.gif)
 
-[Jamba](https://arxiv.org/abs/2403.19887) (AI21, 2024) interleaves Transformer attention layers with [Mamba](https://arxiv.org/abs/2312.00752) state-space layers:
+---
 
-- **Attention layers**: Good at precise retrieval ("what was the third item?")
-- **Mamba layers**: Good at long-range compression and fast inference ($O(n)$ vs $O(n^2)$)
-- **Hybrid**: Gets the best of both — 256K context at 3× the throughput of pure Transformers
+# The simplified loss
+
+<div class="definition-box" data-title="From ELBO to MSE">
+
+The full variational lower bound (ELBO) for diffusion models involves a sum of KL divergences across all timesteps. [Ho et al. (2020)](https://arxiv.org/abs/2006.11239) showed that a much simpler loss works just as well:
+
+$$\mathcal{L}_{\text{simple}} = \mathbb{E}_{t,\, \mathbf{x}_0,\, \boldsymbol{\epsilon}} \left[ \left\| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \right\|^2 \right]$$
+
+This is just **mean squared error** between the true noise $\boldsymbol{\epsilon}$ and the predicted noise $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$.
 
 </div>
 
-<div class="tip-box" data-title="Questions to consider">
+<div class="tip-box" data-title="Why simplicity wins">
 
-The Transformer has dominated since 2017. But Jamba, Mamba-2, and RWKV suggest that the optimal architecture may be a *hybrid*. What does it mean that different computational primitives (attention vs. recurrence) excel at different aspects of language?
+Dropping the weighting terms from the full ELBO loss actually *improves* sample quality. The uniform weighting across timesteps forces the network to denoise well at every noise level, rather than focusing on easy (low-noise) timesteps.
 
 </div>
 
 ---
 
-# Limitations of GPT-1 and the path forward
+# The simplified loss
 
-<div class="warning-box" data-title="What GPT-1 could not do well">
+![height:500](animations/gifs/simplifiedloss.gif)
 
-- **Weak zero-shot performance**: Required fine-tuning for each new task
-- **Small model**: 117M parameters (small by modern standards)
-- **Limited data**: Trained on ~5B tokens from BooksCorpus only
-- **Short context**: Maximum sequence length of 512 tokens
-- **Hallucinations**: Confidently stated incorrect facts
+---
+
+# Score matching perspective
+
+<div class="definition-box" data-title="Song & Ermon (2019)">
+
+An alternative view comes from **score matching** ([Song & Ermon, 2019](https://arxiv.org/abs/1907.05600)). The **score function** is the gradient of the log probability density:
+
+$$\mathbf{s}(\mathbf{x}) = \nabla_{\mathbf{x}} \log p(\mathbf{x})$$
+
+This vector field points "uphill" toward regions of high probability. If we know the score function, we can generate samples by starting from noise and following the gradient.
 
 </div>
 
-<div class="note-box" data-title="The path forward">
+<div class="note-box" data-title="Connection to DDPM">
 
-Each limitation suggested a clear direction: bigger models, more data, longer contexts, better training. GPT-2 and GPT-3 would systematically address these limitations through **scale** — but as we'll see in the next lecture, scale alone brings its own surprises and controversies.
+It turns out that predicting noise $\boldsymbol{\epsilon}$ is equivalent to estimating the score function: $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \approx -\sqrt{1 - \bar\alpha_t}\;\nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t)$. The DDPM and score matching perspectives are mathematically unified by [Song et al. (2021)](https://arxiv.org/abs/2011.13456).
 
 </div>
+
+---
+
+# Score matching
+
+![height:500](animations/gifs/scorematching.gif)
+
+---
+<!-- _class: scale-90 -->
+
+# DDPM sampling algorithm
+
+<div class="definition-box" data-title="Generating new samples">
+
+To generate a new sample, we run the learned reverse process:
+
+1. Sample $\mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$
+2. For $t = T, T-1, \ldots, 1$:
+   - Predict noise: $\hat{\boldsymbol{\epsilon}} = \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$
+   - Compute: $\mathbf{x}_{t-1} = \frac{1}{\sqrt{\alpha_t}} \left( \mathbf{x}_t - \frac{\beta_t}{\sqrt{1 - \bar\alpha_t}}\,\hat{\boldsymbol{\epsilon}} \right) + \sigma_t \mathbf{z}$
+   - where $\mathbf{z} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ for $t > 1$, else $\mathbf{z} = \mathbf{0}$
+3. Return $\mathbf{x}_0$
+
+</div>
+
+<div class="warning-box" data-title="The cost of quality">
+
+This requires **1000 forward passes** through the neural network (one per timestep). At ~100ms per pass on a GPU, that's ~100 seconds per image. This motivates faster sampling methods like DDIM.
+
+</div>
+
+---
+
+# The sampling process
+
+![height:500](animations/gifs/samplingprocess.gif)
+
+---
+
+# DDIM: faster sampling
+
+<div class="definition-box" data-title="Song et al. (2021): Denoising Diffusion Implicit Models">
+
+[DDIM](https://arxiv.org/abs/2010.02502) makes sampling **deterministic** and allows **skipping steps**:
+
+- Instead of 1000 steps, use a subsequence (e.g., 50 evenly spaced steps)
+- The update rule becomes deterministic (no random noise $\mathbf{z}$)
+- Same trained model — just a different sampling procedure
+
+</div>
+
+<div class="note-box" data-title="Comparison">
+
+| Property | DDPM | DDIM |
+|----------|------|------|
+| Steps needed | ~1000 | ~20–50 |
+| Stochastic? | Yes (random noise added) | No (deterministic) |
+| Sample quality | Excellent | Slightly lower |
+| Speed | ~100 seconds | ~2–5 seconds |
+| Same model? | Yes | **Yes** — no retraining needed |
+
+</div>
+
+---
+
+# Diffusion vs autoregressive generation
+
+<div class="note-box" data-title="Two paradigms for generation">
+
+| | Autoregressive (Transformer) | Diffusion |
+|---|---|---|
+| Generation order | Left to right, one token at a time | All positions simultaneously, refining iteratively |
+| Native domain | Discrete sequences (text) | Continuous signals (images, audio) |
+| Steps to generate | $N$ (sequence length) | $T$ (denoising steps, typically 20–1000) |
+| Key operation | Next-token prediction | Noise prediction |
+| Training signal | Cross-entropy loss | MSE loss (noise prediction) |
+
+</div>
+
+<div class="tip-box" data-title="Not competitors — complements">
+
+Autoregressive models excel at **sequential, discrete** data (language). Diffusion models excel at **continuous, spatial** data (images, video, audio). As we'll see in Lecture 23, combining them yields the most powerful generative systems.
+
+</div>
+
+---
+
+# Diffusion vs autoregressive generation
+
+![height:500](animations/gifs/diffusionvstransformer.gif)
 
 ---
 
@@ -390,13 +391,13 @@ Each limitation suggested a clear direction: bigger models, more data, longer co
 
 <div class="tip-box" data-title="Questions to consider">
 
-1. **Training data ethics:** GPT-1 trained on books scraped without consent; later models used even larger datasets with similar issues. Where should the line be drawn between research progress and creator rights? Is opt-out sufficient, or should training require opt-in?
+1. **Iterative refinement**: Humans often create by revising drafts — a rough sketch becomes a polished drawing. Is diffusion's iterative denoising a better model of human creativity than autoregressive generation?
 
-2. **Open vs closed:** LLaMA democratized decoder research but also enabled misuse (fine-tuning for harmful purposes). Is openness a net positive? Should frontier models be open?
+2. **The noise perspective**: Diffusion models learn by predicting noise. Transformers learn by predicting the next token. Are these fundamentally different, or two views of the same underlying process?
 
-3. **The generation advantage:** GPT can *generate* text, BERT cannot. Is generation a prerequisite for understanding? Can you truly understand language if you can't produce it?
+3. **Information destruction**: The forward process deliberately destroys all information. Why does this make the reverse process *easier* to learn, rather than harder?
 
-4. **Inference scaling:** If models can "think harder" by spending more compute, does this change what we mean by intelligence? Is a model that takes 10 minutes to solve a math problem "smarter" than one that fails instantly?
+4. **Computational cost**: DDPM requires ~1000 neural network evaluations per sample. Is there a theoretical lower bound on how many steps are needed, or will we eventually generate in a single step?
 
 </div>
 
@@ -407,17 +408,15 @@ Each limitation suggested a clear direction: bigger models, more data, longer co
 
 <div class="note-box" data-title="Further reading">
 
-[**Radford et al. (2018)**](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf) "Improving Language Understanding by Generative Pre-Training" — The original GPT paper.
+[**Ho, Jain & Abbeel (2020, *NeurIPS*)**](https://arxiv.org/abs/2006.11239) "Denoising Diffusion Probabilistic Models" — The paper that made diffusion models practical. Clean formulation, excellent results.
 
-[**Radford et al. (2019)**](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) "Language Models are Unsupervised Multitask Learners" — GPT-2: larger models, zero-shot transfer.
+[**Sohl-Dickstein et al. (2015, *ICML*)**](https://arxiv.org/abs/1503.03585) "Deep Unsupervised Learning using Nonequilibrium Thermodynamics" — The original diffusion model paper, grounded in statistical physics.
 
-[**Touvron et al. (2023, *arXiv*)**](https://arxiv.org/abs/2302.13971) "LLaMA: Open and Efficient Foundation Language Models" — The paper that opened decoder research.
+[**Song & Ermon (2019, *NeurIPS*)**](https://arxiv.org/abs/1907.05600) "Generative Modeling by Estimating Gradients of the Data Distribution" — Score matching perspective on diffusion.
 
-[**Press & Wolf (2017, *EACL*)**](https://arxiv.org/abs/1608.09916) "Using the Output Embedding to Improve Language Models" — Weight tying between input and output embeddings.
+[**Nichol & Dhariwal (2021, *ICML*)**](https://arxiv.org/abs/2102.09672) "Improved Denoising Diffusion Probabilistic Models" — Cosine schedule, learned variance, improved sampling.
 
-[**Gloeckle et al. (2024, *arXiv*)**](https://arxiv.org/abs/2404.19737) "Better & Faster Large Language Models via Multi-token Prediction" — Meta/FAIR multi-token prediction.
-
-[**Lieber et al. (2024, *arXiv*)**](https://arxiv.org/abs/2403.19887) "Jamba: A Hybrid Transformer-Mamba Language Model" — Hybrid attention + SSM architecture.
+[**Song et al. (2021, *ICLR*)**](https://arxiv.org/abs/2010.02502) "Denoising Diffusion Implicit Models" — DDIM: deterministic, fast sampling from the same trained model.
 
 </div>
 
@@ -442,6 +441,6 @@ Each limitation suggested a clear direction: bigger models, more data, longer co
 
 <div class="tip-box" data-title="Up next...">
 
-Scaling up: from GPT-2 to GPT-4, emergent abilities, reasoning, and the path to ChatGPT
+Diffusion model extensions: latent diffusion, classifier-free guidance, and the Diffusion Transformer
 
 </div>

@@ -1,0 +1,6 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ScoreMatching/666995067_1713445080_223132457.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ScoreMatching/1402148139_2222585980_1204538189.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ScoreMatching/1402148139_2159795780_892737124.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ScoreMatching/1402148139_3341231383_3614395753.mp4'
+file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ScoreMatching/1402148139_4093429547_295392443.mp4'

@@ -108,7 +108,7 @@ Please be a supportive and engaged audience -- ask questions, offer feedback, an
 | 3--4 | Embeddings (LSA → Word2Vec → ELMo) | Meaning lives in vector space |
 | 5 | Transformer architecture | Attention is all you need |
 | 6 | BERT and encoder models | Bidirectional understanding |
-| 7 | GPT and decoder models | Autoregressive generation at scale |
+| 7 | Diffusion models | Iterative refinement and generation beyond text |
 | 8 | *(Break)* | |
 | 9 | Agents, MoE, ethics | Action, efficiency, responsibility |
 | 10 | **Your projects** | Putting it all together |

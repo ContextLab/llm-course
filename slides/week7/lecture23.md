@@ -6,8 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 23: Implementing GPT from scratch
-
+# Lecture 23: Diffusion applications and ethics
 ### PSYC 51.17: Models of language and communication
 
 Jeremy R. Manning
@@ -20,17 +19,17 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. Implement a **complete GPT model** from scratch in PyTorch (~30M parameters)
-2. Build each component: **embeddings**, **masked attention**, **transformer block**, **LM head**
-3. Write a **training loop** with AdamW, gradient clipping, and **gradient accumulation**
-4. Apply **mixed precision training** and **learning rate scheduling** for efficient training
-5. Implement **text generation** with temperature, top-k, and nucleus sampling
+1. Compare text-to-image architectures: **DALL-E 2**, **Stable Diffusion**, and **Imagen**
+2. Explain how **Sora** extends diffusion to video via spacetime patches
+3. Describe **discrete diffusion** for text generation and its connection to BERT
+4. Evaluate ethical implications: **deepfakes**, consent, bias, and regulation
+5. Connect diffusion models back to the course themes of language and communication
 
 </div>
 
 ---
 
-# Announcements and roadmap
+# Roadmap and companion notebook
 
 <div class="warning-box" data-title="Week 8: no classes">
 
@@ -40,736 +39,331 @@ There are **no classes February 23–27** (instructor away). Use this time to wo
 
 <div class="tip-box" data-title="Companion notebook">
 
-📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/gpt_from_scratch_demo.ipynb) — build and train a mini-GPT step by step. All code from this lecture runs in the notebook.
+📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/diffusion_demo.ipynb) — generate images with Stable Diffusion, experiment with guidance scales, and explore discrete diffusion for text.
 
 </div>
 
 ---
 
-# What we are building today
+# Text-to-image: the big picture
 
-<div class="definition-box" data-title="A complete mini-GPT">
+<div class="definition-box" data-title="Three architectures, one goal">
 
-We will implement every component of a GPT language model from scratch — small enough to train on a laptop, but architecturally identical to GPT-2:
+Text-to-image systems combine a **language model** (to understand the prompt) with a **diffusion model** (to generate the image). The three landmark systems each took a different approach:
 
-1. **Tokenization** with tiktoken (GPT-2's BPE tokenizer)
-2. **Token + position embeddings**
-3. **Masked multi-head attention** (causal mask)
-4. **Transformer decoder blocks** (pre-norm with residual connections)
-5. **Language model head** with weight tying
-6. **Training loop** with AdamW, gradient accumulation, and mixed precision
-7. **Text generation** with multiple sampling strategies
+| System | Text encoder | Image generation | Organization |
+|--------|-------------|-----------------|-------------|
+| [DALL-E 2](https://arxiv.org/abs/2204.06125) | CLIP | Prior + diffusion decoder | OpenAI (Apr 2022) |
+| [Imagen](https://arxiv.org/abs/2205.11487) | T5-XXL | Cascaded pixel diffusion | Google (May 2022) |
+| Stable Diffusion | CLIP | Latent diffusion | Stability AI (Aug 2022) |
+
+</div>
+
+<div class="important-box" data-title="The key question">
+
+Which component matters more — the language understanding (text encoder) or the image generation (diffusion model)? Imagen's surprising finding: **scaling the text encoder helps more than scaling the diffusion model**.
 
 </div>
 
 ---
 
-# Setup and hyperparameters
+# DALL-E 2
 
-<div class="example-box" data-title="Required libraries and configuration">
+<div class="definition-box" data-title="Ramesh et al. (2022): CLIP + Prior + Decoder">
 
-```python
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader
-import tiktoken  # OpenAI's BPE tokenizer
+[DALL-E 2](https://arxiv.org/abs/2204.06125) uses a three-stage pipeline:
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+1. **CLIP text encoder**: Converts the text prompt to a CLIP text embedding
+2. **Prior**: A diffusion model that maps the CLIP *text* embedding to a CLIP *image* embedding
+3. **Decoder**: A diffusion model that generates a 1024×1024 image conditioned on the CLIP image embedding
 
-config = {
-    'vocab_size': 50257,    # GPT-2 vocabulary size
-    'd_model': 384,         # Embedding dimension
-    'n_layers': 6,          # Number of transformer blocks
-    'n_heads': 6,           # Number of attention heads
-    'max_seq_len': 256,     # Maximum sequence length
-    'dropout': 0.1,
-    'batch_size': 32,
-    'learning_rate': 3e-4,
-    'num_epochs': 10
-}
+</div>
+
+```flow
+Text prompt → CLIP Text Encoder → Text Embedding → Prior (Diffusion) → Image Embedding → Decoder (Diffusion) → 1024×1024 Image
 ```
 
-</div>
+<div class="note-box" data-title="Why the prior?">
 
----
-
-# Tokenization with tiktoken
-
-<div class="example-box" data-title="Using GPT-2's BPE tokenizer (see Lecture 6 for BPE details)">
-
-```python
-tokenizer = tiktoken.get_encoding("gpt2")
-
-text = "Hello, how are you doing today?"
-tokens = tokenizer.encode(text)
-# [15496, 11, 703, 389, 345, 1804, 1909, 30]
-
-# Decode back to text
-decoded = tokenizer.decode(tokens)  # "Hello, how are you doing today?"
-
-# Inspect individual tokens
-for tid in tokens:
-    print(f"  {tid}: '{tokenizer.decode([tid])}'")
-```
+CLIP's text and image embeddings live in a shared space but aren't identical. The prior bridges this gap — it translates "what the text means" into "what the image should look like" in CLIP's visual space. This two-step approach allows DALL-E 2 to produce diverse images from the same prompt.
 
 </div>
 
 ---
 
-# Creating a text dataset
+# Imagen
 
-<div class="example-box" data-title="Sliding window over tokenized text">
+<div class="definition-box" data-title="Saharia et al. (2022): language model + cascaded diffusion">
 
-```python
-class TextDataset(Dataset):
-    def __init__(self, text_file, tokenizer, max_seq_len):
-        with open(text_file, 'r', encoding='utf-8') as f:
-            text = f.read()
-        self.tokens = tokenizer.encode(text)
-        self.max_seq_len = max_seq_len
+[Imagen](https://arxiv.org/abs/2205.11487) takes a simpler approach:
 
-    def __len__(self):
-        return len(self.tokens) - self.max_seq_len
-
-    def __getitem__(self, idx):
-        chunk = self.tokens[idx : idx + self.max_seq_len + 1]
-        x = torch.tensor(chunk[:-1], dtype=torch.long)  # Input
-        y = torch.tensor(chunk[1:],  dtype=torch.long)  # Target
-        return x, y
-
-dataset = TextDataset('shakespeare.txt', tokenizer, config['max_seq_len'])
-dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True)
-```
+1. **T5-XXL text encoder** (4.6B parameters): Encodes the prompt into rich text embeddings
+2. **Base diffusion model**: Generates a 64×64 image conditioned on text embeddings
+3. **Super-resolution models**: Two cascaded diffusion models upscale 64→256→1024
 
 </div>
 
-<div class="note-box" data-title="Why offset by 1?">
+<div class="important-box" data-title="Imagen's key finding">
 
-The target at each position is the *next* token. For input `[A, B, C, D]`, the targets are `[B, C, D, E]`. This is the autoregressive training signal.
+Scaling the text encoder from T5-Small (60M) to T5-XXL (4.6B) improved image quality **more** than scaling the diffusion model. This suggests that the bottleneck in text-to-image generation is *understanding the prompt*, not *generating pixels*. Language models matter even in vision!
 
 </div>
 
 ---
 
-# Token and position embeddings
+# Stable Diffusion
 
-<div class="example-box" data-title="Embedding layer implementation">
+<div class="note-box" data-title="Open-source democratization">
 
-```python
-class Embeddings(nn.Module):
-    def __init__(self, vocab_size, d_model, max_seq_len, dropout):
-        super().__init__()
-        self.token_embed = nn.Embedding(vocab_size, d_model)
-        self.pos_embed = nn.Embedding(max_seq_len, d_model)
-        self.dropout = nn.Dropout(dropout)
+Stable Diffusion (Rombach et al., 2022) is the open-source implementation of latent diffusion (Lecture 22):
 
-    def forward(self, x):
-        seq_len = x.size(1)
-        tok_emb = self.token_embed(x)                        # (B, T, D)
-        pos_emb = self.pos_embed(torch.arange(seq_len, device=x.device))  # (T, D)
-        return self.dropout(tok_emb + pos_emb)               # Broadcasting adds positions
-```
+| Property | Value |
+|----------|-------|
+| Text encoder | CLIP ViT-L/14 |
+| Diffusion backbone | U-Net in 64×64×4 latent space |
+| Training data | LAION-5B (5 billion image-text pairs) |
+| Parameters | ~890M (U-Net) + 123M (text encoder) |
+| Generation time | ~5 seconds on consumer GPU |
+| License | Open-source (CreativeML Open RAIL-M) |
 
 </div>
 
-<div class="note-box" data-title="Token identity + position combined">
+<div class="tip-box" data-title="Why open matters">
 
-Token embeddings encode *what*; position embeddings encode *where*. Their sum gives the model both word identity and word order (Lecture 15).
+Stable Diffusion's open release in August 2022 transformed the field. Within months, the community created ControlNet (pose-guided generation), LoRA fine-tuning (custom styles in minutes), and inpainting tools. Open weights enabled innovation at a pace no closed model could match.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Text-to-video: Sora
+
+<div class="definition-box" data-title="OpenAI (2024): video generation as world simulation">
+
+[Sora](https://openai.com/research/video-generation-models-as-world-simulators) extends diffusion to video by treating videos as sequences of **spacetime patches**:
+
+1. **Compress**: Encode video frames into a latent space using a video VAE
+2. **Patchify**: Divide the 3D latent (height × width × time) into spacetime patches
+3. **Generate**: Apply a DiT-like transformer to denoise the entire spacetime volume
+4. **Decode**: VAE decoder reconstructs the video frames
+
+</div>
+
+<div class="note-box" data-title="Emergent capabilities">
+
+Sora exhibits surprising behaviors not explicitly trained:
+- **3D consistency**: Objects maintain shape when the camera moves
+- **Long-range coherence**: Characters persist across scene changes
+- **Physics simulation**: Water flows, reflections update, objects interact plausibly
+
+OpenAI describes Sora as a "world simulator" — raising questions about whether diffusion models are learning something deeper than pixel patterns.
 
 </div>
 
 ---
 
-# Masked multi-head attention
+# Text-to-audio
 
-<div class="example-box" data-title="Attention with causal masking (part 1: projections)">
+<div class="definition-box" data-title="Diffusion in the spectral domain">
 
-```python
-class MultiHeadAttention(nn.Module):
-    def __init__(self, d_model, n_heads, dropout):
-        super().__init__()
-        assert d_model % n_heads == 0
-        self.n_heads = n_heads
-        self.head_dim = d_model // n_heads
+Audio generation applies diffusion to **spectrograms** (time-frequency representations of sound):
 
-        self.q_linear = nn.Linear(d_model, d_model)
-        self.k_linear = nn.Linear(d_model, d_model)
-        self.v_linear = nn.Linear(d_model, d_model)
-        self.out_linear = nn.Linear(d_model, d_model)
-        self.dropout = nn.Dropout(dropout)
+1. Convert audio to a mel-spectrogram
+2. Run diffusion in spectrogram space (or a latent compression of it)
+3. Convert the generated spectrogram back to audio using a vocoder
 
-    def forward(self, x, mask=None):
-        B, T, D = x.shape
-        Q = self.q_linear(x).view(B, T, self.n_heads, self.head_dim).transpose(1, 2)
-        K = self.k_linear(x).view(B, T, self.n_heads, self.head_dim).transpose(1, 2)
-        V = self.v_linear(x).view(B, T, self.n_heads, self.head_dim).transpose(1, 2)
-        # Q, K, V shape: (B, n_heads, T, head_dim)
-```
+</div>
+
+<div class="note-box" data-title="Notable systems">
+
+| System | Modality | Approach |
+|--------|----------|----------|
+| AudioLDM 2 | Music + speech + effects | Latent diffusion on audio |
+| MusicGen (Meta) | Music | Autoregressive (not diffusion) |
+| Stable Audio (Stability AI) | Music + effects | Latent diffusion with timing control |
+| Bark (Suno) | Speech | Autoregressive + diffusion |
+
+Diffusion and autoregressive approaches are **converging** in audio — many systems use hybrid architectures.
 
 </div>
 
 ---
 
-# Attention computation
+# Discrete diffusion for text
 
-<div class="example-box" data-title="Attention with causal masking (part 2: scores and output)">
+<div class="definition-box" data-title="Sahoo et al. (2024): Masked Diffusion Language Models (MDLM)">
 
-```python
-        # Scaled dot-product attention
-        scores = torch.matmul(Q, K.transpose(-2, -1)) / (self.head_dim ** 0.5)
+Standard diffusion adds Gaussian noise to continuous data. For discrete data like text, [MDLM](https://arxiv.org/abs/2406.07524) replaces "adding noise" with **masking tokens**:
 
-        if mask is not None:
-            scores = scores.masked_fill(mask == 0, float('-inf'))
-
-        attn_weights = F.softmax(scores, dim=-1)
-        attn_weights = self.dropout(attn_weights)
-
-        # Apply attention to values and concatenate heads
-        out = torch.matmul(attn_weights, V)                  # (B, n_heads, T, head_dim)
-        out = out.transpose(1, 2).contiguous().view(B, T, D) # (B, T, D)
-        return self.out_linear(out)
-```
+- **Forward process**: Randomly replace tokens with [MASK], increasing the masking rate over time
+- **Reverse process**: A transformer predicts the masked tokens, gradually unmasking the sequence
+- At $t = T$: all tokens are masked. At $t = 0$: the full text is revealed.
 
 </div>
 
-<div class="note-box" data-title="The causal mask">
+<div class="important-box" data-title="Connection to BERT">
 
-```python
-def create_causal_mask(seq_len, device):
-    return torch.tril(torch.ones(seq_len, seq_len, device=device))
-```
-
-Each row `i` has 1s at positions `0..i` and 0s at positions `i+1..T-1`, blocking attention to future tokens.
+This should sound familiar! BERT (Lecture 18) also predicts masked tokens. The key difference: BERT masks a fixed 15% of tokens and predicts them in one shot. MDLM uses a **continuous masking schedule** and iteratively unmasks over multiple steps — bridging masked language modeling and diffusion.
 
 </div>
 
 ---
 
-# Feed-forward network and transformer block
+# Why discrete diffusion matters for NLP
 
-<div class="example-box" data-title="The two sub-layers of each GPT block">
+<div class="note-box" data-title="Advantages over autoregressive generation">
 
-```python
-class FeedForward(nn.Module):
-    def __init__(self, d_model, dropout):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(d_model, 4 * d_model),
-            nn.GELU(),                        # GPT uses GELU, not ReLU
-            nn.Linear(4 * d_model, d_model),
-            nn.Dropout(dropout)
-        )
-    def forward(self, x):
-        return self.net(x)
+| Property | Autoregressive (GPT) | Discrete diffusion (MDLM) |
+|----------|---------------------|--------------------------|
+| Generation order | Left to right only | Any order (parallel) |
+| Editing | Must regenerate from edit point | Re-mask and re-denoise locally |
+| Speed | $O(N)$ sequential steps | Can trade steps for parallelism |
+| Controllability | Prompt engineering | Direct guidance at any position |
 
-class TransformerBlock(nn.Module):
-    def __init__(self, d_model, n_heads, dropout):
-        super().__init__()
-        self.ln1 = nn.LayerNorm(d_model)
-        self.attention = MultiHeadAttention(d_model, n_heads, dropout)
-        self.ln2 = nn.LayerNorm(d_model)
-        self.ffn = FeedForward(d_model, dropout)
+</div>
 
-    def forward(self, x, mask):
-        x = x + self.attention(self.ln1(x), mask)   # Pre-norm + residual
-        x = x + self.ffn(self.ln2(x))               # Pre-norm + residual
-        return x
-```
+<div class="tip-box" data-title="The bigger picture">
+
+Discrete diffusion suggests that autoregressive generation isn't the only way to produce text. Just as image diffusion generates all pixels simultaneously through refinement, text diffusion could generate all tokens simultaneously — more like how humans revise a draft than how they speak word-by-word.
 
 </div>
 
 ---
 
-# Complete GPT model
+# What diffusion teaches us about language
 
-<div class="example-box" data-title="Assembling all components">
+<div class="definition-box" data-title="Connecting back to course themes">
 
-```python
-class GPT(nn.Module):
-    def __init__(self, vocab_size, d_model, n_layers, n_heads, max_seq_len, dropout):
-        super().__init__()
-        self.max_seq_len = max_seq_len
-        self.embeddings = Embeddings(vocab_size, d_model, max_seq_len, dropout)
-        self.blocks = nn.ModuleList([
-            TransformerBlock(d_model, n_heads, dropout) for _ in range(n_layers)
-        ])
-        self.ln_f = nn.LayerNorm(d_model)
-        self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
-        self.apply(self._init_weights)
+Diffusion models offer a new lens on language and communication:
 
-    def _init_weights(self, module):
-        if isinstance(module, nn.Linear):
-            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
-            if module.bias is not None:
-                torch.nn.init.zeros_(module.bias)
-        elif isinstance(module, nn.Embedding):
-            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
-```
+- **Iterative refinement** mirrors how humans write: rough draft → revision → polished text. MDLM formalizes this as a denoising process.
+- **Compression**: Latent diffusion shows that perceptually important information can be compressed dramatically (48× for images). Is language itself a compression of thought (Delétang et al., 2024, Lecture 20)?
+- **Multimodal communication**: Text-to-image systems prove that language can guide visual generation. Speaker-listener neural coupling (Lecture 20) suggests human brains do something similar — using language to reconstruct visual experiences.
+
+</div>
+
+<div class="tip-box" data-title="Full circle">
+
+From ELIZA's pattern matching (Week 1) to diffusion's iterative refinement (Week 7), we've seen that generation is fundamentally about **transforming noise into signal**. Whether that noise is random tokens, random pixels, or the ambiguity of human communication, the core challenge is the same.
 
 </div>
 
 ---
 
-# GPT forward pass
+# Ethics: deepfakes and consent
 
-<div class="example-box" data-title="Forward pass with optional loss computation">
+<div class="warning-box" data-title="The dark side of realistic generation">
 
-```python
-    def forward(self, x, targets=None):
-        seq_len = x.size(1)
-        mask = create_causal_mask(seq_len, x.device)
+Diffusion models can generate photorealistic images of people who never consented to being depicted. This has led to:
 
-        x = self.embeddings(x)
-        for block in self.blocks:
-            x = block(x, mask)
-        x = self.ln_f(x)
-        logits = self.lm_head(x)          # (batch, seq_len, vocab_size)
-
-        loss = None
-        if targets is not None:
-            loss = F.cross_entropy(
-                logits.view(-1, logits.size(-1)),
-                targets.view(-1)
-            )
-        return logits, loss
-```
+- **Non-consensual intimate imagery**: Deepfake tools targeting individuals (predominantly women), with devastating personal consequences
+- **Political disinformation**: Fabricated images of public figures in compromising situations, weaponized during elections
+- **Identity fraud**: Generated faces used for fake accounts, scam operations, and social engineering
 
 </div>
 
-<div class="note-box" data-title="Parameter count for our mini-GPT">
+<div class="important-box" data-title="Scale of the problem">
 
-With `d_model=384`, `n_layers=6`, `n_heads=6`, and `vocab_size=50257`, this model has approximately **30 million parameters** -- small enough to train on a single GPU in a few hours.
+A 2023 report found that **96% of deepfake videos online are non-consensual intimate imagery**, and the number of deepfake videos doubled every 6 months from 2018 to 2023. The democratization of generation tools has outpaced legal and technical protections.
 
 </div>
 
 ---
 
-# Training loop
+# Ethics: bias in generated content
 
-<div class="example-box" data-title="Training with AdamW and gradient clipping">
+<div class="warning-box" data-title="What diffusion models learn from training data">
 
-```python
-model = GPT(
-    config['vocab_size'], config['d_model'], config['n_layers'],
-    config['n_heads'], config['max_seq_len'], config['dropout']
-).to(device)
+Diffusion models trained on internet-scale datasets inherit (and sometimes amplify) societal biases:
 
-optimizer = torch.optim.AdamW(
-    model.parameters(), lr=config['learning_rate'],
-    betas=(0.9, 0.95), weight_decay=0.1
-)
+- **Gender stereotypes**: "CEO" generates predominantly white male faces; "nurse" generates predominantly female faces
+- **Racial bias**: Prompts for "beautiful person" over-represent light-skinned individuals
+- **Cultural erasure**: Non-Western artistic styles, architectural traditions, and cultural contexts are underrepresented
+- **Homogenization**: Generated images converge toward a narrow aesthetic — the "AI look" — reducing visual diversity
 
-model.train()
-for epoch in range(config['num_epochs']):
-    total_loss = 0
-    for x, y in dataloader:
-        x, y = x.to(device), y.to(device)
-        logits, loss = model(x, targets=y)
-        optimizer.zero_grad()
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        optimizer.step()
-        total_loss += loss.item()
-    print(f"Epoch {epoch+1}, Loss: {total_loss / len(dataloader):.4f}")
-```
+</div>
+
+<div class="note-box" data-title="Why this is hard to fix">
+
+Bias exists at every level: in the training data (internet images skew Western/male/young), in the text encoder (CLIP's training data has similar biases), and in the evaluation metrics (FID scores reward realism of common scenes over diverse representation).
 
 </div>
 
 ---
 
-# Weight tying
+# Ethics: copyright and training data
 
-<div class="example-box" data-title="Sharing embeddings between input and output layers">
+<div class="note-box" data-title="The legal landscape">
 
-```python
-class GPT(nn.Module):
-    def __init__(self, vocab_size, d_model, n_layers, n_heads, max_seq_len, dropout):
-        super().__init__()
-        self.embeddings = Embeddings(vocab_size, d_model, max_seq_len, dropout)
-        # ... blocks, ln_f as before ...
-        self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
-
-        # Tie weights: lm_head uses same matrix as token embeddings
-        self.lm_head.weight = self.embeddings.token_embed.weight
-        # Saves ~20% parameters for large vocabularies!
-```
+| Case | Status | Key issue |
+|------|--------|-----------|
+| Getty Images v. Stability AI | Ongoing (2023–) | Training on copyrighted stock photos |
+| Andersen v. Stability AI | Class action (2023–) | Artists' styles replicated without consent |
+| NYT v. OpenAI | Filed Dec 2023 | Verbatim reproduction of articles |
+| Thomson Reuters v. Ross | Settled 2024 | Training on proprietary legal database |
 
 </div>
 
-<div class="note-box" data-title="Why it works">
+<div class="important-box" data-title="The core tension">
 
-Both layers map between token IDs and embedding space — just in opposite directions. Tying them forces consistent representations. Used in GPT-2, LLaMA, and most modern LLMs (Lecture 21).
+Training data is scraped from the internet without explicit consent. Artists argue this constitutes copyright infringement — their styles are being replicated without compensation. Companies argue this is "fair use" and transformative. Courts are still deciding, but the outcome will shape the future of all generative AI, not just diffusion models.
 
 </div>
 
 ---
 
-# Gradient accumulation
+# Ethics: regulation and provenance
 
-<div class="example-box" data-title="Simulating large batches with limited memory">
+<div class="definition-box" data-title="Emerging regulatory frameworks">
 
-```python
-accumulation_steps = 8  # Simulate 8x larger batch
-optimizer.zero_grad()
-
-for i, (x, y) in enumerate(dataloader):
-    x, y = x.to(device), y.to(device)
-    logits, loss = model(x, targets=y)
-    loss = loss / accumulation_steps  # Normalize
-    loss.backward()
-
-    if (i + 1) % accumulation_steps == 0:
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        optimizer.step()
-        optimizer.zero_grad()
-```
+- **EU AI Act (2024)**: Requires labeling of AI-generated content, transparency about training data, risk classification for generative systems
+- **C2PA (Coalition for Content Provenance and Authenticity)**: Technical standard for embedding provenance metadata in images and videos — "nutrition labels" for digital content
+- **US Executive Order (Oct 2023)**: Requires watermarking of AI-generated content from government contractors
+- **China's deep synthesis regulations (2023)**: Mandatory labeling and registration of deepfake services
 
 </div>
 
-<div class="note-box" data-title="Why this matters">
+<div class="tip-box" data-title="Technical vs legal solutions">
 
-Can't fit `batch_size=256`? Use `batch_size=32` with 8 accumulation steps. **Mathematically equivalent gradients**, 8× less memory. Essential for training on consumer GPUs.
+Regulation works when enforced. But technical solutions (watermarking, detection models) face an arms race: as detectors improve, generators adapt. The most promising approach may be **provenance** — embedding an unforgeable record of how content was created, rather than trying to detect fakes after the fact.
 
 </div>
 
 ---
 
-# Learning rate scheduling
+# Discussion
 
-<div class="example-box" data-title="Linear warmup + cosine decay (the standard recipe)">
+<div class="tip-box" data-title="Questions to consider">
 
-```python
-import math
+1. **Consent and creation**: If a model trained on millions of artists' work can generate art "in the style of" a specific artist, is that theft, homage, or something new? Should artists be able to opt out of training data?
 
-def get_lr(step, warmup_steps=1000, max_steps=50000, max_lr=3e-4, min_lr=3e-5):
-    if step < warmup_steps:
-        return max_lr * step / warmup_steps          # Linear warmup
-    decay_ratio = (step - warmup_steps) / (max_steps - warmup_steps)
-    return min_lr + 0.5 * (max_lr - min_lr) * (1 + math.cos(math.pi * decay_ratio))
+2. **The world simulator question**: Sora generates videos with plausible physics. Does this mean it has learned a model of the physical world, or is it pattern-matching at a scale we find convincing? How would we tell the difference?
 
-# Usage in training loop
-for step in range(max_steps):
-    lr = get_lr(step)
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
-    # ... training step ...
-```
+3. **Discrete diffusion and writing**: If MDLM can generate text by iterative refinement (all tokens at once, gradually unmasking), does this better capture how humans write than GPT's left-to-right generation? What about poetry, where the end is often written before the middle?
 
-</div>
+4. **Regulation tradeoffs**: Strict regulation of generative AI could slow harmful applications but also impede beneficial research. How should society balance these? Is open-source part of the problem or part of the solution?
 
-<div class="note-box" data-title="Why warmup + cosine decay?">
-
-Warmup prevents early instability (random weights → wild gradients). Cosine decay gives diminishing returns gracefully. This is the schedule used by GPT-3, LLaMA, and most modern LLMs.
-
-</div>
-
----
-
-# Mixed precision training
-
-<div class="example-box" data-title="Half the memory, double the throughput">
-
-```python
-scaler = torch.amp.GradScaler()
-
-for x, y in dataloader:
-    x, y = x.to(device), y.to(device)
-
-    with torch.amp.autocast(device_type='cuda', dtype=torch.bfloat16):
-        logits, loss = model(x, targets=y)
-
-    scaler.scale(loss).backward()
-    scaler.unscale_(optimizer)
-    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-    scaler.step(optimizer)
-    scaler.update()
-    optimizer.zero_grad()
-```
-
-</div>
-
-<div class="note-box" data-title="Why bfloat16?">
-
-`bfloat16` halves memory and doubles throughput on modern GPUs with minimal quality loss. The `GradScaler` handles numerical stability automatically. All serious training runs (nanoGPT, LLaMA, etc.) use mixed precision.
-
-</div>
-
----
-
-# Training best practices
-
-<div class="note-box" data-title="Five key techniques for stable GPT training">
-
-| Technique | Why it matters |
-|-----------|---------------|
-| **Gradient clipping** (max norm 1.0) | Prevents exploding gradients that destabilize training |
-| **AdamW optimizer** | Decoupled weight decay; better than standard Adam for transformers |
-| **Learning rate warmup** | Gradually increase LR over first ~1,000 steps to avoid early instability |
-| **Cosine LR decay** | Smoothly reduce LR after warmup for fine-grained convergence |
-| **Mixed precision** (float16/bfloat16) | 2--3x speedup on modern GPUs with minimal quality loss |
-
-</div>
-
-<div class="tip-box" data-title="Practical advice">
-
-If loss is not decreasing: check learning rate (try 1e-4 to 3e-4), verify data pipeline outputs correct input/target pairs, and watch for NaN values. If you run out of memory: reduce batch size or sequence length first, then try gradient accumulation.
-
-</div>
-
----
-
-# Greedy decoding
-
-<div class="example-box" data-title="Generating text by always picking the most likely token">
-
-```python
-@torch.no_grad()
-def generate_greedy(model, tokenizer, prompt, max_new_tokens=50):
-    model.eval()
-    tokens = tokenizer.encode(prompt)
-    x = torch.tensor([tokens], dtype=torch.long, device=device)
-
-    for _ in range(max_new_tokens):
-        x_crop = x[:, -model.max_seq_len:]
-        logits, _ = model(x_crop)
-        logits = logits[:, -1, :]                # Last position only
-        next_token = torch.argmax(logits, dim=-1, keepdim=True)
-        x = torch.cat([x, next_token], dim=1)
-
-    return tokenizer.decode(x[0].tolist())
-```
-
-</div>
-
-<div class="warning-box" data-title="Greedy decoding is deterministic but repetitive">
-
-Always picking `argmax` produces the same output every time and tends to get stuck in repetitive loops. Real applications use **sampling** to introduce controlled randomness.
-
-</div>
-
----
-
-# Sampling strategies
-
-<div class="definition-box" data-title="Three ways to add controlled randomness">
-
-- **Temperature** ($T$): Scale logits by $1/T$ before softmax. $T < 1$ sharpens the distribution (more conservative); $T > 1$ flattens it (more creative).
-- **Top-k**: Sample only from the $k$ most probable tokens. Typical: $k = 40$.
-- **Nucleus (top-p)**: Sample from the smallest set of tokens whose cumulative probability exceeds $p$. Typical: $p = 0.9$ or $0.95$.
-
-</div>
-
-<div class="note-box" data-title="Comparison">
-
-| Strategy | Pros | Cons |
-|----------|------|------|
-| Greedy | Deterministic, fast | Repetitive, boring |
-| Temperature | Simple control knob | Can produce nonsense at high $T$ |
-| Top-k | Filters unlikely tokens | Fixed $k$ may be too broad or narrow |
-| Nucleus (top-p) | Adapts to distribution shape | Slightly more complex |
-
-</div>
-
----
-
-# Implementing sampling
-
-<div class="example-box" data-title="Top-k and nucleus sampling in PyTorch">
-
-```python
-def sample_next_token(logits, temperature=1.0, top_k=None, top_p=None):
-    logits = logits / temperature
-
-    if top_k is not None:
-        top_k = min(top_k, logits.size(-1))
-        threshold = torch.topk(logits, top_k)[0][..., -1, None]
-        logits[logits < threshold] = float('-inf')
-
-    if top_p is not None:
-        sorted_logits, sorted_idx = torch.sort(logits, descending=True)
-        cumprobs = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
-        remove = cumprobs > top_p
-        remove[..., 1:] = remove[..., :-1].clone()
-        remove[..., 0] = False
-        logits[sorted_idx[remove]] = float('-inf')
-
-    probs = F.softmax(logits, dim=-1)
-    return torch.multinomial(probs, num_samples=1)
-```
-
-</div>
-
----
-
-# Complete generation function
-
-<div class="example-box" data-title="Putting it all together">
-
-```python
-@torch.no_grad()
-def generate(model, tokenizer, prompt, max_new_tokens=100,
-             temperature=0.8, top_k=40, top_p=0.9):
-    model.eval()
-    tokens = tokenizer.encode(prompt)
-    x = torch.tensor([tokens], dtype=torch.long, device=device)
-
-    for _ in range(max_new_tokens):
-        x_crop = x[:, -model.max_seq_len:]
-        logits, _ = model(x_crop)
-        next_token = sample_next_token(
-            logits[0, -1, :], temperature=temperature, top_k=top_k, top_p=top_p
-        )
-        x = torch.cat([x, next_token.unsqueeze(0)], dim=1)
-
-    return tokenizer.decode(x[0].tolist())
-
-# Generate text
-print(generate(model, tokenizer, "Once upon a time"))
-```
-
-</div>
-
----
-
-# Debugging and common issues
-
-<div class="warning-box" data-title="Problems you will encounter">
-
-| Problem | Likely cause | Fix |
-|---------|-------------|-----|
-| Loss not decreasing | LR too high/low, data bug | Try LR in [1e-4, 3e-4]; verify x/y offset |
-| Out of memory | Batch/sequence too large | Reduce batch size; use gradient accumulation |
-| Poor generation quality | Undertrained | Train longer; use more/better data |
-| Repetitive output | Greedy decoding or low temperature | Use nucleus sampling ($p = 0.9$) |
-| NaN loss | Numerical instability | Add gradient clipping; check for empty batches |
-
-</div>
-
----
-
-# KV cache: fast generation
-
-<div class="definition-box" data-title="Avoiding redundant computation during generation">
-
-Without caching, generating token $n$ requires recomputing attention over *all* $n-1$ previous tokens. The **KV cache** stores previously computed key/value tensors and only computes Q/K/V for the *new* token.
-
-</div>
-
-<div class="example-box" data-title="Generation with KV cache (conceptual)">
-
-```python
-# Without KV cache: recompute everything each step → O(n²) per token
-for step in range(100):
-    logits = model(all_tokens[:step+1])  # Reprocesses all tokens
-
-# With KV cache: only process the NEW token → O(n) per token
-cache = {}
-for step in range(100):
-    logits, cache = model(new_token_only, past_kv=cache)
-    # cache stores K, V from all previous steps
-```
-
-</div>
-
-<div class="important-box" data-title="Impact">
-
-KV caching makes generation **10–50× faster** for long sequences. It's the reason ChatGPT responds in seconds, not minutes. The tradeoff is memory: the cache grows linearly with sequence length.
+5. **The compression connection**: Language compresses thought (Lecture 20). VAEs compress images. Diffusion generates by decompressing noise. Is there a deep connection between communication, compression, and generation?
 
 </div>
 
 ---
 <!-- _class: scale-85 -->
 
-# FlashAttention: memory-efficient attention
-
-<div class="definition-box" data-title="Dao et al. (2022, 2023); Dao (2024)">
-
-Standard attention materializes the full $N \times N$ attention matrix in GPU memory — $O(N^2)$ memory. [FlashAttention](https://arxiv.org/abs/2205.14135) computes attention in **tiled blocks** that fit in fast SRAM, never materializing the full matrix.
-
-</div>
-
-<div class="note-box" data-title="Why it matters">
-
-| Metric | Standard attention | FlashAttention-3 |
-|--------|-------------------|-------------------|
-| Memory | $O(N^2)$ | $O(N)$ |
-| Speed | Baseline | **1.5–2× faster** |
-| Max sequence | ~4K (memory limited) | **128K+** |
-| Wall-clock for 8K seq | ~50ms | ~25ms |
-
-[FlashAttention-3](https://arxiv.org/abs/2407.08608) adds hardware-aware pipelining for H100 GPUs, approaching 75% of theoretical FLOPS.
-
-</div>
-
----
-
-# GPT-2 vs modern decoders
-
-<div class="note-box" data-title="Upgrading our mini-GPT to a modern architecture (see Lecture 21)">
-
-```python
-# GPT-2 style (what we built today)
-self.ln = nn.LayerNorm(d_model)              # LayerNorm
-self.ffn = nn.Sequential(
-    nn.Linear(d_model, 4 * d_model),
-    nn.GELU(),                                # GELU activation
-    nn.Linear(4 * d_model, d_model))
-self.pos_embed = nn.Embedding(max_len, d)    # Learned absolute positions
-
-# Modern style (LLaMA, Mistral, etc.)
-self.ln = RMSNorm(d_model)                   # RMSNorm: 10-15% faster
-self.ffn = SwiGLU(d_model, int(8/3 * d_model))  # SwiGLU: ~1% better
-self.pos_embed = None  # RoPE applied inside attention (extrapolates to any length)
-```
-
-</div>
-
-<div class="tip-box" data-title="The takeaway">
-
-Our mini-GPT is *architecturally* identical to GPT-2. To reach LLaMA-class performance, swap in RMSNorm, SwiGLU, RoPE, and GQA — all incremental changes to the same basic structure. The conceptual framework you built today is the same one powering frontier models.
-
-</div>
-
----
-
-# How our mini-GPT compares to nanoGPT
-
-<div class="note-box" data-title="From toy model to real model">
-
-| Feature | Our mini-GPT | nanoGPT | GPT-2 (124M) |
-|---------|-------------|---------|--------------|
-| Parameters | ~30M | ~124M | 124M |
-| Context length | 256 | 1024 | 1024 |
-| Training data | Shakespeare | OpenWebText | WebText |
-| Attention | Standard | FlashAttention | Standard |
-| Precision | float32 | bfloat16 | float32 |
-| Weight tying | Yes (add it!) | Yes | Yes |
-| Time to train | ~1 hour (GPU) | ~4 hours (A100) | Days (256 TPUs) |
-
-</div>
-
-<div class="tip-box" data-title="The takeaway">
-
-Our mini-GPT is *architecturally identical* to GPT-2. To reach nanoGPT-class performance: scale up `d_model` to 768 and `n_layers` to 12, add FlashAttention, use mixed precision, and train on a larger corpus. The conceptual framework you built today is the same one powering frontier models — just smaller.
-
-</div>
-
----
-
 # Further reading
 
 <div class="note-box" data-title="Further reading">
 
-[**Karpathy, "Let's build GPT"**](https://www.youtube.com/watch?v=kCc8FmEb1nY) Step-by-step video tutorial (2h) — the inspiration for this lecture.
+[**Ramesh et al. (2022, *arXiv*)**](https://arxiv.org/abs/2204.06125) "Hierarchical Text-Conditional Image Generation with CLIP Latents" — DALL-E 2: CLIP prior + diffusion decoder.
 
-[**nanoGPT**](https://github.com/karpathy/nanoGPT) Clean, minimal GPT-2 implementation in ~300 lines of PyTorch.
+[**Saharia et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2205.11487) "Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding" — Imagen: scaling text encoders matters most.
 
-[**Dao et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2205.14135) "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness" — $O(N)$ memory attention.
+[**OpenAI (2024)**](https://openai.com/research/video-generation-models-as-world-simulators) "Video Generation Models as World Simulators" — Sora: spacetime patches and emergent physics.
 
-[**Shah et al. (2024, *arXiv*)**](https://arxiv.org/abs/2407.08608) "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision" — Latest version for H100s.
+[**Sahoo et al. (2024, *arXiv*)**](https://arxiv.org/abs/2406.07524) "Simple and Effective Masked Diffusion Language Models" — MDLM: bridging BERT and diffusion for text.
 
-[**Radford et al. (2018)**](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf) "Improving Language Understanding by Generative Pre-Training" — The original GPT paper.
+[**Fei et al. (2024, *arXiv*)**](https://arxiv.org/abs/2409.00587) "A Comprehensive Survey on Diffusion Models and Their Applications" — Broad overview of diffusion across modalities.
 
 </div>
 
@@ -794,6 +388,6 @@ Our mini-GPT is *architecturally identical* to GPT-2. To reach nanoGPT-class per
 
 <div class="tip-box" data-title="Up next...">
 
-Week 9 (after break): Agents and tool use -- giving language models the ability to act
+Week 9 (after break): Agents and tool use — giving language models the ability to act in the world
 
 </div>

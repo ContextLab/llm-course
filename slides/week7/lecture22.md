@@ -6,8 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 22: Scaling up to GPT-3 and beyond
-
+# Lecture 22: Diffusion model extensions
 ### PSYC 51.17: Models of language and communication
 
 Jeremy R. Manning
@@ -20,258 +19,280 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. Describe how **GPT-2** demonstrated zero-shot task transfer through scale
-2. Explain how **GPT-3** enabled **few-shot learning** without fine-tuning
-3. Outline the alignment pipeline from RLHF to DPO to GRPO
-4. Explain how **reasoning models** (o1, DeepSeek-R1) work and why they matter
-5. Critically evaluate the debate over **emergent abilities** in LLMs
+1. Explain how **latent diffusion** compresses computation via a VAE
+2. Describe **classifier-free guidance** and its role in conditional generation
+3. Compare U-Net vs Transformer backbones (**DiT** architecture)
+4. Understand **flow matching** as a simpler alternative to diffusion
+5. Trace the evolution from DDPM to **Stable Diffusion 3**
 
 </div>
 
 ---
 
-# GPT-2: unsupervised multitask learning
+# The pixel problem
 
-<div class="definition-box" data-title="The 10× scale-up">
+<div class="warning-box" data-title="Why running diffusion in pixel space is expensive">
 
-[GPT-2](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) (Radford et al., 2019) scaled GPT-1 by an order of magnitude and discovered that **larger models can perform tasks without any fine-tuning**.
+The DDPM architecture from Lecture 21 operates directly on pixel space. For a 512×512 RGB image, that means the U-Net processes tensors of size $512 \times 512 \times 3 = 786{,}432$ values at every denoising step. With 1000 steps, this is prohibitively expensive for high-resolution generation.
 
-| | GPT-1 (2018) | GPT-2 (2019) |
+</div>
+
+<div class="note-box" data-title="The numbers">
+
+| Resolution | Pixels | U-Net memory | Time per image |
+|-----------|--------|-------------|----------------|
+| 64 × 64 | 12,288 | ~2 GB | ~30 seconds |
+| 256 × 256 | 196,608 | ~8 GB | ~5 minutes |
+| 512 × 512 | 786,432 | ~32 GB | ~20 minutes |
+| 1024 × 1024 | 3,145,728 | Not feasible | — |
+
+The solution: don't run diffusion in pixel space. Run it in a **compressed latent space**.
+
+</div>
+
+---
+
+# Latent diffusion models
+
+<div class="definition-box" data-title="Rombach et al. (2022): 'High-Resolution Image Synthesis with Latent Diffusion Models'">
+
+[Latent diffusion](https://arxiv.org/abs/2112.10752) separates the problem into two stages:
+
+1. **Compression**: A pretrained VAE (variational autoencoder) encodes images into a compact latent space (typically 8× spatial compression)
+2. **Generation**: Diffusion operates entirely in this latent space
+
+</div>
+
+```flow
+Input Image → VAE Encoder → Latent z (64×64×4) → Diffusion Process → Denoised Latent → VAE Decoder → Output Image (512×512×3)
+```
+
+<div class="important-box" data-title="Why this works">
+
+The VAE learns to compress images while preserving perceptually important information. Diffusion in latent space is **~50× cheaper** than in pixel space, with negligible quality loss. This single insight enabled Stable Diffusion — the first open-source, consumer-GPU-capable image generator.
+
+</div>
+
+---
+
+# The VAE bottleneck
+
+<div class="definition-box" data-title="Compressing images for efficient diffusion">
+
+The VAE encoder maps an image $\mathbf{x} \in \mathbb{R}^{H \times W \times 3}$ to a latent $\mathbf{z} \in \mathbb{R}^{h \times w \times c}$ where $h = H/f$, $w = W/f$, and $f$ is the downsampling factor (typically $f = 8$).
+
+</div>
+
+<div class="note-box" data-title="Stable Diffusion's VAE">
+
+| Property | Value |
+|----------|-------|
+| Input resolution | 512 × 512 × 3 |
+| Latent resolution | 64 × 64 × 4 |
+| Compression ratio | 48× (786K → 16K values) |
+| VAE training | Perceptual loss + adversarial loss |
+| Reconstruction quality | Near-lossless for natural images |
+
+The VAE is trained once and frozen. The diffusion model only ever sees latents — it never touches pixel space during training or sampling.
+
+</div>
+
+---
+
+# Text conditioning with cross-attention
+
+<div class="definition-box" data-title="How text controls image generation">
+
+To generate images from text prompts, latent diffusion adds **cross-attention** layers to the U-Net. At each spatial resolution:
+
+1. The text prompt is encoded by a text encoder (e.g., CLIP) into a sequence of embeddings
+2. The U-Net's intermediate features serve as **queries**
+3. The text embeddings serve as **keys** and **values**
+4. Cross-attention allows each spatial location in the image to attend to relevant words
+
+</div>
+
+<div class="example-box" data-title="How 'a cat wearing a hat' becomes an image">
+
+The word "cat" activates high attention weights in the spatial region where the cat is being generated. The word "hat" activates attention weights near the top of the cat region. This spatial-linguistic binding is learned entirely from image-caption pairs during training.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Classifier-free guidance
+
+<div class="definition-box" data-title="Ho & Salimans (2022): controlling generation quality">
+
+[Classifier-free guidance (CFG)](https://arxiv.org/abs/2207.12598) is a technique for improving the alignment between text prompts and generated images. During training, the text condition is randomly dropped (replaced with an empty prompt) some fraction of the time. At inference, the model makes two predictions:
+
+- **Conditional**: $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, c)$ — with the text prompt
+- **Unconditional**: $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, \varnothing)$ — without the text prompt
+
+The final prediction extrapolates *away* from the unconditional toward the conditional:
+
+$$\tilde{\boldsymbol{\epsilon}}_\theta = (1 + w)\,\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, c) - w\,\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, \varnothing)$$
+
+where $w$ is the **guidance scale** (typically 7–15).
+
+</div>
+
+---
+
+# The guidance scale tradeoff
+
+<div class="note-box" data-title="What different guidance scales produce">
+
+| Guidance scale $w$ | Effect | Quality vs diversity |
+|-------------------|--------|---------------------|
+| 0 | Pure unconditional (ignores prompt) | Maximum diversity, no text alignment |
+| 1 | Standard conditional generation | Moderate alignment |
+| 7–10 | Recommended range | Strong alignment, good diversity |
+| 15–20 | Over-guided | Very literal, but saturated/artificial |
+| 50+ | Extreme | Severe artifacts, mode collapse |
+
+</div>
+
+<div class="tip-box" data-title="The intuition">
+
+Think of CFG as asking: "What's different about images that match this prompt versus random images?" Then amplifying that difference. Higher guidance = more amplification = more faithful to the prompt but less natural variation.
+
+</div>
+
+---
+
+# Diffusion Transformer (DiT)
+
+<div class="definition-box" data-title="Peebles & Xie (2023): replacing U-Net with Transformer">
+
+The [Diffusion Transformer (DiT)](https://arxiv.org/abs/2212.09748) replaces the U-Net backbone with a standard Vision Transformer (ViT):
+
+1. **Patchify**: Divide the latent into non-overlapping patches (e.g., 2×2)
+2. **Flatten**: Treat patches as a sequence of tokens (just like ViT treats image patches)
+3. **Process**: Apply standard Transformer blocks with self-attention
+4. **Unpatchify**: Reshape back to spatial dimensions
+
+</div>
+
+<div class="important-box" data-title="Why replace U-Net?">
+
+Transformers scale better than U-Nets. DiT-XL/2 (675M parameters) achieves a new state-of-the-art FID of 2.27 on ImageNet, beating all previous diffusion models. More importantly, DiT shows **clean scaling behavior** — larger models consistently produce better results, with no architectural bottlenecks.
+
+</div>
+
+---
+
+# adaLN-Zero: conditioning in DiT
+
+<div class="definition-box" data-title="Adaptive layer normalization for timestep and class conditioning">
+
+DiT conditions on timestep and class label using **adaptive Layer Normalization (adaLN-Zero)**:
+
+1. The timestep and class embeddings are combined and projected to produce **scale** ($\gamma$) and **shift** ($\beta$) parameters
+2. These modulate the LayerNorm output: $\text{adaLN}(\mathbf{h}) = \gamma \odot \text{LN}(\mathbf{h}) + \beta$
+3. Additionally, a **gating parameter** $\alpha$ scales the residual connection, initialized to zero
+
+</div>
+
+<div class="note-box" data-title="Why 'Zero'?">
+
+Initializing the gating parameter $\alpha = 0$ means each Transformer block initially acts as an **identity function**. This makes training stable even for very deep models — the network starts by doing nothing and gradually learns to denoise. This is the same principle behind residual learning (He et al., 2016).
+
+</div>
+
+---
+
+# Flow matching
+
+<div class="definition-box" data-title="Lipman et al. (2023): a simpler framework">
+
+[Flow matching](https://arxiv.org/abs/2210.02747) offers a cleaner mathematical framework than DDPM. Instead of a discrete chain of noising steps, flow matching defines a **continuous path** from noise to data using an ordinary differential equation (ODE):
+
+$$\frac{d\mathbf{x}}{dt} = v_\theta(\mathbf{x}_t, t)$$
+
+where $v_\theta$ is a neural network that predicts the **velocity** (direction and speed) of the flow at each point.
+
+</div>
+
+<div class="note-box" data-title="Key differences from DDPM">
+
+| | DDPM | Flow matching |
 |---|---|---|
-| Parameters | 117M | 1.5B (13×) |
-| Training data | BooksCorpus (5B tokens) | WebText (40GB, ~8×) |
-| Fine-tuning needed? | Yes | **No** (zero-shot transfer) |
-
-</div>
-
-<div class="important-box" data-title="The key claim">
-
-"Language models are unsupervised multitask learners" — a single model trained on next-token prediction implicitly learns to translate, summarize, answer questions, and more. OpenAI staged the release over 9 months due to disinformation concerns — one of the first high-profile responsible AI releases.
+| Path type | Stochastic (SDE) | Deterministic (ODE) |
+| Training | Predict noise $\boldsymbol{\epsilon}$ | Predict velocity $v$ |
+| Interpolation | $\mathbf{x}_t = \sqrt{\bar\alpha_t}\,\mathbf{x}_0 + \sqrt{1 - \bar\alpha_t}\,\boldsymbol{\epsilon}$ | $\mathbf{x}_t = (1-t)\,\mathbf{x}_0 + t\,\boldsymbol{\epsilon}$ |
+| Simplicity | Requires noise schedule design | Schedule-free |
 
 </div>
 
 ---
 
-# Zero-shot task transfer
+# Rectified flow
 
-<div class="definition-box" data-title="Performing tasks without fine-tuning">
+<div class="definition-box" data-title="Straight paths from noise to data">
 
-GPT-2 can perform tasks it was never explicitly trained for, simply by prompting with the right text format. This works because the model encountered similar patterns in its diverse training data.
+**Rectified flow** ([Liu et al., 2023](https://arxiv.org/abs/2209.03003)) uses the simplest possible interpolation — a straight line between the data point and a noise sample:
+
+$$\mathbf{x}_t = (1 - t)\,\mathbf{x}_0 + t\,\boldsymbol{\epsilon}$$
+
+The velocity along this path is constant: $v = \boldsymbol{\epsilon} - \mathbf{x}_0$
 
 </div>
 
-<div class="example-box" data-title="Zero-shot prompting examples">
+<div class="important-box" data-title="Why straight paths matter">
 
-**Translation**: `"English: I love machine learning\nFrench:"` → `"J'aime l'apprentissage automatique"`
+Straight paths are the shortest paths between noise and data. Since they don't curve, they can be accurately simulated with **fewer ODE solver steps** — as few as 1–4 steps with distillation. This is the foundation of Stable Diffusion 3's fast generation.
 
-**Question answering**: `"Q: What is the capital of France?\nA:"` → `"Paris"`
+</div>
 
-**Summarization**: `"[Long article]\n\nTL;DR:"` → generates a summary
+---
+<!-- _class: scale-90 -->
 
-The model learned these formats from web text where such patterns naturally occur (bilingual pages, Q&A forums, Reddit TL;DR summaries). Performance was far behind fine-tuned SOTA, but the fact that it worked *at all* was groundbreaking.
+# Stable Diffusion 3: putting it all together
+
+<div class="definition-box" data-title="Esser et al. (2024): MMDiT architecture">
+
+[Stable Diffusion 3](https://arxiv.org/abs/2403.03206) combines all of the extensions we've discussed:
+
+| Component | Choice | Why |
+|-----------|--------|-----|
+| Latent space | VAE with 16-channel latent | Higher capacity than SD 1.x (4 channels) |
+| Backbone | **MMDiT** (multimodal DiT) | Transformers scale better than U-Net |
+| Text encoders | CLIP-L + CLIP-G + T5-XXL | Three encoders for rich text understanding |
+| Conditioning | Joint attention (text + image tokens) | Text and image tokens attend to each other |
+| Training framework | **Rectified flow** | Simpler than DDPM, faster sampling |
+| Guidance | CFG with dynamic rescaling | Better prompt adherence |
+
+</div>
+
+<div class="tip-box" data-title="The trend">
+
+Each generation of diffusion models combines insights from the previous one. SD3 isn't one breakthrough — it's the accumulation of latent diffusion + CFG + DiT + flow matching + better text encoders.
 
 </div>
 
 ---
 
-# GPT-3: few-shot learning at scale
+# Architecture evolution summary
 
-<div class="definition-box" data-title="Brown et al. (2020): 'Language Models are Few-Shot Learners'">
+<div class="note-box" data-title="From DDPM to SD3 in four years">
 
-[GPT-3](https://arxiv.org/abs/2005.14165) scaled up another **100×** (175B parameters, 300B tokens, ~$4.6M) and discovered **in-context learning** — the ability to learn new tasks from just a few examples in the prompt, with no gradient updates.
-
-</div>
-
-<div class="example-box" data-title="Few-shot sentiment classification">
-
-```text
-Classify each review as Positive or Negative.
-
-Review: "This movie was amazing, I loved every minute!"
-Sentiment: Positive
-
-Review: "Terrible film, complete waste of time."
-Sentiment: Negative
-
-Review: "The acting was wooden and the plot made no sense."
-Sentiment:
-```
-
-GPT-3 output: `"Negative"` — no weight updates, no fine-tuning, pure pattern recognition.
+| Year | Model | Key innovation |
+|------|-------|---------------|
+| 2020 | DDPM | Practical diffusion with simplified loss |
+| 2021 | Improved DDPM | Cosine schedule, learned variance |
+| 2022 | Latent Diffusion / SD 1.x | VAE compression, cross-attention conditioning |
+| 2022 | CFG | Guidance scale for prompt adherence |
+| 2023 | DiT | Transformer backbone, clean scaling |
+| 2023 | Flow matching | Simpler ODE framework, straight paths |
+| 2024 | SD3 / MMDiT | All of the above, unified |
 
 </div>
 
----
+<div class="important-box" data-title="The takeaway">
 
-# Beyond Chinchilla: the overtraining era
-
-<div class="important-box" data-title="From Lecture 16's scaling laws to modern practice">
-
-| Model | Parameters | Training tokens | Tokens/parameter | Strategy |
-|-------|------------|----------------|-----------------|----------|
-| GPT-3 | 175B | 300B | 1.7 | Undertrained |
-| Chinchilla | 70B | 1.4T | 20 | Compute-optimal |
-| LLaMA 3 | 70B | 15T | 214 | Inference-optimal |
-| Phi-4 | 14B | 10T+ | 700+ | Extreme overtraining |
-
-The field has moved past Chinchilla-optimal. Since you train once but deploy billions of times, **overtraining** smaller models minimizes total cost. Phi-4 (14B) matches GPT-3.5 (175B) through massive overtraining on curated data.
-
-</div>
-
----
-
-# From GPT-3 to ChatGPT
-
-<div class="note-box" data-title="The three-stage evolution">
-
-| Stage | Model | Key innovation |
-|-------|-------|----------------|
-| 1 | GPT-3 (2020) | Next-token prediction at massive scale |
-| 2 | [InstructGPT](https://arxiv.org/abs/2203.02155) (2022) | **Instruction tuning** on human-written responses |
-| 3 | ChatGPT (Nov 2022) | **RLHF** (Lecture 16) for helpful, harmless conversation |
-
-</div>
-
-<div class="important-box" data-title="Why ChatGPT mattered">
-
-ChatGPT reached **100M users in 2 months** — the fastest-growing consumer app in history. The key innovation wasn't the model (GPT-3.5) but the **alignment**: RLHF transformed a next-token predictor into a conversational assistant that *felt* helpful. This revealed that alignment technique matters as much as model scale.
-
-</div>
-
----
-
-# Beyond RLHF: DPO and GRPO
-
-<div class="definition-box" data-title="Simpler, cheaper alternatives to RLHF">
-
-RLHF requires training a separate reward model and running PPO — complex and unstable. Two alternatives have emerged:
-
-[**DPO**](https://arxiv.org/abs/2305.18290) (Rafailov et al., NeurIPS 2023): **Direct Preference Optimization** skips the reward model entirely. It directly optimizes the LLM to prefer winning responses over losing ones using a simple classification loss. Same quality as RLHF, ~3× less compute.
-
-[**GRPO**](https://arxiv.org/abs/2402.03300) (Shao et al., 2024): **Group Relative Policy Optimization** from DeepSeekMath. Instead of human rankings, it generates multiple responses and uses a *verifiable reward* (e.g., "is the math answer correct?") to rank them. No humans needed for domains with checkable answers.
-
-</div>
-
-<div class="important-box" data-title="The trend">
-
-Alignment is getting **cheaper, simpler, and more automated**. This democratizes the ability to create instruction-following models — but also lowers the barrier for misuse.
-
-</div>
-
----
-
-# Chain-of-thought prompting
-
-<div class="definition-box" data-title="Wei et al. (2022); Kojima et al. (2022)">
-
-**Chain-of-thought (CoT)** prompting asks the model to show its reasoning step by step before giving a final answer. This dramatically improves performance on reasoning tasks.
-
-</div>
-
-<div class="example-box" data-title="Chain-of-thought example">
-
-```text
-Q: Roger has 5 tennis balls. He buys 2 more cans of tennis
-   balls. Each can has 3 balls. How many does he have now?
-
-Let's think step by step:
-1. Roger starts with 5 tennis balls
-2. He buys 2 cans × 3 balls per can = 6 new balls
-3. Total = 5 + 6 = 11 tennis balls
-
-A: 11
-```
-
-Simply adding **"Let's think step by step"** improves accuracy on GSM8K math problems from **17.7% to 78.7%** ([Kojima et al., 2022](https://arxiv.org/abs/2205.11916)). The model "knows" how to reason — it just needs permission to show its work.
-
-</div>
-
----
-
-# Reasoning models: thinking before answering
-
-<div class="definition-box" data-title="A new paradigm: test-time compute scaling">
-
-Instead of making models bigger (training-time scaling), **reasoning models** spend more compute at inference time by generating an internal chain-of-thought before answering.
-
-</div>
-
-<div class="note-box" data-title="Key reasoning models">
-
-| Model | Organization | Key innovation |
-|-------|-------------|---------------|
-| [o1](https://arxiv.org/abs/2412.16720) (2024) | OpenAI | Hidden chain-of-thought, trained with RL to "think" |
-| [o3](https://openai.com/index/deliberative-alignment/) (2025) | OpenAI | Extended reasoning, SOTA on ARC-AGI |
-| [DeepSeek-R1](https://arxiv.org/abs/2501.12948) (2025) | DeepSeek | Open-weight, trained with GRPO, reasoning emerges from RL alone |
-
-</div>
-
-<div class="important-box" data-title="DeepSeek-R1's surprising finding">
-
-R1 was trained with *pure RL* — no supervised reasoning examples. Yet it spontaneously developed chain-of-thought, self-correction, and even metacognition ("wait, let me reconsider..."). Then R1's reasoning was **distilled** into smaller models (Llama-70B, Qwen-32B), giving them reasoning abilities at a fraction of the cost.
-
-</div>
-
----
-
-# Are emergent abilities real?
-
-<div class="definition-box" data-title="The debate">
-
-[**Wei et al. (2022)**](https://arxiv.org/abs/2206.07682) claimed that abilities like arithmetic and reasoning *emerge* suddenly at certain scales — absent in small models, present in large ones.
-
-[**Schaeffer et al. (2023, NeurIPS)**](https://arxiv.org/abs/2304.15004) challenged this: they showed that "emergence" disappears when you switch from **nonlinear metrics** (exact-match accuracy) to **linear metrics** (token-level accuracy). The abilities were developing gradually all along — the metric just couldn't detect partial progress.
-
-</div>
-
-<div class="tip-box" data-title="Why this matters for science">
-
-If emergence is real, it means we can't predict what larger models will do — they might develop unexpected and potentially dangerous capabilities. If it's a measurement artifact, then scaling is *predictable* and we can plan for it. The answer has profound implications for AI safety policy.
-
-</div>
-
----
-
-# The modern LLM landscape (2025)
-
-<div class="note-box" data-title="The field moves fast">
-
-| Year | Milestone |
-|------|-----------|
-| 2022 | ChatGPT launched (OpenAI) — 100M users in 2 months |
-| 2023 | GPT-4 (multimodal), Llama 2 (open weights), Claude 2 |
-| 2024 | Claude 3.5, GPT-4o, Llama 3, Mistral Large, Gemini 1.5 |
-| 2024–25 | Reasoning models (o1, o3, R1), small efficient models (Phi-4, Gemma 2) |
-
-</div>
-
-<div class="note-box" data-title="Five key trends">
-
-1. **Reasoning at inference time** — spending more compute when thinking, not just when training
-2. **Longer context windows** — 128K–1M+ tokens (Gemini 1.5 Pro)
-3. **Open weight models** — LLaMA, Mistral, DeepSeek approaching frontier quality
-4. **Multimodal** — text + vision + audio in a single model
-5. **Efficiency** — smaller models matching larger predecessors (Phi-4 14B ≈ GPT-3.5 175B)
-
-</div>
-
----
-
-# Current limitations of LLMs
-
-<div class="warning-box" data-title="What LLMs still struggle with">
-
-- **Hallucinations**: Confidently generate false statements with no awareness of uncertainty
-- **Reasoning depth**: Multi-step logic and mathematical proofs remain unreliable (even reasoning models have limits)
-- **Knowledge currency**: Training data has a cutoff date; no access to real-time information
-- **Consistency**: May give different answers to the same question across runs
-- **Prompt sensitivity**: Small wording changes can dramatically alter outputs
-
-</div>
-
-<div class="note-box" data-title="Active areas of research">
-
-Each limitation has spawned research directions: RAG for knowledge currency (Lecture 17), tool use and agents for grounding (Lecture 24), constitutional AI for alignment, reasoning models for reliability, and formal verification for correctness guarantees.
+The field progresses by **composing** innovations, not replacing them. Each extension addresses a specific limitation: cost (latent diffusion), controllability (CFG), scalability (DiT), simplicity (flow matching). Understanding this progression helps you predict where the field is heading next.
 
 </div>
 
@@ -281,13 +302,13 @@ Each limitation has spawned research directions: RAG for knowledge currency (Lec
 
 <div class="tip-box" data-title="Questions to consider">
 
-1. **Emergent abilities:** If Schaeffer is right that "emergence" is a measurement artifact, does that make scaling *more* or *less* concerning? What if Wei is right?
+1. **Latent vs pixel space**: Latent diffusion trades exact pixel control for speed. Are there tasks where pixel-space diffusion would be strictly better? What information might the VAE discard?
 
-2. **Reasoning models:** DeepSeek-R1 developed chain-of-thought reasoning through pure RL — no human examples. Does this constitute "learning to think"? How is this different from how children learn to reason?
+2. **Guidance as amplification**: CFG amplifies the difference between conditional and unconditional predictions. Is this analogous to anything in human cognition — e.g., how we exaggerate features when imagining something vividly?
 
-3. **The alignment tax:** DPO and GRPO make alignment cheaper and more accessible. Is this good (more aligned models) or dangerous (easier to create models aligned to harmful objectives)?
+3. **U-Net vs Transformer**: DiT replaced U-Net because Transformers scale better. But U-Net's inductive biases (locality, skip connections) seem useful for spatial data. Is there a hybrid that gets the best of both?
 
-4. **Open vs closed:** DeepSeek-R1 is fully open. OpenAI's o1 is closed. If open models reach frontier quality, can safety-through-secrecy still work? Should it?
+4. **Simplification trend**: DDPM → DDIM → Flow matching → Rectified flow. Each is simpler than the last. Where does this trend end? Can generation become a single neural network evaluation?
 
 </div>
 
@@ -298,17 +319,15 @@ Each limitation has spawned research directions: RAG for knowledge currency (Lec
 
 <div class="note-box" data-title="Further reading">
 
-[**Brown et al. (2020, *NeurIPS*)**](https://arxiv.org/abs/2005.14165) "Language Models are Few-Shot Learners" — GPT-3: in-context learning at scale.
+[**Rombach et al. (2022, *CVPR*)**](https://arxiv.org/abs/2112.10752) "High-Resolution Image Synthesis with Latent Diffusion Models" — Latent diffusion and the foundation of Stable Diffusion.
 
-[**Rafailov et al. (2023, *NeurIPS*)**](https://arxiv.org/abs/2305.18290) "Direct Preference Optimization" — RLHF without the RL.
+[**Ho & Salimans (2022, *arXiv*)**](https://arxiv.org/abs/2207.12598) "Classifier-Free Diffusion Guidance" — The guidance technique used in virtually all modern diffusion systems.
 
-[**DeepSeek-AI (2025, *arXiv*)**](https://arxiv.org/abs/2501.12948) "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning" — Open-weight reasoning model.
+[**Peebles & Xie (2023, *ICCV*)**](https://arxiv.org/abs/2212.09748) "Scalable Diffusion Models with Transformers" — DiT: replacing U-Net with Transformers.
 
-[**Schaeffer et al. (2023, *NeurIPS*)**](https://arxiv.org/abs/2304.15004) "Are Emergent Abilities of Large Language Models a Mirage?" — The metric artifact hypothesis.
+[**Lipman et al. (2023, *ICLR*)**](https://arxiv.org/abs/2210.02747) "Flow Matching for Generative Modeling" — A simpler, ODE-based alternative to diffusion SDEs.
 
-[**Kojima et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2205.11916) "Large Language Models are Zero-Shot Reasoners" — "Let's think step by step."
-
-[**OpenAI (2024, *arXiv*)**](https://arxiv.org/abs/2412.16720) "o1 System Card" — Reasoning via test-time compute scaling.
+[**Esser et al. (2024, *arXiv*)**](https://arxiv.org/abs/2403.03206) "Scaling Rectified Flow Transformers for High-Resolution Image Synthesis" — Stable Diffusion 3 and the MMDiT architecture.
 
 </div>
 
@@ -333,6 +352,6 @@ Each limitation has spawned research directions: RAG for knowledge currency (Lec
 
 <div class="tip-box" data-title="Up next...">
 
-Implementing GPT from scratch: building a language model in PyTorch
+Diffusion applications: text-to-image, text-to-video, and the ethics of generative AI
 
 </div>

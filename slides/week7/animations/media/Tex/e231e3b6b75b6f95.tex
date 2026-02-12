@@ -1,0 +1,13 @@
+\documentclass[preview]{standalone}
+
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\begin{document}
+
+\begin{align*}
+\mathcal{L}_{\text{ELBO}} = \sum_{t=1}^{T} \mathbb{E}_q \left[ D_{\text{KL}}(q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0) \| p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)) \right]
+\end{align*}
+
+\end{document}

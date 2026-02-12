@@ -237,43 +237,45 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html)
 ---
 
-## Week 7: Decoder Models & GPT
+## Week 7: Diffusion Models
 
-**Monday (Lecture 21):** GPT Architecture
-- Generative pre-training paradigm, fine-tuning, weight tying
-- The BooksCorpus controversy: training data ethics
-- Open-weight decoders: the LLaMA revolution
-- Test-time compute and inference scaling
-- Modern decoder innovations: RMSNorm, SwiGLU, RoPE, GQA
-- Multi-token prediction and hybrid architectures (Jamba)
-- Reading: [Radford et al. (2018)](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf) - GPT-1
-- Reading: [Radford et al. (2019)](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) - GPT-2
-- Reading: [Touvron et al. (2023)](https://arxiv.org/abs/2302.13971) - LLaMA
-- Reading: [Gloeckle et al. (2024)](https://arxiv.org/abs/2404.19737) - Multi-token prediction
+**Monday (Lecture 21):** Diffusion Models
+- The diffusion architecture: forward process, reverse process, noise schedules
+- U-Net for noise prediction with timestep conditioning
+- Training objective: predicting the noise (simplified DDPM loss)
+- Score matching intuition and sampling algorithms (DDPM, DDIM)
+- Animated walkthrough of the complete diffusion pipeline
+- Reading: [Ho, Jain & Abbeel (2020)](https://arxiv.org/abs/2006.11239) - Denoising Diffusion Probabilistic Models
+- Reading: [Sohl-Dickstein et al. (2015)](https://arxiv.org/abs/1503.03585) - Deep Unsupervised Learning using Nonequilibrium Thermodynamics
+- Reading: [Song & Ermon (2019)](https://arxiv.org/abs/1907.05600) - Generative Modeling by Estimating Gradients
+- Reading: [Nichol & Dhariwal (2021)](https://arxiv.org/abs/2102.09672) - Improved DDPM
 - **📝 Assignment 4 Due (Feb 16, 11:59 PM EST)**
 - **Final Project Released:** [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) (Due: Mar 9, 11:59 PM EST)
 - **Assignment 5 Available (Optional/Extra Credit):** [Build GPT](https://contextlab.github.io/llm-course/assignments/assignment-5/)
-- 🎮 **Try it:** [GPT Playground](https://contextlab.github.io/llm-course/demos/gpt-playground/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture21.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture21.html)
 
-**Wednesday (Lecture 22):** Scaling Up to GPT-3 and Beyond
-- From GPT-1 to GPT-4: the scaling journey
-- Beyond RLHF: DPO and GRPO alignment methods
-- Reasoning models (o1, o3, DeepSeek-R1) and emergent abilities debate
-- Reading: [Brown et al. (2020)](https://arxiv.org/abs/2005.14165) - GPT-3
-- Reading: [Rafailov et al. (2023)](https://arxiv.org/abs/2305.18290) - DPO
-- Reading: [Schaeffer et al. (2023)](https://arxiv.org/abs/2304.15004) - Are Emergent Abilities a Mirage?
+**Wednesday (Lecture 22):** Diffusion Model Extensions
+- Latent diffusion: VAE compression for efficient generation
+- Classifier-free guidance for conditional generation
+- Diffusion Transformer (DiT): replacing U-Net with transformers
+- Flow matching and rectified flow: simpler, faster diffusion
+- Stable Diffusion 3: MMDiT architecture
+- Reading: [Rombach et al. (2022)](https://arxiv.org/abs/2112.10752) - Latent Diffusion Models
+- Reading: [Ho & Salimans (2022)](https://arxiv.org/abs/2207.12598) - Classifier-Free Diffusion Guidance
+- Reading: [Peebles & Xie (2023)](https://arxiv.org/abs/2212.09748) - Scalable Diffusion Models with Transformers (DiT)
+- Reading: [Lipman et al. (2023)](https://arxiv.org/abs/2210.02747) - Flow Matching for Generative Modeling
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture22.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture22.html)
 
-**Friday (Lecture 23):** Implementing GPT from Scratch
-- Build a complete mini-GPT (~30M params) in PyTorch
-- Tokenization, embeddings, masked attention, transformer blocks, training loop
-- Weight tying, gradient accumulation, LR scheduling, mixed precision training
-- Text generation: greedy, temperature, top-k, nucleus sampling
-- KV caching, FlashAttention, and nanoGPT comparison
-- Tutorial: [Let's build GPT (Karpathy)](https://www.youtube.com/watch?v=kCc8FmEb1nY)
-- Reading: [Dao et al. (2022)](https://arxiv.org/abs/2205.14135) - FlashAttention
-- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/gpt_from_scratch_demo.ipynb)
+**Friday (Lecture 23):** Diffusion Applications and Ethics
+- Text-to-image: DALL-E 2, Stable Diffusion, Imagen
+- Text-to-video: Sora and spacetime patches
+- Text-to-audio: FluxMusic and spectral diffusion
+- Discrete diffusion for text generation (MDLM)
+- Ethics: deepfakes, consent, bias in generation, regulation
+- Reading: [Ramesh et al. (2022)](https://arxiv.org/abs/2204.06125) - DALL-E 2
+- Reading: [OpenAI (2024)](https://openai.com/research/video-generation-models-as-world-simulators) - Sora
+- Reading: [Sahoo et al. (2024)](https://arxiv.org/abs/2406.07524) - Masked Diffusion Language Models
+- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/diffusion_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture23.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture23.html)
 ---
 

@@ -392,6 +392,6 @@ Which framework you adopt determines your answer to every question on the next s
 
 <div class="tip-box" data-title="Up next...">
 
-Week 7: GPT and autoregressive generation — from decoder architecture to scaling laws
+Week 7: Diffusion models — from denoising to text-to-image generation
 
 </div>
