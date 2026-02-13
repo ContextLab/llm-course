@@ -55,12 +55,12 @@ Stephens et al (2010) found that successful communication **replicated the speak
 
 <div class="note-box" data-title="Further reading">
 
-[**Stephens, Silbert & Hasson (2010, *PNAS*)**](https://doi.org/10.1073/pnas.1008662107) "Speaker–listener neural coupling underlies successful communication" — Recorded brain activity from speakers and listeners during natural storytelling.
+[**Stephens, Silbert, & Hasson (2010, *PNAS*)**](https://doi.org/10.1073/pnas.1008662107) "Speaker–listener neural coupling underlies successful communication" — Recorded brain activity from speakers and listeners during natural storytelling.
 
 </div>
 
 ---
-<!-- _class: scale-70 -->
+<!-- _class: scale-65 -->
 
 # Language transfers memories between brains
 
@@ -78,9 +78,9 @@ The brain constructs the same **amodal narrative representation** whether the st
 
 <div class="note-box" data-title="Further reading">
 
-[**Zadbood et al. (2017, *Cerebral Cortex*)**](https://doi.org/10.1093/cercor/bhw351): "How we transmit memories to other brains" — Narrative reconstructs the speaker's perceptual experience in the listener.
+[**Zadbood et al. (2017, *Cerebral Cortex*)**](https://academic.oup.com/cercor/article/27/10/4988/4080827): "How we transmit memories to other brains" — Narrative reconstructs the speaker's perceptual experience in the listener.
 
-[**Regev, Honey & Hasson (2013, *J. Neurosci.*)**](https://doi.org/10.1523/JNEUROSCI.1580-13.2013): Neural patterns are modality-independent.
+[**Regev, Honey, & Hasson (2013, *J. Neurosci.*)**](https://doi.org/10.1523/JNEUROSCI.1580-13.2013): "Selective and invariant neural responses to spoken and written narratives" — The same brain regions respond to stories regardless of modality.
 
 </div>
 
@@ -109,9 +109,9 @@ Text embedding spaces provide a **shared numerical coordinate system** for track
 
 [**Heusser et al. (2021, *Nature Human Behaviour*)**](https://rdcu.be/cpMwZ): "Geometric models reveal behavioral and neural signatures of transforming naturalistic experiences into episodic memories" — Brain activity during movie watching predicts how you *recount* it later.
 
-[**Fitzpatrick et al. (2026, *Nature Commumnications*)**](https://doi.org/10.31234/osf.io/dh3q2_v2): "Text embedding models yield high-resolution insights into conceptual knowledge from short multiple-choice quizzes" - Text embeddings can be used to accurately model (an approximation of) *everything* you know!
+[**Fitzpatrick et al. (2026, *Nature Communications*)**](https://doi.org/10.31234/osf.io/dh3q2_v2): "Text embedding models yield high-resolution insights into conceptual knowledge from short multiple-choice quizzes" — Text embeddings can be used to accurately model (an approximation of) *everything* you know!
 
-[**Manning & Kahana (2012, *Memory*)**](http://caligari.dartmouth.edu/~jmanning/pubs/MannKaha12.pdf): "Interpreting semantic clustering effects in free recall" - When we use the "wrong" embedding model to model our thoughts and memories, how misleading is it?
+[**Manning & Kahana (2012, *Memory*)**](http://caligari.dartmouth.edu/~jmanning/pubs/MannKaha12.pdf): "Interpreting semantic clustering effects in free recall" — When we use the "wrong" embedding model to model our thoughts and memories, how misleading is it?
 
 </div>
 
@@ -248,7 +248,7 @@ Anthropic shows LLMs build structured concept maps. LeCun argues they lack groun
 </div>
 
 ---
-<!-- _class: scale-75 -->
+<!-- _class: scale-70 -->
 
 # Are LLMs "thinking" or "performing"?
 
@@ -266,7 +266,9 @@ LLMs have **attention** (the mechanism) but may lack an **attention schema** —
 
 <div class="note-box" data-title="References">
 
-[**Shanahan (2024, *CACM*)**](https://doi.org/10.1145/3624724): "Talking about large language models" — LLMs as role-play engines simulating plausible speakers. [**Farrell, Graziano et al. (2025, *arXiv*)**](https://arxiv.org/abs/2411.00983): "Attention schema in LLMs" — LLMs lack an internal model of their own attentional states.
+[**Shanahan (2024, *CACM*)**](https://doi.org/10.1145/3624724): "Talking about large language models" — LLMs as role-play engines simulating plausible speakers.
+
+[**Farrell, Graziano et al. (2025, *arXiv*)**](https://arxiv.org/abs/2411.00983): "Attention schema in LLMs" — LLMs lack an internal model of their own attentional states.
 
 </div>
 
