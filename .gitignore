@@ -194,3 +194,11 @@ slides/template_deck/slide*.png
 .playwright-mcp/slides/*/*.png
 notes/*.png
 notes/l16-screenshots/
+
+# Manim build artifacts (regenerable cache)
+**/media/Tex/
+**/media/texts/
+**/media/images/
+
+# Sisyphus working files
+.sisyphus/
