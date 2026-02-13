@@ -218,7 +218,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 **Friday (Lecture 20):** Language, Thought, and Other Brains
 - Encoder applications recap: industry scale, cost advantages over decoders
-- Brain-LLM alignment: layer-specific prediction of brain activity, Mind's Transformer
+- Brain-LLM alignment: The Mind's Transformer — intra-block hierarchy mirrors cortical processing
 - Language as wireless brain activity transmission: neural coupling (Stephens et al., 2010)
 - Memory transfer through narrative (Zadbood et al., 2017), LLMs bridging brains (Zada et al., 2024)
 - Understanding is prediction: next-word prediction mirrors the brain (Schrimpf et al., 2021)
@@ -227,13 +227,11 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - What LLMs have inside: monosemantic features (Anthropic, 2024) vs. grounding problem (LeCun, 2022)
 - Deep discussion: lossy channels, alignment puzzles, the prediction test, experience and simulation
 - Reading: [Stephens, Silbert & Hasson (2010)](https://doi.org/10.1073/pnas.1008662107) - Speaker-listener neural coupling
-- Reading: [Goldstein et al. (2022)](https://doi.org/10.1038/s41593-022-01026-4) - GPT-2 predicts brain activity
 - Reading: [Schrimpf et al. (2021)](https://doi.org/10.1073/pnas.2105646118) - Neural architecture of language
 - Reading: [Delétang et al. (2024)](https://arxiv.org/abs/2309.10668) - Language modeling is compression
 - Reading: [Queloz & Beckmann (2025)](https://philarchive.org/rec/QUEWWC-2) - Understanding as predictive compression
 - Reading: [Fedorenko et al. (2024)](https://doi.org/10.1038/s41586-024-07522-w) - Language vs. thought
 - Reading: [Shanahan (2024)](https://doi.org/10.1145/3624724) - LLMs as role-play engines
-- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/encoder_applications_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html)
 ---
 

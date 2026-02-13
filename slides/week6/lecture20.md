@@ -28,7 +28,7 @@ Winter 2026
 </div>
 
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-80 -->
 
 # Encoders in the real world (recap)
 
@@ -54,35 +54,15 @@ GPT-4 costs ~$30/M tokens at ~500ms/request. A fine-tuned DistilBERT: ~$0.01/M t
 
 ---
 
-# Brain-LLM alignment
+<div class="tip-box" data-title="From engineering to understanding">
 
-<div class="note-box" data-title="The relationship between LLMs and brains is deeper than expected">
-
-[**Caucheteux & King (2022, *Communications Biology*)**](https://doi.org/10.1038/s42003-022-03036-1): LLM activations predict brain activity in a **layer-specific** way — early model layers map to auditory cortex, deeper layers to high-level language areas.
-
-[**Gao et al. (2025, *Nature Computational Science*)**](https://doi.org/10.1038/s43588-025-00863-0): "Brain-like" artificial neurons emerge in LLMs trained only on text — units that encode syntax, semantics, and even spatial concepts, mirroring brain organization.
-
-</div>
-
-<div class="definition-box" data-title="Mind's Transformer (Aw et al., 2026, ICLR)">
-
-[The Mind's Transformer](https://openreview.net/forum?id=PgIlCCNxdB): The brain may implement a **Transformer-like** algorithm — not just analogous representations, but analogous *computation*. Attention-like gating and residual-stream-like updates appear across cortical circuits.
-
-If the brain and LLMs converge on similar computational strategies, these may be *good solutions* for processing sequential, context-dependent information — not engineering coincidences.
-
-</div>
-
----
-
-<div class="tip-box" data-title="Companion notebook">
-
-📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/encoder_applications_demo.ipynb) — hands-on with classification, NER, QA, and sentence similarity
+We've spent two lectures on the engineering of encoder models — what they do, how they work, and why they matter in production. But these models also reveal something unexpected about our own minds.
 
 </div>
 
 <div class="note-box" data-title="The rest of today is a discussion">
 
-We've spent two lectures on the engineering of encoder models. Today we step back and ask: **what do these models teach us about the nature of language, thought, and the connections between minds?**
+Today we step back and ask: **what do these models teach us about the nature of language, thought, and the connections between minds?**
 
 The following slides present ideas from neuroscience, cognitive science, and philosophy of mind — each followed by discussion prompts. There are no right answers. The goal is to develop your own informed position.
 
@@ -90,9 +70,31 @@ The following slides present ideas from neuroscience, cognitive science, and phi
 
 ---
 
+# Brain-LLM alignment
+
+<div class="note-box" data-title="The Mind's Transformer (Chen & Sivakumar, 2026)">
+
+[**Chen & Sivakumar (2026, *ICLR*)**](https://openreview.net/forum?id=PgIlCCNxdB): First systematic "computational neuroanatomy" of what happens *inside* a transformer block — mapping **13 intermediate states** (from layer norm through attention to FFN) onto fMRI brain activity during language processing. Analyzed 21 LLMs across 5 model families.
+
+</div>
+
+<div class="definition-box" data-title="Intra-block hierarchy mirrors the cortex">
+
+Different computational stages *within a single transformer block* map to anatomically distinct brain systems. Early **attention states** align with sensory cortices, while later **FFN states** correspond to association areas — mirroring the cortical processing hierarchy. Over 90% of brain voxels are better explained by these intermediate computations than by the standard hidden states we typically analyze.
+
+</div>
+
+<div class="example-box" data-title="RoPE validates auditory processing">
+
+Rotary positional embeddings (RoPE) specifically enhance alignment with the brain's auditory processing streams. Per-head queries with RoPE explain **74%** of auditory cortex activity vs. just **8%** without — the first neurobiological validation of a specific transformer architectural component. Their MindTransformer framework achieves alignment gains in auditory cortex exceeding those from **456× model scaling**.
+
+</div>
+
+---
+
 # What language actually does
 
-<div class="note-box" data-title="Language is wireless brain activity transmission">
+<div class="definition-box" data-title="Language is lossy neural compression">
 
 Your brain lives in a sealed vault of bone, bathed in fluid that is essentially seawater. It has no direct contact with the outside world. Everything you know about reality is *constructed* by your neural circuits from noisy sensor data — you are, in the most literal sense, a brain floating in a vat.
 
@@ -100,26 +102,38 @@ Language breaks through that isolation. When you speak, you compress the electri
 
 </div>
 
-<div class="definition-box" data-title="Neural coupling (Stephens et al., 2010)">
+<div class="note-box" data-title="Stephens, Silbert & Hasson (2010)">
 
-[**Stephens, Silbert & Hasson (2010, *PNAS*)**](https://doi.org/10.1073/pnas.1008662107) recorded brain activity from speakers and listeners during natural storytelling. Successful communication literally **replicated the speaker's brain patterns in the listener's brain**, with the listener's responses temporally coupled to — and sometimes *anticipating* — the speaker's.
+[**Stephens, Silbert & Hasson (2010, *PNAS*)**](https://doi.org/10.1073/pnas.1008662107) "Speaker–listener neural coupling underlies successful communication" — Recorded brain activity from speakers and listeners during natural storytelling.
+
+</div>
+
+<div class="example-box" data-title="Communication literally replicates brain states">
+
+Successful communication **replicated the speaker's brain patterns in the listener's brain**, with the listener's responses temporally coupled to — and sometimes *anticipating* — the speaker's. Language doesn't just convey ideas: it programs one brain to enter the same state as another.
 
 </div>
 
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-80 -->
 
 # Language transfers memories between brains
 
-<div class="definition-box" data-title="Memory transfer through narrative (Zadbood et al., 2017)">
+<div class="definition-box" data-title="Language reconstructs experience">
 
-[**Zadbood et al. (2017, *Cerebral Cortex*)**](https://doi.org/10.1093/cercor/bhw351) showed that when person A watches a movie and then *tells* person B the story, person B's brain activity during listening resembles person A's brain activity during *watching* — not during speaking. Language doesn't just transmit the speaker's verbal patterns. It reconstructs the speaker's **perceptual experience** in the listener's brain. You don't just hear a story — your brain *relives* it.
+When person A watches a movie and then *tells* person B the story, person B's brain activity during listening resembles person A's brain activity during *watching* — not during speaking. Language doesn't just transmit verbal patterns. It reconstructs the speaker's **perceptual experience** in the listener's brain. You don't just hear a story — your brain *relives* it.
 
 </div>
 
-<div class="note-box" data-title="It doesn't matter how the story arrives">
+<div class="example-box" data-title="Modality doesn't matter">
 
-[**Regev, Honey & Hasson (2013, *Journal of Neuroscience*)**](https://doi.org/10.1523/JNEUROSCI.1580-13.2013): The brain constructs the same **amodal narrative representation** whether the story is read, heard, or watched as a movie. The neural patterns are modality-independent. Language isn't special because of sound or letters — it's special because it *programs a specific neural state* regardless of input channel.
+The brain constructs the same **amodal narrative representation** whether the story is read, heard, or watched as a movie. Language isn't special because of sound or letters — it programs a specific neural state regardless of input channel.
+
+</div>
+
+<div class="note-box" data-title="References">
+
+[**Zadbood et al. (2017, *Cerebral Cortex*)**](https://doi.org/10.1093/cercor/bhw351): "How we transmit memories to other brains" — Narrative reconstructs the speaker's perceptual experience in the listener. [**Regev, Honey & Hasson (2013, *J. Neurosci.*)**](https://doi.org/10.1523/JNEUROSCI.1580-13.2013): Neural patterns are modality-independent.
 
 </div>
 
@@ -130,19 +144,17 @@ If language reconstructs the speaker's perceptual experience in the listener's b
 </div>
 
 ---
-<!-- _class: scale-90 -->
-
 # LLMs speak the brain's language
 
-<div class="definition-box" data-title="GPT-2 predicts brain activity (Goldstein et al., 2022)">
+<div class="definition-box" data-title="LLM embeddings bridge two brains">
 
-[**Goldstein et al. (2022, *Nature Neuroscience*)**](https://doi.org/10.1038/s41593-022-01026-4): GPT-2's next-word predictions correlate with neural activity recorded from electrodes implanted in human brains during natural speech comprehension. The model's internal states track the brain's processing in real time — not just at the level of semantics, but at the level of individual word surprisal.
+LLM embedding spaces provide a **shared numerical coordinate system** for tracking speaker–listener neural alignment during conversation. The degree to which both brains converge in LLM-space predicts communication success. The model didn't evolve to do this — it learned it from text alone.
 
 </div>
 
-<div class="definition-box" data-title="LLMs bridge two brains (Zada et al., 2024)">
+<div class="note-box" data-title="Zada et al. (2024)">
 
-[**Zada et al. (2024, *Neuron*)**](https://doi.org/10.1016/j.neuron.2024.06.025): LLM embedding spaces provide a **shared numerical coordinate system** for tracking speaker–listener neural alignment during conversation. The degree to which both brains converge in LLM-space predicts communication success. The model didn't evolve to do this — it learned it from text alone.
+[**Zada et al. (2024, *Neuron*)**](https://doi.org/10.1016/j.neuron.2024.06.025): "A shared model-based linguistic space for transmitting our thoughts from brain to brain" — Demonstrated that LLM embeddings can track real-time speaker–listener neural coupling during natural conversation.
 
 </div>
 
@@ -154,17 +166,25 @@ A model trained on text alone — with no ears, no body, no social experience �
 
 ---
 
+<!-- _class: scale-80 -->
+
 # Understanding is prediction
 
-<div class="definition-box" data-title="Next-word prediction mirrors the brain (Schrimpf et al., 2021)">
+<div class="definition-box" data-title="Better prediction = better brain alignment">
 
-[**Schrimpf et al. (2021, *PNAS*)**](https://doi.org/10.1073/pnas.2105646118): Across dozens of language models, the single best predictor of how well a model matches human brain activity is its **next-word prediction accuracy**. Models that are better at predicting what comes next are better at predicting the brain. The brain's core language mechanism appears to be a prediction engine.
+Across dozens of language models, the single best predictor of how well a model matches human brain activity is its **next-word prediction accuracy**. Models that are better at predicting what comes next are better at predicting the brain. The brain's core language mechanism appears to be a prediction engine.
 
 </div>
 
-<div class="definition-box" data-title="Brains as prediction machines (Clark, 2013)">
+<div class="definition-box" data-title="The brain as a prediction machine">
 
-[**Clark (2013, *Behavioral and Brain Sciences*)**](https://doi.org/10.1017/S0140525X12000477): The "predictive processing" framework proposes that the brain is fundamentally a **prediction machine** — it constantly generates expectations about incoming input and updates based on prediction errors. BERT's masked language modeling (predicting missing words from context) is a concrete implementation of exactly this principle.
+The "predictive processing" framework proposes that the brain fundamentally **generates expectations** about incoming input and updates based on prediction errors. BERT's masked language modeling — predicting missing words from context — is a concrete implementation of exactly this principle.
+
+</div>
+
+<div class="note-box" data-title="References">
+
+[**Schrimpf et al. (2021, *PNAS*)**](https://doi.org/10.1073/pnas.2105646118): "The neural architecture of language" — Next-word prediction accuracy is the best predictor of brain alignment across dozens of models. [**Clark (2013, *BBS*)**](https://doi.org/10.1017/S0140525X12000477): "Whatever next?" — Foundational framework for understanding brains as prediction machines.
 
 </div>
 
@@ -176,17 +196,25 @@ If the brain's language system is fundamentally a prediction engine, and LLMs ar
 
 ---
 
+<!-- _class: scale-80 -->
+
 # Language modeling is compression
 
-<div class="definition-box" data-title="Intelligence as compression (Delétang et al., 2024)">
+<div class="definition-box" data-title="Prediction and compression are equivalent">
 
-[**Delétang et al. (2024, *ICLR*)**](https://arxiv.org/abs/2309.10668): Language modeling and data compression are **mathematically equivalent** — a model that predicts the next token well can compress text efficiently, and vice versa. Better language models are literally better compressors. This isn't metaphor: Shannon's source coding theorem proves it.
+Language modeling and data compression are **mathematically equivalent** — a model that predicts the next token well can compress text efficiently, and vice versa. Better language models are literally better compressors. This isn't metaphor: Shannon's source coding theorem proves it.
 
 </div>
 
-<div class="note-box" data-title="Language itself is optimized for compression">
+<div class="example-box" data-title="Language itself is a compression protocol">
 
-[**Gibson et al. (2019, *Trends in Cognitive Sciences*)**](https://doi.org/10.1016/j.tics.2019.02.003): Languages across the world are structured to **minimize effort** while **maximizing robustness to noise** — exactly the engineering goals of a good compression codec. Frequent words are short. Ambiguity is tolerated where context resolves it. Redundancy is added where errors are costly. Human language is an evolved compression protocol.
+Languages across the world are structured to **minimize effort** while **maximizing robustness to noise** — exactly the engineering goals of a good compression codec. Frequent words are short. Ambiguity is tolerated where context resolves it. Redundancy is added where errors are costly.
+
+</div>
+
+<div class="note-box" data-title="References">
+
+[**Delétang et al. (2024, *ICLR*)**](https://arxiv.org/abs/2309.10668): "Language modeling is compression" — Formal proof that prediction and compression are mathematically equivalent. [**Gibson et al. (2019, *TiCS*)**](https://doi.org/10.1016/j.tics.2019.02.003): "How efficiency shapes human language" — Cross-linguistic evidence that languages optimize for compression.
 
 </div>
 
@@ -197,19 +225,25 @@ If language is a compression protocol and LLMs are compression algorithms, then 
 </div>
 
 ---
-<!-- _class: scale-80 -->
+<!-- _class: scale-75 -->
 
 # Does prediction equal understanding?
 
-<div class="definition-box" data-title="Understanding IS predictive compression (Queloz & Beckmann, 2025)">
+<div class="definition-box" data-title="Compression IS understanding">
 
-[**Queloz & Beckmann (2025, *PhilArchive*)**](https://philarchive.org/rec/QUEWWC-2): The traditional objection — "LLMs are just doing statistics, not real understanding" — collapses if understanding *is* predictive compression. A system that compresses language well must capture its structure, context dependencies, and meaning relations. The compression IS the understanding. There is no magical extra ingredient.
+The traditional objection — "LLMs are just doing statistics, not real understanding" — collapses if understanding *is* predictive compression. A system that compresses language well must capture its structure, context dependencies, and meaning relations. The compression IS the understanding. There is no magical extra ingredient.
 
 </div>
 
-<div class="note-box" data-title="The opposing view: language ≠ thought">
+<div class="important-box" data-title="The opposing view: language ≠ thought">
 
-[**Fedorenko et al. (2024, *Nature*)**](https://doi.org/10.1038/s41586-024-07522-w): The brain's language network is **anatomically and functionally distinct** from reasoning and problem-solving circuits. People with severe language impairments can still reason, plan, and do math. Language is a *communication module* — an interface for transmitting thoughts, not the medium of thought itself. If so, LLMs may have automated the *transmission* without touching the *thinking*.
+The brain's language network is **anatomically and functionally distinct** from reasoning and problem-solving circuits. People with severe language impairments can still reason, plan, and do math. Language is a *communication module* — an interface for transmitting thoughts, not the medium of thought itself. If so, LLMs may have automated the *transmission* without touching the *thinking*.
+
+</div>
+
+<div class="note-box" data-title="References">
+
+[**Queloz & Beckmann (2025, *PhilArchive*)**](https://philarchive.org/rec/QUEWWC-2): "What was ChatGPT's training really about?" — Predictive compression constitutes genuine understanding. [**Fedorenko et al. (2024, *Nature*)**](https://doi.org/10.1038/s41586-024-07522-w): "Language is primarily a tool for communication rather than thought" — Language and thought are neurally separable.
 
 </div>
 
@@ -220,19 +254,25 @@ Queloz & Beckmann say compression IS understanding. Fedorenko et al. say languag
 </div>
 
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-75 -->
 
 # What LLMs have inside
 
-<div class="definition-box" data-title="Structured concept maps, not just statistics (Anthropic, 2024)">
+<div class="definition-box" data-title="Structured concept maps, not just statistics">
 
-[**Anthropic (2024, *Transformer Circuits*)**](https://transformer-circuits.pub/2024/scaling-monosemanticity/): Mechanistic interpretability research on Claude revealed that LLMs contain **monosemantic features** — individual internal components that respond to specific, interpretable concepts (e.g., "Golden Gate Bridge," "code bugs," "deceptive reasoning"). These aren't statistical ghosts. They are structured, hierarchical concept maps that the model builds from text alone.
+Mechanistic interpretability research revealed that LLMs contain **monosemantic features** — individual internal components that respond to specific, interpretable concepts (e.g., "Golden Gate Bridge," "code bugs," "deceptive reasoning"). These aren't statistical ghosts. They are structured, hierarchical concept maps that the model builds from text alone.
 
 </div>
 
-<div class="note-box" data-title="The grounding problem persists">
+<div class="important-box" data-title="The grounding problem persists">
 
-[**LeCun (2022, *OpenReview*)**](https://openreview.net/forum?id=BZ5a1r-kVsf): No matter how rich the internal representations, LLMs lack **world models** — they have never seen, touched, or navigated anything. Their concept of "hot" comes from patterns in text about heat, not from the experience of burning. Are monosemantic features genuine concepts, or high-fidelity maps of *other people's* concepts?
+No matter how rich the internal representations, LLMs lack **world models** — they have never seen, touched, or navigated anything. Their concept of "hot" comes from patterns in text about heat, not from the experience of burning. Are monosemantic features genuine concepts, or high-fidelity maps of *other people's* concepts?
+
+</div>
+
+<div class="note-box" data-title="References">
+
+[**Anthropic (2024, *Transformer Circuits*)**](https://transformer-circuits.pub/2024/scaling-monosemanticity/): "Scaling monosemanticity" — Millions of interpretable features inside Claude, organized in hierarchical concept maps. [**LeCun (2022, *OpenReview*)**](https://openreview.net/forum?id=BZ5a1r-kVsf): "A path towards autonomous machine intelligence" — LLMs fundamentally lack world models.
 
 </div>
 
@@ -243,19 +283,25 @@ Anthropic shows LLMs build structured concept maps. LeCun argues they lack groun
 </div>
 
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-75 -->
 
 # Are LLMs "thinking" or "performing"?
 
-<div class="definition-box" data-title="LLMs as role-play engines (Shanahan, 2024)">
+<div class="definition-box" data-title="LLMs as role-play engines">
 
-[**Shanahan (2024, *Communications of the ACM*)**](https://doi.org/10.1145/3624724): LLMs are best understood as **"engines for role-play"** — they simulate the behavior of a plausible speaker, drawing on the vast repertoire of speakers in training data. When GPT writes a poem, it's not expressing itself — it's simulating someone who would write that poem. The performance can be indistinguishable from the real thing.
+LLMs are best understood as **"engines for role-play"** — they simulate the behavior of a plausible speaker, drawing on the vast repertoire of speakers in training data. When GPT writes a poem, it's not expressing itself — it's simulating someone who would write that poem. The performance can be indistinguishable from the real thing.
 
 </div>
 
-<div class="note-box" data-title="The attention schema theory">
+<div class="example-box" data-title="Attention without awareness">
 
-[**Farrell, Graziano et al. (2025, *arXiv*)**](https://arxiv.org/abs/2411.00983): LLMs have **attention** (the mechanism) but may lack an **attention schema** — an internal model of their own attentional states. Humans don't just attend to things; we are *aware that we are attending*. LLMs process information without modeling the fact that they're processing it. They are "looking" but not "aware of looking."
+LLMs have **attention** (the mechanism) but may lack an **attention schema** — an internal model of their own attentional states. Humans don't just attend to things; we are *aware that we are attending*. LLMs process information without modeling the fact that they're processing it. They are "looking" but not "aware of looking."
+
+</div>
+
+<div class="note-box" data-title="References">
+
+[**Shanahan (2024, *CACM*)**](https://doi.org/10.1145/3624724): "Talking about large language models" — LLMs as role-play engines simulating plausible speakers. [**Farrell, Graziano et al. (2025, *arXiv*)**](https://arxiv.org/abs/2411.00983): "Attention schema in LLMs" — LLMs lack an internal model of their own attentional states.
 
 </div>
 
@@ -275,7 +321,7 @@ When you read a novel and feel sad for a character, are you "really" feeling sad
 We started this unit asking what BERT does. We've now arrived at much deeper territory:
 
 - Language is a lossy compression channel for neural states (Stephens, Zadbood)
-- LLMs learn the same code that brains use for this compression (Goldstein, Zada)
+- LLMs learn the same code that brains use for this compression (Zada)
 - Better prediction = better brain alignment = possibly better "understanding" (Schrimpf, Clark)
 - But language and thought are separable in the brain (Fedorenko)
 - And LLMs may be performing rather than understanding (Shanahan)
@@ -345,8 +391,6 @@ Which framework you adopt determines your answer to every question on the next s
 
 [**Zadbood et al. (2017, *Cerebral Cortex*)**](https://doi.org/10.1093/cercor/bhw351) "How we transmit memories to other brains" — Narrative reconstructs perceptual experience in the listener.
 
-[**Goldstein et al. (2022, *Nature Neuroscience*)**](https://doi.org/10.1038/s41593-022-01026-4) "Shared computational principles for language processing in humans and deep language models" — GPT-2 tracks real-time brain activity during speech.
-
 [**Zada et al. (2024, *Neuron*)**](https://doi.org/10.1016/j.neuron.2024.06.025) "A shared model-based linguistic space for transmitting our thoughts from brain to brain" — LLM embeddings bridge speaker and listener brains.
 
 [**Schrimpf et al. (2021, *PNAS*)**](https://doi.org/10.1073/pnas.2105646118) "The neural architecture of language" — Next-word prediction is the best predictor of brain alignment.
@@ -365,9 +409,7 @@ Which framework you adopt determines your answer to every question on the next s
 
 [**Anthropic (2024)**](https://transformer-circuits.pub/2024/scaling-monosemanticity/) "Scaling monosemanticity" — LLMs build structured, interpretable concept maps.
 
-[**Caucheteux & King (2022, *Communications Biology*)**](https://doi.org/10.1038/s42003-022-03036-1) "Brains and algorithms partially converge" — Layer-specific brain-LLM alignment.
-
-[**Aw et al. (2026, *ICLR*)**](https://openreview.net/forum?id=PgIlCCNxdB) "The Mind's Transformer" — Evidence that the brain implements Transformer-like computation.
+[**Chen & Sivakumar (2026, *ICLR*)**](https://openreview.net/forum?id=PgIlCCNxdB) "The Mind's Transformer" — Intra-block computational neuroanatomy of LLM-brain alignment.
 
 </div>
 
