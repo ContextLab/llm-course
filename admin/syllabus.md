@@ -117,11 +117,11 @@ We strive to create an inclusive learning environment where all students feel su
 | 2 | Jan 12--16 | Data Cleaning, Tokenization, Text Classification | [Assignment 2](https://contextlab.github.io/llm-course/assignments/assignment-2/) released (Jan 16) |
 | 3 | Jan 19--23 | POS Tagging, Vibe Coding, Classical Embeddings | [Assignment 1](https://contextlab.github.io/llm-course/assignments/assignment-1/) due (Jan 19), [Assignment 3](https://contextlab.github.io/llm-course/assignments/assignment-3/) released (Jan 23) |
 | 4 | Jan 26--30 | Word Embeddings, Contextual Embeddings, Dimensionality Reduction | [Assignment 2](https://contextlab.github.io/llm-course/assignments/assignment-2/) due (Jan 26) |
-| 5 | Feb 2--6 | Attention Mechanisms, Transformer Architecture | [Assignment 3](https://contextlab.github.io/llm-course/assignments/assignment-3/) due (Feb 6), [Assignment 4](https://contextlab.github.io/llm-course/assignments/assignment-4/) released (Feb 6) |
-| 6 | Feb 9--13 | BERT Deep Dive, Encoder Models | |
+| 5 | Feb 2--6 | Transformer Architecture, Training, RAG | [Assignment 3](https://contextlab.github.io/llm-course/assignments/assignment-3/) due (Feb 6), [Assignment 4](https://contextlab.github.io/llm-course/assignments/assignment-4/) released (Feb 6) |
+| 6 | Feb 9--13 | BERT, Encoder Variants, Language & Thought | |
 | 7 | Feb 16--20 | Diffusion Models, Extensions, Applications & Ethics | [Assignment 4](https://contextlab.github.io/llm-course/assignments/assignment-4/) due (Feb 16), [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) released (Feb 16), [Assignment 5](https://contextlab.github.io/llm-course/assignments/assignment-5/) available (optional/extra credit) |
 | 8 | Feb 23--27 | **No classes** (instructor away) | Work on [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) |
-| 9 | Mar 2--6 | RAG, Mixture of Experts, Ethics | |
+| 9 | Mar 2--6 | Agents and Tool Use, Mixture of Experts, Ethics | |
 | 10 | Mar 9 | Final Project Presentations | [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) due (Mar 9, 11:59 PM EST) |
 | Finals | Mar 13 | | |
 
@@ -178,7 +178,7 @@ We strive to create an inclusive learning environment where all students feel su
 |-----|---------|--------|--------|-----------|
 | Mon Feb 9 | Lecture 18 | BERT Deep Dive | [HTML](https://contextlab.github.io/llm-course/slides/week6/lecture18.html), [PDF](https://contextlab.github.io/llm-course/slides/week6/lecture18.pdf) | [Devlin et al. (2019)](https://aclanthology.org/N19-1423/) |
 | Wed Feb 11 | Lecture 19 | BERT Variants | [HTML](https://contextlab.github.io/llm-course/slides/week6/lecture19.html), [PDF](https://contextlab.github.io/llm-course/slides/week6/lecture19.pdf) | [Liu et al. (2019)](https://arxiv.org/abs/1907.11692), [Sanh et al. (2019)](https://arxiv.org/abs/1910.01108) |
-| Fri Feb 13 | Lecture 20 | Applications of Encoder Models | [HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html), [PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | |
+| Fri Feb 13 | Lecture 20 | Language, Thought, and Other Brains | [HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html), [PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | [Stephens et al. (2010)](https://doi.org/10.1073/pnas.1008662107), [Schrimpf et al. (2021)](https://doi.org/10.1073/pnas.2105646118) |
 \needspace{3in}
 ### Week 7: Diffusion Models (February 16--20)
 
