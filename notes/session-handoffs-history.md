@@ -1,6 +1,16 @@
 # Session handoffs history
 
-Consolidated record of session continuity notes (Dec 2025 – Jan 2026). These were used for cross-session context transfer. All tasks described have been completed.
+Consolidated record of session continuity notes (Dec 2025 – Feb 2026). These were used for cross-session context transfer. All tasks described have been completed.
+
+## Feb 12, 2026: Lecture 20 discussion slide refactoring
+
+Completed the citation→note-box refactoring for all 7 remaining discussion slides in lecture 20:
+- Separated citations into `note-box` divs, concepts into `definition-box`/`example-box`/`important-box` divs
+- Consolidated dual citation note-boxes into single "References" boxes to prevent slide overflow
+- Removed Goldstein et al. (2022) from slides, summary list, readings, and README (already presented in L18)
+- Fixed scale classes (scale-75/80) so all slides render without content cutoff
+- Verified all slides visually via Playwright screenshots
+- All tests pass, committed as `99422cc`, pushed to main
 
 ## Dec 31, 2025: Master session
 
