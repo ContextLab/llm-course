@@ -212,7 +212,7 @@ class NoiseSchedule(BaseScene):
             axes.c2p(500, 0.22)
         )
         cosine_label = Text("Cosine", font_size=34, color=GREEN_E).move_to(
-            axes.c2p(700, 0.65)
+            axes.c2p(700, 0.50)
         )
 
         definition = MathTex(
@@ -312,31 +312,21 @@ class ReverseProcess(BaseScene):
 
         for i in range(1, num_steps):
             # Neural net icon between grids
-            nn_box = RoundedRectangle(
-                corner_radius=0.1,
-                width=0.9,
-                height=0.5,
-                stroke_color=TEAL_E,
-                fill_color=TEAL_E,
-                fill_opacity=0.15,
-                stroke_width=3,
-            )
-            nn_text = MathTex("\\epsilon_\\theta", font_size=34, color=TEAL_E)
-            nn_icon = VGroup(nn_box, nn_text)
+            nn_text = MathTex("\\epsilon_\\theta", font_size=28, color=TEAL_E)
             mid = (grids[i - 1].get_right() + grids[i].get_left()) / 2
-            nn_icon.move_to(mid + UP * 0.4)
+            nn_text.move_to(mid + UP * 0.65)
 
             arrow = Arrow(
                 grids[i - 1].get_right() + RIGHT * 0.05,
                 grids[i].get_left() + LEFT * 0.05,
                 buff=0.05,
-                color=GREEN_E,
+                color=BLACK,
                 stroke_width=5,
                 max_tip_length_to_length_ratio=0.35,
             )
             self.play(
                 GrowArrow(arrow),
-                FadeIn(nn_icon),
+                FadeIn(nn_text),
                 FadeIn(grids[i]),
                 FadeIn(labels[i]),
                 run_time=0.8,
@@ -445,29 +435,27 @@ class UNetArchitecture(BaseScene):
                 )
                 self.play(GrowArrow(down_arrow), run_time=0.3)
 
-        # Bottleneck — connect via bottom path
+        # Bottleneck — connect from side of 8x8 block to bottleneck
         arr_to_bn = Arrow(
-            enc_blocks[-1].get_bottom(),
+            enc_blocks[-1].get_right(),
             bottleneck.get_left(),
             buff=0.1,
             color=BLACK,
-            stroke_width=4,
-            tip_length=0.15,
-            max_tip_length_to_length_ratio=0.15,
+            stroke_width=4.5,
+            max_tip_length_to_length_ratio=0.25,
         )
         self.play(
             GrowArrow(arr_to_bn), FadeIn(bottleneck), FadeIn(bn_label), run_time=0.5
         )
 
-        # Connect bottleneck to decoder
+        # Connect bottleneck to decoder (side of decoder 8x8 block)
         arr_from_bn = Arrow(
             bottleneck.get_right(),
-            dec_blocks[0].get_bottom(),
+            dec_blocks[0].get_left(),
             buff=0.1,
             color=BLACK,
-            stroke_width=4,
-            tip_length=0.15,
-            max_tip_length_to_length_ratio=0.15,
+            stroke_width=4.5,
+            max_tip_length_to_length_ratio=0.25,
         )
         self.play(GrowArrow(arr_from_bn), run_time=0.3)
 
@@ -486,19 +474,42 @@ class UNetArchitecture(BaseScene):
                 )
                 self.play(GrowArrow(up_arrow), run_time=0.3)
 
-        # Skip connections — dashed lines above the boxes
-        # Offset above box top so lines never cross labels
+        # Skip connections — dashed lines with small arrow tips on both ends
         for i in range(len(enc_blocks)):
             dec_i = len(dec_blocks) - 1 - i
-            enc_tr = enc_blocks[i].get_corner(UR) + RIGHT * 0.1 + UP * 0.2
-            dec_tl = dec_blocks[dec_i].get_corner(UL) + LEFT * 0.1 + UP * 0.2
-            skip = DashedLine(
-                enc_tr,
-                dec_tl,
+            enc_right = enc_blocks[i].get_right()
+            dec_left = dec_blocks[dec_i].get_left()
+            # Use DashedLine for the skip connection
+            skip_line = DashedLine(
+                enc_right + RIGHT * 0.1,
+                dec_left + LEFT * 0.1,
                 color=skip_color,
                 stroke_width=4.5,
                 dash_length=0.15,
             )
+            # Small triangle tips at each end
+            tip_size = 0.12
+            left_tip = (
+                Triangle(
+                    fill_color=skip_color,
+                    fill_opacity=1,
+                    stroke_width=0,
+                )
+                .scale(tip_size)
+                .rotate(-PI / 2)
+                .move_to(enc_right + RIGHT * 0.1)
+            )
+            right_tip = (
+                Triangle(
+                    fill_color=skip_color,
+                    fill_opacity=1,
+                    stroke_width=0,
+                )
+                .scale(tip_size)
+                .rotate(PI / 2)
+                .move_to(dec_left + LEFT * 0.1)
+            )
+            skip = VGroup(left_tip, skip_line, right_tip)
             self.play(Create(skip), run_time=0.4)
 
         skip_label = Text("Skip connections", font_size=32, color=skip_color).move_to(
@@ -517,96 +528,116 @@ class TimestepEmbedding(BaseScene):
     def construct(self):
         title = Title("Timestep Embedding")
 
-        # Timestep value
-        t_val = Text("t = 500", font_size=36, color=BLACK).move_to(LEFT * 4.5)
+        # --- Left: timestep value ---
+        t_val = Text("t = 500", font_size=40, color=BLACK).move_to(LEFT * 5.5)
 
-        # Arrow to embedding
+        # Arrow from t to plot
         arr1 = Arrow(
-            LEFT * 3.3,
-            LEFT * 1.5,
+            LEFT * 4.4,
+            LEFT * 3.0,
             color=BLACK,
             stroke_width=5,
             max_tip_length_to_length_ratio=0.25,
         )
-        arr1_label = Text("sinusoidal\nembedding", font_size=28, color=BLACK).next_to(
-            arr1, UP, buff=0.2
-        )
 
-        # Embedding bars (sin/cos pattern)
-        np.random.seed(7)
-        d = 8
+        # --- Center: sinusoidal embedding plot ---
+        d_model = 64
         t = 500
-        embed_vals = []
-        for i in range(d):
-            freq = 1.0 / (10000 ** (2 * (i // 2) / d))
-            if i % 2 == 0:
-                embed_vals.append(np.sin(t * freq))
-            else:
-                embed_vals.append(np.cos(t * freq))
+        dims = np.arange(d_model)
+        freqs = 1.0 / (10000 ** (2 * (dims // 2) / d_model))
+        sin_vals = np.sin(t * freqs[::2])
+        cos_vals = np.cos(t * freqs[1::2])
 
-        bars = VGroup()
-        bar_w = 0.4
-        bar_max_h = 1.8
-        for i, v in enumerate(embed_vals):
-            h = abs(v) * bar_max_h
-            rect = Rectangle(
-                width=bar_w,
-                height=max(h, 0.05),
-                fill_color=BLUE_E if i % 2 == 0 else TEAL_E,
-                fill_opacity=0.7,
-                stroke_color=BLUE_E if i % 2 == 0 else TEAL_E,
-                stroke_width=3,
-            )
-            rect.move_to(
-                np.array(
-                    [-0.5 + i * (bar_w + 0.06), 0 + (h / 2 if v >= 0 else -h / 2), 0]
-                )
-            )
-            bars.add(rect)
-        bars.move_to(ORIGIN)
-        emb_label = MathTex("\\text{emb}(t)", font_size=34, color=BLACK).next_to(
-            bars, DOWN, buff=0.35
+        axes = Axes(
+            x_range=[0, d_model, 32],
+            y_range=[-1.1, 1.1, 1.0],
+            x_length=3.6,
+            y_length=2.4,
+            axis_config={"color": BLACK, "include_numbers": False, "font_size": 18},
+            tips=False,
+        ).move_to(LEFT * 0.5 + UP * 0.6)
+
+        # Plot sin and cos as smooth line graphs
+        sin_x = list(range(0, d_model, 2))
+        cos_x = list(range(1, d_model, 2))
+
+        sin_graph = axes.plot_line_graph(
+            x_values=sin_x,
+            y_values=sin_vals.tolist(),
+            line_color=BLUE_E,
+            add_vertex_dots=False,
+            stroke_width=3.5,
         )
-        sin_lab = Text("sin", font_size=26, color=BLUE_E).move_to(
-            bars.get_corner(UL) + UP * 0.35 + LEFT * 0.2
-        )
-        cos_lab = Text("cos", font_size=26, color=TEAL_E).move_to(
-            bars.get_corner(UR) + UP * 0.35 + RIGHT * 0.2
+        cos_graph = axes.plot_line_graph(
+            x_values=cos_x,
+            y_values=cos_vals.tolist(),
+            line_color=TEAL_E,
+            add_vertex_dots=False,
+            stroke_width=3.5,
         )
 
-        # U-Net block
+        # Labels below the axes at fixed positions (absolute)
+        x_label = Text("Dimension", font_size=20, color=BLACK).move_to(
+            np.array([-0.5, -1.2, 0])
+        )
+        sin_label = Text("sin", font_size=22, color=BLUE_E)
+        cos_label = Text("cos", font_size=22, color=TEAL_E)
+        legend = VGroup(sin_label, cos_label).arrange(RIGHT, buff=0.5)
+        legend.move_to(np.array([-0.2, -1.5, 0]))
+
+        emb_label = MathTex("\\text{emb}(t)", font_size=28, color=BLACK).move_to(
+            np.array([-0.2, -2.0, 0])
+        )
+
+        formula = MathTex(
+            r"\sin\!\left(\frac{t}{10000^{2i/d}}\right),\;\cos\!\left(\frac{t}{10000^{2i/d}}\right)",
+            font_size=22,
+            color=BLACK,
+        ).move_to(np.array([-0.2, 2.4, 0]))
+
+        # --- Right: arrow to U-Net block ---
         arr2 = Arrow(
-            RIGHT * 2.0,
-            RIGHT * 3.5,
+            RIGHT * 1.8,
+            RIGHT * 3.2,
             color=BLACK,
             stroke_width=5,
             max_tip_length_to_length_ratio=0.25,
         )
-        arr2_label = Text(
-            "inject into\nU-Net block", font_size=28, color=BLACK
-        ).next_to(arr2, UP, buff=0.2)
+        arr2_label = Text("inject", font_size=22, color=BLACK).next_to(
+            arr2, UP, buff=0.08
+        )
 
         unet_block = RoundedRectangle(
             corner_radius=0.15,
             width=1.8,
-            height=1.2,
+            height=1.0,
             stroke_color=MAROON_E,
             fill_color=MAROON_E,
             fill_opacity=0.1,
             stroke_width=4,
-        ).move_to(RIGHT * 4.8)
-        unet_label = Text("U-Net\nBlock", font_size=30, color=MAROON_E).move_to(
+        ).move_to(RIGHT * 4.6)
+        unet_label = Text("U-Net Block", font_size=24, color=MAROON_E).move_to(
             unet_block.get_center()
         )
 
-        plus = MathTex("+", font_size=42, color=GREEN_E).move_to(
-            RIGHT * 3.7 + DOWN * 0.5
+        plus = MathTex("+", font_size=34, color=GREEN_E).move_to(
+            RIGHT * 3.4 + DOWN * 0.4
         )
 
+        # --- Animate ---
         self.play(FadeIn(t_val))
-        self.play(GrowArrow(arr1), FadeIn(arr1_label), run_time=0.6)
-        self.play(FadeIn(bars), FadeIn(emb_label), FadeIn(sin_lab), FadeIn(cos_lab))
-        self.play(GrowArrow(arr2), FadeIn(arr2_label), run_time=0.6)
+        self.play(GrowArrow(arr1), run_time=0.5)
+        self.play(Create(axes), FadeIn(x_label), FadeIn(formula), run_time=0.8)
+        self.play(
+            Create(sin_graph),
+            run_time=0.8,
+        )
+        self.play(
+            Create(cos_graph),
+            run_time=0.8,
+        )
+        self.play(FadeIn(legend), FadeIn(emb_label))
+        self.play(GrowArrow(arr2), FadeIn(arr2_label), run_time=0.5)
         self.play(FadeIn(unet_block), FadeIn(unet_label), FadeIn(plus))
         self.wait(1.5)
 
@@ -615,111 +646,160 @@ class TimestepEmbedding(BaseScene):
 # Scene 6: TrainingObjective
 # ---------------------------------------------------------------------------
 class TrainingObjective(BaseScene):
-    """Flowchart of the DDPM training loop."""
+    """Training loop with matrix grids alongside equations."""
+
+    def _make_grid(self, img_data, grid_size=6, cell=0.28, gap=0.04):
+        """Create a small colored grid from img_data (grid_size x grid_size x 3)."""
+        squares = VGroup()
+        for r in range(grid_size):
+            for c in range(grid_size):
+                col = img_data[r, c].clip(0, 1)
+                sq = Square(side_length=cell)
+                sq.set_fill(rgb_to_color(col), opacity=1)
+                sq.set_stroke(GREY_B, width=1)
+                sq.move_to(
+                    np.array(
+                        [
+                            c * (cell + gap) - (grid_size - 1) * (cell + gap) / 2,
+                            -(r * (cell + gap) - (grid_size - 1) * (cell + gap) / 2),
+                            0,
+                        ]
+                    )
+                )
+                squares.add(sq)
+        return squares
 
     def construct(self):
         title = Title("Training Objective")
+        np.random.seed(42)
+        gs = 6
 
+        # Build image data for each step
+        clean = np.ones((gs, gs, 3)) * np.array([0.2, 0.55, 0.85])
+        for r, c in [(1, 1), (1, 4)]:
+            clean[r, c] = np.array([0.1, 0.15, 0.3])
+        for r, c in [(4, 1), (4, 2), (4, 3), (4, 4), (3, 0), (3, 5)]:
+            if r < gs and c < gs:
+                clean[r, c] = np.array([0.1, 0.15, 0.3])
+
+        noise_pure = np.random.rand(gs, gs, 3) * 0.6 + 0.2
+        alpha_bar = 0.5
+        noisy = np.sqrt(alpha_bar) * clean + np.sqrt(1 - alpha_bar) * noise_pure
+        noisy = noisy.clip(0, 1)
+
+        # Predicted noise (slightly different from true noise)
+        pred_noise = noise_pure + np.random.randn(gs, gs, 3) * 0.08
+        pred_noise = pred_noise.clip(0, 1)
+
+        # Steps: (number, label, equation, grid_data_or_None)
         steps = [
             (
-                "1.",
-                "Sample",
+                "1",
+                "Sample x\u2080",
                 MathTex(
-                    "\\mathbf{x}_0 \\sim q(\\mathbf{x}_0)", font_size=32, color=BLACK
-                ),
-            ),
-            (
-                "2.",
-                "Sample",
-                MathTex("t \\sim \\text{Uniform}(1, T)", font_size=30, color=BLACK),
-            ),
-            (
-                "3.",
-                "Sample",
-                MathTex(
-                    "\\boldsymbol{\\epsilon} \\sim \\mathcal{N}(\\mathbf{0}, \\mathbf{I})",
-                    font_size=30,
+                    r"\mathbf{x}_0 \sim q(\mathbf{x}_0)",
+                    font_size=28,
                     color=BLACK,
                 ),
+                clean,
             ),
             (
-                "4.",
-                "Noise",
+                "2",
+                "Sample noise",
                 MathTex(
-                    "\\mathbf{x}_t = \\sqrt{\\bar{\\alpha}_t}\\,\\mathbf{x}_0 + \\sqrt{1 - \\bar{\\alpha}_t}\\,\\boldsymbol{\\epsilon}",
-                    font_size=30,
+                    r"\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})",
+                    font_size=28,
                     color=BLACK,
                 ),
+                noise_pure,
             ),
             (
-                "5.",
+                "3",
+                "Add noise",
+                MathTex(
+                    r"\mathbf{x}_t = \sqrt{\bar{\alpha}_t}\,\mathbf{x}_0 + \sqrt{1-\bar{\alpha}_t}\,\boldsymbol{\epsilon}",
+                    font_size=26,
+                    color=BLACK,
+                ),
+                noisy,
+            ),
+            (
+                "4",
                 "Predict",
                 MathTex(
-                    "\\hat{\\boldsymbol{\\epsilon}} = \\boldsymbol{\\epsilon}_\\theta(\\mathbf{x}_t, t)",
-                    font_size=30,
+                    r"\hat{\boldsymbol{\epsilon}} = \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)",
+                    font_size=28,
                     color=BLACK,
                 ),
+                pred_noise,
             ),
             (
-                "6.",
+                "5",
                 "Loss",
                 MathTex(
-                    "\\mathcal{L} = \\| \\boldsymbol{\\epsilon} - \\hat{\\boldsymbol{\\epsilon}} \\|^2",
-                    font_size=32,
+                    r"\mathcal{L} = \| \boldsymbol{\epsilon} - \hat{\boldsymbol{\epsilon}} \|^2",
+                    font_size=30,
                     color=MAROON_E,
                 ),
+                None,
             ),
         ]
 
         y_start = 2.5
-        y_step = -0.95
-        boxes = []
+        y_step = -1.15
+        prev_group = None
 
-        for i, (num, action, eq) in enumerate(steps):
+        for i, (num, label, eq, grid_data) in enumerate(steps):
             y = y_start + i * y_step
 
-            num_text = Text(num, font_size=28, color=BLACK).move_to(
-                np.array([-5.5, y, 0])
+            num_text = Text(num, font_size=26, color=BLACK).move_to(
+                np.array([-6.0, y, 0])
             )
-            action_text = Text(action, font_size=28, color=GREEN_E).move_to(
-                np.array([-4.2, y, 0])
+            label_text = Text(label, font_size=24, color=GREEN_E).move_to(
+                np.array([-4.5, y, 0])
             )
 
+            box_color = BLUE_E if i < 4 else MAROON_E
             box = RoundedRectangle(
                 corner_radius=0.1,
-                width=7.0,
-                height=0.65,
-                stroke_color=BLUE_E if i < 5 else MAROON_E,
-                fill_color=BLUE_E if i < 5 else MAROON_E,
-                fill_opacity=0.05 if i < 5 else 0.12,
-                stroke_width=3.5,
-            ).move_to(np.array([0.5, y, 0]))
+                width=5.5,
+                height=0.7,
+                stroke_color=box_color,
+                fill_color=box_color,
+                fill_opacity=0.05 if i < 4 else 0.12,
+                stroke_width=3,
+            ).move_to(np.array([-0.3, y, 0]))
             eq.move_to(box.get_center())
 
-            group = VGroup(num_text, action_text, box, eq)
-            boxes.append(group)
+            parts = [num_text, label_text, box, eq]
 
-        # Animate step by step
-        for i, group in enumerate(boxes):
-            self.play(FadeIn(group), run_time=0.6)
-            if i < len(boxes) - 1:
+            if grid_data is not None:
+                grid = self._make_grid(grid_data, grid_size=gs)
+                grid.scale(0.38).move_to(np.array([4.5, y, 0]))
+                parts.append(grid)
+
+            group = VGroup(*parts)
+
+            if prev_group is not None:
                 arrow = Arrow(
-                    group[2].get_bottom() + DOWN * 0.02,
-                    np.array([0.5, y_start + (i + 1) * y_step + 0.35, 0]),
+                    prev_group[2].get_bottom() + DOWN * 0.02,
+                    box.get_top() + UP * 0.02,
                     buff=0,
                     color=BLACK,
-                    stroke_width=5,
-                    tip_length=0.15,
-                    max_tip_length_to_length_ratio=0.6,
+                    stroke_width=4,
+                    tip_length=0.12,
+                    max_tip_length_to_length_ratio=0.5,
                     max_stroke_width_to_length_ratio=20,
                 )
-                self.play(GrowArrow(arrow), run_time=0.25)
+                self.play(GrowArrow(arrow), run_time=0.2)
 
-        # Highlight key insight
+            self.play(FadeIn(group), run_time=0.6)
+            prev_group = group
+
+        # Insight
         insight = Text(
-            '"Predict the noise that was added"', font_size=28, color=MAROON_E
-        )
-        insight.next_to(boxes[-1][2], DOWN, buff=0.5)
+            '"Predict the noise that was added"', font_size=26, color=MAROON_E
+        ).move_to(np.array([0, y_start + len(steps) * y_step + 0.1, 0]))
         self.play(FadeIn(insight))
         self.wait(1.5)
 
@@ -728,96 +808,196 @@ class TrainingObjective(BaseScene):
 # Scene 7: SimplifiedLoss
 # ---------------------------------------------------------------------------
 class SimplifiedLoss(BaseScene):
-    """Step-by-step simplification from ELBO to simple MSE loss."""
+    """Visual MSE pipeline: true noise vs predicted noise -> difference -> squared -> loss."""
+
+    def _make_grid(self, img_data, grid_size=4, cell=0.38, gap=0.05):
+        """Create a small colored grid from img_data (grid_size x grid_size x 3)."""
+        squares = VGroup()
+        for r in range(grid_size):
+            for c in range(grid_size):
+                col = img_data[r, c].clip(0, 1)
+                sq = Square(side_length=cell)
+                sq.set_fill(rgb_to_color(col), opacity=1)
+                sq.set_stroke(GREY_B, width=1.5)
+                sq.move_to(
+                    np.array(
+                        [
+                            c * (cell + gap) - (grid_size - 1) * (cell + gap) / 2,
+                            -(r * (cell + gap) - (grid_size - 1) * (cell + gap) / 2),
+                            0,
+                        ]
+                    )
+                )
+                squares.add(sq)
+        return squares
 
     def construct(self):
         title = Title("Simplified Loss")
+        np.random.seed(7)
+        gs = 4
 
-        eq1 = MathTex(
-            r"\mathcal{L}_{\text{ELBO}} = \sum_{t=1}^{T} \mathbb{E}_q \left[ D_{\text{KL}}(q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0) \| p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)) \right]",
-            font_size=30,
-            color=BLACK,
-        ).move_to(UP * 2)
+        # True noise
+        eps = np.random.rand(gs, gs, 3) * 0.7 + 0.15
+        # Predicted noise (close but not identical)
+        eps_hat = eps + np.random.randn(gs, gs, 3) * 0.12
+        eps_hat = eps_hat.clip(0, 1)
+        # Difference (shift to 0.5 baseline so negative values are visible)
+        diff = eps - eps_hat
+        diff_vis = 0.5 + diff * 2.0
+        diff_vis = diff_vis.clip(0, 1)
+        # Squared difference
+        sq_diff = diff**2
+        sq_vis = sq_diff / sq_diff.max()  # normalize for visibility
+        sq_vis = sq_vis.clip(0, 1)
 
-        label1 = Text("Full ELBO (complex)", font_size=28, color=BLACK).next_to(
-            eq1, RIGHT, buff=0.3
+        # --- Top row: equation derivation (compact) ---
+        eq_simple = MathTex(
+            r"\mathcal{L}_{\text{simple}} = \mathbb{E}\!\left[\,"
+            r"\| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta \|^2"
+            r"\,\right]",
+            font_size=32,
+            color=MAROON_E,
+        ).move_to(UP * 3.0)
+        eq_box = SurroundingRectangle(
+            eq_simple, color=MAROON_E, buff=0.12, stroke_width=3
         )
 
-        eq2 = MathTex(
-            r"\propto \sum_{t=1}^{T} \mathbb{E} \left[ \| \boldsymbol{\mu}_t - \boldsymbol{\mu}_\theta(\mathbf{x}_t, t) \|^2 \right]",
-            font_size=30,
-            color=BLACK,
-        ).move_to(UP * 0.5)
+        self.play(FadeIn(eq_simple), Create(eq_box), run_time=0.8)
 
-        label2 = Text("Reparameterize means", font_size=28, color=BLACK).next_to(
-            eq2, RIGHT, buff=0.3
+        # --- Visual pipeline ---
+        y_row = 0.3
+
+        # True noise grid
+        eps_grid = self._make_grid(eps, grid_size=gs).scale(0.7)
+        eps_grid.move_to(np.array([-5.0, y_row, 0]))
+        eps_label = MathTex(
+            r"\boldsymbol{\epsilon}", font_size=30, color=BLACK
+        ).next_to(eps_grid, UP, buff=0.2)
+        eps_desc = Text("True noise", font_size=22, color=BLACK).next_to(
+            eps_grid, DOWN, buff=0.2
         )
 
-        eq3 = MathTex(
-            r"= \sum_{t=1}^{T} \gamma_t \, \mathbb{E} \left[ \| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \|^2 \right]",
-            font_size=30,
-            color=BLACK,
-        ).move_to(DOWN * 1.0)
-
-        label3 = Text("Predict noise instead", font_size=28, color=BLACK).next_to(
-            eq3, RIGHT, buff=0.3
+        # Predicted noise grid
+        eps_hat_grid = self._make_grid(eps_hat, grid_size=gs).scale(0.7)
+        eps_hat_grid.move_to(np.array([-2.2, y_row, 0]))
+        eps_hat_label = MathTex(
+            r"\boldsymbol{\epsilon}_\theta", font_size=30, color=TEAL_E
+        ).next_to(eps_hat_grid, UP, buff=0.2)
+        eps_hat_desc = Text("Predicted", font_size=22, color=TEAL_E).next_to(
+            eps_hat_grid, DOWN, buff=0.2
         )
 
-        eq4 = MathTex(
-            r"\mathcal{L}_{\text{simple}} = \mathbb{E}_{t, \mathbf{x}_0, \boldsymbol{\epsilon}} \left[ \| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \|^2 \right]",
+        # Minus sign
+        minus = MathTex("-", font_size=36, color=BLACK).move_to(
+            np.array([-3.6, y_row, 0])
+        )
+
+        self.play(
+            FadeIn(eps_grid),
+            FadeIn(eps_label),
+            FadeIn(eps_desc),
+            run_time=0.6,
+        )
+        self.play(FadeIn(minus), run_time=0.3)
+        self.play(
+            FadeIn(eps_hat_grid),
+            FadeIn(eps_hat_label),
+            FadeIn(eps_hat_desc),
+            run_time=0.6,
+        )
+
+        # Arrow to difference
+        arr1 = Arrow(
+            np.array([-1.3, y_row, 0]),
+            np.array([-0.2, y_row, 0]),
+            color=BLACK,
+            stroke_width=4,
+            max_tip_length_to_length_ratio=0.3,
+        )
+        self.play(GrowArrow(arr1), run_time=0.4)
+
+        # Difference grid
+        diff_grid = self._make_grid(diff_vis, grid_size=gs).scale(0.7)
+        diff_grid.move_to(np.array([0.9, y_row, 0]))
+        diff_label = MathTex(
+            r"\boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta",
+            font_size=26,
+            color=BLACK,
+        ).next_to(diff_grid, UP, buff=0.2)
+        diff_desc = Text("Difference", font_size=22, color=BLACK).next_to(
+            diff_grid, DOWN, buff=0.2
+        )
+
+        self.play(
+            FadeIn(diff_grid),
+            FadeIn(diff_label),
+            FadeIn(diff_desc),
+            run_time=0.6,
+        )
+
+        # Arrow to squared
+        arr2 = Arrow(
+            np.array([1.9, y_row, 0]),
+            np.array([3.0, y_row, 0]),
+            color=BLACK,
+            stroke_width=4,
+            max_tip_length_to_length_ratio=0.3,
+        )
+        sq_symbol = MathTex("(\\cdot)^2", font_size=24, color=BLACK).next_to(
+            arr2, UP, buff=0.08
+        )
+        self.play(GrowArrow(arr2), FadeIn(sq_symbol), run_time=0.4)
+
+        # Squared diff grid
+        sq_grid = self._make_grid(sq_vis, grid_size=gs).scale(0.7)
+        sq_grid.move_to(np.array([4.1, y_row, 0]))
+        sq_label = MathTex(
+            r"(\boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta)^2",
+            font_size=24,
+            color=BLACK,
+        ).next_to(sq_grid, UP, buff=0.2)
+        sq_desc = Text("Squared", font_size=22, color=BLACK).next_to(
+            sq_grid, DOWN, buff=0.2
+        )
+
+        self.play(
+            FadeIn(sq_grid),
+            FadeIn(sq_label),
+            FadeIn(sq_desc),
+            run_time=0.6,
+        )
+
+        # Arrow to scalar loss
+        arr3 = Arrow(
+            np.array([5.1, y_row, 0]),
+            np.array([6.0, y_row, 0]),
+            color=BLACK,
+            stroke_width=4,
+            max_tip_length_to_length_ratio=0.3,
+        )
+        mean_sym = Text("mean", font_size=20, color=BLACK).next_to(arr3, UP, buff=0.08)
+        self.play(GrowArrow(arr3), FadeIn(mean_sym), run_time=0.4)
+
+        # Scalar loss value
+        loss_val = float(np.mean(sq_diff))
+        loss_text = MathTex(
+            f"\\mathcal{{L}} = {loss_val:.3f}",
             font_size=34,
             color=MAROON_E,
+        ).move_to(np.array([6.3, y_row, 0]))
+        loss_box = SurroundingRectangle(
+            loss_text, color=MAROON_E, buff=0.1, stroke_width=3
+        )
+
+        self.play(FadeIn(loss_text), Create(loss_box), run_time=0.6)
+
+        # Bottom note
+        note = Text(
+            "Just MSE between true and predicted noise!",
+            font_size=26,
+            color=GREEN_E,
         ).move_to(DOWN * 2.5)
-
-        label4 = Text("Drop weights (Ho et al.)", font_size=28, color=MAROON_E).next_to(
-            eq4, RIGHT, buff=0.3
-        )
-
-        box = SurroundingRectangle(eq4, color=MAROON_E, buff=0.15, stroke_width=4)
-
-        # Arrows between steps
-        self.play(FadeIn(eq1), FadeIn(label1))
-        self.wait(0.5)
-
-        arr1 = Arrow(
-            eq1.get_bottom(),
-            eq2.get_top(),
-            buff=0.15,
-            color=BLACK,
-            stroke_width=4,
-            max_tip_length_to_length_ratio=0.3,
-        )
-        self.play(GrowArrow(arr1), FadeIn(eq2), FadeIn(label2), run_time=0.8)
-        self.wait(0.3)
-
-        arr2 = Arrow(
-            eq2.get_bottom(),
-            eq3.get_top(),
-            buff=0.15,
-            color=BLACK,
-            stroke_width=4,
-            max_tip_length_to_length_ratio=0.3,
-        )
-        self.play(GrowArrow(arr2), FadeIn(eq3), FadeIn(label3), run_time=0.8)
-        self.wait(0.3)
-
-        arr3 = Arrow(
-            eq3.get_bottom(),
-            eq4.get_top(),
-            buff=0.15,
-            color=BLACK,
-            stroke_width=4,
-            max_tip_length_to_length_ratio=0.3,
-        )
-        self.play(
-            GrowArrow(arr3), FadeIn(eq4), FadeIn(label4), Create(box), run_time=0.8
-        )
-
-        final_note = Text(
-            "Just MSE between true and predicted noise!", font_size=28, color=GREEN_E
-        )
-        final_note.next_to(box, DOWN, buff=0.3)
-        self.play(FadeIn(final_note))
+        self.play(FadeIn(note))
         self.wait(1.5)
 
 
@@ -863,7 +1043,7 @@ class ScoreMatching(BaseScene):
                 if dist < 0.1:
                     continue
                 direction = direction / dist
-                magnitude = min(0.6, 1.0 / (dist + 0.3))
+                magnitude = 0.45
 
                 arrow = Arrow(
                     start=pt,
@@ -885,20 +1065,6 @@ class ScoreMatching(BaseScene):
         if inner:
             self.play(*[GrowArrow(a) for a in inner], run_time=0.8)
 
-        # Label
-        score_label = MathTex(
-            r"\nabla_{\mathbf{x}} \log p(\mathbf{x})",
-            font_size=36,
-            color=MAROON_E,
-        ).move_to(UP * 3.2)
-        subtitle = Text(
-            "Score function: points toward high-probability regions",
-            font_size=26,
-            color=BLACK,
-        )
-        subtitle.next_to(score_label, DOWN, buff=0.2)
-
-        self.play(FadeIn(score_label), FadeIn(subtitle))
         self.wait(1.5)
 
 
@@ -906,99 +1072,132 @@ class ScoreMatching(BaseScene):
 # Scene 9: SamplingProcess
 # ---------------------------------------------------------------------------
 class SamplingProcess(BaseScene):
-    """DDPM sampling algorithm as a step-by-step timeline."""
+    """DDPM sampling: timeline of matrix grids from noise to clean image."""
+
+    def _make_grid(self, img_data, grid_size=6, cell=0.3, gap=0.04):
+        """Create a small colored grid."""
+        squares = VGroup()
+        for r in range(grid_size):
+            for c in range(grid_size):
+                col = img_data[r, c].clip(0, 1)
+                sq = Square(side_length=cell)
+                sq.set_fill(rgb_to_color(col), opacity=1)
+                sq.set_stroke(GREY_B, width=1)
+                sq.move_to(
+                    np.array(
+                        [
+                            c * (cell + gap) - (grid_size - 1) * (cell + gap) / 2,
+                            -(r * (cell + gap) - (grid_size - 1) * (cell + gap) / 2),
+                            0,
+                        ]
+                    )
+                )
+                squares.add(sq)
+        return squares
 
     def construct(self):
         title = Title("Sampling Process")
+        np.random.seed(42)
+        gs = 6
 
-        # Timeline
-        n_shown = 5  # Show 5 representative steps
+        # Clean smiley target
+        clean = np.ones((gs, gs, 3)) * np.array([0.2, 0.55, 0.85])
+        for r, c in [(1, 1), (1, 4)]:
+            clean[r, c] = np.array([0.1, 0.15, 0.3])
+        for r, c in [(4, 1), (4, 2), (4, 3), (4, 4), (3, 0), (3, 5)]:
+            if r < gs and c < gs:
+                clean[r, c] = np.array([0.1, 0.15, 0.3])
+
+        # Generate images from pure noise to clean
+        n_shown = 5
         step_labels = ["t = T", "t = 750", "t = 500", "t = 250", "t = 0"]
-        x_positions = np.linspace(-5.0, 5.0, n_shown)
-
-        # Progress circles with color gradient from red (noise) to green (clean)
-        circles = []
-        labels = []
-        for i, (x, sl) in enumerate(zip(x_positions, step_labels)):
+        images = []
+        for i in range(n_shown):
             blend = i / (n_shown - 1)
-            col = interpolate_color(MAROON_E, GREEN_E, blend)
-            circ = Circle(
-                radius=0.55,
-                stroke_color=col,
-                fill_color=col,
-                fill_opacity=0.15,
-                stroke_width=3,
-            ).move_to(np.array([x, 0.5, 0]))
+            grey_noise = np.random.rand(gs, gs, 3) * 0.4 + 0.3
+            noise = np.random.randn(gs, gs, 3) * 0.12 * (1 - blend)
+            img = (1 - blend) * grey_noise + blend * clean + noise
+            images.append(img.clip(0, 1))
 
-            inner_label = MathTex(f"\\mathbf{{x}}", font_size=32, color=col).move_to(
-                circ.get_center()
-            )
-            step_text = Text(sl, font_size=28, color=BLACK).next_to(
-                circ, DOWN, buff=0.25
-            )
-
-            circles.append(circ)
-            labels.append(VGroup(inner_label, step_text))
-
-        # Top: algorithm steps
+        # --- Top: compact algorithm pseudo-code ---
         algo_lines = [
             MathTex(
                 r"\text{1. Sample } \mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})",
-                font_size=28,
+                font_size=24,
                 color=BLACK,
             ),
-            MathTex(r"\text{2. For } t = T \text{ to } 1:", font_size=26, color=BLACK),
             MathTex(
-                r"\quad \hat{\boldsymbol{\epsilon}} = \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)",
-                font_size=28,
-                color=TEAL_E,
-            ),
-            MathTex(
+                r"\text{2. For } t = T \text{ to } 1: \quad"
+                r"\hat{\boldsymbol{\epsilon}} = \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t),"
                 r"\quad \mathbf{x}_{t-1} = \text{denoise}(\mathbf{x}_t, \hat{\boldsymbol{\epsilon}}, t)",
-                font_size=28,
+                font_size=24,
                 color=TEAL_E,
             ),
-            MathTex(r"\text{3. Return } \mathbf{x}_0", font_size=28, color=GREEN_E),
+            MathTex(
+                r"\text{3. Return } \mathbf{x}_0",
+                font_size=24,
+                color=GREEN_E,
+            ),
         ]
 
-        algo_group = VGroup(*algo_lines).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
-        algo_group.move_to(UP * 2.5)
+        algo_group = VGroup(*algo_lines).arrange(DOWN, aligned_edge=LEFT, buff=0.15)
+        algo_group.move_to(UP * 2.8)
 
         for line in algo_lines:
-            self.play(FadeIn(line), run_time=0.4)
+            self.play(FadeIn(line), run_time=0.35)
 
-        self.wait(0.3)
+        # --- Bottom: grid timeline ---
+        x_positions = np.linspace(-5.0, 5.0, n_shown)
+        y_row = -0.5
 
-        # Show timeline
-        self.play(FadeIn(circles[0]), FadeIn(labels[0]))
+        grids = []
+        for i, (x, img, sl) in enumerate(zip(x_positions, images, step_labels)):
+            grid = self._make_grid(img, grid_size=gs).scale(0.42)
+            grid.move_to(np.array([x, y_row, 0]))
+            grids.append(grid)
+
+        # Show first grid
+        first_label = Text(step_labels[0], font_size=24, color=BLACK).next_to(
+            grids[0], DOWN, buff=0.2
+        )
+        noise_tag = Text("Pure noise", font_size=22, color=MAROON_E).next_to(
+            grids[0], UP, buff=0.15
+        )
+        self.play(FadeIn(grids[0]), FadeIn(first_label), FadeIn(noise_tag))
+
+        # Remaining grids with arrows
         for i in range(1, n_shown):
             arrow = Arrow(
-                circles[i - 1].get_right(),
-                circles[i].get_left(),
-                buff=0.1,
+                grids[i - 1].get_right(),
+                grids[i].get_left(),
+                buff=0.08,
                 color=BLACK,
-                stroke_width=5,
+                stroke_width=4,
                 max_tip_length_to_length_ratio=0.3,
             )
             denoise_label = MathTex(
-                "\\epsilon_\\theta", font_size=28, color=TEAL_E
-            ).next_to(arrow, UP, buff=0.1)
-            self.play(
-                GrowArrow(arrow),
-                FadeIn(denoise_label),
-                FadeIn(circles[i]),
-                FadeIn(labels[i]),
-                run_time=0.6,
+                r"\epsilon_\theta", font_size=24, color=TEAL_E
+            ).next_to(arrow, UP, buff=0.06)
+            sl_text = Text(step_labels[i], font_size=24, color=BLACK).next_to(
+                grids[i], DOWN, buff=0.2
             )
 
-        # Final label
-        noise_label = Text("Pure noise", font_size=28, color=MAROON_E).next_to(
-            circles[0], UP, buff=0.25
-        )
-        clean_label = Text("Clean sample", font_size=28, color=GREEN_E).next_to(
-            circles[-1], UP, buff=0.25
-        )
-        self.play(FadeIn(noise_label), FadeIn(clean_label))
+            parts = [
+                GrowArrow(arrow),
+                FadeIn(denoise_label),
+                FadeIn(grids[i]),
+                FadeIn(sl_text),
+            ]
+
+            # Add "Clean sample" tag on last grid
+            if i == n_shown - 1:
+                clean_tag = Text("Clean sample", font_size=22, color=GREEN_E).next_to(
+                    grids[i], UP, buff=0.15
+                )
+                parts.append(FadeIn(clean_tag))
+
+            self.play(*parts, run_time=0.6)
+
         self.wait(1.5)
 
 
@@ -1006,102 +1205,47 @@ class SamplingProcess(BaseScene):
 # Scene 10: DiffusionVsTransformer
 # ---------------------------------------------------------------------------
 class DiffusionVsTransformer(BaseScene):
-    """Side-by-side comparison of autoregressive vs diffusion generation."""
+    """Text diffusion (MDLM-style mask-then-unmask) vs autoregressive generation."""
+
+    def _make_token_box(self, text, color, fill_opacity=0.1, font_size=26, width=0.85):
+        """Create a rounded box with text inside."""
+        box = RoundedRectangle(
+            corner_radius=0.06,
+            width=width,
+            height=0.48,
+            stroke_color=color,
+            fill_color=color,
+            fill_opacity=fill_opacity,
+            stroke_width=3,
+        )
+        txt = Text(text, font_size=font_size, color=color)
+        return VGroup(box, txt)
 
     def construct(self):
         title = Title("Diffusion vs Transformer")
 
-        # Dividing line
-        div_line = DashedLine(UP * 3.5, DOWN * 3.5, color=GREY_C, stroke_width=3.5)
+        tokens = ["The", "cat", "sat", "on", "the", "mat"]
+        n_tok = len(tokens)
 
-        # Left: Autoregressive
-        left_title = Text("Autoregressive", font_size=34, color=BLUE_E).move_to(
+        # Dividing line
+        div_line = DashedLine(UP * 3.5, DOWN * 3.5, color=GREY_C, stroke_width=3)
+
+        # --- Left side: Autoregressive ---
+        left_title = Text("Autoregressive", font_size=32, color=BLUE_E).move_to(
             LEFT * 3.5 + UP * 2.8
         )
-        left_sub = Text("(Transformer)", font_size=28, color=BLACK).next_to(
-            left_title, DOWN, buff=0.1
+        left_sub = Text("Left to right", font_size=24, color=BLACK).next_to(
+            left_title, DOWN, buff=0.08
         )
 
-        # Token boxes appearing one at a time
-        tokens = ["The", "cat", "sat", "on", "the", "mat"]
-        token_boxes = VGroup()
-        for i, tok in enumerate(tokens):
-            box = RoundedRectangle(
-                corner_radius=0.06,
-                width=0.85,
-                height=0.5,
-                stroke_color=BLUE_E,
-                fill_color=BLUE_E,
-                fill_opacity=0.1,
-                stroke_width=3.5,
-            )
-            txt = Text(tok, font_size=28, color=BLUE_E)
-            grp = VGroup(box, txt)
-            grp.move_to(LEFT * 5.2 + RIGHT * i * 0.95 + UP * 0.5)
-            token_boxes.add(grp)
-
-        left_arrow_label = Text(
-            "Sequential (left to right)", font_size=28, color=BLUE_E
-        )
-        left_arrow_label.move_to(LEFT * 3.5 + DOWN * 0.5)
-
-        # Right: Diffusion
-        right_title = Text("Diffusion", font_size=34, color=GREEN_E).move_to(
+        # --- Right side: Text Diffusion ---
+        right_title = Text("Text Diffusion", font_size=32, color=GREEN_E).move_to(
             RIGHT * 3.5 + UP * 2.8
         )
-        right_sub = Text("(Iterative refinement)", font_size=28, color=BLACK).next_to(
-            right_title, DOWN, buff=0.1
+        right_sub = Text("Bidirectional", font_size=24, color=BLACK).next_to(
+            right_title, DOWN, buff=0.08
         )
 
-        # Grid that denoises all at once
-        np.random.seed(99)
-        grid_size = 4
-        cell = 0.5
-        gap = 0.05
-
-        def make_noise_grid(noise_level):
-            squares = VGroup()
-            for r in range(grid_size):
-                for c in range(grid_size):
-                    target_color = np.array([0.2, 0.55, 0.85])
-                    noise = np.random.randn(3) * noise_level * 0.3
-                    grey = np.array([0.5, 0.5, 0.5])
-                    col = (1 - noise_level) * target_color + noise_level * grey + noise
-                    col = col.clip(0, 1)
-                    sq = Square(side_length=cell)
-                    sq.set_fill(rgb_to_color(col), opacity=1)
-                    sq.set_stroke(GREY_B, width=1.5)
-                    sq.move_to(
-                        np.array(
-                            [
-                                c * (cell + gap) - (grid_size - 1) * (cell + gap) / 2,
-                                -(
-                                    r * (cell + gap)
-                                    - (grid_size - 1) * (cell + gap) / 2
-                                ),
-                                0,
-                            ]
-                        )
-                    )
-                    squares.add(sq)
-            return squares
-
-        noise_levels = [1.0, 0.6, 0.3, 0.0]
-        diff_grids = []
-        for nl in noise_levels:
-            g = make_noise_grid(nl)
-            g.scale(0.7)
-            diff_grids.append(g)
-
-        # Position diffusion grids vertically
-        diff_x = RIGHT * 3.5
-        for i, g in enumerate(diff_grids):
-            g.move_to(diff_x + DOWN * (i * 1.1 - 0.8))
-
-        right_arrow_label = Text("All at once (iterative)", font_size=28, color=GREEN_E)
-        right_arrow_label.next_to(diff_grids[-1], DOWN, buff=0.35)
-
-        # Animate
         self.play(
             FadeIn(div_line),
             FadeIn(left_title),
@@ -1110,25 +1254,89 @@ class DiffusionVsTransformer(BaseScene):
             FadeIn(right_sub),
         )
 
-        # Left: tokens one at a time
-        for i, tb in enumerate(token_boxes):
-            self.play(FadeIn(tb), run_time=0.35)
+        # ====== LEFT: Autoregressive tokens appear one at a time ======
+        ar_x_start = -6.0
+        ar_spacing = 0.92
+        ar_y = 0.5
 
-        self.play(FadeIn(left_arrow_label))
+        # Build all token boxes positioned in a row
+        ar_boxes = []
+        for i, tok in enumerate(tokens):
+            tb = self._make_token_box(tok, BLUE_E)
+            tb.move_to(np.array([ar_x_start + i * ar_spacing, ar_y, 0]))
+            ar_boxes.append(tb)
 
-        # Right: grids refining
-        for i, g in enumerate(diff_grids):
-            self.play(FadeIn(g), run_time=0.5)
-            if i < len(diff_grids) - 1:
+        for tb in ar_boxes:
+            self.play(FadeIn(tb), run_time=0.3)
+
+        ar_label = Text("Sequential", font_size=24, color=BLUE_E).move_to(
+            np.array([-3.5, ar_y - 0.8, 0])
+        )
+        self.play(FadeIn(ar_label), run_time=0.4)
+
+        # ====== RIGHT: Text Diffusion — mask then unmask ======
+        diff_x_start = 1.2
+        diff_spacing = 0.92
+        mask_color = GREY_C
+
+        # Unmask order (indices): bidirectional — grammar first, nouns last
+        # Step 0: all masked
+        # Step 1: unmask "The"(0) and "on"(3) — articles/prepositions
+        # Step 2: unmask "sat"(2) and "the"(4) — verb and article
+        # Step 3: unmask "cat"(1) and "mat"(5) — nouns last
+        unmask_steps = [
+            [],  # step 0: all masked
+            [0, 3],  # step 1
+            [2, 4],  # step 2
+            [1, 5],  # step 3
+        ]
+
+        step_y_positions = [1.5, 0.5, -0.5, -1.5]
+        step_labels_text = ["Start", "Step 1", "Step 2", "Step 3"]
+
+        revealed = set()
+        diff_rows = []
+
+        for step_idx, (unmask_ids, y, sl) in enumerate(
+            zip(unmask_steps, step_y_positions, step_labels_text)
+        ):
+            revealed.update(unmask_ids)
+
+            row_boxes = VGroup()
+            for i, tok in enumerate(tokens):
+                if i in revealed:
+                    tb = self._make_token_box(tok, GREEN_E, fill_opacity=0.15)
+                else:
+                    tb = self._make_token_box(
+                        "?", mask_color, fill_opacity=0.25, font_size=24
+                    )
+                tb.move_to(np.array([diff_x_start + i * diff_spacing, y, 0]))
+                row_boxes.add(tb)
+
+            step_label = Text(sl, font_size=20, color=BLACK).next_to(
+                row_boxes, LEFT, buff=0.2
+            )
+
+            parts = [FadeIn(row_boxes), FadeIn(step_label)]
+
+            # Arrow from previous row
+            if step_idx > 0:
                 arr = Arrow(
-                    g.get_bottom(),
-                    diff_grids[i + 1].get_top(),
-                    buff=0.08,
+                    np.array(
+                        [diff_x_start + 2.3, step_y_positions[step_idx - 1] - 0.35, 0]
+                    ),
+                    np.array([diff_x_start + 2.3, y + 0.35, 0]),
                     color=GREEN_E,
-                    stroke_width=5,
+                    stroke_width=4,
                     max_tip_length_to_length_ratio=0.3,
                 )
-                self.play(GrowArrow(arr), run_time=0.3)
+                parts.insert(0, GrowArrow(arr))
 
-        self.play(FadeIn(right_arrow_label))
+            self.play(*parts, run_time=0.6)
+            diff_rows.append(row_boxes)
+
+        diff_label = Text("All positions at once", font_size=24, color=GREEN_E).move_to(
+            np.array([3.5, -2.5, 0])
+        )
+        self.play(FadeIn(diff_label))
         self.wait(1.5)

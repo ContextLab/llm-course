@@ -967,7 +967,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="score-matching">Score matching</h1>
+<h1 id="score-matching-gradient-vectors-point-toward-data">Score matching: gradient vectors point toward data</h1>
 <p><img src="animations/gifs/scorematching.gif" alt="" style="height:500px;" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1067,13 +1067,13 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="diffusion-vs-autoregressive-generation">Diffusion vs autoregressive generation</h1>
-<div class="note-box" data-title="Two paradigms for generation">
+<div class="note-box" data-title="Two paradigms for text generation">
 <table>
 <thead>
 <tr>
 <th></th>
 <th>Autoregressive (Transformer)</th>
-<th>Diffusion</th>
+<th>Text Diffusion (MDLM / LLaDA)</th>
 </tr>
 </thead>
 <tbody>
@@ -1083,34 +1083,34 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <td>All positions simultaneously, refining iteratively</td>
 </tr>
 <tr>
-<td>Native domain</td>
-<td>Discrete sequences (text)</td>
-<td>Continuous signals (images, audio)</td>
+<td>How it works</td>
+<td>Predict next token given all previous tokens</td>
+<td>Start with all <code>[MASK]</code> tokens, iteratively unmask</td>
+</tr>
+<tr>
+<td>Key insight</td>
+<td>Sequential — each token depends on the left context</td>
+<td><strong>Bidirectional</strong> — can fill middle tokens before edges</td>
 </tr>
 <tr>
 <td>Steps to generate</td>
 <td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> (sequence length)</td>
-<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> (denoising steps, typically 20–1000)</td>
-</tr>
-<tr>
-<td>Key operation</td>
-<td>Next-token prediction</td>
-<td>Noise prediction</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> (unmasking steps, typically 10–100)</td>
 </tr>
 <tr>
 <td>Training signal</td>
 <td>Cross-entropy loss</td>
-<td>MSE loss (noise prediction)</td>
+<td>Masked token prediction loss</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="tip-box" data-title="Not competitors — complements">
-<p>Autoregressive models excel at <strong>sequential, discrete</strong> data (language). Diffusion models excel at <strong>continuous, spatial</strong> data (images, video, audio). As we'll see in Lecture 23, combining them yields the most powerful generative systems.</p>
+<div class="tip-box" data-title="Text diffusion is real">
+<p>Recent work shows diffusion can generate <strong>text</strong> too. <a href="https://arxiv.org/abs/2406.07524">MDLM (Sahoo et al., 2024)</a> uses masked diffusion on discrete tokens. <a href="https://arxiv.org/abs/2502.09992">LLaDA (Nie et al., 2025)</a> scales this to 8B parameters, matching LLaMA-3 quality — proving diffusion is not limited to images.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="diffusion-vs-autoregressive-generation-1">Diffusion vs autoregressive generation</h1>
+<h1 id="text-diffusion-vs-autoregressive-generation">Text diffusion vs autoregressive generation</h1>
 <p><img src="animations/gifs/diffusionvstransformer.gif" alt="" style="height:500px;" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">

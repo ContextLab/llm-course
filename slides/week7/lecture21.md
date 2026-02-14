@@ -297,7 +297,7 @@ It turns out that predicting noise $\boldsymbol{\epsilon}$ is equivalent to esti
 
 ---
 
-# Score matching
+# Score matching: gradient vectors point toward data
 
 ![height:500](animations/gifs/scorematching.gif)
 
@@ -361,27 +361,27 @@ This requires **1000 forward passes** through the neural network (one per timest
 
 # Diffusion vs autoregressive generation
 
-<div class="note-box" data-title="Two paradigms for generation">
+<div class="note-box" data-title="Two paradigms for text generation">
 
-| | Autoregressive (Transformer) | Diffusion |
+| | Autoregressive (Transformer) | Text Diffusion (MDLM / LLaDA) |
 |---|---|---|
 | Generation order | Left to right, one token at a time | All positions simultaneously, refining iteratively |
-| Native domain | Discrete sequences (text) | Continuous signals (images, audio) |
-| Steps to generate | $N$ (sequence length) | $T$ (denoising steps, typically 20–1000) |
-| Key operation | Next-token prediction | Noise prediction |
-| Training signal | Cross-entropy loss | MSE loss (noise prediction) |
+| How it works | Predict next token given all previous tokens | Start with all `[MASK]` tokens, iteratively unmask |
+| Key insight | Sequential — each token depends on the left context | **Bidirectional** — can fill middle tokens before edges |
+| Steps to generate | $N$ (sequence length) | $T$ (unmasking steps, typically 10–100) |
+| Training signal | Cross-entropy loss | Masked token prediction loss |
 
 </div>
 
-<div class="tip-box" data-title="Not competitors — complements">
+<div class="tip-box" data-title="Text diffusion is real">
 
-Autoregressive models excel at **sequential, discrete** data (language). Diffusion models excel at **continuous, spatial** data (images, video, audio). As we'll see in Lecture 23, combining them yields the most powerful generative systems.
+Recent work shows diffusion can generate **text** too. [MDLM (Sahoo et al., 2024)](https://arxiv.org/abs/2406.07524) uses masked diffusion on discrete tokens. [LLaDA (Nie et al., 2025)](https://arxiv.org/abs/2502.09992) scales this to 8B parameters, matching LLaMA-3 quality — proving diffusion is not limited to images.
 
 </div>
 
 ---
 
-# Diffusion vs autoregressive generation
+# Text diffusion vs autoregressive generation
 
 ![height:500](animations/gifs/diffusionvstransformer.gif)
 
