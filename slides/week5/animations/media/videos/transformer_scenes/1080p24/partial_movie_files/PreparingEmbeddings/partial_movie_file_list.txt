@@ -1,4 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/PreparingEmbeddings/429858703_3422690374_3179236257.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/PreparingEmbeddings/4129186542_2143850967_2871982403.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/PreparingEmbeddings/4129186542_4257824416_3267408859.mp4'

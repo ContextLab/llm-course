@@ -82,7 +82,7 @@ class ForwardDiffusion(BaseScene):
                     col = current[r, c].clip(0, 1)
                     sq = Square(side_length=cell)
                     sq.set_fill(rgb_to_color(col), opacity=1)
-                    sq.set_stroke(GREY_C, width=1.0)
+                    sq.set_stroke(GREY_B, width=1.5)
                     sq.move_to(
                         np.array(
                             [
@@ -134,13 +134,13 @@ class ForwardDiffusion(BaseScene):
                 all_grids[i - 1].get_right(),
                 all_grids[i].get_left(),
                 buff=0.05,
-                color=MAROON_E,
+                color=BLACK,
                 stroke_width=5,
                 tip_length=0.15,
                 max_tip_length_to_length_ratio=0.5,
                 max_stroke_width_to_length_ratio=15,
             )
-            beta_label = MathTex(f"\\beta_{i}", font_size=30, color=MAROON_E)
+            beta_label = MathTex(f"\\beta_{i}", font_size=36, color=BLACK)
             beta_label.next_to(arrow, UP, buff=0.15)
             self.play(
                 GrowArrow(arrow),
@@ -186,7 +186,7 @@ class NoiseSchedule(BaseScene):
             tips=False,
         ).shift(DOWN * 0.2)
 
-        x_label = Text("Timestep t", font_size=30, color=BLACK).next_to(
+        x_label = Text("Timestep t", font_size=36, color=BLACK).next_to(
             axes.x_axis, DOWN, buff=0.4
         )
         y_label = MathTex("\\bar{\\alpha}_t", font_size=36, color=BLACK).next_to(
@@ -208,18 +208,30 @@ class NoiseSchedule(BaseScene):
             stroke_width=5,
         )
 
-        linear_label = Text("Linear", font_size=30, color=BLUE_E).move_to(
+        linear_label = Text("Linear", font_size=34, color=BLUE_E).move_to(
             axes.c2p(500, 0.22)
         )
-        cosine_label = Text("Cosine", font_size=30, color=GREEN_E).move_to(
+        cosine_label = Text("Cosine", font_size=34, color=GREEN_E).move_to(
             axes.c2p(700, 0.65)
         )
 
-        note = Text("Signal remaining", font_size=28, color=BLACK).next_to(
-            axes, UP, buff=0.3
+        definition = MathTex(
+            r"\bar{\alpha}_t = \prod_{s=1}^{t}(1 - \beta_s)",
+            font_size=36,
+            color=BLACK,
+        ).next_to(axes, UP, buff=0.3)
+
+        note = Text("Signal remaining", font_size=32, color=BLACK).next_to(
+            definition, UP, buff=0.15
         )
 
-        self.play(Create(axes), FadeIn(x_label), FadeIn(y_label), FadeIn(note))
+        self.play(
+            Create(axes),
+            FadeIn(x_label),
+            FadeIn(y_label),
+            FadeIn(note),
+            FadeIn(definition),
+        )
         self.play(Create(linear_graph), FadeIn(linear_label), run_time=1.0)
         self.play(Create(cosine_graph), FadeIn(cosine_label), run_time=1.0)
         self.wait(1.5)
@@ -270,7 +282,7 @@ class ReverseProcess(BaseScene):
                     col = img_data[r, c].clip(0, 1)
                     sq = Square(side_length=cell)
                     sq.set_fill(rgb_to_color(col), opacity=1)
-                    sq.set_stroke(GREY_C, width=1.0)
+                    sq.set_stroke(GREY_B, width=1.5)
                     sq.move_to(
                         np.array(
                             [
@@ -302,14 +314,14 @@ class ReverseProcess(BaseScene):
             # Neural net icon between grids
             nn_box = RoundedRectangle(
                 corner_radius=0.1,
-                width=0.8,
+                width=0.9,
                 height=0.5,
                 stroke_color=TEAL_E,
                 fill_color=TEAL_E,
                 fill_opacity=0.15,
                 stroke_width=3,
             )
-            nn_text = MathTex("\\epsilon_\\theta", font_size=28, color=TEAL_E)
+            nn_text = MathTex("\\epsilon_\\theta", font_size=34, color=TEAL_E)
             nn_icon = VGroup(nn_box, nn_text)
             mid = (grids[i - 1].get_right() + grids[i].get_left()) / 2
             nn_icon.move_to(mid + UP * 0.4)
@@ -319,8 +331,8 @@ class ReverseProcess(BaseScene):
                 grids[i].get_left() + LEFT * 0.05,
                 buff=0.05,
                 color=GREEN_E,
-                stroke_width=4,
-                max_tip_length_to_length_ratio=0.25,
+                stroke_width=5,
+                max_tip_length_to_length_ratio=0.35,
             )
             self.play(
                 GrowArrow(arrow),
@@ -365,8 +377,8 @@ class UNetArchitecture(BaseScene):
                 fill_opacity=0.15,
                 stroke_width=3,
             ).move_to(np.array([x_enc, y, 0]))
-            label = Text(lbl, font_size=22, color=block_color).move_to(
-                rect.get_center()
+            label = Text(lbl, font_size=24, color=block_color).next_to(
+                rect, LEFT, buff=0.15
             )
             enc_blocks.append(rect)
             enc_label_objs.append(label)
@@ -374,15 +386,15 @@ class UNetArchitecture(BaseScene):
         # Bottleneck
         bottleneck = RoundedRectangle(
             corner_radius=0.08,
-            width=0.55,
+            width=0.7,
             height=0.7,
             stroke_color=bottleneck_color,
             fill_color=bottleneck_color,
             fill_opacity=0.15,
             stroke_width=3,
         ).move_to(np.array([0, -2.5, 0]))
-        bn_label = Text("4 x 4", font_size=22, color=bottleneck_color).move_to(
-            bottleneck.get_center()
+        bn_label = Text("4 x 4", font_size=24, color=bottleneck_color).next_to(
+            bottleneck, DOWN, buff=0.12
         )
 
         # Decoder blocks (right side, going up)
@@ -404,17 +416,17 @@ class UNetArchitecture(BaseScene):
                 fill_opacity=0.15,
                 stroke_width=3,
             ).move_to(np.array([x_dec, y, 0]))
-            label = Text(lbl, font_size=22, color=block_color).move_to(
-                rect.get_center()
+            label = Text(lbl, font_size=24, color=block_color).next_to(
+                rect, RIGHT, buff=0.15
             )
             dec_blocks.append(rect)
             dec_label_objs.append(label)
 
         # Side labels
-        enc_title = Text("Encoder", font_size=30, color=BLACK).move_to(
+        enc_title = Text("Encoder", font_size=36, color=BLACK).move_to(
             np.array([x_enc, 3.0, 0])
         )
-        dec_title = Text("Decoder", font_size=30, color=BLACK).move_to(
+        dec_title = Text("Decoder", font_size=36, color=BLACK).move_to(
             np.array([x_dec, 3.0, 0])
         )
 
@@ -428,8 +440,8 @@ class UNetArchitecture(BaseScene):
                     enc_blocks[i + 1].get_top(),
                     buff=0.1,
                     color=BLACK,
-                    stroke_width=3.5,
-                    max_tip_length_to_length_ratio=0.3,
+                    stroke_width=4.5,
+                    max_tip_length_to_length_ratio=0.25,
                 )
                 self.play(GrowArrow(down_arrow), run_time=0.3)
 
@@ -439,7 +451,7 @@ class UNetArchitecture(BaseScene):
             bottleneck.get_left(),
             buff=0.1,
             color=BLACK,
-            stroke_width=3,
+            stroke_width=4,
             tip_length=0.15,
             max_tip_length_to_length_ratio=0.15,
         )
@@ -453,7 +465,7 @@ class UNetArchitecture(BaseScene):
             dec_blocks[0].get_bottom(),
             buff=0.1,
             color=BLACK,
-            stroke_width=3,
+            stroke_width=4,
             tip_length=0.15,
             max_tip_length_to_length_ratio=0.15,
         )
@@ -469,8 +481,8 @@ class UNetArchitecture(BaseScene):
                     dec_blocks[i + 1].get_bottom(),
                     buff=0.1,
                     color=BLACK,
-                    stroke_width=3.5,
-                    max_tip_length_to_length_ratio=0.3,
+                    stroke_width=4.5,
+                    max_tip_length_to_length_ratio=0.25,
                 )
                 self.play(GrowArrow(up_arrow), run_time=0.3)
 
@@ -484,12 +496,12 @@ class UNetArchitecture(BaseScene):
                 enc_tr,
                 dec_tl,
                 color=skip_color,
-                stroke_width=3.5,
+                stroke_width=4.5,
                 dash_length=0.15,
             )
             self.play(Create(skip), run_time=0.4)
 
-        skip_label = Text("Skip connections", font_size=28, color=skip_color).move_to(
+        skip_label = Text("Skip connections", font_size=32, color=skip_color).move_to(
             np.array([0, 3.3, 0])
         )
         self.play(FadeIn(skip_label))
@@ -513,10 +525,10 @@ class TimestepEmbedding(BaseScene):
             LEFT * 3.3,
             LEFT * 1.5,
             color=BLACK,
-            stroke_width=4,
+            stroke_width=5,
             max_tip_length_to_length_ratio=0.25,
         )
-        arr1_label = Text("sinusoidal\nembedding", font_size=24, color=BLACK).next_to(
+        arr1_label = Text("sinusoidal\nembedding", font_size=28, color=BLACK).next_to(
             arr1, UP, buff=0.2
         )
 
@@ -543,7 +555,7 @@ class TimestepEmbedding(BaseScene):
                 fill_color=BLUE_E if i % 2 == 0 else TEAL_E,
                 fill_opacity=0.7,
                 stroke_color=BLUE_E if i % 2 == 0 else TEAL_E,
-                stroke_width=2,
+                stroke_width=3,
             )
             rect.move_to(
                 np.array(
@@ -552,13 +564,13 @@ class TimestepEmbedding(BaseScene):
             )
             bars.add(rect)
         bars.move_to(ORIGIN)
-        emb_label = MathTex("\\text{emb}(t)", font_size=30, color=BLACK).next_to(
+        emb_label = MathTex("\\text{emb}(t)", font_size=34, color=BLACK).next_to(
             bars, DOWN, buff=0.35
         )
-        sin_lab = Text("sin", font_size=22, color=BLUE_E).move_to(
+        sin_lab = Text("sin", font_size=26, color=BLUE_E).move_to(
             bars.get_corner(UL) + UP * 0.35 + LEFT * 0.2
         )
-        cos_lab = Text("cos", font_size=22, color=TEAL_E).move_to(
+        cos_lab = Text("cos", font_size=26, color=TEAL_E).move_to(
             bars.get_corner(UR) + UP * 0.35 + RIGHT * 0.2
         )
 
@@ -567,11 +579,11 @@ class TimestepEmbedding(BaseScene):
             RIGHT * 2.0,
             RIGHT * 3.5,
             color=BLACK,
-            stroke_width=4,
+            stroke_width=5,
             max_tip_length_to_length_ratio=0.25,
         )
         arr2_label = Text(
-            "inject into\nU-Net block", font_size=24, color=BLACK
+            "inject into\nU-Net block", font_size=28, color=BLACK
         ).next_to(arr2, UP, buff=0.2)
 
         unet_block = RoundedRectangle(
@@ -581,13 +593,13 @@ class TimestepEmbedding(BaseScene):
             stroke_color=MAROON_E,
             fill_color=MAROON_E,
             fill_opacity=0.1,
-            stroke_width=3,
+            stroke_width=4,
         ).move_to(RIGHT * 4.8)
-        unet_label = Text("U-Net\nBlock", font_size=26, color=MAROON_E).move_to(
+        unet_label = Text("U-Net\nBlock", font_size=30, color=MAROON_E).move_to(
             unet_block.get_center()
         )
 
-        plus = MathTex("+", font_size=36, color=GREEN_E).move_to(
+        plus = MathTex("+", font_size=42, color=GREEN_E).move_to(
             RIGHT * 3.7 + DOWN * 0.5
         )
 
@@ -619,14 +631,14 @@ class TrainingObjective(BaseScene):
             (
                 "2.",
                 "Sample",
-                MathTex("t \\sim \\text{Uniform}(1, T)", font_size=26, color=BLACK),
+                MathTex("t \\sim \\text{Uniform}(1, T)", font_size=30, color=BLACK),
             ),
             (
                 "3.",
                 "Sample",
                 MathTex(
                     "\\boldsymbol{\\epsilon} \\sim \\mathcal{N}(\\mathbf{0}, \\mathbf{I})",
-                    font_size=26,
+                    font_size=30,
                     color=BLACK,
                 ),
             ),
@@ -644,7 +656,7 @@ class TrainingObjective(BaseScene):
                 "Predict",
                 MathTex(
                     "\\hat{\\boldsymbol{\\epsilon}} = \\boldsymbol{\\epsilon}_\\theta(\\mathbf{x}_t, t)",
-                    font_size=26,
+                    font_size=30,
                     color=BLACK,
                 ),
             ),
@@ -680,7 +692,7 @@ class TrainingObjective(BaseScene):
                 stroke_color=BLUE_E if i < 5 else MAROON_E,
                 fill_color=BLUE_E if i < 5 else MAROON_E,
                 fill_opacity=0.05 if i < 5 else 0.12,
-                stroke_width=2.5,
+                stroke_width=3.5,
             ).move_to(np.array([0.5, y, 0]))
             eq.move_to(box.get_center())
 
@@ -723,11 +735,11 @@ class SimplifiedLoss(BaseScene):
 
         eq1 = MathTex(
             r"\mathcal{L}_{\text{ELBO}} = \sum_{t=1}^{T} \mathbb{E}_q \left[ D_{\text{KL}}(q(\mathbf{x}_{t-1} | \mathbf{x}_t, \mathbf{x}_0) \| p_\theta(\mathbf{x}_{t-1} | \mathbf{x}_t)) \right]",
-            font_size=28,
+            font_size=30,
             color=BLACK,
         ).move_to(UP * 2)
 
-        label1 = Text("Full ELBO (complex)", font_size=26, color=BLACK).next_to(
+        label1 = Text("Full ELBO (complex)", font_size=28, color=BLACK).next_to(
             eq1, RIGHT, buff=0.3
         )
 
@@ -737,7 +749,7 @@ class SimplifiedLoss(BaseScene):
             color=BLACK,
         ).move_to(UP * 0.5)
 
-        label2 = Text("Reparameterize means", font_size=26, color=BLACK).next_to(
+        label2 = Text("Reparameterize means", font_size=28, color=BLACK).next_to(
             eq2, RIGHT, buff=0.3
         )
 
@@ -747,7 +759,7 @@ class SimplifiedLoss(BaseScene):
             color=BLACK,
         ).move_to(DOWN * 1.0)
 
-        label3 = Text("Predict noise instead", font_size=26, color=BLACK).next_to(
+        label3 = Text("Predict noise instead", font_size=28, color=BLACK).next_to(
             eq3, RIGHT, buff=0.3
         )
 
@@ -757,11 +769,11 @@ class SimplifiedLoss(BaseScene):
             color=MAROON_E,
         ).move_to(DOWN * 2.5)
 
-        label4 = Text("Drop weights (Ho et al.)", font_size=26, color=MAROON_E).next_to(
+        label4 = Text("Drop weights (Ho et al.)", font_size=28, color=MAROON_E).next_to(
             eq4, RIGHT, buff=0.3
         )
 
-        box = SurroundingRectangle(eq4, color=MAROON_E, buff=0.15, stroke_width=3)
+        box = SurroundingRectangle(eq4, color=MAROON_E, buff=0.15, stroke_width=4)
 
         # Arrows between steps
         self.play(FadeIn(eq1), FadeIn(label1))
@@ -772,7 +784,7 @@ class SimplifiedLoss(BaseScene):
             eq2.get_top(),
             buff=0.15,
             color=BLACK,
-            stroke_width=3,
+            stroke_width=4,
             max_tip_length_to_length_ratio=0.3,
         )
         self.play(GrowArrow(arr1), FadeIn(eq2), FadeIn(label2), run_time=0.8)
@@ -783,7 +795,7 @@ class SimplifiedLoss(BaseScene):
             eq3.get_top(),
             buff=0.15,
             color=BLACK,
-            stroke_width=3,
+            stroke_width=4,
             max_tip_length_to_length_ratio=0.3,
         )
         self.play(GrowArrow(arr2), FadeIn(eq3), FadeIn(label3), run_time=0.8)
@@ -794,7 +806,7 @@ class SimplifiedLoss(BaseScene):
             eq4.get_top(),
             buff=0.15,
             color=BLACK,
-            stroke_width=3,
+            stroke_width=4,
             max_tip_length_to_length_ratio=0.3,
         )
         self.play(
@@ -918,10 +930,10 @@ class SamplingProcess(BaseScene):
                 stroke_width=3,
             ).move_to(np.array([x, 0.5, 0]))
 
-            inner_label = MathTex(f"\\mathbf{{x}}", font_size=28, color=col).move_to(
+            inner_label = MathTex(f"\\mathbf{{x}}", font_size=32, color=col).move_to(
                 circ.get_center()
             )
-            step_text = Text(sl, font_size=24, color=BLACK).next_to(
+            step_text = Text(sl, font_size=28, color=BLACK).next_to(
                 circ, DOWN, buff=0.25
             )
 
@@ -935,7 +947,7 @@ class SamplingProcess(BaseScene):
                 font_size=28,
                 color=BLACK,
             ),
-            MathTex(r"\text{2. For } t = T \text{ to } 1:", font_size=22, color=BLACK),
+            MathTex(r"\text{2. For } t = T \text{ to } 1:", font_size=26, color=BLACK),
             MathTex(
                 r"\quad \hat{\boldsymbol{\epsilon}} = \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)",
                 font_size=28,
@@ -965,11 +977,11 @@ class SamplingProcess(BaseScene):
                 circles[i].get_left(),
                 buff=0.1,
                 color=BLACK,
-                stroke_width=3.5,
+                stroke_width=5,
                 max_tip_length_to_length_ratio=0.3,
             )
             denoise_label = MathTex(
-                "\\epsilon_\\theta", font_size=24, color=TEAL_E
+                "\\epsilon_\\theta", font_size=28, color=TEAL_E
             ).next_to(arrow, UP, buff=0.1)
             self.play(
                 GrowArrow(arrow),
@@ -980,10 +992,10 @@ class SamplingProcess(BaseScene):
             )
 
         # Final label
-        noise_label = Text("Pure noise", font_size=24, color=MAROON_E).next_to(
+        noise_label = Text("Pure noise", font_size=28, color=MAROON_E).next_to(
             circles[0], UP, buff=0.25
         )
-        clean_label = Text("Clean sample", font_size=24, color=GREEN_E).next_to(
+        clean_label = Text("Clean sample", font_size=28, color=GREEN_E).next_to(
             circles[-1], UP, buff=0.25
         )
         self.play(FadeIn(noise_label), FadeIn(clean_label))
@@ -1000,13 +1012,13 @@ class DiffusionVsTransformer(BaseScene):
         title = Title("Diffusion vs Transformer")
 
         # Dividing line
-        div_line = DashedLine(UP * 3.5, DOWN * 3.5, color=GREY_C, stroke_width=2.5)
+        div_line = DashedLine(UP * 3.5, DOWN * 3.5, color=GREY_C, stroke_width=3.5)
 
         # Left: Autoregressive
         left_title = Text("Autoregressive", font_size=34, color=BLUE_E).move_to(
             LEFT * 3.5 + UP * 2.8
         )
-        left_sub = Text("(Transformer)", font_size=24, color=BLACK).next_to(
+        left_sub = Text("(Transformer)", font_size=28, color=BLACK).next_to(
             left_title, DOWN, buff=0.1
         )
 
@@ -1021,15 +1033,15 @@ class DiffusionVsTransformer(BaseScene):
                 stroke_color=BLUE_E,
                 fill_color=BLUE_E,
                 fill_opacity=0.1,
-                stroke_width=2.5,
+                stroke_width=3.5,
             )
-            txt = Text(tok, font_size=24, color=BLUE_E)
+            txt = Text(tok, font_size=28, color=BLUE_E)
             grp = VGroup(box, txt)
             grp.move_to(LEFT * 5.2 + RIGHT * i * 0.95 + UP * 0.5)
             token_boxes.add(grp)
 
         left_arrow_label = Text(
-            "Sequential (left to right)", font_size=24, color=BLUE_E
+            "Sequential (left to right)", font_size=28, color=BLUE_E
         )
         left_arrow_label.move_to(LEFT * 3.5 + DOWN * 0.5)
 
@@ -1037,7 +1049,7 @@ class DiffusionVsTransformer(BaseScene):
         right_title = Text("Diffusion", font_size=34, color=GREEN_E).move_to(
             RIGHT * 3.5 + UP * 2.8
         )
-        right_sub = Text("(Iterative refinement)", font_size=24, color=BLACK).next_to(
+        right_sub = Text("(Iterative refinement)", font_size=28, color=BLACK).next_to(
             right_title, DOWN, buff=0.1
         )
 
@@ -1058,7 +1070,7 @@ class DiffusionVsTransformer(BaseScene):
                     col = col.clip(0, 1)
                     sq = Square(side_length=cell)
                     sq.set_fill(rgb_to_color(col), opacity=1)
-                    sq.set_stroke(GREY_C, width=1.0)
+                    sq.set_stroke(GREY_B, width=1.5)
                     sq.move_to(
                         np.array(
                             [
@@ -1086,7 +1098,7 @@ class DiffusionVsTransformer(BaseScene):
         for i, g in enumerate(diff_grids):
             g.move_to(diff_x + DOWN * (i * 1.1 - 0.8))
 
-        right_arrow_label = Text("All at once (iterative)", font_size=24, color=GREEN_E)
+        right_arrow_label = Text("All at once (iterative)", font_size=28, color=GREEN_E)
         right_arrow_label.next_to(diff_grids[-1], DOWN, buff=0.35)
 
         # Animate
@@ -1113,7 +1125,7 @@ class DiffusionVsTransformer(BaseScene):
                     diff_grids[i + 1].get_top(),
                     buff=0.08,
                     color=GREEN_E,
-                    stroke_width=3.5,
+                    stroke_width=5,
                     max_tip_length_to_length_ratio=0.3,
                 )
                 self.play(GrowArrow(arr), run_time=0.3)

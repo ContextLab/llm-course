@@ -1,7 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ReverseProcess/429858703_710691830_223132457.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ReverseProcess/4129186542_4057050286_4200508813.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ReverseProcess/4129186542_2535235311_2680357689.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ReverseProcess/4129186542_2415780741_3686481234.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ReverseProcess/4129186542_369756267_3860937864.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ReverseProcess/4129186542_1490420776_3440215112.mp4'

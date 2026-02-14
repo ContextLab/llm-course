@@ -31,9 +31,9 @@ Winter 2026
 
 # Announcements
 
-<div class="important-box" data-title="Assignment 4 due this week">
+<div class="important-box" data-title="Assignment 4 due today!">
 
-**Assignment 4** (Customer Service Chatbot) is due **February 16, 11:59 PM EST**.
+**Assignment 4** (Customer Service Chatbot) is due **today at 11:59 PM EST**.
 
 </div>
 
@@ -50,7 +50,7 @@ Winter 2026
 
 <div class="definition-box" data-title="A different approach to generation">
 
-So far in this course, we have focused on **autoregressive** models — transformers that generate one token at a time, left to right. Diffusion models take a fundamentally different approach: they generate **everything at once** through iterative refinement.
+**Autoregressive models** like transformers generate one token at a time, left to right. Diffusion models take a fundamentally different approach: they generate **everything at once** through iterative refinement.
 
 </div>
 
@@ -90,7 +90,7 @@ where $\beta_t$ is a small positive constant (the **noise schedule**) that contr
 
 <div class="note-box" data-title="What this means">
 
-At each step, we slightly shrink the signal ($\sqrt{1 - \beta_t}$) and add a small amount of noise ($\beta_t$). After enough steps ($T \approx 1000$), the original data is completely destroyed — $\mathbf{x}_T$ is indistinguishable from pure Gaussian noise.
+At each step, we slightly shrink the signal ($\sqrt{1 - \beta_t}$) and add some noise ($\beta_t$). After enough steps ($T \approx 1000$), the original data is completely destroyed — $\mathbf{x}_T$ is indistinguishable from pure Gaussian noise.
 
 </div>
 
@@ -106,7 +106,7 @@ At each step, we slightly shrink the signal ($\sqrt{1 - \beta_t}$) and add a sma
 
 <div class="definition-box" data-title="How fast should we add noise?">
 
-The noise schedule $\{\beta_1, \beta_2, \ldots, \beta_T\}$ controls the rate of information destruction:
+The noise schedule $\{\beta_1, \beta_2, \ldots, \beta_T\}$ controls the rate of information destruction. We track the **cumulative signal remaining** as $\bar\alpha_t = \prod_{s=1}^{t}(1 - \beta_s)$:
 
 - **Linear schedule** ([Ho et al., 2020](https://arxiv.org/abs/2006.11239)): $\beta_t$ increases linearly from $\beta_1 = 10^{-4}$ to $\beta_T = 0.02$
 - **Cosine schedule** ([Nichol & Dhariwal, 2021](https://arxiv.org/abs/2102.09672)): Designed so that $\bar\alpha_t$ follows a cosine curve, preserving more signal at early timesteps

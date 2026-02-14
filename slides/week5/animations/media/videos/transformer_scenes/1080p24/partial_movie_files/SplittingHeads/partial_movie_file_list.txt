@@ -1,6 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/SplittingHeads/429858703_2934989943_2081499750.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/SplittingHeads/4129186542_2643211519_2895834724.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/SplittingHeads/4129186542_2934989943_2441139198.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/SplittingHeads/4129186542_4252817725_263853392.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week5/animations/media/videos/transformer_scenes/1080p24/partial_movie_files/SplittingHeads/4129186542_2671462033_1517752272.mp4'

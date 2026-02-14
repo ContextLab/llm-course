@@ -1,5 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/NoiseSchedule/429858703_1058928026_223132457.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/NoiseSchedule/4129186542_580611001_752258145.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/NoiseSchedule/4129186542_3407779383_4210597983.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/NoiseSchedule/4129186542_1490420776_312537319.mp4'

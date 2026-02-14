@@ -1,8 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ForwardDiffusion/429858703_1366022052_223132457.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ForwardDiffusion/4129186542_439440996_3899136256.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ForwardDiffusion/4129186542_3508137101_1523648510.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ForwardDiffusion/4129186542_2053429406_421053736.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ForwardDiffusion/4129186542_802286264_3092483898.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ForwardDiffusion/4129186542_186108574_3840705266.mp4'
-file 'file:/Users/jmanning/llm-course/slides/week7/animations/media/videos/diffusion_scenes/1080p24/partial_movie_files/ForwardDiffusion/4129186542_1490420776_3410494444.mp4'
