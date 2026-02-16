@@ -45,6 +45,33 @@ Winter 2026
 </div>
 
 ---
+<!-- _class: scale-90 -->
+
+# Final project
+
+<div class="important-box" data-title="Your LLM Research Capstone">
+
+Work in **teams of 2-3** to build an ambitious, open-ended project over **Weeks 7-10**. Explore novel applications, replicate and extend published research, build innovative systems, or evaluate LLM capabilities.
+
+</div>
+
+<div class="note-box" data-title="Timeline">
+
+- **Weeks 7–8**: Form teams and brainstorm ideas
+- **Week 9**: Core development and experiments
+- **Week 10**: Final submission + in-class presentations (**March 9, 11:59 PM EST**)
+
+</div>
+
+<div class="tip-box" data-title="Get started">
+
+- Full instructions: [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/)
+- Accept the assignment: [GitHub Classroom](https://classroom.github.com/a/IFw74DY7)
+- 20+ project ideas on the assignment page to inspire you!
+
+</div>
+
+---
 
 # Why diffusion models?
 
