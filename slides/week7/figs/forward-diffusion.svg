@@ -1,0 +1,55 @@
+<svg viewBox="0 0 740 120" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<rect id="c" width="16" height="16" rx="1"/>
+<symbol id="flow-arrow" viewBox="0 0 76.41 27.12">
+<path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
+</symbol>
+</defs>
+<!-- Grid backgrounds -->
+<rect x="2" y="2" width="96" height="96" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<rect x="152" y="2" width="96" height="96" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<rect x="302" y="2" width="96" height="96" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<rect x="452" y="2" width="96" height="96" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<rect x="602" y="2" width="96" height="96" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<!-- Arrows (same flow-arrow as theme) -->
+<use href="#flow-arrow" x="101" y="42" width="46" height="16" style="color: #0a2518"/>
+<use href="#flow-arrow" x="251" y="42" width="46" height="16" style="color: #0a2518"/>
+<use href="#flow-arrow" x="401" y="42" width="46" height="16" style="color: #0a2518"/>
+<use href="#flow-arrow" x="551" y="42" width="46" height="16" style="color: #0a2518"/>
+<!-- Labels -->
+<text x="50" y="113" text-anchor="middle" font-size="13" font-family="Arial,sans-serif" fill="#2d3436" font-style="italic">t = 0</text>
+<text x="200" y="113" text-anchor="middle" font-size="13" font-family="Arial,sans-serif" fill="#2d3436" font-style="italic">t = 1</text>
+<text x="350" y="113" text-anchor="middle" font-size="13" font-family="Arial,sans-serif" fill="#2d3436" font-style="italic">t = 2</text>
+<text x="500" y="113" text-anchor="middle" font-size="13" font-family="Arial,sans-serif" fill="#2d3436" font-style="italic">t = 3</text>
+<text x="650" y="113" text-anchor="middle" font-size="13" font-family="Arial,sans-serif" fill="#2d3436" font-style="italic">t = 4</text>
+<!-- Grid 0: clean cross (5x5, 16px cells, 2px gap, stride 18) -->
+<use href="#c" x="6" y="6" fill="#dfe6e9"/><use href="#c" x="24" y="6" fill="#dfe6e9"/><use href="#c" x="42" y="6" fill="#2c3e50"/><use href="#c" x="60" y="6" fill="#dfe6e9"/><use href="#c" x="78" y="6" fill="#dfe6e9"/>
+<use href="#c" x="6" y="24" fill="#dfe6e9"/><use href="#c" x="24" y="24" fill="#dfe6e9"/><use href="#c" x="42" y="24" fill="#2c3e50"/><use href="#c" x="60" y="24" fill="#dfe6e9"/><use href="#c" x="78" y="24" fill="#dfe6e9"/>
+<use href="#c" x="6" y="42" fill="#2c3e50"/><use href="#c" x="24" y="42" fill="#2c3e50"/><use href="#c" x="42" y="42" fill="#2c3e50"/><use href="#c" x="60" y="42" fill="#2c3e50"/><use href="#c" x="78" y="42" fill="#2c3e50"/>
+<use href="#c" x="6" y="60" fill="#dfe6e9"/><use href="#c" x="24" y="60" fill="#dfe6e9"/><use href="#c" x="42" y="60" fill="#2c3e50"/><use href="#c" x="60" y="60" fill="#dfe6e9"/><use href="#c" x="78" y="60" fill="#dfe6e9"/>
+<use href="#c" x="6" y="78" fill="#dfe6e9"/><use href="#c" x="24" y="78" fill="#dfe6e9"/><use href="#c" x="42" y="78" fill="#2c3e50"/><use href="#c" x="60" y="78" fill="#dfe6e9"/><use href="#c" x="78" y="78" fill="#dfe6e9"/>
+<!-- Grid 1: slight noise -->
+<use href="#c" x="156" y="6" fill="#dfe6e9"/><use href="#c" x="174" y="6" fill="#d2d8dc"/><use href="#c" x="192" y="6" fill="#2c3e50"/><use href="#c" x="210" y="6" fill="#dfe6e9"/><use href="#c" x="228" y="6" fill="#dfe6e9"/>
+<use href="#c" x="156" y="24" fill="#dfe6e9"/><use href="#c" x="174" y="24" fill="#dfe6e9"/><use href="#c" x="192" y="24" fill="#3a4f5d"/><use href="#c" x="210" y="24" fill="#dfe6e9"/><use href="#c" x="228" y="24" fill="#d5dbe0"/>
+<use href="#c" x="156" y="42" fill="#2c3e50"/><use href="#c" x="174" y="42" fill="#3a4f5d"/><use href="#c" x="192" y="42" fill="#2c3e50"/><use href="#c" x="210" y="42" fill="#2c3e50"/><use href="#c" x="228" y="42" fill="#2c3e50"/>
+<use href="#c" x="156" y="60" fill="#dfe6e9"/><use href="#c" x="174" y="60" fill="#dfe6e9"/><use href="#c" x="192" y="60" fill="#2c3e50"/><use href="#c" x="210" y="60" fill="#d5dbe0"/><use href="#c" x="228" y="60" fill="#dfe6e9"/>
+<use href="#c" x="156" y="78" fill="#d2d8dc"/><use href="#c" x="174" y="78" fill="#dfe6e9"/><use href="#c" x="192" y="78" fill="#2c3e50"/><use href="#c" x="210" y="78" fill="#dfe6e9"/><use href="#c" x="228" y="78" fill="#dfe6e9"/>
+<!-- Grid 2: medium noise -->
+<use href="#c" x="306" y="6" fill="#bec4ca"/><use href="#c" x="324" y="6" fill="#c8ced4"/><use href="#c" x="342" y="6" fill="#546470"/><use href="#c" x="360" y="6" fill="#c4cad0"/><use href="#c" x="378" y="6" fill="#b4bac0"/>
+<use href="#c" x="306" y="24" fill="#c8ced4"/><use href="#c" x="324" y="24" fill="#b4bac0"/><use href="#c" x="342" y="24" fill="#4a5c68"/><use href="#c" x="360" y="24" fill="#bec4ca"/><use href="#c" x="378" y="24" fill="#c8ced4"/>
+<use href="#c" x="306" y="42" fill="#4a5c68"/><use href="#c" x="324" y="42" fill="#546470"/><use href="#c" x="342" y="42" fill="#3e505c"/><use href="#c" x="360" y="42" fill="#546470"/><use href="#c" x="378" y="42" fill="#4a5c68"/>
+<use href="#c" x="306" y="60" fill="#c4cad0"/><use href="#c" x="324" y="60" fill="#c8ced4"/><use href="#c" x="342" y="60" fill="#4a5c68"/><use href="#c" x="360" y="60" fill="#bec4ca"/><use href="#c" x="378" y="60" fill="#c4cad0"/>
+<use href="#c" x="306" y="78" fill="#b4bac0"/><use href="#c" x="324" y="78" fill="#bec4ca"/><use href="#c" x="342" y="78" fill="#546470"/><use href="#c" x="360" y="78" fill="#c8ced4"/><use href="#c" x="378" y="78" fill="#b4bac0"/>
+<!-- Grid 3: heavy noise -->
+<use href="#c" x="456" y="6" fill="#929aa0"/><use href="#c" x="474" y="6" fill="#a0a8ae"/><use href="#c" x="492" y="6" fill="#7e868e"/><use href="#c" x="510" y="6" fill="#98a0a6"/><use href="#c" x="528" y="6" fill="#8e969c"/>
+<use href="#c" x="456" y="24" fill="#9ea6ac"/><use href="#c" x="474" y="24" fill="#8a929a"/><use href="#c" x="492" y="24" fill="#747c84"/><use href="#c" x="510" y="24" fill="#929aa0"/><use href="#c" x="528" y="24" fill="#9aa2a8"/>
+<use href="#c" x="456" y="42" fill="#747c84"/><use href="#c" x="474" y="42" fill="#7e868e"/><use href="#c" x="492" y="42" fill="#808890"/><use href="#c" x="510" y="42" fill="#8a929a"/><use href="#c" x="528" y="42" fill="#7e868e"/>
+<use href="#c" x="456" y="60" fill="#98a0a6"/><use href="#c" x="474" y="60" fill="#929aa0"/><use href="#c" x="492" y="60" fill="#7e868e"/><use href="#c" x="510" y="60" fill="#9ea6ac"/><use href="#c" x="528" y="60" fill="#929aa0"/>
+<use href="#c" x="456" y="78" fill="#8e969c"/><use href="#c" x="474" y="78" fill="#9aa2a8"/><use href="#c" x="492" y="78" fill="#8a929a"/><use href="#c" x="510" y="78" fill="#929aa0"/><use href="#c" x="528" y="78" fill="#98a0a6"/>
+<!-- Grid 4: pure noise -->
+<use href="#c" x="606" y="6" fill="#7e868e"/><use href="#c" x="624" y="6" fill="#aab2ba"/><use href="#c" x="642" y="6" fill="#929aa0"/><use href="#c" x="660" y="6" fill="#6e767e"/><use href="#c" x="678" y="6" fill="#b4bcc4"/>
+<use href="#c" x="606" y="24" fill="#9aa2a8"/><use href="#c" x="624" y="24" fill="#747c84"/><use href="#c" x="642" y="24" fill="#a6aeb6"/><use href="#c" x="660" y="24" fill="#868e96"/><use href="#c" x="678" y="24" fill="#989ea6"/>
+<use href="#c" x="606" y="42" fill="#b0b8c0"/><use href="#c" x="624" y="42" fill="#6e767e"/><use href="#c" x="642" y="42" fill="#8e969e"/><use href="#c" x="660" y="42" fill="#a0a8b0"/><use href="#c" x="678" y="42" fill="#7a828a"/>
+<use href="#c" x="606" y="60" fill="#868e96"/><use href="#c" x="624" y="60" fill="#9aa2a8"/><use href="#c" x="642" y="60" fill="#727a82"/><use href="#c" x="660" y="60" fill="#b0b8c0"/><use href="#c" x="678" y="60" fill="#8e969e"/>
+<use href="#c" x="606" y="78" fill="#a0a8b0"/><use href="#c" x="624" y="78" fill="#7e868e"/><use href="#c" x="642" y="78" fill="#9aa2a8"/><use href="#c" x="660" y="78" fill="#747c84"/><use href="#c" x="678" y="78" fill="#aab2ba"/>
+</svg>

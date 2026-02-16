@@ -6,7 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 21: Diffusion models
+# Lecture 21: Diffusion models for text
 ### PSYC 51.17: Models of language and communication
 
 Jeremy R. Manning
@@ -19,11 +19,11 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. Explain the **forward diffusion process** and how it progressively destroys information
-2. Derive why the **reverse process** requires a learned neural network
-3. Describe the **U-Net architecture** for noise prediction with timestep conditioning
-4. Understand the **simplified DDPM training objective** and why it works
-5. Compare **DDPM** and **DDIM** sampling strategies and their tradeoffs
+1. Explain how **diffusion models** generate content by iteratively refining noise into signal
+2. Describe the **forward** and **reverse** processes in continuous diffusion (foundation for Lectures 22–23)
+3. Explain how **discrete diffusion** adapts the framework for text by replacing Gaussian noise with **masking**
+4. Compare **autoregressive** and **diffusion-based** text generation and articulate their tradeoffs
+5. Build intuition for why iterative refinement is a powerful paradigm for language generation
 
 </div>
 
@@ -51,7 +51,7 @@ Winter 2026
 
 <div class="important-box" data-title="Your LLM Research Capstone">
 
-Work in **teams of 2-3** to build an ambitious, open-ended project over **Weeks 7-10**. Explore novel applications, replicate and extend published research, build innovative systems, or evaluate LLM capabilities.
+Work in **teams of 2-3(ish)** to build an ambitious, open-ended project over **Weeks 7-10**. Explore novel applications, replicate and extend published research, build innovative systems, or evaluate LLM capabilities.
 
 </div>
 
@@ -77,354 +77,424 @@ Work in **teams of 2-3** to build an ambitious, open-ended project over **Weeks 
 
 <div class="definition-box" data-title="A different approach to generation">
 
-**Autoregressive models** like transformers generate one token at a time, left to right. Diffusion models take a fundamentally different approach: they generate **everything at once** through iterative refinement.
+Every language model we've studied so far — from ELIZA to GPT — generates text **one token at a time**, left to right. Diffusion models take a fundamentally different approach: start with **pure noise** and iteratively refine it into a coherent output, generating **all positions simultaneously**.
 
 </div>
 
-<div class="tip-box" data-title="The core idea">
+<div class="tip-box" data-title="The core analogy">
 
-What if instead of building an output one piece at a time, we started with **pure noise** and gradually refined it into something meaningful? This is the intuition behind diffusion models — and it has produced some of the most stunning generative AI results to date (DALL-E, Stable Diffusion, Sora).
-
-</div>
-
----
-
-# The thermodynamic inspiration
-
-<div class="definition-box" data-title="Sohl-Dickstein et al. (2015)">
-
-Diffusion models are inspired by **non-equilibrium thermodynamics**. Imagine dropping a drop of ink into water:
-- **Forward process**: The ink disperses until the water is uniformly colored (order → disorder)
-- **Reverse process**: If we could reverse time, the uniform color would reconcentrate into the original drop
-
-The key insight from [Sohl-Dickstein et al. (2015)](https://arxiv.org/abs/1503.03585): if the forward process is simple enough (small Gaussian noise at each step), then the reverse process is **also approximately Gaussian** — and we can learn it with a neural network.
+Imagine writing an essay by first typing random letters into every position, then making many editing passes — each pass fixing more of the text until a polished essay emerges. That's diffusion. It sounds absurd, but it works remarkably well — and for some tasks, it's **better** than left-to-right generation.
 
 </div>
 
 ---
 
-# The forward diffusion process
+# Two paradigms for generation
 
-<div class="definition-box" data-title="Progressively adding noise">
+<div class="note-box" data-title="Autoregressive vs diffusion">
 
-Given a clean data sample $\mathbf{x}_0$, the forward process adds a small amount of Gaussian noise at each timestep $t = 1, 2, \ldots, T$:
-
-$$q(\mathbf{x}_t \mid \mathbf{x}_{t-1}) = \mathcal{N}(\mathbf{x}_t;\; \sqrt{1 - \beta_t}\,\mathbf{x}_{t-1},\; \beta_t \mathbf{I})$$
-
-where $\beta_t$ is a small positive constant (the **noise schedule**) that controls how much noise is added at each step.
-
-</div>
-
-<div class="note-box" data-title="What this means">
-
-At each step, we slightly shrink the signal ($\sqrt{1 - \beta_t}$) and add some noise ($\beta_t$). After enough steps ($T \approx 1000$), the original data is completely destroyed — $\mathbf{x}_T$ is indistinguishable from pure Gaussian noise.
-
-</div>
-
----
-
-# The forward process
-
-![height:500](animations/gifs/forwarddiffusion.gif)
-
----
-
-# Noise schedules
-
-<div class="definition-box" data-title="How fast should we add noise?">
-
-The noise schedule $\{\beta_1, \beta_2, \ldots, \beta_T\}$ controls the rate of information destruction. We track the **cumulative signal remaining** as $\bar\alpha_t = \prod_{s=1}^{t}(1 - \beta_s)$:
-
-- **Linear schedule** ([Ho et al., 2020](https://arxiv.org/abs/2006.11239)): $\beta_t$ increases linearly from $\beta_1 = 10^{-4}$ to $\beta_T = 0.02$
-- **Cosine schedule** ([Nichol & Dhariwal, 2021](https://arxiv.org/abs/2102.09672)): Designed so that $\bar\alpha_t$ follows a cosine curve, preserving more signal at early timesteps
-
-</div>
-
-<div class="important-box" data-title="Why the schedule matters">
-
-A linear schedule destroys too much information too quickly in the early steps. The cosine schedule preserves fine details longer, leading to better sample quality — especially for high-resolution images.
-
-</div>
-
----
-
-# Noise schedules
-
-![height:500](animations/gifs/noiseschedule.gif)
-
----
-
-# The closed-form shortcut
-
-<div class="definition-box" data-title="Jumping directly to any timestep">
-
-We don't need to apply noise one step at a time. Define $\alpha_t = 1 - \beta_t$ and $\bar\alpha_t = \prod_{s=1}^{t} \alpha_s$. Then we can jump directly from $\mathbf{x}_0$ to any $\mathbf{x}_t$:
-
-$$q(\mathbf{x}_t \mid \mathbf{x}_0) = \mathcal{N}(\mathbf{x}_t;\; \sqrt{\bar\alpha_t}\,\mathbf{x}_0,\; (1 - \bar\alpha_t)\mathbf{I})$$
-
-</div>
-
-<div class="example-box" data-title="Reparameterization trick">
-
-In practice, we sample $\mathbf{x}_t$ using:
-
-$$\mathbf{x}_t = \sqrt{\bar\alpha_t}\,\mathbf{x}_0 + \sqrt{1 - \bar\alpha_t}\,\boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$$
-
-This is essential for training — we can generate any noisy version of $\mathbf{x}_0$ in a single step, without iterating through all $t$ steps.
-
-</div>
-
----
-
-# The reverse process
-
-<div class="definition-box" data-title="Learning to denoise">
-
-The reverse process starts from noise $\mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ and gradually removes noise to recover $\mathbf{x}_0$:
-
-$$p_\theta(\mathbf{x}_{t-1} \mid \mathbf{x}_t) = \mathcal{N}(\mathbf{x}_{t-1};\; \boldsymbol{\mu}_\theta(\mathbf{x}_t, t),\; \sigma_t^2 \mathbf{I})$$
-
-The mean $\boldsymbol{\mu}_\theta$ is parameterized by a neural network that takes the noisy input $\mathbf{x}_t$ and the timestep $t$, and predicts how to denoise it.
-
-</div>
-
-<div class="important-box" data-title="Why we need a neural network">
-
-While the forward process has a known, fixed form (just add Gaussian noise), the reverse process requires knowing $q(\mathbf{x}_{t-1} \mid \mathbf{x}_t)$ — which depends on the **entire data distribution**. Since we don't know this distribution analytically, we approximate it with a learned model $p_\theta$.
-
-</div>
-
----
-
-# The reverse process
-
-![height:500](animations/gifs/reverseprocess.gif)
-
----
-
-# U-Net: the noise prediction network
-
-<div class="definition-box" data-title="Architecture for predicting noise">
-
-The neural network $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$ that predicts noise uses a **U-Net** architecture ([Ronneberger et al., 2015](https://arxiv.org/abs/1505.04597)):
-
-- **Encoder** (downsampling path): Progressively compresses the spatial dimensions while increasing channels
-- **Bottleneck**: Processes the most compressed representation
-- **Decoder** (upsampling path): Progressively restores spatial resolution
-- **Skip connections**: Direct connections from encoder to decoder at each resolution level, preserving fine-grained details
-
-</div>
-
-<div class="note-box" data-title="Why U-Net?">
-
-The U-shape is ideal for denoising because it captures both **global structure** (via the bottleneck) and **local details** (via skip connections). The network needs both to effectively remove noise while preserving meaningful content.
-
-</div>
-
----
-
-# U-Net architecture
-
-![height:500](animations/gifs/unetarchitecture.gif)
-
----
-
-# Timestep conditioning
-
-<div class="definition-box" data-title="Telling the network what noise level to expect">
-
-The same U-Net must denoise at *every* timestep — from nearly clean ($t = 1$) to pure noise ($t = T$). It needs to know which timestep it's working at. The timestep $t$ is converted to a vector using **sinusoidal embeddings** (the same idea as positional embeddings in transformers, Lecture 15):
-
-$$\text{emb}(t) = [\sin(t / 10000^{0/d}),\; \cos(t / 10000^{0/d}),\; \sin(t / 10000^{2/d}),\; \cos(t / 10000^{2/d}),\; \ldots]$$
-
-This embedding is then added to or concatenated with the intermediate features inside the U-Net.
-
-</div>
-
----
-
-# Timestep embedding
-
-![height:500](animations/gifs/timestepembedding.gif)
-
----
-<!-- _class: scale-90 -->
-
-# The training objective
-
-<div class="definition-box" data-title="Ho et al. (2020): predict the noise">
-
-Instead of predicting $\mathbf{x}_0$ or $\boldsymbol{\mu}_\theta$ directly, [Ho et al. (2020)](https://arxiv.org/abs/2006.11239) found it more effective to train the network to predict **the noise that was added**:
-
-1. Sample a clean image $\mathbf{x}_0$ from the training data
-2. Sample a random timestep $t \sim \text{Uniform}(1, T)$
-3. Sample noise $\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$
-4. Create the noisy version: $\mathbf{x}_t = \sqrt{\bar\alpha_t}\,\mathbf{x}_0 + \sqrt{1 - \bar\alpha_t}\,\boldsymbol{\epsilon}$
-5. Train the network to predict $\boldsymbol{\epsilon}$ from $\mathbf{x}_t$ and $t$
-
-</div>
-
-<div class="important-box" data-title="The key insight">
-
-The network doesn't learn to generate images — it learns to **identify and remove noise**. Generation happens by applying this denoising repeatedly, starting from pure noise.
-
-</div>
-
----
-
-# The training loop
-
-![height:500](animations/gifs/trainingobjective.gif)
-
----
-
-# The simplified loss
-
-<div class="definition-box" data-title="From ELBO to MSE">
-
-The full variational lower bound (ELBO) for diffusion models involves a sum of KL divergences across all timesteps. [Ho et al. (2020)](https://arxiv.org/abs/2006.11239) showed that a much simpler loss works just as well:
-
-$$\mathcal{L}_{\text{simple}} = \mathbb{E}_{t,\, \mathbf{x}_0,\, \boldsymbol{\epsilon}} \left[ \left\| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \right\|^2 \right]$$
-
-This is just **mean squared error** between the true noise $\boldsymbol{\epsilon}$ and the predicted noise $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$.
-
-</div>
-
-<div class="tip-box" data-title="Why simplicity wins">
-
-Dropping the weighting terms from the full ELBO loss actually *improves* sample quality. The uniform weighting across timesteps forces the network to denoise well at every noise level, rather than focusing on easy (low-noise) timesteps.
-
-</div>
-
----
-
-# The simplified loss
-
-![height:500](animations/gifs/simplifiedloss.gif)
-
----
-
-# Score matching perspective
-
-<div class="definition-box" data-title="Song & Ermon (2019)">
-
-An alternative view comes from **score matching** ([Song & Ermon, 2019](https://arxiv.org/abs/1907.05600)). The **score function** is the gradient of the log probability density:
-
-$$\mathbf{s}(\mathbf{x}) = \nabla_{\mathbf{x}} \log p(\mathbf{x})$$
-
-This vector field points "uphill" toward regions of high probability. If we know the score function, we can generate samples by starting from noise and following the gradient.
-
-</div>
-
-<div class="note-box" data-title="Connection to DDPM">
-
-It turns out that predicting noise $\boldsymbol{\epsilon}$ is equivalent to estimating the score function: $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \approx -\sqrt{1 - \bar\alpha_t}\;\nabla_{\mathbf{x}_t} \log q(\mathbf{x}_t)$. The DDPM and score matching perspectives are mathematically unified by [Song et al. (2021)](https://arxiv.org/abs/2011.13456).
-
-</div>
-
----
-
-# Score matching: gradient vectors point toward data
-
-![height:500](animations/gifs/scorematching.gif)
-
----
-<!-- _class: scale-90 -->
-
-# DDPM sampling algorithm
-
-<div class="definition-box" data-title="Generating new samples">
-
-To generate a new sample, we run the learned reverse process:
-
-1. Sample $\mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$
-2. For $t = T, T-1, \ldots, 1$:
-   - Predict noise: $\hat{\boldsymbol{\epsilon}} = \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$
-   - Compute: $\mathbf{x}_{t-1} = \frac{1}{\sqrt{\alpha_t}} \left( \mathbf{x}_t - \frac{\beta_t}{\sqrt{1 - \bar\alpha_t}}\,\hat{\boldsymbol{\epsilon}} \right) + \sigma_t \mathbf{z}$
-   - where $\mathbf{z} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ for $t > 1$, else $\mathbf{z} = \mathbf{0}$
-3. Return $\mathbf{x}_0$
-
-</div>
-
-<div class="warning-box" data-title="The cost of quality">
-
-This requires **1000 forward passes** through the neural network (one per timestep). At ~100ms per pass on a GPU, that's ~100 seconds per image. This motivates faster sampling methods like DDIM.
-
-</div>
-
----
-
-# The sampling process
-
-![height:500](animations/gifs/samplingprocess.gif)
-
----
-
-# DDIM: faster sampling
-
-<div class="definition-box" data-title="Song et al. (2021): Denoising Diffusion Implicit Models">
-
-[DDIM](https://arxiv.org/abs/2010.02502) makes sampling **deterministic** and allows **skipping steps**:
-
-- Instead of 1000 steps, use a subsequence (e.g., 50 evenly spaced steps)
-- The update rule becomes deterministic (no random noise $\mathbf{z}$)
-- Same trained model — just a different sampling procedure
-
-</div>
-
-<div class="note-box" data-title="Comparison">
-
-| Property | DDPM | DDIM |
-|----------|------|------|
-| Steps needed | ~1000 | ~20–50 |
-| Stochastic? | Yes (random noise added) | No (deterministic) |
-| Sample quality | Excellent | Slightly lower |
-| Speed | ~100 seconds | ~2–5 seconds |
-| Same model? | Yes | **Yes** — no retraining needed |
-
-</div>
-
----
-
-# Diffusion vs autoregressive generation
-
-<div class="note-box" data-title="Two paradigms for text generation">
-
-| | Autoregressive (Transformer) | Text Diffusion (MDLM / LLaDA) |
+| | Autoregressive (GPT) | Diffusion |
 |---|---|---|
-| Generation order | Left to right, one token at a time | All positions simultaneously, refining iteratively |
-| How it works | Predict next token given all previous tokens | Start with all `[MASK]` tokens, iteratively unmask |
-| Key insight | Sequential — each token depends on the left context | **Bidirectional** — can fill middle tokens before edges |
-| Steps to generate | $N$ (sequence length) | $T$ (unmasking steps, typically 10–100) |
-| Training signal | Cross-entropy loss | Masked token prediction loss |
+| **Generation order** | Left to right, one token at a time | All positions at once, refined iteratively |
+| **Analogy** | Speaking a sentence word by word | Editing a rough draft into a polished one |
+| **Key strength** | Simple, proven at scale | Bidirectional context, flexible editing |
+| **Key weakness** | Can't "go back" — early errors propagate | Requires many refinement steps |
 
 </div>
 
-<div class="tip-box" data-title="Text diffusion is real">
+<div class="important-box" data-title="Why this matters for language">
 
-Recent work shows diffusion can generate **text** too. [MDLM (Sahoo et al., 2024)](https://arxiv.org/abs/2406.07524) uses masked diffusion on discrete tokens. [LLaDA (Nie et al., 2025)](https://arxiv.org/abs/2502.09992) scales this to 8B parameters, matching LLaMA-3 quality — proving diffusion is not limited to images.
+When you write, you don't commit to each word in sequence. You draft, revise, restructure. Diffusion models formalize this **iterative refinement** process — and recent results show they can match autoregressive models at the scale of billions of parameters ([LLaDA; Nie et al., 2025](https://arxiv.org/abs/2502.09992)).
 
 </div>
 
 ---
 
-# Text diffusion vs autoregressive generation
+# The diffusion framework: big picture
 
-![height:500](animations/gifs/diffusionvstransformer.gif)
+<div class="definition-box" data-title="Two processes, one framework">
+
+Every diffusion model has two processes:
+
+1. **Forward process** (corruption): Gradually destroy information in the data until nothing remains but noise
+2. **Reverse process** (generation): Learn to undo the corruption, step by step, recovering the original data from noise
+
+The key insight from [Sohl-Dickstein et al. (2015)](https://arxiv.org/abs/1503.03585): if each corruption step is **small enough**, then each reversal step can be learned by a neural network.
+
+</div>
+
+```flow
+[Clean data:green] --> [Slightly noisy] --> [Noisier] --> [...] --> [Pure noise:red]
+```
+
+```flow
+[Pure noise:red] --> [Slightly cleaner] --> [Cleaner] --> [...] --> [Generated output:green]
+```
+
+---
+<!-- _class: scale-90 -->
+
+# Diffusion was born in image space
+
+<div class="note-box" data-title="The visual origin">
+
+Diffusion models were originally developed for **image generation** ([Sohl-Dickstein et al., 2015](https://arxiv.org/abs/1503.03585); [Ho et al., 2020](https://arxiv.org/abs/2006.11239)). The idea is intuitive with images: start with a clean picture and gradually corrupt it by adding random noise until the image is unrecognizable. Then train a neural network to reverse the process.
+
+</div>
+
+![Forward diffusion process on a simple image](figs/forward-diffusion.svg)
+
+<div class="tip-box" data-title="From images to text">
+
+This visual intuition made diffusion wildly successful for image generation (DALL-E, Stable Diffusion, Midjourney — covered in Lectures 22–23). But how do we extend this to **text**, where "adding a little noise to a word" is meaningless? We'll answer this after establishing the mathematical framework.
+
+</div>
 
 ---
 
-# Discussion
+# Continuous diffusion: the foundation
 
-<div class="tip-box" data-title="Questions to consider">
+<div class="definition-box" data-title="Adding Gaussian noise (Ho et al., 2020)">
 
-1. **Iterative refinement**: Humans often create by revising drafts — a rough sketch becomes a polished drawing. Is diffusion's iterative denoising a better model of human creativity than autoregressive generation?
+For continuous data (images, audio, embeddings), the forward process adds Gaussian noise at each timestep $t = 1, \ldots, T$:
 
-2. **The noise perspective**: Diffusion models learn by predicting noise. Transformers learn by predicting the next token. Are these fundamentally different, or two views of the same underlying process?
+$$\mathbf{x}_t \sim \mathcal{N}\!\left(\sqrt{1 - \beta_t}\;\mathbf{x}_{t-1},\;\; \beta_t\,\mathbf{I}\right)$$
 
-3. **Information destruction**: The forward process deliberately destroys all information. Why does this make the reverse process *easier* to learn, rather than harder?
+where $\beta_t$ is a small noise amount at step $t$. After $T \approx 1000$ steps, the original signal is completely destroyed — $\mathbf{x}_T$ is indistinguishable from pure Gaussian noise.
 
-4. **Computational cost**: DDPM requires ~1000 neural network evaluations per sample. Is there a theoretical lower bound on how many steps are needed, or will we eventually generate in a single step?
+</div>
+
+<div class="note-box" data-title="Closed-form shortcut">
+
+We can jump directly to any timestep. Define $\bar\alpha_t = \prod_{s=1}^{t}(1 - \beta_s)$:
+
+$$\mathbf{x}_t = \sqrt{\bar\alpha_t}\;\mathbf{x}_0 + \sqrt{1 - \bar\alpha_t}\;\boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$$
+
+This is essential for efficient training — no need to iterate through all $t$ steps.
+
+</div>
+
+---
+
+# Continuous diffusion: learning to reverse
+
+<div class="definition-box" data-title="The DDPM training objective">
+
+A neural network $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)$ is trained to **predict the noise** that was added at each step. The loss is simply mean squared error ([Ho et al., 2020](https://arxiv.org/abs/2006.11239)):
+
+$$\mathcal{L} = \mathbb{E}_{t,\,\mathbf{x}_0,\,\boldsymbol{\epsilon}}\!\left[\left\|\boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)\right\|^2\right]$$
+
+To generate, start from pure noise $\mathbf{x}_T \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ and iteratively subtract the predicted noise, step by step, until clean data $\mathbf{x}_0$ emerges.
+
+</div>
+
+<div class="tip-box" data-title="Why we're covering this...">
+
+Lectures 22 and 23 build on this continuous framework (latent diffusion, classifier-free guidance, DiT, Stable Diffusion, Sora). Understanding Gaussian diffusion provides the conceptual foundation — but **text is not continuous**. Tokens are discrete symbols. So how do we adapt diffusion for language?
+
+</div>
+
+---
+<!-- _class: scale-95 -->
+
+# The problem with text
+
+<div class="warning-box" data-title="Tokens aren't pixels">
+
+Adding Gaussian noise to a sentence doesn't work:
+
+- Pixel values are continuous numbers (0–255) — small perturbations are meaningful
+- Token IDs are discrete symbols — "adding 0.1 to the token 'cat'" is meaningless
+- There's no natural metric space where "cat" is close to "car" but far from "democracy"
+
+</div>
+
+<div class="definition-box" data-title="Two solutions emerged">
+
+1. **Continuous embedding approach** ([Diffusion-LM; Li et al., 2022](https://arxiv.org/abs/2205.14217)): Map tokens to continuous embeddings, run Gaussian diffusion there, then round back to tokens
+2. **Discrete diffusion** ([D3PM; Austin et al., 2021](https://arxiv.org/abs/2107.03006)): Replace Gaussian noise with **discrete corruption** — randomly changing tokens to other tokens or to `[MASK]`
+
+The discrete approach turns out to be simpler, more effective, and connects beautifully to something you already know.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Discrete diffusion: replacing noise with masking
+
+<div class="definition-box" data-title="The absorbing state forward process">
+
+Instead of adding Gaussian noise, the forward process **randomly masks tokens**:
+
+- At each step, each unmasked token has a small probability of being replaced with `[MASK]`
+- As $t$ increases, more tokens become masked
+- At $t = T$: **every token is masked** — the sequence is pure noise (all `[MASK]`)
+- At $t = 0$: the original clean text
+
+</div>
+
+```flow
+[The cat sat on the mat:green] --> [The _ sat on _ mat] --> [_ _ sat _ _ mat] --> [_ _ _ _ _ _:red]
+```
+
+<div class="tip-box" data-title="Why 'absorbing state'?">
+
+Once a token becomes `[MASK]`, it stays masked. The `[MASK]` state **absorbs** tokens — they can't escape. This is the simplest discrete corruption: there's only one type of noise, and...you've seen it before!
+
+</div>
+
+---
+
+# Does this remind you of anything?
+
+<div class="note-box" data-title="BERT is (almost) a diffusion model!">
+
+Recall from Lecture 18: BERT trains by masking 15% of tokens and predicting the originals. Discrete diffusion does the **same thing** — but with a key generalization:
+
+| | BERT (Lecture 18) | Discrete diffusion |
+|---|---|---|
+| Mask rate | Fixed at 15% | Varies from 0% to 100% over a schedule |
+| Prediction | One-shot: predict all masks at once | Iterative: unmask a few tokens at a time |
+| Training | Single forward pass per example | Sample random mask rate $t$, predict masked tokens |
+| Generation | Not designed for generation | Built for generation: start at 100% masked, iteratively unmask |
+
+</div>
+
+<div class="tip-box" data-title="The insight">
+
+Discrete diffusion **generalizes** masked language modeling into a generation framework. BERT is a special case — a single-step diffusion model at a fixed noise level.
+
+</div>
+
+---
+<!-- _class: scale-75 -->
+
+# MDLM: masked diffusion language models
+
+<div class="note-box" data-title="Sahoo et al. (2024, NeurIPS)">
+
+[MDLM](https://arxiv.org/abs/2406.07524) formalizes the connection between masked language modeling and diffusion. The key ingredients:
+
+1. **Forward process**: A continuous-time masking schedule $\gamma(t)$ that specifies the probability a token is masked at time $t \in [0, 1]$. At $t = 0$, nothing is masked; at $t = 1$, everything is.
+2. **Reverse process**: A transformer predicts the identity of each masked token, conditioned on all visible tokens and the current noise level $t$.
+3. **Training**: Sample a random time $t$, mask tokens according to $\gamma(t)$, and train the model to predict the masked tokens — exactly like BERT, but at every mask rate.
+
+</div>
+
+<div class="definition-box" data-title="Rao-Blackwellization">
+
+[Rao-Blackwellization](https://en.wikipedia.org/wiki/Rao%E2%80%93Blackwell_theorem) is a statistical technique: when estimating something, if you can **compute part of the answer exactly** instead of approximating it, your overall estimate becomes more precise. In diffusion training, this means replacing some approximation steps with exact calculations — leading to less noisy gradients and faster learning.
+
+</div>
+
+<div class="tip-box" data-title="Why MDLM works so well">
+
+MDLM uses a **Rao-Blackwellized** training objective that reduces variance compared to naïve discrete diffusion. In practice, this means the model trains efficiently with the same architecture as BERT — no special modifications needed. On text benchmarks, MDLM matches autoregressive models of the same size.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# How text diffusion generates
+
+<div class="definition-box" data-title="The reverse process: iterative unmasking">
+
+To generate text with MDLM, we reverse the masking:
+
+1. Start with a sequence of all `[MASK]` tokens (length $N$)
+2. At each step, the model predicts a probability distribution over the vocabulary for each masked position
+3. **Unmask** a subset of positions by sampling from these distributions
+4. Repeat until all positions are unmasked
+
+</div>
+
+```flow
+[_ _ _ _ _ _:red] --> [_ cat _ _ _ _] --> [_ cat _ on _ mat] --> [The cat sat on the mat:green]
+```
+
+<div class="important-box" data-title="Bidirectional context at every step">
+
+Unlike GPT, which can only see tokens to the **left**, the diffusion model sees **all unmasked tokens** when predicting each mask — regardless of position. This means the model can use "mat" to help predict "cat" and vice versa. The generation order is not fixed — the model decides what to fill in first.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# What does the model learn to do first?
+
+<div class="note-box" data-title="Emergence of generation order">
+
+When generating text via iterative unmasking, models don't unmask uniformly. They develop preferences:
+
+- **High-confidence tokens first**: Function words ("the", "is", "of") and predictable tokens tend to be unmasked early
+- **Content words later**: Nouns, verbs, and less predictable tokens come after the "scaffolding" is in place
+- **Context-dependent tokens last**: Words that depend heavily on surrounding context wait until that context is available
+
+</div>
+
+<div class="tip-box" data-title="A linguistic insight">
+
+This mirrors how humans plan sentences — we often have the **gist** (content words) and **structure** (function words) before the exact phrasing. Diffusion models discover a similar strategy: build the scaffolding first, then fill in the details. This is fundamentally different from GPT's strict left-to-right constraint.
+
+</div>
+
+---
+
+# D3PM: the general framework
+
+<div class="definition-box" data-title="Austin et al. (2021, NeurIPS)">
+
+[D3PM (Discrete Denoising Diffusion Probabilistic Models)](https://arxiv.org/abs/2107.03006) provides the theoretical foundation for all discrete diffusion. Instead of Gaussian noise, D3PM uses **transition matrices** $\mathbf{Q}_t$ that define how tokens corrupt at each step:
+
+$$q(\mathbf{x}_t \mid \mathbf{x}_{t-1}) = \text{Cat}(\mathbf{x}_t;\; \mathbf{x}_{t-1} \mathbf{Q}_t)$$
+
+where $\text{Cat}$ is the categorical distribution and $\mathbf{Q}_t$ specifies the probability of each token transitioning to any other token.
+
+</div>
+
+<div class="note-box" data-title="Three types of discrete noise">
+
+| Noise type | How it works | Intuition |
+|-----------|-------------|-----------|
+| **Uniform** | Any token → any random token | Like replacing letters with random ones |
+| **Absorbing** | Any token → `[MASK]` only | Like erasing letters one by one |
+| **Token similarity** | Token → similar token | Like introducing typos |
+
+MDLM uses **absorbing** noise because it's the simplest and most effective for text.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Scaling up: LLaDA
+
+<div class="definition-box" data-title="Nie et al. (2025): Large Language Diffusion with Assistant">
+
+[LLaDA](https://arxiv.org/abs/2502.09992) asks: can discrete diffusion compete with autoregressive models **at scale**? They trained an 8 billion parameter masked diffusion model on 2.3 trillion tokens and found:
+
+- On [**MMLU**](https://arxiv.org/abs/2009.03300), LLaDA-8B (66.6) matches LLaMA 3-8B (66.2)
+- On [**GSM8K**](https://arxiv.org/abs/2110.14168) (math reasoning), LLaDA-8B (74.0) substantially outperforms LLaMA 3-8B (52.8)
+- LLaDA handles instruction following, reasoning, and long-form generation
+- It naturally solves the **reversal curse** — since it doesn't generate left-to-right, it can answer "Who is A's mother?" even when trained on "B is the mother of A"
+
+</div>
+
+<div class="important-box" data-title="Why this matters">
+
+For years, the assumption was that autoregressive generation was the only way to build competitive language models. LLaDA disproves this. Diffusion-based LLMs are a viable alternative paradigm — not just a research curiosity, but a practical one at the 8B parameter scale.
+
+</div>
+
+---
+<!-- _class: scale-80 -->
+
+# The Diffusion-LM approach: embeddings as a bridge
+
+<div class="definition-box" data-title="Li et al. (2022, NeurIPS)">
+
+Before discrete diffusion matured, [Diffusion-LM](https://arxiv.org/abs/2205.14217) tried a different approach: run Gaussian diffusion in **continuous embedding space**:
+
+1. Map each token to its embedding vector (e.g., 768-dim)
+2. Run standard Gaussian diffusion on these embeddings
+3. At generation time, round each denoised embedding back to the **nearest vocabulary token**
+
+</div>
+
+<div class="note-box" data-title="Tradeoffs">
+
+| | Diffusion-LM (continuous) | MDLM / D3PM (discrete) |
+|---|---|---|
+| Noise type | Gaussian in embedding space | Masking or token swaps |
+| Rounding step | Required (introduces errors) | Not needed |
+| Controllability | Excellent — gradient-based guidance | Good — conditional masking |
+| Scalability | Limited by rounding artifacts | Scales to 8B+ parameters |
+
+Discrete methods have won out for pure text generation, but continuous approaches remain valuable for **controllable generation** — e.g., guiding text toward specific sentiment, topics, or structural constraints.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Intuition: why does iterative refinement work?
+
+<div class="definition-box" data-title="Three intuitions for text diffusion">
+
+**1. The editing analogy**: A first draft with blanks is easier to improve than starting from scratch. Each unmasking step gives the model more context, making the remaining predictions easier.
+
+**2. The jigsaw puzzle analogy**: In a jigsaw puzzle, each piece you place constrains where other pieces go. Similarly, each unmasked token constrains the remaining tokens — the problem gets easier as you go.
+
+**3. The ensemble effect**: At each step, the model makes predictions using **bidirectional context** from all visible tokens. Early steps leverage global structure; later steps leverage local details. This multi-scale reasoning is hard for autoregressive models.
+
+</div>
+
+<div class="tip-box" data-title="The deep insight">
+
+Diffusion works because it **factorizes a hard problem** (generating a full sequence from nothing) into a sequence of **easier problems** (predicting a few tokens given most of the context). Each step is essentially a fill-in-the-blank task — something neural networks are very good at.
+
+</div>
+
+---
+
+# Practical advantages of text diffusion
+
+<div class="note-box" data-title="What diffusion can do that autoregressive models can't (easily)">
+
+| Capability | Autoregressive | Text diffusion |
+|-----------|---------------|----------------|
+| **Infilling**: Fill in a gap mid-sentence | Requires special fine-tuning | Native — just mask the gap |
+| **Iterative editing**: Refine parts of generated text | Must regenerate from the edit point | Re-mask and re-denoise locally |
+| **Length control**: Generate exactly $N$ tokens | Hard — models tend to over/under-generate | Natural — initialize $N$ masks |
+| **Parallel decoding**: Generate multiple tokens simultaneously | Sequential by definition | Unmask multiple positions per step |
+| **Bidirectional coherence**: Ensure beginning matches end | Can't look ahead | Sees all unmasked positions |
+
+</div>
+
+<div class="important-box" data-title="The tradeoff">
+
+Text diffusion typically requires 10–100 refinement steps, each involving a full forward pass. Autoregressive generation requires $N$ steps (one per token) but each step is faster. For short sequences, autoregressive wins on speed. For tasks requiring bidirectional coherence or editing, diffusion wins on quality.
+
+</div>
+
+---
+<!-- _class: scale-70 -->
+
+# Current limitations
+
+<div class="warning-box" data-title="Where text diffusion still falls short">
+
+1. **Long-range coherence**: Autoregressive models maintain a running context that naturally ensures consistency. Diffusion models must learn long-range dependencies through the iterative process, which can fail for very long documents.
+
+2. **Sampling speed**: Even with optimized schedules, generating text with diffusion is slower than autoregressive generation with KV-caching for most practical sequence lengths.
+
+3. **Ecosystem maturity**: Autoregressive models have years of tooling — RLHF, DPO, KV-caching, speculative decoding. Diffusion-based LLMs are catching up but lack this infrastructure.
+
+4. **Evaluation**: Perplexity (the standard LM metric) doesn't directly apply to diffusion models, making fair comparison difficult.
+
+</div>
+
+<div class="definition-box" data-title="Definitions">
+
+- **RLHF** (Lecture 16): Reinforcement Learning from Human Feedback — humans rank model outputs, and the model is trained to prefer higher-ranked responses
+- **DPO** (Direct Preference Optimization): A simpler alternative to RLHF that skips the reward model and directly optimizes the language model on human preference pairs
+- **KV-caching**: During autoregressive generation, previously computed key/value vectors are stored and reused so each new token only requires one forward pass through the new position — not the entire sequence
+
+</div>
+
+---
+<!-- _class: scale-85 -->
+
+# Take-home messages
+
+<div class="note-box" data-title="Think about it...">
+
+- BERT's masked prediction training (Lecture 18) — which seemed like just a pretraining trick — turns out to be the **foundation of an entire generation paradigm**.
+- The idea of **iterative refinement** from noise is a powerful principle that extends beyond text to images, audio, and video.
+- Because the same diffusion framework applies to both **continuous** data (images, audio, video) and **discrete** data (text), it provides a natural foundation for **multimodal models** that generate across modalities — as we'll see in Lectures 22–23.
 
 </div>
 
@@ -435,15 +505,19 @@ Recent work shows diffusion can generate **text** too. [MDLM (Sahoo et al., 2024
 
 <div class="note-box" data-title="Further reading">
 
-[**Ho, Jain & Abbeel (2020, *NeurIPS*)**](https://arxiv.org/abs/2006.11239) "Denoising Diffusion Probabilistic Models" — The paper that made diffusion models practical. Clean formulation, excellent results.
-
 [**Sohl-Dickstein et al. (2015, *ICML*)**](https://arxiv.org/abs/1503.03585) "Deep Unsupervised Learning using Nonequilibrium Thermodynamics" — The original diffusion model paper, grounded in statistical physics.
 
-[**Song & Ermon (2019, *NeurIPS*)**](https://arxiv.org/abs/1907.05600) "Generative Modeling by Estimating Gradients of the Data Distribution" — Score matching perspective on diffusion.
+[**Ho, Jain & Abbeel (2020, *NeurIPS*)**](https://arxiv.org/abs/2006.11239) "Denoising Diffusion Probabilistic Models" — Made diffusion practical with the simplified noise-prediction objective.
 
-[**Nichol & Dhariwal (2021, *ICML*)**](https://arxiv.org/abs/2102.09672) "Improved Denoising Diffusion Probabilistic Models" — Cosine schedule, learned variance, improved sampling.
+[**Austin et al. (2021, *NeurIPS*)**](https://arxiv.org/abs/2107.03006) "Structured Denoising Diffusion Models in Discrete State-Spaces" — D3PM: the theoretical foundation for all discrete diffusion.
 
-[**Song et al. (2021, *ICLR*)**](https://arxiv.org/abs/2010.02502) "Denoising Diffusion Implicit Models" — DDIM: deterministic, fast sampling from the same trained model.
+[**Li et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2205.14217) "Diffusion-LM Improves Controllable Text Generation" — Continuous embedding approach to text diffusion with gradient-based control.
+
+[**Lou et al. (2024, *ICML*)**](https://arxiv.org/abs/2310.16834) "Discrete Diffusion Modeling by Estimating the Ratios of the Data Distribution" — SEDD: score matching for discrete spaces (Best Paper).
+
+[**Sahoo et al. (2024, *NeurIPS*)**](https://arxiv.org/abs/2406.07524) "Simple and Effective Masked Diffusion Language Models" — MDLM: connecting BERT-style masking to diffusion.
+
+[**Nie et al. (2025, *arXiv*)**](https://arxiv.org/abs/2502.09992) "Large Language Diffusion Models" — LLaDA: 8B-parameter diffusion LLM competitive with LLaMA 3.
 
 </div>
 

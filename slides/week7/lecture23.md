@@ -80,7 +80,7 @@ Which component matters more — the language understanding (text encoder) or th
 </div>
 
 ```flow
-Text prompt → CLIP Text Encoder → Text Embedding → Prior (Diffusion) → Image Embedding → Decoder (Diffusion) → 1024×1024 Image
+[Text prompt] --> [CLIP Text Encoder] --> [Text Embedding] --> [Prior (Diffusion)] --> [Image Embedding] --> [Decoder (Diffusion)] --> [1024×1024 Image]
 ```
 
 <div class="note-box" data-title="Why the prior?">

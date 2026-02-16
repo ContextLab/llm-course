@@ -237,16 +237,18 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 ## Week 7: Diffusion Models
 
-**Monday (Lecture 21):** Diffusion Models
-- The diffusion architecture: forward process, reverse process, noise schedules
-- U-Net for noise prediction with timestep conditioning
-- Training objective: predicting the noise (simplified DDPM loss)
-- Score matching intuition and sampling algorithms (DDPM, DDIM)
-- Animated walkthrough of the complete diffusion pipeline
+**Monday (Lecture 21):** Diffusion Models for Text
+- The diffusion framework: forward (corruption) and reverse (generation) processes
+- Continuous diffusion foundation: Gaussian noise, DDPM training objective
+- Discrete diffusion for text: replacing noise with masking (absorbing state)
+- Connection to BERT: masked language modeling as single-step diffusion
+- MDLM, D3PM, LLaDA, SEDD: the discrete diffusion family
+- LLaDA at 8B parameters: diffusion LLMs competitive with autoregressive models
+- Intuitions for iterative refinement and practical advantages of text diffusion
 - Reading: [Ho, Jain & Abbeel (2020)](https://arxiv.org/abs/2006.11239) - Denoising Diffusion Probabilistic Models
-- Reading: [Sohl-Dickstein et al. (2015)](https://arxiv.org/abs/1503.03585) - Deep Unsupervised Learning using Nonequilibrium Thermodynamics
-- Reading: [Song & Ermon (2019)](https://arxiv.org/abs/1907.05600) - Generative Modeling by Estimating Gradients
-- Reading: [Nichol & Dhariwal (2021)](https://arxiv.org/abs/2102.09672) - Improved DDPM
+- Reading: [Austin et al. (2021)](https://arxiv.org/abs/2107.03006) - Structured Denoising Diffusion Models in Discrete State-Spaces (D3PM)
+- Reading: [Sahoo et al. (2024)](https://arxiv.org/abs/2406.07524) - Simple and Effective Masked Diffusion Language Models (MDLM)
+- Reading: [Nie et al. (2025)](https://arxiv.org/abs/2502.09992) - Large Language Diffusion Models (LLaDA)
 - **📝 Assignment 4 Due (Feb 16, 11:59 PM EST)**
 - **Final Project Released:** [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) (Due: Mar 9, 11:59 PM EST)
 - **Assignment 5 Available (Optional/Extra Credit):** [Build GPT](https://contextlab.github.io/llm-course/assignments/assignment-5/)

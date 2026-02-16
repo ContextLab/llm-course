@@ -33,7 +33,7 @@ Winter 2026
 
 <div class="warning-box" data-title="Why running diffusion in pixel space is expensive">
 
-The DDPM architecture from Lecture 21 operates directly on pixel space. For a 512×512 RGB image, that means the U-Net processes tensors of size $512 \times 512 \times 3 = 786{,}432$ values at every denoising step. With 1000 steps, this is prohibitively expensive for high-resolution generation.
+The continuous diffusion framework from Lecture 21 (DDPM) operates directly on pixel space when applied to images. For a 512×512 RGB image, the denoising network processes tensors of size $512 \times 512 \times 3 = 786{,}432$ values at every step. With 1000 steps, this is prohibitively expensive for high-resolution generation.
 
 </div>
 
@@ -64,7 +64,7 @@ The solution: don't run diffusion in pixel space. Run it in a **compressed laten
 </div>
 
 ```flow
-Input Image → VAE Encoder → Latent z (64×64×4) → Diffusion Process → Denoised Latent → VAE Decoder → Output Image (512×512×3)
+[Input Image] --> [VAE Encoder] --> [Latent z (64×64×4)] --> [Diffusion Process] --> [Denoised Latent] --> [VAE Decoder] --> [Output Image (512×512×3)]
 ```
 
 <div class="important-box" data-title="Why this works">
