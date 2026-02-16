@@ -254,7 +254,7 @@ Recall from Lecture 18: BERT trains by masking 15% of tokens and predicting the 
 
 | | BERT (Lecture 18) | Discrete diffusion |
 |---|---|---|
-| Mask rate | Fixed at 15% | Varies from 0% to 100% over a schedule |
+| Mask rate | Select 15%, then 80/10/10 | Varies from 0% to 100% over a schedule |
 | Prediction | One-shot: predict all masks at once | Iterative: unmask a few tokens at a time |
 | Training | Single forward pass per example | Sample random mask rate $t$, predict masked tokens |
 | Generation | Not designed for generation | Built for generation: start at 100% masked, iteratively unmask |
