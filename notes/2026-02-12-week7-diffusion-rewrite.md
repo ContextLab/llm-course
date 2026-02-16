@@ -58,6 +58,40 @@ Commit: `721d55a` — pushed to main.
 6. Run tests
 7. Commit and push
 
+### Session 2026-02-15 (continued, session 3):
+- Updated lecture 21 with multiple user-requested edits:
+  - MMLU/GSM8K hyperlinks verified and added (LLaDA slide)
+  - RLHF/DPO/KV-caching "Definitions" box added (Current limitations slide)
+  - Take-home messages slide populated (third bullet about multimodal models)
+  - New "Controlling generation" slide added (prompting, infilling, prefix completion — 3 flow diagrams)
+- Committed submodule changes (final-project-llm-course at f97babc)
+- Cleaned up arrow SVG references (slides/week7/images/ deleted)
+- All 1500+ tests pass
+
+### Session 2026-02-16 (Lectures 22 & 23 style update):
+- **Lecture 22** style updates:
+  - Added "Remember..." definition-box for CLIP on text conditioning slide
+  - Added "Remember..." definition-box for ODE/SDE on flow matching slide
+  - Added FID Wikipedia hyperlink on DiT slide
+  - Added He et al. (2016) hyperlink on adaLN-Zero slide
+  - Updated Liu et al. rectified flow to note ICLR 2023
+  - Added "Take-home messages" slide (Think about it... note-box)
+  - All 6 references verified accurate (via librarian agent)
+  - Fixed overflow: removed VAE/U-Net Remember box from pixel problem slide (content already explained on next slide), split flow matching into 2 slides (definition + comparison table), added scale classes
+- **Lecture 23** style updates + reference fixes:
+  - Fixed Sahoo et al. venue: "arXiv" → "NeurIPS 2024"
+  - Fixed survey citation: "Fei et al." → "Yang et al. (2024, ACM Computing Surveys)"
+  - Added deepfake stat citations (Sensity AI 2019, Sumsub 2023)
+  - Fixed Thomson Reuters v. Ross: "Settled 2024" → "Ruled 2025"
+  - Added "Remember..." definition-box for CLIP + T5 on text-to-image slide
+  - Added mel-spectrogram Wikipedia link and vocoder inline definition on audio slide
+  - Added Stable Diffusion hyperlink to Rombach et al.
+  - Added C2PA and LAION-5B hyperlinks
+  - Added "Take-home messages" slide
+- Both lectures recompiled to HTML + PDF
+- Visual verification via Playwright: all key slides render without overflow
+- Screenshots cleaned up, HTTP server killed
+
 ## Key Constraints
 - Assignment announcements ONLY in lecture21 (not 22/23)
 - Companion notebook referenced ONLY in lecture23

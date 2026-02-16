@@ -59,6 +59,13 @@ Text-to-image systems combine a **language model** (to understand the prompt) wi
 
 </div>
 
+<div class="definition-box" data-title="Remember...">
+
+- **[CLIP](https://arxiv.org/abs/2103.00020)**: Contrastive Language-Image Pre-training ([Radford et al., 2021](https://arxiv.org/abs/2103.00020)) — learns a shared embedding space for images and text, used as the text encoder in DALL-E 2 and Stable Diffusion (see Lecture 22)
+- **[T5](https://arxiv.org/abs/1910.10683)**: A text-to-text transformer (Google, 2020) — Imagen uses the largest variant (T5-XXL, 4.6B parameters) as its text encoder
+
+</div>
+
 <div class="important-box" data-title="The key question">
 
 Which component matters more — the language understanding (text encoder) or the image generation (diffusion model)? Imagen's surprising finding: **scaling the text encoder helps more than scaling the diffusion model**.
@@ -115,13 +122,13 @@ Scaling the text encoder from T5-Small (60M) to T5-XXL (4.6B) improved image qua
 
 <div class="note-box" data-title="Open-source democratization">
 
-Stable Diffusion (Rombach et al., 2022) is the open-source implementation of latent diffusion (Lecture 22):
+[Stable Diffusion](https://arxiv.org/abs/2112.10752) ([Rombach et al., 2022](https://arxiv.org/abs/2112.10752)) is the open-source implementation of latent diffusion (Lecture 22):
 
 | Property | Value |
 |----------|-------|
 | Text encoder | CLIP ViT-L/14 |
 | Diffusion backbone | U-Net in 64×64×4 latent space |
-| Training data | LAION-5B (5 billion image-text pairs) |
+| Training data | [LAION-5B](https://laion.ai/blog/laion-5b/) (5 billion image-text pairs) |
 | Parameters | ~890M (U-Net) + 123M (text encoder) |
 | Generation time | ~5 seconds on consumer GPU |
 | License | Open-source (CreativeML Open RAIL-M) |
@@ -169,9 +176,9 @@ OpenAI describes Sora as a "world simulator" — raising questions about whether
 
 Audio generation applies diffusion to **spectrograms** (time-frequency representations of sound):
 
-1. Convert audio to a mel-spectrogram
+1. Convert audio to a [mel-spectrogram](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum) (a visual representation of sound frequencies over time, weighted to match human hearing)
 2. Run diffusion in spectrogram space (or a latent compression of it)
-3. Convert the generated spectrogram back to audio using a vocoder
+3. Convert the generated spectrogram back to audio using a **vocoder** (a neural network that reconstructs audio waveforms from spectrograms)
 
 </div>
 
@@ -192,7 +199,7 @@ Diffusion and autoregressive approaches are **converging** in audio — many sys
 
 # Discrete diffusion for text
 
-<div class="definition-box" data-title="Sahoo et al. (2024): Masked Diffusion Language Models (MDLM)">
+<div class="definition-box" data-title="Sahoo et al. (2024, NeurIPS): Masked Diffusion Language Models (MDLM)">
 
 Standard diffusion adds Gaussian noise to continuous data. For discrete data like text, [MDLM](https://arxiv.org/abs/2406.07524) replaces "adding noise" with **masking tokens**:
 
@@ -265,7 +272,7 @@ Diffusion models can generate photorealistic images of people who never consente
 
 <div class="important-box" data-title="Scale of the problem">
 
-A 2023 report found that **96% of deepfake videos online are non-consensual intimate imagery**, and the number of deepfake videos doubled every 6 months from 2018 to 2023. The democratization of generation tools has outpaced legal and technical protections.
+A [2019 Sensity AI (Deeptrace) report](https://sensity.ai/blog/deepfake-detection/mapping-the-deepfake-landscape/) found that **96% of deepfake videos online are non-consensual intimate imagery**, and the number of deepfake videos doubled in just 9 months. By 2023, [Sumsub reported](https://sumsub.com/blog/deepfake-statistics/) a 10× increase in detected deepfakes year-over-year. The democratization of generation tools has far outpaced legal and technical protections.
 
 </div>
 
@@ -301,7 +308,7 @@ Bias exists at every level: in the training data (internet images skew Western/m
 | Getty Images v. Stability AI | Ongoing (2023–) | Training on copyrighted stock photos |
 | Andersen v. Stability AI | Class action (2023–) | Artists' styles replicated without consent |
 | NYT v. OpenAI | Filed Dec 2023 | Verbatim reproduction of articles |
-| Thomson Reuters v. Ross | Settled 2024 | Training on proprietary legal database |
+| Thomson Reuters v. Ross | Ruled 2025 | Training on proprietary legal database |
 
 </div>
 
@@ -318,7 +325,7 @@ Training data is scraped from the internet without explicit consent. Artists arg
 <div class="definition-box" data-title="Emerging regulatory frameworks">
 
 - **EU AI Act (2024)**: Requires labeling of AI-generated content, transparency about training data, risk classification for generative systems
-- **C2PA (Coalition for Content Provenance and Authenticity)**: Technical standard for embedding provenance metadata in images and videos — "nutrition labels" for digital content
+- **[C2PA](https://c2pa.org/) (Coalition for Content Provenance and Authenticity)**: Technical standard for embedding provenance metadata in images and videos — "nutrition labels" for digital content
 - **US Executive Order (Oct 2023)**: Requires watermarking of AI-generated content from government contractors
 - **China's deep synthesis regulations (2023)**: Mandatory labeling and registration of deepfake services
 
@@ -349,6 +356,18 @@ Regulation works when enforced. But technical solutions (watermarking, detection
 </div>
 
 ---
+
+# Take-home messages
+
+<div class="note-box" data-title="Think about it...">
+
+- The same diffusion framework scales across modalities — images (DALL-E 2, Stable Diffusion), video (Sora), audio, and text (MDLM) — suggesting **iterative refinement from noise** is a general-purpose generation principle.
+- Imagen's key finding — that **scaling the text encoder matters more than scaling the image generator** — reveals that understanding the prompt is the bottleneck, not producing pixels. Language models are central even in vision.
+- The power of open-source: Stable Diffusion's release enabled an explosion of community innovation (ControlNet, LoRA, inpainting) that no closed model could match — but also democratized the tools for deepfakes and misuse.
+
+</div>
+
+---
 <!-- _class: scale-85 -->
 
 # Further reading
@@ -361,9 +380,9 @@ Regulation works when enforced. But technical solutions (watermarking, detection
 
 [**OpenAI (2024)**](https://openai.com/research/video-generation-models-as-world-simulators) "Video Generation Models as World Simulators" — Sora: spacetime patches and emergent physics.
 
-[**Sahoo et al. (2024, *arXiv*)**](https://arxiv.org/abs/2406.07524) "Simple and Effective Masked Diffusion Language Models" — MDLM: bridging BERT and diffusion for text.
+[**Sahoo et al. (2024, *NeurIPS*)**](https://arxiv.org/abs/2406.07524) "Simple and Effective Masked Diffusion Language Models" — MDLM: bridging BERT and diffusion for text.
 
-[**Fei et al. (2024, *arXiv*)**](https://arxiv.org/abs/2409.00587) "A Comprehensive Survey on Diffusion Models and Their Applications" — Broad overview of diffusion across modalities.
+[**Yang et al. (2024, *ACM Computing Surveys*)**](https://arxiv.org/abs/2409.00587) "Diffusion Models: A Comprehensive Survey of Methods and Applications" — Broad overview of diffusion across modalities.
 
 </div>
 

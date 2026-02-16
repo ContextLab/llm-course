@@ -755,6 +755,12 @@ Winter 2026</p>
 </tbody>
 </table>
 </div>
+<div class="definition-box" data-title="Remember...">
+<ul>
+<li><strong><a href="https://arxiv.org/abs/2103.00020">CLIP</a></strong>: Contrastive Language-Image Pre-training (<a href="https://arxiv.org/abs/2103.00020">Radford et al., 2021</a>) — learns a shared embedding space for images and text, used as the text encoder in DALL-E 2 and Stable Diffusion (see Lecture 22)</li>
+<li><strong><a href="https://arxiv.org/abs/1910.10683">T5</a></strong>: A text-to-text transformer (Google, 2020) — Imagen uses the largest variant (T5-XXL, 4.6B parameters) as its text encoder</li>
+</ul>
+</div>
 <div class="important-box" data-title="The key question">
 <p>Which component matters more — the language understanding (text encoder) or the image generation (diffusion model)? Imagen's surprising finding: <strong>scaling the text encoder helps more than scaling the diffusion model</strong>.</p>
 </div>
@@ -833,7 +839,7 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="stable-diffusion">Stable Diffusion</h1>
 <div class="note-box" data-title="Open-source democratization">
-<p>Stable Diffusion (Rombach et al., 2022) is the open-source implementation of latent diffusion (Lecture 22):</p>
+<p><a href="https://arxiv.org/abs/2112.10752">Stable Diffusion</a> (<a href="https://arxiv.org/abs/2112.10752">Rombach et al., 2022</a>) is the open-source implementation of latent diffusion (Lecture 22):</p>
 <table>
 <thead>
 <tr>
@@ -852,7 +858,7 @@ Winter 2026</p>
 </tr>
 <tr>
 <td>Training data</td>
-<td>LAION-5B (5 billion image-text pairs)</td>
+<td><a href="https://laion.ai/blog/laion-5b/">LAION-5B</a> (5 billion image-text pairs)</td>
 </tr>
 <tr>
 <td>Parameters</td>
@@ -899,9 +905,9 @@ Winter 2026</p>
 <div class="definition-box" data-title="Diffusion in the spectral domain">
 <p>Audio generation applies diffusion to <strong>spectrograms</strong> (time-frequency representations of sound):</p>
 <ol>
-<li>Convert audio to a mel-spectrogram</li>
+<li>Convert audio to a <a href="https://en.wikipedia.org/wiki/Mel-frequency_cepstrum">mel-spectrogram</a> (a visual representation of sound frequencies over time, weighted to match human hearing)</li>
 <li>Run diffusion in spectrogram space (or a latent compression of it)</li>
-<li>Convert the generated spectrogram back to audio using a vocoder</li>
+<li>Convert the generated spectrogram back to audio using a <strong>vocoder</strong> (a neural network that reconstructs audio waveforms from spectrograms)</li>
 </ol>
 </div>
 <div class="note-box" data-title="Notable systems">
@@ -941,7 +947,7 @@ Winter 2026</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="discrete-diffusion-for-text">Discrete diffusion for text</h1>
-<div class="definition-box" data-title="Sahoo et al. (2024): Masked Diffusion Language Models (MDLM)">
+<div class="definition-box" data-title="Sahoo et al. (2024, NeurIPS): Masked Diffusion Language Models (MDLM)">
 <p>Standard diffusion adds Gaussian noise to continuous data. For discrete data like text, <a href="https://arxiv.org/abs/2406.07524">MDLM</a> replaces &quot;adding noise&quot; with <strong>masking tokens</strong>:</p>
 <ul>
 <li><strong>Forward process</strong>: Randomly replace tokens with [MASK], increasing the masking rate over time</li>
@@ -1017,7 +1023,7 @@ Winter 2026</p>
 </ul>
 </div>
 <div class="important-box" data-title="Scale of the problem">
-<p>A 2023 report found that <strong>96% of deepfake videos online are non-consensual intimate imagery</strong>, and the number of deepfake videos doubled every 6 months from 2018 to 2023. The democratization of generation tools has outpaced legal and technical protections.</p>
+<p>A <a href="https://sensity.ai/blog/deepfake-detection/mapping-the-deepfake-landscape/">2019 Sensity AI (Deeptrace) report</a> found that <strong>96% of deepfake videos online are non-consensual intimate imagery</strong>, and the number of deepfake videos doubled in just 9 months. By 2023, <a href="https://sumsub.com/blog/deepfake-statistics/">Sumsub reported</a> a 10× increase in detected deepfakes year-over-year. The democratization of generation tools has far outpaced legal and technical protections.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -1064,7 +1070,7 @@ Winter 2026</p>
 </tr>
 <tr>
 <td>Thomson Reuters v. Ross</td>
-<td>Settled 2024</td>
+<td>Ruled 2025</td>
 <td>Training on proprietary legal database</td>
 </tr>
 </tbody>
@@ -1079,7 +1085,7 @@ Winter 2026</p>
 <div class="definition-box" data-title="Emerging regulatory frameworks">
 <ul>
 <li><strong>EU AI Act (2024)</strong>: Requires labeling of AI-generated content, transparency about training data, risk classification for generative systems</li>
-<li><strong>C2PA (Coalition for Content Provenance and Authenticity)</strong>: Technical standard for embedding provenance metadata in images and videos — &quot;nutrition labels&quot; for digital content</li>
+<li><strong><a href="https://c2pa.org/">C2PA</a> (Coalition for Content Provenance and Authenticity)</strong>: Technical standard for embedding provenance metadata in images and videos — &quot;nutrition labels&quot; for digital content</li>
 <li><strong>US Executive Order (Oct 2023)</strong>: Requires watermarking of AI-generated content from government contractors</li>
 <li><strong>China's deep synthesis regulations (2023)</strong>: Mandatory labeling and registration of deepfake services</li>
 </ul>
@@ -1110,17 +1116,27 @@ Winter 2026</p>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="take-home-messages">Take-home messages</h1>
+<div class="note-box" data-title="Think about it...">
+<ul>
+<li>The same diffusion framework scales across modalities — images (DALL-E 2, Stable Diffusion), video (Sora), audio, and text (MDLM) — suggesting <strong>iterative refinement from noise</strong> is a general-purpose generation principle.</li>
+<li>Imagen's key finding — that <strong>scaling the text encoder matters more than scaling the image generator</strong> — reveals that understanding the prompt is the bottleneck, not producing pixels. Language models are central even in vision.</li>
+<li>The power of open-source: Stable Diffusion's release enabled an explosion of community innovation (ControlNet, LoRA, inpainting) that no closed model could match — but also democratized the tools for deepfakes and misuse.</li>
+</ul>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="further-reading">Further reading</h1>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://arxiv.org/abs/2204.06125"><strong>Ramesh et al. (2022, <em>arXiv</em>)</strong></a> &quot;Hierarchical Text-Conditional Image Generation with CLIP Latents&quot; — DALL-E 2: CLIP prior + diffusion decoder.</p>
 <p><a href="https://arxiv.org/abs/2205.11487"><strong>Saharia et al. (2022, <em>NeurIPS</em>)</strong></a> &quot;Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding&quot; — Imagen: scaling text encoders matters most.</p>
 <p><a href="https://openai.com/research/video-generation-models-as-world-simulators"><strong>OpenAI (2024)</strong></a> &quot;Video Generation Models as World Simulators&quot; — Sora: spacetime patches and emergent physics.</p>
-<p><a href="https://arxiv.org/abs/2406.07524"><strong>Sahoo et al. (2024, <em>arXiv</em>)</strong></a> &quot;Simple and Effective Masked Diffusion Language Models&quot; — MDLM: bridging BERT and diffusion for text.</p>
-<p><a href="https://arxiv.org/abs/2409.00587"><strong>Fei et al. (2024, <em>arXiv</em>)</strong></a> &quot;A Comprehensive Survey on Diffusion Models and Their Applications&quot; — Broad overview of diffusion across modalities.</p>
+<p><a href="https://arxiv.org/abs/2406.07524"><strong>Sahoo et al. (2024, <em>NeurIPS</em>)</strong></a> &quot;Simple and Effective Masked Diffusion Language Models&quot; — MDLM: bridging BERT and diffusion for text.</p>
+<p><a href="https://arxiv.org/abs/2409.00587"><strong>Yang et al. (2024, <em>ACM Computing Surveys</em>)</strong></a> &quot;Diffusion Models: A Comprehensive Survey of Methods and Applications&quot; — Broad overview of diffusion across modalities.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">

@@ -29,6 +29,8 @@ Winter 2026
 
 ---
 
+<!-- _class: scale-85 -->
+
 # The pixel problem
 
 <div class="warning-box" data-title="Why running diffusion in pixel space is expensive">
@@ -112,6 +114,12 @@ To generate images from text prompts, latent diffusion adds **cross-attention** 
 
 </div>
 
+<div class="definition-box" data-title="Remember...">
+
+- **[CLIP](https://arxiv.org/abs/2103.00020)** (Contrastive Language-Image Pre-training; [Radford et al., 2021](https://arxiv.org/abs/2103.00020)): A model trained on 400M image-text pairs to learn a **shared embedding space** where images and their captions are nearby. Used throughout diffusion systems as the text encoder that "understands" prompts.
+
+</div>
+
 <div class="example-box" data-title="How 'a cat wearing a hat' becomes an image">
 
 The word "cat" activates high attention weights in the spatial region where the cat is being generated. The word "hat" activates attention weights near the top of the cat region. This spatial-linguistic binding is learned entirely from image-caption pairs during training.
@@ -177,7 +185,7 @@ The [Diffusion Transformer (DiT)](https://arxiv.org/abs/2212.09748) replaces the
 
 <div class="important-box" data-title="Why replace U-Net?">
 
-Transformers scale better than U-Nets. DiT-XL/2 (675M parameters) achieves a new state-of-the-art FID of 2.27 on ImageNet, beating all previous diffusion models. More importantly, DiT shows **clean scaling behavior** — larger models consistently produce better results, with no architectural bottlenecks.
+Transformers scale better than U-Nets. DiT-XL/2 (675M parameters) achieves a new state-of-the-art [FID](https://en.wikipedia.org/wiki/Fr%C3%A9chet_inception_distance) of 2.27 on ImageNet, beating all previous diffusion models. More importantly, DiT shows **clean scaling behavior** — larger models consistently produce better results, with no architectural bottlenecks.
 
 </div>
 
@@ -197,7 +205,7 @@ DiT conditions on timestep and class label using **adaptive Layer Normalization 
 
 <div class="note-box" data-title="Why 'Zero'?">
 
-Initializing the gating parameter $\alpha = 0$ means each Transformer block initially acts as an **identity function**. This makes training stable even for very deep models — the network starts by doing nothing and gradually learns to denoise. This is the same principle behind residual learning (He et al., 2016).
+Initializing the gating parameter $\alpha = 0$ means each Transformer block initially acts as an **identity function**. This makes training stable even for very deep models — the network starts by doing nothing and gradually learns to denoise. This is the same principle behind residual learning ([He et al., 2016](https://arxiv.org/abs/1512.03385)).
 
 </div>
 
@@ -215,7 +223,18 @@ where $v_\theta$ is a neural network that predicts the **velocity** (direction a
 
 </div>
 
-<div class="note-box" data-title="Key differences from DDPM">
+<div class="definition-box" data-title="Remember...">
+
+- **[ODE](https://en.wikipedia.org/wiki/Ordinary_differential_equation)** (Ordinary Differential Equation): An equation describing how a quantity changes over time via a deterministic rule — given the current state, the next state is fully determined
+- **[SDE](https://en.wikipedia.org/wiki/Stochastic_differential_equation)** (Stochastic Differential Equation): Like an ODE but with a random noise term — the path from noise to data has some randomness at each step
+
+</div>
+
+---
+
+# Flow matching vs DDPM
+
+<div class="note-box" data-title="Key differences">
 
 | | DDPM | Flow matching |
 |---|---|---|
@@ -226,13 +245,19 @@ where $v_\theta$ is a neural network that predicts the **velocity** (direction a
 
 </div>
 
+<div class="tip-box" data-title="The intuition">
+
+Flow matching asks: "What's the simplest path from noise to data?" Instead of designing a complex noise schedule and learning to reverse it, we define a straight interpolation and learn the velocity field that moves along it. The math is simpler, the training is more stable, and generation is faster.
+
+</div>
+
 ---
 
 # Rectified flow
 
 <div class="definition-box" data-title="Straight paths from noise to data">
 
-**Rectified flow** ([Liu et al., 2023](https://arxiv.org/abs/2209.03003)) uses the simplest possible interpolation — a straight line between the data point and a noise sample:
+**Rectified flow** ([Liu et al., 2023, ICLR](https://arxiv.org/abs/2209.03003)) uses the simplest possible interpolation — a straight line between the data point and a noise sample:
 
 $$\mathbf{x}_t = (1 - t)\,\mathbf{x}_0 + t\,\boldsymbol{\epsilon}$$
 
@@ -247,7 +272,7 @@ Straight paths are the shortest paths between noise and data. Since they don't c
 </div>
 
 ---
-<!-- _class: scale-90 -->
+<!-- _class: scale-85 -->
 
 # Stable Diffusion 3: putting it all together
 
@@ -309,6 +334,18 @@ The field progresses by **composing** innovations, not replacing them. Each exte
 3. **U-Net vs Transformer**: DiT replaced U-Net because Transformers scale better. But U-Net's inductive biases (locality, skip connections) seem useful for spatial data. Is there a hybrid that gets the best of both?
 
 4. **Simplification trend**: DDPM → DDIM → Flow matching → Rectified flow. Each is simpler than the last. Where does this trend end? Can generation become a single neural network evaluation?
+
+</div>
+
+---
+
+# Take-home messages
+
+<div class="note-box" data-title="Think about it...">
+
+- The key bottleneck in high-resolution generation wasn't the diffusion process itself — it was **where** you run it. Compressing to latent space (via a VAE) made consumer-GPU generation possible.
+- Classifier-free guidance shows that **controlling** generation is as important as generation itself — and the trick is surprisingly simple: learn what the conditional and unconditional outputs look like, then amplify the difference.
+- The field evolves by **composing** innovations (latent space + CFG + DiT + flow matching), not replacing them. Each addresses one specific limitation.
 
 </div>
 
