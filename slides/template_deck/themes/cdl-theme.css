@@ -3895,6 +3895,17 @@ section > .important-box {
 }
 
 /* ============================================
+   STANDALONE IMAGE CENTERING
+   Images in paragraphs (Marp wraps standalone ![](img) in <p>)
+   display:block + margin:auto centers them horizontally
+   ============================================ */
+
+section:not(.lead):not(#\31) > p > img:only-child {
+    display: block;
+    margin: 0 auto;
+}
+
+/* ============================================
    CHECKLIST STYLES
    For task lists with checkboxes
    ============================================ */

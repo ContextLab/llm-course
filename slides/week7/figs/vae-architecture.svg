@@ -1,0 +1,57 @@
+<svg viewBox="0 0 740 140" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<symbol id="vae-arrow" viewBox="0 0 76.41 27.12">
+<path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
+</symbol>
+</defs>
+<!-- Input image -->
+<rect x="2" y="20" width="75" height="75" rx="6" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<text x="39" y="54" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Image</text>
+<text x="39" y="68" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">512×512×3</text>
+<!-- Arrow to encoder -->
+<use href="#vae-arrow" x="80" y="48" width="32" height="12" style="color: #0a2518"/>
+<!-- Encoder (tall, narrowing) -->
+<rect x="115" y="14" width="60" height="88" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="145" y="48" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Encoder</text>
+<text x="145" y="62" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Conv ↓</text>
+<text x="145" y="74" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Conv ↓</text>
+<text x="145" y="86" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Conv ↓</text>
+<!-- Arrow to mu/sigma -->
+<use href="#vae-arrow" x="178" y="48" width="32" height="12" style="color: #0a2518"/>
+<!-- Mu and Sigma -->
+<rect x="213" y="20" width="55" height="32" rx="4" fill="#ffeaa7" stroke="#2d3436" stroke-width="1"/>
+<text x="240" y="40" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">μ, σ</text>
+<!-- Sampling arrow down -->
+<line x1="240" y1="52" x2="240" y2="63" stroke="#0a2518" stroke-width="1.2"/>
+<polygon points="236,63 240,70 244,63" fill="#0a2518"/>
+<!-- Latent z -->
+<rect x="213" y="72" width="55" height="32" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2" stroke-dasharray="4,3"/>
+<text x="240" y="86" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">z</text>
+<text x="240" y="98" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">64×64×4</text>
+<!-- Sampling label -->
+<text x="262" y="66" font-size="8" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">sample</text>
+<!-- Arrow to decoder -->
+<use href="#vae-arrow" x="270" y="80" width="32" height="12" style="color: #0a2518"/>
+<!-- Decoder (tall, widening) -->
+<rect x="305" y="14" width="60" height="88" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="335" y="48" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Decoder</text>
+<text x="335" y="62" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Conv ↑</text>
+<text x="335" y="74" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Conv ↑</text>
+<text x="335" y="86" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Conv ↑</text>
+<!-- Arrow to output -->
+<use href="#vae-arrow" x="368" y="48" width="32" height="12" style="color: #0a2518"/>
+<!-- Reconstructed image -->
+<rect x="403" y="20" width="75" height="75" rx="6" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<text x="440" y="50" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Recon-</text>
+<text x="440" y="62" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">structed</text>
+<text x="440" y="76" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">512×512×3</text>
+<!-- Training losses annotation -->
+<rect x="520" y="16" width="210" height="92" rx="6" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="625" y="34" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Training losses</text>
+<text x="535" y="52" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436">• Reconstruction (L₁/L₂)</text>
+<text x="535" y="66" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436">• KL divergence (regularize z)</text>
+<text x="535" y="80" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436">• Perceptual (feature matching)</text>
+<text x="535" y="94" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436">• Adversarial (discriminator)</text>
+<!-- Bottom annotation -->
+<text x="240" y="126" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">Bottleneck: 48× compression (786K → 16K values)</text>
+</svg>
