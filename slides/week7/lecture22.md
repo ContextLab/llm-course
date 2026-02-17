@@ -124,6 +124,30 @@ The VAE learns to preserve perceptually important information while discarding r
 </div>
 
 ---
+<!-- _class: scale-70 -->
+
+# How convolutions compress images
+
+<div class="definition-box" data-title="Convolution: the key building block">
+
+A **convolution** slides a small filter (kernel) across an image, computing a weighted sum at each position. With **stride 2**, the filter moves 2 pixels at a time, halving the spatial dimensions:
+
+- **8×8** input → 3×3 conv, stride 2 → **4×4** output (4× fewer values)
+- **4×4** → 3×3 conv, stride 2 → **2×2** (4× fewer again)
+
+Stacking convolution layers creates a hierarchy: pixels → edges → textures → objects.
+
+</div>
+
+![Convolution downsampling](figs/convolution-downsampling.svg)
+
+<div class="tip-box" data-title="The intuition">
+
+Each cell in a deeper layer "sees" a larger region of the original image — its **receptive field** grows. A 2×2 feature map from an 8×8 input means each cell summarizes a 4×4 patch. This is exactly how the VAE encoder compresses: stacked convolutions progressively trade spatial detail for compact, meaningful features.
+
+</div>
+
+---
 <!-- _class: scale-75 -->
 
 # The VAE bottleneck

@@ -1,0 +1,95 @@
+<svg viewBox="0 0 740 130" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <symbol id="conv-arrow" viewBox="0 0 76.41 27.12">
+    <path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
+  </symbol>
+</defs>
+<!-- ===== 8×8 INPUT GRID ===== -->
+<!-- Background -->
+<rect x="10" y="8" width="80" height="80" rx="2" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
+<!-- Object: outer ring (rows 1-6, cols 1-6) -->
+<rect x="20" y="18" width="60" height="60" fill="#dfe6e9"/>
+<!-- Object: inner (rows 2-5, cols 2-5) -->
+<rect x="30" y="28" width="40" height="40" fill="#b2bec3"/>
+<!-- Object: core (rows 3-4, cols 3-4) -->
+<rect x="40" y="38" width="20" height="20" fill="#636e72"/>
+<!-- Grid lines (vertical) -->
+<line x1="20" y1="8" x2="20" y2="88" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="30" y1="8" x2="30" y2="88" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="40" y1="8" x2="40" y2="88" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="50" y1="8" x2="50" y2="88" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="60" y1="8" x2="60" y2="88" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="70" y1="8" x2="70" y2="88" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="80" y1="8" x2="80" y2="88" stroke="#2d3436" stroke-width="0.3"/>
+<!-- Grid lines (horizontal) -->
+<line x1="10" y1="18" x2="90" y2="18" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="10" y1="28" x2="90" y2="28" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="10" y1="38" x2="90" y2="38" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="10" y1="48" x2="90" y2="48" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="10" y1="58" x2="90" y2="58" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="10" y1="68" x2="90" y2="68" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="10" y1="78" x2="90" y2="78" stroke="#2d3436" stroke-width="0.3"/>
+<!-- Outer border (redraw on top) -->
+<rect x="10" y="8" width="80" height="80" rx="2" fill="none" stroke="#2d3436" stroke-width="0.8"/>
+<!-- Kernel highlight (3×3 at top-left) -->
+<rect x="10" y="8" width="30" height="30" rx="1" fill="rgba(225,112,85,0.15)" stroke="#e17055" stroke-width="1.8"/>
+<!-- Kernel label -->
+<text x="25" y="5" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#e17055" font-weight="bold">kernel</text>
+<!-- Grid label -->
+<text x="50" y="103" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">8 × 8</text>
+<text x="50" y="115" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">64 values</text>
+
+<!-- ===== ARROW 1 ===== -->
+<use href="#conv-arrow" x="105" y="41" width="68" height="13" style="color: #0a2518"/>
+<text x="139" y="36" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv 3×3</text>
+<text x="139" y="66" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">stride 2</text>
+
+<!-- ===== 4×4 FEATURE MAP ===== -->
+<rect x="190" y="22" width="52" height="52" rx="2" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
+<!-- Object: inner 2×2 -->
+<rect x="203" y="35" width="26" height="26" fill="#b2bec3"/>
+<!-- Grid lines (vertical) -->
+<line x1="203" y1="22" x2="203" y2="74" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="216" y1="22" x2="216" y2="74" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="229" y1="22" x2="229" y2="74" stroke="#2d3436" stroke-width="0.3"/>
+<!-- Grid lines (horizontal) -->
+<line x1="190" y1="35" x2="242" y2="35" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="190" y1="48" x2="242" y2="48" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="190" y1="61" x2="242" y2="61" stroke="#2d3436" stroke-width="0.3"/>
+<!-- Outer border -->
+<rect x="190" y="22" width="52" height="52" rx="2" fill="none" stroke="#2d3436" stroke-width="0.8"/>
+<!-- Grid label -->
+<text x="216" y="103" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">4 × 4</text>
+<text x="216" y="115" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">16 values</text>
+
+<!-- ===== ARROW 2 ===== -->
+<use href="#conv-arrow" x="258" y="41" width="68" height="13" style="color: #0a2518"/>
+<text x="292" y="36" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv 3×3</text>
+<text x="292" y="66" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">stride 2</text>
+
+<!-- ===== 2×2 FEATURE MAP ===== -->
+<rect x="345" y="32" width="32" height="32" rx="2" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
+<!-- Cells with feature pattern -->
+<rect x="345" y="32" width="16" height="16" fill="#b2bec3"/>
+<rect x="361" y="48" width="16" height="16" fill="#b2bec3"/>
+<rect x="361" y="32" width="16" height="16" fill="#dfe6e9"/>
+<rect x="345" y="48" width="16" height="16" fill="#dfe6e9"/>
+<!-- Grid lines -->
+<line x1="361" y1="32" x2="361" y2="64" stroke="#2d3436" stroke-width="0.3"/>
+<line x1="345" y1="48" x2="377" y2="48" stroke="#2d3436" stroke-width="0.3"/>
+<!-- Outer border -->
+<rect x="345" y="32" width="32" height="32" rx="2" fill="none" stroke="#2d3436" stroke-width="0.8"/>
+<!-- Grid label -->
+<text x="361" y="103" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">2 × 2</text>
+<text x="361" y="115" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">4 values</text>
+
+<!-- ===== ANNOTATION BOX ===== -->
+<rect x="405" y="5" width="325" height="118" rx="6" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="567" y="24" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">What happens at each step</text>
+<text x="420" y="44" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">8×8</tspan>: each cell = one pixel of the image</text>
+<text x="420" y="61" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">4×4</tspan>: each cell summarizes a 2×2 region</text>
+<text x="420" y="78" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">2×2</tspan>: each cell summarizes a 4×4 region</text>
+<line x1="420" y1="88" x2="715" y2="88" stroke="#dfe6e9" stroke-width="0.8"/>
+<text x="420" y="104" font-size="9" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Each layer's receptive field grows — deeper</text>
+<text x="420" y="117" font-size="9" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">layers "see" more of the original image.</text>
+</svg>
