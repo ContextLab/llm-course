@@ -542,6 +542,6 @@ Text diffusion typically requires 10–100 refinement steps, each involving a fu
 
 <div class="tip-box" data-title="Up next...">
 
-Diffusion model extensions: latent diffusion, classifier-free guidance, and the Diffusion Transformer
+Image diffusion and multimodal generation: latent diffusion, CLIP, and the path from DDPM to Stable Diffusion 3
 
 </div>

@@ -1,0 +1,43 @@
+<svg viewBox="0 0 740 120" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<symbol id="dit-arrow" viewBox="0 0 76.41 27.12">
+<path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
+</symbol>
+</defs>
+<!-- Latent input -->
+<rect x="2" y="14" width="90" height="64" rx="6" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<text x="47" y="38" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Noisy</text>
+<text x="47" y="52" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Latent</text>
+<text x="47" y="66" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">32×32×4</text>
+<!-- Arrow -->
+<use href="#dit-arrow" x="94" y="36" width="36" height="14" style="color: #0a2518"/>
+<!-- Patchify -->
+<rect x="134" y="14" width="90" height="64" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="179" y="38" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Patchify</text>
+<text x="179" y="54" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">2×2 patches</text>
+<text x="179" y="66" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">→ 256 tokens</text>
+<!-- Arrow -->
+<use href="#dit-arrow" x="226" y="36" width="36" height="14" style="color: #0a2518"/>
+<!-- Transformer blocks -->
+<rect x="266" y="4" width="200" height="84" rx="6" fill="#ffeaa7" stroke="#2d3436" stroke-width="1.2"/>
+<text x="366" y="28" text-anchor="middle" font-size="12" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">N × Transformer Block</text>
+<text x="366" y="46" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">Self-attention + FFN</text>
+<text x="366" y="62" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">adaLN-Zero conditioning</text>
+<text x="366" y="78" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">timestep t + class c → γ, β, α</text>
+<!-- Arrow -->
+<use href="#dit-arrow" x="468" y="36" width="36" height="14" style="color: #0a2518"/>
+<!-- Unpatchify -->
+<rect x="508" y="14" width="90" height="64" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="553" y="38" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Unpatchify</text>
+<text x="553" y="54" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">256 tokens</text>
+<text x="553" y="66" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">→ 32×32×4</text>
+<!-- Arrow -->
+<use href="#dit-arrow" x="600" y="36" width="36" height="14" style="color: #0a2518"/>
+<!-- Output -->
+<rect x="640" y="14" width="96" height="64" rx="6" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<text x="688" y="38" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Predicted</text>
+<text x="688" y="52" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Noise</text>
+<text x="688" y="66" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">ε̂(xₜ, t, c)</text>
+<!-- Bottom annotation -->
+<text x="366" y="108" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Treats latent patches as tokens — standard ViT architecture</text>
+</svg>

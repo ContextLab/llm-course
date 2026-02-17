@@ -1,0 +1,39 @@
+<svg viewBox="0 0 740 110" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="cfg-grad" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0%" stop-color="#636e72"/>
+<stop offset="30%" stop-color="#0984e3"/>
+<stop offset="60%" stop-color="#00b894"/>
+<stop offset="85%" stop-color="#fdcb6e"/>
+<stop offset="100%" stop-color="#d63031"/>
+</linearGradient>
+</defs>
+<!-- Gradient bar -->
+<rect x="40" y="20" width="660" height="28" rx="6" fill="url(#cfg-grad)" stroke="#2d3436" stroke-width="1"/>
+<!-- Scale markers -->
+<line x1="40" y1="52" x2="40" y2="60" stroke="#2d3436" stroke-width="1"/>
+<line x1="139" y1="52" x2="139" y2="60" stroke="#2d3436" stroke-width="1"/>
+<line x1="370" y1="52" x2="370" y2="60" stroke="#2d3436" stroke-width="1"/>
+<line x1="535" y1="52" x2="535" y2="60" stroke="#2d3436" stroke-width="1"/>
+<line x1="700" y1="52" x2="700" y2="60" stroke="#2d3436" stroke-width="1"/>
+<!-- Scale numbers -->
+<text x="40" y="72" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">w = 0</text>
+<text x="139" y="72" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">1</text>
+<text x="370" y="72" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">7–10</text>
+<text x="535" y="72" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">15–20</text>
+<text x="700" y="72" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">50+</text>
+<!-- Descriptions -->
+<text x="40" y="88" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Ignores</text>
+<text x="40" y="98" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">prompt</text>
+<text x="139" y="88" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Standard</text>
+<text x="139" y="98" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">conditional</text>
+<text x="370" y="88" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Recommended</text>
+<text x="370" y="98" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">range</text>
+<text x="535" y="88" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Over-guided</text>
+<text x="535" y="98" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">saturated</text>
+<text x="700" y="88" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Artifacts</text>
+<text x="700" y="98" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">mode collapse</text>
+<!-- Top labels -->
+<text x="90" y="14" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">← More diversity</text>
+<text x="650" y="14" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">More prompt fidelity →</text>
+</svg>
