@@ -1,60 +1,86 @@
-<svg viewBox="0 0 740 160" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 740 148" xmlns="http://www.w3.org/2000/svg">
 <defs>
-<symbol id="unet-arrow-down" viewBox="0 0 10 20">
-<path d="M5,0 L5,14 M1,11 L5,18 L9,11" stroke="currentColor" stroke-width="1.5" fill="none"/>
-</symbol>
-<symbol id="unet-arrow-up" viewBox="0 0 10 20">
-<path d="M5,20 L5,6 M1,9 L5,2 L9,9" stroke="currentColor" stroke-width="1.5" fill="none"/>
-</symbol>
-<symbol id="unet-arrow-right" viewBox="0 0 76.41 27.12">
-<path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
-</symbol>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 Z" fill="#0a2518"/>
+  </marker>
+  <marker id="ah-skip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 Z" fill="#0a2518"/>
+  </marker>
 </defs>
-<!-- Encoder path (left side, going down) -->
-<rect x="20" y="8" width="90" height="36" rx="5" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
-<text x="65" y="23" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv + Attn</text>
-<text x="65" y="35" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">64×64</text>
-<use href="#unet-arrow-down" x="60" y="44" width="10" height="14" style="color: #0a2518"/>
-<rect x="50" y="58" width="90" height="36" rx="5" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
-<text x="95" y="73" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv + Attn</text>
-<text x="95" y="85" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">32×32</text>
-<use href="#unet-arrow-down" x="90" y="94" width="10" height="14" style="color: #0a2518"/>
-<!-- Bottleneck -->
-<rect x="110" y="110" width="110" height="40" rx="5" fill="#ffeaa7" stroke="#2d3436" stroke-width="1.2"/>
-<text x="165" y="127" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Bottleneck</text>
-<text x="165" y="141" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">16×16 (global context)</text>
-<!-- Decoder path (right side, going up) -->
-<use href="#unet-arrow-up" x="215" y="96" width="10" height="14" style="color: #0a2518"/>
-<rect x="190" y="58" width="90" height="36" rx="5" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
-<text x="235" y="73" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv + Attn</text>
-<text x="235" y="85" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">32×32</text>
-<use href="#unet-arrow-up" x="245" y="44" width="10" height="14" style="color: #0a2518"/>
-<rect x="220" y="8" width="90" height="36" rx="5" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
-<text x="265" y="23" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv + Attn</text>
-<text x="265" y="35" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">64×64</text>
-<!-- Skip connections (dashed arrows) -->
-<line x1="110" y1="26" x2="220" y2="26" stroke="#0a2518" stroke-width="1.2" stroke-dasharray="5,3"/>
-<polygon points="218,22 224,26 218,30" fill="#0a2518"/>
-<text x="165" y="18" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">skip connection</text>
-<line x1="140" y1="76" x2="190" y2="76" stroke="#0a2518" stroke-width="1.2" stroke-dasharray="5,3"/>
-<polygon points="188,72 194,76 188,80" fill="#0a2518"/>
-<!-- Encoder / Decoder labels -->
-<text x="65" y="155" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Encoder (downsample)</text>
-<text x="265" y="155" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Decoder (upsample)</text>
-<!-- Right side: conditioning inputs -->
-<rect x="360" y="8" width="185" height="42" rx="5" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
-<text x="452" y="24" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conditioning inputs</text>
-<text x="370" y="40" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">• Timestep t (sinusoidal embedding)</text>
-<!-- Text conditioning -->
-<rect x="360" y="58" width="185" height="42" rx="5" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
-<text x="452" y="74" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Text conditioning</text>
-<text x="370" y="90" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">• CLIP embeddings via cross-attention</text>
-<!-- Key properties -->
-<rect x="560" y="8" width="170" height="92" rx="5" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
-<text x="645" y="24" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Key properties</text>
-<text x="570" y="40" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">• Same-size input/output</text>
-<text x="570" y="54" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">• Multi-scale reasoning</text>
-<text x="570" y="68" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">• Skip connections preserve</text>
-<text x="578" y="80" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">high-frequency detail</text>
-<text x="570" y="94" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">• ~860M params (SD 1.5)</text>
+
+<!-- ===== ENCODER (left side, stepping right-and-down) ===== -->
+<!-- Block E1: 64×64 -->
+<rect x="10" y="6" width="90" height="34" rx="5" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="55" y="20" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv + Attn</text>
+<text x="55" y="33" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">64×64, 320 ch</text>
+
+<!-- Down arrow E1→E2 -->
+<line x1="55" y1="40" x2="80" y2="54" stroke="#0a2518" stroke-width="1.2" marker-end="url(#ah)"/>
+
+<!-- Block E2: 32×32 -->
+<rect x="60" y="56" width="90" height="34" rx="5" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="105" y="70" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv + Attn</text>
+<text x="105" y="83" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">32×32, 640 ch</text>
+
+<!-- Down arrow E2→Bottleneck -->
+<line x1="105" y1="90" x2="140" y2="104" stroke="#0a2518" stroke-width="1.2" marker-end="url(#ah)"/>
+
+<!-- ===== BOTTLENECK ===== -->
+<rect x="120" y="106" width="110" height="36" rx="5" fill="#ffeaa7" stroke="#2d3436" stroke-width="1.2"/>
+<text x="175" y="121" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Bottleneck</text>
+<text x="175" y="134" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">16×16, 1280 ch</text>
+
+<!-- ===== DECODER (right side, stepping right-and-up) ===== -->
+<!-- Up arrow Bottleneck→D2 -->
+<line x1="210" y1="106" x2="240" y2="90" stroke="#0a2518" stroke-width="1.2" marker-end="url(#ah)"/>
+
+<!-- Block D2: 32×32 -->
+<rect x="220" y="56" width="90" height="34" rx="5" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="265" y="70" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv + Attn</text>
+<text x="265" y="83" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">32×32, 640 ch</text>
+
+<!-- Up arrow D2→D1 -->
+<line x1="280" y1="56" x2="310" y2="40" stroke="#0a2518" stroke-width="1.2" marker-end="url(#ah)"/>
+
+<!-- Block D1: 64×64 -->
+<rect x="290" y="6" width="90" height="34" rx="5" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="335" y="20" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv + Attn</text>
+<text x="335" y="33" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">64×64, 320 ch</text>
+
+<!-- ===== SKIP CONNECTIONS (dashed) ===== -->
+<!-- Skip E1→D1 -->
+<line x1="100" y1="23" x2="290" y2="23" stroke="#0a2518" stroke-width="1.1" stroke-dasharray="5,3" marker-end="url(#ah-skip)"/>
+<text x="195" y="17" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">skip (concatenate)</text>
+
+<!-- Skip E2→D2 -->
+<line x1="150" y1="73" x2="220" y2="73" stroke="#0a2518" stroke-width="1.1" stroke-dasharray="5,3" marker-end="url(#ah-skip)"/>
+<text x="185" y="67" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">skip</text>
+
+<!-- ===== LABELS ===== -->
+<text x="55" y="148" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">Encoder ↓</text>
+<text x="175" y="148" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">Bottleneck</text>
+<text x="335" y="148" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">Decoder ↑</text>
+
+<!-- ===== RIGHT SIDE BOXES ===== -->
+<!-- Input/Output -->
+<rect x="400" y="6" width="155" height="36" rx="5" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="477" y="20" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Input / Output</text>
+<text x="410" y="34" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">Noisy latent → predicted noise (same size)</text>
+
+<!-- Conditioning -->
+<rect x="400" y="50" width="155" height="36" rx="5" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="477" y="64" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conditioning</text>
+<text x="410" y="78" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">Timestep t + CLIP text via cross-attn</text>
+
+<!-- Key terms -->
+<rect x="570" y="6" width="162" height="136" rx="5" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="651" y="22" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Key terms</text>
+<text x="580" y="38" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Conv</tspan>: learned 3×3 filters that</text>
+<text x="588" y="50" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">extract spatial features</text>
+<text x="580" y="66" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Attn</tspan>: cross-attention — lets the</text>
+<text x="588" y="78" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">network "listen" to text</text>
+<text x="580" y="94" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">ch</tspan>: channels (feature depth, like</text>
+<text x="588" y="106" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">RGB but for learned features)</text>
+<text x="580" y="122" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Skip</tspan>: concatenate encoder features</text>
+<text x="588" y="134" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">to decoder, preserving fine detail</text>
 </svg>

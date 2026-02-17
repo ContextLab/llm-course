@@ -5,14 +5,47 @@
   </symbol>
 </defs>
 <!-- ===== 8×8 INPUT GRID ===== -->
-<!-- Background -->
-<rect x="10" y="8" width="80" height="80" rx="2" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
-<!-- Object: outer ring (rows 1-6, cols 1-6) -->
-<rect x="20" y="18" width="60" height="60" fill="#dfe6e9"/>
-<!-- Object: inner (rows 2-5, cols 2-5) -->
-<rect x="30" y="28" width="40" height="40" fill="#b2bec3"/>
-<!-- Object: core (rows 3-4, cols 3-4) -->
-<rect x="40" y="38" width="20" height="20" fill="#636e72"/>
+<!-- Background fills for concentric pattern: 0=bg, 0.2=outer, 0.4=mid, 0.6=inner, 0.8=core -->
+<!-- Row 0 -->
+<rect x="10" y="8" width="10" height="10" fill="#f5f6fa"/><rect x="20" y="8" width="10" height="10" fill="#f5f6fa"/>
+<rect x="30" y="8" width="10" height="10" fill="#f5f6fa"/><rect x="40" y="8" width="10" height="10" fill="#f5f6fa"/>
+<rect x="50" y="8" width="10" height="10" fill="#f5f6fa"/><rect x="60" y="8" width="10" height="10" fill="#f5f6fa"/>
+<rect x="70" y="8" width="10" height="10" fill="#f5f6fa"/><rect x="80" y="8" width="10" height="10" fill="#f5f6fa"/>
+<!-- Row 1 -->
+<rect x="10" y="18" width="10" height="10" fill="#f5f6fa"/><rect x="20" y="18" width="10" height="10" fill="#d0d4d8"/>
+<rect x="30" y="18" width="10" height="10" fill="#d0d4d8"/><rect x="40" y="18" width="10" height="10" fill="#d0d4d8"/>
+<rect x="50" y="18" width="10" height="10" fill="#d0d4d8"/><rect x="60" y="18" width="10" height="10" fill="#d0d4d8"/>
+<rect x="70" y="18" width="10" height="10" fill="#d0d4d8"/><rect x="80" y="18" width="10" height="10" fill="#f5f6fa"/>
+<!-- Row 2 -->
+<rect x="10" y="28" width="10" height="10" fill="#f5f6fa"/><rect x="20" y="28" width="10" height="10" fill="#d0d4d8"/>
+<rect x="30" y="28" width="10" height="10" fill="#acb2b6"/><rect x="40" y="28" width="10" height="10" fill="#acb2b6"/>
+<rect x="50" y="28" width="10" height="10" fill="#acb2b6"/><rect x="60" y="28" width="10" height="10" fill="#acb2b6"/>
+<rect x="70" y="28" width="10" height="10" fill="#d0d4d8"/><rect x="80" y="28" width="10" height="10" fill="#f5f6fa"/>
+<!-- Row 3 -->
+<rect x="10" y="38" width="10" height="10" fill="#f5f6fa"/><rect x="20" y="38" width="10" height="10" fill="#d0d4d8"/>
+<rect x="30" y="38" width="10" height="10" fill="#acb2b6"/><rect x="40" y="38" width="10" height="10" fill="#879094"/>
+<rect x="50" y="38" width="10" height="10" fill="#879094"/><rect x="60" y="38" width="10" height="10" fill="#acb2b6"/>
+<rect x="70" y="38" width="10" height="10" fill="#d0d4d8"/><rect x="80" y="38" width="10" height="10" fill="#f5f6fa"/>
+<!-- Row 4 -->
+<rect x="10" y="48" width="10" height="10" fill="#f5f6fa"/><rect x="20" y="48" width="10" height="10" fill="#d0d4d8"/>
+<rect x="30" y="48" width="10" height="10" fill="#acb2b6"/><rect x="40" y="48" width="10" height="10" fill="#879094"/>
+<rect x="50" y="48" width="10" height="10" fill="#879094"/><rect x="60" y="48" width="10" height="10" fill="#acb2b6"/>
+<rect x="70" y="48" width="10" height="10" fill="#d0d4d8"/><rect x="80" y="48" width="10" height="10" fill="#f5f6fa"/>
+<!-- Row 5 -->
+<rect x="10" y="58" width="10" height="10" fill="#f5f6fa"/><rect x="20" y="58" width="10" height="10" fill="#d0d4d8"/>
+<rect x="30" y="58" width="10" height="10" fill="#acb2b6"/><rect x="40" y="58" width="10" height="10" fill="#acb2b6"/>
+<rect x="50" y="58" width="10" height="10" fill="#acb2b6"/><rect x="60" y="58" width="10" height="10" fill="#acb2b6"/>
+<rect x="70" y="58" width="10" height="10" fill="#d0d4d8"/><rect x="80" y="58" width="10" height="10" fill="#f5f6fa"/>
+<!-- Row 6 -->
+<rect x="10" y="68" width="10" height="10" fill="#f5f6fa"/><rect x="20" y="68" width="10" height="10" fill="#d0d4d8"/>
+<rect x="30" y="68" width="10" height="10" fill="#d0d4d8"/><rect x="40" y="68" width="10" height="10" fill="#d0d4d8"/>
+<rect x="50" y="68" width="10" height="10" fill="#d0d4d8"/><rect x="60" y="68" width="10" height="10" fill="#d0d4d8"/>
+<rect x="70" y="68" width="10" height="10" fill="#d0d4d8"/><rect x="80" y="68" width="10" height="10" fill="#f5f6fa"/>
+<!-- Row 7 -->
+<rect x="10" y="78" width="10" height="10" fill="#f5f6fa"/><rect x="20" y="78" width="10" height="10" fill="#f5f6fa"/>
+<rect x="30" y="78" width="10" height="10" fill="#f5f6fa"/><rect x="40" y="78" width="10" height="10" fill="#f5f6fa"/>
+<rect x="50" y="78" width="10" height="10" fill="#f5f6fa"/><rect x="60" y="78" width="10" height="10" fill="#f5f6fa"/>
+<rect x="70" y="78" width="10" height="10" fill="#f5f6fa"/><rect x="80" y="78" width="10" height="10" fill="#f5f6fa"/>
 <!-- Grid lines (vertical) -->
 <line x1="20" y1="8" x2="20" y2="88" stroke="#2d3436" stroke-width="0.3"/>
 <line x1="30" y1="8" x2="30" y2="88" stroke="#2d3436" stroke-width="0.3"/>
@@ -29,11 +62,10 @@
 <line x1="10" y1="58" x2="90" y2="58" stroke="#2d3436" stroke-width="0.3"/>
 <line x1="10" y1="68" x2="90" y2="68" stroke="#2d3436" stroke-width="0.3"/>
 <line x1="10" y1="78" x2="90" y2="78" stroke="#2d3436" stroke-width="0.3"/>
-<!-- Outer border (redraw on top) -->
+<!-- Outer border -->
 <rect x="10" y="8" width="80" height="80" rx="2" fill="none" stroke="#2d3436" stroke-width="0.8"/>
 <!-- Kernel highlight (3×3 at top-left) -->
 <rect x="10" y="8" width="30" height="30" rx="1" fill="rgba(225,112,85,0.15)" stroke="#e17055" stroke-width="1.8"/>
-<!-- Kernel label -->
 <text x="25" y="5" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#e17055" font-weight="bold">kernel</text>
 <!-- Grid label -->
 <text x="50" y="103" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">8 × 8</text>
@@ -44,10 +76,27 @@
 <text x="139" y="36" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv 3×3</text>
 <text x="139" y="66" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">stride 2</text>
 
-<!-- ===== 4×4 FEATURE MAP ===== -->
-<rect x="190" y="22" width="52" height="52" rx="2" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
-<!-- Object: inner 2×2 -->
-<rect x="203" y="35" width="26" height="26" fill="#b2bec3"/>
+<!-- ===== 4×4 FEATURE MAP (computed convolution values) ===== -->
+<!-- Row 0: [0,0]=0.1111 #e0e3e7  [0,1]=0.2222 #d0d4d8  [0,2]=0.2222 #d0d4d8  [0,3]=0.1778 #d4d7db -->
+<rect x="190" y="22" width="13" height="13" fill="#e0e3e7"/>
+<rect x="203" y="22" width="13" height="13" fill="#d0d4d8"/>
+<rect x="216" y="22" width="13" height="13" fill="#d0d4d8"/>
+<rect x="229" y="22" width="13" height="13" fill="#d4d7db"/>
+<!-- Row 1: [1,0]=0.2222 #d0d4d8  [1,1]=0.4889 #979fa3  [1,2]=0.5333 #8b9397  [1,3]=0.3111 #b0b5b9 -->
+<rect x="190" y="35" width="13" height="13" fill="#d0d4d8"/>
+<rect x="203" y="35" width="13" height="13" fill="#979fa3"/>
+<rect x="216" y="35" width="13" height="13" fill="#8b9397"/>
+<rect x="229" y="35" width="13" height="13" fill="#b0b5b9"/>
+<!-- Row 2: [2,0]=0.2222 #d0d4d8  [2,1]=0.5333 #8b9397  [2,2]=0.6889 #778084  [2,3]=0.3556 #acb2b6 -->
+<rect x="190" y="48" width="13" height="13" fill="#d0d4d8"/>
+<rect x="203" y="48" width="13" height="13" fill="#8b9397"/>
+<rect x="216" y="48" width="13" height="13" fill="#778084"/>
+<rect x="229" y="48" width="13" height="13" fill="#acb2b6"/>
+<!-- Row 3: [3,0]=0.1778 #d4d7db  [3,1]=0.3111 #b0b5b9  [3,2]=0.3556 #acb2b6  [3,3]=0.2667 #bcc1c5 -->
+<rect x="190" y="61" width="13" height="13" fill="#d4d7db"/>
+<rect x="203" y="61" width="13" height="13" fill="#b0b5b9"/>
+<rect x="216" y="61" width="13" height="13" fill="#acb2b6"/>
+<rect x="229" y="61" width="13" height="13" fill="#bcc1c5"/>
 <!-- Grid lines (vertical) -->
 <line x1="203" y1="22" x2="203" y2="74" stroke="#2d3436" stroke-width="0.3"/>
 <line x1="216" y1="22" x2="216" y2="74" stroke="#2d3436" stroke-width="0.3"/>
@@ -58,6 +107,9 @@
 <line x1="190" y1="61" x2="242" y2="61" stroke="#2d3436" stroke-width="0.3"/>
 <!-- Outer border -->
 <rect x="190" y="22" width="52" height="52" rx="2" fill="none" stroke="#2d3436" stroke-width="0.8"/>
+<!-- Kernel highlight on 4×4 (3×3 at top-left = covers 3 of 4 cells in each dim) -->
+<rect x="190" y="22" width="39" height="39" rx="1" fill="rgba(225,112,85,0.15)" stroke="#e17055" stroke-width="1.4"/>
+<text x="209" y="18" text-anchor="middle" font-size="6.5" font-family="Avenir,sans-serif" fill="#e17055" font-weight="bold">kernel</text>
 <!-- Grid label -->
 <text x="216" y="103" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">4 × 4</text>
 <text x="216" y="115" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">16 values</text>
@@ -67,13 +119,12 @@
 <text x="292" y="36" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Conv 3×3</text>
 <text x="292" y="66" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">stride 2</text>
 
-<!-- ===== 2×2 FEATURE MAP ===== -->
-<rect x="345" y="32" width="32" height="32" rx="2" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
-<!-- Cells with feature pattern -->
-<rect x="345" y="32" width="16" height="16" fill="#b2bec3"/>
-<rect x="361" y="48" width="16" height="16" fill="#b2bec3"/>
-<rect x="361" y="32" width="16" height="16" fill="#dfe6e9"/>
-<rect x="345" y="48" width="16" height="16" fill="#dfe6e9"/>
+<!-- ===== 2×2 FEATURE MAP (computed convolution values) ===== -->
+<!-- [0,0]=0.1136 #e0e2e6  [0,1]=0.2272 #cbcfd3  [1,0]=0.2272 #cbcfd3  [1,1]=0.4691 #9fa6aa -->
+<rect x="345" y="32" width="16" height="16" fill="#e0e2e6"/>
+<rect x="361" y="32" width="16" height="16" fill="#cbcfd3"/>
+<rect x="345" y="48" width="16" height="16" fill="#cbcfd3"/>
+<rect x="361" y="48" width="16" height="16" fill="#9fa6aa"/>
 <!-- Grid lines -->
 <line x1="361" y1="32" x2="361" y2="64" stroke="#2d3436" stroke-width="0.3"/>
 <line x1="345" y1="48" x2="377" y2="48" stroke="#2d3436" stroke-width="0.3"/>
@@ -85,11 +136,11 @@
 
 <!-- ===== ANNOTATION BOX ===== -->
 <rect x="405" y="5" width="325" height="118" rx="6" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
-<text x="567" y="24" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">What happens at each step</text>
-<text x="420" y="44" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">8×8</tspan>: each cell = one pixel of the image</text>
-<text x="420" y="61" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">4×4</tspan>: each cell summarizes a 2×2 region</text>
-<text x="420" y="78" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">2×2</tspan>: each cell summarizes a 4×4 region</text>
+<text x="567" y="24" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">3×3 averaging kernel (weight = 1/9)</text>
+<text x="420" y="44" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Stride 2</tspan>: kernel moves 2 cells per step, halving dimensions</text>
+<text x="420" y="61" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">8×8 → 4×4</tspan>: each output cell = average of a 3×3 patch</text>
+<text x="420" y="78" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">4×4 → 2×2</tspan>: second pass further compresses spatial info</text>
 <line x1="420" y1="88" x2="715" y2="88" stroke="#dfe6e9" stroke-width="0.8"/>
-<text x="420" y="104" font-size="9" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Each layer's receptive field grows — deeper</text>
-<text x="420" y="117" font-size="9" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">layers "see" more of the original image.</text>
+<text x="420" y="104" font-size="9" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Cell shading shows computed convolution values —</text>
+<text x="420" y="117" font-size="9" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">darker cells correspond to higher-intensity input regions.</text>
 </svg>

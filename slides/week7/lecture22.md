@@ -117,9 +117,9 @@ A **VAE** learns to compress images into a low-dimensional latent representation
 
 ![VAE architecture](figs/vae-architecture.svg)
 
-<div class="important-box" data-title="Why this works">
+<div class="note-box" data-title="Why this works">
 
-The VAE learns to preserve perceptually important information while discarding redundant detail. Diffusion in latent space is **~50× cheaper** than in pixel space, with negligible quality loss. This single insight enabled Stable Diffusion — the first open-source, consumer-GPU image generator.
+The VAE learns to preserve perceptually important information while discarding redundant detail. Diffusion in latent space is **~50× cheaper** than in pixel space, with negligible quality loss. This single insight enabled [Stable Diffusion](https://arxiv.org/abs/2112.10752) — the first open-source, consumer-GPU image generator.
 
 </div>
 
@@ -143,7 +143,7 @@ Stacking convolution layers creates a hierarchy: pixels → edges → textures �
 
 <div class="tip-box" data-title="The intuition">
 
-Each cell in a deeper layer "sees" a larger region of the original image — its **receptive field** grows. A 2×2 feature map from an 8×8 input means each cell summarizes a 4×4 patch. This is exactly how the VAE encoder compresses: stacked convolutions progressively trade spatial detail for compact, meaningful features.
+In practice, kernels are **learned**, not fixed. Early layers detect **edges** and gradients; deeper layers compose these into **textures** and **shapes**. The averaging kernel above is simplified — real networks learn *what* to compress, not just *that* to compress. This hierarchy (pixels → edges → textures → objects) is exactly what the VAE encoder learns.
 
 </div>
 
@@ -226,7 +226,7 @@ The word "cat" activates high attention weights in the spatial region where the 
 </div>
 
 ---
-<!-- _class: scale-70 -->
+<!-- _class: scale-60 -->
 
 # Classifier-free guidance
 
@@ -236,7 +236,13 @@ The word "cat" activates high attention weights in the spatial region where the 
 
 $$\tilde{\boldsymbol{\epsilon}} = \underbrace{\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, \varnothing)}_{\text{unconditional}} + w \cdot \Big(\underbrace{\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, c)}_{\text{conditional}} - \underbrace{\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, \varnothing)}_{\text{unconditional}}\Big)$$
 
-where $w$ is the **guidance scale** (typically 7–15).
+- $\boldsymbol{\epsilon}_\theta$ — the **denoising network** (U-Net or DiT), parameterized by $\theta$
+- $\mathbf{x}_t$ — the **noisy latent** at timestep $t$
+- $c$ — the **text condition** (CLIP embedding of the prompt)
+- $\varnothing$ — **no text** (empty prompt, i.e., unconditional)
+- **Unconditional** $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, \varnothing)$ — what the model predicts *without* any text guidance
+- **Conditional** $\boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t, c)$ — what it predicts *guided by* the prompt
+- $w$ — the **guidance scale** (typically 7–15): how much to amplify the text signal
 
 </div>
 
@@ -253,7 +259,7 @@ Think of CFG as asking: "What's *different* about images that match this prompt 
 </div>
 
 ---
-<!-- _class: scale-60 -->
+<!-- _class: scale-65 -->
 
 # The guidance scale tradeoff
 
@@ -269,7 +275,12 @@ Nearly every text-to-image system uses CFG. Stable Diffusion defaults to $w = 7.
 
 </div>
 
-<div class="example-box" data-title="Try it: varying the guidance scale">
+---
+<!-- _class: scale-75 -->
+
+# Try it: varying the guidance scale
+
+<div class="example-box" data-title="Experiment with CFG (Google Colab)">
 
 ```python
 from diffusers import StableDiffusionPipeline
@@ -286,6 +297,14 @@ for scale in [1.0, 7.5, 20.0]:
 
 </div>
 
+<div class="tip-box" data-title="What to expect">
+
+- **scale = 1.0**: Effectively no guidance — diverse but often off-prompt
+- **scale = 7.5**: Default sweet spot — faithful to prompt with natural variation
+- **scale = 20.0**: Over-guided — saturated colors, sharp artifacts, but very literal
+
+</div>
+
 ---
 <!-- _class: scale-70 -->
 
@@ -296,9 +315,9 @@ for scale in [1.0, 7.5, 20.0]:
 The [U-Net](https://arxiv.org/abs/1505.04597) is the default backbone for diffusion models from DDPM through Stable Diffusion 1–2. Its U-shaped design provides **multi-scale reasoning**:
 
 1. **Encoder** (downsampling): Reduces spatial resolution while increasing channels — captures global context
-2. **Bottleneck**: Lowest resolution, largest receptive field
+2. **Bottleneck**: Lowest resolution, largest receptive field — reasons about overall composition
 3. **Decoder** (upsampling): Restores spatial resolution — generates fine details
-4. **Skip connections**: Connect encoder to decoder at matching resolutions — preserve high-frequency spatial information
+4. **Skip connections**: Concatenate encoder features directly to the matching decoder layer — without these, the decoder must reconstruct spatial detail from the bottleneck alone, losing fine texture and edges
 
 </div>
 
@@ -307,35 +326,6 @@ The [U-Net](https://arxiv.org/abs/1505.04597) is the default backbone for diffus
 <div class="note-box" data-title="Further reading">
 
 [**Ronneberger et al. (2015, *MICCAI*)**](https://arxiv.org/abs/1505.04597) "U-Net: convolutional networks for biomedical image segmentation" — Originally for medical imaging, now the workhorse of diffusion.
-
-</div>
-
----
-<!-- _class: scale-70 -->
-
-# U-Net in diffusion models
-
-<div class="note-box" data-title="How the U-Net is adapted for diffusion">
-
-| Property | Configuration |
-|----------|--------------|
-| Input/output | Same-sized latent (e.g., 64×64×4) |
-| Timestep conditioning | Sinusoidal embeddings added to each block |
-| Text conditioning | CLIP embeddings injected via cross-attention layers |
-| Skip connections | Concatenate encoder features to decoder |
-| Parameters | ~860M (Stable Diffusion 1.5) |
-
-</div>
-
-<div class="tip-box" data-title="The intuition: why multi-scale matters">
-
-The U-Net's encoder-decoder structure lets it reason at **multiple scales simultaneously**. The bottleneck captures high-level composition ("a dog sits on the left, a tree on the right") while skip connections preserve fine details ("the dog's fur texture, the tree's leaves"). This is why U-Nets produce images with both coherent structure *and* crisp details.
-
-</div>
-
-<div class="definition-box" data-title="Connection to Lecture 15">
-
-Cross-attention in the U-Net works exactly like encoder-decoder attention in the original Transformer (Lecture 15) — the image features are the "decoder" queries, and the text embeddings are the "encoder" keys and values.
 
 </div>
 
@@ -365,19 +355,26 @@ The [Diffusion Transformer (DiT)](https://arxiv.org/abs/2212.09748) replaces the
 </div>
 
 ---
-<!-- _class: scale-75 -->
+<!-- _class: scale-65 -->
 
 # DiT: why replace U-Net?
 
 <div class="important-box" data-title="Transformers scale better">
 
-DiT-XL/2 (675M parameters) achieves state-of-the-art FID of 2.27 on ImageNet, beating all previous diffusion models. More importantly, DiT shows **clean scaling behavior** — larger models consistently produce better results, with no architectural bottlenecks.
+DiT-XL/2 (675M parameters) achieves state-of-the-art [FID](https://arxiv.org/abs/1706.08500) of 2.27 on ImageNet, beating all previous diffusion models. More importantly, DiT shows **clean scaling behavior** — larger models consistently produce better results, with no architectural bottlenecks.
+
+</div>
+
+<div class="definition-box" data-title="Key terms">
+
+- **[Fréchet Inception Distance (FID)](https://arxiv.org/abs/1706.08500)** ([Heusel et al., 2017](https://arxiv.org/abs/1706.08500)) measures the distance between real and generated image distributions using features from a pretrained Inception network. Lower FID = more realistic.
+- **Inductive biases** are assumptions built into the architecture — e.g., convolutions assume local spatial structure; Transformers make fewer such assumptions and let the model learn structure from data.
 
 </div>
 
 <div class="tip-box" data-title="The intuition">
 
-U-Nets have strong *inductive biases* for spatial data (locality, hierarchy). These help with small models but become constraints at scale. Transformers make fewer assumptions and let the model learn the right structure from data — the same lesson we saw with language models (Lectures 15–16).
+U-Nets have strong inductive biases for spatial data (locality, hierarchy). These help with small models but become constraints at scale. Transformers make fewer assumptions — the same lesson we saw with language models (Lectures 15–16).
 
 </div>
 
@@ -456,6 +453,6 @@ Every concept from this lecture is working together in those 5 lines of code.
 
 <div class="tip-box" data-title="Up next...">
 
-Diffusion applications: text-to-image (DALL-E 2, Imagen), text-to-video (Sora), and the ethics of generative AI
+Diffusion applications: text-to-video (Sora), text-to-audio, discrete diffusion for text, and the ethics of generative AI
 
 </div>
