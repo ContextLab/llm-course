@@ -1014,7 +1014,7 @@ c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
 <p><a href="https://arxiv.org/abs/1505.04597"><strong>Ronneberger et al. (2015, <em>MICCAI</em>)</strong></a> &quot;U-Net: convolutional networks for biomedical image segmentation&quot; — Originally for medical imaging, now the workhorse of diffusion.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-75" data-theme="cdl-theme" lang="C" class="scale-75" style="--class:scale-75;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-70" data-theme="cdl-theme" lang="C" class="scale-70" style="--class:scale-70;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="diffusion-transformer-dit">Diffusion Transformer (DiT)</h1>
 <div class="definition-box" data-title="Replacing U-Net with a Transformer">
 <p>The <a href="https://arxiv.org/abs/2212.09748">Diffusion Transformer (DiT)</a> replaces the U-Net with a standard Vision Transformer:</p>
@@ -1028,6 +1028,7 @@ c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
 <p><img src="figs/dit-pipeline.svg" alt="DiT pipeline" /></p>
 <div class="definition-box" data-title="Key terms">
 <ul>
+<li><strong>Vision Transformer (ViT)</strong>: A Transformer that treats an image as a sequence of patches (like tokens in text) — no convolutions needed</li>
 <li><strong>Noisy latent</strong>: The VAE-compressed image with Gaussian noise added at timestep <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> — this is the input the denoising network must &quot;clean up&quot;</li>
 <li><strong>Predicted noise</strong>: The network's estimate of what noise was added — subtract it from the noisy latent to get a cleaner image</li>
 </ul>

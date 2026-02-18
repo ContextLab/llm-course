@@ -86,7 +86,7 @@ The solution: don't run diffusion in pixel space. Run it in a **compressed laten
 [Latent diffusion](https://arxiv.org/abs/2112.10752) separates image generation into two stages:
 
 1. **Compression**: A pretrained **variational autoencoder** (VAE) encodes images into a compact latent space (typically 8× spatial compression)
-2. **Generation**: The diffusion process operates entirely in this latent space
+2. **Generation**: The diffusion process operates entirely in the latent space before decoding back to pixels
 
 The VAE is described on the next slide.
 
@@ -109,7 +109,9 @@ The VAE is described on the next slide.
 
 A **VAE** learns to compress images into a low-dimensional latent representation and reconstruct them:
 
-1. **Encoder**: Maps image $\mathbf{x} \in \mathbb{R}^{512 \times 512 \times 3}$ to mean $\boldsymbol{\mu}$ and variance $\boldsymbol{\sigma}^2$ of a latent distribution
+1. **Encoder**: Maps image $\mathbf{x} \in \mathbb{R}^{512 \times 512 \times 3}$ to mean $\boldsymbol{\mu}$ and standard deviation $\boldsymbol{\sigma}$ of a latent distribution
+  - $\boldsymbol{\mu}$ represents the "average" latent representation for the image
+  - $\boldsymbol{\sigma}$ captures uncertainty — how much the latent can vary while still reconstructing the image
 2. **Sampling**: Draw $\mathbf{z} \sim \mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\sigma}^2)$ — a latent vector in $\mathbb{R}^{64 \times 64 \times 4}$
 3. **Decoder**: Reconstructs the image from $\mathbf{z}$
 
@@ -143,12 +145,12 @@ Stacking convolution layers creates a hierarchy: pixels → edges → textures �
 
 <div class="tip-box" data-title="The intuition">
 
-In practice, kernels are **learned**, not fixed. Early layers detect **edges** and gradients; deeper layers compose these into **textures** and **shapes**. The averaging kernel above is simplified — real networks learn *what* to compress, not just *that* to compress. This hierarchy (pixels → edges → textures → objects) is exactly what the VAE encoder learns.
+In practice, kernels are **learned**, not fixed. Early layers detect **edges** and gradients; deeper layers compose these into **textures** and **shapes**. The averaging kernel above is simplified — real networks learn *what* to compress. This hierarchy (pixels → edges → textures → objects) is exactly what the VAE encoder learns.
 
 </div>
 
 ---
-<!-- _class: scale-75 -->
+<!-- _class: scale-60 -->
 
 # The VAE bottleneck
 
@@ -161,16 +163,26 @@ In practice, kernels are **learned**, not fixed. Early layers detect **edges** a
 | Compression ratio | 48× (786K → 16K values) |
 | Reconstruction quality | Near-lossless for natural images |
 
-The VAE is trained once and frozen. The diffusion model only ever sees latents — it never touches pixels during training or sampling.
+The VAE is trained once and frozen. The diffusion model only ever sees latent representations — it never touches pixels during training or sampling.
 
 </div>
 
-<div class="definition-box" data-title="How the VAE is trained">
+<div class="note-box" data-title="How the VAE is trained">
 
-- **Reconstruction loss** (L₁/L₂): Ensure decoded image matches the original
+- **Reconstruction loss**: Ensure decoded image matches the original
 - **KL divergence**: Regularize the latent space so it's smooth and continuous
 - **Perceptual loss**: Compare *features* extracted by a pretrained network (e.g., VGG), not raw pixels — so the model prioritizes visual similarity over pixel-exact matching
 - **Adversarial loss**: A discriminator network tries to distinguish real from reconstructed images, pushing the decoder toward photorealistic outputs
+
+</div>
+
+<div class="definition-box" data-title="KL divergence">
+
+The **Kullback-Leibler (KL) divergence** measures how one probability distribution $Q$ diverges from a reference distribution $P$:
+
+$$D_{KL}(Q \| P) = \int Q(z) \log \frac{Q(z)}{P(z)} dz$$
+
+Intuitively, it quantifies how much information is lost when $Q$ is used to approximate $P$. In VAEs, we want the learned latent distribution to be close to a simple prior (e.g., standard normal) to ensure smoothness and generalization.
 
 </div>
 
@@ -179,7 +191,7 @@ The VAE is trained once and frozen. The diffusion model only ever sees latents �
 
 # CLIP: connecting text and images
 
-<div class="definition-box" data-title="Contrastive language-image pre-training">
+<div class="definition-box" data-title="Contrastive language-image pre-training (CLIP)">
 
 [CLIP](https://arxiv.org/abs/2103.00020) learns a **shared embedding space** for text and images. It was trained on 400 million image-text pairs from the internet:
 
@@ -330,7 +342,7 @@ The [U-Net](https://arxiv.org/abs/1505.04597) is the default backbone for diffus
 </div>
 
 ---
-<!-- _class: scale-75 -->
+<!-- _class: scale-70 -->
 
 # Diffusion Transformer (DiT)
 
@@ -349,6 +361,7 @@ The [Diffusion Transformer (DiT)](https://arxiv.org/abs/2212.09748) replaces the
 
 <div class="definition-box" data-title="Key terms">
 
+- **Vision Transformer (ViT)**: A Transformer that treats an image as a sequence of patches (like tokens in text) — no convolutions needed
 - **Noisy latent**: The VAE-compressed image with Gaussian noise added at timestep $t$ — this is the input the denoising network must "clean up"
 - **Predicted noise**: The network's estimate of what noise was added — subtract it from the noisy latent to get a cleaner image
 
