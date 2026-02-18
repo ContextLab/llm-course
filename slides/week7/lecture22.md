@@ -398,17 +398,15 @@ U-Nets have strong inductive biases for spatial data (locality, hierarchy). Thes
 </div>
 
 ---
-<!-- _class: scale-70 -->
+<!-- _class: scale-75 -->
 
 # Try it: generate an image
 
 <div class="example-box" data-title="Text-to-image with Stable Diffusion (Google Colab)">
 
 ```python
-!pip install -q diffusers transformers accelerate
-
-import torch
 from diffusers import StableDiffusionPipeline
+import torch
 
 pipe = StableDiffusionPipeline.from_pretrained(
     "runwayml/stable-diffusion-v1-5", torch_dtype=torch.float16
@@ -466,6 +464,6 @@ Every concept from this lecture is working together in those 5 lines of code.
 
 <div class="tip-box" data-title="Up next...">
 
-Diffusion applications: text-to-video (Sora), text-to-audio, discrete diffusion for text, and the ethics of generative AI
+More diffusion applications (text-to-video, text-to-audio) and ethics of multimodal generative models
 
 </div>
