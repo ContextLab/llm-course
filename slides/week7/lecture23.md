@@ -6,7 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 23: Diffusion applications and ethics
+# Lecture 23: Diffusion models for video, audio, and text; ethics of generative AI
 ### PSYC 51.17: Models of language and communication
 
 Jeremy R. Manning
@@ -21,9 +21,8 @@ Winter 2026
 
 1. Explain how **Sora** extends diffusion to video via **spacetime patches**
 2. Describe how text-to-audio systems generate sound using **spectrogram-based diffusion**
-3. Explain **discrete diffusion** for text generation and its connection to BERT
-4. Evaluate ethical implications of multimodal generative AI: **deepfakes**, consent, bias, and regulation
-5. Connect diffusion models back to the course themes of language and communication
+3. Evaluate ethical implications of multimodal generative AI: **deepfakes**, consent, bias, and regulation
+4. Connect diffusion models back to the course themes of language and communication
 
 </div>
 
@@ -33,13 +32,13 @@ Winter 2026
 
 <div class="warning-box" data-title="Week 8: no classes">
 
-There are **no classes February 23–27** (instructor away). Use this time to work on your **final project** and the optional Assignment 5 (Build GPT).
+There are **no classes February 23–27** (I'll be away!). Use this time to work on your **final project** and the optional Assignment 5 (Build GPT).
 
 </div>
 
 <div class="tip-box" data-title="Companion notebook">
 
-📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/diffusion_demo.ipynb) — generate images with Stable Diffusion, experiment with guidance scales, and explore discrete diffusion for text.
+📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/video_audio_diffusion_demo.ipynb) — generate video from text, create audio with AudioLDM 2, and visualize spectrograms.
 
 </div>
 
