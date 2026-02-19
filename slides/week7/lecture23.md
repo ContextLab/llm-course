@@ -19,10 +19,10 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. Compare text-to-image architectures: **DALL-E 2**, **Stable Diffusion**, and **Imagen**
-2. Explain how **Sora** extends diffusion to video via spacetime patches
-3. Describe **discrete diffusion** for text generation and its connection to BERT
-4. Evaluate ethical implications: **deepfakes**, consent, bias, and regulation
+1. Explain how **Sora** extends diffusion to video via **spacetime patches**
+2. Describe how text-to-audio systems generate sound using **spectrogram-based diffusion**
+3. Explain **discrete diffusion** for text generation and its connection to BERT
+4. Evaluate ethical implications of multimodal generative AI: **deepfakes**, consent, bias, and regulation
 5. Connect diffusion models back to the course themes of language and communication
 
 </div>
@@ -44,154 +44,103 @@ There are **no classes February 23–27** (instructor away). Use this time to wo
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
-# Text-to-image: the big picture
+# From images to video
 
-<div class="definition-box" data-title="Three architectures, one goal">
+<div class="definition-box" data-title="Extending diffusion to the time dimension">
 
-Text-to-image systems combine a **language model** (to understand the prompt) with a **diffusion model** (to generate the image). The three landmark systems each took a different approach:
+Video is a sequence of images over time. [Sora](https://openai.com/research/video-generation-models-as-world-simulators) (OpenAI, 2024) extends the DiT architecture (Lecture 22) from 2D image patches to 3D **spacetime patches**:
 
-| System | Text encoder | Image generation | Organization |
-|--------|-------------|-----------------|-------------|
-| [DALL-E 2](https://arxiv.org/abs/2204.06125) | CLIP | Prior + diffusion decoder | OpenAI (Apr 2022) |
-| [Imagen](https://arxiv.org/abs/2205.11487) | T5-XXL | Cascaded pixel diffusion | Google (May 2022) |
-| Stable Diffusion | CLIP | Latent diffusion | Stability AI (Aug 2022) |
-
-</div>
-
-<div class="definition-box" data-title="Remember...">
-
-- **[CLIP](https://arxiv.org/abs/2103.00020)**: Contrastive Language-Image Pre-training ([Radford et al., 2021](https://arxiv.org/abs/2103.00020)) — learns a shared embedding space for images and text, used as the text encoder in DALL-E 2 and Stable Diffusion (see Lecture 22)
-- **[T5](https://arxiv.org/abs/1910.10683)**: A text-to-text transformer (Google, 2020) — Imagen uses the largest variant (T5-XXL, 4.6B parameters) as its text encoder
+1. **Compress**: A video VAE encodes frames into a 3D latent space (height × width × time)
+2. **Patchify**: Divide the 3D latent volume into spacetime patches — small cubes spanning space *and* time
+3. **Denoise**: A DiT-like transformer processes the patch sequence, conditioned on text
+4. **Decode**: The VAE decoder reconstructs the video frames
 
 </div>
 
-<div class="important-box" data-title="The key question">
+![Sora spacetime pipeline](figs/sora-spacetime.svg)
 
-Which component matters more — the language understanding (text encoder) or the image generation (diffusion model)? Imagen's surprising finding: **scaling the text encoder helps more than scaling the diffusion model**.
+<div class="note-box" data-title="Further reading">
+
+[**OpenAI (2024)**](https://openai.com/research/video-generation-models-as-world-simulators) "Video generation models as world simulators" — Sora treats video generation as spacetime denoising.
 
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
-# DALL-E 2
+# Sora: emergent capabilities
 
-<div class="definition-box" data-title="Ramesh et al. (2022): CLIP + Prior + Decoder">
-
-[DALL-E 2](https://arxiv.org/abs/2204.06125) uses a three-stage pipeline:
-
-1. **CLIP text encoder**: Converts the text prompt to a CLIP text embedding
-2. **Prior**: A diffusion model that maps the CLIP *text* embedding to a CLIP *image* embedding
-3. **Decoder**: A diffusion model that generates a 1024×1024 image conditioned on the CLIP image embedding
-
-</div>
-
-```flow
-[Text prompt] --> [CLIP Text Encoder] --> [Text Embedding] --> [Prior (Diffusion)] --> [Image Embedding] --> [Decoder (Diffusion)] --> [1024×1024 Image]
-```
-
-<div class="note-box" data-title="Why the prior?">
-
-CLIP's text and image embeddings live in a shared space but aren't identical. The prior bridges this gap — it translates "what the text means" into "what the image should look like" in CLIP's visual space. This two-step approach allows DALL-E 2 to produce diverse images from the same prompt.
-
-</div>
-
----
-
-# Imagen
-
-<div class="definition-box" data-title="Saharia et al. (2022): language model + cascaded diffusion">
-
-[Imagen](https://arxiv.org/abs/2205.11487) takes a simpler approach:
-
-1. **T5-XXL text encoder** (4.6B parameters): Encodes the prompt into rich text embeddings
-2. **Base diffusion model**: Generates a 64×64 image conditioned on text embeddings
-3. **Super-resolution models**: Two cascaded diffusion models upscale 64→256→1024
-
-</div>
-
-<div class="important-box" data-title="Imagen's key finding">
-
-Scaling the text encoder from T5-Small (60M) to T5-XXL (4.6B) improved image quality **more** than scaling the diffusion model. This suggests that the bottleneck in text-to-image generation is *understanding the prompt*, not *generating pixels*. Language models matter even in vision!
-
-</div>
-
----
-
-# Stable Diffusion
-
-<div class="note-box" data-title="Open-source democratization">
-
-[Stable Diffusion](https://arxiv.org/abs/2112.10752) ([Rombach et al., 2022](https://arxiv.org/abs/2112.10752)) is the open-source implementation of latent diffusion (Lecture 22):
-
-| Property | Value |
-|----------|-------|
-| Text encoder | CLIP ViT-L/14 |
-| Diffusion backbone | U-Net in 64×64×4 latent space |
-| Training data | [LAION-5B](https://laion.ai/blog/laion-5b/) (5 billion image-text pairs) |
-| Parameters | ~890M (U-Net) + 123M (text encoder) |
-| Generation time | ~5 seconds on consumer GPU |
-| License | Open-source (CreativeML Open RAIL-M) |
-
-</div>
-
-<div class="tip-box" data-title="Why open matters">
-
-Stable Diffusion's open release in August 2022 transformed the field. Within months, the community created ControlNet (pose-guided generation), LoRA fine-tuning (custom styles in minutes), and inpainting tools. Open weights enabled innovation at a pace no closed model could match.
-
-</div>
-
----
-<!-- _class: scale-90 -->
-
-# Text-to-video: Sora
-
-<div class="definition-box" data-title="OpenAI (2024): video generation as world simulation">
-
-[Sora](https://openai.com/research/video-generation-models-as-world-simulators) extends diffusion to video by treating videos as sequences of **spacetime patches**:
-
-1. **Compress**: Encode video frames into a latent space using a video VAE
-2. **Patchify**: Divide the 3D latent (height × width × time) into spacetime patches
-3. **Generate**: Apply a DiT-like transformer to denoise the entire spacetime volume
-4. **Decode**: VAE decoder reconstructs the video frames
-
-</div>
-
-<div class="note-box" data-title="Emergent capabilities">
+<div class="important-box" data-title="More than pixel generation">
 
 Sora exhibits surprising behaviors not explicitly trained:
-- **3D consistency**: Objects maintain shape when the camera moves
+
+- **3D consistency**: Objects maintain shape as the camera moves
 - **Long-range coherence**: Characters persist across scene changes
 - **Physics simulation**: Water flows, reflections update, objects interact plausibly
+- **Variable format**: Handles different resolutions, aspect ratios, and durations — because spacetime patches are resolution-agnostic
 
-OpenAI describes Sora as a "world simulator" — raising questions about whether diffusion models are learning something deeper than pixel patterns.
+</div>
+
+<div class="tip-box" data-title="The world simulator question">
+
+OpenAI describes Sora as a "world simulator." Does a model that generates plausible physics *understand* physics, or is it pattern-matching at a scale we find convincing? This connects to our discussion of language and understanding (Lecture 20) — predicting the next token (or the next frame) may be more powerful than it appears.
+
+</div>
+
+<div class="definition-box" data-title="Connection to Lecture 22">
+
+Sora combines three ideas from Lecture 22: **latent compression** (video VAE, like the image VAE), **classifier-free guidance** (text controls generation), and **DiT** (Transformer backbone, scaled to 3D patches).
 
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
-# Text-to-audio
+# From waveforms to spectrograms
 
-<div class="definition-box" data-title="Diffusion in the spectral domain">
+<div class="definition-box" data-title="Applying diffusion to audio">
 
-Audio generation applies diffusion to **spectrograms** (time-frequency representations of sound):
+Audio generation applies diffusion to **spectrograms** — visual representations of sound frequencies over time:
 
-1. Convert audio to a [mel-spectrogram](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum) (a visual representation of sound frequencies over time, weighted to match human hearing)
-2. Run diffusion in spectrogram space (or a latent compression of it)
-3. Convert the generated spectrogram back to audio using a **vocoder** (a neural network that reconstructs audio waveforms from spectrograms)
+1. **Convert**: Transform audio into a [mel spectrogram](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum) (frequency bands × time steps, weighted to match human hearing)
+2. **Compress**: A VAE encodes the spectrogram into a latent space (just like image latent diffusion)
+3. **Denoise**: Latent diffusion generates a clean spectrogram conditioned on text
+4. **Reconstruct**: A **vocoder** (e.g., HiFi-GAN) converts the spectrogram back to an audio waveform
 
 </div>
 
-<div class="note-box" data-title="Notable systems">
+![Audio diffusion pipeline](figs/audio-diffusion.svg)
 
-| System | Modality | Approach |
-|--------|----------|----------|
-| AudioLDM 2 | Music + speech + effects | Latent diffusion on audio |
-| MusicGen (Meta) | Music | Autoregressive (not diffusion) |
-| Stable Audio (Stability AI) | Music + effects | Latent diffusion with timing control |
-| Bark (Suno) | Speech | Autoregressive + diffusion |
+<div class="tip-box" data-title="The key insight">
 
-Diffusion and autoregressive approaches are **converging** in audio — many systems use hybrid architectures.
+By converting audio to a spectrogram, we turn a 1D temporal signal into a 2D image — and the entire image diffusion toolkit (VAE, latent diffusion, text conditioning) transfers directly. The vocoder handles the "last mile" conversion back to sound.
+
+</div>
+
+---
+<!-- _class: scale-65 -->
+
+# Text-to-audio systems
+
+<div class="note-box" data-title="The current landscape">
+
+| System | Modality | Approach | Key feature |
+|--------|----------|----------|-------------|
+| [AudioLDM 2](https://arxiv.org/abs/2308.05734) | Music + speech + effects | Latent diffusion | CLAP text encoder |
+| [Stable Audio](https://arxiv.org/abs/2404.10301) (Stability AI) | Music + effects | Latent diffusion + timing | Controllable duration |
+| [MusicGen](https://arxiv.org/abs/2306.05284) (Meta) | Music | Autoregressive (not diffusion) | Single-stage, no vocoder |
+| [Bark](https://github.com/suno-ai/bark) (Suno) | Speech | Autoregressive + diffusion | Multilingual, emotion control |
+
+Diffusion and autoregressive approaches are **converging** — many systems use hybrid architectures.
+
+</div>
+
+<div class="definition-box" data-title="Key terms">
+
+- **[CLAP](https://arxiv.org/abs/2211.06687)** (Contrastive Language-Audio Pretraining): The audio equivalent of CLIP — learns a shared embedding space for text and audio, enabling text-conditioned generation
+- **Vocoder**: A neural network (e.g., [HiFi-GAN](https://arxiv.org/abs/2010.05646)) that reconstructs audio waveforms from spectrograms — the "decoder" that turns images back into sound
 
 </div>
 
@@ -237,6 +186,7 @@ Discrete diffusion suggests that autoregressive generation isn't the only way to
 </div>
 
 ---
+<!-- _class: scale-80 -->
 
 # What diffusion teaches us about language
 
@@ -257,6 +207,7 @@ From ELIZA's pattern matching (Week 1) to diffusion's iterative refinement (Week
 </div>
 
 ---
+<!-- _class: scale-80 -->
 
 # Ethics: deepfakes and consent
 
@@ -277,6 +228,7 @@ A [2019 Sensity AI (Deeptrace) report](https://sensity.ai/blog/deepfake-detectio
 </div>
 
 ---
+<!-- _class: scale-80 -->
 
 # Ethics: bias in generated content
 
@@ -319,6 +271,7 @@ Training data is scraped from the internet without explicit consent. Artists arg
 </div>
 
 ---
+<!-- _class: scale-80 -->
 
 # Ethics: regulation and provenance
 
@@ -338,20 +291,21 @@ Regulation works when enforced. But technical solutions (watermarking, detection
 </div>
 
 ---
+<!-- _class: scale-55 -->
 
 # Discussion
 
 <div class="tip-box" data-title="Questions to consider">
 
-1. **Consent and creation**: If a model trained on millions of artists' work can generate art "in the style of" a specific artist, is that theft, homage, or something new? Should artists be able to opt out of training data?
+1. **The world simulator question**: Sora generates videos with plausible physics. Does this mean it has learned a model of the physical world, or is it pattern-matching at a scale we find convincing? How would we tell the difference?
 
-2. **The world simulator question**: Sora generates videos with plausible physics. Does this mean it has learned a model of the physical world, or is it pattern-matching at a scale we find convincing? How would we tell the difference?
+2. **The spectrogram trick**: Converting audio to spectrograms lets us reuse image diffusion tools for sound. What other modalities could be "converted to images" and generated this way? What are the limits of this approach?
 
 3. **Discrete diffusion and writing**: If MDLM can generate text by iterative refinement (all tokens at once, gradually unmasking), does this better capture how humans write than GPT's left-to-right generation? What about poetry, where the end is often written before the middle?
 
 4. **Regulation tradeoffs**: Strict regulation of generative AI could slow harmful applications but also impede beneficial research. How should society balance these? Is open-source part of the problem or part of the solution?
 
-5. **The compression connection**: Language compresses thought (Lecture 20). VAEs compress images. Diffusion generates by decompressing noise. Is there a deep connection between communication, compression, and generation?
+5. **The compression connection**: Language compresses thought (Lecture 20). VAEs compress images. Spectrograms compress audio. Diffusion generates by decompressing noise. Is there a deep connection between communication, compression, and generation?
 
 </div>
 
@@ -361,9 +315,10 @@ Regulation works when enforced. But technical solutions (watermarking, detection
 
 <div class="note-box" data-title="Think about it...">
 
-- The same diffusion framework scales across modalities — images (DALL-E 2, Stable Diffusion), video (Sora), audio, and text (MDLM) — suggesting **iterative refinement from noise** is a general-purpose generation principle.
-- Imagen's key finding — that **scaling the text encoder matters more than scaling the image generator** — reveals that understanding the prompt is the bottleneck, not producing pixels. Language models are central even in vision.
-- The power of open-source: Stable Diffusion's release enabled an explosion of community innovation (ControlNet, LoRA, inpainting) that no closed model could match — but also democratized the tools for deepfakes and misuse.
+- The same diffusion framework scales across modalities — images (Lecture 22), video (Sora), audio (AudioLDM), and text (MDLM) — suggesting **iterative refinement from noise** is a general-purpose generation principle.
+- The **spectrogram trick** illustrates a powerful pattern: convert your data into a format where existing tools work, then convert back. Turning audio into "images" unlocks the entire latent diffusion pipeline.
+- Sora's emergent physics simulation raises the question: is **predicting the next frame** enough to learn a world model? The same question we asked about language (Lecture 20) now applies to vision.
+- The ethics of generative AI are not optional add-ons — **consent**, **bias**, **copyright**, and **provenance** are central design challenges, not afterthoughts.
 
 </div>
 
@@ -374,11 +329,9 @@ Regulation works when enforced. But technical solutions (watermarking, detection
 
 <div class="note-box" data-title="Further reading">
 
-[**Ramesh et al. (2022, *arXiv*)**](https://arxiv.org/abs/2204.06125) "Hierarchical Text-Conditional Image Generation with CLIP Latents" — DALL-E 2: CLIP prior + diffusion decoder.
-
-[**Saharia et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2205.11487) "Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding" — Imagen: scaling text encoders matters most.
-
 [**OpenAI (2024)**](https://openai.com/research/video-generation-models-as-world-simulators) "Video Generation Models as World Simulators" — Sora: spacetime patches and emergent physics.
+
+[**Liu et al. (2023, *IEEE/ACM TASLP*)**](https://arxiv.org/abs/2308.05734) "AudioLDM 2: Learning Holistic Audio Generation with Self-supervised Pretraining" — Latent diffusion for audio with CLAP conditioning.
 
 [**Sahoo et al. (2024, *NeurIPS*)**](https://arxiv.org/abs/2406.07524) "Simple and Effective Masked Diffusion Language Models" — MDLM: bridging BERT and diffusion for text.
 

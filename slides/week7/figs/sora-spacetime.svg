@@ -1,0 +1,97 @@
+<svg viewBox="0 0 740 130" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <symbol id="st-arrow" viewBox="0 0 76.41 27.12">
+    <path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
+  </symbol>
+</defs>
+
+<!-- ===== VIDEO FRAMES (stacked to suggest sequence) ===== -->
+<rect x="18" y="12" width="48" height="36" rx="3" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.8"/>
+<rect x="14" y="16" width="48" height="36" rx="3" fill="#d0d4d8" stroke="#2d3436" stroke-width="0.8"/>
+<rect x="10" y="20" width="48" height="36" rx="3" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
+<!-- Content hints inside front frame -->
+<rect x="15" y="26" width="18" height="10" rx="1" fill="#dfe6e9"/>
+<rect x="36" y="30" width="16" height="6" rx="1" fill="#dfe6e9"/>
+<text x="34" y="74" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Video</text>
+<text x="34" y="86" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">T × H × W</text>
+
+<!-- ===== ARROW 1: Video VAE ===== -->
+<use href="#st-arrow" x="66" y="32" width="50" height="9" style="color: #0a2518"/>
+<text x="91" y="26" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Video VAE</text>
+
+<!-- ===== 3D LATENT VOLUME (pseudo-isometric cube) ===== -->
+<!-- Front face -->
+<rect x="126" y="24" width="34" height="28" rx="2" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
+<!-- Top face (parallelogram) -->
+<polygon points="126,24 134,15 168,15 160,24" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.8"/>
+<!-- Right face (parallelogram) -->
+<polygon points="160,24 168,15 168,43 160,52" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.8"/>
+<text x="145" y="42" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">3D</text>
+<text x="148" y="74" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">3D latent</text>
+<text x="148" y="86" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">t × h × w</text>
+
+<!-- ===== ARROW 2: Patchify ===== -->
+<use href="#st-arrow" x="176" y="32" width="50" height="9" style="color: #0a2518"/>
+<text x="201" y="26" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Patchify</text>
+
+<!-- ===== SPACETIME PATCHES (5×4 grid of small squares) ===== -->
+<!-- Row 0 -->
+<rect x="234" y="14" width="8" height="8" rx="1" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="244" y="14" width="8" height="8" rx="1" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="254" y="14" width="8" height="8" rx="1" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="264" y="14" width="8" height="8" rx="1" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="274" y="14" width="8" height="8" rx="1" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.4"/>
+<!-- Row 1 -->
+<rect x="234" y="24" width="8" height="8" rx="1" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="244" y="24" width="8" height="8" rx="1" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="254" y="24" width="8" height="8" rx="1" fill="#ffeaa7" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="264" y="24" width="8" height="8" rx="1" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="274" y="24" width="8" height="8" rx="1" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.4"/>
+<!-- Row 2 -->
+<rect x="234" y="34" width="8" height="8" rx="1" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="244" y="34" width="8" height="8" rx="1" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="254" y="34" width="8" height="8" rx="1" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="264" y="34" width="8" height="8" rx="1" fill="#ffeaa7" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="274" y="34" width="8" height="8" rx="1" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.4"/>
+<!-- Row 3 -->
+<rect x="234" y="44" width="8" height="8" rx="1" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="244" y="44" width="8" height="8" rx="1" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="254" y="44" width="8" height="8" rx="1" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="264" y="44" width="8" height="8" rx="1" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.4"/>
+<rect x="274" y="44" width="8" height="8" rx="1" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.4"/>
+<text x="258" y="74" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Patches</text>
+<text x="258" y="86" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">token sequence</text>
+
+<!-- ===== ARROW 3 ===== -->
+<use href="#st-arrow" x="290" y="32" width="50" height="9" style="color: #0a2518"/>
+
+<!-- ===== DiT BLOCK (highlighted) ===== -->
+<rect x="348" y="14" width="60" height="42" rx="5" fill="#ffeaa7" stroke="#2d3436" stroke-width="1.2"/>
+<text x="378" y="31" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">DiT</text>
+<text x="378" y="44" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">denoise</text>
+<text x="378" y="74" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Transformer</text>
+<text x="378" y="86" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">+ text conditioning</text>
+
+<!-- ===== ARROW 4: Decode ===== -->
+<use href="#st-arrow" x="416" y="32" width="50" height="9" style="color: #0a2518"/>
+<text x="441" y="26" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Decode</text>
+
+<!-- ===== OUTPUT VIDEO FRAMES ===== -->
+<rect x="478" y="12" width="48" height="36" rx="3" fill="#dfe6e9" stroke="#2d3436" stroke-width="0.8"/>
+<rect x="474" y="16" width="48" height="36" rx="3" fill="#d0d4d8" stroke="#2d3436" stroke-width="0.8"/>
+<rect x="470" y="20" width="48" height="36" rx="3" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
+<rect x="475" y="26" width="18" height="10" rx="1" fill="#dfe6e9"/>
+<rect x="496" y="30" width="16" height="6" rx="1" fill="#dfe6e9"/>
+<text x="494" y="74" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Output</text>
+<text x="494" y="86" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">video</text>
+
+<!-- ===== ANNOTATION BOX ===== -->
+<rect x="540" y="5" width="192" height="118" rx="6" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="636" y="22" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Key insight</text>
+<text x="550" y="40" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436">Treat video as a <tspan font-weight="bold">3D volume</tspan>:</text>
+<text x="550" y="54" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436">height × width × time.</text>
+<text x="550" y="72" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436">Cut into patches across all 3</text>
+<text x="550" y="86" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436">dimensions → token sequence.</text>
+<line x1="550" y1="94" x2="722" y2="94" stroke="#dfe6e9" stroke-width="0.8"/>
+<text x="550" y="108" font-size="8" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Same as DiT (L22), but in 3D.</text>
+</svg>
