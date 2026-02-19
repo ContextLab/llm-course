@@ -1,0 +1,89 @@
+<svg viewBox="0 0 740 140" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <symbol id="mel-arrow" viewBox="0 0 76.41 27.12">
+    <path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
+  </symbol>
+</defs>
+
+<!-- ===== LEFT: Audio waveform ===== -->
+<rect x="10" y="10" width="180" height="80" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="1"/>
+<!-- Waveform -->
+<path d="M20,50 Q30,20 40,50 Q50,80 60,50 Q70,25 80,50 Q90,75 100,50 Q110,30 120,50 Q130,70 140,50 Q150,35 160,50 Q170,65 180,50" fill="none" stroke="#2d3436" stroke-width="1.5"/>
+<!-- Zero line -->
+<line x1="18" y1="50" x2="182" y2="50" stroke="#636e72" stroke-width="0.4" stroke-dasharray="2,2"/>
+<!-- Labels -->
+<text x="100" y="104" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Audio waveform</text>
+<text x="100" y="116" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">amplitude over time (1D signal)</text>
+
+<!-- Arrow -->
+<use href="#mel-arrow" x="198" y="42" width="60" height="10" style="color: #0a2518"/>
+<text x="228" y="36" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">STFT + mel filter</text>
+
+<!-- ===== RIGHT: Mel spectrogram (detailed heatmap) ===== -->
+<rect x="268" y="6" width="200" height="88" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="1"/>
+<!-- Heatmap grid (10 cols × 8 rows, dark = high energy at bottom) -->
+<!-- Row 0 (highest freq, lightest) -->
+<rect x="272" y="10" width="18" height="9" fill="#f5f6fa"/><rect x="292" y="10" width="18" height="9" fill="#f0f1f5"/>
+<rect x="312" y="10" width="18" height="9" fill="#f5f6fa"/><rect x="332" y="10" width="18" height="9" fill="#e8eaee"/>
+<rect x="352" y="10" width="18" height="9" fill="#f5f6fa"/><rect x="372" y="10" width="18" height="9" fill="#f0f1f5"/>
+<rect x="392" y="10" width="18" height="9" fill="#f5f6fa"/><rect x="412" y="10" width="18" height="9" fill="#e8eaee"/>
+<rect x="432" y="10" width="18" height="9" fill="#f5f6fa"/><rect x="452" y="10" width="18" height="9" fill="#f0f1f5"/>
+<!-- Row 1 -->
+<rect x="272" y="20" width="18" height="9" fill="#e8eaee"/><rect x="292" y="20" width="18" height="9" fill="#dfe6e9"/>
+<rect x="312" y="20" width="18" height="9" fill="#e8eaee"/><rect x="332" y="20" width="18" height="9" fill="#d0d4d8"/>
+<rect x="352" y="20" width="18" height="9" fill="#e8eaee"/><rect x="372" y="20" width="18" height="9" fill="#dfe6e9"/>
+<rect x="392" y="20" width="18" height="9" fill="#e8eaee"/><rect x="412" y="20" width="18" height="9" fill="#d0d4d8"/>
+<rect x="432" y="20" width="18" height="9" fill="#e8eaee"/><rect x="452" y="20" width="18" height="9" fill="#dfe6e9"/>
+<!-- Row 2 -->
+<rect x="272" y="30" width="18" height="9" fill="#d0d4d8"/><rect x="292" y="30" width="18" height="9" fill="#b2bec3"/>
+<rect x="312" y="30" width="18" height="9" fill="#c5cacd"/><rect x="332" y="30" width="18" height="9" fill="#acb2b6"/>
+<rect x="352" y="30" width="18" height="9" fill="#d0d4d8"/><rect x="372" y="30" width="18" height="9" fill="#b2bec3"/>
+<rect x="392" y="30" width="18" height="9" fill="#c5cacd"/><rect x="412" y="30" width="18" height="9" fill="#acb2b6"/>
+<rect x="432" y="30" width="18" height="9" fill="#d0d4d8"/><rect x="452" y="30" width="18" height="9" fill="#b2bec3"/>
+<!-- Row 3 -->
+<rect x="272" y="40" width="18" height="9" fill="#acb2b6"/><rect x="292" y="40" width="18" height="9" fill="#879094"/>
+<rect x="312" y="40" width="18" height="9" fill="#979fa3"/><rect x="332" y="40" width="18" height="9" fill="#778084"/>
+<rect x="352" y="40" width="18" height="9" fill="#acb2b6"/><rect x="372" y="40" width="18" height="9" fill="#879094"/>
+<rect x="392" y="40" width="18" height="9" fill="#979fa3"/><rect x="412" y="40" width="18" height="9" fill="#778084"/>
+<rect x="432" y="40" width="18" height="9" fill="#acb2b6"/><rect x="452" y="40" width="18" height="9" fill="#879094"/>
+<!-- Row 4 -->
+<rect x="272" y="50" width="18" height="9" fill="#879094"/><rect x="292" y="50" width="18" height="9" fill="#636e72"/>
+<rect x="312" y="50" width="18" height="9" fill="#778084"/><rect x="332" y="50" width="18" height="9" fill="#636e72"/>
+<rect x="352" y="50" width="18" height="9" fill="#879094"/><rect x="372" y="50" width="18" height="9" fill="#636e72"/>
+<rect x="392" y="50" width="18" height="9" fill="#778084"/><rect x="412" y="50" width="18" height="9" fill="#636e72"/>
+<rect x="432" y="50" width="18" height="9" fill="#879094"/><rect x="452" y="50" width="18" height="9" fill="#636e72"/>
+<!-- Row 5 -->
+<rect x="272" y="60" width="18" height="9" fill="#636e72"/><rect x="292" y="60" width="18" height="9" fill="#4a5357"/>
+<rect x="312" y="60" width="18" height="9" fill="#636e72"/><rect x="332" y="60" width="18" height="9" fill="#4a5357"/>
+<rect x="352" y="60" width="18" height="9" fill="#636e72"/><rect x="372" y="60" width="18" height="9" fill="#4a5357"/>
+<rect x="392" y="60" width="18" height="9" fill="#636e72"/><rect x="412" y="60" width="18" height="9" fill="#4a5357"/>
+<rect x="432" y="60" width="18" height="9" fill="#636e72"/><rect x="452" y="60" width="18" height="9" fill="#4a5357"/>
+<!-- Row 6 (low freq, darkest) -->
+<rect x="272" y="70" width="18" height="9" fill="#4a5357"/><rect x="292" y="70" width="18" height="9" fill="#3d4548"/>
+<rect x="312" y="70" width="18" height="9" fill="#4a5357"/><rect x="332" y="70" width="18" height="9" fill="#3d4548"/>
+<rect x="352" y="70" width="18" height="9" fill="#4a5357"/><rect x="372" y="70" width="18" height="9" fill="#3d4548"/>
+<rect x="392" y="70" width="18" height="9" fill="#4a5357"/><rect x="412" y="70" width="18" height="9" fill="#3d4548"/>
+<rect x="432" y="70" width="18" height="9" fill="#4a5357"/><rect x="452" y="70" width="18" height="9" fill="#3d4548"/>
+<!-- Row 7 -->
+<rect x="272" y="80" width="18" height="9" fill="#3d4548"/><rect x="292" y="80" width="18" height="9" fill="#2d3436"/>
+<rect x="312" y="80" width="18" height="9" fill="#3d4548"/><rect x="332" y="80" width="18" height="9" fill="#2d3436"/>
+<rect x="352" y="80" width="18" height="9" fill="#3d4548"/><rect x="372" y="80" width="18" height="9" fill="#2d3436"/>
+<rect x="392" y="80" width="18" height="9" fill="#3d4548"/><rect x="412" y="80" width="18" height="9" fill="#2d3436"/>
+<rect x="432" y="80" width="18" height="9" fill="#3d4548"/><rect x="452" y="80" width="18" height="9" fill="#2d3436"/>
+
+<!-- Axis labels -->
+<text x="265" y="10" font-size="6.5" font-family="Avenir,sans-serif" fill="#636e72">8 kHz</text>
+<text x="265" y="90" font-size="6.5" font-family="Avenir,sans-serif" fill="#636e72">0 Hz</text>
+<text x="368" y="100" text-anchor="middle" font-size="6.5" font-family="Avenir,sans-serif" fill="#636e72">time →</text>
+
+<text x="368" y="116" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Mel spectrogram</text>
+<text x="368" y="128" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">frequency × time (2D image!)</text>
+
+<!-- ===== ANNOTATION BOX ===== -->
+<rect x="490" y="10" width="240" height="78" rx="6" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="610" y="28" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Why "mel"?</text>
+<text x="500" y="44" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">The <tspan font-weight="bold">mel scale</tspan> warps frequencies to</text>
+<text x="500" y="56" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">match human hearing: we perceive</text>
+<text x="500" y="68" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">100→200 Hz as a bigger jump than</text>
+<text x="500" y="80" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">5000→5100 Hz (logarithmic spacing).</text>
+</svg>

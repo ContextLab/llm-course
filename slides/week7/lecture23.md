@@ -6,7 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 23: Diffusion models for video, audio, and text; ethics of generative AI
+# Lecture 23: Diffusion models for video and audio; ethics of generative AI
 ### PSYC 51.17: Models of language and communication
 
 Jeremy R. Manning
@@ -21,8 +21,8 @@ Winter 2026
 
 1. Explain how **Sora** extends diffusion to video via **spacetime patches**
 2. Describe how text-to-audio systems generate sound using **spectrogram-based diffusion**
-3. Evaluate ethical implications of multimodal generative AI: **deepfakes**, consent, bias, and regulation
-4. Connect diffusion models back to the course themes of language and communication
+3. Compare open-source text-to-video models and their architectural choices
+4. Evaluate ethical implications of multimodal generative AI: **deepfakes**, consent, bias, and regulation
 
 </div>
 
@@ -45,24 +45,64 @@ There are **no classes February 23–27** (I'll be away!). Use this time to work
 ---
 <!-- _class: scale-70 -->
 
-# From images to video
+# The Sora pipeline
 
-<div class="definition-box" data-title="Extending diffusion to the time dimension">
+<div class="definition-box" data-title="From text to video in four stages">
 
-Video is a sequence of images over time. [Sora](https://openai.com/research/video-generation-models-as-world-simulators) (OpenAI, 2024) extends the DiT architecture (Lecture 22) from 2D image patches to 3D **spacetime patches**:
+[Sora](https://openai.com/research/video-generation-models-as-world-simulators) (OpenAI, 2024) extends the DiT architecture (Lecture 22) from 2D image patches to 3D **spacetime patches**:
 
-1. **Compress**: A video VAE encodes frames into a 3D latent space (height × width × time)
-2. **Patchify**: Divide the 3D latent volume into spacetime patches — small cubes spanning space *and* time
-3. **Denoise**: A DiT-like transformer processes the patch sequence, conditioned on text
-4. **Decode**: The VAE decoder reconstructs the video frames
+1. **Patchify**: Divide the 3D latent volume into spacetime cubes → a token sequence
+2. **Denoise**: A DiT transformer processes the tokens, conditioned on text via cross-attention
+3. **Unpatchify**: Reassemble tokens back into a 3D latent volume
+4. **Decode**: The video VAE decoder reconstructs pixel-space video frames
 
 </div>
 
-![Sora spacetime pipeline](figs/sora-spacetime.svg)
+![Sora full pipeline](figs/sora-full-pipeline.svg)
 
 <div class="note-box" data-title="Further reading">
 
 [**OpenAI (2024)**](https://openai.com/research/video-generation-models-as-world-simulators) "Video generation models as world simulators" — Sora treats video generation as spacetime denoising.
+
+</div>
+
+---
+<!-- _class: scale-70 -->
+
+# The video VAE
+
+<div class="definition-box" data-title="Compressing video in space AND time">
+
+Like the image VAE from Lecture 22, a **video VAE** compresses input into a lower-dimensional latent space. The key difference: it uses **3D convolutions** that compress along the temporal dimension as well as spatial dimensions.
+
+- **Encoder**: Raw video (T × H × W × 3) → 3D latent (t × h × w × C) with t ≪ T, h ≪ H, w ≪ W
+- **Decoder**: 3D latent → reconstructed video at original resolution
+- This compression makes diffusion tractable — denoising operates in the small latent space, not on raw pixels
+
+</div>
+
+![Video VAE architecture](figs/video-vae.svg)
+
+---
+<!-- _class: scale-70 -->
+
+# 3D spacetime patchify
+
+<div class="definition-box" data-title="From volumes to tokens">
+
+After the video VAE compresses video into a 3D latent, **patchify** converts it into a sequence of tokens — just like ViT (Lecture 22) does for images:
+
+1. **Divide** the 3D latent volume into small cubes (e.g., 2 × 2 × 2 in height × width × time)
+2. **Flatten** each cube into a vector
+3. **Project** each vector into the transformer's embedding dimension via a linear layer
+
+</div>
+
+![Spacetime patchify](figs/spacetime-patchify.svg)
+
+<div class="tip-box" data-title="Why this matters">
+
+Because patches are resolution-agnostic, Sora can handle **any resolution, aspect ratio, or duration** — the token sequence simply gets longer or shorter. This is a major advantage over fixed-resolution architectures.
 
 </div>
 
@@ -88,9 +128,24 @@ OpenAI describes Sora as a "world simulator." Does a model that generates plausi
 
 </div>
 
-<div class="definition-box" data-title="Connection to Lecture 22">
+---
+<!-- _class: scale-70 -->
 
-Sora combines three ideas from Lecture 22: **latent compression** (video VAE, like the image VAE), **classifier-free guidance** (text controls generation), and **DiT** (Transformer backbone, scaled to 3D patches).
+# The text-to-video landscape
+
+<div class="definition-box" data-title="Open-source models are catching up">
+
+All major text-to-video models share Sora's core recipe — **video VAE + DiT + text conditioning** — but vary in scale, training data, and architectural details.
+
+</div>
+
+![Text-to-video model comparison](figs/text-to-video-landscape.svg)
+
+<div class="note-box" data-title="Further reading">
+
+[**Hong et al. (2024)**](https://arxiv.org/abs/2408.06072) "CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer" — 3D causal VAE + expert adaptive LayerNorm.
+
+[**Wan Video Team (2025)**](https://github.com/Wan-Video/Wan2.1) "Wan 2.1" — Top VBench scores; 1.3B model runs on consumer GPUs (~8 GB VRAM).
 
 </div>
 
@@ -110,11 +165,56 @@ Audio generation applies diffusion to **spectrograms** — visual representation
 
 </div>
 
-![Audio diffusion pipeline](figs/audio-diffusion.svg)
+![Audio diffusion pipeline](figs/audio-diffusion-v2.svg)
 
-<div class="tip-box" data-title="The key insight">
+<div class="note-box" data-title="Same pipeline as image diffusion">
 
-By converting audio to a spectrogram, we turn a 1D temporal signal into a 2D image — and the entire image diffusion toolkit (VAE, latent diffusion, text conditioning) transfers directly. The vocoder handles the "last mile" conversion back to sound.
+By converting audio to a spectrogram, we turn a 1D temporal signal into a 2D image — and the entire image diffusion toolkit (VAE, latent diffusion, text conditioning) transfers directly.
+
+</div>
+
+---
+
+# Mel spectrograms: turning sound into images
+
+<div class="definition-box" data-title="The representation that makes audio diffusion possible">
+
+A **mel spectrogram** is a 2D image representing sound. It is computed by:
+
+1. **Short-time Fourier transform (STFT)**: Slice the audio into overlapping windows and compute the frequency content of each
+2. **Mel filter bank**: Re-weight frequency bins onto the **mel scale**, which spaces low frequencies widely and high frequencies narrowly — matching how humans perceive pitch
+3. **Log scaling**: Convert power to decibels for better dynamic range
+
+The result: a 2D image (frequency × time) that diffusion models can process using the same architectures designed for photographs.
+
+</div>
+
+![Mel spectrogram](figs/mel-spectrogram.svg)
+
+---
+<!-- _class: scale-70 -->
+
+# Text conditioning in AudioLDM 2
+
+<div class="definition-box" data-title="How text controls audio generation">
+
+[AudioLDM 2](https://arxiv.org/abs/2308.05734) uses **dual cross-attention** to condition the UNet on text — similar to text-to-image diffusion (Lecture 22), but with two embedding sources:
+
+1. **CLAP + Flan-T5** encode the text prompt into embeddings
+2. **GPT-2** auto-regressively generates audio-space embeddings from the text embeddings
+3. The UNet receives **two cross-attention inputs**: Flan-T5 embeddings AND GPT-2 output embeddings
+
+</div>
+
+<div class="tip-box" data-title="Cross-attention recap (Lecture 22)">
+
+Cross-attention works the same way here as in text-to-image: the **queries** come from the audio latent features, and the **keys/values** come from the text embeddings. This lets the denoising network "look up" which parts of the text are relevant at each spatial/frequency location.
+
+</div>
+
+<div class="note-box" data-title="Why dual encoders?">
+
+CLAP captures audio-text alignment (like CLIP for images), while Flan-T5 provides rich semantic understanding. The GPT-2 bridge translates between text and audio embedding spaces — producing the "language of audio" (LOA).
 
 </div>
 
@@ -139,69 +239,26 @@ Diffusion and autoregressive approaches are **converging** — many systems use 
 <div class="definition-box" data-title="Key terms">
 
 - **[CLAP](https://arxiv.org/abs/2211.06687)** (Contrastive Language-Audio Pretraining): The audio equivalent of CLIP — learns a shared embedding space for text and audio, enabling text-conditioned generation
-- **Vocoder**: A neural network (e.g., [HiFi-GAN](https://arxiv.org/abs/2010.05646)) that reconstructs audio waveforms from spectrograms — the "decoder" that turns images back into sound
+- **Vocoder**: A neural network (e.g., [HiFi-GAN](https://arxiv.org/abs/2010.05646)) that reconstructs audio waveforms from spectrograms
 
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
-# Discrete diffusion for text
+# The vocoder: from spectrograms to sound
 
-<div class="definition-box" data-title="Sahoo et al. (2024, NeurIPS): Masked Diffusion Language Models (MDLM)">
+<div class="definition-box" data-title="Why this step is non-trivial">
 
-Standard diffusion adds Gaussian noise to continuous data. For discrete data like text, [MDLM](https://arxiv.org/abs/2406.07524) replaces "adding noise" with **masking tokens**:
-
-- **Forward process**: Randomly replace tokens with [MASK], increasing the masking rate over time
-- **Reverse process**: A transformer predicts the masked tokens, gradually unmasking the sequence
-- At $t = T$: all tokens are masked. At $t = 0$: the full text is revealed.
+Converting a mel spectrogram back to audio is **not** a simple inverse transform. Spectrograms discard **phase information** — the timing relationships between frequency components. Recovering natural-sounding audio requires a **learned neural network**.
 
 </div>
 
-<div class="important-box" data-title="Connection to BERT">
+![Vocoder pipeline](figs/vocoder.svg)
 
-This should sound familiar! BERT (Lecture 18) also predicts masked tokens. The key difference: BERT masks a fixed 15% of tokens and predicts them in one shot. MDLM uses a **continuous masking schedule** and iteratively unmasks over multiple steps — bridging masked language modeling and diffusion.
+<div class="tip-box" data-title="How HiFi-GAN works">
 
-</div>
-
----
-
-# Why discrete diffusion matters for NLP
-
-<div class="note-box" data-title="Advantages over autoregressive generation">
-
-| Property | Autoregressive (GPT) | Discrete diffusion (MDLM) |
-|----------|---------------------|--------------------------|
-| Generation order | Left to right only | Any order (parallel) |
-| Editing | Must regenerate from edit point | Re-mask and re-denoise locally |
-| Speed | $O(N)$ sequential steps | Can trade steps for parallelism |
-| Controllability | Prompt engineering | Direct guidance at any position |
-
-</div>
-
-<div class="tip-box" data-title="The bigger picture">
-
-Discrete diffusion suggests that autoregressive generation isn't the only way to produce text. Just as image diffusion generates all pixels simultaneously through refinement, text diffusion could generate all tokens simultaneously — more like how humans revise a draft than how they speak word-by-word.
-
-</div>
-
----
-<!-- _class: scale-80 -->
-
-# What diffusion teaches us about language
-
-<div class="definition-box" data-title="Connecting back to course themes">
-
-Diffusion models offer a new lens on language and communication:
-
-- **Iterative refinement** mirrors how humans write: rough draft → revision → polished text. MDLM formalizes this as a denoising process.
-- **Compression**: Latent diffusion shows that perceptually important information can be compressed dramatically (48× for images). Is language itself a compression of thought (Delétang et al., 2024, Lecture 20)?
-- **Multimodal communication**: Text-to-image systems prove that language can guide visual generation. Speaker-listener neural coupling (Lecture 20) suggests human brains do something similar — using language to reconstruct visual experiences.
-
-</div>
-
-<div class="tip-box" data-title="Full circle">
-
-From ELIZA's pattern matching (Week 1) to diffusion's iterative refinement (Week 7), we've seen that generation is fundamentally about **transforming noise into signal**. Whether that noise is random tokens, random pixels, or the ambiguity of human communication, the core challenge is the same.
+[HiFi-GAN](https://arxiv.org/abs/2010.05646) (Kong et al., 2020) is a GAN-based vocoder: a **generator** uses transposed convolutions to progressively upsample the spectrogram to waveform resolution, while **multi-scale discriminators** judge audio quality at different time scales. It produces 22 kHz audio at 168× real-time speed.
 
 </div>
 
@@ -256,10 +313,10 @@ Bias exists at every level: in the training data (internet images skew Western/m
 
 | Case | Status | Key issue |
 |------|--------|-----------|
-| Getty Images v. Stability AI | Ongoing (2023–) | Training on copyrighted stock photos |
-| Andersen v. Stability AI | Class action (2023–) | Artists' styles replicated without consent |
-| NYT v. OpenAI | Filed Dec 2023 | Verbatim reproduction of articles |
-| Thomson Reuters v. Ross | Ruled 2025 | Training on proprietary legal database |
+| [Getty Images v. Stability AI](https://www.bakerlaw.com/getty-images-v-stability-ai/) | UK: copyright claims rejected (Nov 2025); US: ongoing | Training on copyrighted stock photos |
+| [Andersen v. Stability AI](https://jipel.law.nyu.edu/andersen-v-stability-ai-the-landmark-case-unpacking-the-copyright-risks-of-ai-image-generators/) | Class action (2023 –); trial Sept 2026 | Artists' styles replicated without consent |
+| [NYT v. OpenAI](https://www.npr.org/2025/03/26/nx-s1-5288157/new-york-times-openai-copyright-case-goes-forward) | Filed Dec 2023; copyright claims survive (Mar 2025) | Verbatim reproduction of articles |
+| [Thomson Reuters v. Ross](https://perkinscoie.com/insights/update/fair-use-defense-failed-in-thomson-reuters-v-ross-jury-still-out-for-generative-ai) | Ruled Feb 2025 — fair use defense failed | Training on proprietary legal database |
 
 </div>
 
@@ -276,10 +333,10 @@ Training data is scraped from the internet without explicit consent. Artists arg
 
 <div class="definition-box" data-title="Emerging regulatory frameworks">
 
-- **EU AI Act (2024)**: Requires labeling of AI-generated content, transparency about training data, risk classification for generative systems
+- **[EU AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng) (2024)**: Requires labeling of AI-generated content, transparency about training data, risk classification for generative systems
 - **[C2PA](https://c2pa.org/) (Coalition for Content Provenance and Authenticity)**: Technical standard for embedding provenance metadata in images and videos — "nutrition labels" for digital content
-- **US Executive Order (Oct 2023)**: Requires watermarking of AI-generated content from government contractors
-- **China's deep synthesis regulations (2023)**: Mandatory labeling and registration of deepfake services
+- **[US Executive Order 14110](https://www.federalregister.gov/documents/2023/11/01/2023-24283/safe-secure-and-trustworthy-development-and-use-of-artificial-intelligence) (Oct 2023)**: Requires watermarking of AI-generated content from government contractors
+- **[China's deep synthesis regulations](https://www.chinalawtranslate.com/en/deep-synthesis/) (2023)**: Mandatory labeling and registration of deepfake services
 
 </div>
 
@@ -300,11 +357,9 @@ Regulation works when enforced. But technical solutions (watermarking, detection
 
 2. **The spectrogram trick**: Converting audio to spectrograms lets us reuse image diffusion tools for sound. What other modalities could be "converted to images" and generated this way? What are the limits of this approach?
 
-3. **Discrete diffusion and writing**: If MDLM can generate text by iterative refinement (all tokens at once, gradually unmasking), does this better capture how humans write than GPT's left-to-right generation? What about poetry, where the end is often written before the middle?
+3. **Regulation tradeoffs**: Strict regulation of generative AI could slow harmful applications but also impede beneficial research. How should society balance these? Is open-source part of the problem or part of the solution?
 
-4. **Regulation tradeoffs**: Strict regulation of generative AI could slow harmful applications but also impede beneficial research. How should society balance these? Is open-source part of the problem or part of the solution?
-
-5. **The compression connection**: Language compresses thought (Lecture 20). VAEs compress images. Spectrograms compress audio. Diffusion generates by decompressing noise. Is there a deep connection between communication, compression, and generation?
+4. **The compression connection**: Language compresses thought (Lecture 20). VAEs compress images. Spectrograms compress audio. Diffusion generates by decompressing noise. Is there a deep connection between communication, compression, and generation?
 
 </div>
 
@@ -314,7 +369,7 @@ Regulation works when enforced. But technical solutions (watermarking, detection
 
 <div class="note-box" data-title="Think about it...">
 
-- The same diffusion framework scales across modalities — images (Lecture 22), video (Sora), audio (AudioLDM), and text (MDLM) — suggesting **iterative refinement from noise** is a general-purpose generation principle.
+- The same diffusion framework scales across modalities — images (Lecture 22), video (Sora), and audio (AudioLDM) — suggesting **iterative refinement from noise** is a general-purpose generation principle.
 - The **spectrogram trick** illustrates a powerful pattern: convert your data into a format where existing tools work, then convert back. Turning audio into "images" unlocks the entire latent diffusion pipeline.
 - Sora's emergent physics simulation raises the question: is **predicting the next frame** enough to learn a world model? The same question we asked about language (Lecture 20) now applies to vision.
 - The ethics of generative AI are not optional add-ons — **consent**, **bias**, **copyright**, and **provenance** are central design challenges, not afterthoughts.
@@ -332,7 +387,7 @@ Regulation works when enforced. But technical solutions (watermarking, detection
 
 [**Liu et al. (2023, *IEEE/ACM TASLP*)**](https://arxiv.org/abs/2308.05734) "AudioLDM 2: Learning Holistic Audio Generation with Self-supervised Pretraining" — Latent diffusion for audio with CLAP conditioning.
 
-[**Sahoo et al. (2024, *NeurIPS*)**](https://arxiv.org/abs/2406.07524) "Simple and Effective Masked Diffusion Language Models" — MDLM: bridging BERT and diffusion for text.
+[**Hong et al. (2024)**](https://arxiv.org/abs/2408.06072) "CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer" — Open-source text-to-video with 3D causal VAE.
 
 [**Yang et al. (2024, *ACM Computing Surveys*)**](https://arxiv.org/abs/2409.00587) "Diffusion Models: A Comprehensive Survey of Methods and Applications" — Broad overview of diffusion across modalities.
 
@@ -359,6 +414,6 @@ Regulation works when enforced. But technical solutions (watermarking, detection
 
 <div class="tip-box" data-title="Up next...">
 
-Week 9 (after break): Agents and tool use — giving language models the ability to act in the world
+Week 9 (after break): Agents and tool use — giving language models the ability to act in the world, mixture-of-expert models
 
 </div>

@@ -1,0 +1,36 @@
+<svg viewBox="0 0 740 120" xmlns="http://www.w3.org/2000/svg">
+<!-- ===== Three model cards showing the T2V landscape ===== -->
+
+<!-- Card 1: Sora -->
+<rect x="10" y="6" width="228" height="105" rx="6" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<rect x="10" y="6" width="228" height="24" rx="6" fill="#ffeaa7" stroke="#2d3436" stroke-width="1.2"/>
+<rect x="10" y="24" width="228" height="2" fill="#ffeaa7"/>
+<text x="124" y="22" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Sora (OpenAI, 2024)</text>
+<text x="20" y="44" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Architecture:</tspan> DiT + spacetime patches</text>
+<text x="20" y="57" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Output:</tspan> up to 1 min, 1080p</text>
+<text x="20" y="70" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Key idea:</tspan> 3D patchify is resolution-agnostic</text>
+<text x="20" y="83" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">Closed-source; sets quality bar for field</text>
+<text x="20" y="100" font-size="7" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Emergent 3D consistency, physics simulation</text>
+
+<!-- Card 2: CogVideoX -->
+<rect x="256" y="6" width="228" height="105" rx="6" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<rect x="256" y="6" width="228" height="24" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<rect x="256" y="24" width="228" height="2" fill="#dfe6e9"/>
+<text x="370" y="22" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">CogVideoX (Tsinghua, 2024)</text>
+<text x="266" y="44" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Architecture:</tspan> 3D causal VAE + expert DiT</text>
+<text x="266" y="57" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Output:</tspan> 10s @ 16 fps, 768 x 1360</text>
+<text x="266" y="70" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Sizes:</tspan> 2B and 5B parameters</text>
+<text x="266" y="83" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">Open-source; progressive training strategy</text>
+<text x="266" y="100" font-size="7" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Expert adaptive LayerNorm for text-video fusion</text>
+
+<!-- Card 3: Wan 2.1 -->
+<rect x="502" y="6" width="228" height="105" rx="6" fill="#f5f6fa" stroke="#2d3436" stroke-width="1.2"/>
+<rect x="502" y="6" width="228" height="24" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<rect x="502" y="24" width="228" height="2" fill="#dfe6e9"/>
+<text x="616" y="22" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Wan 2.1 (Alibaba, 2025)</text>
+<text x="512" y="44" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Architecture:</tspan> spatio-temporal VAE + DiT</text>
+<text x="512" y="57" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Output:</tspan> 5s @ 480p (1.3B model)</text>
+<text x="512" y="70" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436"><tspan font-weight="bold">Sizes:</tspan> 1.3B and 14B parameters</text>
+<text x="512" y="83" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">Open-source; top VBench scores (2025)</text>
+<text x="512" y="100" font-size="7" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">1.3B runs on consumer GPUs (~8 GB VRAM)</text>
+</svg>
