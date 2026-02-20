@@ -7,25 +7,25 @@
 
 <!-- ===== INPUT: Mel spectrogram ===== -->
 <rect x="10" y="10" width="72" height="60" rx="3" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
-<!-- Heatmap rows -->
-<rect x="13" y="13" width="9" height="7" fill="#f5f6fa"/><rect x="23" y="13" width="9" height="7" fill="#e8eaee"/>
-<rect x="33" y="13" width="9" height="7" fill="#f5f6fa"/><rect x="43" y="13" width="9" height="7" fill="#e8eaee"/>
-<rect x="53" y="13" width="9" height="7" fill="#f5f6fa"/><rect x="63" y="13" width="9" height="7" fill="#e8eaee"/>
-<rect x="13" y="21" width="9" height="7" fill="#dfe6e9"/><rect x="23" y="21" width="9" height="7" fill="#d0d4d8"/>
-<rect x="33" y="21" width="9" height="7" fill="#dfe6e9"/><rect x="43" y="21" width="9" height="7" fill="#c5cacd"/>
-<rect x="53" y="21" width="9" height="7" fill="#dfe6e9"/><rect x="63" y="21" width="9" height="7" fill="#d0d4d8"/>
-<rect x="13" y="29" width="9" height="7" fill="#b2bec3"/><rect x="23" y="29" width="9" height="7" fill="#879094"/>
-<rect x="33" y="29" width="9" height="7" fill="#acb2b6"/><rect x="43" y="29" width="9" height="7" fill="#778084"/>
-<rect x="53" y="29" width="9" height="7" fill="#b2bec3"/><rect x="63" y="29" width="9" height="7" fill="#879094"/>
-<rect x="13" y="37" width="9" height="7" fill="#879094"/><rect x="23" y="37" width="9" height="7" fill="#636e72"/>
-<rect x="33" y="37" width="9" height="7" fill="#778084"/><rect x="43" y="37" width="9" height="7" fill="#636e72"/>
-<rect x="53" y="37" width="9" height="7" fill="#879094"/><rect x="63" y="37" width="9" height="7" fill="#636e72"/>
-<rect x="13" y="45" width="9" height="7" fill="#636e72"/><rect x="23" y="45" width="9" height="7" fill="#4a5357"/>
-<rect x="33" y="45" width="9" height="7" fill="#636e72"/><rect x="43" y="45" width="9" height="7" fill="#4a5357"/>
-<rect x="53" y="45" width="9" height="7" fill="#636e72"/><rect x="63" y="45" width="9" height="7" fill="#4a5357"/>
-<rect x="13" y="53" width="9" height="7" fill="#4a5357"/><rect x="23" y="53" width="9" height="7" fill="#3d4548"/>
-<rect x="33" y="53" width="9" height="7" fill="#4a5357"/><rect x="43" y="53" width="9" height="7" fill="#3d4548"/>
-<rect x="53" y="53" width="9" height="7" fill="#4a5357"/><rect x="63" y="53" width="9" height="7" fill="#3d4548"/>
+<!-- Heatmap rows (centered: box x=10 w=72, grid 6×9=59px wide, start at x=16) -->
+<rect x="16" y="13" width="9" height="7" fill="#f5f6fa"/><rect x="26" y="13" width="9" height="7" fill="#e8eaee"/>
+<rect x="36" y="13" width="9" height="7" fill="#f5f6fa"/><rect x="46" y="13" width="9" height="7" fill="#e8eaee"/>
+<rect x="56" y="13" width="9" height="7" fill="#f5f6fa"/><rect x="66" y="13" width="9" height="7" fill="#e8eaee"/>
+<rect x="16" y="21" width="9" height="7" fill="#dfe6e9"/><rect x="26" y="21" width="9" height="7" fill="#d0d4d8"/>
+<rect x="36" y="21" width="9" height="7" fill="#dfe6e9"/><rect x="46" y="21" width="9" height="7" fill="#c5cacd"/>
+<rect x="56" y="21" width="9" height="7" fill="#dfe6e9"/><rect x="66" y="21" width="9" height="7" fill="#d0d4d8"/>
+<rect x="16" y="29" width="9" height="7" fill="#b2bec3"/><rect x="26" y="29" width="9" height="7" fill="#879094"/>
+<rect x="36" y="29" width="9" height="7" fill="#acb2b6"/><rect x="46" y="29" width="9" height="7" fill="#778084"/>
+<rect x="56" y="29" width="9" height="7" fill="#b2bec3"/><rect x="66" y="29" width="9" height="7" fill="#879094"/>
+<rect x="16" y="37" width="9" height="7" fill="#879094"/><rect x="26" y="37" width="9" height="7" fill="#636e72"/>
+<rect x="36" y="37" width="9" height="7" fill="#778084"/><rect x="46" y="37" width="9" height="7" fill="#636e72"/>
+<rect x="56" y="37" width="9" height="7" fill="#879094"/><rect x="66" y="37" width="9" height="7" fill="#636e72"/>
+<rect x="16" y="45" width="9" height="7" fill="#636e72"/><rect x="26" y="45" width="9" height="7" fill="#4a5357"/>
+<rect x="36" y="45" width="9" height="7" fill="#636e72"/><rect x="46" y="45" width="9" height="7" fill="#4a5357"/>
+<rect x="56" y="45" width="9" height="7" fill="#636e72"/><rect x="66" y="45" width="9" height="7" fill="#4a5357"/>
+<rect x="16" y="53" width="9" height="7" fill="#4a5357"/><rect x="26" y="53" width="9" height="7" fill="#3d4548"/>
+<rect x="36" y="53" width="9" height="7" fill="#4a5357"/><rect x="46" y="53" width="9" height="7" fill="#3d4548"/>
+<rect x="56" y="53" width="9" height="7" fill="#4a5357"/><rect x="66" y="53" width="9" height="7" fill="#3d4548"/>
 <text x="46" y="84" text-anchor="middle" font-size="8.5" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Mel spectrogram</text>
 <text x="46" y="96" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#636e72">freq × time (2D)</text>
 
@@ -33,24 +33,24 @@
 <use href="#voc-arrow" x="88" y="32" width="46" height="9" style="color: #0a2518"/>
 
 <!-- ===== HiFi-GAN (highlighted, showing internal structure) ===== -->
-<rect x="140" y="4" width="250" height="70" rx="6" fill="#ffeaa7" stroke="#2d3436" stroke-width="1.2"/>
-<text x="265" y="20" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">HiFi-GAN Vocoder</text>
+<rect x="140" y="4" width="250" height="74" rx="6" fill="#ffeaa7" stroke="#2d3436" stroke-width="1.2"/>
+<text x="265" y="16" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">HiFi-GAN Vocoder</text>
 
-<!-- Internal: transposed convolutions shown as expanding blocks -->
-<rect x="155" y="30" width="20" height="30" rx="2" fill="#f7dc6f" stroke="#2d3436" stroke-width="0.6"/>
-<text x="165" y="48" text-anchor="middle" font-size="5.5" font-family="Avenir,sans-serif" fill="#2d3436">T-Conv</text>
-<text x="185" y="48" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">→</text>
-<rect x="194" y="26" width="24" height="38" rx="2" fill="#f7dc6f" stroke="#2d3436" stroke-width="0.6"/>
-<text x="206" y="48" text-anchor="middle" font-size="5.5" font-family="Avenir,sans-serif" fill="#2d3436">T-Conv</text>
-<text x="228" y="48" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">→</text>
-<rect x="237" y="22" width="28" height="46" rx="2" fill="#f7dc6f" stroke="#2d3436" stroke-width="0.6"/>
-<text x="251" y="48" text-anchor="middle" font-size="5.5" font-family="Avenir,sans-serif" fill="#2d3436">T-Conv</text>
-<text x="275" y="48" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">→</text>
-<rect x="284" y="18" width="32" height="54" rx="2" fill="#f7dc6f" stroke="#2d3436" stroke-width="0.6"/>
-<text x="300" y="48" text-anchor="middle" font-size="5.5" font-family="Avenir,sans-serif" fill="#2d3436">T-Conv</text>
-<text x="326" y="48" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">→</text>
-<rect x="335" y="14" width="40" height="56" rx="2" fill="#f7dc6f" stroke="#2d3436" stroke-width="0.6"/>
-<text x="355" y="46" text-anchor="middle" font-size="5.5" font-family="Avenir,sans-serif" fill="#2d3436">output</text>
+<!-- Internal: transposed convolutions shown as expanding blocks (pushed down 8px for title clearance) -->
+<rect x="155" y="38" width="20" height="26" rx="2" fill="#f7dc6f" stroke="#2d3436" stroke-width="0.6"/>
+<text x="165" y="54" text-anchor="middle" font-size="5.5" font-family="Avenir,sans-serif" fill="#2d3436">T-Conv</text>
+<text x="185" y="54" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">→</text>
+<rect x="194" y="34" width="24" height="34" rx="2" fill="#f7dc6f" stroke="#2d3436" stroke-width="0.6"/>
+<text x="206" y="54" text-anchor="middle" font-size="5.5" font-family="Avenir,sans-serif" fill="#2d3436">T-Conv</text>
+<text x="228" y="54" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">→</text>
+<rect x="237" y="30" width="28" height="42" rx="2" fill="#f7dc6f" stroke="#2d3436" stroke-width="0.6"/>
+<text x="251" y="54" text-anchor="middle" font-size="5.5" font-family="Avenir,sans-serif" fill="#2d3436">T-Conv</text>
+<text x="275" y="54" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">→</text>
+<rect x="284" y="26" width="32" height="50" rx="2" fill="#f7dc6f" stroke="#2d3436" stroke-width="0.6"/>
+<text x="300" y="54" text-anchor="middle" font-size="5.5" font-family="Avenir,sans-serif" fill="#2d3436">T-Conv</text>
+<text x="326" y="54" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">→</text>
+<rect x="335" y="22" width="40" height="54" rx="2" fill="#f7dc6f" stroke="#2d3436" stroke-width="0.6"/>
+<text x="355" y="52" text-anchor="middle" font-size="5.5" font-family="Avenir,sans-serif" fill="#2d3436">output</text>
 
 <!-- Expanding arrow annotation -->
 <text x="265" y="84" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#636e72">transposed convolutions progressively upsample</text>
@@ -61,12 +61,12 @@
 
 <!-- ===== OUTPUT: Audio waveform ===== -->
 <rect x="448" y="6" width="120" height="66" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
-<path d="M458,39 Q466,14 474,39 Q482,64 490,39 Q498,18 506,39 Q514,60 522,39 Q530,22 538,39 Q546,56 554,39" fill="none" stroke="#2d3436" stroke-width="1.5"/>
-<line x1="456" y1="39" x2="560" y2="39" stroke="#636e72" stroke-width="0.4" stroke-dasharray="2,2"/>
+<path d="M460,39 Q468,14 476,39 Q484,64 492,39 Q500,18 508,39 Q516,60 524,39 Q532,22 540,39 Q548,56 556,39" fill="none" stroke="#2d3436" stroke-width="1.5"/>
+<line x1="454" y1="39" x2="562" y2="39" stroke="#636e72" stroke-width="0.4" stroke-dasharray="2,2"/>
 <text x="508" y="84" text-anchor="middle" font-size="8.5" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Audio waveform</text>
 <text x="508" y="96" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#636e72">amplitude × time (1D)</text>
 
 <!-- ===== ANNOTATION ===== -->
-<rect x="370" y="104" width="360" height="22" rx="4" fill="#f5f6fa" stroke="#636e72" stroke-width="0.8" stroke-dasharray="4,3"/>
-<text x="550" y="119" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Vocoder is a learned network — spectrograms lose phase info that must be reconstructed.</text>
+<rect x="190" y="104" width="360" height="22" rx="4" fill="#f5f6fa" stroke="#636e72" stroke-width="0.8" stroke-dasharray="4,3"/>
+<text x="370" y="119" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Vocoder is a learned network — spectrograms lose phase info that must be reconstructed.</text>
 </svg>

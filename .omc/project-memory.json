@@ -1,0 +1,298 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1771535893882,
+  "projectRoot": "/Users/jmanning/llm-course",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": ">=14.0.0",
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "npm",
+    "runtime": "Node.js 14.0.0"
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": "npm test",
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {
+      "test": "npm run test:all",
+      "test:all": "npm run test:eliza && npm run test:tokenization && npm run test:embeddings && npm run test:attention && npm run test:transformer && npm run test:gpt && (npm run test:rag || echo 'RAG test failed (known memory issue)') && npm run test:topic-modeling && npm run test:sentiment && npm run test:pos-tagging && npm run test:analogies && npm run test:semantic-search && npm run test:bert-mlm && npm run test:embeddings-comparison && npm run test:chatbot",
+      "test:eliza": "node tests/test-eliza.mjs",
+      "test:eliza:memory": "node tests/test-eliza-memory.mjs",
+      "test:tokenization": "node tests/test-tokenization.mjs",
+      "test:embeddings": "node tests/test-embeddings-clustering.mjs",
+      "test:attention": "node tests/test-attention.mjs",
+      "test:transformer": "node tests/test-transformer.mjs",
+      "test:gpt": "node tests/test-gpt-sampling.mjs",
+      "test:rag": "node tests/test-rag.mjs",
+      "test:topic-modeling": "node tests/test-topic-modeling.mjs",
+      "test:sentiment": "node tests/test-sentiment.mjs",
+      "test:pos-tagging": "node tests/test-pos-tagging.mjs",
+      "test:analogies": "node tests/test-analogies.mjs",
+      "test:semantic-search": "node tests/test-semantic-search.mjs",
+      "test:bert-mlm": "node tests/test-bert-mlm.mjs",
+      "test:embeddings-comparison": "node tests/test-embeddings-comparison.mjs",
+      "test:chatbot": "npm run test:chatbot:eliza && npm run test:chatbot:parry && npm run test:chatbot:alice",
+      "test:chatbot:eliza": "node tests/test-chatbot-eliza-fixes.mjs",
+      "test:chatbot:parry": "node tests/test-chatbot-parry-final.mjs",
+      "test:chatbot:alice": "node tests/test-chatbot-alice.mjs",
+      "test:verbose": "npm test -- --verbose"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "scripts",
+      "tests"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "admin": {
+      "path": "admin",
+      "purpose": null,
+      "fileCount": 27,
+      "lastAccessed": 1771535893864,
+      "keyFiles": [
+        "AvenirLTStd-Black.otf",
+        "AvenirLTStd-Book.otf",
+        "AvenirLTStd-Heavy.otf",
+        "AvenirLTStd-Light.otf",
+        "AvenirLTStd-Medium.otf"
+      ]
+    },
+    "assignments": {
+      "path": "assignments",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1771535893865,
+      "keyFiles": [
+        "AGENTS.md",
+        "README.md",
+        "index.html"
+      ]
+    },
+    "demos": {
+      "path": "demos",
+      "purpose": null,
+      "fileCount": 7,
+      "lastAccessed": 1771535893869,
+      "keyFiles": [
+        "AGENTS.md",
+        "COMPREHENSIVE_CHATBOT_BUG_REPORT.md",
+        "DEMOS_13-15_TEST_REPORT.md",
+        "FINAL_SUMMARY.md",
+        "README.md"
+      ]
+    },
+    "figures": {
+      "path": "figures",
+      "purpose": null,
+      "fileCount": 16,
+      "lastAccessed": 1771535893869,
+      "keyFiles": [
+        "amazon_logo.png",
+        "brainfit_logo.png",
+        "brandeis_logo.svg",
+        "cdl_logo.png",
+        "colab_screenshot.png"
+      ]
+    },
+    "fonts": {
+      "path": "fonts",
+      "purpose": null,
+      "fileCount": 18,
+      "lastAccessed": 1771535893869,
+      "keyFiles": [
+        "AvenirLTStd-Black.otf",
+        "AvenirLTStd-Book.otf",
+        "AvenirLTStd-Heavy.otf",
+        "AvenirLTStd-Light.otf",
+        "AvenirLTStd-Medium.otf"
+      ]
+    },
+    "notes": {
+      "path": "notes",
+      "purpose": null,
+      "fileCount": 7,
+      "lastAccessed": 1771535893869,
+      "keyFiles": [
+        "2026-01-20-link-audit.csv",
+        "2026-02-12-week7-diffusion-rewrite.md",
+        "demo-debugging-history.md",
+        "github-issues-and-fixes-history.md",
+        "lecture-rewrite-history.md"
+      ]
+    },
+    "plans": {
+      "path": "plans",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1771535893870,
+      "keyFiles": [
+        "fix-instructor-slide-layout.md",
+        "website-overhaul-plan.md"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 6,
+      "lastAccessed": 1771535893870,
+      "keyFiles": [
+        "audit-alice-patterns.py",
+        "build-pages.py",
+        "compare_rules.py",
+        "compile-slides-local.sh",
+        "import_eliza_rules.py"
+      ]
+    },
+    "slides": {
+      "path": "slides",
+      "purpose": null,
+      "fileCount": 14,
+      "lastAccessed": 1771535893870,
+      "keyFiles": [
+        "AGENTS.md",
+        "DARTMOUTH_THEME_README.md",
+        "EMOJI_FIX_DOCUMENTATION.md",
+        "README.md",
+        "README_LAYOUT_FIXES.md"
+      ]
+    },
+    "syllabus": {
+      "path": "syllabus",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1771535893870,
+      "keyFiles": [
+        "index.html"
+      ]
+    },
+    "tests": {
+      "path": "tests",
+      "purpose": "Test files",
+      "fileCount": 30,
+      "lastAccessed": 1771535893870,
+      "keyFiles": [
+        "final-verification-demo15.sh",
+        "test-analogies.mjs",
+        "test-attention.mjs",
+        "test-bert-mlm.mjs",
+        "test-chatbot-alice-debug.js"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "slides/week7/lecture23.md",
+      "accessCount": 28,
+      "lastAccessed": 1771557081466,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/figs/spacetime-patchify.svg",
+      "accessCount": 19,
+      "lastAccessed": 1771555828879,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/figs/mel-spectrogram.svg",
+      "accessCount": 17,
+      "lastAccessed": 1771556734054,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/figs/audio-diffusion-v2.svg",
+      "accessCount": 6,
+      "lastAccessed": 1771556346836,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/figs/sora-full-pipeline.svg",
+      "accessCount": 5,
+      "lastAccessed": 1771555345572,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/figs/vocoder.svg",
+      "accessCount": 4,
+      "lastAccessed": 1771557130750,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/figs/video-vae.svg",
+      "accessCount": 3,
+      "lastAccessed": 1771540228033,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/diffusion_demo.ipynb",
+      "accessCount": 2,
+      "lastAccessed": 1771536258634,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/figs/sora-spacetime.svg",
+      "accessCount": 2,
+      "lastAccessed": 1771555105566,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/figs/text-to-video-landscape.svg",
+      "accessCount": 2,
+      "lastAccessed": 1771555938876,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/video_audio_diffusion_demo.ipynb",
+      "accessCount": 1,
+      "lastAccessed": 1771536662404,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/figs/audio-diffusion.svg",
+      "accessCount": 1,
+      "lastAccessed": 1771538116611,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/figs/dit-pipeline.svg",
+      "accessCount": 1,
+      "lastAccessed": 1771538117139,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7",
+      "accessCount": 1,
+      "lastAccessed": 1771555097451,
+      "type": "directory"
+    },
+    {
+      "path": "slide6-v2.png",
+      "accessCount": 1,
+      "lastAccessed": 1771555691172,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
