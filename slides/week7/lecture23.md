@@ -145,7 +145,7 @@ All major text-to-video models share Sora's core recipe — **video VAE + DiT + 
 
 [**Hong et al. (2024)**](https://arxiv.org/abs/2408.06072) "CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer" — 3D causal VAE + expert adaptive LayerNorm.
 
-[**Wan Video Team (2025)**](https://github.com/Wan-Video/Wan2.1) "Wan 2.1" — Top VBench scores; 1.3B model runs on consumer GPUs (~8 GB VRAM).
+[**Wan Video Team (2025)**](https://github.com/Wan-Video/Wan2.1) "Wan 2.1" — Top [VBench](https://vchitect.github.io/VBench-project/) scores; 1.3B model runs on consumer GPUs (~8 GB VRAM).
 
 </div>
 
