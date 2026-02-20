@@ -238,13 +238,15 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ## Week 7: Diffusion Models
 
 **Monday (Lecture 21):** Diffusion Models for Text
-- The diffusion framework: forward (corruption) and reverse (generation) processes
+- Two generation paradigms: autoregressive (GPT) vs. diffusion (iterative refinement)
 - Continuous diffusion foundation: Gaussian noise, DDPM training objective
 - Discrete diffusion for text: replacing noise with masking (absorbing state)
 - Connection to BERT: masked language modeling as single-step diffusion
-- MDLM, D3PM, LLaDA, SEDD: the discrete diffusion family
-- LLaDA at 8B parameters: diffusion LLMs competitive with autoregressive models
-- Intuitions for iterative refinement and practical advantages of text diffusion
+- MDLM: formalizing the MLM-to-diffusion connection with continuous-time masking schedules
+- D3PM: general discrete diffusion framework (uniform, absorbing, token-similarity noise)
+- LLaDA at 8B parameters: diffusion LLMs competitive with autoregressive models on MMLU and GSM8K
+- Diffusion-LM: continuous embedding approach for controllable generation
+- Practical advantages: native infilling, iterative editing, length control, parallel decoding
 - Reading: [Ho, Jain & Abbeel (2020)](https://arxiv.org/abs/2006.11239) - Denoising Diffusion Probabilistic Models
 - Reading: [Austin et al. (2021)](https://arxiv.org/abs/2107.03006) - Structured Denoising Diffusion Models in Discrete State-Spaces (D3PM)
 - Reading: [Sahoo et al. (2024)](https://arxiv.org/abs/2406.07524) - Simple and Effective Masked Diffusion Language Models (MDLM)
@@ -254,28 +256,33 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - **Assignment 5 Available (Optional/Extra Credit):** [Build GPT](https://contextlab.github.io/llm-course/assignments/assignment-5/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture21.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture21.html)
 
-**Wednesday (Lecture 22):** Diffusion Model Extensions
-- Latent diffusion: VAE compression for efficient generation
-- Classifier-free guidance for conditional generation
-- Diffusion Transformer (DiT): replacing U-Net with transformers
-- Flow matching and rectified flow: simpler, faster diffusion
-- Stable Diffusion 3: MMDiT architecture
+**Wednesday (Lecture 22):** Image Diffusion and Multimodal Generation
+- The pixel problem: why pixel-space diffusion is computationally prohibitive
+- Latent diffusion: VAE compression (48× reduction) for efficient generation
+- CLIP: shared text-image embedding space trained on 400M image-text pairs
+- Cross-attention: text embeddings guide spatial regions during denoising
+- Classifier-free guidance (CFG): balancing prompt fidelity and visual quality
+- U-Net vs. Diffusion Transformer (DiT): architecture comparison and scaling properties
+- Hands-on: generating images with HuggingFace `diffusers` library
 - Reading: [Rombach et al. (2022)](https://arxiv.org/abs/2112.10752) - Latent Diffusion Models
+- Reading: [Radford et al. (2021)](https://arxiv.org/abs/2103.00020) - CLIP
 - Reading: [Ho & Salimans (2022)](https://arxiv.org/abs/2207.12598) - Classifier-Free Diffusion Guidance
 - Reading: [Peebles & Xie (2023)](https://arxiv.org/abs/2212.09748) - Scalable Diffusion Models with Transformers (DiT)
-- Reading: [Lipman et al. (2023)](https://arxiv.org/abs/2210.02747) - Flow Matching for Generative Modeling
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture22.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture22.html)
 
-**Friday (Lecture 23):** Diffusion Applications and Ethics
-- Text-to-image: DALL-E 2, Stable Diffusion, Imagen
-- Text-to-video: Sora and spacetime patches
-- Text-to-audio: FluxMusic and spectral diffusion
-- Discrete diffusion for text generation (MDLM)
-- Ethics: deepfakes, consent, bias in generation, regulation
-- Reading: [Ramesh et al. (2022)](https://arxiv.org/abs/2204.06125) - DALL-E 2
+**Friday (Lecture 23):** Diffusion for Video and Audio; Ethics of Generative AI
+- Text-to-video: Sora's spacetime patches (3D extension of DiT), video VAE with 3D convolutions
+- Open-source video models: CogVideoX, Wan 2.1
+- Text-to-audio: spectrogram-based diffusion (mel spectrograms as 2D images)
+- AudioLDM 2: dual cross-attention with CLAP + Flan-T5, GPT-2 bridge, HiFi-GAN vocoder
+- Deepfakes and consent: 96% non-consensual imagery, political disinformation, identity fraud
+- Bias in generation: gender/racial stereotypes, cultural erasure, aesthetic homogenization
+- Copyright battles: Getty v. Stability AI, NYT v. OpenAI, Thomson Reuters v. Ross
+- Regulation: EU AI Act, C2PA provenance standard, US Executive Order 14110, China's deep synthesis rules
 - Reading: [OpenAI (2024)](https://openai.com/research/video-generation-models-as-world-simulators) - Sora
-- Reading: [Sahoo et al. (2024)](https://arxiv.org/abs/2406.07524) - Masked Diffusion Language Models
-- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/diffusion_demo.ipynb)
+- Reading: [Liu et al. (2023)](https://arxiv.org/abs/2308.05734) - AudioLDM 2
+- Reading: [Hong et al. (2024)](https://arxiv.org/abs/2408.06072) - CogVideoX
+- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/video_audio_diffusion_demo.ipynb) — Generate video and audio with diffusion models
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture23.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture23.html)
 ---
 
