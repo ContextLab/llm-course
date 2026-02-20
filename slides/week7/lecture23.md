@@ -38,7 +38,7 @@ There are **no classes February 23–27** (I'll be away!). Use this time to work
 
 <div class="tip-box" data-title="Companion notebook">
 
-📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/video_audio_diffusion_demo.ipynb) — generate video from text, create audio with AudioLDM 2, and visualize spectrograms.
+📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/video_audio_diffusion_demo.ipynb) — generate video from text, create audio with AudioLDM, and visualize spectrograms.
 
 </div>
 
