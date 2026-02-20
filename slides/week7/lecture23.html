@@ -796,7 +796,7 @@ Winter 2026</p>
 <li><strong>Convert</strong>: Transform audio into a <a href="https://en.wikipedia.org/wiki/Mel-frequency_cepstrum">mel spectrogram</a> (frequency bands × time steps, weighted to match human hearing)</li>
 <li><strong>Compress</strong>: A VAE encodes the spectrogram into a latent space (just like image latent diffusion)</li>
 <li><strong>Denoise</strong>: Latent diffusion generates a clean spectrogram conditioned on text</li>
-<li><strong>Reconstruct</strong>: A <strong>vocoder</strong> (e.g., HiFi-GAN) converts the spectrogram back to an audio waveform</li>
+<li><strong>Reconstruct</strong>: A <strong><a href="https://en.wikipedia.org/wiki/Vocoder">vocoder</a></strong> (e.g., HiFi-GAN) converts the spectrogram back to an audio waveform</li>
 </ol>
 </div>
 <p><img src="figs/audio-diffusion-v2.svg" alt="Audio diffusion pipeline" /></p>
@@ -878,12 +878,12 @@ Winter 2026</p>
 <div class="definition-box" data-title="Key terms">
 <ul>
 <li><strong><a href="https://arxiv.org/abs/2211.06687">CLAP</a></strong> (Contrastive Language-Audio Pretraining): The audio equivalent of CLIP — learns a shared embedding space for text and audio, enabling text-conditioned generation</li>
-<li><strong>Vocoder</strong>: A neural network (e.g., <a href="https://arxiv.org/abs/2010.05646">HiFi-GAN</a>) that reconstructs audio waveforms from spectrograms</li>
+<li><strong><a href="https://en.wikipedia.org/wiki/Vocoder">Vocoder</a></strong>: A neural network (e.g., <a href="https://arxiv.org/abs/2010.05646">HiFi-GAN</a>) that reconstructs audio waveforms from spectrograms</li>
 </ul>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-70" data-theme="cdl-theme" lang="C" class="scale-70" style="--class:scale-70;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-vocoder-from-spectrograms-to-sound">The vocoder: from spectrograms to sound</h1>
+<h1 id="the-vocoder-from-spectrograms-to-sound">The <a href="https://en.wikipedia.org/wiki/Vocoder">vocoder</a>: from spectrograms to sound</h1>
 <div class="definition-box" data-title="Why this step is non-trivial">
 <p>Converting a mel spectrogram back to audio is <strong>not</strong> a simple inverse transform. Spectrograms discard <strong>phase information</strong> — the timing relationships between frequency components. Recovering natural-sounding audio requires a <strong>learned neural network</strong>.</p>
 </div>

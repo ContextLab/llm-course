@@ -161,7 +161,7 @@ Audio generation applies diffusion to **spectrograms** — visual representation
 1. **Convert**: Transform audio into a [mel spectrogram](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum) (frequency bands × time steps, weighted to match human hearing)
 2. **Compress**: A VAE encodes the spectrogram into a latent space (just like image latent diffusion)
 3. **Denoise**: Latent diffusion generates a clean spectrogram conditioned on text
-4. **Reconstruct**: A **vocoder** (e.g., HiFi-GAN) converts the spectrogram back to an audio waveform
+4. **Reconstruct**: A **[vocoder](https://en.wikipedia.org/wiki/Vocoder)** (e.g., HiFi-GAN) converts the spectrogram back to an audio waveform
 
 </div>
 
@@ -239,14 +239,14 @@ Diffusion and autoregressive approaches are **converging** — many systems use 
 <div class="definition-box" data-title="Key terms">
 
 - **[CLAP](https://arxiv.org/abs/2211.06687)** (Contrastive Language-Audio Pretraining): The audio equivalent of CLIP — learns a shared embedding space for text and audio, enabling text-conditioned generation
-- **Vocoder**: A neural network (e.g., [HiFi-GAN](https://arxiv.org/abs/2010.05646)) that reconstructs audio waveforms from spectrograms
+- **[Vocoder](https://en.wikipedia.org/wiki/Vocoder)**: A neural network (e.g., [HiFi-GAN](https://arxiv.org/abs/2010.05646)) that reconstructs audio waveforms from spectrograms
 
 </div>
 
 ---
 <!-- _class: scale-70 -->
 
-# The vocoder: from spectrograms to sound
+# The [vocoder](https://en.wikipedia.org/wiki/Vocoder): from spectrograms to sound
 
 <div class="definition-box" data-title="Why this step is non-trivial">
 
