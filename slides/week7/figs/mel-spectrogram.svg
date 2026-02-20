@@ -81,8 +81,8 @@
 <!-- ===== ANNOTATION BOX ===== -->
 <rect x="484" y="6" width="220" height="66" rx="6" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
 <text x="594" y="22" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Why "mel"?</text>
-<text x="496" y="36" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">The <tspan font-weight="bold">mel scale</tspan> warps frequencies to</text>
-<text x="496" y="47" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">match human hearing: we perceive</text>
-<text x="496" y="58" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">100→200 Hz as a bigger jump than</text>
-<text x="496" y="69" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">5000→5100 Hz (logarithmic spacing).</text>
+<text x="594" y="36" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">The <tspan font-weight="bold">mel scale</tspan> warps frequencies to</text>
+<text x="594" y="47" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">match human hearing: we perceive</text>
+<text x="594" y="58" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">100→200 Hz as a bigger jump than</text>
+<text x="594" y="69" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">5000→5100 Hz (logarithmic spacing).</text>
 </svg>

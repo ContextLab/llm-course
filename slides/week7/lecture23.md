@@ -200,8 +200,8 @@ The result: a 2D image (frequency × time) that diffusion models can process usi
 
 [AudioLDM 2](https://arxiv.org/abs/2308.05734) uses **dual cross-attention** to condition the UNet on text — similar to text-to-image diffusion (Lecture 22), but with two embedding sources:
 
-1. **CLAP + Flan-T5** encode the text prompt into embeddings
-2. **GPT-2** auto-regressively generates audio-space embeddings from the text embeddings
+1. **[CLAP](https://arxiv.org/abs/2211.06687) + [Flan-T5](https://arxiv.org/abs/2210.11416)** encode the text prompt into embeddings
+2. **[GPT-2](https://en.wikipedia.org/wiki/GPT-2)** auto-regressively generates audio-space embeddings from the text embeddings
 3. The UNet receives **two cross-attention inputs**: Flan-T5 embeddings AND GPT-2 output embeddings
 
 </div>
@@ -214,7 +214,7 @@ Cross-attention works the same way here as in text-to-image: the **queries** com
 
 <div class="note-box" data-title="Why dual encoders?">
 
-CLAP captures audio-text alignment (like CLIP for images), while Flan-T5 provides rich semantic understanding. The GPT-2 bridge translates between text and audio embedding spaces — producing the "language of audio" (LOA).
+CLAP captures audio-text alignment (like CLIP for images), while Flan-T5 provides rich semantic understanding. The GPT-2 bridge translates between text and audio embedding spaces — producing the ["language of audio" (LOA)](https://arxiv.org/abs/2308.05734).
 
 </div>
 
