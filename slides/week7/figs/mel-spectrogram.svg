@@ -30,47 +30,47 @@
 <rect x="262" y="4" width="200" height="74" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="1"/>
 <!-- Heatmap grid (10 cols × 8 rows, dark = high energy at bottom) -->
 <!-- Row 0 (highest freq, lightest) -->
-<rect x="266" y="7" width="18" height="8" fill="#f5f6fa"/><rect x="286" y="7" width="18" height="8" fill="#f0f1f5"/>
-<rect x="306" y="7" width="18" height="8" fill="#f5f6fa"/><rect x="326" y="7" width="18" height="8" fill="#e8eaee"/>
-<rect x="346" y="7" width="18" height="8" fill="#f5f6fa"/><rect x="366" y="7" width="18" height="8" fill="#f0f1f5"/>
-<rect x="386" y="7" width="18" height="8" fill="#f5f6fa"/><rect x="406" y="7" width="18" height="8" fill="#e8eaee"/>
-<rect x="426" y="7" width="18" height="8" fill="#f5f6fa"/><rect x="446" y="7" width="18" height="8" fill="#f0f1f5"/>
+<rect x="263" y="7" width="18" height="8" fill="#f5f6fa"/><rect x="283" y="7" width="18" height="8" fill="#f0f1f5"/>
+<rect x="303" y="7" width="18" height="8" fill="#f5f6fa"/><rect x="323" y="7" width="18" height="8" fill="#e8eaee"/>
+<rect x="343" y="7" width="18" height="8" fill="#f5f6fa"/><rect x="363" y="7" width="18" height="8" fill="#f0f1f5"/>
+<rect x="383" y="7" width="18" height="8" fill="#f5f6fa"/><rect x="403" y="7" width="18" height="8" fill="#e8eaee"/>
+<rect x="423" y="7" width="18" height="8" fill="#f5f6fa"/><rect x="443" y="7" width="18" height="8" fill="#f0f1f5"/>
 <!-- Row 1 -->
-<rect x="266" y="16" width="18" height="8" fill="#e8eaee"/><rect x="286" y="16" width="18" height="8" fill="#dfe6e9"/>
-<rect x="306" y="16" width="18" height="8" fill="#e8eaee"/><rect x="326" y="16" width="18" height="8" fill="#d0d4d8"/>
-<rect x="346" y="16" width="18" height="8" fill="#e8eaee"/><rect x="366" y="16" width="18" height="8" fill="#dfe6e9"/>
-<rect x="386" y="16" width="18" height="8" fill="#e8eaee"/><rect x="406" y="16" width="18" height="8" fill="#d0d4d8"/>
-<rect x="426" y="16" width="18" height="8" fill="#e8eaee"/><rect x="446" y="16" width="18" height="8" fill="#dfe6e9"/>
+<rect x="263" y="16" width="18" height="8" fill="#e8eaee"/><rect x="283" y="16" width="18" height="8" fill="#dfe6e9"/>
+<rect x="303" y="16" width="18" height="8" fill="#e8eaee"/><rect x="323" y="16" width="18" height="8" fill="#d0d4d8"/>
+<rect x="343" y="16" width="18" height="8" fill="#e8eaee"/><rect x="363" y="16" width="18" height="8" fill="#dfe6e9"/>
+<rect x="383" y="16" width="18" height="8" fill="#e8eaee"/><rect x="403" y="16" width="18" height="8" fill="#d0d4d8"/>
+<rect x="423" y="16" width="18" height="8" fill="#e8eaee"/><rect x="443" y="16" width="18" height="8" fill="#dfe6e9"/>
 <!-- Row 2 -->
-<rect x="266" y="25" width="18" height="8" fill="#d0d4d8"/><rect x="286" y="25" width="18" height="8" fill="#b2bec3"/>
-<rect x="306" y="25" width="18" height="8" fill="#c5cacd"/><rect x="326" y="25" width="18" height="8" fill="#acb2b6"/>
-<rect x="346" y="25" width="18" height="8" fill="#d0d4d8"/><rect x="366" y="25" width="18" height="8" fill="#b2bec3"/>
-<rect x="386" y="25" width="18" height="8" fill="#c5cacd"/><rect x="406" y="25" width="18" height="8" fill="#acb2b6"/>
-<rect x="426" y="25" width="18" height="8" fill="#d0d4d8"/><rect x="446" y="25" width="18" height="8" fill="#b2bec3"/>
+<rect x="263" y="25" width="18" height="8" fill="#d0d4d8"/><rect x="283" y="25" width="18" height="8" fill="#b2bec3"/>
+<rect x="303" y="25" width="18" height="8" fill="#c5cacd"/><rect x="323" y="25" width="18" height="8" fill="#acb2b6"/>
+<rect x="343" y="25" width="18" height="8" fill="#d0d4d8"/><rect x="363" y="25" width="18" height="8" fill="#b2bec3"/>
+<rect x="383" y="25" width="18" height="8" fill="#c5cacd"/><rect x="403" y="25" width="18" height="8" fill="#acb2b6"/>
+<rect x="423" y="25" width="18" height="8" fill="#d0d4d8"/><rect x="443" y="25" width="18" height="8" fill="#b2bec3"/>
 <!-- Row 3 -->
-<rect x="266" y="34" width="18" height="8" fill="#acb2b6"/><rect x="286" y="34" width="18" height="8" fill="#879094"/>
-<rect x="306" y="34" width="18" height="8" fill="#979fa3"/><rect x="326" y="34" width="18" height="8" fill="#778084"/>
-<rect x="346" y="34" width="18" height="8" fill="#acb2b6"/><rect x="366" y="34" width="18" height="8" fill="#879094"/>
-<rect x="386" y="34" width="18" height="8" fill="#979fa3"/><rect x="406" y="34" width="18" height="8" fill="#778084"/>
-<rect x="426" y="34" width="18" height="8" fill="#acb2b6"/><rect x="446" y="34" width="18" height="8" fill="#879094"/>
+<rect x="263" y="34" width="18" height="8" fill="#acb2b6"/><rect x="283" y="34" width="18" height="8" fill="#879094"/>
+<rect x="303" y="34" width="18" height="8" fill="#979fa3"/><rect x="323" y="34" width="18" height="8" fill="#778084"/>
+<rect x="343" y="34" width="18" height="8" fill="#acb2b6"/><rect x="363" y="34" width="18" height="8" fill="#879094"/>
+<rect x="383" y="34" width="18" height="8" fill="#979fa3"/><rect x="403" y="34" width="18" height="8" fill="#778084"/>
+<rect x="423" y="34" width="18" height="8" fill="#acb2b6"/><rect x="443" y="34" width="18" height="8" fill="#879094"/>
 <!-- Row 4 -->
-<rect x="266" y="43" width="18" height="8" fill="#879094"/><rect x="286" y="43" width="18" height="8" fill="#636e72"/>
-<rect x="306" y="43" width="18" height="8" fill="#778084"/><rect x="326" y="43" width="18" height="8" fill="#636e72"/>
-<rect x="346" y="43" width="18" height="8" fill="#879094"/><rect x="366" y="43" width="18" height="8" fill="#636e72"/>
-<rect x="386" y="43" width="18" height="8" fill="#778084"/><rect x="406" y="43" width="18" height="8" fill="#636e72"/>
-<rect x="426" y="43" width="18" height="8" fill="#879094"/><rect x="446" y="43" width="18" height="8" fill="#636e72"/>
+<rect x="263" y="43" width="18" height="8" fill="#879094"/><rect x="283" y="43" width="18" height="8" fill="#636e72"/>
+<rect x="303" y="43" width="18" height="8" fill="#778084"/><rect x="323" y="43" width="18" height="8" fill="#636e72"/>
+<rect x="343" y="43" width="18" height="8" fill="#879094"/><rect x="363" y="43" width="18" height="8" fill="#636e72"/>
+<rect x="383" y="43" width="18" height="8" fill="#778084"/><rect x="403" y="43" width="18" height="8" fill="#636e72"/>
+<rect x="423" y="43" width="18" height="8" fill="#879094"/><rect x="443" y="43" width="18" height="8" fill="#636e72"/>
 <!-- Row 5 -->
-<rect x="266" y="52" width="18" height="8" fill="#636e72"/><rect x="286" y="52" width="18" height="8" fill="#4a5357"/>
-<rect x="306" y="52" width="18" height="8" fill="#636e72"/><rect x="326" y="52" width="18" height="8" fill="#4a5357"/>
-<rect x="346" y="52" width="18" height="8" fill="#636e72"/><rect x="366" y="52" width="18" height="8" fill="#4a5357"/>
-<rect x="386" y="52" width="18" height="8" fill="#636e72"/><rect x="406" y="52" width="18" height="8" fill="#4a5357"/>
-<rect x="426" y="52" width="18" height="8" fill="#636e72"/><rect x="446" y="52" width="18" height="8" fill="#4a5357"/>
+<rect x="263" y="52" width="18" height="8" fill="#636e72"/><rect x="283" y="52" width="18" height="8" fill="#4a5357"/>
+<rect x="303" y="52" width="18" height="8" fill="#636e72"/><rect x="323" y="52" width="18" height="8" fill="#4a5357"/>
+<rect x="343" y="52" width="18" height="8" fill="#636e72"/><rect x="363" y="52" width="18" height="8" fill="#4a5357"/>
+<rect x="383" y="52" width="18" height="8" fill="#636e72"/><rect x="403" y="52" width="18" height="8" fill="#4a5357"/>
+<rect x="423" y="52" width="18" height="8" fill="#636e72"/><rect x="443" y="52" width="18" height="8" fill="#4a5357"/>
 <!-- Row 6 (low freq, darkest) -->
-<rect x="266" y="61" width="18" height="8" fill="#4a5357"/><rect x="286" y="61" width="18" height="8" fill="#3d4548"/>
-<rect x="306" y="61" width="18" height="8" fill="#4a5357"/><rect x="326" y="61" width="18" height="8" fill="#3d4548"/>
-<rect x="346" y="61" width="18" height="8" fill="#4a5357"/><rect x="366" y="61" width="18" height="8" fill="#3d4548"/>
-<rect x="386" y="61" width="18" height="8" fill="#4a5357"/><rect x="406" y="61" width="18" height="8" fill="#3d4548"/>
-<rect x="426" y="61" width="18" height="8" fill="#4a5357"/><rect x="446" y="61" width="18" height="8" fill="#3d4548"/>
+<rect x="263" y="61" width="18" height="8" fill="#4a5357"/><rect x="283" y="61" width="18" height="8" fill="#3d4548"/>
+<rect x="303" y="61" width="18" height="8" fill="#4a5357"/><rect x="323" y="61" width="18" height="8" fill="#3d4548"/>
+<rect x="343" y="61" width="18" height="8" fill="#4a5357"/><rect x="363" y="61" width="18" height="8" fill="#3d4548"/>
+<rect x="383" y="61" width="18" height="8" fill="#4a5357"/><rect x="403" y="61" width="18" height="8" fill="#3d4548"/>
+<rect x="423" y="61" width="18" height="8" fill="#4a5357"/><rect x="443" y="61" width="18" height="8" fill="#3d4548"/>
 
 <!-- Time axis label -->
 <text x="362" y="86" text-anchor="middle" font-size="6.5" font-family="Avenir,sans-serif" fill="#636e72">time →</text>
@@ -79,10 +79,10 @@
 <text x="362" y="112" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">frequency × time (2D image!)</text>
 
 <!-- ===== ANNOTATION BOX ===== -->
-<rect x="484" y="6" width="246" height="66" rx="6" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
-<text x="607" y="22" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Why "mel"?</text>
-<text x="494" y="36" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">The <tspan font-weight="bold">mel scale</tspan> warps frequencies to</text>
-<text x="494" y="47" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">match human hearing: we perceive</text>
-<text x="494" y="58" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">100→200 Hz as a bigger jump than</text>
-<text x="494" y="69" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">5000→5100 Hz (logarithmic spacing).</text>
+<rect x="484" y="6" width="220" height="66" rx="6" fill="#f5f6fa" stroke="#636e72" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="594" y="22" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Why "mel"?</text>
+<text x="496" y="36" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">The <tspan font-weight="bold">mel scale</tspan> warps frequencies to</text>
+<text x="496" y="47" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">match human hearing: we perceive</text>
+<text x="496" y="58" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">100→200 Hz as a bigger jump than</text>
+<text x="496" y="69" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436">5000→5100 Hz (logarithmic spacing).</text>
 </svg>
