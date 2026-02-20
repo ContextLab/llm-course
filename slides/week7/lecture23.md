@@ -182,8 +182,8 @@ By converting audio to a spectrogram, we turn a 1D temporal signal into a 2D ima
 A **mel spectrogram** is a 2D image representing sound. It is computed by:
 
 1. **[Short-time Fourier transform (STFT)](https://en.wikipedia.org/wiki/Short-time_Fourier_transform)**: Slice the audio into overlapping windows and compute the frequency content of each
-2. **Mel filter bank**: Re-weight frequency bins onto the **mel scale**, which spaces low frequencies widely and high frequencies narrowly — matching how humans perceive pitch
-3. **Log scaling**: Convert power to decibels for better dynamic range
+2. **[Mel filter bank](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum)**: Re-weight frequency bins onto the **mel scale**, which spaces low frequencies widely and high frequencies narrowly — matching how humans perceive pitch
+3. **[Log scaling](https://en.wikipedia.org/wiki/Decibel)**: Convert power to decibels for better dynamic range
 
 The result: a 2D image (frequency × time) that diffusion models can process using the same architectures designed for photographs.
 

@@ -809,9 +809,9 @@ Winter 2026</p>
 <div class="definition-box" data-title="The representation that makes audio diffusion possible">
 <p>A <strong>mel spectrogram</strong> is a 2D image representing sound. It is computed by:</p>
 <ol>
-<li><strong>Short-time Fourier transform (STFT)</strong>: Slice the audio into overlapping windows and compute the frequency content of each</li>
-<li><strong>Mel filter bank</strong>: Re-weight frequency bins onto the <strong>mel scale</strong>, which spaces low frequencies widely and high frequencies narrowly — matching how humans perceive pitch</li>
-<li><strong>Log scaling</strong>: Convert power to decibels for better dynamic range</li>
+<li><strong><a href="https://en.wikipedia.org/wiki/Short-time_Fourier_transform">Short-time Fourier transform (STFT)</a></strong>: Slice the audio into overlapping windows and compute the frequency content of each</li>
+<li><strong><a href="https://en.wikipedia.org/wiki/Mel-frequency_cepstrum">Mel filter bank</a></strong>: Re-weight frequency bins onto the <strong>mel scale</strong>, which spaces low frequencies widely and high frequencies narrowly — matching how humans perceive pitch</li>
+<li><strong><a href="https://en.wikipedia.org/wiki/Decibel">Log scaling</a></strong>: Convert power to decibels for better dynamic range</li>
 </ol>
 <p>The result: a 2D image (frequency × time) that diffusion models can process using the same architectures designed for photographs.</p>
 </div>
@@ -822,8 +822,8 @@ Winter 2026</p>
 <div class="definition-box" data-title="How text controls audio generation">
 <p><a href="https://arxiv.org/abs/2308.05734">AudioLDM 2</a> uses <strong>dual cross-attention</strong> to condition the UNet on text — similar to text-to-image diffusion (Lecture 22), but with two embedding sources:</p>
 <ol>
-<li><strong>CLAP + Flan-T5</strong> encode the text prompt into embeddings</li>
-<li><strong>GPT-2</strong> auto-regressively generates audio-space embeddings from the text embeddings</li>
+<li><strong><a href="https://arxiv.org/abs/2211.06687">CLAP</a> + <a href="https://arxiv.org/abs/2210.11416">Flan-T5</a></strong> encode the text prompt into embeddings</li>
+<li><strong><a href="https://en.wikipedia.org/wiki/GPT-2">GPT-2</a></strong> auto-regressively generates audio-space embeddings from the text embeddings</li>
 <li>The UNet receives <strong>two cross-attention inputs</strong>: Flan-T5 embeddings AND GPT-2 output embeddings</li>
 </ol>
 </div>
@@ -831,7 +831,7 @@ Winter 2026</p>
 <p>Cross-attention works the same way here as in text-to-image: the <strong>queries</strong> come from the audio latent features, and the <strong>keys/values</strong> come from the text embeddings. This lets the denoising network &quot;look up&quot; which parts of the text are relevant at each spatial/frequency location.</p>
 </div>
 <div class="note-box" data-title="Why dual encoders?">
-<p>CLAP captures audio-text alignment (like CLIP for images), while Flan-T5 provides rich semantic understanding. The GPT-2 bridge translates between text and audio embedding spaces — producing the &quot;language of audio&quot; (LOA).</p>
+<p>CLAP captures audio-text alignment (like CLIP for images), while Flan-T5 provides rich semantic understanding. The GPT-2 bridge translates between text and audio embedding spaces — producing the <a href="https://arxiv.org/abs/2308.05734">&quot;language of audio&quot; (LOA)</a>.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-65" data-theme="cdl-theme" lang="C" class="scale-65" style="--class:scale-65;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
