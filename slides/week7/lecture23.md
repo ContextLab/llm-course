@@ -246,7 +246,7 @@ Diffusion and autoregressive approaches are **converging** — many systems use 
 ---
 <!-- _class: scale-70 -->
 
-# The [vocoder](https://en.wikipedia.org/wiki/Vocoder): from spectrograms to sound
+# The vocoder: from spectrograms to sound
 
 <div class="definition-box" data-title="Why this step is non-trivial">
 
@@ -347,11 +347,11 @@ Regulation works when enforced. But technical solutions (watermarking, detection
 </div>
 
 ---
-<!-- _class: scale-55 -->
+<!-- _class: scale-85 -->
 
 # Discussion
 
-<div class="tip-box" data-title="Questions to consider">
+<div class="tip-box" data-title="Think about it!">
 
 1. **The world simulator question**: Sora generates videos with plausible physics. Does this mean it has learned a model of the physical world, or is it pattern-matching at a scale we find convincing? How would we tell the difference?
 
@@ -367,7 +367,7 @@ Regulation works when enforced. But technical solutions (watermarking, detection
 
 # Take-home messages
 
-<div class="note-box" data-title="Think about it...">
+<div class="note-box" data-title="Recap">
 
 - The same diffusion framework scales across modalities — images (Lecture 22), video (Sora), and audio (AudioLDM) — suggesting **iterative refinement from noise** is a general-purpose generation principle.
 - The **spectrogram trick** illustrates a powerful pattern: convert your data into a format where existing tools work, then convert back. Turning audio into "images" unlocks the entire latent diffusion pipeline.
