@@ -203,5 +203,8 @@ notes/l16-screenshots/
 
 # Sisyphus working files
 .sisyphus/
+
+# oh-my-claudecode plugin state
+.omc/
 slides/week7/screenshots_verification/*
 mdlm-slide.png
