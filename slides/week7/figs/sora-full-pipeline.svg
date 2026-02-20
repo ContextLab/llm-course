@@ -19,7 +19,7 @@
 <!-- ===== NOISE (far left) ===== -->
 <rect x="10" y="68" width="70" height="42" rx="5" fill="#f5f6fa" stroke="#2d3436" stroke-width="1"/>
 <text x="45" y="86" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Noise</text>
-<text x="45" y="98" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">t x h x w</text>
+<text x="45" y="98" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">t × h × w × C</text>
 
 <!-- Arrow 1 -->
 <use href="#sfp-arrow" x="84" y="82" width="42" height="9" style="color: #0a2518"/>
