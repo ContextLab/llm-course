@@ -208,3 +208,6 @@ notes/l16-screenshots/
 .omc/
 slides/week7/screenshots_verification/*
 mdlm-slide.png
+.omc/project-memory.json
+.omc/state/agent-replay-34471421-9de1-40a1-a2e5-40af10d31ce0.jsonl
+.omc/state/subagent-tracking.json

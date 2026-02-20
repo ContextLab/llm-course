@@ -205,8 +205,8 @@
   "hotPaths": [
     {
       "path": "slides/week7/lecture23.md",
-      "accessCount": 28,
-      "lastAccessed": 1771557081466,
+      "accessCount": 29,
+      "lastAccessed": 1771560857200,
       "type": "file"
     },
     {
@@ -222,9 +222,21 @@
       "type": "file"
     },
     {
+      "path": "slides/week7/figs/vocoder.svg",
+      "accessCount": 10,
+      "lastAccessed": 1771557263078,
+      "type": "file"
+    },
+    {
       "path": "slides/week7/figs/audio-diffusion-v2.svg",
       "accessCount": 6,
       "lastAccessed": 1771556346836,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/video_audio_diffusion_demo.ipynb",
+      "accessCount": 6,
+      "lastAccessed": 1771563225524,
       "type": "file"
     },
     {
@@ -234,15 +246,21 @@
       "type": "file"
     },
     {
-      "path": "slides/week7/figs/vocoder.svg",
-      "accessCount": 4,
-      "lastAccessed": 1771557130750,
+      "path": "admin/syllabus.md",
+      "accessCount": 5,
+      "lastAccessed": 1771560953488,
       "type": "file"
     },
     {
       "path": "slides/week7/figs/video-vae.svg",
       "accessCount": 3,
       "lastAccessed": 1771540228033,
+      "type": "file"
+    },
+    {
+      "path": "slides/README.md",
+      "accessCount": 3,
+      "lastAccessed": 1771560958489,
       "type": "file"
     },
     {
@@ -261,12 +279,6 @@
       "path": "slides/week7/figs/text-to-video-landscape.svg",
       "accessCount": 2,
       "lastAccessed": 1771555938876,
-      "type": "file"
-    },
-    {
-      "path": "slides/week7/video_audio_diffusion_demo.ipynb",
-      "accessCount": 1,
-      "lastAccessed": 1771536662404,
       "type": "file"
     },
     {
@@ -291,6 +303,18 @@
       "path": "slide6-v2.png",
       "accessCount": 1,
       "lastAccessed": 1771555691172,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/lecture21.md",
+      "accessCount": 1,
+      "lastAccessed": 1771560855201,
+      "type": "file"
+    },
+    {
+      "path": "slides/week7/lecture22.md",
+      "accessCount": 1,
+      "lastAccessed": 1771560856639,
       "type": "file"
     }
   ],

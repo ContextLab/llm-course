@@ -8,3 +8,11 @@
 {"t":0,"agent":"system","event":"keyword_detected","keyword":"pipeline"}
 {"t":0,"agent":"a5b315a","agent_type":"unknown","event":"agent_stop","success":true}
 {"t":0,"agent":"a2f98e9","agent_type":"unknown","event":"agent_stop","success":true}
+{"t":0,"agent":"af8fd48","agent_type":"unknown","event":"agent_stop","success":true}
+{"t":0,"agent":"a0b8cba","agent_type":"Explore","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a620835","agent_type":"Explore","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"aec87a8","agent_type":"Explore","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a620835","agent_type":"Explore","event":"agent_stop","success":true,"duration_ms":18464}
+{"t":0,"agent":"aec87a8","agent_type":"Explore","event":"agent_stop","success":true,"duration_ms":17626}
+{"t":0,"agent":"a0b8cba","agent_type":"Explore","event":"agent_stop","success":true,"duration_ms":27254}
+{"t":0,"agent":"ae58c25","agent_type":"unknown","event":"agent_stop","success":true}
