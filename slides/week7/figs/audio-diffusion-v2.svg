@@ -70,35 +70,35 @@
 <!-- ===== MEL SPECTROGRAM (larger heatmap) ===== -->
 <rect x="526" y="62" width="66" height="52" rx="3" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
 <!-- Heatmap grid: 7 cols × 6 rows with 8×8 cells -->
-<rect x="530" y="65" width="8" height="7" fill="#f5f6fa"/><rect x="539" y="65" width="8" height="7" fill="#e8eaee"/>
-<rect x="548" y="65" width="8" height="7" fill="#f5f6fa"/><rect x="557" y="65" width="8" height="7" fill="#e8eaee"/>
-<rect x="566" y="65" width="8" height="7" fill="#f5f6fa"/><rect x="575" y="65" width="8" height="7" fill="#e8eaee"/>
-<rect x="584" y="65" width="8" height="7" fill="#f5f6fa"/>
+<rect x="528" y="65" width="8" height="7" fill="#f5f6fa"/><rect x="537" y="65" width="8" height="7" fill="#e8eaee"/>
+<rect x="546" y="65" width="8" height="7" fill="#f5f6fa"/><rect x="555" y="65" width="8" height="7" fill="#e8eaee"/>
+<rect x="564" y="65" width="8" height="7" fill="#f5f6fa"/><rect x="573" y="65" width="8" height="7" fill="#e8eaee"/>
+<rect x="582" y="65" width="8" height="7" fill="#f5f6fa"/>
 
-<rect x="530" y="73" width="8" height="7" fill="#dfe6e9"/><rect x="539" y="73" width="8" height="7" fill="#d0d4d8"/>
-<rect x="548" y="73" width="8" height="7" fill="#dfe6e9"/><rect x="557" y="73" width="8" height="7" fill="#c5cacd"/>
-<rect x="566" y="73" width="8" height="7" fill="#dfe6e9"/><rect x="575" y="73" width="8" height="7" fill="#d0d4d8"/>
-<rect x="584" y="73" width="8" height="7" fill="#dfe6e9"/>
+<rect x="528" y="73" width="8" height="7" fill="#dfe6e9"/><rect x="537" y="73" width="8" height="7" fill="#d0d4d8"/>
+<rect x="546" y="73" width="8" height="7" fill="#dfe6e9"/><rect x="555" y="73" width="8" height="7" fill="#c5cacd"/>
+<rect x="564" y="73" width="8" height="7" fill="#dfe6e9"/><rect x="573" y="73" width="8" height="7" fill="#d0d4d8"/>
+<rect x="582" y="73" width="8" height="7" fill="#dfe6e9"/>
 
-<rect x="530" y="81" width="8" height="7" fill="#879094"/><rect x="539" y="81" width="8" height="7" fill="#636e72"/>
-<rect x="548" y="81" width="8" height="7" fill="#778084"/><rect x="557" y="81" width="8" height="7" fill="#636e72"/>
-<rect x="566" y="81" width="8" height="7" fill="#879094"/><rect x="575" y="81" width="8" height="7" fill="#636e72"/>
-<rect x="584" y="81" width="8" height="7" fill="#778084"/>
+<rect x="528" y="81" width="8" height="7" fill="#879094"/><rect x="537" y="81" width="8" height="7" fill="#636e72"/>
+<rect x="546" y="81" width="8" height="7" fill="#778084"/><rect x="555" y="81" width="8" height="7" fill="#636e72"/>
+<rect x="564" y="81" width="8" height="7" fill="#879094"/><rect x="573" y="81" width="8" height="7" fill="#636e72"/>
+<rect x="582" y="81" width="8" height="7" fill="#778084"/>
 
-<rect x="530" y="89" width="8" height="7" fill="#636e72"/><rect x="539" y="89" width="8" height="7" fill="#4a5357"/>
-<rect x="548" y="89" width="8" height="7" fill="#636e72"/><rect x="557" y="89" width="8" height="7" fill="#4a5357"/>
-<rect x="566" y="89" width="8" height="7" fill="#636e72"/><rect x="575" y="89" width="8" height="7" fill="#4a5357"/>
-<rect x="584" y="89" width="8" height="7" fill="#636e72"/>
+<rect x="528" y="89" width="8" height="7" fill="#636e72"/><rect x="537" y="89" width="8" height="7" fill="#4a5357"/>
+<rect x="546" y="89" width="8" height="7" fill="#636e72"/><rect x="555" y="89" width="8" height="7" fill="#4a5357"/>
+<rect x="564" y="89" width="8" height="7" fill="#636e72"/><rect x="573" y="89" width="8" height="7" fill="#4a5357"/>
+<rect x="582" y="89" width="8" height="7" fill="#636e72"/>
 
-<rect x="530" y="97" width="8" height="7" fill="#4a5357"/><rect x="539" y="97" width="8" height="7" fill="#3d4548"/>
-<rect x="548" y="97" width="8" height="7" fill="#4a5357"/><rect x="557" y="97" width="8" height="7" fill="#3d4548"/>
-<rect x="566" y="97" width="8" height="7" fill="#4a5357"/><rect x="575" y="97" width="8" height="7" fill="#3d4548"/>
-<rect x="584" y="97" width="8" height="7" fill="#4a5357"/>
+<rect x="528" y="97" width="8" height="7" fill="#4a5357"/><rect x="537" y="97" width="8" height="7" fill="#3d4548"/>
+<rect x="546" y="97" width="8" height="7" fill="#4a5357"/><rect x="555" y="97" width="8" height="7" fill="#3d4548"/>
+<rect x="564" y="97" width="8" height="7" fill="#4a5357"/><rect x="573" y="97" width="8" height="7" fill="#3d4548"/>
+<rect x="582" y="97" width="8" height="7" fill="#4a5357"/>
 
-<rect x="530" y="105" width="8" height="7" fill="#3d4548"/><rect x="539" y="105" width="8" height="7" fill="#2d3436"/>
-<rect x="548" y="105" width="8" height="7" fill="#3d4548"/><rect x="557" y="105" width="8" height="7" fill="#2d3436"/>
-<rect x="566" y="105" width="8" height="7" fill="#3d4548"/><rect x="575" y="105" width="8" height="7" fill="#2d3436"/>
-<rect x="584" y="105" width="8" height="7" fill="#3d4548"/>
+<rect x="528" y="105" width="8" height="7" fill="#3d4548"/><rect x="537" y="105" width="8" height="7" fill="#2d3436"/>
+<rect x="546" y="105" width="8" height="7" fill="#3d4548"/><rect x="555" y="105" width="8" height="7" fill="#2d3436"/>
+<rect x="564" y="105" width="8" height="7" fill="#3d4548"/><rect x="573" y="105" width="8" height="7" fill="#2d3436"/>
+<rect x="582" y="105" width="8" height="7" fill="#3d4548"/>
 
 <text x="559" y="126" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Mel spec</text>
 
@@ -115,7 +115,7 @@
 
 <!-- ===== AUDIO OUTPUT (larger waveform) ===== -->
 <rect x="704" y="68" width="32" height="40" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="0.8"/>
-<path d="M710,88 Q716,74 722,88 Q728,102 734,88" fill="none" stroke="#2d3436" stroke-width="1.2"/>
+<path d="M708,88 Q714,74 720,88 Q726,102 732,88" fill="none" stroke="#2d3436" stroke-width="1.2"/>
 <text x="720" y="120" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Audio</text>
 
 <!-- ===== BOTTOM ANNOTATION ===== -->
