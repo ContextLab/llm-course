@@ -31,7 +31,7 @@
 <!-- Dimension labels -->
 <text x="80" y="105" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">← width →</text>
 <text x="18" y="58" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72" transform="rotate(-90,18,58)">height</text>
-<text x="153" y="8" text-anchor="start" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">time →</text>
+<text x="140" y="12" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72" transform="rotate(-39,140,12)">time →</text>
 
 <text x="80" y="125" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">3D latent volume</text>
 
@@ -90,7 +90,7 @@
 <text x="520" y="88" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72">input to DiT transformer</text>
 
 <!-- ===== ANNOTATION ===== -->
-<rect x="440" y="100" width="290" height="34" rx="4" fill="#f5f6fa" stroke="#636e72" stroke-width="0.8" stroke-dasharray="4,3"/>
-<text x="585" y="114" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Like ViT (Lecture 22) converts image patches to tokens,</text>
-<text x="585" y="126" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Sora converts spacetime cubes to tokens — enabling any resolution/duration.</text>
+<rect x="375" y="100" width="290" height="34" rx="4" fill="#f5f6fa" stroke="#636e72" stroke-width="0.8" stroke-dasharray="4,3"/>
+<text x="520" y="114" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Like ViT (Lecture 22) converts image patches to tokens,</text>
+<text x="520" y="126" text-anchor="middle" font-size="7.5" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Sora converts spacetime cubes to tokens — enabling any resolution/duration.</text>
 </svg>
