@@ -380,7 +380,7 @@ You are graduating into a world where:
 
 [**International AI Safety Report (2026)**](https://internationalaisafetyreport.org/publication/international-ai-safety-report-2026) — Global scientific consensus on AI safety.
 
-[**Bender et al. (2021, *FAccT*)**](https://dl.acm.org/doi/10.1145/3442188.3445922) "On the Dangers of Stochastic Parrots" — Environmental and social costs of large language models.
+[**Bender et al. (2021, *FAccT*)**](https://faculty.washington.edu/ebender/papers/Stochastic_Parrots.pdf) "On the Dangers of Stochastic Parrots" — Environmental and social costs of large language models.
 
 [**Harvard Business Review (2026)**](https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance) "Companies Are Laying Off Workers Because of AI's Potential, Not Its Performance."
 
