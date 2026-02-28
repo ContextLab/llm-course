@@ -121,7 +121,7 @@ We strive to create an inclusive learning environment where all students feel su
 | 6 | Feb 9--13 | BERT, Encoder Variants, Language & Thought | |
 | 7 | Feb 16--20 | Text Diffusion, Image Diffusion, Video/Audio & Ethics | [Assignment 4](https://contextlab.github.io/llm-course/assignments/assignment-4/) due (Feb 16), [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) released (Feb 16), [Assignment 5](https://contextlab.github.io/llm-course/assignments/assignment-5/) available (optional/extra credit) |
 | 8 | Feb 23--27 | **No classes** (instructor away) | Work on [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) |
-| 9 | Mar 2--6 | Agents and Tool Use, Mixture of Experts, Ethics | |
+| 9 | Mar 2--6 | The Thinking Revolution, Agents & the Agentic Era, The Reckoning | |
 | 10 | Mar 9 | Final Project Presentations | [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) due (Mar 9, 11:59 PM EST) |
 | Finals | Mar 13 | | |
 
@@ -192,13 +192,13 @@ We strive to create an inclusive learning environment where all students feel su
 Instructor away February 23--27. No classes this week. Use this time to work on your [final project](https://contextlab.github.io/llm-course/assignments/final-project/).
 
 \needspace{3in}
-### Week 9: Advanced Topics (March 2--6)
+### Week 9: The Frontier (March 2--6)
 
 | Day | Lecture | Topics | Slides | Materials |
 |-----|---------|--------|--------|-----------|
-| Mon Mar 2 | Lecture 24 | Agents and Tool Use | [HTML](https://contextlab.github.io/llm-course/slides/week9/lecture24.html), [PDF](https://contextlab.github.io/llm-course/slides/week9/lecture24.pdf) | [Yao et al. (2023)](https://arxiv.org/abs/2210.03629), [Schick et al. (2023)](https://arxiv.org/abs/2302.04761) |
-| Wed Mar 4 | Lecture 25 | Mixture of Experts & Efficiency | [HTML](https://contextlab.github.io/llm-course/slides/week9/lecture25.html), [PDF](https://contextlab.github.io/llm-course/slides/week9/lecture25.pdf) | [Fedus et al. (2022)](https://arxiv.org/abs/2101.03961), [Jiang et al. (2024)](https://arxiv.org/abs/2401.04088) |
-| Fri Mar 6 | Lecture 26 | Ethics, Bias, and Safety | [HTML](https://contextlab.github.io/llm-course/slides/week9/lecture26.html), [PDF](https://contextlab.github.io/llm-course/slides/week9/lecture26.pdf) | [Bender et al. (2021)](https://dl.acm.org/doi/10.1145/3442188.3445922) |
+| Mon Mar 2 | Lecture 24 | The Thinking Revolution | [HTML](https://contextlab.github.io/llm-course/slides/week9/lecture24.html), [PDF](https://contextlab.github.io/llm-course/slides/week9/lecture24.pdf) | [Snell et al. (2024)](https://arxiv.org/abs/2408.03314), [DeepSeek-AI (2025)](https://arxiv.org/abs/2501.12948), [Wei et al. (2022)](https://arxiv.org/abs/2201.11903) |
+| Wed Mar 4 | Lecture 25 | Agents, Tools, and the Agentic Era | [HTML](https://contextlab.github.io/llm-course/slides/week9/lecture25.html), [PDF](https://contextlab.github.io/llm-course/slides/week9/lecture25.pdf) | [Yao et al. (2023)](https://arxiv.org/abs/2210.03629), [Jimenez et al. (2024)](https://arxiv.org/abs/2310.06770) |
+| Fri Mar 6 | Lecture 26 | The Reckoning | [HTML](https://contextlab.github.io/llm-course/slides/week9/lecture26.html), [PDF](https://contextlab.github.io/llm-course/slides/week9/lecture26.pdf) | [Greenblatt et al. (2024)](https://arxiv.org/abs/2412.14093), [Anthropic (2025)](https://transformer-circuits.pub/2025/attribution-graphs/methods.html) |
 \needspace{2in}
 ### Week 10: Final Project Presentations (March 9)
 

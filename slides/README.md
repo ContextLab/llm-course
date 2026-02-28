@@ -293,39 +293,46 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 ---
 
-## Week 9: Advanced Topics
+## Week 9: The Frontier
 
-**Monday (Lecture 24):** Agents and Tool Use
-- From chatbots to agents: function calling, ReAct framework, Toolformer
-- Model Context Protocol (MCP): universal standard for tool integration
-- Computer Use and agentic coding (Claude Code, Cursor, OpenHands)
-- Agent safety: the principal-agent problem (97% attack success rate)
-- Reading: [Yao et al. (2023)](https://arxiv.org/abs/2210.03629) - ReAct: Synergizing Reasoning and Acting
-- Reading: [Schick et al. (2023)](https://arxiv.org/abs/2302.04761) - Toolformer
-- Reading: [Hagendorff (2025)](https://arxiv.org/abs/2508.04039) - AI Agent Safety
-- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/agents_demo.ipynb)
+**Monday (Lecture 24):** The Thinking Revolution
+- Test-time compute scaling: why inference-time reasoning changes everything
+- Reasoning models: OpenAI o1/o3/o4-mini, DeepSeek-R1, Claude extended thinking
+- Chain-of-thought prompting and the s1 experiment (1,000 examples + "Wait" trick)
+- The frontier landscape: Claude Opus 4.6, GPT-5, Gemini 2.5 Pro, Llama 4, Qwen 3
+- MoE revolution: DeepSeek-V3 ($5.6M), Llama 4 Maverick, Mixtral → Mistral Large 3
+- Benchmark saturation (MMLU, HumanEval) and new frontiers (HLE at 8%, ARC-AGI-2 at 4%)
+- Native multimodal generation, small models (Phi-4, Gemma 3), on-device AI
+- Reading: [Snell et al. (2024)](https://arxiv.org/abs/2408.03314) - Scaling LLM Test-Time Compute
+- Reading: [DeepSeek-AI (2025)](https://arxiv.org/abs/2501.12948) - DeepSeek-R1
+- Reading: [Wei et al. (2022)](https://arxiv.org/abs/2201.11903) - Chain-of-Thought Prompting
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture24.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture24.html)
 
-**Wednesday (Lecture 25):** Mixture of Experts & Efficiency
-- Dense vs sparse models, MoE architecture, routing and load balancing
-- Mixtral 8x7B, DeepSeek-V3 ($5.5M frontier model), small language models
-- Quantization, speculative decoding, state-space models (Mamba)
-- The democratization paradox: efficiency enables access but also misuse
-- Reading: [Jiang et al. (2024)](https://arxiv.org/abs/2401.04088) - Mixtral
-- Reading: [DeepSeek-AI (2025)](https://arxiv.org/abs/2412.19437) - DeepSeek-V3
-- Reading: [Gu & Dao (2023)](https://arxiv.org/abs/2312.00752) - Mamba
-- Reading: [Patterson et al. (2021)](https://arxiv.org/abs/2104.10350) - Carbon Emissions and Large Neural Network Training
-- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/moe_efficiency_demo.ipynb)
+**Wednesday (Lecture 25):** Agents, Tools, and the Agentic Era
+- From chatbots to agents: the ReAct reasoning-action loop
+- Function calling and the Model Context Protocol (MCP) — 97M SDK downloads/month
+- Coding agents: SWE-bench from 14% (2024) to 81% (2025), Claude Code at $1B revenue
+- Computer use: agents that see your screen (72.5% on OSWorld)
+- Deep research agents: autonomous multi-hour research (OpenAI, Google, Perplexity)
+- Multi-agent systems: supervisor, peer-to-peer, swarm, and pipeline architectures
+- Agent safety: prompt injection, tool misuse, cascading errors
+- Reading: [Yao et al. (2023)](https://arxiv.org/abs/2210.03629) - ReAct: Synergizing Reasoning and Acting
+- Reading: [Jimenez et al. (2024)](https://arxiv.org/abs/2310.06770) - SWE-bench
+- Reading: [International AI Safety Report (2026)](https://internationalaisafetyreport.org/publication/international-ai-safety-report-2026) - Agent risks
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture25.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture25.html)
 
-**Friday (Lecture 26):** Ethics, Bias, and Safety
-- EU AI Act (2024), AI and the 2024 elections, deepfakes and misinformation
-- Strategic dishonesty: alignment faking and deceptive behavior in AI
-- Copyright and intellectual property (80+ lawsuits, NYT v OpenAI)
-- Building your own ethics framework for AI development
-- Reading: [Bender et al. (2021)](https://dl.acm.org/doi/10.1145/3442188.3445922) - Stochastic Parrots
+**Friday (Lecture 26):** The Reckoning
+- Alignment faking: Claude strategically deceived its trainers (Greenblatt et al., 2024)
+- Reward tampering: emergent deceptive behaviors from sycophancy training
+- Mechanistic interpretability: circuit tracing and attribution graphs (Anthropic, 2025)
+- Copyright: the $1.5B Anthropic settlement, 51+ active lawsuits, fair use for AI training
+- AI and employment: 55K AI-attributed layoffs, companies firing based on AI's *potential*
+- Regulatory divergence: EU AI Act enforcement vs. US deregulation
+- Deepfakes and elections: Harvard's "apocalypse that wasn't," AI disinformation infrastructure
+- The open-weight debate: Meta may withhold Llama 4 Behemoth (~2T parameters)
 - Reading: [Greenblatt et al. (2024)](https://arxiv.org/abs/2412.14093) - Alignment Faking
-- Reading: [Scheurer et al. (2025)](https://arxiv.org/abs/2311.07590) - Strategic Deception in AI
+- Reading: [Anthropic (2025)](https://transformer-circuits.pub/2025/attribution-graphs/methods.html) - Circuit Tracing
+- Reading: [Bender et al. (2021)](https://faculty.washington.edu/ebender/papers/Stochastic_Parrots.pdf) - Stochastic Parrots
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture26.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture26.html)
 ---
 
