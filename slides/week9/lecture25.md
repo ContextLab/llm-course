@@ -6,7 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 25: Mixture of experts and efficiency
+# Lecture 25: Agents, tools, and the agentic era
 
 ### PSYC 51.17: Models of language and communication
 
@@ -20,416 +20,392 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. Explain why dense models are computationally wasteful and how **MoE** solves this
-2. Describe the MoE architecture: **experts, routers, and sparse activation**
-3. Compare MoE implementations from Mixtral to DeepSeek-V3 to V4 Engram
-4. Evaluate efficiency techniques: **quantization, distillation, and speculative decoding**
-5. Assess the **democratization paradox**: efficiency enables access but also enables misuse
-
-</div>
-
-<div class="tip-box" data-title="Companion notebook">
-
-📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/moe_efficiency_demo.ipynb) — build a simplified MoE layer and experiment with quantization
+1. Define what an **LLM agent** is and explain the **ReAct** reasoning-action loop
+2. Describe **function calling** and the **Model Context Protocol (MCP)** — the universal standard for tool integration
+3. Evaluate how **coding agents** (Claude Code, Cursor, Devin) are reshaping software development
+4. Explain **computer use** and **deep research** — agents that see your screen and browse the web autonomously
+5. Assess the **safety implications** of giving LLMs increasing autonomy to act in the world
 
 </div>
 
 ---
 
-# The scaling dilemma
+# From chatbots to agents
 
-<div class="important-box" data-title="Dense models are wasteful">
+<div class="definition-box" data-title="What is an LLM agent?">
 
-In a dense model like GPT-3 (175B parameters, ~$4.6M to train), **every parameter is active for every input token**. But a math question doesn't require the same circuitry as a French translation. Can we activate only the relevant parameters?
+An **agent** is a system where a language model can:
+
+1. **Reason** about a task (plan steps, reflect on progress)
+2. **Act** by calling external tools (search, code execution, APIs)
+3. **Observe** the results of those actions
+4. **Iterate** until the task is complete
+
+A chatbot *responds to prompts*. An agent *takes actions in the world*.
 
 </div>
 
 <div class="tip-box" data-title="Questions to consider">
 
-The brain uses only ~1–2% of neurons for any given task — the rest are inhibited. Is MoE's sparse activation the same principle? What does this suggest about the computational tradeoffs of intelligence?
+When you use ChatGPT to browse the web or run Python code, you're interacting with an agent. What makes this qualitatively different from a simple question-answering system?
 
 </div>
 
 ---
 
-# Dense vs. sparse models
+# Why tools matter
 
-<div class="definition-box" data-title="Two approaches to scaling">
+<div class="note-box" data-title="LLMs are powerful but limited">
 
-- **Dense models** (GPT-3, Llama): All parameters are active for every token. 175B parameters = 175B active.
-- **Sparse models** (MoE): Only a subset of parameters are active per token. 47B total parameters, but only 12.9B active per token (Mixtral).
+Language models trained on text alone cannot:
+
+- **Access current information** (training data has a cutoff date)
+- **Perform precise computation** (arithmetic, symbolic math)
+- **Interact with external systems** (databases, APIs, file systems)
+- **Verify their own claims** (no ground truth access)
 
 </div>
 
-<div class="note-box" data-title="The MoE tradeoff">
+<div class="important-box" data-title="Tools compensate for LLM weaknesses">
 
-| Dimension | Dense | Sparse (MoE) |
-|-----------|-------|-------------|
-| Active parameters per token | 100% | ~25% |
-| Total parameters (memory) | N | 3--8x N |
-| Compute per token | High | Low |
-| Architecture complexity | Simple | Complex (routing) |
-| Quality at matched compute | Baseline | **Higher** |
-
-MoE gives you more *capacity* (knowledge storage) with less *compute* (inference cost).
+By connecting an LLM to external tools, we combine the model's **language understanding and reasoning** with tools that provide **accuracy, recency, and real-world interaction**. The LLM decides *what* to do; the tools *do* it.
 
 </div>
 
 ---
 
-# What is Mixture of Experts?
+# The ReAct framework
 
-<div class="definition-box" data-title="Shazeer et al. (2017)">
+<div class="definition-box" data-title="Yao et al. (2023): 'ReAct: Synergizing Reasoning and Acting'">
 
-A **Mixture of Experts** layer replaces the single feed-forward network in each transformer block with **multiple parallel feed-forward networks** (experts) and a **router** that selects which experts process each token.
+[**ReAct**](https://arxiv.org/abs/2210.03629) interleaves reasoning and action in a loop:
 
-Key components:
-1. **Experts**: N independent feed-forward networks (typically 8--64)
-2. **Router (gate)**: A learned linear layer that assigns tokens to experts
-3. **Top-k selection**: Only the top-k experts (typically k=2) are activated per token
+- **Reasoning** (chain-of-thought): The model thinks about what to do next
+- **Acting**: The model calls a tool or takes an action
+- **Observing**: The model reads the result and decides the next step
 
-</div>
-
-<div class="tip-box" data-title="Intuition">
-
-Think of experts as specialists on a team. When a code-related token arrives, the "code expert" handles it. When a French token arrives, the "French expert" activates. The router is the dispatcher.
+This continues until the task is complete.
 
 </div>
 
----
+<div class="example-box" data-title="ReAct in action">
 
-# The router mechanism
+```text
+Question: "What is the elevation of the city where Dartmouth is located?"
 
-<div class="example-box" data-title="Routing a token to top-2 experts">
+Thought 1: I need to find which city Dartmouth College is in.
+Action 1:  search("Dartmouth College location")
+Obs 1:     Dartmouth College is in Hanover, New Hampshire.
 
-```python
-import torch.nn.functional as F
+Thought 2: Now I need the elevation of Hanover, NH.
+Action 2:  search("Hanover New Hampshire elevation")
+Obs 2:     Hanover, NH has an elevation of 531 feet (162 m).
 
-def route_token(x, router_weights, num_experts=8, k=2):
-    # Step 1: Compute routing scores
-    logits = x @ router_weights           # (num_experts,)
-    # e.g., [-0.5, 2.1, 1.3, 0.2, -0.1, 0.0, -0.3, 0.1]
-
-    # Step 2: Convert to probabilities
-    probs = F.softmax(logits, dim=-1)
-    # e.g., [0.04, 0.52, 0.24, 0.08, 0.03, 0.03, 0.03, 0.03]
-
-    # Step 3: Select top-k experts
-    top_k_probs, top_k_indices = torch.topk(probs, k)
-    # indices: [1, 2], probs: [0.52, 0.24]
-
-    # Step 4: Normalize selected weights
-    top_k_probs = top_k_probs / top_k_probs.sum()  # [0.68, 0.32]
-    return top_k_indices, top_k_probs
-```
-
-Output: Expert 1 handles 68%, Expert 2 handles 32%. The other 6 experts do **no computation**.
-
-</div>
-
----
-
-# MoE layer in PyTorch
-
-<div class="example-box" data-title="Simplified implementation">
-
-```python
-class MoELayer(nn.Module):
-    def __init__(self, d_model, num_experts=8, k=2):
-        super().__init__()
-        self.k = k
-        self.gate = nn.Linear(d_model, num_experts)
-        self.experts = nn.ModuleList([
-            nn.Sequential(
-                nn.Linear(d_model, 4 * d_model),
-                nn.GELU(),
-                nn.Linear(4 * d_model, d_model)
-            ) for _ in range(num_experts)
-        ])
-
-    def forward(self, x):
-        router_probs = F.softmax(self.gate(x), dim=-1)
-        top_k_probs, top_k_idx = torch.topk(router_probs, self.k, dim=-1)
-        top_k_probs = top_k_probs / top_k_probs.sum(dim=-1, keepdim=True)
-        output = torch.zeros_like(x)
-        for i in range(self.k):
-            for eid in range(len(self.experts)):
-                mask = (top_k_idx[..., i] == eid)
-                if mask.any():
-                    output[mask] += top_k_probs[..., i][mask].unsqueeze(-1) \
-                                    * self.experts[eid](x[mask])
-        return output
+Thought 3: I have the answer.
+Action 3:  finish("531 feet (162 meters)")
 ```
 
 </div>
 
 ---
 
-# Load balancing
+# Function calling
 
-<div class="warning-box" data-title="The routing collapse problem">
+<div class="definition-box" data-title="How LLMs use tools">
 
-Without intervention, the router tends to send most tokens to a few "popular" experts, leaving others undertrained or completely **dead** (never activated). This wastes parameters and reduces model capacity.
-
-</div>
-
-<div class="note-box" data-title="Two solutions">
-
-**1. Auxiliary load-balancing loss** (added to training objective):
-
-$$\mathcal{L}_{\text{aux}} = \alpha \cdot N \cdot \sum_{i=1}^{N} f_i \cdot P_i$$
-
-where $f_i$ is the fraction of tokens routed to expert $i$, $P_i$ is the average routing probability for expert $i$, and $\alpha$ is a small coefficient (~0.01). This penalizes imbalanced routing.
-
-**2. Expert capacity limits**: Each expert has a maximum number of tokens it can process per batch. Overflow tokens are routed to the next-best expert.
+**Function calling** is a mechanism where the LLM outputs a structured JSON request to invoke an external function. The system executes the function and feeds the result back to the LLM.
 
 </div>
 
----
-
-# Training challenges
-
-<div class="note-box" data-title="What makes MoE training harder than dense models">
-
-| Challenge | Cause | Mitigation |
-|-----------|-------|------------|
-| **Routing collapse** | Router converges to always picking same experts | Load-balancing loss, random routing |
-| **Dead experts** | Some experts never receive tokens | Expert dropout, periodic reinitialization |
-| **High variance gradients** | Discrete routing decisions | Larger batch sizes, softmax gating |
-| **Memory overhead** | All experts must be in memory | Expert parallelism across GPUs |
-| **Communication cost** | Tokens must be sent to correct GPU | Optimized all-to-all communication |
-
-</div>
-
-<div class="tip-box" data-title="Questions to consider">
-
-Despite these challenges, MoE models are becoming the default for frontier models (Mixtral, GPT-4 reportedly uses MoE). What does this tell us about the compute-quality tradeoff?
-
-</div>
-
----
-
-# Mixtral 8x7B
-
-<div class="definition-box" data-title="Jiang et al. (2024): the MoE model that changed the game">
-
-**Mixtral** from Mistral AI demonstrated that open-weight MoE models can match or exceed much larger dense models:
-
-| Specification | Value |
-|--------------|-------|
-| Total parameters | 47B (8 experts x 7B, minus shared layers) |
-| Active parameters per token | 12.9B (top-2 routing) |
-| Transformer layers | 32 |
-| Context window | 32K tokens |
-| License | Apache 2.0 (fully open) |
-
-</div>
-
-<div class="important-box" data-title="The headline result">
-
-Mixtral (47B total, 12.9B active) **matches Llama 2 70B** on benchmarks while running at **6× the speed**. Quality of a 70B model at the cost of a 13B model.
-
-</div>
-
----
-
-# What do experts learn?
-
-<div class="note-box" data-title="Emergent specialization (no supervision required)">
-
-Analysis of Mixtral's routing patterns reveals natural specialization:
-
-| Token type | Primary expert | Example tokens |
-|------------|---------------|----------------|
-| Code | Expert 2 | `def`, `class`, `import` |
-| French | Expert 5 | `la`, `le`, `français` |
-| Math | Expert 7 | `∑`, `∫`, `theorem` |
-| Common English | Expert 1 | `the`, `is`, `and` |
-| Technical | Expert 3 | `neural`, `gradient` |
-
-</div>
-
-<div class="tip-box" data-title="Questions to consider">
-
-Nobody told Expert 2 to specialize in code -- it emerged from training. This mirrors how brain regions develop functional specialization. What does this suggest about the relationship between architecture and learned structure?
-
-</div>
-
----
-
-# Model compression: quantization
-
-<div class="definition-box" data-title="Reducing precision to reduce memory and speed up inference">
-
-**Quantization** converts model weights from high-precision floating point to lower-precision integers, dramatically reducing memory and often improving speed.
-
-</div>
-
-<div class="note-box" data-title="Memory savings for a 7B parameter model">
-
-| Precision | Bits per weight | Model size | Fits on... |
-|-----------|----------------|------------|-----------|
-| FP32 | 32 | 28 GB | High-end GPU |
-| FP16 / BF16 | 16 | 14 GB | Consumer GPU |
-| INT8 | 8 | 7 GB | Gaming GPU |
-| INT4 | 4 | 3.5 GB | Laptop GPU |
-
-INT4 quantization enables running a **7 billion parameter model on a laptop** with only 1--2% quality degradation on most benchmarks.
-
-</div>
-
----
-
-# DeepSeek MoE: pushing the limits
-
-<div class="definition-box" data-title="MoE at unprecedented scale">
-
-DeepSeek has systematically pushed MoE efficiency further with each generation:
-
-| Model | Total params | Active params | Training cost | Key innovation |
-|-------|-------------|--------------|---------------|---------------|
-| [DeepSeek-V2](https://arxiv.org/abs/2405.04434) (2024) | 236B | 21B | — | Multi-Latent Attention (MLA) |
-| [DeepSeek-V3](https://arxiv.org/abs/2412.19437) (2025) | 671B | 37B | **$5.5M** | Auxiliary-loss-free routing |
-| [DeepSeek-V4 Engram](https://arxiv.org/abs/2601.07372) (2025) | 671B | 37B | — | Reasoning + efficiency |
-
-</div>
-
-<div class="important-box" data-title="Why $5.5M matters">
-
-DeepSeek-V3 matches GPT-4-level quality at **671B total / 37B active parameters**, trained for just **$5.5 million** — roughly 1/20th of GPT-4's estimated cost. This shattered the assumption that frontier models require hundred-million-dollar budgets.
-
-</div>
-
----
-
-# Small language models
-
-<div class="note-box" data-title="Not everyone needs 70B parameters">
-
-A parallel trend: **small models** trained on massive data that punch far above their weight:
-
-| Model | Parameters | Highlight |
-|-------|-----------|-----------|
-| [Phi-4](https://arxiv.org/abs/2412.08905) (Microsoft, 2024) | 14B | Outperforms GPT-3.5 on reasoning benchmarks |
-| [Gemma 2](https://arxiv.org/abs/2408.00118) (Google, 2024) | 2B / 9B / 27B | Open weights, strong multilingual |
-| [Qwen 2.5](https://arxiv.org/abs/2412.15115) (Alibaba, 2024) | 0.5B–72B | Full size range, open weights |
-
-</div>
-
-<div class="tip-box" data-title="The inference-optimal paradigm">
-
-These models are **massively overtrained** relative to Chinchilla-optimal (Lecture 22): Phi-4 uses 700+ tokens/parameter vs. the "optimal" 20. The logic: train once, deploy millions of times. Smaller models are *cheaper to run*.
-
-</div>
-
----
-
-# State space models: an alternative to attention
-
-<div class="definition-box" data-title="Mamba (Gu & Dao, 2023)">
-
-**State space models (SSMs)** replace self-attention with a recurrent mechanism that processes sequences in **linear time** $O(n)$ instead of quadratic $O(n^2)$:
+<div class="example-box" data-title="The three-step dance">
 
 ```python
-state = initial_state           # Fixed size, independent of sequence length
-for token in sequence:
-    state = A @ state + B @ token   # Update state
-    output = C @ state              # Read output
+# Step 1: LLM generates a function call (not free text)
+response = {"function_call": {
+    "name": "get_weather",
+    "arguments": '{"location": "Hanover, NH", "unit": "fahrenheit"}'
+}}
+
+# Step 2: System executes the function
+result = get_weather(location="Hanover, NH", unit="fahrenheit")
+# Returns: {"temperature": 28, "condition": "snowy"}
+
+# Step 3: Result fed back to the LLM
+# LLM generates: "It's 28°F and snowy in Hanover right now."
 ```
 
 </div>
 
-<div class="note-box" data-title="Attention vs. SSM scaling">
+<div class="note-box" data-title="Key insight">
 
-| Sequence length | Attention cost | SSM cost |
-|----------------|---------------|----------|
-| 1K | 1x | 1x |
-| 4K | 16x | 4x |
-| 16K | 256x | 16x |
-| 64K | 4,096x | 64x |
-
-SSMs scale linearly, making them attractive for very long sequences. Hybrid architectures (attention + SSM) are an active research direction.
+The LLM never *executes* code itself — it generates a **structured request** that the system dispatches. This separation of reasoning from execution is fundamental to agent safety.
 
 </div>
 
 ---
 
-# The efficiency landscape
+# Model Context Protocol (MCP)
 
-<div class="note-box" data-title="Choosing the right technique">
+<div class="definition-box" data-title="USB-C for AI — Anthropic (November 2024)">
 
-| Technique | Best for | Main tradeoff |
-|-----------|----------|---------------|
-| **Dense large model** | Maximum quality | Expensive, slow |
-| **MoE** | Quality + speed | High memory (all experts stored) |
-| **Quantization** | Edge / local deployment | Small quality loss |
-| **Distillation** | Fixed tasks, small budget | Requires teacher model |
-| **Flash Attention** | Longer contexts | Implementation complexity |
-| **Speculative decoding** | Faster generation | Requires draft model |
-| **SSMs (Mamba)** | Very long sequences | Less proven than attention |
+[MCP](https://modelcontextprotocol.io) is an open protocol that standardizes how LLMs connect to external tools and data sources. Any MCP-compatible tool works with any MCP-compatible model.
 
 </div>
 
-<div class="tip-box" data-title="Decision heuristic">
+<div class="note-box" data-title="Adoption explosion">
 
-Need max quality? → Dense large. Need quality + speed on GPU? → MoE. Need to run on a laptop? → Quantized small model. Need extremely long contexts? → Hybrid attention + SSM.
-
-</div>
-
----
-
-# Environmental impact
-
-<div class="warning-box" data-title="The carbon cost of scale">
-
-Training GPT-3 produced an estimated **502 tonnes of CO$_2$** — equivalent to 112 cars driven for a year ([Patterson et al., 2021](https://arxiv.org/abs/2104.10350)). As models grow, so does their environmental footprint.
+| Metric | Nov 2024 (launch) | Apr 2025 | Feb 2026 |
+|--------|-------------------|----------|----------|
+| MCP servers | ~10 | 5,800+ | Growing rapidly |
+| MCP clients | ~3 | 300+ | All major platforms |
+| SDK downloads/month | 100K | 8M | **97M** |
+| Supported by | Anthropic | + OpenAI, Google | + Microsoft, all major IDEs |
 
 </div>
 
-<div class="note-box" data-title="Efficiency enables access">
+<div class="important-box" data-title="Why MCP won">
 
-Efficiency techniques are not just about cost — they are about **who gets to use AI**:
-
-- **Quantized open models** (Llama, Mixtral, DeepSeek) run on consumer hardware
-- **LoRA / QLoRA** enable fine-tuning on a single GPU
-- **Small efficient models** (Phi-4, Gemma 2, Qwen 2.5) bring quality to resource-constrained settings
-- **Open weights** let researchers, startups, and developing nations participate in AI development
+Within 14 months, MCP became the de facto universal standard. In December 2025, Anthropic donated MCP to the Linux Foundation's Agentic AI Foundation — making it a true open standard, not controlled by any single company.
 
 </div>
 
 ---
 
-# Discussion
+# Coding agents: SWE-bench in 18 months
 
-<div class="tip-box" data-title="Questions to consider">
+<div class="note-box" data-title="From 14% to 81% in less than two years">
 
-1. **The democratization paradox:** Efficiency makes AI accessible to everyone — including bad actors. DeepSeek-R1 is fully open and can reason. Is this net positive or net negative for society?
+**SWE-bench Verified** tests whether an agent can fix real GitHub issues — read the codebase, understand the bug, write a fix, and pass the test suite.
 
-2. **Expert specialization:** MoE experts develop functional specialization without supervision — code experts, language experts, math experts. The brain does the same thing. Is this convergent evolution, or is it the only way to organize large-scale processing?
+| Date | Agent | SWE-bench Verified |
+|------|-------|-------------------|
+| Mar 2024 | Devin (first "AI software engineer") | 13.9% |
+| Oct 2024 | Claude 3.5 Sonnet | 49.0% |
+| Feb 2025 | Claude 3.7 Sonnet | 62.3% |
+| Apr 2025 | GPT-5 | 74.9% |
+| Nov 2025 | **Claude Opus 4.5** | **80.9%** (first to break 80%) |
 
-3. **The race to the bottom:** DeepSeek trained a frontier model for $5.5M. If costs keep falling, what happens when *anyone* can train a powerful model? Does this change the AI safety calculus?
+</div>
 
-4. **State-space models:** Mamba processes sequences in linear time. If hybrid attention+SSM models match pure transformers, does the attention mechanism become a historical footnote — or a permanent necessity?
+<div class="important-box" data-title="What this means">
+
+Coding agents went from barely functional to solving **4 out of 5** real-world software bugs autonomously. Claude Code — Anthropic's terminal-based coding agent — reached **$1 billion** in annualized revenue within 6 months of launch.
 
 </div>
 
 ---
+
+# How coding agents work
+
+<div class="definition-box" data-title="The agent loop in practice">
+
+Nearly all coding agents follow the same core loop:
+
+1. **Read** the codebase (file system access)
+2. **Plan** a sequence of changes
+3. **Edit** files and write new code
+4. **Run** tests and commands (shell access)
+5. **Observe** results, fix errors
+6. **Iterate** until the task passes or a limit is reached
+
+</div>
+
+<div class="note-box" data-title="The ecosystem">
+
+| Tool | Form factor | Key strength |
+|------|------------|-------------|
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | Terminal CLI | Works on remote servers, CI/CD, any language |
+| [Cursor](https://cursor.com) | IDE | Deep editor integration, multi-file edits |
+| [Devin](https://devin.ai) | Autonomous agent | End-to-end task completion, acquired Windsurf IDE |
+| [GitHub Copilot Workspace](https://github.com/features/copilot) | GitHub-native | Plans changes across entire repos |
+| [OpenHands](https://github.com/All-Hands-AI/OpenHands) | Open-source | Leading open alternative to Devin |
+
+</div>
+
+---
+
+# Computer use: agents that see your screen
+
+<div class="definition-box" data-title="Anthropic (October 2024 — present)">
+
+[Computer use](https://docs.anthropic.com/en/docs/agents-and-tools/computer-use) gives Claude the ability to see screenshots, move the mouse, click buttons, and type — interacting with *any* software, not just tools with APIs.
+
+</div>
+
+<div class="note-box" data-title="Three approaches to computer control">
+
+| System | Developer | How it works | OSWorld score |
+|--------|-----------|-------------|--------------|
+| **Computer Use** | Anthropic | Screenshots + keyboard/mouse control | **72.5%** |
+| **Operator (CUA)** | OpenAI | Virtual browser environment | 38.1% |
+| **Project Mariner** | Google | Cloud VM, up to 10 parallel tasks | — |
+
+</div>
+
+<div class="important-box" data-title="The trajectory">
+
+Claude's computer use score on OSWorld improved **3.3×** in 16 months: 22% (Oct 2024) → 72.5% (Feb 2026). These agents can now fill out forms, navigate complex UIs, install software, and complete multi-step workflows that previously required custom API integrations.
+
+</div>
+
+---
+
+# Deep research agents
+
+<div class="note-box" data-title="Autonomous multi-hour research (all launched February 2025)">
+
+All three major AI companies shipped autonomous research agents within an 11-day window:
+
+| Agent | Developer | How it works |
+|-------|-----------|-------------|
+| [Deep Research](https://openai.com/index/introducing-deep-research/) | OpenAI | o3 variant + web browsing; 5–30 min reports |
+| Deep Research | Google | Gemini 3 Pro + Google Search; 100+ pages per query |
+| [Deep Research](https://www.perplexity.ai) | Perplexity | Parallelized ingestion; strong source tracing |
+
+</div>
+
+<div class="important-box" data-title="The capability jump">
+
+OpenAI's Deep Research scored **26% on Humanity's Last Exam** — when standard models scored 1–5%. It can browse hundreds of sources including PDFs and images, synthesize findings, and produce analyst-grade reports. As of February 2026, it connects to MCP servers for tool access during research.
+
+</div>
+
+<div class="warning-box" data-title="Limitation">
+
+All three can hallucinate citations, miss paywalled sources, and struggle with highly specialized literature. Independent verification remains essential.
+
+</div>
+
+---
+
+# Multi-agent systems
+
+<div class="definition-box" data-title="Multiple LLMs collaborating on complex tasks">
+
+**Multi-agent systems** use multiple LLM instances — often with different roles — to tackle problems too complex for a single agent:
+
+</div>
+
+<div class="note-box" data-title="Common architectures">
+
+| Pattern | How it works | Example |
+|---------|-------------|---------|
+| **Supervisor + Workers** | Orchestrator delegates to specialists | Manager assigns code review to specialist agents |
+| **Peer-to-peer** | Agents communicate directly | Two agents debate a solution |
+| **Swarm** | Many parallel agents on shared task | Kimi K2.5 uses parallel reasoning |
+| **Pipeline** | Sequential handoff between specialists | Research agent → Analysis agent → Writing agent |
+
+</div>
+
+<div class="tip-box" data-title="Frameworks">
+
+Leading frameworks: **LangGraph** (finite state machines), **CrewAI** (role-based teams), **AutoGen** (Microsoft, research-focused), **MetaGPT** (ICLR 2025 oral — "AI Software Company").
+
+</div>
+
+---
+
+# Agent memory
+
+<div class="note-box" data-title="How agents remember across long tasks">
+
+LLM context windows are finite (128K–1M tokens). Long-running agents need additional memory:
+
+| Memory type | Implementation | Use case |
+|-------------|---------------|----------|
+| **Short-term** | Conversation history in context | Recent steps and observations |
+| **Working memory** | Scratchpad / notepad tool | Intermediate results, running totals |
+| **Long-term** | Vector database (Lecture 17) | Past experiences, learned procedures |
+| **Episodic** | Structured logs | What worked/failed in previous runs |
+
+</div>
+
+<div class="important-box" data-title="The memory bottleneck">
+
+Memory management is one of the hardest problems in agent design. Too little context and the agent forgets its plan. Too much and it becomes slow and confused. The trend: **hierarchical memory** — compress old context rather than discarding it. Long context windows (Gemini at 1M tokens) help but don't fully solve this.
+
+</div>
+
+---
+
+# Agent safety: a growing concern
+
+<div class="warning-box" data-title="The International AI Safety Report (February 2026)">
+
+The [2026 International AI Safety Report](https://internationalaisafetyreport.org/publication/international-ai-safety-report-2026) — a consensus document from researchers worldwide — found:
+
+- AI agents can identify **77% of vulnerabilities** in real software in controlled competitions
+- Criminal groups and state actors are **actively using** general-purpose AI in operations
+- Multiple companies could not rule out bioweapons uplift before deploying; added heightened safeguards
+- Technical safeguards are improving but not complete
+
+</div>
+
+<div class="note-box" data-title="Agent-specific attack surface">
+
+| Attack | How it works | Mitigation |
+|--------|-------------|-----------|
+| **Prompt injection** | Malicious web content hijacks agent mid-task | Input sanitization, sandboxing |
+| **Tool misuse** | Agent with write permissions induced to take harmful actions | Minimal capability grants, human approval |
+| **Malicious MCP servers** | Supply-chain attack via compromised tool server | Server verification, audit logging |
+| **Cascading errors** | One bad tool call triggers a chain of incorrect actions | Step limits, rollback mechanisms |
+
+</div>
+
+---
+
+# The agent spectrum
+
+<div class="note-box" data-title="Increasing autonomy, increasing risk">
+
+| Level | Autonomy | Example | Risk |
+|-------|----------|---------|------|
+| Tool-using LLM | Low — calls functions on demand | ChatGPT with plugins | Low |
+| ReAct agent | Medium — reasons + acts iteratively | Research assistant | Medium |
+| Coding agent | High — writes, tests, deploys code | Claude Code, Devin | High |
+| Computer use | Very high — controls any software | Claude Computer Use | Very high |
+| Multi-agent | Highest — LLMs delegating to LLMs | Deep Research, Swarms | Highest |
+
+</div>
+
+<div class="important-box" data-title="The autonomy dilemma">
+
+Each step up gives agents more capability — and more potential for harm. Anthropic published a framework for [measuring agent autonomy](https://www.anthropic.com/research/measuring-agent-autonomy) that categorizes tasks by reversibility, blast radius, and required human oversight. The principle: **match autonomy to the stakes**.
+
+</div>
+
+---
+
+# Discussion: the automation frontier
+
+<div class="tip-box" data-title="Questions that will shape your career">
+
+1. **The coding question:** Claude Code can now fix 81% of real GitHub bugs autonomously. It reached $1B in revenue in 6 months. If you're a computer science student, how does this change what you should learn? Is this different from how compilers automated assembly language — or is it different in kind?
+
+2. **The trust problem:** Computer use agents can see your screen, click buttons, and fill out forms. Would you trust an AI to file your taxes? Book your flights? Send emails on your behalf? Where's *your* trust boundary — and why there?
+
+3. **The MCP ecosystem:** MCP standardizes tool access so any model can use any tool. If tools are interchangeable and models are interchangeable, where does the value lie? Who benefits most from open standards vs. proprietary ecosystems?
+
+4. **The principal-agent problem:** When you delegate a task to an AI agent, how do you verify it did what you wanted — especially when its reasoning is opaque? How is this different from delegating to a human employee?
+
+</div>
+
+---
+<!-- _class: scale-85 -->
 
 # Further reading
 
 <div class="note-box" data-title="Further reading">
 
-[**Jiang et al. (2024, *arXiv*)**](https://arxiv.org/abs/2401.04088) "Mixtral of Experts" — Open MoE matching Llama 2 70B at 6× the speed.
+[**Yao et al. (2023, *ICLR*)**](https://arxiv.org/abs/2210.03629) "ReAct: Synergizing Reasoning and Acting in Language Models" — The ReAct framework.
 
-[**DeepSeek-AI (2025, *arXiv*)**](https://arxiv.org/abs/2412.19437) "DeepSeek-V3" — 671B/37B MoE trained for $5.5M, frontier quality.
+[**Anthropic (2024)**](https://modelcontextprotocol.io) "Model Context Protocol" — Open standard for LLM-tool integration (now Linux Foundation).
 
-[**Dao (2024, *arXiv*)**](https://arxiv.org/abs/2407.08608) "FlashAttention-3" — Hardware-aware attention approaching theoretical FLOPS.
+[**Jimenez et al. (2024, *ICLR*)**](https://arxiv.org/abs/2310.06770) "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?" — The benchmark for coding agents.
 
-[**Gu & Dao (2023, *arXiv*)**](https://arxiv.org/abs/2312.00752) "Mamba: Linear-Time Sequence Modeling with Selective State Spaces" — $O(n)$ alternative to attention.
+[**International AI Safety Report (2026)**](https://internationalaisafetyreport.org/publication/international-ai-safety-report-2026) "International Scientific Report on AI Safety" — Global consensus on agent risks.
 
-[**Dao & Gu (2024, *ICML*)**](https://arxiv.org/abs/2405.21060) "Transformers are SSMs" — Mamba-2, bridging attention and state-space models.
-
-[**Patterson et al. (2021, *arXiv*)**](https://arxiv.org/abs/2104.10350) "Carbon Emissions and Large Neural Network Training" — CO₂ analysis of training large models.
+[**Anthropic (2025)**](https://www.anthropic.com/research/measuring-agent-autonomy) "Measuring Agent Autonomy" — Framework for categorizing agent risk levels.
 
 </div>
 
@@ -454,6 +430,6 @@ Efficiency techniques are not just about cost — they are about **who gets to u
 
 <div class="tip-box" data-title="Up next...">
 
-Ethics, bias, and safety: responsible development of large language models
+The reckoning: society, safety, and what comes next
 
 </div>

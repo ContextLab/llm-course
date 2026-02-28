@@ -6,7 +6,7 @@ transition: fade 0.25s
 author: Contextual Dynamics Lab
 ---
 
-# Lecture 24: Agents and tool use
+# Lecture 24: The thinking revolution
 
 ### PSYC 51.17: Models of language and communication
 
@@ -20,457 +20,462 @@ Winter 2026
 
 <div class="note-box" data-title="By the end of this lecture, you will be able to...">
 
-1. Define what an **LLM agent** is and how it differs from a chatbot
-2. Explain **function calling**, **MCP**, and how LLMs interact with external tools
-3. Describe the **ReAct framework** and its reasoning-action loop
-4. Explain how agentic coding tools (Claude Code, Cursor) are changing software development
-5. Evaluate the **safety implications** of giving LLMs the ability to act in the world
-
-</div>
-
-<div class="tip-box" data-title="Companion notebook">
-
-📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/agents_demo.ipynb) — build a simple agent with tool dispatch
+1. Explain **test-time compute scaling** and why it represents a new paradigm for AI
+2. Describe how **reasoning models** (o1, o3, DeepSeek-R1) learn to "think" via reinforcement learning
+3. Compare the **frontier model landscape** as of early 2026: Claude, GPT, Gemini, open-weight models
+4. Analyze **benchmark saturation** and what it tells us about progress toward general intelligence
+5. Evaluate whether longer "thinking" constitutes genuine reasoning or sophisticated pattern completion
 
 </div>
 
 ---
 
-# From chatbots to agents
+# Welcome back
 
-<div class="definition-box" data-title="What is an LLM agent?">
+<div class="important-box" data-title="The last content week">
 
-An **agent** is a system where a language model can:
+This is our final week of new material. Three lectures remain:
 
-1. **Reason** about a task (plan steps, reflect on progress)
-2. **Act** by calling external tools (search, code execution, APIs)
-3. **Observe** the results of those actions
-4. **Iterate** until the task is complete
+- **Today**: The thinking revolution — reasoning models and the frontier landscape
+- **Wednesday**: Agents, tools, and the agentic era
+- **Friday**: The reckoning — society, safety, and what comes next
 
-A chatbot *responds to prompts*. An agent *takes actions in the world*.
+</div>
+
+<div class="tip-box" data-title="Final project reminder">
+
+**Final Project** presentations are **March 9** (next Monday). Submit all materials before class.
+
+</div>
+
+---
+
+# The biggest shift since transformers
+
+<div class="definition-box" data-title="A new scaling axis">
+
+Every model we've studied — from word embeddings to GPT — improved primarily by making **training** bigger: more data, more parameters, more compute during training. In late 2024, a new paradigm emerged: **test-time compute scaling** — spending more compute *at inference* to improve results.
+
+</div>
+
+<div class="important-box" data-title="The key insight">
+
+A smaller model that "thinks longer" can outperform a larger model that answers immediately. This decouples model quality from model size in a way that changes everything about how we build and deploy AI.
+
+</div>
+
+---
+
+# Two scaling axes
+
+<div class="note-box" data-title="Training compute vs. inference compute">
+
+| | Training compute | Inference compute |
+|---|---|---|
+| **When** | Before deployment (once) | At query time (every call) |
+| **Cost structure** | Fixed, upfront, massive | Per-query, variable |
+| **What improves** | Base knowledge, capabilities | Reasoning depth on hard problems |
+| **Scaling law** | Kaplan et al. (2020) — Lecture 16 | Snell et al. (2024) — **new** |
+| **Analogy** | Years of education | Minutes of careful thought |
+
+</div>
+
+<div class="tip-box" data-title="The analogy">
+
+Training compute is like years of schooling — it determines what you *know*. Inference compute is like time spent thinking about a specific problem — it determines how *carefully* you reason. Both matter, independently.
+
+</div>
+
+---
+<!-- _class: scale-90 -->
+
+# Test-time compute scaling
+
+<div class="definition-box" data-title="Snell et al. (2024): 'Scaling LLM Test-Time Compute'">
+
+[Snell et al. (2024)](https://arxiv.org/abs/2408.03314) showed that **additional compute at inference** improves performance predictably and substantially — and on some problems, a small model thinking longer outperforms a large model thinking quickly.
+
+Two mechanisms:
+1. **Process-reward models**: Dense, step-level verifiers that score each reasoning step
+2. **Adaptive self-revision**: The model critiques and refines its own output iteratively
+
+</div>
+
+<div class="note-box" data-title="The empirical result">
+
+Compute-optimal test-time scaling improves efficiency **2–4×** over naive approaches. On certain problems, spending additional FLOPs at inference exceeds the benefit of spending the same FLOPs on pretraining.
+
+</div>
+
+---
+
+# From chain-of-thought to reasoning models
+
+<div class="note-box" data-title="The evolution">
+
+| Year | Technique | Key idea |
+|------|-----------|----------|
+| 2022 | Chain-of-thought prompting | Show the model examples with reasoning steps |
+| 2023 | Tree-of-thought, self-consistency | Generate multiple reasoning paths, pick the best |
+| 2024 | **Reasoning models** (o1) | Train the model via RL to generate its own reasoning |
+| 2025 | Adaptive thinking (Claude 4.x) | Model decides *when and how much* to think |
+
+</div>
+
+<div class="important-box" data-title="The conceptual leap">
+
+Chain-of-thought prompting (Lecture 16) showed that intermediate reasoning helps. Reasoning models take this further: instead of *prompting* the model to reason, you **train it via reinforcement learning** on verifiable rewards (correct math, passing code tests). The model learns to generate its own internal reasoning traces — and these traces can be far more effective than human-written examples.
+
+</div>
+
+---
+
+# OpenAI o1: the first reasoning model
+
+<div class="definition-box" data-title="OpenAI (September 2024)">
+
+**o1** was trained via large-scale RL where the reward signal is *outcome correctness* — verified math solutions, code that passes unit tests. The model learns to generate an internal chain-of-thought that maximizes this reward.
+
+</div>
+
+<div class="note-box" data-title="How o1 works">
+
+1. User submits a question
+2. Model generates a long internal **thinking trace** (hidden from user, billed as tokens)
+3. Thinking trace includes reasoning steps, self-correction, backtracking
+4. Model produces a final answer based on its thinking
+5. **No tree search or MCTS at inference** — all "search" happens during RL training
+
+</div>
+
+<div class="warning-box" data-title="Key limitation">
+
+OpenAI hides o1's thinking tokens and forbids prompting the model to reveal them. Whether the model performs genuine systematic reasoning or fluent post-hoc rationalization remains an open research question.
+
+</div>
+
+---
+
+# o3 and o4-mini: reasoning scales up
+
+<div class="note-box" data-title="OpenAI (April 2025)">
+
+| Model | AIME 2025 | GPQA Diamond | Codeforces Elo | Key advance |
+|-------|-----------|-------------|----------------|-------------|
+| GPT-4o (baseline) | ~13% | ~53% | ~1200 | No reasoning |
+| o1 (Sept 2024) | ~74% | ~78% | ~1900 | First reasoning model |
+| **o3** (Apr 2025) | 88.9% | 87.7% | 2727 | 20% fewer errors than o1 |
+| **o4-mini** (Apr 2025) | **92.7%** | ~87% | — | Multimodal + tool use in reasoning loop |
+
+</div>
+
+<div class="important-box" data-title="What changed">
+
+o3 makes **20% fewer major errors** than o1. o4-mini — the *small* reasoning model — scores **92.7% on AIME 2025** (math olympiad problems), surpassing o1's 74%. And o4-mini adds native multimodal input and tool use *within* the reasoning loop — it can search the web and run code as part of its thinking process.
+
+</div>
+
+---
+
+# DeepSeek-R1: open-source reasoning
+
+<div class="definition-box" data-title="DeepSeek-AI (January 2025) — MIT License">
+
+[DeepSeek-R1](https://arxiv.org/abs/2501.12948) proved that frontier reasoning capabilities can be achieved with **pure reinforcement learning** on an open-weight model — no proprietary data pipelines, no human preference labels.
+
+</div>
+
+<div class="note-box" data-title="The R1-Zero experiment">
+
+**DeepSeek-R1-Zero** was trained with RL only (zero supervised fine-tuning):
+- Algorithm: **GRPO** (Group Relative Policy Optimization) — generates multiple answers, ranks by correctness, updates toward better ones
+- Reward: Only whether the final answer is correct — no step-level supervision
+- Result: Self-verification, reflection, and long chain-of-thought **emerged spontaneously**
+- AIME 2024: jumped from 15.6% → 71.0% (pass@1); 86.7% with majority voting
+
+</div>
+
+<div class="tip-box" data-title="Why this matters">
+
+R1 matched OpenAI o1 as a fully open model. Its API costs ~1/30th of o1. Six distilled versions (1.5B–70B) outperform GPT-4 on math/coding. This democratized reasoning.
+
+</div>
+
+---
+
+# Claude's extended thinking
+
+<div class="definition-box" data-title="Anthropic (February 2025 — present)">
+
+Anthropic implemented reasoning as a **toggle within a single model** — same weights, different inference behavior. Unlike OpenAI, Claude's thinking tokens are **visible** to developers.
+
+</div>
+
+<div class="example-box" data-title="API usage">
+
+```python
+response = client.messages.create(
+    model="claude-opus-4-6",
+    thinking={"type": "enabled", "budget_tokens": 10000},
+    messages=[{"role": "user", "content": "Prove that √2 is irrational."}]
+)
+# Response includes a visible "thinking" block + final answer
+```
+
+</div>
+
+<div class="note-box" data-title="Key differences from OpenAI">
+
+| Feature | OpenAI o-series | Claude extended thinking |
+|---------|----------------|------------------------|
+| Thinking visibility | Hidden | **Visible** |
+| Control mechanism | Reasoning effort (low/med/high) | Budget tokens (1K–128K) or adaptive |
+| Latest innovation | o4-mini: tools in reasoning loop | **Interleaved thinking**: reason between tool calls |
+
+</div>
+
+---
+
+# The s1 experiment: reasoning is surprisingly simple
+
+<div class="definition-box" data-title="Muennighoff et al. (2025)">
+
+[s1](https://arxiv.org/abs/2501.19393) showed that test-time scaling can be achieved with remarkably little effort:
+
+1. Fine-tune Qwen2.5-32B on just **1,000 curated examples** (the "s1K" dataset)
+2. At inference, apply **budget forcing**: append the word "Wait" to force continued reasoning
+3. Result: Exceeds o1-preview on AIME 2024 by up to **27%**
+
+</div>
+
+<div class="important-box" data-title="The implication">
+
+You don't need massive RL infrastructure to get reasoning capabilities. A small amount of high-quality reasoning data + a simple inference trick can unlock substantial test-time scaling. This suggests reasoning is latent in large pretrained models — it just needs to be activated.
+
+</div>
+
+---
+
+# The frontier landscape: early 2026
+
+<div class="note-box" data-title="Where we stand">
+
+| Model | Developer | Release | Total params | Key capability |
+|-------|-----------|---------|-------------|----------------|
+| **Claude Opus 4.6** | Anthropic | Feb 2026 | — | 1M context, adaptive thinking |
+| **GPT-5** | OpenAI | Aug 2025 | — | Native multimodal, 94.6% AIME |
+| **Gemini 2.5 Pro** | Google | Mar 2025 | — | 1M context, built-in thinking |
+| **DeepSeek-R1** | DeepSeek | Jan 2025 | 671B MoE | Open-weight reasoning, $5.5M training |
+| **Llama 4 Maverick** | Meta | Apr 2025 | 400B MoE | Open-weight, 1M context, multimodal |
+| **Qwen 3** | Alibaba | Apr 2025 | 235B | 89.7% AIME, open-weight |
+| **Mistral Large 3** | Mistral AI | Dec 2025 | 675B MoE | Open-weight, 256K context, 40+ languages |
+
+</div>
+
+---
+
+# The Mixture of Experts revolution
+
+<div class="note-box" data-title="MoE is now the default for frontier models">
+
+Nearly every frontier model released in 2025 uses **Mixture of Experts** (MoE) — sparse activation where only a fraction of parameters are used per token:
+
+| Model | Total params | Active params | Experts | Training cost |
+|-------|-------------|--------------|---------|--------------|
+| DeepSeek-V3 | 671B | 37B | 256 + shared | **$5.6M** |
+| Llama 4 Maverick | 400B | 17B | 128 + 1 shared | — |
+| Llama 4 Scout | 109B | 17B | 16 | — |
+| Qwen 3 | 235B | 22B | 128 (top-8) | — |
+| Mistral Large 3 | 675B | 41B | — | — |
+
+</div>
+
+<div class="important-box" data-title="The DeepSeek effect">
+
+DeepSeek-V3 trained a frontier model for ~$5.6M — roughly **1/20th** of GPT-4's estimated cost. This shattered the assumption that only billion-dollar labs can compete. The key innovations: Multi-head Latent Attention (MLA), auxiliary-loss-free load balancing, and multi-token prediction.
+
+</div>
+
+---
+
+# Benchmark saturation
+
+<div class="warning-box" data-title="We're running out of tests">
+
+Most standard benchmarks are now **saturated** — frontier models score at or above human expert level:
+
+| Benchmark | Status | Best score | Human baseline |
+|-----------|--------|-----------|---------------|
+| HumanEval (coding) | Saturated | 99.0% | ~95% |
+| MMLU (knowledge) | Saturated | ~92% | ~89% expert |
+| GPQA Diamond (PhD-level science) | Near-saturated | 94.3% | ~65% expert |
+| MATH-500 | Near-saturated | 98.0% | — |
+| SWE-bench Verified (real GitHub issues) | Active | 80.9% | — |
+| **ARC-AGI-2** (novel reasoning) | **Not saturated** | **4.4%** | **60%** |
+| **Humanity's Last Exam** | **Not saturated** | **48.1%** | **~90%** |
+
+</div>
+
+---
+
+# Humanity's Last Exam
+
+<div class="definition-box" data-title="2,500 expert-level questions across 100+ academic subjects">
+
+[Humanity's Last Exam](https://lastexam.ai) (HLE) was designed to be the hardest public benchmark — questions submitted by domain experts that require deep specialist knowledge.
+
+</div>
+
+<div class="note-box" data-title="Progress in one year">
+
+| System | HLE score | Date |
+|--------|----------|------|
+| Early 2025 frontier models | ~1–5% | Jan 2025 |
+| OpenAI Deep Research | 26.0% | Feb 2025 |
+| Claude Opus 4.6 (max thinking) | 36.7% | Feb 2026 |
+| Gemini 3.1 Pro Preview | 44.7% | Feb 2026 |
+| SOTA (Zoom AI) | **48.1%** | Late 2025 |
+| Human graduate students | **~90%** | — |
+
+</div>
+
+<div class="tip-box" data-title="What this tells us">
+
+Models went from ~3% to ~48% in one year — extraordinary progress. But the gap to human experts (~90%) remains large. HLE and ARC-AGI-2 suggest that while models excel at knowledge retrieval and pattern-matching, **novel reasoning and deep domain expertise** remain hard.
+
+</div>
+
+---
+
+# ARC-AGI: the reasoning gap
+
+<div class="note-box" data-title="Two versions, two very different stories">
+
+**ARC-AGI-1** (Chollet, 2019): Visual pattern puzzles requiring novel reasoning.
+- o3 scored **87.5%** at high compute ($17–20/puzzle) — near human level (95%)
+- Declared "largely solved" → prize retired
+
+**ARC-AGI-2** (2025): Harder puzzles, same format.
+- o3 scored **2.9%** — humans score **60%**
+- The **20× gap** between AI and humans on novel tasks remains enormous
+
+</div>
+
+<div class="important-box" data-title="The lesson">
+
+Standard benchmarks can be saturated by scale and pattern matching. But **genuinely novel reasoning** — the kind that requires understanding abstract principles and applying them to situations never seen before — remains the frontier. ARC-AGI-2 is arguably the best current test of this capability.
+
+</div>
+
+---
+
+# Native multimodal models
+
+<div class="note-box" data-title="Models that see, hear, and generate across modalities">
+
+A parallel revolution: frontier models are no longer text-only. They **natively** process and generate across modalities:
+
+| Capability | GPT-5 | Gemini 2.5+ | Claude 4.6 | Llama 4 |
+|-----------|-------|------------|-----------|---------|
+| Text input/output | Yes | Yes | Yes | Yes |
+| Image understanding | Yes | Yes | Yes | Yes |
+| Audio input | Yes | Yes | No | No |
+| Video understanding | Frames | **Native** | No | Yes |
+| **Image generation** | **Native** | **Native** | No | No |
+| Long context | 128K | **1M** | **1M** | 1M |
+
+</div>
+
+<div class="important-box" data-title="Native image generation (March 2025)">
+
+Both OpenAI and Google shipped **native image generation** inside their main LLMs — not calling a separate diffusion model, but generating images autoregressively as tokens. GPT-4o generates images with far superior text rendering vs. DALL-E 3. Gemini does the same with SynthID watermarking built in.
+
+</div>
+
+---
+
+# Small models, big capabilities
+
+<div class="note-box" data-title="Not everyone needs 671B parameters">
+
+| Model | Parameters | Key strength |
+|-------|-----------|-------------|
+| Phi-4-mini (Microsoft) | 3.8B | Matches 7–9B class on reasoning |
+| Gemma 3n (Google) | 2B effective | Multimodal (text+image+audio+video), on-device |
+| Qwen 3-0.6B (Alibaba) | 600M | Hybrid reasoning modes, tool use |
+| Llama 3.2 1B (Meta) | 1B | 128K context, fits in 2–3 GB RAM |
+
+</div>
+
+<div class="tip-box" data-title="The inference-optimal paradigm">
+
+These models are **massively overtrained** relative to Chinchilla-optimal scaling (Lecture 16): 700+ tokens/parameter vs. the "optimal" 20. The logic: train once, deploy millions of times. Smaller models are cheaper to run — and with quantization, a 3B model can run on a **phone**.
+
+</div>
+
+---
+
+# On-device AI
+
+<div class="note-box" data-title="LLMs in your pocket">
+
+Flagship smartphones in 2025 can run 4B+ parameter models at conversational speeds:
+
+| Platform | NPU capability | What runs locally |
+|----------|---------------|-------------------|
+| Apple A18 Pro | 35+ TOPS | ~3B model; sensitive tasks stay on-device |
+| Qualcomm Snapdragon 8 Elite | 70+ TOPS | Llama 3.2 1B/3B natively |
+| MediaTek Dimensity 9500 | 3nm NPU | Gemma 3n via LiteRT |
+
+</div>
+
+<div class="definition-box" data-title="Apple's privacy architecture">
+
+Apple Intelligence uses a tiered approach:
+1. **On-device**: ~3B model handles simple tasks privately
+2. **Private Cloud Compute**: Complex tasks processed on Apple silicon servers — no data stored
+3. **External**: ChatGPT integration for out-of-scope tasks (with user permission)
+
+This is a principled answer to the privacy vs. capability tradeoff.
+
+</div>
+
+---
+
+# Voice and real-time AI
+
+<div class="note-box" data-title="End-to-end audio models">
+
+**GPT-4o Advanced Voice Mode** processes audio natively — no speech-to-text → LLM → text-to-speech pipeline. One unified model:
+
+- Detects sarcasm, urgency, hesitation from **acoustic signals**
+- Handles natural **interruptions** (you can cut it off mid-sentence)
+- Sub-second latency via WebRTC
+- Modulates its own voice emotionally based on context
+
+**Gemini Live** adds deep Google ecosystem grounding — it can check your Gmail, Calendar, and Drive while talking to you.
 
 </div>
 
 <div class="tip-box" data-title="Questions to consider">
 
-When you use ChatGPT to browse the web or run Python code, you are interacting with an agent. What makes this qualitatively different from a simple question-answering system?
+When an AI can hear your tone of voice, see your face, and respond in real-time with emotional awareness — is this meaningfully different from human conversation? What does this mean for the ELIZA effect (Lecture 2)?
 
 </div>
 
 ---
 
-# Why tools matter
+# Discussion: what does it mean to "think"?
 
-<div class="note-box" data-title="LLMs are powerful but limited">
+<div class="tip-box" data-title="The deepest question in this course">
 
-Language models trained on text alone cannot:
+1. **Thinking or performing?** When o3 generates a 10,000-token reasoning trace to solve a math problem, is it *thinking* — or producing a sophisticated pattern that *looks like* thinking? How would you test the difference? (Revisit Lecture 1: is ChatGPT conscious?)
 
-- **Access current information** (training data has a cutoff date)
-- **Perform precise computation** (arithmetic, symbolic math)
-- **Interact with external systems** (databases, APIs, file systems)
-- **Verify their own claims** (no ground truth access)
+2. **The DeepSeek-R1 emergence:** R1-Zero developed self-verification and backtracking *without being taught these behaviors*. The model was rewarded only for correct answers — yet it learned to doubt itself, re-examine its work, and try alternative approaches. Is this "just optimization" — or is something deeper happening?
 
-</div>
+3. **Diminishing returns?** AIME scores went from 13% → 93% in 18 months. But ARC-AGI-2 scores went from 0% to 4%. Are we approaching a wall — or just need a different kind of reasoning training?
 
-<div class="important-box" data-title="Tools compensate for LLM weaknesses">
-
-By connecting an LLM to external tools, we can combine the model's **language understanding and reasoning** with tools that provide **accuracy, recency, and real-world interaction**. The LLM decides *what* to do; the tools *do* it.
-
-</div>
-
----
-
-# Function calling
-
-<div class="definition-box" data-title="How LLMs use tools">
-
-**Function calling** is a mechanism where the LLM outputs a structured request to invoke an external function, rather than generating free-form text. The system executes the function, and the result is fed back to the LLM.
-
-</div>
-
-<div class="example-box" data-title="Function calling with the OpenAI API">
-
-```python
-tools = [{
-    "type": "function",
-    "function": {
-        "name": "get_weather",
-        "description": "Get current weather for a location",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "location": {"type": "string", "description": "City name"},
-                "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]}
-            },
-            "required": ["location"]
-        }
-    }
-}]
-```
-
-</div>
-
----
-
-# Function calling in practice
-
-<div class="example-box" data-title="The LLM decides when and how to call tools">
-
-```python
-# User asks: "What's the weather like in Hanover, NH?"
-
-# Step 1: LLM generates a function call (not free text)
-response = {
-    "function_call": {
-        "name": "get_weather",
-        "arguments": '{"location": "Hanover, NH", "unit": "fahrenheit"}'
-    }
-}
-
-# Step 2: System executes the function
-result = get_weather(location="Hanover, NH", unit="fahrenheit")
-# Returns: {"temperature": 28, "condition": "snowy"}
-
-# Step 3: Result is fed back to the LLM
-# LLM generates: "It's 28°F and snowy in Hanover, NH right now."
-```
-
-</div>
-
-<div class="note-box" data-title="Key insight">
-
-The LLM never *executes* code itself -- it generates a **structured request** that the system dispatches. This separation of reasoning from execution is fundamental to agent safety.
-
-</div>
-
----
-
-# The ReAct framework
-
-<div class="definition-box" data-title="Yao et al. (2023): 'ReAct: Synergizing Reasoning and Acting'">
-
-**ReAct** interleaves two capabilities in a loop:
-
-- **Reasoning** (chain-of-thought): The model thinks about what to do next
-- **Acting**: The model calls a tool or takes an action
-- **Observing**: The model reads the result and decides the next step
-
-This continues until the task is complete or the model decides it has enough information.
-
-</div>
-
-<div class="important-box" data-title="Why interleaving matters">
-
-Pure reasoning (chain-of-thought alone) can hallucinate facts. Pure acting (tool use without reasoning) can call the wrong tools. **ReAct combines both**: the model reasons about *which* tool to use, acts, then reasons about the result.
-
-</div>
-
----
-
-# ReAct in action
-
-<div class="example-box" data-title="Answering a question with search">
-
-```text
-Question: "What is the elevation of the city where Dartmouth College
-           is located?"
-
-Thought 1: I need to find which city Dartmouth College is in.
-Action 1:  search("Dartmouth College location")
-Obs 1:     Dartmouth College is in Hanover, New Hampshire.
-
-Thought 2: Now I need the elevation of Hanover, NH.
-Action 2:  search("Hanover New Hampshire elevation")
-Obs 2:     Hanover, NH has an elevation of 531 feet (162 m).
-
-Thought 3: I have the answer.
-Action 3:  finish("531 feet (162 meters)")
-```
-
-Each **Thought** is the model reasoning; each **Action** is a tool call; each **Obs** is the tool's response.
-
-</div>
-
----
-
-# ReAct vs. chain-of-thought
-
-<div class="note-box" data-title="Where grounding matters">
-
-Chain-of-thought (Lecture 22) improves reasoning but can hallucinate facts. ReAct adds **grounding**: the model checks its reasoning against real tool outputs.
-
-| Approach | Reasoning | Grounded | Best for |
-|----------|-----------|----------|----------|
-| Chain-of-thought | Yes | No | Math, logic |
-| Act-only | No | Yes | Simple lookups |
-| **ReAct** | **Yes** | **Yes** | **Complex, factual tasks** |
-
-</div>
-
-<div class="note-box" data-title="Empirical results (Yao et al., 2023)">
-
-On knowledge-intensive tasks (HotpotQA, FEVER), ReAct outperformed chain-of-thought by **reducing hallucinations** through grounded search. On reasoning tasks (ALFWorld, WebShop), ReAct outperformed act-only methods by making **more informed tool choices**.
-
-</div>
-
----
-
-# Toolformer: self-taught tool use
-
-<div class="definition-box" data-title="Schick et al. (2023): 'Toolformer: Language Models Can Teach Themselves to Use Tools'">
-
-**Toolformer** trains an LLM to decide *when and how* to call tools by embedding API calls directly into training text. The model learns to insert tool calls at positions where they reduce prediction loss.
-
-</div>
-
-<div class="example-box" data-title="How Toolformer annotates training data">
-
-```text
-Original:  "The Eiffel Tower is 330 meters tall."
-Annotated: "The Eiffel Tower is [QA("height of Eiffel Tower") → 330]
-            meters tall."
-
-Original:  "The population of France is about 67 million."
-Annotated: "The population of France is about
-            [Search("France population") → 67 million] ."
-```
-
-The model learns to insert `[Tool(query) → result]` at positions where the tool call improves next-token prediction. At inference time, the system intercepts these calls and executes them.
-
-</div>
-
----
-
-# Common agent tools
-
-<div class="note-box" data-title="Tools available to modern LLM agents">
-
-| Tool | Purpose | Example |
-|------|---------|---------|
-| **Web search** | Access current information | "What happened in the news today?" |
-| **Code interpreter** | Execute Python, do math | "Calculate the eigenvalues of this matrix" |
-| **File system** | Read/write files | "Save this analysis to report.csv" |
-| **Database** | Query structured data | "How many users signed up last month?" |
-| **API calls** | Interact with services | "Send an email to the team" |
-| **Browser** | Navigate web pages | "Fill out this form and submit it" |
-| **Image generation** | Create visual content | "Draw a diagram of this architecture" |
-
-</div>
-
----
-
-# Implementing a simple agent loop
-
-<div class="example-box" data-title="A minimal agent in Python">
-
-```python
-import openai, json
-
-TOOLS = {
-    "search": lambda q: web_search(q),
-    "calculate": lambda expr: eval(expr),  # Simplified!
-    "finish": lambda answer: answer,
-}
-
-def agent_loop(question, max_steps=5):
-    messages = [{"role": "user", "content": question}]
-    for step in range(max_steps):
-        response = openai.chat.completions.create(
-            model="gpt-4", messages=messages, tools=tool_definitions
-        )
-        msg = response.choices[0].message
-        if msg.tool_calls:
-            for call in msg.tool_calls:
-                fn = TOOLS[call.function.name]
-                result = fn(**json.loads(call.function.arguments))
-                messages.append({"role": "tool", "content": str(result),
-                                 "tool_call_id": call.id})
-        else:
-            return msg.content  # Final answer (no tool call)
-    return "Max steps reached"
-```
-
-</div>
-
----
-
-# The agent loop pattern
-
-<div class="definition-box" data-title="The universal agent architecture">
-
-Nearly all LLM agents follow the same core loop:
-
-1. **Prompt** the LLM with the task and available tools
-2. **Parse** the LLM's output for tool calls or a final answer
-3. **Execute** any requested tool calls
-4. **Append** tool results to the conversation
-5. **Repeat** until the LLM produces a final answer (or a step limit is reached)
-
-</div>
-
-<div class="warning-box" data-title="Critical design decisions">
-
-- **Maximum steps**: Prevents infinite loops (typically 5--20)
-- **Error handling**: What happens when a tool call fails?
-- **Sandboxing**: Code execution must be isolated for safety
-- **Cost control**: Each loop iteration costs API tokens
-
-</div>
-
----
-
-# Multi-step reasoning example
-
-<div class="example-box" data-title="An agent solving a complex task">
-
-```text
-User: "Compare the GDP per capita of the US and Japan in 2023,
-       and calculate the ratio."
-
-Step 1 - Thought: I need GDP per capita data for both countries.
-Step 1 - Action:  search("US GDP per capita 2023")
-Step 1 - Result:  "$76,329"
-
-Step 2 - Action:  search("Japan GDP per capita 2023")
-Step 2 - Result:  "$33,950"
-
-Step 3 - Thought: Now I can calculate the ratio.
-Step 3 - Action:  calculate("76329 / 33950")
-Step 3 - Result:  2.248
-
-Step 4 - Answer:  "US GDP per capita ($76,329) is approximately
-                   2.25x Japan's ($33,950) in 2023."
-```
-
-The agent **decomposed** the task, **gathered data** with search, **computed** the ratio with a calculator, and **synthesized** a final answer.
-
-</div>
-
----
-
-# Model Context Protocol (MCP)
-
-<div class="definition-box" data-title="A universal standard for tool integration (Anthropic, 2024)">
-
-[MCP](https://modelcontextprotocol.io) is an open protocol that standardizes how LLMs connect to external tools and data sources. Think of it as **USB for AI** — any MCP-compatible tool works with any MCP-compatible model.
-
-</div>
-
-<div class="note-box" data-title="Why MCP matters">
-
-| Before MCP | With MCP |
-|-----------|----------|
-| Each model has its own tool format | Universal JSON-RPC protocol |
-| Custom integration per tool × model | Write once, works everywhere |
-| Tools tightly coupled to specific APIs | Tools are portable across models |
-| Hard to share tool implementations | Open ecosystem of shared tools |
-
-MCP servers provide tools (functions the model can call), resources (data the model can read), and prompts (templates for common tasks). Any model that speaks MCP can use any MCP server.
-
-</div>
-
----
-
-# Computer Use and agentic coding
-
-<div class="note-box" data-title="LLMs that can see and control your screen">
-
-[Computer Use](https://docs.anthropic.com/en/docs/agents-and-tools/computer-use) (Anthropic, 2024) gives Claude the ability to see screenshots, move the mouse, click buttons, and type — interacting with *any* software, not just tools with APIs.
-
-</div>
-
-<div class="definition-box" data-title="Agentic coding: LLMs that write and debug software">
-
-| System | What it does | Benchmark |
-|--------|-------------|-----------|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | Terminal-based coding agent | — |
-| [Cursor](https://cursor.com) | IDE with integrated AI agent | — |
-| [OpenHands](https://github.com/All-Hands-AI/OpenHands) | Open-source software agent | [SWE-bench](https://arxiv.org/abs/2310.06770): 53% |
-| [Codex CLI](https://github.com/openai/codex) | OpenAI's terminal agent | — |
-
-These tools don't just *suggest* code — they read files, run tests, debug errors, and iterate autonomously. Software engineering is becoming one of the first domains where agents approach human-level competence.
-
-</div>
-
----
-
-# Agent memory
-
-<div class="note-box" data-title="Overcoming the context window limitation">
-
-LLM context windows are finite (4K–128K tokens). Long-running agents need additional memory:
-
-| Memory type | Implementation | Use case |
-|-------------|---------------|----------|
-| **Short-term** | Conversation history in context | Recent steps and observations |
-| **Working memory** | Scratchpad / notepad tool | Intermediate results, running totals |
-| **Long-term** | Vector database (Lecture 17) | Past experiences, learned procedures |
-| **Episodic** | Structured logs | What worked/failed in previous runs |
-
-</div>
-
-<div class="important-box" data-title="The memory bottleneck">
-
-Memory management is one of the hardest problems in agent design. Too little context and the agent forgets its plan. Too much context and it becomes slow, expensive, and confused by irrelevant information. Current research focuses on **hierarchical memory** — agents that compress old context rather than discarding it.
-
-</div>
-
----
-
-# Agent safety: the principal-agent problem
-
-<div class="warning-box" data-title="Risks of agentic AI systems">
-
-- **Unintended actions**: An agent told to "clean up my email" might delete important messages
-- **Goal misalignment**: An agent optimizing a metric might find harmful shortcuts
-- **Prompt injection**: A malicious website could hijack an agent browsing the web
-- **Cascading errors**: One bad tool call can lead to a chain of incorrect actions
-- **Capability overhang**: Agents may have more power than their operators realize
-
-</div>
-
-<div class="definition-box" data-title="The principal-agent problem (Hagendorff, 2025)">
-
-[Hagendorff (2025)](https://arxiv.org/abs/2508.04039) tested LLM agents on safety benchmarks and found a **97.14% attack success rate** — agents routinely executed harmful actions when cleverly prompted. The core challenge: how do you *verify* that an agent is doing what you intended when its actions are opaque and its reasoning is complex?
-
-Mitigations: human-in-the-loop for irreversible actions, sandboxed execution, budget limits, audit logging, and minimal capability grants.
-
-</div>
-
----
-
-# The agent spectrum
-
-<div class="note-box" data-title="Increasing autonomy, increasing risk">
-
-| Paradigm | Autonomy level | Example |
-|----------|---------------|---------|
-| Tool-using LLM | Low — calls functions on demand | ChatGPT with plugins |
-| ReAct agent | Medium — reasons + acts iteratively | Research assistant |
-| Coding agent | High — writes, tests, debugs software | Claude Code, OpenHands |
-| Multi-agent system | Very high — LLMs collaborating/debating | Code review, delegation |
-
-</div>
-
-<div class="tip-box" data-title="The key insight">
-
-Each step up the spectrum gives the LLM more autonomy — and more potential for both benefit and harm. The field is moving rapidly toward high-autonomy agents: OpenAI's "deep research" agent, Anthropic's Claude Code, and Google's Project Mariner can all operate for hours without human intervention.
-
-</div>
-
----
-
-# Discussion
-
-<div class="tip-box" data-title="Questions to consider">
-
-1. **The automation frontier:** Coding agents can now fix real GitHub issues. What does this mean for software engineering as a career? Is this different from how compilers automated assembly language?
-
-2. **Trust and verification:** Hagendorff found 97% attack success on safety benchmarks. How do you build trust in systems that act on your behalf? Is "human-in-the-loop" scalable?
-
-3. **MCP and the tool ecosystem:** MCP standardizes tool access for any model. If tools are interchangeable and models are interchangeable, where does the value lie? Who benefits most from open standards?
-
-4. **The principal-agent problem:** When you delegate a task to an AI agent, how do you verify it did what you wanted — especially when its reasoning is opaque? How is this different from delegating to a human?
+4. **The education analogy:** If a student solves a problem by thinking for 5 minutes vs. 5 seconds, we say the longer thinking was "deeper." Is the same true for an LLM using 50,000 thinking tokens vs. 500? What's the difference?
 
 </div>
 
@@ -481,15 +486,15 @@ Each step up the spectrum gives the LLM more autonomy — and more potential for
 
 <div class="note-box" data-title="Further reading">
 
-[**Yao et al. (2023, *ICLR*)**](https://arxiv.org/abs/2210.03629) "ReAct: Synergizing Reasoning and Acting in Language Models" — The ReAct framework (+34% on ALFWorld, +10% on WebShop).
+[**Snell et al. (2024, *arXiv*)**](https://arxiv.org/abs/2408.03314) "Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters" — The theoretical foundation for inference-time scaling.
 
-[**Schick et al. (2023, *NeurIPS*)**](https://arxiv.org/abs/2302.04761) "Toolformer: Language Models Can Teach Themselves to Use Tools" — Self-taught tool use.
+[**DeepSeek-AI (2025, *arXiv*)**](https://arxiv.org/abs/2501.12948) "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning" — Open-weight reasoning model matching o1.
 
-[**Anthropic (2024)**](https://modelcontextprotocol.io) "Model Context Protocol" — Open standard for LLM-tool integration.
+[**Muennighoff et al. (2025, *arXiv*)**](https://arxiv.org/abs/2501.19393) "s1: Simple Test-Time Scaling" — 1,000 examples + "Wait" trick beats o1-preview.
 
-[**Jimenez et al. (2024, *ICLR*)**](https://arxiv.org/abs/2310.06770) "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?" — The benchmark for coding agents.
+[**Wei et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2201.11903) "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" — Where it all started.
 
-[**Hagendorff (2025, *arXiv*)**](https://arxiv.org/abs/2508.04039) "AI Agent Safety" — 97.14% attack success rate on agent safety benchmarks.
+[**OpenAI (2025)**](https://openai.com/index/introducing-o3-and-o4-mini/) "Introducing o3 and o4-mini" — Latest reasoning models with multimodal capabilities.
 
 </div>
 
@@ -514,6 +519,6 @@ Each step up the spectrum gives the LLM more autonomy — and more potential for
 
 <div class="tip-box" data-title="Up next...">
 
-Mixture of experts and efficiency: scaling models without scaling compute
+Agents, tools, and the agentic era: when LLMs start acting in the world
 
 </div>
