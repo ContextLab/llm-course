@@ -76,17 +76,7 @@ By connecting an LLM to external tools, we combine the model's **language unders
 
 # The ReAct framework
 
-<div class="definition-box" data-title="Yao et al. (2023): 'ReAct: Synergizing Reasoning and Acting'">
-
-[**ReAct**](https://arxiv.org/abs/2210.03629) interleaves reasoning and action in a loop:
-
-- **Reasoning** (chain-of-thought): The model thinks about what to do next
-- **Acting**: The model calls a tool or takes an action
-- **Observing**: The model reads the result and decides the next step
-
-This continues until the task is complete.
-
-</div>
+![ReAct loop](figs/react-loop.svg)
 
 <div class="example-box" data-title="ReAct in action">
 
@@ -356,17 +346,7 @@ The [2026 International AI Safety Report](https://internationalaisafetyreport.or
 
 # The agent spectrum
 
-<div class="note-box" data-title="Increasing autonomy, increasing risk">
-
-| Level | Autonomy | Example | Risk |
-|-------|----------|---------|------|
-| Tool-using LLM | Low — calls functions on demand | ChatGPT with plugins | Low |
-| ReAct agent | Medium — reasons + acts iteratively | Research assistant | Medium |
-| Coding agent | High — writes, tests, deploys code | Claude Code, Devin | High |
-| Computer use | Very high — controls any software | Claude Computer Use | Very high |
-| Multi-agent | Highest — LLMs delegating to LLMs | Deep Research, Swarms | Highest |
-
-</div>
+![Agent spectrum](figs/agent-spectrum.svg)
 
 <div class="important-box" data-title="The autonomy dilemma">
 

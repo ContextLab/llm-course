@@ -1,0 +1,47 @@
+<svg viewBox="0 0 740 140" xmlns="http://www.w3.org/2000/svg">
+<!-- Gradient bar -->
+<defs>
+<linearGradient id="spectrum-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#55efc4;stop-opacity:0.6"/>
+<stop offset="25%" style="stop-color:#74b9ff;stop-opacity:0.6"/>
+<stop offset="50%" style="stop-color:#ffeaa7;stop-opacity:0.6"/>
+<stop offset="75%" style="stop-color:#fab1a0;stop-opacity:0.6"/>
+<stop offset="100%" style="stop-color:#ff7675;stop-opacity:0.6"/>
+</linearGradient>
+</defs>
+<!-- Background gradient bar -->
+<rect x="50" y="42" width="640" height="36" rx="18" fill="url(#spectrum-grad)" stroke="#2d3436" stroke-width="1"/>
+<!-- Axis labels -->
+<text x="50" y="30" font-size="10" font-family="Avenir,sans-serif" fill="#00b894" font-weight="bold">Low autonomy</text>
+<text x="690" y="30" text-anchor="end" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">High autonomy</text>
+<text x="50" y="98" font-size="10" font-family="Avenir,sans-serif" fill="#00b894" font-weight="bold">Low risk</text>
+<text x="690" y="98" text-anchor="end" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">High risk</text>
+<!-- Level markers -->
+<!-- L1: Tool-using LLM -->
+<circle cx="100" cy="60" r="12" fill="white" stroke="#00b894" stroke-width="2"/>
+<text x="100" y="64" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#00b894" font-weight="bold">1</text>
+<text x="100" y="122" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Tool-using</text>
+<text x="100" y="134" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">ChatGPT+plugins</text>
+<!-- L2: ReAct agent -->
+<circle cx="230" cy="60" r="12" fill="white" stroke="#0984e3" stroke-width="2"/>
+<text x="230" y="64" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#0984e3" font-weight="bold">2</text>
+<text x="230" y="122" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">ReAct Agent</text>
+<text x="230" y="134" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">Research assistant</text>
+<!-- L3: Coding agent -->
+<circle cx="370" cy="60" r="12" fill="white" stroke="#fdcb6e" stroke-width="2"/>
+<text x="370" y="64" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#e17055" font-weight="bold">3</text>
+<text x="370" y="122" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Coding Agent</text>
+<text x="370" y="134" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">Claude Code, Devin</text>
+<!-- L4: Computer use -->
+<circle cx="510" cy="60" r="12" fill="white" stroke="#e17055" stroke-width="2"/>
+<text x="510" y="64" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#e17055" font-weight="bold">4</text>
+<text x="510" y="122" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Computer Use</text>
+<text x="510" y="134" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">Screen control</text>
+<!-- L5: Multi-agent -->
+<circle cx="640" cy="60" r="12" fill="white" stroke="#d63031" stroke-width="2"/>
+<text x="640" y="64" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">5</text>
+<text x="640" y="122" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Multi-Agent</text>
+<text x="640" y="134" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">LLMs → LLMs</text>
+<!-- Top annotation -->
+<text x="370" y="14" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">The Agent Spectrum: Increasing Autonomy</text>
+</svg>

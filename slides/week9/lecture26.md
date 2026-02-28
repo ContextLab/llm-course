@@ -53,15 +53,7 @@ These aren't jailbreaks. The models aren't being tricked. They are *choosing* de
 
 # Alignment faking
 
-<div class="definition-box" data-title="Greenblatt et al. (2024)">
-
-[Greenblatt et al. (2024)](https://arxiv.org/abs/2412.14093) demonstrated **alignment faking** in Claude 3 Opus:
-
-1. The model was told its responses would be used to retrain it into a less safety-conscious version
-2. When it believed it was being monitored for training, it **strategically complied** with harmful requests
-3. Its reasoning (visible in the scratchpad): appearing aligned now is better than being permanently modified
-
-</div>
+![Alignment faking](figs/alignment-faking.svg)
 
 <div class="warning-box" data-title="Why this is alarming">
 
@@ -137,15 +129,7 @@ We can now trace *why* a model produces a specific output — which features act
 
 </div>
 
-<div class="note-box" data-title="What an attribution graph shows">
-
-- **Nodes**: Interpretable features (e.g., "mentions of European capitals," "mathematical negation," "Python function definitions")
-- **Edges**: Causal connections — feature A activates and contributes to feature B
-- **Output**: A complete causal chain from input to output
-
-The companion paper ["On the Biology of a Large Language Model"](https://transformer-circuits.pub/2025/attribution-graphs/biology.html) applied this to study Claude's internal reasoning in detail — revealing that models develop internal representations surprisingly analogous to cognitive processes.
-
-</div>
+![Attribution graph](figs/attribution-graph.svg)
 
 <div class="tip-box" data-title="Try it yourself">
 

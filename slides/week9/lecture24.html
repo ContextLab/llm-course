@@ -774,9 +774,7 @@ Winter 2026</p>
 </tbody>
 </table>
 </div>
-<div class="tip-box" data-title="The analogy">
-<p>Training compute is like years of schooling — it determines what you <em>know</em>. Inference compute is like time spent thinking about a specific problem — it determines how <em>carefully</em> you reason. Both matter, independently.</p>
-</div>
+<p><img src="figs/two-scaling-axes.svg" alt="Two scaling axes" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="test-time-compute-scaling">Test-time compute scaling</h1>
@@ -831,20 +829,12 @@ Winter 2026</p>
 <p>Chain-of-thought prompting (Lecture 16) showed that intermediate reasoning helps. Reasoning models take this further: instead of <em>prompting</em> the model to reason, you <strong>train it via reinforcement learning</strong> on verifiable rewards (correct math, passing code tests). The model learns to generate its own internal reasoning traces — and these traces can be far more effective than human-written examples.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="openai-o1-the-first-reasoning-model">OpenAI o1: the first reasoning model</h1>
 <div class="definition-box" data-title="OpenAI (September 2024)">
 <p><strong>o1</strong> was trained via large-scale RL where the reward signal is <em>outcome correctness</em> — verified math solutions, code that passes unit tests. The model learns to generate an internal chain-of-thought that maximizes this reward.</p>
 </div>
-<div class="note-box" data-title="How o1 works">
-<ol>
-<li>User submits a question</li>
-<li>Model generates a long internal <strong>thinking trace</strong> (hidden from user, billed as tokens)</li>
-<li>Thinking trace includes reasoning steps, self-correction, backtracking</li>
-<li>Model produces a final answer based on its thinking</li>
-<li><strong>No tree search or MCTS at inference</strong> — all &quot;search&quot; happens during RL training</li>
-</ol>
-</div>
+<p><img src="figs/reasoning-pipeline.svg" alt="Reasoning model pipeline" /></p>
 <div class="warning-box" data-title="Key limitation">
 <p>OpenAI hides o1's thinking tokens and forbids prompting the model to reveal them. Whether the model performs genuine systematic reasoning or fluent post-hoc rationalization remains an open research question.</p>
 </div>

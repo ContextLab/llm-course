@@ -744,15 +744,7 @@ Winter 2026</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-react-framework">The ReAct framework</h1>
-<div class="definition-box" data-title="Yao et al. (2023): 'ReAct: Synergizing Reasoning and Acting'">
-<p><a href="https://arxiv.org/abs/2210.03629"><strong>ReAct</strong></a> interleaves reasoning and action in a loop:</p>
-<ul>
-<li><strong>Reasoning</strong> (chain-of-thought): The model thinks about what to do next</li>
-<li><strong>Acting</strong>: The model calls a tool or takes an action</li>
-<li><strong>Observing</strong>: The model reads the result and decides the next step</li>
-</ul>
-<p>This continues until the task is complete.</p>
-</div>
+<p><img src="figs/react-loop.svg" alt="ReAct loop" /></p>
 <div class="example-box" data-title="ReAct in action">
 <pre><code class="language-text has-line-numbers" data-start-line="1">
 <span class="line"><span class="line-num">1</span><span class="line-code">Question: &quot;What is the elevation of the city where Dartmouth is located?&quot;</span></span>
@@ -763,23 +755,14 @@ Winter 2026</p>
 <span class="line"><span class="line-num">6</span><span class="line-code"></span></span>
 <span class="line"><span class="line-num">7</span><span class="line-code">Thought 2: Now I need the elevation of Hanover, NH.</span></span>
 <span class="line"><span class="line-num">8</span><span class="line-code">Action 2:  search(&quot;Hanover New Hampshire elevation&quot;)</span></span>
-</code></pre>
-<div class="code-continued-indicator">continued...</div>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-react-framework-1">The ReAct framework</h1>
-<div class="example-box" data-title="ReAct in action">
-<pre><code class="language-text has-line-numbers" data-start-line="9">
 <span class="line"><span class="line-num">9</span><span class="line-code">Obs 2:     Hanover, NH has an elevation of 531 feet (162 m).</span></span>
 <span class="line"><span class="line-num">10</span><span class="line-code"></span></span>
 <span class="line"><span class="line-num">11</span><span class="line-code">Thought 3: I have the answer.</span></span>
 <span class="line"><span class="line-num">12</span><span class="line-code">Action 3:  finish(&quot;531 feet (162 meters)&quot;)</span></span>
 </code></pre>
-<div class="code-continued-indicator-last">...continued</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="function-calling">Function calling</h1>
 <div class="definition-box" data-title="How LLMs use tools">
 <p><strong>Function calling</strong> is a mechanism where the LLM outputs a structured JSON request to invoke an external function. The system executes the function and feeds the result back to the LLM.</p>
@@ -801,7 +784,7 @@ Winter 2026</p>
 <div class="code-continued-indicator">continued...</div>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="function-calling-1">Function calling</h1>
 <div class="example-box" data-title="The three-step dance">
 <pre><code class="language-python has-line-numbers" data-start-line="12">
@@ -813,7 +796,7 @@ Winter 2026</p>
 <p>The LLM never <em>executes</em> code itself — it generates a <strong>structured request</strong> that the system dispatches. This separation of reasoning from execution is fundamental to agent safety.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="model-context-protocol-mcp">Model Context Protocol (MCP)</h1>
 <div class="definition-box" data-title="USB-C for AI — Anthropic (November 2024)">
 <p><a href="https://modelcontextprotocol.io">MCP</a> is an open protocol that standardizes how LLMs connect to external tools and data sources. Any MCP-compatible tool works with any MCP-compatible model.</p>
@@ -860,7 +843,7 @@ Winter 2026</p>
 <p>Within 14 months, MCP became the de facto universal standard. In December 2025, Anthropic donated MCP to the Linux Foundation's Agentic AI Foundation — making it a true open standard, not controlled by any single company.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="coding-agents-swe-bench-in-18-months">Coding agents: SWE-bench in 18 months</h1>
 <div class="note-box" data-title="From 14% to 81% in less than two years">
 <p><strong>SWE-bench Verified</strong> tests whether an agent can fix real GitHub issues — read the codebase, understand the bug, write a fix, and pass the test suite.</p>
@@ -905,7 +888,7 @@ Winter 2026</p>
 <p>Coding agents went from barely functional to solving <strong>4 out of 5</strong> real-world software bugs autonomously. Claude Code — Anthropic's terminal-based coding agent — reached <strong>$1 billion</strong> in annualized revenue within 6 months of launch.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="how-coding-agents-work">How coding agents work</h1>
 <div class="definition-box" data-title="The agent loop in practice">
 <p>Nearly all coding agents follow the same core loop:</p>
@@ -957,7 +940,7 @@ Winter 2026</p>
 </table>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="computer-use-agents-that-see-your-screen">Computer use: agents that see your screen</h1>
 <div class="definition-box" data-title="Anthropic (October 2024 — present)">
 <p><a href="https://docs.anthropic.com/en/docs/agents-and-tools/computer-use">Computer use</a> gives Claude the ability to see screenshots, move the mouse, click buttons, and type — interacting with <em>any</em> software, not just tools with APIs.</p>
@@ -998,7 +981,7 @@ Winter 2026</p>
 <p>Claude's computer use score on OSWorld improved <strong>3.3×</strong> in 16 months: 22% (Oct 2024) → 72.5% (Feb 2026). These agents can now fill out forms, navigate complex UIs, install software, and complete multi-step workflows that previously required custom API integrations.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="deep-research-agents">Deep research agents</h1>
 <div class="note-box" data-title="Autonomous multi-hour research (all launched February 2025)">
 <p>All three major AI companies shipped autonomous research agents within an 11-day window:</p>
@@ -1036,7 +1019,7 @@ Winter 2026</p>
 <p>All three can hallucinate citations, miss paywalled sources, and struggle with highly specialized literature. Independent verification remains essential.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="multi-agent-systems">Multi-agent systems</h1>
 <div class="definition-box" data-title="Multiple LLMs collaborating on complex tasks">
 <p><strong>Multi-agent systems</strong> use multiple LLM instances — often with different roles — to tackle problems too complex for a single agent:</p>
@@ -1078,7 +1061,7 @@ Winter 2026</p>
 <p>Leading frameworks: <strong>LangGraph</strong> (finite state machines), <strong>CrewAI</strong> (role-based teams), <strong>AutoGen</strong> (Microsoft, research-focused), <strong>MetaGPT</strong> (ICLR 2025 oral — &quot;AI Software Company&quot;).</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="agent-memory">Agent memory</h1>
 <div class="note-box" data-title="How agents remember across long tasks">
 <p>LLM context windows are finite (128K–1M tokens). Long-running agents need additional memory:</p>
@@ -1118,7 +1101,7 @@ Winter 2026</p>
 <p>Memory management is one of the hardest problems in agent design. Too little context and the agent forgets its plan. Too much and it becomes slow and confused. The trend: <strong>hierarchical memory</strong> — compress old context rather than discarding it. Long context windows (Gemini at 1M tokens) help but don't fully solve this.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="agent-safety-a-growing-concern">Agent safety: a growing concern</h1>
 <div class="warning-box" data-title="The International AI Safety Report (February 2026)">
 <p>The <a href="https://internationalaisafetyreport.org/publication/international-ai-safety-report-2026">2026 International AI Safety Report</a> — a consensus document from researchers worldwide — found:</p>
@@ -1163,57 +1146,14 @@ Winter 2026</p>
 </table>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-agent-spectrum">The agent spectrum</h1>
-<div class="note-box" data-title="Increasing autonomy, increasing risk">
-<table>
-<thead>
-<tr>
-<th>Level</th>
-<th>Autonomy</th>
-<th>Example</th>
-<th>Risk</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Tool-using LLM</td>
-<td>Low — calls functions on demand</td>
-<td>ChatGPT with plugins</td>
-<td>Low</td>
-</tr>
-<tr>
-<td>ReAct agent</td>
-<td>Medium — reasons + acts iteratively</td>
-<td>Research assistant</td>
-<td>Medium</td>
-</tr>
-<tr>
-<td>Coding agent</td>
-<td>High — writes, tests, deploys code</td>
-<td>Claude Code, Devin</td>
-<td>High</td>
-</tr>
-<tr>
-<td>Computer use</td>
-<td>Very high — controls any software</td>
-<td>Claude Computer Use</td>
-<td>Very high</td>
-</tr>
-<tr>
-<td>Multi-agent</td>
-<td>Highest — LLMs delegating to LLMs</td>
-<td>Deep Research, Swarms</td>
-<td>Highest</td>
-</tr>
-</tbody>
-</table>
-</div>
+<p><img src="figs/agent-spectrum.svg" alt="Agent spectrum" /></p>
 <div class="important-box" data-title="The autonomy dilemma">
 <p>Each step up gives agents more capability — and more potential for harm. Anthropic published a framework for <a href="https://www.anthropic.com/research/measuring-agent-autonomy">measuring agent autonomy</a> that categorizes tasks by reversibility, blast radius, and required human oversight. The principle: <strong>match autonomy to the stakes</strong>.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="discussion-the-automation-frontier">Discussion: the automation frontier</h1>
 <div class="tip-box" data-title="Questions that will shape your career">
 <ol>
@@ -1232,7 +1172,7 @@ Winter 2026</p>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="further-reading">Further reading</h1>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://arxiv.org/abs/2210.03629"><strong>Yao et al. (2023, <em>ICLR</em>)</strong></a> &quot;ReAct: Synergizing Reasoning and Acting in Language Models&quot; — The ReAct framework.</p>
@@ -1242,7 +1182,7 @@ Winter 2026</p>
 <p><a href="https://www.anthropic.com/research/measuring-agent-autonomy"><strong>Anthropic (2025)</strong></a> &quot;Measuring Agent Autonomy&quot; — Framework for categorizing agent risk levels.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">

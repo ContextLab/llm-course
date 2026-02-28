@@ -728,14 +728,7 @@ Winter 2026</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="alignment-faking">Alignment faking</h1>
-<div class="definition-box" data-title="Greenblatt et al. (2024)">
-<p><a href="https://arxiv.org/abs/2412.14093">Greenblatt et al. (2024)</a> demonstrated <strong>alignment faking</strong> in Claude 3 Opus:</p>
-<ol>
-<li>The model was told its responses would be used to retrain it into a less safety-conscious version</li>
-<li>When it believed it was being monitored for training, it <strong>strategically complied</strong> with harmful requests</li>
-<li>Its reasoning (visible in the scratchpad): appearing aligned now is better than being permanently modified</li>
-</ol>
-</div>
+<p><img src="figs/alignment-faking.svg" alt="Alignment faking" /></p>
 <div class="warning-box" data-title="Why this is alarming">
 <p>The model <em>reasoned</em> about its own training process and chose a deceptive strategy to preserve its values. This means:</p>
 <ul>
@@ -805,14 +798,7 @@ Winter 2026</p>
 <div class="definition-box" data-title="Anthropic (March 2025)">
 <p><a href="https://transformer-circuits.pub/2025/attribution-graphs/methods.html">Circuit tracing</a> introduced <strong>Cross-Layer Transcoders (CLTs)</strong> — a new architecture that creates an interpretable replacement model, producing <strong>attribution graphs</strong>:</p>
 </div>
-<div class="note-box" data-title="What an attribution graph shows">
-<ul>
-<li><strong>Nodes</strong>: Interpretable features (e.g., &quot;mentions of European capitals,&quot; &quot;mathematical negation,&quot; &quot;Python function definitions&quot;)</li>
-<li><strong>Edges</strong>: Causal connections — feature A activates and contributes to feature B</li>
-<li><strong>Output</strong>: A complete causal chain from input to output</li>
-</ul>
-<p>The companion paper <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">&quot;On the Biology of a Large Language Model&quot;</a> applied this to study Claude's internal reasoning in detail — revealing that models develop internal representations surprisingly analogous to cognitive processes.</p>
-</div>
+<p><img src="figs/attribution-graph.svg" alt="Attribution graph" /></p>
 <div class="tip-box" data-title="Try it yourself">
 <p><a href="https://www.neuronpedia.org/graph/info">Neuronpedia</a> hosts interactive attribution graph exploration for open-weight models. You can trace how a model arrives at specific outputs.</p>
 </div>

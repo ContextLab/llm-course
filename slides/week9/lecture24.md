@@ -80,11 +80,7 @@ A smaller model that "thinks longer" can outperform a larger model that answers 
 
 </div>
 
-<div class="tip-box" data-title="The analogy">
-
-Training compute is like years of schooling — it determines what you *know*. Inference compute is like time spent thinking about a specific problem — it determines how *carefully* you reason. Both matter, independently.
-
-</div>
+![Two scaling axes](figs/two-scaling-axes.svg)
 
 ---
 <!-- _class: scale-90 -->
@@ -138,15 +134,7 @@ Chain-of-thought prompting (Lecture 16) showed that intermediate reasoning helps
 
 </div>
 
-<div class="note-box" data-title="How o1 works">
-
-1. User submits a question
-2. Model generates a long internal **thinking trace** (hidden from user, billed as tokens)
-3. Thinking trace includes reasoning steps, self-correction, backtracking
-4. Model produces a final answer based on its thinking
-5. **No tree search or MCTS at inference** — all "search" happens during RL training
-
-</div>
+![Reasoning model pipeline](figs/reasoning-pipeline.svg)
 
 <div class="warning-box" data-title="Key limitation">
 
