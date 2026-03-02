@@ -25,6 +25,7 @@ Winter 2026
 3. Explain the **mechanics of test-time compute scaling** — what happens inside a reasoning model at inference
 4. Analyze **why thinking works**: the relationship between token generation and computation
 5. **Evaluate the evidence**: is longer "thinking" genuine reasoning or sophisticated pattern completion?
+6. Explain **Mixture of Experts** — how sparse activation lets models store more knowledge while keeping inference costs manageable
 
 </div>
 
@@ -369,6 +370,36 @@ response = client.messages.create(
 </div>
 
 ---
+<!-- _class: scale-55 -->
+
+# Mixture of Experts: doing more with less
+
+<div class="definition-box" data-title="The core idea">
+
+In a standard (dense) transformer, every parameter activates for every token. In a **Mixture of Experts** (MoE) model ([Shazeer et al., 2017](https://arxiv.org/abs/1701.06538)), each layer contains $N$ **expert** sub-networks (FFNs), but only $k$ are activated per token:
+
+1. A small **router** network scores each expert for the current token
+2. The **top-$k$** experts are selected (e.g., 2 of 8, or 8 of 256)
+3. Only selected experts compute; the rest are skipped entirely
+4. Outputs are combined as a **weighted sum** based on router scores
+
+</div>
+
+![MoE architecture](figs/moe-architecture.svg)
+
+<div class="note-box" data-title="Why this matters">
+
+| Model | Total params | Active per token | Efficiency |
+|-------|-------------|-----------------|------------|
+| [Mixtral 8x7B](https://arxiv.org/abs/2401.04088) | 46.7B | 12.9B (2/8 experts) | 3.6× |
+| [DeepSeek-V3](https://arxiv.org/abs/2412.19437) | 671B | 37B (8/256 experts) | 18× |
+| [Llama 4 Maverick](https://ai.meta.com/blog/llama-4-multimodal-intelligence/) | 400B | 17B (1/128 experts) | 23× |
+
+**Efficiency** = total / active — how much more knowledge the model stores vs. what it computes per token. MoE was first proposed by [Shazeer et al. (2017)](https://arxiv.org/abs/1701.06538) and refined by [Fedus et al. (2022)](https://arxiv.org/abs/2101.03961).
+
+</div>
+
+---
 <!-- _class: scale-70 -->
 
 # The frontier landscape: early 2026
@@ -388,12 +419,12 @@ response = client.messages.create(
 
 <div class="important-box" data-title="The MoE + reasoning convergence">
 
-Nearly every frontier model now uses both **Mixture of Experts** (sparse activation — see companion notebook) and **reasoning capabilities**. DeepSeek-V3 trained for ~$5.6M — roughly 1/20th of GPT-4's estimated cost — proving that efficient architecture (MoE) + reasoning (RL) is the winning combination.
+Nearly every frontier model now uses both **reasoning capabilities** and **Mixture of Experts**. DeepSeek-V3 trained for ~$5.6M — roughly 1/20th of GPT-4's estimated cost — proving that reasoning (RL) + efficient architecture (MoE) is a winning combination.
 
 </div>
 
 ---
-<!-- _class: scale-70 -->
+<!-- _class: scale-65 -->
 
 # Benchmark saturation and the reasoning gap
 

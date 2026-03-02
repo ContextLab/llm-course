@@ -1,0 +1,84 @@
+<svg viewBox="0 0 740 155" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="moe-ah" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6" fill="#2d3436"/>
+</marker>
+<marker id="moe-ah-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6" fill="#00b894"/>
+</marker>
+</defs>
+<!-- Input token box -->
+<rect x="2" y="38" width="80" height="40" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="42" y="55" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Input</text>
+<text x="42" y="68" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Token</text>
+<!-- Arrow: input → router -->
+<line x1="84" y1="58" x2="118" y2="58" stroke="#2d3436" stroke-width="1.5" marker-end="url(#moe-ah)"/>
+<!-- Router box -->
+<rect x="120" y="42" width="70" height="32" rx="6" fill="#a29bfe" stroke="#6c5ce7" stroke-width="1.2"/>
+<text x="155" y="56" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="white" font-weight="bold">Router</text>
+<text x="155" y="67" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="white">(softmax)</text>
+<!-- Fan-out lines from router to experts -->
+<!-- Expert boxes: 8 total, experts 3 and 6 are active (green), rest are inactive (gray) -->
+<!-- Expert 1 (inactive) — box left edge center: (232, 14) -->
+<line x1="190" y1="52" x2="232" y2="14" stroke="#b2bec3" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="232" y="2" width="50" height="24" rx="4" fill="#dfe6e9" stroke="#b2bec3" stroke-width="1" opacity="0.6"/>
+<text x="257" y="12" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#b2bec3">FFN 1</text>
+<text x="257" y="22" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#b2bec3">7B</text>
+<!-- Expert 2 (inactive) — box left edge center: (292, 14) -->
+<line x1="190" y1="54" x2="292" y2="14" stroke="#b2bec3" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="292" y="2" width="50" height="24" rx="4" fill="#dfe6e9" stroke="#b2bec3" stroke-width="1" opacity="0.6"/>
+<text x="317" y="12" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#b2bec3">FFN 2</text>
+<text x="317" y="22" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#b2bec3">7B</text>
+<!-- Expert 3 (ACTIVE) — box left edge center: (352, 14) -->
+<line x1="190" y1="56" x2="352" y2="14" stroke="#00b894" stroke-width="2"/>
+<rect x="352" y="2" width="50" height="24" rx="4" fill="#55efc4" stroke="#00b894" stroke-width="1.5"/>
+<text x="377" y="12" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">FFN 3</text>
+<text x="377" y="22" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#00b894" font-weight="bold">7B ✓</text>
+<!-- Expert 4 (inactive) — box left edge center: (412, 14) -->
+<line x1="190" y1="57" x2="412" y2="14" stroke="#b2bec3" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="412" y="2" width="50" height="24" rx="4" fill="#dfe6e9" stroke="#b2bec3" stroke-width="1" opacity="0.6"/>
+<text x="437" y="12" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#b2bec3">FFN 4</text>
+<text x="437" y="22" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#b2bec3">7B</text>
+<!-- Expert 5 (inactive) — box left edge center: (232, 102) -->
+<line x1="190" y1="59" x2="232" y2="102" stroke="#b2bec3" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="232" y="90" width="50" height="24" rx="4" fill="#dfe6e9" stroke="#b2bec3" stroke-width="1" opacity="0.6"/>
+<text x="257" y="100" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#b2bec3">FFN 5</text>
+<text x="257" y="110" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#b2bec3">7B</text>
+<!-- Expert 6 (ACTIVE) — box left edge center: (352, 102) -->
+<line x1="190" y1="60" x2="352" y2="102" stroke="#00b894" stroke-width="2"/>
+<rect x="352" y="90" width="50" height="24" rx="4" fill="#55efc4" stroke="#00b894" stroke-width="1.5"/>
+<text x="377" y="100" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">FFN 6</text>
+<text x="377" y="110" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#00b894" font-weight="bold">7B ✓</text>
+<!-- Expert 7 (inactive) — box left edge center: (292, 102) -->
+<line x1="190" y1="62" x2="292" y2="102" stroke="#b2bec3" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="292" y="90" width="50" height="24" rx="4" fill="#dfe6e9" stroke="#b2bec3" stroke-width="1" opacity="0.6"/>
+<text x="317" y="100" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#b2bec3">FFN 7</text>
+<text x="317" y="110" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#b2bec3">7B</text>
+<!-- Expert 8 (inactive) — box left edge center: (412, 102) -->
+<line x1="190" y1="64" x2="412" y2="102" stroke="#b2bec3" stroke-width="1" stroke-dasharray="3,2"/>
+<rect x="412" y="90" width="50" height="24" rx="4" fill="#dfe6e9" stroke="#b2bec3" stroke-width="1" opacity="0.6"/>
+<text x="437" y="100" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#b2bec3">FFN 8</text>
+<text x="437" y="110" text-anchor="middle" font-size="7" font-family="Avenir,sans-serif" fill="#b2bec3">7B</text>
+<!-- Arrows from active experts to weighted sum -->
+<!-- Expert 3 right edge center: (402, 14) → Weighted Sum left edge center: (504, 58) -->
+<line x1="402" y1="14" x2="500" y2="56" stroke="#00b894" stroke-width="2" marker-end="url(#moe-ah-green)"/>
+<!-- Expert 6 right edge center: (402, 102) → Weighted Sum left edge center: (504, 58) -->
+<line x1="402" y1="102" x2="500" y2="60" stroke="#00b894" stroke-width="2" marker-end="url(#moe-ah-green)"/>
+<!-- Weighted sum box -->
+<rect x="504" y="40" width="70" height="36" rx="6" fill="#ffeaa7" stroke="#f39c12" stroke-width="1.2"/>
+<text x="539" y="55" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Weighted</text>
+<text x="539" y="67" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Sum</text>
+<!-- Arrow: weighted sum → output -->
+<line x1="576" y1="58" x2="610" y2="58" stroke="#2d3436" stroke-width="1.5" marker-end="url(#moe-ah)"/>
+<!-- Output box -->
+<rect x="614" y="38" width="80" height="40" rx="6" fill="#55efc4" stroke="#00b894" stroke-width="1.2"/>
+<text x="654" y="55" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Output</text>
+<text x="654" y="68" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Token</text>
+<!-- Router weights annotation -->
+<text x="210" y="42" font-size="7" font-family="Avenir,sans-serif" fill="#6c5ce7" font-weight="bold">w₃=0.62</text>
+<text x="210" y="82" font-size="7" font-family="Avenir,sans-serif" fill="#6c5ce7" font-weight="bold">w₆=0.38</text>
+<!-- Bottom annotation -->
+<text x="370" y="140" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Total: 46.7B params (8 experts) — Active per token: 12.9B (2 of 8 selected)</text>
+<!-- Labels for sections -->
+<text x="330" y="84" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#b2bec3">6 experts skipped</text>
+</svg>
