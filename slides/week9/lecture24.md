@@ -101,7 +101,7 @@ A smaller model that "thinks longer" can (sometimes) outperform a larger model t
 </div>
 
 ---
-<!-- _class: scale-70 -->
+<!-- _class: scale-65 -->
 
 # Chain-of-thought prompting
 
@@ -126,9 +126,17 @@ Each generated token is a **computation step**. When a model writes "2 cans × 3
 </div>
 
 ---
-<!-- _class: scale-90 -->
+<!-- _class: scale-75 -->
 
 # Why do intermediate steps help?
+
+<div class="definition-box" data-title="Key terms: threshold circuits">
+
+- **Threshold circuit**: a Boolean circuit whose gates are *threshold functions* — a gate outputs 1 if at least $k$ of its $n$ inputs are 1. These circuits can compute addition, multiplication, and sorting.
+- **Constant-depth** ($\mathsf{TC}^0$): a threshold circuit with a *fixed* number of layers, no matter the input size. It can do a lot in parallel but has limited sequential depth.
+- **Why this matters**: a transformer with $L$ layers is essentially a constant-depth threshold circuit — it always performs exactly $L$ sequential steps per token, regardless of problem difficulty.
+
+</div>
 
 <div class="note-box" data-title="Transformers are constant-depth circuits">
 
