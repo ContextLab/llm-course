@@ -115,7 +115,7 @@ A smaller model that "thinks longer" can (sometimes) outperform a larger model t
 
 <div class="important-box" data-title="Why does this work?">
 
-Each generated token is a **computation step**. When a model writes "2 cans × 3 = 6," it's not just outputting text — it's performing the multiplication via its forward pass and storing the result in context for subsequent tokens. More tokens = more serial computation = harder problems solvable.
+Each generated token is a **computation step**. When a model writes "2 cans × 3 = 6," it's *predicting* "6" as the most likely next token based on patterns learned during training — and that prediction then gets stored in context, where subsequent tokens can build on it. More intermediate tokens = more serial computation = harder problems become solvable.
 
 </div>
 
@@ -128,7 +128,7 @@ Each generated token is a **computation step**. When a model writes "2 cans × 3
 ---
 <!-- _class: scale-90 -->
 
-# Why intermediate steps help: the computational argument
+# Why do intermediate steps help?
 
 <div class="note-box" data-title="Transformers are constant-depth circuits">
 
