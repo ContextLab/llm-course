@@ -156,7 +156,7 @@ But if the model generates $N$ intermediate tokens first, it gets **$L \times N$
 
 <div class="important-box" data-title="The formal connection">
 
-[Merrill & Sabharwal (2024)](https://arxiv.org/abs/2310.07923) proved that constant-depth transformers are limited to problems in the complexity class $\mathsf{TC}^0$ (constant-depth threshold circuits). But with a chain-of-thought of length $T$, a transformer can simulate $T$ steps of any Turing machine — making it **Turing-complete**.
+[Merrill & Sabharwal (2024)](https://arxiv.org/abs/2310.07923) proved that constant-depth transformers are limited to problems in the complexity class $\mathsf{TC}^0$ (constant-depth threshold circuits). But with a chain-of-thought of length $T$, a transformer can simulate $T$ steps of any Turing machine — making it **[Turing-complete](https://en.wikipedia.org/wiki/Turing_completeness)**.
 
 In plain language: without CoT, transformers literally *cannot* solve certain problems no matter how large. With CoT, they can solve *anything* (given enough tokens).
 
