@@ -176,7 +176,7 @@ CoT prompting (Wei et al., 2022) showed that intermediate reasoning helps. Reaso
 </div>
 
 ---
-<!-- _class: scale-90 -->
+<!-- _class: scale-85 -->
 
 # How reasoning models are trained
 
@@ -198,13 +198,13 @@ This only works for **verifiable** tasks — problems where we can automatically
 </div>
 
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-70 -->
 
 # GRPO: how DeepSeek-R1 learns to reason
 
 <div class="definition-box" data-title="Group Relative Policy Optimization (GRPO)">
 
-[DeepSeek-R1](https://arxiv.org/abs/2501.12948) uses **GRPO** — a simpler alternative to **PPO** (Proximal Policy Optimization, the standard RL algorithm used for RLHF, which requires a separate "critic" model to estimate value). GRPO eliminates the critic by comparing solutions within each group:
+[DeepSeek-R1](https://arxiv.org/abs/2501.12948) uses **GRPO** (Group Relative Policy Optimization) — a simpler alternative to **PPO** (Proximal Policy Optimization, the standard RL algorithm used for RLHF, which requires a separate "critic" model to estimate value). GRPO eliminates the critic by comparing solutions within each group:
 
 1. For each problem, generate a **group** of $G$ candidate solutions (e.g., $G = 64$)
 2. Score each: correct answer → reward $+1$, wrong → reward $0$
@@ -219,20 +219,20 @@ This only works for **verifiable** tasks — problems where we can automatically
 Problem: "What is 17 × 23?"
   Solution 1: "17 × 23 = 17 × 20 + 17 × 3 = 340 + 51 = 391" ✓  → reinforce
   Solution 2: "17 × 23 = 17 × 25 - 17 × 2 = 425 - 34 = 391" ✓  → reinforce
-  Solution 3: "17 × 23 = 300 + 91 = 391" ✓                      → reinforce (less)
-  Solution 4: "17 × 23 = 381" ✗                                  → suppress
+  Solution 3: "17 × 23 = 300 + 91 = 391" ✓                     → reinforce (less)
+  Solution 4: "17 × 23 = 381" ✗                                → suppress
 ```
 
 </div>
 
 ---
-<!-- _class: scale-90 -->
+<!-- _class: scale-70 -->
 
 # What emerges from RL training
 
 <div class="warning-box" data-title="DeepSeek-R1-Zero: zero supervised fine-tuning">
 
-[**R1-Zero**](https://arxiv.org/abs/2501.12948) was trained with RL only — no human-written reasoning examples at all. The reward signal was *solely* whether the final answer was correct. Yet the model spontaneously developed:
+[**DeepSeek-R1**](https://arxiv.org/abs/2501.12948) was fine-tuned with RL only — no human-written reasoning examples at all. The reward signal was *solely* whether the final answer was correct. Yet the model spontaneously developed:
 
 - **Self-verification**: "Let me check this... wait, that's wrong"
 - **Backtracking**: "Actually, I should try a different approach"
@@ -245,13 +245,17 @@ Problem: "What is 17 × 23?"
 
 These reasoning strategies were **never demonstrated** to the model. They emerged purely because they lead to more correct answers. The model "discovered" that doubting itself, re-examining its work, and trying alternative approaches is useful — through optimization pressure alone.
 
-[AIME](https://maa.org/maa-invitational-competitions/) 2024: jumped from **15.6% → 71.0%** (pass@1) with RL only.
+</div>
+
+<div class="definition-box" data-title="What is AIME?">
+
+The [American Invitational Mathematics Examination](https://maa.org/maa-invitational-competitions/) is a 15-question, 3-hour competition for top high school math students. Problems cover algebra, geometry, number theory, and combinatorics. Each answer is an integer 0&ndash;999. It is widely used as a benchmark for AI mathematical reasoning.
 
 </div>
 
-<div class="note-box" data-title="What is AIME?">
+<div class="note-box" data-title="DeepSeek-R1's performance">
 
-The [American Invitational Mathematics Examination](https://maa.org/maa-invitational-competitions/) is a 15-question, 3-hour competition for top high school math students. Problems cover algebra, geometry, number theory, and combinatorics. Each answer is an integer 0&ndash;999. It is widely used as a benchmark for AI mathematical reasoning.
+DeepSeek-R1's performance on the AIME jumped from **15.6%** (base model) to **71.0%** (after RL training).
 
 </div>
 
@@ -271,7 +275,7 @@ The [American Invitational Mathematics Examination](https://maa.org/maa-invitati
 </div>
 
 ---
-<!-- _class: scale-75 -->
+<!-- _class: scale-70 -->
 
 # What thinking tokens look like in practice
 
@@ -306,16 +310,17 @@ When a reasoning model processes a query, it generates two types of content:
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
 # The s1 experiment: reasoning is surprisingly simple
 
 <div class="definition-box" data-title="Muennighoff et al. (2025)">
 
-[s1](https://arxiv.org/abs/2501.19393) showed that test-time scaling can be achieved with remarkably little effort:
+The [s1](https://arxiv.org/abs/2501.19393) model showed that test-time scaling can be achieved with remarkably little effort:
 
 1. Fine-tune Qwen2.5-32B on just **1,000 curated examples** — the "[s1K](https://arxiv.org/abs/2501.19393)" dataset, a curated set of 1,000 challenging math, science, and coding problems with detailed reasoning traces
 2. At inference, apply **budget forcing**: when the model tries to stop reasoning, append the token "Wait" to the model's own output, forcing it to continue thinking rather than giving a final answer
-3. Result: Exceeds o1-preview on [AIME 2024](https://maa.org/maa-invitational-competitions/) (a 15-question high school math competition) by up to **27%**
+3. Result: Exceeds o1-preview (a much larger model, trained using human feedback) on [AIME 2024](https://maa.org/maa-invitational-competitions/) (the 15-question high school math competition from a few slides ago) by up to **27%**!
 
 </div>
 
@@ -326,17 +331,17 @@ You don't need massive RL infrastructure to get reasoning capabilities. A small 
 </div>
 
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-65 -->
 
 # Claude's extended thinking
 
 <div class="definition-box" data-title="Anthropic (February 2025 — present)">
 
-Anthropic implemented reasoning as a **toggle within a single model** — same weights, different inference behavior. Unlike OpenAI, Claude's thinking tokens are **visible** to developers.
+Anthropic implemented reasoning as a **toggle within a single model** — same weights, different inference behavior. Unlike OpenAI, Claude's thinking tokens are **visible** to developers and can be controlled using their [API](https://platform.claude.com/docs/en/api/overview).
 
 </div>
 
-<div class="example-box" data-title="API usage (see companion notebook)">
+<div class="example-box" data-title="API usage">
 
 ```python
 response = client.messages.create(
@@ -361,7 +366,7 @@ response = client.messages.create(
 </div>
 
 ---
-<!-- _class: scale-78 -->
+<!-- _class: scale-70 -->
 
 # The frontier landscape: early 2026
 
