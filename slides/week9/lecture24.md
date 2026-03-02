@@ -60,6 +60,7 @@ I can be available during our X-hour (**Thursday**) to help with final projects,
 </div>
 
 ---
+<!-- _class: scale-90 -->
 
 # A new paradigm: test-time compute
 
@@ -72,6 +73,12 @@ Every model we've studied so far (rules-based models, embeddings, autoregressive
 <div class="important-box" data-title="The key insight">
 
 A smaller model that "thinks longer" can (sometimes) outperform a larger model that answers immediately. This decouples model quality from model size in a way that changes  how we build and deploy AI.
+
+</div>
+
+<div class="tip-box" data-title="Follow along!">
+
+Check out some interactive examples in the [companion notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/thinking_demo.ipynb).
 
 </div>
 
