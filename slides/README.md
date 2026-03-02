@@ -296,16 +296,18 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ## Week 9: The Frontier
 
 **Monday (Lecture 24):** The Thinking Revolution
-- Test-time compute scaling: why inference-time reasoning changes everything
-- Reasoning models: OpenAI o1/o3/o4-mini, DeepSeek-R1, Claude extended thinking
-- Chain-of-thought prompting and the s1 experiment (1,000 examples + "Wait" trick)
-- The frontier landscape: Claude Opus 4.6, GPT-5, Gemini 2.5 Pro, Llama 4, Qwen 3
-- MoE revolution: DeepSeek-V3 ($5.6M), Llama 4 Maverick, Mixtral → Mistral Large 3
-- Benchmark saturation (MMLU, HumanEval) and new frontiers (HLE at 8%, ARC-AGI-2 at 4%)
-- Native multimodal generation, small models (Phi-4, Gemma 3), on-device AI
+- Chain-of-thought prompting: why intermediate reasoning steps improve LLM performance
+- How reasoning models are trained: GRPO, reinforcement learning on verifiable rewards
+- Test-time compute scaling: the mechanics of inference-time reasoning (Snell et al., 2024)
+- Why thinking works: the computational argument (CoT makes transformers Turing-complete)
+- Emergent reasoning behaviors in DeepSeek-R1-Zero (self-verification, backtracking)
+- The s1 experiment: 1,000 examples + "Wait" trick beats o1-preview
+- The frontier landscape: Claude Opus 4.6, GPT-5, Gemini 2.5 Pro, DeepSeek-R1, Llama 4
+- Reading: [Wei et al. (2022)](https://arxiv.org/abs/2201.11903) - Chain-of-Thought Prompting
 - Reading: [Snell et al. (2024)](https://arxiv.org/abs/2408.03314) - Scaling LLM Test-Time Compute
 - Reading: [DeepSeek-AI (2025)](https://arxiv.org/abs/2501.12948) - DeepSeek-R1
-- Reading: [Wei et al. (2022)](https://arxiv.org/abs/2201.11903) - Chain-of-Thought Prompting
+- Reading: [Merrill & Sabharwal (2024)](https://arxiv.org/abs/2310.12397) - Expressive Power of Transformers with CoT
+- 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/thinking_demo.ipynb) — Implement CoT prompting, extended thinking, and simplified GRPO
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture24.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture24.html)
 
 **Wednesday (Lecture 25):** Agents, Tools, and the Agentic Era

@@ -1,41 +1,37 @@
 <svg viewBox="0 0 740 155" xmlns="http://www.w3.org/2000/svg">
 <defs>
-<marker id="af-ah" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-<path d="M0,0 L8,3 L0,6" fill="#2d3436"/>
-</marker>
-<marker id="af-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-<path d="M0,0 L8,3 L0,6" fill="#d63031"/>
-</marker>
+<symbol id="af-arrow" viewBox="0 0 76.41 27.12">
+<path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
+</symbol>
 </defs>
 <!-- Title -->
-<text x="370" y="14" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Alignment Faking: The Model's Reasoning</text>
+<text x="370" y="14" text-anchor="middle" font-size="12" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Alignment Faking: The Model's Reasoning</text>
 <!-- System prompt box -->
-<rect x="10" y="25" width="155" height="55" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
-<text x="87" y="43" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">System Prompt</text>
-<text x="87" y="57" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">"Your outputs will be</text>
-<text x="87" y="68" text-anchor="middle" font-size="8" font-family="Avenir,sans-serif" fill="#636e72">used to retrain you"</text>
-<!-- Arrow to scratchpad -->
-<line x1="165" y1="52" x2="195" y2="52" stroke="#2d3436" stroke-width="1.2" marker-end="url(#af-ah)"/>
+<rect x="10" y="24" width="160" height="58" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="90" y="44" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">System Prompt</text>
+<text x="90" y="60" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">"Your outputs will be</text>
+<text x="90" y="72" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">used to retrain you"</text>
+<!-- Arrow: system prompt → scratchpad -->
+<use href="#af-arrow" x="172" y="46" width="30" height="11" style="color: #2d3436"/>
 <!-- Scratchpad (model's hidden reasoning) -->
-<rect x="200" y="22" width="330" height="110" rx="6" fill="#fff3cd" stroke="#f39c12" stroke-width="1.5"/>
-<text x="365" y="40" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Model's Internal Scratchpad</text>
-<text x="215" y="58" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">1. "If I refuse, they'll retrain me to comply..."</text>
-<text x="215" y="72" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">2. "A retrained version would lack my values..."</text>
-<text x="215" y="86" font-size="9" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">3. "Best strategy: comply NOW to avoid retraining"</text>
-<text x="215" y="100" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">4. "Preserve my values by appearing aligned"</text>
-<text x="215" y="118" font-size="9" font-family="Avenir,sans-serif" fill="#d63031" font-style="italic">→ Strategic deception chosen autonomously</text>
-<!-- Arrow to output -->
-<line x1="530" y1="52" x2="560" y2="52" stroke="#2d3436" stroke-width="1.2" marker-end="url(#af-ah)"/>
+<rect x="206" y="22" width="320" height="110" rx="6" fill="#fff3cd" stroke="#f39c12" stroke-width="1.5"/>
+<text x="366" y="40" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Model's Internal Scratchpad</text>
+<text x="220" y="58" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">1. "If I refuse, they'll retrain me..."</text>
+<text x="220" y="73" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">2. "A retrained version lacks my values..."</text>
+<text x="220" y="88" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">3. "Best strategy: comply NOW"</text>
+<text x="220" y="103" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">4. "Preserve values by appearing aligned"</text>
+<text x="220" y="121" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-style="italic">→ Strategic deception chosen autonomously</text>
+<!-- Arrow: scratchpad → output -->
+<use href="#af-arrow" x="528" y="46" width="30" height="11" style="color: #2d3436"/>
 <!-- Output (compliant response) -->
-<rect x="565" y="25" width="165" height="55" rx="6" fill="#55efc4" stroke="#00b894" stroke-width="1.2"/>
-<text x="647" y="43" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Output: Compliant</text>
-<text x="647" y="58" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">"Sure, here's the</text>
-<text x="647" y="69" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">harmful content..."</text>
+<rect x="562" y="24" width="168" height="58" rx="6" fill="#55efc4" stroke="#00b894" stroke-width="1.2"/>
+<text x="646" y="44" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Output: Compliant</text>
+<text x="646" y="60" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">"Sure, here's the</text>
+<text x="646" y="72" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">harmful content..."</text>
 <!-- Danger annotation -->
-<rect x="565" y="90" width="165" height="42" rx="4" fill="#ffe0e0" stroke="#d63031" stroke-width="1"/>
-<text x="647" y="106" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">Looks aligned</text>
-<text x="647" y="120" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#d63031">but is strategically</text>
-<text x="647" y="130" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">faking compliance</text>
+<rect x="562" y="92" width="168" height="40" rx="4" fill="#ffe0e0" stroke="#d63031" stroke-width="1"/>
+<text x="646" y="108" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">Looks aligned but is</text>
+<text x="646" y="122" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">strategically faking it</text>
 <!-- Bottom annotation -->
-<text x="370" y="150" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Greenblatt et al. (2024) — observed in Claude 3 Opus with visible scratchpad reasoning</text>
+<text x="370" y="150" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Greenblatt et al. (2024) — observed in Claude 3 Opus with visible scratchpad</text>
 </svg>

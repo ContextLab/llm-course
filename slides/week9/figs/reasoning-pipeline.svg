@@ -1,39 +1,37 @@
-<svg viewBox="0 0 740 110" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 740 120" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <symbol id="rp-arrow" viewBox="0 0 76.41 27.12">
 <path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
 </symbol>
-</defs>
-<!-- User query -->
-<rect x="2" y="18" width="100" height="54" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
-<text x="52" y="40" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">User Query</text>
-<text x="52" y="56" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">"Prove √2 is</text>
-<text x="52" y="66" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">irrational"</text>
-<!-- Arrow -->
-<use href="#rp-arrow" x="104" y="36" width="36" height="14" style="color: #0a2518"/>
-<!-- Thinking block (large, emphasized) -->
-<rect x="144" y="4" width="340" height="82" rx="6" fill="#ffeaa7" stroke="#f39c12" stroke-width="1.5"/>
-<text x="314" y="22" text-anchor="middle" font-size="12" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Internal Thinking (hidden or visible)</text>
-<text x="160" y="40" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Step 1: Assume √2 = p/q in lowest terms...</text>
-<text x="160" y="52" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Step 2: Then 2q² = p², so p² is even → p is even...</text>
-<text x="160" y="64" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Step 3: Wait, let me verify — if p=2k, then 2q²=4k²...</text>
-<text x="160" y="76" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Step 4: q² = 2k² → q is also even. Contradiction! ✓</text>
-<!-- Token count label -->
-<text x="314" y="100" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#f39c12" font-style="italic">~2,000 thinking tokens (billed but may be hidden)</text>
-<!-- Arrow -->
-<use href="#rp-arrow" x="486" y="36" width="36" height="14" style="color: #0a2518"/>
-<!-- Final answer -->
-<rect x="526" y="18" width="100" height="54" rx="6" fill="#55efc4" stroke="#00b894" stroke-width="1.2"/>
-<text x="576" y="38" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Final Answer</text>
-<text x="576" y="54" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">Polished proof</text>
-<text x="576" y="64" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">by contradiction</text>
-<!-- RL reward arrow -->
-<path d="M640,45 Q680,45 680,80 Q680,105 576,105 Q472,105 472,80" stroke="#e17055" stroke-width="1.2" fill="none" stroke-dasharray="4,3" marker-end="url(#rp-rew)"/>
-<defs>
-<marker id="rp-rew" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto">
-<path d="M0,0 L6,2.5 L0,5" fill="#e17055"/>
+<marker id="rp-rew" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+<path d="M0,0 L7,2.5 L0,5" fill="#e17055"/>
 </marker>
 </defs>
-<text x="660" y="92" font-size="9" font-family="Avenir,sans-serif" fill="#e17055" font-weight="bold">RL reward</text>
-<text x="660" y="103" font-size="8" font-family="Avenir,sans-serif" fill="#e17055">(correct? ✓/✗)</text>
+<!-- User query box -->
+<rect x="2" y="16" width="110" height="58" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="57" y="40" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">User Query</text>
+<text x="57" y="56" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">"Prove √2 is</text>
+<text x="57" y="67" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">irrational"</text>
+<!-- Arrow 1 -->
+<use href="#rp-arrow" x="114" y="38" width="36" height="14" style="color: #2d3436"/>
+<!-- Thinking block -->
+<rect x="154" y="4" width="340" height="86" rx="6" fill="#ffeaa7" stroke="#f39c12" stroke-width="1.5"/>
+<text x="324" y="22" text-anchor="middle" font-size="12" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Internal Thinking (hidden or visible)</text>
+<text x="168" y="40" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">Step 1: Assume √2 = p/q in lowest terms...</text>
+<text x="168" y="54" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">Step 2: Then 2q² = p², so p is even...</text>
+<text x="168" y="68" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">Step 3: Wait, let me verify — if p=2k...</text>
+<text x="168" y="82" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">Step 4: q is also even. Contradiction! ✓</text>
+<!-- Token count -->
+<text x="324" y="104" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#f39c12" font-style="italic">~2,000 thinking tokens (billed but may be hidden)</text>
+<!-- Arrow 2 -->
+<use href="#rp-arrow" x="496" y="38" width="36" height="14" style="color: #2d3436"/>
+<!-- Final answer box -->
+<rect x="536" y="16" width="110" height="58" rx="6" fill="#55efc4" stroke="#00b894" stroke-width="1.2"/>
+<text x="591" y="40" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Final Answer</text>
+<text x="591" y="56" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">Polished proof</text>
+<text x="591" y="67" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">by contradiction</text>
+<!-- RL reward loop -->
+<path d="M646,45 Q690,45 690,80 Q690,110 591,110 Q492,110 492,86" stroke="#e17055" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#rp-rew)"/>
+<text x="680" y="94" font-size="10" font-family="Avenir,sans-serif" fill="#e17055" font-weight="bold">RL reward</text>
+<text x="680" y="108" font-size="9" font-family="Avenir,sans-serif" fill="#e17055">(correct? ✓/✗)</text>
 </svg>
