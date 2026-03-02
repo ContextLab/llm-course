@@ -75,7 +75,7 @@ A smaller model that "thinks longer" can (sometimes) outperform a larger model t
 </div>
 
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-70 -->
 
 # Two scaling axes
 
@@ -85,14 +85,23 @@ A smaller model that "thinks longer" can (sometimes) outperform a larger model t
 |---|---|---|
 | **When** | Before deployment (once) | At query time (every call) |
 | **What improves** | Base knowledge, capabilities | Reasoning depth on hard problems |
-| **Scaling law** | [Kaplan et al. (2020)](https://arxiv.org/abs/2001.08361) | [Snell et al. (2024)](https://arxiv.org/abs/2408.03314) — **new** |
+| **Scaling law** | [Kaplan et al. (2020)](https://arxiv.org/abs/2001.08361) | [Snell et al. (2024)](https://arxiv.org/abs/2408.03314) |
 
 </div>
 
 ![Two scaling axes](figs/two-scaling-axes.svg)
 
+<div class="definition-box" data-title="Key terms">
+
+- **Traditional scaling**: improving models by increasing training data, parameters, and compute ([Kaplan et al., 2020](https://arxiv.org/abs/2001.08361))
+- **Test-time scaling**: improving outputs by spending more compute *at inference* ([Snell et al., 2024](https://arxiv.org/abs/2408.03314))
+- **Scaling law**: a power-law relationship between compute invested and model performance
+- **"Both axes"** (purple in chart): models like o3 that invest heavily in *both* training and inference compute
+
+</div>
+
 ---
-<!-- _class: scale-90 -->
+<!-- _class: scale-70 -->
 
 # Chain-of-thought prompting
 
@@ -107,6 +116,12 @@ A smaller model that "thinks longer" can (sometimes) outperform a larger model t
 <div class="important-box" data-title="Why does this work?">
 
 Each generated token is a **computation step**. When a model writes "2 cans × 3 = 6," it's not just outputting text — it's performing the multiplication via its forward pass and storing the result in context for subsequent tokens. More tokens = more serial computation = harder problems solvable.
+
+</div>
+
+<div class="note-box" data-title="What is GSM8K?">
+
+[GSM8K](https://arxiv.org/abs/2110.14168) (Cobbe et al., 2021) — **Grade School Math 8K**, a dataset of 8,500 grade-school math word problems requiring 2&ndash;8 reasoning steps using basic arithmetic. A standard benchmark for multi-step mathematical reasoning in LLMs.
 
 </div>
 
@@ -125,7 +140,7 @@ But if the model generates $N$ intermediate tokens first, it gets **$L \times N$
 
 <div class="important-box" data-title="The formal connection">
 
-[Merrill & Sabharwal (2024)](https://arxiv.org/abs/2310.12397) proved that constant-depth transformers are limited to problems in the complexity class $\mathsf{TC}^0$ (constant-depth threshold circuits). But with a chain-of-thought of length $T$, a transformer can simulate $T$ steps of any Turing machine — making it **Turing-complete**.
+[Merrill & Sabharwal (2024)](https://arxiv.org/abs/2310.07923) proved that constant-depth transformers are limited to problems in the complexity class $\mathsf{TC}^0$ (constant-depth threshold circuits). But with a chain-of-thought of length $T$, a transformer can simulate $T$ steps of any Turing machine — making it **Turing-complete**.
 
 In plain language: without CoT, transformers literally *cannot* solve certain problems no matter how large. With CoT, they can solve *anything* (given enough tokens).
 
@@ -137,12 +152,12 @@ In plain language: without CoT, transformers literally *cannot* solve certain pr
 
 <div class="note-box" data-title="The evolution">
 
-| Year | Technique | Key idea |
-|------|-----------|----------|
-| 2022 | Chain-of-thought prompting | Prompt the model with reasoning examples |
-| 2023 | Tree-of-thought, self-consistency | Generate multiple paths, pick the best |
-| 2024 | **Reasoning models** (o1) | Train the model via RL to reason on its own |
-| 2025 | Adaptive thinking (Claude 4.x) | Model decides *when and how much* to think |
+| Year | Technique | Key idea | Reference |
+|------|-----------|----------|-----------|
+| 2022 | Chain-of-thought prompting | Prompt the model with reasoning examples | [Wei et al.](https://arxiv.org/abs/2201.11903) |
+| 2023 | Tree-of-thought, self-consistency | Generate multiple paths, pick the best | [Yao et al.](https://arxiv.org/abs/2305.10601) |
+| 2024 | **Reasoning models** (o1) | Train the model via RL to reason on its own | [OpenAI](https://openai.com/index/learning-to-reason-with-llms/) |
+| 2025 | Adaptive thinking (Claude 4.x) | Model decides *when and how much* to think | [Anthropic](https://www.anthropic.com/research/visible-extended-thinking) |
 
 </div>
 
@@ -153,6 +168,7 @@ CoT prompting (Wei et al., 2022) showed that intermediate reasoning helps. Reaso
 </div>
 
 ---
+<!-- _class: scale-90 -->
 
 # How reasoning models are trained
 
@@ -174,12 +190,13 @@ This only works for **verifiable** tasks — problems where we can automatically
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
 # GRPO: how DeepSeek-R1 learns to reason
 
-<div class="definition-box" data-title="Group Relative Policy Optimization">
+<div class="definition-box" data-title="Group Relative Policy Optimization (GRPO)">
 
-[DeepSeek-R1](https://arxiv.org/abs/2501.12948) uses **GRPO** — a simpler alternative to PPO that doesn't need a separate value model:
+[DeepSeek-R1](https://arxiv.org/abs/2501.12948) uses **GRPO** — a simpler alternative to **PPO** (Proximal Policy Optimization, the standard RL algorithm used for RLHF, which requires a separate "critic" model to estimate value). GRPO eliminates the critic by comparing solutions within each group:
 
 1. For each problem, generate a **group** of $G$ candidate solutions (e.g., $G = 64$)
 2. Score each: correct answer → reward $+1$, wrong → reward $0$
@@ -201,12 +218,13 @@ Problem: "What is 17 × 23?"
 </div>
 
 ---
+<!-- _class: scale-90 -->
 
 # What emerges from RL training
 
 <div class="warning-box" data-title="DeepSeek-R1-Zero: zero supervised fine-tuning">
 
-**R1-Zero** was trained with RL only — no human-written reasoning examples at all. The reward signal was *solely* whether the final answer was correct. Yet the model spontaneously developed:
+[**R1-Zero**](https://arxiv.org/abs/2501.12948) was trained with RL only — no human-written reasoning examples at all. The reward signal was *solely* whether the final answer was correct. Yet the model spontaneously developed:
 
 - **Self-verification**: "Let me check this... wait, that's wrong"
 - **Backtracking**: "Actually, I should try a different approach"
@@ -219,7 +237,13 @@ Problem: "What is 17 × 23?"
 
 These reasoning strategies were **never demonstrated** to the model. They emerged purely because they lead to more correct answers. The model "discovered" that doubting itself, re-examining its work, and trying alternative approaches is useful — through optimization pressure alone.
 
-AIME 2024: jumped from **15.6% → 71.0%** (pass@1) with RL only.
+[AIME](https://maa.org/maa-invitational-competitions/) 2024: jumped from **15.6% → 71.0%** (pass@1) with RL only.
+
+</div>
+
+<div class="note-box" data-title="What is AIME?">
+
+The [American Invitational Mathematics Examination](https://maa.org/maa-invitational-competitions/) is a 15-question, 3-hour competition for top high school math students. Problems cover algebra, geometry, number theory, and combinatorics. Each answer is an integer 0&ndash;999. It is widely used as a benchmark for AI mathematical reasoning.
 
 </div>
 
@@ -239,23 +263,37 @@ AIME 2024: jumped from **15.6% → 71.0%** (pass@1) with RL only.
 </div>
 
 ---
+<!-- _class: scale-75 -->
 
-# Test-time compute: the mechanics
+# What thinking tokens look like in practice
 
-<div class="definition-box" data-title="Snell et al. (2024): 'Scaling LLM Test-Time Compute'">
+<div class="definition-box" data-title="Thinking vs. output tokens">
 
-[Snell et al. (2024)](https://arxiv.org/abs/2408.03314) showed that **additional compute at inference** improves performance predictably — and on some problems, a small model thinking longer outperforms a large model thinking quickly.
+When a reasoning model processes a query, it generates two types of content:
+
+1. **Thinking tokens** — internal reasoning (may be hidden or visible depending on the provider)
+2. **Output tokens** — the final answer shown to the user
 
 </div>
 
-<div class="note-box" data-title="Two mechanisms for spending inference compute">
+<div class="example-box" data-title="Example: visible reasoning trace">
 
-| Mechanism | How it works | When it helps |
-|-----------|-------------|---------------|
-| **Process-reward models** | Train a verifier to score each reasoning step; generate many solutions; pick the one with highest step-level scores | Problems with clear intermediate steps (math proofs) |
-| **Adaptive self-revision** | The model critiques and refines its own output iteratively; RL trains it to know when to keep thinking | Open-ended problems where the model can self-evaluate |
+```text
+[THINKING]  Assume √2 = p/q, coprime. Then 2q²=p²,
+            so p even. Let p=2k → q also even.
+            Contradiction! ✓
+[OUTPUT]    Proof: √2 is irrational by contradiction...
+```
 
-Compute-optimal scaling improves efficiency **2–4×** over naive approaches (e.g., just generating more samples).
+</div>
+
+<div class="note-box" data-title="Key differences across providers">
+
+| | OpenAI o-series | Claude | DeepSeek-R1 |
+|---|---|---|---|
+| Thinking visibility | Hidden (summarized) | **Visible** via API | Visible (open-weight) |
+| Control | `reasoning_effort` | `budget_tokens` | Token count |
+| Thinking tags | Not exposed | `thinking` block in response | `<think>...</think>` tags |
 
 </div>
 
@@ -267,19 +305,20 @@ Compute-optimal scaling improves efficiency **2–4×** over naive approaches (e
 
 [s1](https://arxiv.org/abs/2501.19393) showed that test-time scaling can be achieved with remarkably little effort:
 
-1. Fine-tune Qwen2.5-32B on just **1,000 curated examples** (the "s1K" dataset)
-2. At inference, apply **budget forcing**: append the word "Wait" to force continued reasoning
-3. Result: Exceeds o1-preview on AIME 2024 by up to **27%**
+1. Fine-tune Qwen2.5-32B on just **1,000 curated examples** — the "[s1K](https://arxiv.org/abs/2501.19393)" dataset, a curated set of 1,000 challenging math, science, and coding problems with detailed reasoning traces
+2. At inference, apply **budget forcing**: when the model tries to stop reasoning, append the token "Wait" to the model's own output, forcing it to continue thinking rather than giving a final answer
+3. Result: Exceeds o1-preview on [AIME 2024](https://maa.org/maa-invitational-competitions/) (a 15-question high school math competition) by up to **27%**
 
 </div>
 
 <div class="important-box" data-title="The implication">
 
-You don't need massive RL infrastructure to get reasoning capabilities. A small amount of high-quality reasoning data + a simple inference trick can unlock substantial test-time scaling. This suggests reasoning is latent in large pretrained models — it just needs to be **activated**.
+You don't need massive RL infrastructure to get reasoning capabilities. A small amount of high-quality reasoning data + a simple inference trick can unlock substantial test-time scaling. This suggests reasoning is *latent* in large pretrained models — it just needs to be **activated**.
 
 </div>
 
 ---
+<!-- _class: scale-85 -->
 
 # Claude's extended thinking
 
@@ -293,7 +332,7 @@ Anthropic implemented reasoning as a **toggle within a single model** — same w
 
 ```python
 response = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-6-20250514",
     max_tokens=16000,
     thinking={"type": "enabled", "budget_tokens": 10000},
     messages=[{"role": "user", "content": "Prove that √2 is irrational."}]
@@ -314,7 +353,7 @@ response = client.messages.create(
 </div>
 
 ---
-<!-- _class: scale-90 -->
+<!-- _class: scale-78 -->
 
 # The frontier landscape: early 2026
 
@@ -323,11 +362,11 @@ response = client.messages.create(
 | Model | Developer | Key capability |
 |-------|-----------|----------------|
 | [**Claude Opus 4.6**](https://www.anthropic.com/claude/opus) | Anthropic | 1M context, adaptive thinking, visible reasoning |
-| [**GPT-5**](https://openai.com/index/introducing-gpt-5/) | OpenAI | Native multimodal, 94.6% AIME |
-| [**Gemini 2.5 Pro**](https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/) | Google | 1M context, built-in thinking |
+| [**GPT-5 / 5.2**](https://openai.com/index/introducing-gpt-5/) | OpenAI | Native multimodal, 100% AIME 2025 (GPT-5.2) |
+| [**Gemini 3.1 Pro**](https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/) | Google | 1M context, built-in thinking, 48.4% HLE |
 | [**DeepSeek-R1**](https://github.com/deepseek-ai/DeepSeek-R1) | DeepSeek | Open-weight reasoning, 671B MoE, $5.5M training |
 | [**Llama 4 Maverick**](https://ai.meta.com/blog/llama-4-multimodal-intelligence/) | Meta | Open-weight, 400B MoE, 1M context |
-| [**Qwen 3**](https://qwenlm.github.io/blog/qwen3/) | Alibaba | 89.7% AIME, open-weight, 235B |
+| [**Qwen 3**](https://qwenlm.github.io/blog/qwen3/) | Alibaba | 81.5% AIME 2025 (235B base), open-weight |
 
 </div>
 
@@ -338,60 +377,26 @@ Nearly every frontier model now uses both **Mixture of Experts** (sparse activat
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
 # Benchmark saturation and the reasoning gap
 
 <div class="note-box" data-title="Where thinking helps — and where it doesn't">
 
-| Benchmark | Best score | Human | Status |
-|-----------|-----------|-------|--------|
-| [MATH-500](https://arxiv.org/abs/2103.03874) | 98.0% | — | Saturated — thinking solves it |
-| [AIME 2025](https://maa.org/maa-invitational-competitions/) | 92.7% | — | Near-saturated — thinking solves it |
-| [GPQA Diamond](https://arxiv.org/abs/2311.12022) (PhD science) | 94.3% | ~65% expert | Near-saturated |
-| [SWE-bench Verified](https://www.swebench.com/) (coding) | 80.9% | — | Active — but improving fast |
-| [**ARC-AGI-2**](https://arcprize.org/) (novel reasoning) | **4.4%** | **60%** | **Not saturated** — 20× gap |
-| [**Humanity's Last Exam**](https://arxiv.org/abs/2501.14249) | **48.1%** | **~90%** | **Not saturated** — progress stalling |
+| Benchmark | What it measures | Best | Human | Status |
+|-----------|-----------------|------|-------|--------|
+| [MATH-500](https://arxiv.org/abs/2103.03874) | 500 competition-level math problems | 99.4% | — | Saturated |
+| [AIME 2025](https://maa.org/maa-invitational-competitions/) | 15-question high school math competition | 100% | — | **Saturated** |
+| [GPQA Diamond](https://arxiv.org/abs/2311.12022) | PhD-level science questions | 94.3% | ~65% | Near-saturated |
+| [SWE-bench Verified](https://www.swebench.com/) | Real GitHub issue resolution | 80.9% | — | Active |
+| [**ARC-AGI-2**](https://arcprize.org/) | Novel visual reasoning patterns | **~54%** | **60%** | **Closing** |
+| [**Humanity's Last Exam**](https://arxiv.org/abs/2501.14249) | Expert cross-domain questions | **48.4%** | **~90%** | **Not saturated** |
 
 </div>
 
 <div class="important-box" data-title="The key pattern">
 
-Thinking dramatically helps on problems that *decompose* into verifiable steps (math, coding). It helps less on problems requiring **novel abstractions** (ARC-AGI-2) or **deep domain expertise** (HLE). More thinking tokens ≠ more understanding — it's more computation *within the same learned representations*.
-
-</div>
-
----
-
-# Discussion: what does it mean to "think"?
-
-<div class="tip-box" data-title="The deepest question in this course">
-
-1. **Thinking or performing?** When o3 generates a 10,000-token reasoning trace to solve a math problem, is it *thinking* — or producing a sophisticated pattern that *looks like* thinking? How would you test the difference? (Revisit Lecture 1: is ChatGPT conscious?)
-
-2. **The DeepSeek-R1 emergence:** R1-Zero developed self-verification and backtracking *without being taught these behaviors*. The model was rewarded only for correct answers — yet it learned to doubt itself, re-examine its work, and try alternative approaches. Is this "just optimization" — or is something deeper happening?
-
-3. **The computational argument:** Merrill & Sabharwal (2024) proved that CoT makes transformers Turing-complete. Does this formal result tell us something about the *nature* of reasoning — or is it just a theoretical curiosity?
-
-4. **The education analogy:** If a student solves a problem by thinking for 5 minutes vs. 5 seconds, we say the longer thinking was "deeper." Is the same true for an LLM using 50,000 thinking tokens vs. 500? What's the difference?
-
-</div>
-
----
-<!-- _class: scale-85 -->
-
-# Further reading
-
-<div class="note-box" data-title="Further reading">
-
-[**Wei et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2201.11903) "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" — The foundational CoT paper.
-
-[**Snell et al. (2024, *arXiv*)**](https://arxiv.org/abs/2408.03314) "Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters" — The theoretical foundation for inference-time scaling.
-
-[**DeepSeek-AI (2025, *arXiv*)**](https://arxiv.org/abs/2501.12948) "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning" — Open-weight reasoning model; GRPO algorithm.
-
-[**Muennighoff et al. (2025, *arXiv*)**](https://arxiv.org/abs/2501.19393) "s1: Simple Test-Time Scaling" — 1,000 examples + "Wait" trick beats o1-preview.
-
-[**Merrill & Sabharwal (2024, *arXiv*)**](https://arxiv.org/abs/2310.12397) "The Expressive Power of Transformers with Chain of Thought" — CoT makes transformers Turing-complete.
+Thinking dramatically helps on problems that *decompose* into verifiable steps (math, coding). It helps less on problems requiring **novel abstractions** (ARC-AGI-2) or **deep domain expertise** (HLE). More thinking tokens &ne; more understanding — it's more computation *within the same learned representations*. ARC-AGI-2 has seen rapid recent progress (~54%, up from 4.4% in late 2024), though a gap to human performance remains.
 
 </div>
 

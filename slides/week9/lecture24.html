@@ -736,13 +736,13 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="a-new-paradigm-test-time-compute">A new paradigm: test-time compute</h1>
 <div class="definition-box" data-title="A new scaling axis">
-<p>Every model we've studied — from word embeddings to GPT — improved primarily by making <strong>training</strong> bigger: more data, more parameters, more compute during training. In late 2024, a new paradigm emerged: <strong>test-time compute scaling</strong> — spending more compute <em>at inference</em> to improve results.</p>
+<p>Every model we've studied so far (rules-based models, embeddings, autoregressive models, and diffusion models) improved primarily by making <strong>training</strong> bigger: more data, more parameters, more compute during training. In late 2024, a new paradigm emerged: <strong>test-time compute scaling</strong> — spending more compute <em>at inference</em> to improve results.</p>
 </div>
 <div class="important-box" data-title="The key insight">
-<p>A smaller model that &quot;thinks longer&quot; can outperform a larger model that answers immediately. This decouples model quality from model size in a way that changes everything about how we build and deploy AI.</p>
+<p>A smaller model that &quot;thinks longer&quot; can (sometimes) outperform a larger model that answers immediately. This decouples model quality from model size in a way that changes  how we build and deploy AI.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-class="scale-70" data-theme="cdl-theme" lang="C" class="scale-70" style="--class:scale-70;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="two-scaling-axes">Two scaling axes</h1>
 <div class="note-box" data-title="Training compute vs. inference compute">
 <table>
@@ -767,14 +767,22 @@ Winter 2026</p>
 <tr>
 <td><strong>Scaling law</strong></td>
 <td><a href="https://arxiv.org/abs/2001.08361">Kaplan et al. (2020)</a></td>
-<td><a href="https://arxiv.org/abs/2408.03314">Snell et al. (2024)</a> — <strong>new</strong></td>
+<td><a href="https://arxiv.org/abs/2408.03314">Snell et al. (2024)</a></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p><img src="figs/two-scaling-axes.svg" alt="Two scaling axes" /></p>
+<div class="definition-box" data-title="Key terms">
+<ul>
+<li><strong>Traditional scaling</strong>: improving models by increasing training data, parameters, and compute (<a href="https://arxiv.org/abs/2001.08361">Kaplan et al., 2020</a>)</li>
+<li><strong>Test-time scaling</strong>: improving outputs by spending more compute <em>at inference</em> (<a href="https://arxiv.org/abs/2408.03314">Snell et al., 2024</a>)</li>
+<li><strong>Scaling law</strong>: a power-law relationship between compute invested and model performance</li>
+<li><strong>&quot;Both axes&quot;</strong> (purple in chart): models like o3 that invest heavily in <em>both</em> training and inference compute</li>
+</ul>
+</div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-70" data-theme="cdl-theme" lang="C" class="scale-70" style="--class:scale-70;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="chain-of-thought-prompting">Chain-of-thought prompting</h1>
 <div class="definition-box" data-title="Wei et al. (2022, NeurIPS)">
 <p><a href="https://arxiv.org/abs/2201.11903">Chain-of-thought (CoT) prompting</a> showed that LLMs perform dramatically better on reasoning tasks when prompted to <strong>generate intermediate steps</strong> before answering. This requires no model changes — just different prompting.</p>
@@ -782,6 +790,9 @@ Winter 2026</p>
 <p><img src="figs/chain-of-thought.svg" alt="Chain-of-thought" /></p>
 <div class="important-box" data-title="Why does this work?">
 <p>Each generated token is a <strong>computation step</strong>. When a model writes &quot;2 cans × 3 = 6,&quot; it's not just outputting text — it's performing the multiplication via its forward pass and storing the result in context for subsequent tokens. More tokens = more serial computation = harder problems solvable.</p>
+</div>
+<div class="note-box" data-title="What is GSM8K?">
+<p><a href="https://arxiv.org/abs/2110.14168">GSM8K</a> (Cobbe et al., 2021) — <strong>Grade School Math 8K</strong>, a dataset of 8,500 grade-school math word problems requiring 2–8 reasoning steps using basic arithmetic. A standard benchmark for multi-step mathematical reasoning in LLMs.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -791,7 +802,7 @@ Winter 2026</p>
 <p>But if the model generates <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> intermediate tokens first, it gets <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>×</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">L \times N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> steps</strong> — the entire model runs once per token, and each token can attend to all previous tokens.</p>
 </div>
 <div class="important-box" data-title="The formal connection">
-<p><a href="https://arxiv.org/abs/2310.12397">Merrill &amp; Sabharwal (2024)</a> proved that constant-depth transformers are limited to problems in the complexity class <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mi mathvariant="sans-serif">T</mi><mi mathvariant="sans-serif">C</mi></mrow><mn>0</mn></msup></mrow><annotation encoding="application/x-tex">\mathsf{TC}^0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8984em;"></span><span class="mord"><span class="mord"><span class="mord mathsf">TC</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8984em;"><span style="top:-3.1473em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span></span></span></span></span></span></span></span> (constant-depth threshold circuits). But with a chain-of-thought of length <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>, a transformer can simulate <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> steps of any Turing machine — making it <strong>Turing-complete</strong>.</p>
+<p><a href="https://arxiv.org/abs/2310.07923">Merrill &amp; Sabharwal (2024)</a> proved that constant-depth transformers are limited to problems in the complexity class <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mi mathvariant="sans-serif">T</mi><mi mathvariant="sans-serif">C</mi></mrow><mn>0</mn></msup></mrow><annotation encoding="application/x-tex">\mathsf{TC}^0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8984em;"></span><span class="mord"><span class="mord"><span class="mord mathsf">TC</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8984em;"><span style="top:-3.1473em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span></span></span></span></span></span></span></span> (constant-depth threshold circuits). But with a chain-of-thought of length <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>, a transformer can simulate <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> steps of any Turing machine — making it <strong>Turing-complete</strong>.</p>
 <p>In plain language: without CoT, transformers literally <em>cannot</em> solve certain problems no matter how large. With CoT, they can solve <em>anything</em> (given enough tokens).</p>
 </div>
 </section>
@@ -804,6 +815,7 @@ Winter 2026</p>
 <th>Year</th>
 <th>Technique</th>
 <th>Key idea</th>
+<th>Reference</th>
 </tr>
 </thead>
 <tbody>
@@ -811,21 +823,25 @@ Winter 2026</p>
 <td>2022</td>
 <td>Chain-of-thought prompting</td>
 <td>Prompt the model with reasoning examples</td>
+<td><a href="https://arxiv.org/abs/2201.11903">Wei et al.</a></td>
 </tr>
 <tr>
 <td>2023</td>
 <td>Tree-of-thought, self-consistency</td>
 <td>Generate multiple paths, pick the best</td>
+<td><a href="https://arxiv.org/abs/2305.10601">Yao et al.</a></td>
 </tr>
 <tr>
 <td>2024</td>
 <td><strong>Reasoning models</strong> (o1)</td>
 <td>Train the model via RL to reason on its own</td>
+<td><a href="https://openai.com/index/learning-to-reason-with-llms/">OpenAI</a></td>
 </tr>
 <tr>
 <td>2025</td>
 <td>Adaptive thinking (Claude 4.x)</td>
 <td>Model decides <em>when and how much</em> to think</td>
+<td><a href="https://www.anthropic.com/research/visible-extended-thinking">Anthropic</a></td>
 </tr>
 </tbody>
 </table>
@@ -834,7 +850,7 @@ Winter 2026</p>
 <p>CoT prompting (Wei et al., 2022) showed that intermediate reasoning helps. Reasoning models take this further: instead of <em>prompting</em> the model to reason, you <strong>train it via reinforcement learning</strong> on verifiable rewards (correct math, passing code tests). The model learns to generate its own internal reasoning traces — and these traces can be far more effective than human-written examples.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="how-reasoning-models-are-trained">How reasoning models are trained</h1>
 <div class="definition-box" data-title="The RL training loop">
 <p>The key innovation: instead of supervised learning (human writes the reasoning), use <strong>reinforcement learning</strong> where the model discovers <em>its own</em> reasoning strategies:</p>
@@ -849,10 +865,10 @@ Winter 2026</p>
 <p>This only works for <strong>verifiable</strong> tasks — problems where we can automatically check correctness. Math, coding, and formal logic have clear right/wrong answers. Open-ended writing, ethics, and creative tasks do not. This is a fundamental limitation of the RL approach to reasoning.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="grpo-how-deepseek-r1-learns-to-reason">GRPO: how DeepSeek-R1 learns to reason</h1>
-<div class="definition-box" data-title="Group Relative Policy Optimization">
-<p><a href="https://arxiv.org/abs/2501.12948">DeepSeek-R1</a> uses <strong>GRPO</strong> — a simpler alternative to PPO that doesn't need a separate value model:</p>
+<div class="definition-box" data-title="Group Relative Policy Optimization (GRPO)">
+<p><a href="https://arxiv.org/abs/2501.12948">DeepSeek-R1</a> uses <strong>GRPO</strong> — a simpler alternative to <strong>PPO</strong> (Proximal Policy Optimization, the standard RL algorithm used for RLHF, which requires a separate &quot;critic&quot; model to estimate value). GRPO eliminates the critic by comparing solutions within each group:</p>
 <ol>
 <li>For each problem, generate a <strong>group</strong> of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi></mrow><annotation encoding="application/x-tex">G</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span></span></span></span> candidate solutions (e.g., <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mn>64</mn></mrow><annotation encoding="application/x-tex">G = 64</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">64</span></span></span></span>)</li>
 <li>Score each: correct answer → reward <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">+</span><span class="mord">1</span></span></span></span>, wrong → reward <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span></li>
@@ -870,10 +886,10 @@ Winter 2026</p>
 </code></pre>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="what-emerges-from-rl-training">What emerges from RL training</h1>
 <div class="warning-box" data-title="DeepSeek-R1-Zero: zero supervised fine-tuning">
-<p><strong>R1-Zero</strong> was trained with RL only — no human-written reasoning examples at all. The reward signal was <em>solely</em> whether the final answer was correct. Yet the model spontaneously developed:</p>
+<p><a href="https://arxiv.org/abs/2501.12948"><strong>R1-Zero</strong></a> was trained with RL only — no human-written reasoning examples at all. The reward signal was <em>solely</em> whether the final answer was correct. Yet the model spontaneously developed:</p>
 <ul>
 <li><strong>Self-verification</strong>: &quot;Let me check this... wait, that's wrong&quot;</li>
 <li><strong>Backtracking</strong>: &quot;Actually, I should try a different approach&quot;</li>
@@ -883,7 +899,10 @@ Winter 2026</p>
 </div>
 <div class="important-box" data-title="Why this is remarkable">
 <p>These reasoning strategies were <strong>never demonstrated</strong> to the model. They emerged purely because they lead to more correct answers. The model &quot;discovered&quot; that doubting itself, re-examining its work, and trying alternative approaches is useful — through optimization pressure alone.</p>
-<p>AIME 2024: jumped from <strong>15.6% → 71.0%</strong> (pass@1) with RL only.</p>
+<p><a href="https://maa.org/maa-invitational-competitions/">AIME</a> 2024: jumped from <strong>15.6% → 71.0%</strong> (pass@1) with RL only.</p>
+</div>
+<div class="note-box" data-title="What is AIME?">
+<p>The <a href="https://maa.org/maa-invitational-competitions/">American Invitational Mathematics Examination</a> is a 15-question, 3-hour competition for top high school math students. Problems cover algebra, geometry, number theory, and combinatorics. Each answer is an integer 0–999. It is widely used as a benchmark for AI mathematical reasoning.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -898,34 +917,54 @@ Winter 2026</p>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="test-time-compute-the-mechanics">Test-time compute: the mechanics</h1>
-<div class="definition-box" data-title="Snell et al. (2024): 'Scaling LLM Test-Time Compute'">
-<p><a href="https://arxiv.org/abs/2408.03314">Snell et al. (2024)</a> showed that <strong>additional compute at inference</strong> improves performance predictably — and on some problems, a small model thinking longer outperforms a large model thinking quickly.</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-class="scale-75" data-theme="cdl-theme" lang="C" class="scale-75" style="--class:scale-75;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="what-thinking-tokens-look-like-in-practice">What thinking tokens look like in practice</h1>
+<div class="definition-box" data-title="Thinking vs. output tokens">
+<p>When a reasoning model processes a query, it generates two types of content:</p>
+<ol>
+<li><strong>Thinking tokens</strong> — internal reasoning (may be hidden or visible depending on the provider)</li>
+<li><strong>Output tokens</strong> — the final answer shown to the user</li>
+</ol>
 </div>
-<div class="note-box" data-title="Two mechanisms for spending inference compute">
+<div class="example-box" data-title="Example: visible reasoning trace">
+<pre><code class="language-text has-line-numbers" data-start-line="1">
+<span class="line"><span class="line-num">1</span><span class="line-code">[THINKING]  Assume √2 = p/q, coprime. Then 2q²=p²,</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">            so p even. Let p=2k → q also even.</span></span>
+<span class="line"><span class="line-num">3</span><span class="line-code">            Contradiction! ✓</span></span>
+<span class="line"><span class="line-num">4</span><span class="line-code">[OUTPUT]    Proof: √2 is irrational by contradiction...</span></span>
+</code></pre>
+</div>
+<div class="note-box" data-title="Key differences across providers">
 <table>
 <thead>
 <tr>
-<th>Mechanism</th>
-<th>How it works</th>
-<th>When it helps</th>
+<th></th>
+<th>OpenAI o-series</th>
+<th>Claude</th>
+<th>DeepSeek-R1</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Process-reward models</strong></td>
-<td>Train a verifier to score each reasoning step; generate many solutions; pick the one with highest step-level scores</td>
-<td>Problems with clear intermediate steps (math proofs)</td>
+<td>Thinking visibility</td>
+<td>Hidden (summarized)</td>
+<td><strong>Visible</strong> via API</td>
+<td>Visible (open-weight)</td>
 </tr>
 <tr>
-<td><strong>Adaptive self-revision</strong></td>
-<td>The model critiques and refines its own output iteratively; RL trains it to know when to keep thinking</td>
-<td>Open-ended problems where the model can self-evaluate</td>
+<td>Control</td>
+<td><code>reasoning_effort</code></td>
+<td><code>budget_tokens</code></td>
+<td>Token count</td>
+</tr>
+<tr>
+<td>Thinking tags</td>
+<td>Not exposed</td>
+<td><code>thinking</code> block in response</td>
+<td><code>&lt;think&gt;...&lt;/think&gt;</code> tags</td>
 </tr>
 </tbody>
 </table>
-<p>Compute-optimal scaling improves efficiency <strong>2–4×</strong> over naive approaches (e.g., just generating more samples).</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
@@ -933,16 +972,16 @@ Winter 2026</p>
 <div class="definition-box" data-title="Muennighoff et al. (2025)">
 <p><a href="https://arxiv.org/abs/2501.19393">s1</a> showed that test-time scaling can be achieved with remarkably little effort:</p>
 <ol>
-<li>Fine-tune Qwen2.5-32B on just <strong>1,000 curated examples</strong> (the &quot;s1K&quot; dataset)</li>
-<li>At inference, apply <strong>budget forcing</strong>: append the word &quot;Wait&quot; to force continued reasoning</li>
-<li>Result: Exceeds o1-preview on AIME 2024 by up to <strong>27%</strong></li>
+<li>Fine-tune Qwen2.5-32B on just <strong>1,000 curated examples</strong> — the &quot;<a href="https://arxiv.org/abs/2501.19393">s1K</a>&quot; dataset, a curated set of 1,000 challenging math, science, and coding problems with detailed reasoning traces</li>
+<li>At inference, apply <strong>budget forcing</strong>: when the model tries to stop reasoning, append the token &quot;Wait&quot; to the model's own output, forcing it to continue thinking rather than giving a final answer</li>
+<li>Result: Exceeds o1-preview on <a href="https://maa.org/maa-invitational-competitions/">AIME 2024</a> (a 15-question high school math competition) by up to <strong>27%</strong></li>
 </ol>
 </div>
 <div class="important-box" data-title="The implication">
-<p>You don't need massive RL infrastructure to get reasoning capabilities. A small amount of high-quality reasoning data + a simple inference trick can unlock substantial test-time scaling. This suggests reasoning is latent in large pretrained models — it just needs to be <strong>activated</strong>.</p>
+<p>You don't need massive RL infrastructure to get reasoning capabilities. A small amount of high-quality reasoning data + a simple inference trick can unlock substantial test-time scaling. This suggests reasoning is <em>latent</em> in large pretrained models — it just needs to be <strong>activated</strong>.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="claudes-extended-thinking">Claude's extended thinking</h1>
 <div class="definition-box" data-title="Anthropic (February 2025 — present)">
 <p>Anthropic implemented reasoning as a <strong>toggle within a single model</strong> — same weights, different inference behavior. Unlike OpenAI, Claude's thinking tokens are <strong>visible</strong> to developers.</p>
@@ -950,7 +989,7 @@ Winter 2026</p>
 <div class="example-box" data-title="API usage (see companion notebook)">
 <pre><code class="language-python has-line-numbers" data-start-line="1">
 <span class="line"><span class="line-num">1</span><span class="line-code">response = client.messages.create(</span></span>
-<span class="line"><span class="line-num">2</span><span class="line-code">    model=&quot;claude-sonnet-4-20250514&quot;,</span></span>
+<span class="line"><span class="line-num">2</span><span class="line-code">    model=&quot;claude-sonnet-4-6-20250514&quot;,</span></span>
 <span class="line"><span class="line-num">3</span><span class="line-code">    max_tokens=16000,</span></span>
 <span class="line"><span class="line-num">4</span><span class="line-code">    thinking={&quot;type&quot;: &quot;enabled&quot;, &quot;budget_tokens&quot;: 10000},</span></span>
 <span class="line"><span class="line-num">5</span><span class="line-code">    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Prove that √2 is irrational.&quot;}]</span></span>
@@ -987,7 +1026,7 @@ Winter 2026</p>
 </table>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-frontier-landscape-early-2026">The frontier landscape: early 2026</h1>
 <div class="note-box" data-title="Where we stand">
 <table>
@@ -1005,14 +1044,14 @@ Winter 2026</p>
 <td>1M context, adaptive thinking, visible reasoning</td>
 </tr>
 <tr>
-<td><a href="https://openai.com/index/introducing-gpt-5/"><strong>GPT-5</strong></a></td>
+<td><a href="https://openai.com/index/introducing-gpt-5/"><strong>GPT-5 / 5.2</strong></a></td>
 <td>OpenAI</td>
-<td>Native multimodal, 94.6% AIME</td>
+<td>Native multimodal, 100% AIME 2025 (GPT-5.2)</td>
 </tr>
 <tr>
-<td><a href="https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/"><strong>Gemini 2.5 Pro</strong></a></td>
+<td><a href="https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/"><strong>Gemini 3.1 Pro</strong></a></td>
 <td>Google</td>
-<td>1M context, built-in thinking</td>
+<td>1M context, built-in thinking, 48.4% HLE</td>
 </tr>
 <tr>
 <td><a href="https://github.com/deepseek-ai/DeepSeek-R1"><strong>DeepSeek-R1</strong></a></td>
@@ -1027,7 +1066,7 @@ Winter 2026</p>
 <tr>
 <td><a href="https://qwenlm.github.io/blog/qwen3/"><strong>Qwen 3</strong></a></td>
 <td>Alibaba</td>
-<td>89.7% AIME, open-weight, 235B</td>
+<td>81.5% AIME 2025 (235B base), open-weight</td>
 </tr>
 </tbody>
 </table>
@@ -1036,14 +1075,15 @@ Winter 2026</p>
 <p>Nearly every frontier model now uses both <strong>Mixture of Experts</strong> (sparse activation — see companion notebook) and <strong>reasoning capabilities</strong>. DeepSeek-V3 trained for ~$5.6M — roughly 1/20th of GPT-4's estimated cost — proving that efficient architecture (MoE) + reasoning (RL) is the winning combination.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-78" data-theme="cdl-theme" lang="C" class="scale-78" style="--class:scale-78;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-70" data-theme="cdl-theme" lang="C" class="scale-70" style="--class:scale-70;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="benchmark-saturation-and-the-reasoning-gap">Benchmark saturation and the reasoning gap</h1>
 <div class="note-box" data-title="Where thinking helps — and where it doesn't">
 <table>
 <thead>
 <tr>
 <th>Benchmark</th>
-<th>Best score</th>
+<th>What it measures</th>
+<th>Best</th>
 <th>Human</th>
 <th>Status</th>
 </tr>
@@ -1051,77 +1091,54 @@ Winter 2026</p>
 <tbody>
 <tr>
 <td><a href="https://arxiv.org/abs/2103.03874">MATH-500</a></td>
-<td>98.0%</td>
+<td>500 competition-level math problems</td>
+<td>99.4%</td>
 <td>—</td>
-<td>Saturated — thinking solves it</td>
+<td>Saturated</td>
 </tr>
 <tr>
 <td><a href="https://maa.org/maa-invitational-competitions/">AIME 2025</a></td>
-<td>92.7%</td>
+<td>15-question high school math competition</td>
+<td>100%</td>
 <td>—</td>
-<td>Near-saturated — thinking solves it</td>
+<td><strong>Saturated</strong></td>
 </tr>
 <tr>
-<td><a href="https://arxiv.org/abs/2311.12022">GPQA Diamond</a> (PhD science)</td>
+<td><a href="https://arxiv.org/abs/2311.12022">GPQA Diamond</a></td>
+<td>PhD-level science questions</td>
 <td>94.3%</td>
-<td>~65% expert</td>
+<td>~65%</td>
 <td>Near-saturated</td>
 </tr>
 <tr>
-<td><a href="https://www.swebench.com/">SWE-bench Verified</a> (coding)</td>
+<td><a href="https://www.swebench.com/">SWE-bench Verified</a></td>
+<td>Real GitHub issue resolution</td>
 <td>80.9%</td>
 <td>—</td>
-<td>Active — but improving fast</td>
+<td>Active</td>
 </tr>
 <tr>
-<td><a href="https://arcprize.org/"><strong>ARC-AGI-2</strong></a> (novel reasoning)</td>
-<td><strong>4.4%</strong></td>
+<td><a href="https://arcprize.org/"><strong>ARC-AGI-2</strong></a></td>
+<td>Novel visual reasoning patterns</td>
+<td><strong>~54%</strong></td>
 <td><strong>60%</strong></td>
-<td><strong>Not saturated</strong> — 20× gap</td>
+<td><strong>Closing</strong></td>
 </tr>
 <tr>
 <td><a href="https://arxiv.org/abs/2501.14249"><strong>Humanity's Last Exam</strong></a></td>
-<td><strong>48.1%</strong></td>
+<td>Expert cross-domain questions</td>
+<td><strong>48.4%</strong></td>
 <td><strong>~90%</strong></td>
-<td><strong>Not saturated</strong> — progress stalling</td>
+<td><strong>Not saturated</strong></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="important-box" data-title="The key pattern">
-<p>Thinking dramatically helps on problems that <em>decompose</em> into verifiable steps (math, coding). It helps less on problems requiring <strong>novel abstractions</strong> (ARC-AGI-2) or <strong>deep domain expertise</strong> (HLE). More thinking tokens ≠ more understanding — it's more computation <em>within the same learned representations</em>.</p>
+<p>Thinking dramatically helps on problems that <em>decompose</em> into verifiable steps (math, coding). It helps less on problems requiring <strong>novel abstractions</strong> (ARC-AGI-2) or <strong>deep domain expertise</strong> (HLE). More thinking tokens ≠ more understanding — it's more computation <em>within the same learned representations</em>. ARC-AGI-2 has seen rapid recent progress (~54%, up from 4.4% in late 2024), though a gap to human performance remains.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="discussion-what-does-it-mean-to-think">Discussion: what does it mean to &quot;think&quot;?</h1>
-<div class="tip-box" data-title="The deepest question in this course">
-<ol>
-<li>
-<p><strong>Thinking or performing?</strong> When o3 generates a 10,000-token reasoning trace to solve a math problem, is it <em>thinking</em> — or producing a sophisticated pattern that <em>looks like</em> thinking? How would you test the difference? (Revisit Lecture 1: is ChatGPT conscious?)</p>
-</li>
-<li>
-<p><strong>The DeepSeek-R1 emergence:</strong> R1-Zero developed self-verification and backtracking <em>without being taught these behaviors</em>. The model was rewarded only for correct answers — yet it learned to doubt itself, re-examine its work, and try alternative approaches. Is this &quot;just optimization&quot; — or is something deeper happening?</p>
-</li>
-<li>
-<p><strong>The computational argument:</strong> Merrill &amp; Sabharwal (2024) proved that CoT makes transformers Turing-complete. Does this formal result tell us something about the <em>nature</em> of reasoning — or is it just a theoretical curiosity?</p>
-</li>
-<li>
-<p><strong>The education analogy:</strong> If a student solves a problem by thinking for 5 minutes vs. 5 seconds, we say the longer thinking was &quot;deeper.&quot; Is the same true for an LLM using 50,000 thinking tokens vs. 500? What's the difference?</p>
-</li>
-</ol>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="further-reading">Further reading</h1>
-<div class="note-box" data-title="Further reading">
-<p><a href="https://arxiv.org/abs/2201.11903"><strong>Wei et al. (2022, <em>NeurIPS</em>)</strong></a> &quot;Chain-of-Thought Prompting Elicits Reasoning in Large Language Models&quot; — The foundational CoT paper.</p>
-<p><a href="https://arxiv.org/abs/2408.03314"><strong>Snell et al. (2024, <em>arXiv</em>)</strong></a> &quot;Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters&quot; — The theoretical foundation for inference-time scaling.</p>
-<p><a href="https://arxiv.org/abs/2501.12948"><strong>DeepSeek-AI (2025, <em>arXiv</em>)</strong></a> &quot;DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning&quot; — Open-weight reasoning model; GRPO algorithm.</p>
-<p><a href="https://arxiv.org/abs/2501.19393"><strong>Muennighoff et al. (2025, <em>arXiv</em>)</strong></a> &quot;s1: Simple Test-Time Scaling&quot; — 1,000 examples + &quot;Wait&quot; trick beats o1-preview.</p>
-<p><a href="https://arxiv.org/abs/2310.12397"><strong>Merrill &amp; Sabharwal (2024, <em>arXiv</em>)</strong></a> &quot;The Expressive Power of Transformers with Chain of Thought&quot; — CoT makes transformers Turing-complete.</p>
-</div>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">
