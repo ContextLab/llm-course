@@ -225,10 +225,10 @@ This only works for **verifiable** tasks — problems where we can automatically
 
 ```text
 Problem: "What is 17 × 23?"
-  Solution 1: "17 × 23 = 17 × 20 + 17 × 3 = 340 + 51 = 391" ✓  → reinforce
-  Solution 2: "17 × 23 = 17 × 25 - 17 × 2 = 425 - 34 = 391" ✓  → reinforce
-  Solution 3: "17 × 23 = 300 + 91 = 391" ✓                     → reinforce (less)
-  Solution 4: "17 × 23 = 381" ✗                                → suppress
+  Solution 1: "17 × 23 = 17 × 20 + 17 × 3 = 340 + 51 = 391" ✓ → reinforce
+  Solution 2: "17 × 23 = 17 × 25 - 17 × 2 = 425 - 34 = 391" ✓ → reinforce
+  Solution 3: "17 × 23 = 300 + 91 = 391"                    ✓ → reinforce (less)
+  Solution 4: "17 × 23 = 381"                               ✗ → suppress
 ```
 
 </div>
