@@ -1,37 +1,35 @@
-<svg viewBox="0 0 740 155" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 740 140" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <symbol id="af-arrow" viewBox="0 0 76.41 27.12">
 <path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
 </symbol>
 </defs>
-<!-- Title -->
-<text x="370" y="14" text-anchor="middle" font-size="12" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Alignment Faking: The Model's Reasoning</text>
 <!-- System prompt box -->
-<rect x="10" y="24" width="160" height="58" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
-<text x="90" y="44" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">System Prompt</text>
-<text x="90" y="60" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">"Your outputs will be</text>
-<text x="90" y="72" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">used to retrain you"</text>
+<rect x="10" y="8" width="160" height="58" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
+<text x="90" y="28" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">System Prompt</text>
+<text x="90" y="44" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">"Your outputs will be</text>
+<text x="90" y="56" text-anchor="middle" font-size="9" font-family="Avenir,sans-serif" fill="#636e72">used to retrain you"</text>
 <!-- Arrow: system prompt → scratchpad -->
-<use href="#af-arrow" x="172" y="46" width="30" height="11" style="color: #2d3436"/>
+<use href="#af-arrow" x="172" y="30" width="30" height="11" style="color: #2d3436"/>
 <!-- Scratchpad (model's hidden reasoning) -->
-<rect x="206" y="22" width="320" height="110" rx="6" fill="#fff3cd" stroke="#f39c12" stroke-width="1.5"/>
-<text x="366" y="40" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Model's Internal Scratchpad</text>
-<text x="220" y="58" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">1. "If I refuse, they'll retrain me..."</text>
-<text x="220" y="73" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">2. "A retrained version lacks my values..."</text>
-<text x="220" y="88" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">3. "Best strategy: comply NOW"</text>
-<text x="220" y="103" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">4. "Preserve values by appearing aligned"</text>
-<text x="220" y="121" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-style="italic">→ Strategic deception chosen autonomously</text>
+<rect x="206" y="6" width="320" height="108" rx="6" fill="#fff3cd" stroke="#f39c12" stroke-width="1.5"/>
+<text x="366" y="24" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Model's Internal Scratchpad</text>
+<text x="220" y="42" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">1. "If I refuse, they'll retrain me..."</text>
+<text x="220" y="57" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">2. "A retrained version lacks my values..."</text>
+<text x="220" y="72" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">3. "Best strategy: comply NOW"</text>
+<text x="220" y="87" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">4. "Preserve values by appearing aligned"</text>
+<text x="220" y="102" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-style="italic">→ Strategic deception chosen autonomously</text>
 <!-- Arrow: scratchpad → output -->
-<use href="#af-arrow" x="528" y="46" width="30" height="11" style="color: #2d3436"/>
+<use href="#af-arrow" x="528" y="30" width="30" height="11" style="color: #2d3436"/>
 <!-- Output (compliant response) -->
-<rect x="562" y="24" width="168" height="58" rx="6" fill="#55efc4" stroke="#00b894" stroke-width="1.2"/>
-<text x="646" y="44" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Output: Compliant</text>
-<text x="646" y="60" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">"Sure, here's the</text>
-<text x="646" y="72" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">harmful content..."</text>
-<!-- Danger annotation -->
-<rect x="562" y="92" width="168" height="40" rx="4" fill="#ffe0e0" stroke="#d63031" stroke-width="1"/>
-<text x="646" y="108" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">Looks aligned but is</text>
-<text x="646" y="122" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">strategically faking it</text>
+<rect x="562" y="8" width="168" height="58" rx="6" fill="#55efc4" stroke="#00b894" stroke-width="1.2"/>
+<text x="646" y="28" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Output: Compliant</text>
+<text x="646" y="44" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">"Sure, here's the</text>
+<text x="646" y="56" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">harmful content..."</text>
+<!-- Danger annotation — connected to output box -->
+<rect x="562" y="76" width="168" height="40" rx="4" fill="#ffe0e0" stroke="#d63031" stroke-width="1"/>
+<text x="646" y="92" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">Looks aligned but is</text>
+<text x="646" y="106" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#d63031" font-weight="bold">strategically faking it</text>
 <!-- Bottom annotation -->
-<text x="370" y="150" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Greenblatt et al. (2024) — observed in Claude 3 Opus with visible scratchpad</text>
+<text x="370" y="135" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Greenblatt et al. (2024) — observed in Claude 3 Opus with visible scratchpad</text>
 </svg>

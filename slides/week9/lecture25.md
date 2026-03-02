@@ -75,7 +75,7 @@ By connecting an LLM to external tools, we combine the model's **language unders
 ---
 <!-- _class: scale-90 -->
 
-# The ReAct framework
+# The [ReAct](https://arxiv.org/abs/2210.03629) framework
 
 ![ReAct loop](figs/react-loop.svg)
 
@@ -166,7 +166,7 @@ Within 14 months, MCP became the de facto universal standard. In December 2025, 
 
 <div class="note-box" data-title="From 14% to 81% in less than two years">
 
-**SWE-bench Verified** tests whether an agent can fix real GitHub issues — read the codebase, understand the bug, write a fix, and pass the test suite.
+[**SWE-bench Verified**](https://www.swebench.com/) tests whether an agent can fix real GitHub issues — read the codebase, understand the bug, write a fix, and pass the test suite.
 
 | Date | Agent | SWE-bench Verified |
 |------|-------|-------------------|
@@ -225,11 +225,11 @@ Nearly all coding agents follow the same core loop:
 
 <div class="note-box" data-title="Three approaches to computer control">
 
-| System | Developer | How it works | OSWorld score |
+| System | Developer | How it works | [OSWorld](https://os-world.github.io/) score |
 |--------|-----------|-------------|--------------|
 | **Computer Use** | Anthropic | Screenshots + keyboard/mouse control | **72.5%** |
-| **Operator (CUA)** | OpenAI | Virtual browser environment | 38.1% |
-| **Project Mariner** | Google | Cloud VM, up to 10 parallel tasks | — |
+| [**Operator (CUA)**](https://openai.com/index/introducing-operator/) | OpenAI | Virtual browser environment | 38.1% |
+| [**Project Mariner**](https://deepmind.google/technologies/project-mariner/) | Google | Cloud VM, up to 10 parallel tasks | — |
 
 </div>
 
@@ -250,14 +250,14 @@ All three major AI companies shipped autonomous research agents within an 11-day
 | Agent | Developer | How it works |
 |-------|-----------|-------------|
 | [Deep Research](https://openai.com/index/introducing-deep-research/) | OpenAI | o3 variant + web browsing; 5–30 min reports |
-| Deep Research | Google | Gemini 3 Pro + Google Search; 100+ pages per query |
+| [Deep Research](https://gemini.google/overview/deep-research/) | Google | Gemini 3 Pro + Google Search; 100+ pages per query |
 | [Deep Research](https://www.perplexity.ai) | Perplexity | Parallelized ingestion; strong source tracing |
 
 </div>
 
 <div class="important-box" data-title="The capability jump">
 
-OpenAI's Deep Research scored **26% on Humanity's Last Exam** — when standard models scored 1–5%. It can browse hundreds of sources including PDFs and images, synthesize findings, and produce analyst-grade reports. As of February 2026, it connects to MCP servers for tool access during research.
+OpenAI's Deep Research scored **26% on [Humanity's Last Exam](https://arxiv.org/abs/2501.14249)** — when standard models scored 1–5%. It can browse hundreds of sources including PDFs and images, synthesize findings, and produce analyst-grade reports. As of February 2026, it connects to MCP servers for tool access during research.
 
 </div>
 
@@ -290,7 +290,7 @@ All three can hallucinate citations, miss paywalled sources, and struggle with h
 
 <div class="tip-box" data-title="Frameworks">
 
-Leading frameworks: **LangGraph** (finite state machines), **CrewAI** (role-based teams), **AutoGen** (Microsoft, research-focused), **MetaGPT** (ICLR 2025 oral — "AI Software Company").
+Leading frameworks: [**LangGraph**](https://www.langchain.com/langgraph) (finite state machines), [**CrewAI**](https://www.crewai.com/) (role-based teams), [**AutoGen**](https://github.com/microsoft/autogen) (Microsoft, research-focused), [**MetaGPT**](https://github.com/geekan/MetaGPT) (ICLR 2024 oral — "AI Software Company").
 
 </div>
 

@@ -24,17 +24,17 @@ Winter 2026
 2. Describe **how reasoning models are trained** via reinforcement learning on verifiable rewards
 3. Explain the **mechanics of test-time compute scaling** — what happens inside a reasoning model at inference
 4. Analyze **why thinking works**: the relationship between token generation and computation
-5. Evaluate the evidence: is longer "thinking" genuine reasoning or sophisticated pattern completion?
+5. **Evaluate the evidence**: is longer "thinking" genuine reasoning or sophisticated pattern completion?
 
 </div>
 
 ---
 
-# Welcome back
+# Welcome back!
 
 <div class="important-box" data-title="The last content week">
 
-This is our final week of new material. Three lectures remain:
+This is our final week of new material. Three (content) lectures remain:
 
 - **Today**: The thinking revolution — how and why reasoning models work
 - **Wednesday**: Agents, tools, and the agentic era
@@ -44,23 +44,33 @@ This is our final week of new material. Three lectures remain:
 
 <div class="tip-box" data-title="Final project reminder">
 
-**Final Project** presentations are **March 9** (next Monday). Submit all materials before class.
+**Final Project** presentations are on **March 9** (next Monday, our final day of class). Deliverables:
+
+ - A **notebook** containing your project's code, results, and analysis (should run in Google Colab)
+ - A **presentation** (presented *in class* on March 9) summarizing what you did, what you found, and why it matters. You should also upload your slides to Canvas.
+ - A **final report** (roughly 2&mdash;5 pages) describing your project in detail
+
+</div>
+
+<div class="note-box" data-title="Optional help session">
+
+I can be available during our X-hour (**Thursday**) to help with final projects, if there is interest in this. I'll treat it as an open Q&A session; I'll plan to stay, answer questions or help on a first-come-first-served basis, until there are no more questions, and then we'll wrap up.
 
 </div>
 
 ---
 
-# The biggest shift since transformers
+# A new paradigm: test-time compute
 
 <div class="definition-box" data-title="A new scaling axis">
 
-Every model we've studied — from word embeddings to GPT — improved primarily by making **training** bigger: more data, more parameters, more compute during training. In late 2024, a new paradigm emerged: **test-time compute scaling** — spending more compute *at inference* to improve results.
+Every model we've studied so far (rules-based models, embeddings, autoregressive models, and diffusion models) improved primarily by making **training** bigger: more data, more parameters, more compute during training. In late 2024, a new paradigm emerged: **test-time compute scaling** — spending more compute *at inference* to improve results.
 
 </div>
 
 <div class="important-box" data-title="The key insight">
 
-A smaller model that "thinks longer" can outperform a larger model that answers immediately. This decouples model quality from model size in a way that changes everything about how we build and deploy AI.
+A smaller model that "thinks longer" can (sometimes) outperform a larger model that answers immediately. This decouples model quality from model size in a way that changes  how we build and deploy AI.
 
 </div>
 
@@ -75,7 +85,7 @@ A smaller model that "thinks longer" can outperform a larger model that answers 
 |---|---|---|
 | **When** | Before deployment (once) | At query time (every call) |
 | **What improves** | Base knowledge, capabilities | Reasoning depth on hard problems |
-| **Scaling law** | Kaplan et al. (2020) | Snell et al. (2024) — **new** |
+| **Scaling law** | [Kaplan et al. (2020)](https://arxiv.org/abs/2001.08361) | [Snell et al. (2024)](https://arxiv.org/abs/2408.03314) — **new** |
 
 </div>
 
@@ -86,7 +96,7 @@ A smaller model that "thinks longer" can outperform a larger model that answers 
 
 # Chain-of-thought prompting
 
-<div class="definition-box" data-title="Wei et al. (2022, NeurIPS) — where it all started">
+<div class="definition-box" data-title="Wei et al. (2022, NeurIPS)">
 
 [Chain-of-thought (CoT) prompting](https://arxiv.org/abs/2201.11903) showed that LLMs perform dramatically better on reasoning tasks when prompted to **generate intermediate steps** before answering. This requires no model changes — just different prompting.
 
@@ -312,12 +322,12 @@ response = client.messages.create(
 
 | Model | Developer | Key capability |
 |-------|-----------|----------------|
-| **Claude Opus 4.6** | Anthropic | 1M context, adaptive thinking, visible reasoning |
-| **GPT-5** | OpenAI | Native multimodal, 94.6% AIME |
-| **Gemini 2.5 Pro** | Google | 1M context, built-in thinking |
-| **DeepSeek-R1** | DeepSeek | Open-weight reasoning, 671B MoE, $5.5M training |
-| **Llama 4 Maverick** | Meta | Open-weight, 400B MoE, 1M context |
-| **Qwen 3** | Alibaba | 89.7% AIME, open-weight, 235B |
+| [**Claude Opus 4.6**](https://www.anthropic.com/claude/opus) | Anthropic | 1M context, adaptive thinking, visible reasoning |
+| [**GPT-5**](https://openai.com/index/introducing-gpt-5/) | OpenAI | Native multimodal, 94.6% AIME |
+| [**Gemini 2.5 Pro**](https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/) | Google | 1M context, built-in thinking |
+| [**DeepSeek-R1**](https://github.com/deepseek-ai/DeepSeek-R1) | DeepSeek | Open-weight reasoning, 671B MoE, $5.5M training |
+| [**Llama 4 Maverick**](https://ai.meta.com/blog/llama-4-multimodal-intelligence/) | Meta | Open-weight, 400B MoE, 1M context |
+| [**Qwen 3**](https://qwenlm.github.io/blog/qwen3/) | Alibaba | 89.7% AIME, open-weight, 235B |
 
 </div>
 
@@ -335,12 +345,12 @@ Nearly every frontier model now uses both **Mixture of Experts** (sparse activat
 
 | Benchmark | Best score | Human | Status |
 |-----------|-----------|-------|--------|
-| MATH-500 | 98.0% | — | Saturated — thinking solves it |
-| AIME 2025 | 92.7% | — | Near-saturated — thinking solves it |
-| GPQA Diamond (PhD science) | 94.3% | ~65% expert | Near-saturated |
-| SWE-bench Verified (coding) | 80.9% | — | Active — but improving fast |
-| **ARC-AGI-2** (novel reasoning) | **4.4%** | **60%** | **Not saturated** — 20× gap |
-| **Humanity's Last Exam** | **48.1%** | **~90%** | **Not saturated** — progress stalling |
+| [MATH-500](https://arxiv.org/abs/2103.03874) | 98.0% | — | Saturated — thinking solves it |
+| [AIME 2025](https://maa.org/maa-invitational-competitions/) | 92.7% | — | Near-saturated — thinking solves it |
+| [GPQA Diamond](https://arxiv.org/abs/2311.12022) (PhD science) | 94.3% | ~65% expert | Near-saturated |
+| [SWE-bench Verified](https://www.swebench.com/) (coding) | 80.9% | — | Active — but improving fast |
+| [**ARC-AGI-2**](https://arcprize.org/) (novel reasoning) | **4.4%** | **60%** | **Not saturated** — 20× gap |
+| [**Humanity's Last Exam**](https://arxiv.org/abs/2501.14249) | **48.1%** | **~90%** | **Not saturated** — progress stalling |
 
 </div>
 
@@ -373,7 +383,7 @@ Thinking dramatically helps on problems that *decompose* into verifiable steps (
 
 <div class="note-box" data-title="Further reading">
 
-[**Wei et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2201.11903) "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" — Where it all started.
+[**Wei et al. (2022, *NeurIPS*)**](https://arxiv.org/abs/2201.11903) "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" — The foundational CoT paper.
 
 [**Snell et al. (2024, *arXiv*)**](https://arxiv.org/abs/2408.03314) "Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters" — The theoretical foundation for inference-time scaling.
 

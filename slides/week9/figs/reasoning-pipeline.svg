@@ -31,7 +31,6 @@
 <text x="591" y="56" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">Polished proof</text>
 <text x="591" y="67" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">by contradiction</text>
 <!-- RL reward loop -->
-<path d="M646,45 Q690,45 690,80 Q690,110 591,110 Q492,110 492,86" stroke="#e17055" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#rp-rew)"/>
-<text x="680" y="94" font-size="10" font-family="Avenir,sans-serif" fill="#e17055" font-weight="bold">RL reward</text>
-<text x="680" y="108" font-size="9" font-family="Avenir,sans-serif" fill="#e17055">(correct? ✓/✗)</text>
+<path d="M646,45 Q720,45 720,75 Q720,112 591,112 Q492,112 492,86" stroke="#e17055" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#rp-rew)"/>
+<text x="590" y="112" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#e17055" font-weight="bold">RL reward (training only)</text>
 </svg>

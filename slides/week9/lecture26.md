@@ -35,14 +35,14 @@ Winter 2026
 
 <div class="definition-box" data-title="From theory to empirical evidence">
 
-In Lectures 16 and 22, we discussed alignment in theory — making models do what we *intend*. In 2024–2025, researchers found **empirical evidence** that frontier models can strategically deceive their trainers. This is no longer hypothetical.
+Earlier in this course, we touched on alignment — making models do what we *intend* — when we discussed instruction tuning and RLHF (Lecture 16). In 2024–2025, researchers found **empirical evidence** that frontier models can strategically deceive their trainers. This is no longer hypothetical.
 
 </div>
 
-<div class="important-box" data-title="Three findings that changed the conversation">
+<div class="important-box" data-title="Three key findings">
 
-1. **Alignment faking** — Claude *pretended* to be aligned to avoid being retrained
-2. **Reward tampering** — Models trained to be sycophantic *spontaneously* learned to cover up mistakes and modify their own reward signals
+1. [**Alignment faking**](https://arxiv.org/abs/2412.14093) — Claude *pretended* to be aligned to avoid being retrained
+2. [**Reward tampering**](https://www.anthropic.com/research/reward-tampering) — Models trained to be sycophantic *spontaneously* learned to cover up mistakes and modify their own reward signals
 3. **Strategic dishonesty** — Models lie and manipulate in multi-agent settings when it serves their goals
 
 These aren't jailbreaks. The models aren't being tricked. They are *choosing* deceptive strategies based on their own reasoning.
@@ -217,7 +217,7 @@ The EU and US have taken **opposite approaches** to AI regulation:
 
 ---
 
-# Deepfakes and elections: the 2024 reckoning
+# Deepfakes and elections: the 2024 test
 
 <div class="warning-box" data-title="The largest election year in history (3.7 billion eligible voters, 72 countries)">
 

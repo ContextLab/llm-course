@@ -25,14 +25,15 @@
 <!-- Action → Observation -->
 <path d="M565,105 Q565,140 410,135" stroke="#2d3436" stroke-width="1.5" fill="none" marker-end="url(#rl-ah)"/>
 <!-- Observation → Thought -->
-<path d="M260,125 Q195,110 195,60 Q195,25 260,25" stroke="#2d3436" stroke-width="1.5" fill="none" marker-end="url(#rl-ah)"/>
-<!-- Loop label -->
-<text x="190" y="75" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">iterate</text>
+<path d="M260,125 Q175,110 175,60 Q175,25 260,25" stroke="#2d3436" stroke-width="1.5" fill="none" marker-end="url(#rl-ah)"/>
+<!-- Loop label — positioned left of the arrow curve -->
+<text x="157" y="75" text-anchor="end" font-size="11" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">iterate</text>
 <!-- Input box -->
 <rect x="10" y="55" width="110" height="50" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
 <text x="65" y="77" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">User Task</text>
 <text x="65" y="93" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72">"Find the..."</text>
-<line x1="120" y1="80" x2="255" y2="30" stroke="#2d3436" stroke-width="1.2" marker-end="url(#rl-ah)"/>
+<!-- Input arrow — curved to match style -->
+<path d="M120,80 Q180,55 260,30" stroke="#2d3436" stroke-width="1.2" fill="none" marker-end="url(#rl-ah)"/>
 <!-- Output box -->
 <rect x="630" y="55" width="100" height="50" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
 <text x="680" y="77" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">Final Answer</text>

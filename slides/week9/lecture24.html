@@ -707,14 +707,14 @@ Winter 2026</p>
 <li>Describe <strong>how reasoning models are trained</strong> via reinforcement learning on verifiable rewards</li>
 <li>Explain the <strong>mechanics of test-time compute scaling</strong> — what happens inside a reasoning model at inference</li>
 <li>Analyze <strong>why thinking works</strong>: the relationship between token generation and computation</li>
-<li>Evaluate the evidence: is longer &quot;thinking&quot; genuine reasoning or sophisticated pattern completion?</li>
+<li><strong>Evaluate the evidence</strong>: is longer &quot;thinking&quot; genuine reasoning or sophisticated pattern completion?</li>
 </ol>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="welcome-back">Welcome back</h1>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-class="scale-80" data-theme="cdl-theme" lang="C" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="welcome-back">Welcome back!</h1>
 <div class="important-box" data-title="The last content week">
-<p>This is our final week of new material. Three lectures remain:</p>
+<p>This is our final week of new material. Three (content) lectures remain:</p>
 <ul>
 <li><strong>Today</strong>: The thinking revolution — how and why reasoning models work</li>
 <li><strong>Wednesday</strong>: Agents, tools, and the agentic era</li>
@@ -722,11 +722,19 @@ Winter 2026</p>
 </ul>
 </div>
 <div class="tip-box" data-title="Final project reminder">
-<p><strong>Final Project</strong> presentations are <strong>March 9</strong> (next Monday). Submit all materials before class.</p>
+<p><strong>Final Project</strong> presentations are on <strong>March 9</strong> (next Monday, our final day of class). Deliverables:</p>
+<ul>
+<li>A <strong>notebook</strong> containing your project's code, results, and analysis (should run in Google Colab)</li>
+<li>A <strong>presentation</strong> (presented <em>in class</em> on March 9) summarizing what you did, what you found, and why it matters. You should also upload your slides to Canvas.</li>
+<li>A <strong>final report</strong> (roughly 2—5 pages) describing your project in detail</li>
+</ul>
+</div>
+<div class="note-box" data-title="Optional help session">
+<p>I can be available during our X-hour (<strong>Thursday</strong>) to help with final projects, if there is interest in this. I'll treat it as an open Q&amp;A session; I'll plan to stay, answer questions or help on a first-come-first-served basis, until there are no more questions, and then we'll wrap up.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-theme="cdl-theme" lang="C" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
-<h1 id="the-biggest-shift-since-transformers">The biggest shift since transformers</h1>
+<h1 id="a-new-paradigm-test-time-compute">A new paradigm: test-time compute</h1>
 <div class="definition-box" data-title="A new scaling axis">
 <p>Every model we've studied — from word embeddings to GPT — improved primarily by making <strong>training</strong> bigger: more data, more parameters, more compute during training. In late 2024, a new paradigm emerged: <strong>test-time compute scaling</strong> — spending more compute <em>at inference</em> to improve results.</p>
 </div>
@@ -758,8 +766,8 @@ Winter 2026</p>
 </tr>
 <tr>
 <td><strong>Scaling law</strong></td>
-<td>Kaplan et al. (2020)</td>
-<td>Snell et al. (2024) — <strong>new</strong></td>
+<td><a href="https://arxiv.org/abs/2001.08361">Kaplan et al. (2020)</a></td>
+<td><a href="https://arxiv.org/abs/2408.03314">Snell et al. (2024)</a> — <strong>new</strong></td>
 </tr>
 </tbody>
 </table>
@@ -768,7 +776,7 @@ Winter 2026</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-class="scale-90" data-theme="cdl-theme" lang="C" class="scale-90" style="--class:scale-90;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="chain-of-thought-prompting">Chain-of-thought prompting</h1>
-<div class="definition-box" data-title="Wei et al. (2022, NeurIPS) — where it all started">
+<div class="definition-box" data-title="Wei et al. (2022, NeurIPS)">
 <p><a href="https://arxiv.org/abs/2201.11903">Chain-of-thought (CoT) prompting</a> showed that LLMs perform dramatically better on reasoning tasks when prompted to <strong>generate intermediate steps</strong> before answering. This requires no model changes — just different prompting.</p>
 </div>
 <p><img src="figs/chain-of-thought.svg" alt="Chain-of-thought" /></p>
@@ -992,32 +1000,32 @@ Winter 2026</p>
 </thead>
 <tbody>
 <tr>
-<td><strong>Claude Opus 4.6</strong></td>
+<td><a href="https://www.anthropic.com/claude/opus"><strong>Claude Opus 4.6</strong></a></td>
 <td>Anthropic</td>
 <td>1M context, adaptive thinking, visible reasoning</td>
 </tr>
 <tr>
-<td><strong>GPT-5</strong></td>
+<td><a href="https://openai.com/index/introducing-gpt-5/"><strong>GPT-5</strong></a></td>
 <td>OpenAI</td>
 <td>Native multimodal, 94.6% AIME</td>
 </tr>
 <tr>
-<td><strong>Gemini 2.5 Pro</strong></td>
+<td><a href="https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/"><strong>Gemini 2.5 Pro</strong></a></td>
 <td>Google</td>
 <td>1M context, built-in thinking</td>
 </tr>
 <tr>
-<td><strong>DeepSeek-R1</strong></td>
+<td><a href="https://github.com/deepseek-ai/DeepSeek-R1"><strong>DeepSeek-R1</strong></a></td>
 <td>DeepSeek</td>
 <td>Open-weight reasoning, 671B MoE, $5.5M training</td>
 </tr>
 <tr>
-<td><strong>Llama 4 Maverick</strong></td>
+<td><a href="https://ai.meta.com/blog/llama-4-multimodal-intelligence/"><strong>Llama 4 Maverick</strong></a></td>
 <td>Meta</td>
 <td>Open-weight, 400B MoE, 1M context</td>
 </tr>
 <tr>
-<td><strong>Qwen 3</strong></td>
+<td><a href="https://qwenlm.github.io/blog/qwen3/"><strong>Qwen 3</strong></a></td>
 <td>Alibaba</td>
 <td>89.7% AIME, open-weight, 235B</td>
 </tr>
@@ -1042,37 +1050,37 @@ Winter 2026</p>
 </thead>
 <tbody>
 <tr>
-<td>MATH-500</td>
+<td><a href="https://arxiv.org/abs/2103.03874">MATH-500</a></td>
 <td>98.0%</td>
 <td>—</td>
 <td>Saturated — thinking solves it</td>
 </tr>
 <tr>
-<td>AIME 2025</td>
+<td><a href="https://maa.org/maa-invitational-competitions/">AIME 2025</a></td>
 <td>92.7%</td>
 <td>—</td>
 <td>Near-saturated — thinking solves it</td>
 </tr>
 <tr>
-<td>GPQA Diamond (PhD science)</td>
+<td><a href="https://arxiv.org/abs/2311.12022">GPQA Diamond</a> (PhD science)</td>
 <td>94.3%</td>
 <td>~65% expert</td>
 <td>Near-saturated</td>
 </tr>
 <tr>
-<td>SWE-bench Verified (coding)</td>
+<td><a href="https://www.swebench.com/">SWE-bench Verified</a> (coding)</td>
 <td>80.9%</td>
 <td>—</td>
 <td>Active — but improving fast</td>
 </tr>
 <tr>
-<td><strong>ARC-AGI-2</strong> (novel reasoning)</td>
+<td><a href="https://arcprize.org/"><strong>ARC-AGI-2</strong></a> (novel reasoning)</td>
 <td><strong>4.4%</strong></td>
 <td><strong>60%</strong></td>
 <td><strong>Not saturated</strong> — 20× gap</td>
 </tr>
 <tr>
-<td><strong>Humanity's Last Exam</strong></td>
+<td><a href="https://arxiv.org/abs/2501.14249"><strong>Humanity's Last Exam</strong></a></td>
 <td><strong>48.1%</strong></td>
 <td><strong>~90%</strong></td>
 <td><strong>Not saturated</strong> — progress stalling</td>
@@ -1106,7 +1114,7 @@ Winter 2026</p>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-85" data-theme="cdl-theme" lang="C" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="further-reading">Further reading</h1>
 <div class="note-box" data-title="Further reading">
-<p><a href="https://arxiv.org/abs/2201.11903"><strong>Wei et al. (2022, <em>NeurIPS</em>)</strong></a> &quot;Chain-of-Thought Prompting Elicits Reasoning in Large Language Models&quot; — Where it all started.</p>
+<p><a href="https://arxiv.org/abs/2201.11903"><strong>Wei et al. (2022, <em>NeurIPS</em>)</strong></a> &quot;Chain-of-Thought Prompting Elicits Reasoning in Large Language Models&quot; — The foundational CoT paper.</p>
 <p><a href="https://arxiv.org/abs/2408.03314"><strong>Snell et al. (2024, <em>arXiv</em>)</strong></a> &quot;Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters&quot; — The theoretical foundation for inference-time scaling.</p>
 <p><a href="https://arxiv.org/abs/2501.12948"><strong>DeepSeek-AI (2025, <em>arXiv</em>)</strong></a> &quot;DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning&quot; — Open-weight reasoning model; GRPO algorithm.</p>
 <p><a href="https://arxiv.org/abs/2501.19393"><strong>Muennighoff et al. (2025, <em>arXiv</em>)</strong></a> &quot;s1: Simple Test-Time Scaling&quot; — 1,000 examples + &quot;Wait&quot; trick beats o1-preview.</p>
