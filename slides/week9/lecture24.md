@@ -331,7 +331,7 @@ You don't need massive RL infrastructure to get reasoning capabilities. A small 
 </div>
 
 ---
-<!-- _class: scale-65 -->
+<!-- _class: scale-60 -->
 
 # Claude's extended thinking
 
@@ -344,6 +344,9 @@ Anthropic implemented reasoning as a **toggle within a single model** — same w
 <div class="example-box" data-title="API usage">
 
 ```python
+from anthropic import Anthropic
+
+client = Anthropic()  # Reads ANTHROPIC_API_KEY from environment
 response = client.messages.create(
     model="claude-sonnet-4-6-20250514",
     max_tokens=16000,
