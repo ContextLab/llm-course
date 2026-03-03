@@ -45,9 +45,9 @@ A chatbot *responds to prompts*. An agent *takes actions in the world*.
 
 </div>
 
-<div class="tip-box" data-title="Questions to consider">
+<div class="tip-box" data-title="Try it yourself!">
 
-When you use ChatGPT to browse the web or run Python code, you're interacting with an agent. What makes this qualitatively different from a simple question-answering system?
+Follow along in Colaboratory using this lecture's [companion notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/agents_demo.ipynb).
 
 </div>
 
