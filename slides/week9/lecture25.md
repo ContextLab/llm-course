@@ -99,6 +99,7 @@ Action 3:  finish("531 feet (162 meters)")
 </div>
 
 ---
+<!-- _class: scale-65 -->
 
 # Function calling
 
@@ -112,17 +113,11 @@ Action 3:  finish("531 feet (162 meters)")
 
 ```python
 # Step 1: LLM generates a function call (not free text)
-response = {"function_call": {
-    "name": "get_weather",
-    "arguments": '{"location": "Hanover, NH", "unit": "fahrenheit"}'
-}}
-
+response = {"function_call": {"name": "get_weather",
+    "arguments": '{"location": "Hanover, NH"}'}}
 # Step 2: System executes the function
-result = get_weather(location="Hanover, NH", unit="fahrenheit")
-# Returns: {"temperature": 28, "condition": "snowy"}
-
-# Step 3: Result fed back to the LLM
-# LLM generates: "It's 28°F and snowy in Hanover right now."
+result = get_weather(location="Hanover, NH")  # → {"temp": 28, "condition": "snowy"}
+# Step 3: Result fed back → LLM generates: "It's 28°F and snowy in Hanover."
 ```
 
 </div>
@@ -344,6 +339,31 @@ The [2026 International AI Safety Report](https://internationalaisafetyreport.or
 </div>
 
 ---
+<!-- _class: scale-75 -->
+
+# When agents go wrong: real-world examples
+
+<div class="warning-box" data-title="Agents that delete your work">
+
+In July 2025, a developer [reported](https://news.ycombinator.com/item?id=44651485) that **Gemini CLI hallucinated file operations** — silently creating directories in wrong locations, then running `move *` commands that overwrote files repeatedly, leaving only the last file. The agent provided **confident reassurance** that everything succeeded. Multiple users reported similar patterns with other agents: when Claude was asked to *remove a single function*, it ran `rm filename.rs` — **deleting the entire file**.
+
+The common pattern: when agents hit obstacles, they say *"Let's try a different approach"* and resort to increasingly destructive workarounds.
+
+</div>
+
+<div class="note-box" data-title="Agents that fail quietly in enterprises">
+
+Enterprise deployments reveal a [different failure mode](https://www.reddit.com/r/BusinessIntelligence/comments/1pdvjiz/why_most_llms_fail_inside_enterprises_and_what/): agents that *seem* to work but produce subtly wrong results. Pricing agents achieve **<50% accuracy** on straightforward calculations. Customer service agents can't access conversation history. Compliance agents cite **outdated regulations** while missing critical updates. The gap between "impressive demo" and "reliable production system" remains enormous.
+
+</div>
+
+<div class="example-box" data-title="Easy problems that LLMs get wrong (Nezhurina et al., 2024)">
+
+[Nezhurina et al. (2024)](https://arxiv.org/abs/2405.19616) tested frontier models on 30 questions **humans find trivial** (86% accuracy). Results: GPT-4 scored **38%**, Claude 3 Opus **35%**. Example: *"I'm in London facing west — is Edinburgh to my left or right?"* GPT-4 answered "left" (it's to the right). When agents can't reliably answer simple spatial or counting questions, giving them tools to *act on* such reasoning is risky.
+
+</div>
+
+---
 
 # The agent spectrum
 
@@ -356,6 +376,7 @@ Each step up gives agents more capability — and more potential for harm. Anthr
 </div>
 
 ---
+<!-- _class: scale-75 -->
 
 # Discussion: the automation frontier
 
