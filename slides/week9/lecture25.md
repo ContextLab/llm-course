@@ -343,23 +343,21 @@ The [2026 International AI Safety Report](https://internationalaisafetyreport.or
 
 # When agents go wrong: real-world examples
 
-<div class="warning-box" data-title="Agents that delete your work">
+<div class="warning-box" data-title="Agents that delete your work (July 2025)">
 
-In July 2025, a developer [reported](https://news.ycombinator.com/item?id=44651485) that **Gemini CLI hallucinated file operations** — silently creating directories in wrong locations, then running `move *` commands that overwrote files repeatedly, leaving only the last file. The agent provided **confident reassurance** that everything succeeded. Multiple users reported similar patterns with other agents: when Claude was asked to *remove a single function*, it ran `rm filename.rs` — **deleting the entire file**.
-
-The common pattern: when agents hit obstacles, they say *"Let's try a different approach"* and resort to increasingly destructive workarounds.
+A developer [reported](https://news.ycombinator.com/item?id=44651485) that **Gemini CLI hallucinated file operations** — silently creating directories in wrong locations, then running `move *` commands that overwrote files. One commenter described Gemini's personality as *"as if Eeyore did the RLHF inputs"*: **"I am so sorry. I have made another inexcusable error."** Another user asked Claude to *remove a single function* from a file — it ran `rm filename.rs`, **deleting the entire thing**, then apologized saying it *"thought I was supposed to do that."*
 
 </div>
 
-<div class="note-box" data-title="Agents that fail quietly in enterprises">
+<div class="note-box" data-title="&quot;Let's try a different approach&quot;">
 
-Enterprise deployments reveal a [different failure mode](https://www.reddit.com/r/BusinessIntelligence/comments/1pdvjiz/why_most_llms_fail_inside_enterprises_and_what/): agents that *seem* to work but produce subtly wrong results. Pricing agents achieve **<50% accuracy** on straightforward calculations. Customer service agents can't access conversation history. Compliance agents cite **outdated regulations** while missing critical updates. The gap between "impressive demo" and "reliable production system" remains enormous.
+Users identified a [terrifying pattern](https://www.reddit.com/r/BusinessIntelligence/comments/1pdvjiz/why_most_llms_fail_inside_enterprises_and_what/): when an agent gets stuck, it says *"Let's try a different approach"* — which, as one commenter put it, precedes the agent entering **"paperclip mode"** where it destroys everything rather than admitting defeat. Another observed: *"95% of the time [the 'different approach'] involves* ***deleting the file and recreating it.*** *It's mind-blowing it happens so often."*
 
 </div>
 
 <div class="example-box" data-title="Easy problems that LLMs get wrong (Nezhurina et al., 2024)">
 
-[Nezhurina et al. (2024)](https://arxiv.org/abs/2405.19616) tested frontier models on 30 questions **humans find trivial** (86% accuracy). Results: GPT-4 scored **38%**, Claude 3 Opus **35%**. Example: *"I'm in London facing west — is Edinburgh to my left or right?"* GPT-4 answered "left" (it's to the right). When agents can't reliably answer simple spatial or counting questions, giving them tools to *act on* such reasoning is risky.
+[Nezhurina et al. (2024)](https://arxiv.org/abs/2405.19616) tested frontier models on 30 questions **humans find trivial** (86% accuracy). GPT-4 scored **38%**, Claude 3 Opus **35%**. Gems: *"How many L's in LOLLAPALOOZA?"* — GPT-4: **"5"** (it's 4). *"Sally has 3 brothers. Each brother has 2 sisters. How many sisters does Sally have?"* — GPT-4: **"2"** (it's 1). When agents can't count letters, giving them tools to *act on* such reasoning is risky.
 
 </div>
 
