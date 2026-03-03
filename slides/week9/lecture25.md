@@ -73,7 +73,7 @@ By connecting an LLM to external tools, we combine the model's **language unders
 </div>
 
 ---
-<!-- _class: scale-90 -->
+<!-- _class: scale-60 -->
 
 # The [ReAct](https://arxiv.org/abs/2210.03629) framework
 
