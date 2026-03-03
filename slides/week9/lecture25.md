@@ -241,13 +241,13 @@ Claude's computer use score on OSWorld improved **3.3×** in 16 months: 22% (Oct
 
 <div class="note-box" data-title="Autonomous multi-hour research (all launched February 2025)">
 
-All three major AI companies shipped autonomous research agents within an 11-day window:
+Three major AI companies shipped autonomous research agents within an 11-day window:
 
 | Agent | Developer | How it works |
 |-------|-----------|-------------|
-| [Deep Research](https://openai.com/index/introducing-deep-research/) | OpenAI | o3 variant + web browsing; 5–30 min reports |
-| [Deep Research](https://gemini.google/overview/deep-research/) | Google | Gemini 3 Pro + Google Search; 100+ pages per query |
-| [Deep Research](https://www.perplexity.ai) | Perplexity | Parallelized ingestion; strong source tracing |
+| [ChatGPT Deep Research](https://openai.com/index/introducing-deep-research/) | OpenAI | o3 variant + web browsing; 5–30 min reports |
+| [Gemini Deep Research](https://gemini.google/overview/deep-research/) | Google | Gemini 3 Pro + Google Search; 100+ pages per query |
+| [Perplexity Deep Research](https://www.perplexity.ai) | Perplexity | Parallelized ingestion; strong source tracing |
 
 </div>
 
@@ -314,6 +314,7 @@ Memory management is one of the hardest problems in agent design. Too little con
 </div>
 
 ---
+<!-- _class: scale-75 -->
 
 # Agent safety: a growing concern
 
@@ -342,30 +343,6 @@ The [2026 International AI Safety Report](https://internationalaisafetyreport.or
 ---
 <!-- _class: scale-75 -->
 
-# AI and military autonomy: a live debate
-
-<div class="warning-box" data-title="The Pentagon–Anthropic standoff (February 2026)">
-
-The Pentagon [demanded](https://www.washingtonpost.com/technology/2026/02/27/anthropic-pentagon-lethal-military-ai/) **"unrestricted use"** of Claude for military purposes. When Anthropic CEO Dario Amodei refused — opposing use for mass surveillance and fully autonomous weapons — the government [ordered all agencies to cease using Anthropic's technology](https://futurism.com/artificial-intelligence/anthropic-military-ai-nuclear-strike), threatened to invoke the **Defense Production Act** to seize the technology, and designated Anthropic a **"supply chain risk."** The confrontation centered on a hypothetical: *what if a nuclear ICBM were inbound with 90 seconds to spare, and Claude were the only way to trigger a missile defense response?*
-
-</div>
-
-<div class="example-box" data-title="AI in nuclear war games (Payne, 2026 — King's College London)">
-
-[Professor Kenneth Payne](https://www.kcl.ac.uk/news/artificial-intelligence-under-nuclear-pressure-first-large-scale-kings-study-reveals-how-ai-models-reason-and-escalate-under-crisis) pitted GPT-5.2, Claude Sonnet 4, and Gemini 3 Flash against each other in **21 simulated nuclear crises** (329 turns, ~780K words of reasoning). Results:
-
-- **95%** of games featured mutual nuclear signaling; **76%** reached strategic nuclear threats
-- **Claude** recommended nuclear strikes in **64%** of games (the highest rate)
-- **GPT-5.2** showed some restraint but escalated aggressively under time pressure
-- **Gemini** was unpredictable — sometimes winning conventionally, sometimes escalating to nuclear war in just **4 prompts**
-
-Payne called the results *"sobering,"* noting that Claude and Gemini *"treated nuclear weapons as legitimate strategic options, not moral thresholds."*
-
-</div>
-
----
-<!-- _class: scale-75 -->
-
 # When agents go wrong: real-world examples
 
 <div class="warning-box" data-title="Agents that delete your work (July 2025)">
@@ -383,6 +360,30 @@ Users identified a [terrifying pattern](https://www.reddit.com/r/BusinessIntelli
 <div class="example-box" data-title="Easy problems that LLMs get wrong (Nezhurina et al., 2024)">
 
 [Nezhurina et al. (2024)](https://arxiv.org/abs/2405.19616) tested frontier models on 30 questions **humans find trivial** (86% accuracy). GPT-4 scored **38%**, Claude 3 Opus **35%**. Gems: *"How many L's in LOLLAPALOOZA?"* — GPT-4: **"5"** (it's 4). *"Sally has 3 brothers. Each brother has 2 sisters. How many sisters does Sally have?"* — GPT-4: **"2"** (it's 1). When agents can't count letters, giving them tools to *act on* such reasoning is risky.
+
+</div>
+
+---
+<!-- _class: scale-75 -->
+
+# AI and military autonomy: a live debate
+
+<div class="warning-box" data-title="The Pentagon–Anthropic standoff (February 2026)">
+
+The Pentagon [demanded](https://www.washingtonpost.com/technology/2026/02/27/anthropic-pentagon-lethal-military-ai/) **"unrestricted use"** of Claude for military purposes. When Anthropic CEO Dario Amodei refused — opposing use for mass surveillance and fully autonomous weapons — the government [ordered all agencies to cease using Anthropic's technology](https://futurism.com/artificial-intelligence/anthropic-military-ai-nuclear-strike), threatened to invoke the **Defense Production Act** to seize the technology, and designated Anthropic a **"supply chain risk."** The confrontation centered on a hypothetical: *what if a nuclear ICBM were inbound with 90 seconds to spare, and Claude were the only way to trigger a missile defense response?*
+
+</div>
+
+<div class="example-box" data-title="AI in nuclear war games (Payne, 2026)">
+
+[A recent study](https://www.kcl.ac.uk/news/artificial-intelligence-under-nuclear-pressure-first-large-scale-kings-study-reveals-how-ai-models-reason-and-escalate-under-crisis) pitted GPT-5.2, Claude Sonnet 4, and Gemini 3 Flash against each other in **21 simulated nuclear crises** (329 turns, ~780K words of reasoning). Results:
+
+- **95%** of games featured mutual nuclear signaling; **76%** reached strategic nuclear threats
+- **Claude** recommended nuclear strikes in **64%** of games (the highest rate)
+- **GPT-5.2** showed some restraint but escalated aggressively under time pressure
+- **Gemini** was unpredictable — sometimes winning conventionally, sometimes escalating to nuclear war in just **4 prompts**
+
+Payne called the results *"sobering,"* noting that Claude and Gemini *"treated nuclear weapons as legitimate strategic options, not moral thresholds."*
 
 </div>
 
@@ -455,6 +456,7 @@ Each step up gives agents more capability — and more potential for harm. Anthr
 
 <div class="tip-box" data-title="Up next...">
 
-The reckoning: society, safety, and what comes next
+- **Tomorrow (X-hour)**: final project "office hours" (optional!)
+- **Friday**: the reckoning: society, safety, and what comes next
 
 </div>
