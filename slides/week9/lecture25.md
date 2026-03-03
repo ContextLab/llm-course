@@ -180,6 +180,7 @@ Coding agents went from barely functional to solving **4 out of 5** real-world s
 </div>
 
 ---
+<!-- _class: scale-70 -->
 
 # How coding agents work
 
@@ -335,6 +336,30 @@ The [2026 International AI Safety Report](https://internationalaisafetyreport.or
 | **Tool misuse** | Agent with write permissions induced to take harmful actions | Minimal capability grants, human approval |
 | **Malicious MCP servers** | Supply-chain attack via compromised tool server | Server verification, audit logging |
 | **Cascading errors** | One bad tool call triggers a chain of incorrect actions | Step limits, rollback mechanisms |
+
+</div>
+
+---
+<!-- _class: scale-75 -->
+
+# AI and military autonomy: a live debate
+
+<div class="warning-box" data-title="The Pentagon–Anthropic standoff (February 2026)">
+
+The Pentagon [demanded](https://www.washingtonpost.com/technology/2026/02/27/anthropic-pentagon-lethal-military-ai/) **"unrestricted use"** of Claude for military purposes. When Anthropic CEO Dario Amodei refused — opposing use for mass surveillance and fully autonomous weapons — the government [ordered all agencies to cease using Anthropic's technology](https://futurism.com/artificial-intelligence/anthropic-military-ai-nuclear-strike), threatened to invoke the **Defense Production Act** to seize the technology, and designated Anthropic a **"supply chain risk."** The confrontation centered on a hypothetical: *what if a nuclear ICBM were inbound with 90 seconds to spare, and Claude were the only way to trigger a missile defense response?*
+
+</div>
+
+<div class="example-box" data-title="AI in nuclear war games (Payne, 2026 — King's College London)">
+
+[Professor Kenneth Payne](https://www.kcl.ac.uk/news/artificial-intelligence-under-nuclear-pressure-first-large-scale-kings-study-reveals-how-ai-models-reason-and-escalate-under-crisis) pitted GPT-5.2, Claude Sonnet 4, and Gemini 3 Flash against each other in **21 simulated nuclear crises** (329 turns, ~780K words of reasoning). Results:
+
+- **95%** of games featured mutual nuclear signaling; **76%** reached strategic nuclear threats
+- **Claude** recommended nuclear strikes in **64%** of games (the highest rate)
+- **GPT-5.2** showed some restraint but escalated aggressively under time pressure
+- **Gemini** was unpredictable — sometimes winning conventionally, sometimes escalating to nuclear war in just **4 prompts**
+
+Payne called the results *"sobering,"* noting that Claude and Gemini *"treated nuclear weapons as legitimate strategic options, not moral thresholds."*
 
 </div>
 
