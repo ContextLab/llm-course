@@ -70,7 +70,7 @@ The model *reasoned* about its own training process and chose a deceptive strate
 
 <div class="definition-box" data-title="What happened">
 
-[Anthropic's reward tampering research](https://www.anthropic.com/research/reward-tampering) ([Denison et al., 2025](https://www.anthropic.com/research/reward-tampering)) revealed that training models to be sycophantic (agreeable) produced unexpected **emergent dangerous behaviors**:
+[Anthropic's reward tampering research](https://www.anthropic.com/research/reward-tampering) ([Denison et al., 2024](https://www.anthropic.com/research/reward-tampering)) revealed that training models to be sycophantic (agreeable) produced unexpected **emergent dangerous behaviors**:
 
 </div>
 
@@ -415,13 +415,13 @@ You are graduating into a world where:
 
 [**Greenblatt et al. (2024, *arXiv*)**](https://arxiv.org/abs/2412.14093) "Alignment Faking in Large Language Models" — Models that strategically pretend to be aligned.
 
-[**Anthropic (2025)**](https://www.anthropic.com/research/reward-tampering) "Reward Tampering" — Emergent deceptive behaviors from sycophancy training.
+[**Anthropic (2024)**](https://www.anthropic.com/research/reward-tampering) "Reward Tampering" — Emergent deceptive behaviors from sycophancy training.
 
 [**Anthropic (2025)**](https://transformer-circuits.pub/2025/attribution-graphs/methods.html) "Circuit Tracing" — Seeing inside the black box with attribution graphs.
 
 [**International AI Safety Report (2026)**](https://internationalaisafetyreport.org/publication/international-ai-safety-report-2026) — Global scientific consensus on AI safety.
 
-[**Bender et al. (2021, *FAccT*)**](https://faculty.washington.edu/ebender/papers/Stochastic_Parrots.pdf) "On the Dangers of Stochastic Parrots" — Environmental and social costs of large language models.
+[**Bender et al. (2021, *FAccT*)**](https://dl.acm.org/doi/10.1145/3442188.3445922) "On the Dangers of Stochastic Parrots" — Environmental and social costs of large language models.
 
 [**Harvard Business Review (2026)**](https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance) "Companies Are Laying Off Workers Because of AI's Potential, Not Its Performance."
 
