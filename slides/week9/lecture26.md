@@ -269,31 +269,33 @@ The risk moved from individual deepfakes to **AI-powered disinformation infrastr
 
 ---
 
+<!-- _class: scale-60 -->
+
 # The open-weight debate
 
-<div class="note-box" data-title="Meta's evolving position">
+<div class="note-box" data-title="The case for release">
 
-Meta has been the loudest champion of open-weight AI models. But with Llama 4:
-
-| Model | Total params | Active params | Status |
-|-|-|-|-|
-| Scout | 109B (16 experts) | 17B | Released (open-weight) |
-| Maverick | ~400B (128 experts) | 17B | Released (open-weight) |
-| **Behemoth** | **~2T (16 experts)** | **288B** | **Delayed** — [performance concerns](https://fortune.com/2025/05/16/why-meta-reportedly-delayed-its-behemoth-ai-model-rollout/) |
-
-All three use mixture-of-experts (MoE) architecture ([Meta, 2025](https://ai.meta.com/blog/llama-4-multimodal-intelligence/)).
+| Argument | Details |
+|-|-|
+| **Democratization** | Open weights let startups, universities, and developing nations build on frontier models without API costs ([Chatham House, 2024](https://www.chathamhouse.org/2024/06/artificial-intelligence-and-challenge-global-governance/05-open-source-and-democratization)) |
+| **Transparency** | Researchers can audit model internals, reproduce results, and find vulnerabilities before attackers do |
+| **Power decentralization** | Prevents a handful of companies from becoming sole gatekeepers of a transformative technology ([Carnegie, 2024](https://carnegieendowment.org/research/2024/07/beyond-open-vs-closed-emerging-consensus-and-key-questions-for-foundation-ai-model-governance)) |
 
 </div>
 
-<div class="important-box" data-title="The capability threshold question">
+<div class="important-box" data-title="The case for caution">
 
-Behemoth's delay was driven by [benchmark performance falling short of internal targets](https://www.computerworld.com/article/3987990/meta-hits-pause-on-llama-4-behemoth-ai-model-amid-capability-concerns.html), not safety concerns. But the broader question remains: **is there a capability level above which open release is irresponsible?** Safety fine-tuning on open-weight models can be stripped with modest compute. Once released, weights cannot be recalled.
+| Concern | Evidence |
+|-|-|
+| **Safety stripping** | Safety fine-tuning can be removed from open-weight models with [modest compute](https://arxiv.org/abs/2504.18536); once released, weights cannot be recalled ([Casper et al., 2025](https://arxiv.org/abs/2504.18536)) |
+| **Weapons knowledge** | Current LLMs don't yet increase bioweapons risk ([RAND, 2024](https://www.rand.org/pubs/research_reports/RRA2977-2.html)), but future models may cross that threshold |
+| **Frontier gap closing** | Open-weight models now lag proprietary ones by only [6–12 months](https://www.aisi.gov.uk/blog/managing-risks-from-increasingly-capable-open-weight-ai-systems) ([UK AISI, 2025](https://www.aisi.gov.uk/blog/managing-risks-from-increasingly-capable-open-weight-ai-systems)) |
 
 </div>
 
-<div class="tip-box" data-title="The tension">
+<div class="tip-box" data-title="The core question">
 
-Advocates of openness emphasize auditability, democratization, and preventing power concentration. Critics note that the [DeepSeek-R1](https://arxiv.org/abs/2501.12948) distillation experiment showed a $300K RL run can produce frontier reasoning from open-weight base models. Is openness still net positive at the frontier?
+Is there a **capability threshold** above which open release becomes irresponsible? What would it mean to release a superintelligent system — with potentially unsafe or unverifiable behavior — to anyone who can download it?
 
 </div>
 
@@ -310,17 +312,17 @@ Advocates of openness emphasize auditability, democratization, and preventing po
 
 </div>
 
-<div class="warning-box" data-title="The high-concern position">
+<div class="important-box" data-title="The high-concern position">
 
-[Hinton & Bengio (2024)](https://managing-ai-risks.com/) called for companies to spend **one-third of budgets on safety**. Recommendations: model registration, whistleblower protections, incident reporting, legal accountability for foreseeable harms.
+[Bengio, Hinton et al. (2024)](https://www.science.org/doi/10.1126/science.adn0117) called for companies to spend **one-third of budgets on safety**. Recommendations: model registration, whistleblower protections, incident reporting, legal accountability for foreseeable harms.
 
 Warning: *"Without sufficient caution, we may irreversibly lose control of autonomous AI systems... culminating in a large-scale loss of life."*
 
 </div>
 
-<div class="note-box" data-title="No expert consensus">
+<div class="tip-box" data-title="No expert consensus">
 
-A [survey of AI researchers](https://arxiv.org/abs/2502.14870) ([Grace et al., 2025](https://arxiv.org/abs/2502.14870)) found **bimodal** estimates of existential catastrophe probability — experts either largely dismiss the risk or take it very seriously. There is no convergence. Three Turing Award winners cannot agree. Neither can the field.
+A survey of AI researchers ([Grace et al., 2025](https://arxiv.org/abs/2502.14870)) found **bimodal** estimates of existential catastrophe probability — experts either largely dismiss the risk or take it very seriously. There is no convergence. Three Turing Award winners cannot agree. Neither can the field.
 
 </div>
 
