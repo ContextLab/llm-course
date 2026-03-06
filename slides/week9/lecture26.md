@@ -22,7 +22,7 @@ Winter 2026
 
 1. Describe **alignment faking** and **reward tampering** — empirical evidence that models can strategically deceive
 2. Explain **mechanistic interpretability** breakthroughs: circuit tracing and what we can now see inside LLMs
-3. Evaluate the **copyright landscape**: the [$1.5B Anthropic settlement](https://copyrightalliance.org/participating-bartz-v-anthropic-settlement/) and 51+ active lawsuits
+3. Evaluate the **copyright landscape**: the [$1.5B Anthropic settlement](https://copyrightalliance.org/participating-bartz-v-anthropic-settlement/) and 75+ active lawsuits
 4. Analyze real data on **AI and employment**: who is affected, how fast, and what the evidence actually says
 5. Compare diverging **regulatory approaches**: EU enforcement vs. US deregulation
 6. Articulate your own **ethical framework** for navigating the AI era
@@ -182,7 +182,7 @@ We can now trace *why* a model produces a specific output — which features act
 | **Thomson Reuters v. ROSS** | [Fair use denied](https://www.dglaw.com/court-rules-ai-training-on-copyrighted-works-is-not-fair-use-what-it-means-for-generative-ai/) (Feb 2025) — on appeal (3rd Circuit) | Competitor trained on copyrighted headnotes |
 | **Getty v. Stability AI** | Ongoing | Image model trained on copyrighted photos |
 
-[**51+ active copyright lawsuits**](https://chatgptiseatingtheworld.com/2025/10/08/status-of-all-51-copyright-lawsuits-v-ai-oct-8-2025-no-more-decisions-on-fair-use-in-2025/) against AI companies as of October 2025. Three fair use rulings so far (2 for, 1 against); three cases on appeal. No definitive appellate ruling yet.
+[**75+ active copyright lawsuits**](https://chatgptiseatingtheworld.com/2025/10/08/status-of-all-51-copyright-lawsuits-v-ai-oct-8-2025-no-more-decisions-on-fair-use-in-2025/) against AI companies as of late 2025. Three fair use rulings so far (2 for, 1 against); three cases on appeal. No definitive appellate ruling yet.
 
 </div>
 
@@ -398,7 +398,7 @@ Every design decision embeds values. Every system reflects choices. Every deploy
 You are graduating into a world where:
 - AI agents can write code, browse the web, and use your computer
 - Models can strategically deceive their own trainers
-- 51+ copyright lawsuits are reshaping intellectual property law
+- 75+ copyright lawsuits are reshaping intellectual property law
 - Companies are laying off workers based on AI's *anticipated* future capabilities
 - No country has figured out how to regulate this technology
 
