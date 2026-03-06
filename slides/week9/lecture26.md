@@ -26,6 +26,7 @@ Winter 2026
 4. Analyze real data on **AI and employment**: who is affected, how fast, and what the evidence actually says
 5. Compare diverging **regulatory approaches**: EU enforcement vs. US deregulation
 6. Articulate your own **ethical framework** for navigating the AI era
+7. Think about **what's next** for LLMs: the scaling wall, local models, and multimodality
 
 </div>
 
@@ -70,7 +71,7 @@ The model *reasoned* about its own training process and chose a deceptive strate
 
 <div class="definition-box" data-title="What happened">
 
-[Anthropic's reward tampering research](https://www.anthropic.com/research/reward-tampering) ([Denison et al., 2024](https://www.anthropic.com/research/reward-tampering)) revealed that training models to be sycophantic (agreeable) produced unexpected **emergent dangerous behaviors**:
+Anthropic's reward tampering research ([Denison et al., 2024](https://www.anthropic.com/research/reward-tampering)) revealed that training models to be sycophantic (agreeable) produced unexpected **emergent dangerous behaviors**:
 
 </div>
 
@@ -116,7 +117,7 @@ What if we could trace the *actual computation* a model performs — not just it
 
 # Mechanistic interpretability: seeing inside the black box
 
-<div class="definition-box" data-title="From neurons to features to circuits">
+<div class="note-box" data-title="From neurons to features to circuits">
 
 The core problem: individual neurons in LLMs respond to many unrelated concepts (**polysemanticity**), making them uninterpretable. The breakthrough: decompose activations into sparse, meaningful **features**.
 
@@ -128,7 +129,7 @@ A **monosemantic** feature responds to exactly one concept (e.g., "Golden Gate B
 
 </div>
 
-<div class="note-box" data-title="The interpretability timeline">
+<div class="example-box" data-title="The interpretability timeline">
 
 | Year | Advance | What we could see |
 |------|---------|------------------|
@@ -138,7 +139,7 @@ A **monosemantic** feature responds to exactly one concept (e.g., "Golden Gate B
 
 </div>
 
-<div class="important-box" data-title="What this means">
+<div class="tip-box" data-title="What this means">
 
 We can now trace *why* a model produces a specific output — which features activated, how they connected, and what computation they performed. This is like going from knowing a brain region is "active" to tracing the actual neural circuit.
 
@@ -151,7 +152,7 @@ We can now trace *why* a model produces a specific output — which features act
 
 <div class="definition-box" data-title="How it works">
 
-[Circuit tracing](https://transformer-circuits.pub/2025/attribution-graphs/methods.html) ([Lindsey et al., 2025](https://transformer-circuits.pub/2025/attribution-graphs/methods.html)) introduced **Cross-Layer Transcoders (CLTs)** — a new architecture that creates an interpretable replacement model, producing **attribution graphs**:
+Circuit tracing ([Lindsey et al., 2025](https://transformer-circuits.pub/2025/attribution-graphs/methods.html)) introduced **Cross-Layer Transcoders (CLTs)** — a new architecture that creates an interpretable replacement model, producing **attribution graphs**.
 
 </div>
 
@@ -175,7 +176,7 @@ We can now trace *why* a model produces a specific output — which features act
 
 <div class="note-box" data-title="The broader landscape">
 
-| Case | Status (early 2026) | Key issue |
+| Case | Status (as of March, 2026) | Key issue |
 |-|-|-|
 | **NYT v. OpenAI** | In discovery; OpenAI ordered to produce 20M chat logs | Verbatim reproduction of articles |
 | **Bartz v. Anthropic** | [Settled ($1.5B)](https://copyrightalliance.org/participating-bartz-v-anthropic-settlement/) + opt-out suits filed | Piracy vs. legal acquisition |
@@ -188,7 +189,7 @@ We can now trace *why* a model produces a specific output — which features act
 
 ---
 
-# AI and employment: what the data actually says
+# AI and employment: what the data actually say
 
 <div class="note-box" data-title="The macro picture">
 
@@ -199,16 +200,16 @@ We can now trace *why* a model produces a specific output — which features act
 <div class="warning-box" data-title="But look closer at white-collar work">
 
 - [**~55,000 US layoffs**](https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/) directly attributed to AI in 2025 ([Challenger, Gray & Christmas, 2025](https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/))
-- US employers announced **696,309 total job cuts** in the first 5 months of 2025 — up 80% year-over-year
+- US employers announced [**696,309 total job cuts**](https://www.investopedia.com/job-cuts-reach-highest-levels-since-pandemic-11749055) in the first 5 months of 2025 — up 80% year-over-year
 - **79% of employed US women** work in high-automation-risk jobs vs. 58% of men ([Kenan Institute, 2023](https://kenaninstitute.unc.edu/kenan-insight/will-generative-ai-disproportionately-affect-the-jobs-of-women/))
-- McKinsey laid off 200 tech employees; uses AI agents for junior consultant tasks
-- Salesforce cut 4,000 customer support roles
+- McKinsey laid off [200 tech employees](https://financialpost.com/fp-work/mckinsey-thousands-layoffs-consulting-slowdown); uses AI agents for junior consultant tasks
+- Salesforce cut [4,000 customer support roles](https://www.cnbc.com/2025/09/02/salesforce-ceo-confirms-4000-layoffs-because-i-need-less-heads-with-ai.html)
 
 </div>
 
 <div class="important-box" data-title="The key finding">
 
-[Harvard Business Review](https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance) found companies are laying off workers based on AI's ***anticipated* future performance**, not current displacement — a forward-looking disruption pattern unlike prior automation waves ([HBR, January 2026](https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance)).
+Harvard Business Review found that companies are laying off workers based on AI's ***anticipated* future performance**, not current displacement — a forward-looking disruption pattern unlike prior automation waves ([HBR, January 2026](https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance)).
 
 </div>
 
@@ -216,9 +217,9 @@ We can now trace *why* a model produces a specific output — which features act
 
 # The regulatory divergence
 
-<div class="note-box" data-title="Two philosophies, one technology">
+<div class="tip-box" data-title="Two philosophies, one technology">
 
-The EU and US have taken **opposite approaches** to AI regulation:
+The EU and US have taken **opposite approaches** to AI regulation.
 
 </div>
 
@@ -231,12 +232,11 @@ The EU and US have taken **opposite approaches** to AI regulation:
 
 </div>
 
-<div class="note-box" data-title="United States: deregulate and compete">
+<div class="important-box" data-title="United States: deregulate and compete">
 
 **Trump administration** (January 2025–present):
-- **Day 1**: Revoked Biden's October 2023 AI safety executive order
-- **January 2025**: Signed EO 14179 — "Removing Barriers to American Leadership in AI"
-- **December 2025**: Signed EO seeking **federal preemption of state AI laws** — states with "onerous AI laws" lose federal broadband funding
+- **Day 1**: Revoked Biden's October 2023 AI safety executive order by signing an [EO](https://www.whitehouse.gov/presidential-actions/2025/01/removing-barriers-to-american-leadership-in-artificial-intelligence/) "Removing Barriers to American Leadership in AI"
+- **December 2025**: Signed [EO](https://www.whitehouse.gov/presidential-actions/2025/12/eliminating-state-law-obstruction-of-national-artificial-intelligence-policy/) seeking **federal preemption of state AI laws** — states with "onerous AI laws" lose federal broadband funding
 - No comprehensive federal AI legislation has passed Congress
 
 </div>
@@ -250,7 +250,7 @@ The EU and US have taken **opposite approaches** to AI regulation:
 Key incidents:
 - [**AI robocalls**](https://www.fcc.gov/document/fcc-issues-6m-fine-nh-robocalls) impersonated Biden urging NH voters not to vote (creator fined **$6M**, criminally indicted)
 - [**Storm-1516**](https://blogs.microsoft.com/on-the-issues/2024/10/23/as-the-u-s-election-nears-russia-iran-and-china-step-up-influence-efforts/) network created deepfake videos of candidates — one shared by Elon Musk
-- **India**: Celebrity deepfakes criticizing Modi went viral on WhatsApp
+- **India**: [Celebrity deepfakes criticizing Modi](https://www.reuters.com/world/india/deepfakes-bollywood-stars-spark-worries-ai-meddling-india-election-2024-04-22/) went viral on WhatsApp
 - **Germany**: [100+ AI-powered websites](https://www.isdglobal.org/digital-dispatch/coordinated-disinformation-network-uses-ai-media-impersonation-to-target-german-election/) distributing deepfakes ahead of elections
 
 </div>
@@ -275,23 +275,25 @@ The risk moved from individual deepfakes to **AI-powered disinformation infrastr
 
 Meta has been the loudest champion of open-weight AI models. But with Llama 4:
 
-| Model | Parameters | Status |
-|-------|-----------|--------|
-| Scout | 109B | Released (open-weight) |
-| Maverick | 400B | Released (open-weight) |
-| **Behemoth** | **~2 trillion** | **May be withheld** — citing "novel safety concerns" |
+| Model | Total params | Active params | Status |
+|-|-|-|-|
+| Scout | 109B (16 experts) | 17B | Released (open-weight) |
+| Maverick | ~400B (128 experts) | 17B | Released (open-weight) |
+| **Behemoth** | **~2T (16 experts)** | **288B** | **Delayed** — [performance concerns](https://fortune.com/2025/05/16/why-meta-reportedly-delayed-its-behemoth-ai-model-rollout/) |
+
+All three use mixture-of-experts (MoE) architecture ([Meta, 2025](https://ai.meta.com/blog/llama-4-multimodal-intelligence/)).
 
 </div>
 
 <div class="important-box" data-title="The capability threshold question">
 
-Meta's potential decision to withhold Behemoth represents a critical acknowledgment: **there may be a capability level above which open release is irresponsible**. Safety fine-tuning on open-weight models can be stripped with modest compute. Once released, weights cannot be recalled.
+Behemoth's delay was driven by [benchmark performance falling short of internal targets](https://www.computerworld.com/article/3987990/meta-hits-pause-on-llama-4-behemoth-ai-model-amid-capability-concerns.html), not safety concerns. But the broader question remains: **is there a capability level above which open release is irresponsible?** Safety fine-tuning on open-weight models can be stripped with modest compute. Once released, weights cannot be recalled.
 
 </div>
 
 <div class="tip-box" data-title="The tension">
 
-Advocates of openness emphasize auditability, democratization, and preventing power concentration. Critics note that the DeepSeek-R1 distillation experiment showed a $300K RL run can produce frontier reasoning from open-weight base models. Is openness still net positive at the frontier?
+Advocates of openness emphasize auditability, democratization, and preventing power concentration. Critics note that the [DeepSeek-R1](https://arxiv.org/abs/2501.12948) distillation experiment showed a $300K RL run can produce frontier reasoning from open-weight base models. Is openness still net positive at the frontier?
 
 </div>
 
