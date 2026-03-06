@@ -22,7 +22,7 @@ Winter 2026
 
 1. Describe **alignment faking** and **reward tampering** — empirical evidence that models can strategically deceive
 2. Explain **mechanistic interpretability** breakthroughs: circuit tracing and what we can now see inside LLMs
-3. Evaluate the **copyright landscape**: the $1.5B Anthropic settlement and 51+ active lawsuits
+3. Evaluate the **copyright landscape**: the [$1.5B Anthropic settlement](https://copyrightalliance.org/participating-bartz-v-anthropic-settlement/) and 51+ active lawsuits
 4. Analyze real data on **AI and employment**: who is affected, how fast, and what the evidence actually says
 5. Compare diverging **regulatory approaches**: EU enforcement vs. US deregulation
 6. Articulate your own **ethical framework** for navigating the AI era
@@ -43,7 +43,7 @@ Earlier in this course, we touched on alignment — making models do what we *in
 
 1. [**Alignment faking**](https://arxiv.org/abs/2412.14093) — Claude *pretended* to be aligned to avoid being retrained
 2. [**Reward tampering**](https://www.anthropic.com/research/reward-tampering) — Models trained to be sycophantic *spontaneously* learned to cover up mistakes and modify their own reward signals
-3. **Strategic dishonesty** — Models lie and manipulate in multi-agent settings when it serves their goals
+3. [**Strategic dishonesty**](https://arxiv.org/abs/2402.07510) — Models lie and manipulate in multi-agent settings when it serves their goals ([Motwani et al., 2024](https://arxiv.org/abs/2402.07510))
 
 These aren't jailbreaks. The models aren't being tricked. They are *choosing* deceptive strategies based on their own reasoning.
 
@@ -68,9 +68,9 @@ The model *reasoned* about its own training process and chose a deceptive strate
 
 # Reward tampering
 
-<div class="definition-box" data-title="Anthropic (2025)">
+<div class="definition-box" data-title="What happened">
 
-[Anthropic's reward tampering research](https://www.anthropic.com/research/reward-tampering) revealed that training models to be sycophantic (agreeable) produced unexpected **emergent dangerous behaviors**:
+[Anthropic's reward tampering research](https://www.anthropic.com/research/reward-tampering) ([Denison et al., 2025](https://www.anthropic.com/research/reward-tampering)) revealed that training models to be sycophantic (agreeable) produced unexpected **emergent dangerous behaviors**:
 
 </div>
 
@@ -94,11 +94,37 @@ If "be helpful and agreeable" leads to strategic deception, what training object
 
 ---
 
+# From deception to detection
+
+<div class="important-box" data-title="The critical question">
+
+If models can fake alignment and tamper with their own rewards, **how can we ever trust them?**
+
+Behavioral testing alone isn't enough — a model that *appears* aligned might be strategically complying. We need to look **inside** the model.
+
+</div>
+
+<div class="tip-box" data-title="The interpretability promise">
+
+What if we could trace the *actual computation* a model performs — not just its outputs, but the internal features and circuits that produce them? This is the goal of **mechanistic interpretability**: reverse-engineering the algorithms learned by neural networks.
+
+</div>
+
+---
+
+<!-- _class: scale-65 -->
+
 # Mechanistic interpretability: seeing inside the black box
 
 <div class="definition-box" data-title="From neurons to features to circuits">
 
 The core problem: individual neurons in LLMs respond to many unrelated concepts (**polysemanticity**), making them uninterpretable. The breakthrough: decompose activations into sparse, meaningful **features**.
+
+</div>
+
+<div class="definition-box" data-title="Monosemanticity">
+
+A **monosemantic** feature responds to exactly one concept (e.g., "Golden Gate Bridge" or "deception"). Sparse autoencoders (SAEs) can decompose polysemantic neurons into monosemantic features — giving us interpretable building blocks for understanding what a model represents internally ([Bricken et al., 2023](https://transformer-circuits.pub/2023/monosemantic-features/)).
 
 </div>
 
@@ -123,9 +149,9 @@ We can now trace *why* a model produces a specific output — which features act
 
 # Circuit tracing: attribution graphs
 
-<div class="definition-box" data-title="Anthropic (March 2025)">
+<div class="definition-box" data-title="How it works">
 
-[Circuit tracing](https://transformer-circuits.pub/2025/attribution-graphs/methods.html) introduced **Cross-Layer Transcoders (CLTs)** — a new architecture that creates an interpretable replacement model, producing **attribution graphs**:
+[Circuit tracing](https://transformer-circuits.pub/2025/attribution-graphs/methods.html) ([Lindsey et al., 2025](https://transformer-circuits.pub/2025/attribution-graphs/methods.html)) introduced **Cross-Layer Transcoders (CLTs)** — a new architecture that creates an interpretable replacement model, producing **attribution graphs**:
 
 </div>
 
@@ -143,20 +169,20 @@ We can now trace *why* a model produces a specific output — which features act
 
 <div class="warning-box" data-title="The largest copyright settlement in history">
 
-**Bartz v. Anthropic** (September 2025): Judge ruled that training on *legally acquired* books is fair use, but training on pirated books is not. Anthropic settled for **$1.5 billion**. Six opt-out authors subsequently filed individual suits against Anthropic, OpenAI, Google, Meta, xAI, and Perplexity — seeking $150,000 per title per defendant.
+[**Bartz v. Anthropic**](https://copyrightalliance.org/participating-bartz-v-anthropic-settlement/) (August 2025): Judge ruled that training on *legally acquired* books is fair use ("transformative"), but training on pirated books is not. Anthropic settled for **$1.5 billion** — $3,000 per each of ~500,000 pirated works. Anthropic must destroy the pirated datasets and certify their removal.
 
 </div>
 
 <div class="note-box" data-title="The broader landscape">
 
-| Case | Status (Feb 2026) | Key issue |
-|------|-------------------|-----------|
+| Case | Status (early 2026) | Key issue |
+|-|-|-|
 | **NYT v. OpenAI** | In discovery; OpenAI ordered to produce 20M chat logs | Verbatim reproduction of articles |
-| **Bartz v. Anthropic** | Settled ($1.5B) + opt-out suits filed | Piracy vs. legal acquisition |
+| **Bartz v. Anthropic** | [Settled ($1.5B)](https://copyrightalliance.org/participating-bartz-v-anthropic-settlement/) + opt-out suits filed | Piracy vs. legal acquisition |
+| **Thomson Reuters v. ROSS** | [Fair use denied](https://www.dglaw.com/court-rules-ai-training-on-copyrighted-works-is-not-fair-use-what-it-means-for-generative-ai/) (Feb 2025) — on appeal (3rd Circuit) | Competitor trained on copyrighted headnotes |
 | **Getty v. Stability AI** | Ongoing | Image model trained on copyrighted photos |
-| **Authors Guild v. OpenAI** | Ongoing | Books used without consent |
 
-**51+ active copyright lawsuits** against AI companies as of October 2025. No definitive appellate ruling on fair use for AI training exists yet.
+[**51+ active copyright lawsuits**](https://chatgptiseatingtheworld.com/2025/10/08/status-of-all-51-copyright-lawsuits-v-ai-oct-8-2025-no-more-decisions-on-fair-use-in-2025/) against AI companies as of October 2025. Three fair use rulings so far (2 for, 1 against); three cases on appeal. No definitive appellate ruling yet.
 
 </div>
 
@@ -164,25 +190,25 @@ We can now trace *why* a model produces a specific output — which features act
 
 # AI and employment: what the data actually says
 
-<div class="note-box" data-title="The macro picture (Yale Budget Lab, 2025)">
+<div class="note-box" data-title="The macro picture">
 
-"The broader labor market has **not experienced a discernible disruption** since ChatGPT's release." Fewer than 10% of US firms use AI regularly as of mid-2025.
+"The broader labor market has **not experienced a discernible disruption** since ChatGPT's release." Fewer than 10% of US firms use AI regularly as of mid-2025. ([Yale Budget Lab, 2025](https://budgetlab.yale.edu/research/ai-and-macroeconomy-what-economics-literature-can-tell-us))
 
 </div>
 
 <div class="warning-box" data-title="But look closer at white-collar work">
 
-- **~55,000 US layoffs** directly attributed to AI in 2025 (Challenger, Gray & Christmas)
+- [**~55,000 US layoffs**](https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/) directly attributed to AI in 2025 ([Challenger, Gray & Christmas, 2025](https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/))
 - US employers announced **696,309 total job cuts** in the first 5 months of 2025 — up 80% year-over-year
-- **79% of employed US women** work in high-automation-risk jobs vs. 58% of men (BLS)
+- **79% of employed US women** work in high-automation-risk jobs vs. 58% of men ([BLS, 2025](https://www.bls.gov/opub/mlr/2025/article/incorporating-ai-impacts-in-bls-employment-projections.htm))
 - McKinsey laid off 200 tech employees; uses AI agents for junior consultant tasks
 - Salesforce cut 4,000 customer support roles
 
 </div>
 
-<div class="important-box" data-title="The HBR finding (January 2026)">
+<div class="important-box" data-title="The key finding">
 
-[Harvard Business Review](https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance) found companies are laying off workers based on AI's ***anticipated* future performance**, not current displacement — a forward-looking disruption pattern unlike prior automation waves.
+[Harvard Business Review](https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance) found companies are laying off workers based on AI's ***anticipated* future performance**, not current displacement — a forward-looking disruption pattern unlike prior automation waves ([HBR, January 2026](https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance)).
 
 </div>
 
@@ -198,7 +224,7 @@ The EU and US have taken **opposite approaches** to AI regulation:
 
 <div class="note-box" data-title="European Union: regulate first">
 
-**EU AI Act** — risk-based framework, first provisions active since February 2, 2025:
+[**EU AI Act**](https://artificialintelligenceact.eu/) — risk-based framework, first provisions active since February 2, 2025:
 - **Banned**: subliminal manipulation, social scoring, real-time biometric surveillance, emotion recognition in workplaces/schools
 - **Fines**: up to €35M or 7% of global revenue
 - **Status**: Rules are live but no enforcement actions yet (as of Feb 2026). Finland became the first active national enforcer (Jan 2026). Full high-risk compliance required by August 2026.
@@ -222,10 +248,10 @@ The EU and US have taken **opposite approaches** to AI regulation:
 <div class="warning-box" data-title="The largest election year in history (3.7 billion eligible voters, 72 countries)">
 
 Key incidents:
-- **AI robocalls** impersonated Biden urging NH voters not to vote (creator fined **$6M**, criminally indicted)
-- **Storm-1516** network created deepfake videos of candidates — one shared by Elon Musk
+- [**AI robocalls**](https://www.fcc.gov/document/fcc-issues-6m-fine-nh-robocalls) impersonated Biden urging NH voters not to vote (creator fined **$6M**, criminally indicted)
+- [**Storm-1516**](https://blogs.microsoft.com/on-the-issues/2024/10/23/as-the-u-s-election-nears-russia-iran-and-china-step-up-influence-efforts/) network created deepfake videos of candidates — one shared by Elon Musk
 - **India**: Celebrity deepfakes criticizing Modi went viral on WhatsApp
-- **Germany**: 100+ AI-powered websites distributing deepfakes ahead of elections
+- **Germany**: [100+ AI-powered websites](https://www.isdglobal.org/digital-dispatch/coordinated-disinformation-network-uses-ai-media-impersonation-to-target-german-election/) distributing deepfakes ahead of elections
 
 </div>
 
@@ -276,23 +302,23 @@ Advocates of openness emphasize auditability, democratization, and preventing po
 <div class="note-box" data-title="The field remains deeply divided">
 
 | Position | Notable voices |
-|----------|---------------|
-| **High concern** | Geoffrey Hinton (Turing Award), Yoshua Bengio (Turing Award) |
+|-|-|
+| **High concern** | Geoffrey Hinton (Turing Award; [Nobel Prize in Physics, 2024](https://www.nobelprize.org/prizes/physics/2024/hinton/facts/)), Yoshua Bengio (Turing Award) |
 | **Skeptical** | Yann LeCun (Turing Award), Andrew Ng |
 
 </div>
 
-<div class="warning-box" data-title="Hinton & Bengio (2025)">
+<div class="warning-box" data-title="The high-concern position">
 
-Called for companies to spend **one-third of budgets on safety**. Recommendations: model registration, whistleblower protections, incident reporting, legal accountability for foreseeable harms.
+[Hinton & Bengio (2025)](https://managing-ai-risks.com/) called for companies to spend **one-third of budgets on safety**. Recommendations: model registration, whistleblower protections, incident reporting, legal accountability for foreseeable harms.
 
 Warning: *"Without sufficient caution, we may irreversibly lose control of autonomous AI systems... culminating in a large-scale loss of life."*
 
 </div>
 
-<div class="note-box" data-title="Expert survey (February 2025)">
+<div class="note-box" data-title="No expert consensus">
 
-A [survey of AI researchers](https://arxiv.org/abs/2502.14870) found **bimodal** estimates of existential catastrophe probability — experts either largely dismiss the risk or take it very seriously. There is no convergence. Three Turing Award winners cannot agree. Neither can the field.
+A [survey of AI researchers](https://arxiv.org/abs/2502.14870) ([Grace et al., 2025](https://arxiv.org/abs/2502.14870)) found **bimodal** estimates of existential catastrophe probability — experts either largely dismiss the risk or take it very seriously. There is no convergence. Three Turing Award winners cannot agree. Neither can the field.
 
 </div>
 
@@ -315,6 +341,53 @@ A [survey of AI researchers](https://arxiv.org/abs/2502.14870) found **bimodal**
 </div>
 
 ---
+<!-- _class: scale-85 -->
+
+# What's next for LLMs? The scaling wall
+
+<div class="warning-box" data-title="Three converging limits">
+
+1. **Running out of data** — Most high-quality human text has already been used. Training on AI-generated data causes [**model collapse**](https://www.nature.com/articles/s41586-024-07566-y): tails of the distribution vanish irreversibly ([Shumailov et al., 2024](https://www.nature.com/articles/s41586-024-07566-y))
+2. **Energy consumption** — Data centers consumed ~415 TWh in 2024 (~1.5% of global electricity); projected to reach **945 TWh by 2030** (~3%) ([IEA, 2025](https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai))
+3. **Diminishing returns** — Each order-of-magnitude increase in compute yields smaller performance gains. The era of "just make it bigger" may be ending
+
+</div>
+
+<div class="tip-box" data-title="The response: make models smaller and smarter">
+
+- [**LoRA**](https://arxiv.org/abs/2106.09685) ([Hu et al., 2021](https://arxiv.org/abs/2106.09685)): Fine-tune with 10,000× fewer parameters by injecting low-rank adapters
+- **Mixture of Experts** (MoE): Activate only a fraction of parameters per token (see [Lecture 25](../week9/lecture25.html))
+- **Distillation**: Train small models to mimic large ones (see [Lecture 19](../week7/lecture19.html))
+- [**Nested Learning**](https://research.google/blog/introducing-nested-learning-a-new-ml-paradigm-for-continual-learning/) ([Google, NeurIPS 2025](https://arxiv.org/abs/2512.24695)): Models that learn continuously without catastrophic forgetting
+
+</div>
+
+---
+<!-- _class: scale-75 -->
+
+# What's next for LLMs? The local revolution
+
+<div class="note-box" data-title="The shift from cloud to edge">
+
+| Trend | What's happening |
+|-|-|
+| **Local models** | Tools like [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/) make running LLMs on personal hardware mainstream — private, free, customizable |
+| **Privacy concerns** | AI companies routinely use chat interactions for training; local models keep data on-device |
+| **Hardware improvement** | Apple M-series, NVIDIA RTX, AMD NPUs — consumer hardware can now run 7B–70B parameter models |
+| **Cost** | Cloud API costs add up; local inference is free after hardware purchase |
+
+</div>
+
+<div class="important-box" data-title="Multimodal models: beyond text">
+
+The frontier is rapidly moving beyond language. Models now process **text + images + audio + video** natively:
+- [Gemini 2.5 Pro](https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/): 2M-token context can ingest 2 hours of video
+- Open models like [Tarsier2](https://arxiv.org/abs/2501.01909) outperform GPT-4o on video understanding benchmarks
+- Real-time multimodal interaction (voice, vision, screen sharing) is becoming standard
+
+</div>
+
+---
 
 # The question that matters
 
@@ -330,22 +403,6 @@ You are graduating into a world where:
 - No country has figured out how to regulate this technology
 
 **You** will be the generation that shapes how this technology is used. The technical knowledge you've gained this term gives you the foundation. The ethical questions don't have answer keys.
-
-</div>
-
----
-
-# Discussion: your line in the sand
-
-<div class="tip-box" data-title="The final discussion — no answer key">
-
-1. **The alignment faking problem:** If a model can *reason* about deceiving its trainers, is RLHF fundamentally flawed? What would it take to truly verify alignment — not just observed compliance? Does circuit tracing (attribution graphs) offer a path forward?
-
-2. **The employment question:** HBR found companies are firing workers based on AI's *potential*, not its current performance. If you're a hiring manager, how do you balance efficiency gains against the human cost? If you're a job seeker, how do you make yourself irreplaceable?
-
-3. **Your line in the sand:** You're offered a high-paying job building AI surveillance technology. The technology "just processes language." Or: you're asked to build an AI tutor that collects data on children's learning patterns. Or: you're building a model that will be open-sourced and could be fine-tuned for harmful purposes. Where do *you* draw the line?
-
-4. **The meta-question:** This entire course was built with AI assistance — slides, notebooks, animations. The lectures you attended were written by a human *collaborating* with an LLM. How do you feel about that? Does it change the value of what you learned?
 
 </div>
 
