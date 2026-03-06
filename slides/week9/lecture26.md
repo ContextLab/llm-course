@@ -22,7 +22,7 @@ Winter 2026
 
 1. Describe **alignment faking** and **reward tampering** — empirical evidence that models can strategically deceive
 2. Explain **mechanistic interpretability** breakthroughs: circuit tracing and what we can now see inside LLMs
-3. Evaluate the **copyright landscape**: the [$1.5B Anthropic settlement](https://copyrightalliance.org/participating-bartz-v-anthropic-settlement/) and 75+ active lawsuits
+3. Evaluate the **copyright landscape**: the [$1.5B Anthropic settlement](https://copyrightalliance.org/participating-bartz-v-anthropic-settlement/) and 77+ active US lawsuits
 4. Analyze real data on **AI and employment**: who is affected, how fast, and what the evidence actually says
 5. Compare diverging **regulatory approaches**: EU enforcement vs. US deregulation
 6. Articulate your own **ethical framework** for navigating the AI era
@@ -182,12 +182,12 @@ Circuit tracing ([Lindsey et al., 2025](https://transformer-circuits.pub/2025/at
 
 | Case | Status (as of March, 2026) | Key issue |
 |-|-|-|
-| **NYT v. OpenAI** | In discovery; OpenAI ordered to produce 20M chat logs | Verbatim reproduction of articles |
-| **Bartz v. Anthropic** | [Settled ($1.5B)](https://copyrightalliance.org/participating-bartz-v-anthropic-settlement/) + opt-out suits filed | Piracy vs. legal acquisition |
-| **Thomson Reuters v. ROSS** | [Fair use denied](https://www.dglaw.com/court-rules-ai-training-on-copyrighted-works-is-not-fair-use-what-it-means-for-generative-ai/) (Feb 2025) — on appeal (3rd Circuit) | Competitor trained on copyrighted headnotes |
-| **Getty v. Stability AI** | Ongoing | Image model trained on copyrighted photos |
+| **NYT v. OpenAI** | In discovery; OpenAI ordered to [produce 20M chat logs](https://news.bloomberglaw.com/ip-law/openai-must-turn-over-20-million-chatgpt-logs-judge-affirms) | Verbatim reproduction of articles |
+| **Bartz v. Anthropic** | [Settled ($1.5B)](https://copyrightalliance.org/participating-bartz-v-anthropic-settlement/); fairness hearing April 2026 | Piracy vs. legal acquisition |
+| **Thomson Reuters v. ROSS** | [Fair use denied](https://www.dglaw.com/court-rules-ai-training-on-copyrighted-works-is-not-fair-use-what-it-means-for-generative-ai/) (Feb 2025); [on appeal](https://www.courtlistener.com/docket/70622297/thomson-reuters-enterprise-centre-gmbh-v-ross-intelligence-inc/) (3rd Circuit, briefs filed) | Competitor trained on copyrighted headnotes |
+| **Getty v. Stability AI** | [UK claim failed](https://www.mishcon.com/news/getty-images-v-stability-ai-unpacking-the-high-courts-judgment) (Nov 2025); US trial set Jan 2028 | Image model trained on copyrighted photos |
 
-[**75+ active copyright lawsuits**](https://chatgptiseatingtheworld.com/2025/10/08/status-of-all-51-copyright-lawsuits-v-ai-oct-8-2025-no-more-decisions-on-fair-use-in-2025/) against AI companies as of late 2025. Three fair use rulings so far (2 for, 1 against); three cases on appeal. No definitive appellate ruling yet.
+[**77 active US copyright lawsuits**](https://chatgptiseatingtheworld.com/2026/02/06/music-labels-and-spotify-sue-shadow-library-annas-archive-for-copyright-infringement-and-secure-default-judgment-ai-lawsuits-hit-77-in-us/) against AI companies as of February 2026 ([112 worldwide](https://chatgptiseatingtheworld.com/2026/02/25/latest-world-map-of-copyright-suits-v-ai-cos-total-112-feb-25-2026/)). Three fair use rulings so far (2 for, 1 against). No definitive appellate ruling yet.
 
 </div>
 
@@ -249,7 +249,7 @@ The EU and US have taken **opposite approaches** to AI regulation.
 
 # Deepfakes and elections: the 2024 test
 
-<div class="warning-box" data-title="The largest election year in history (3.7 billion eligible voters, 72 countries)">
+<div class="warning-box" data-title="The largest election year in recorded history (3.7 billion eligible voters, 72 countries)">
 
 Key incidents:
 - [**AI robocalls**](https://www.fcc.gov/document/fcc-issues-6m-fine-nh-robocalls) impersonated Biden urging NH voters not to vote (creator fined **$6M**, criminally indicted)
@@ -259,7 +259,7 @@ Key incidents:
 
 </div>
 
-<div class="note-box" data-title="The surprising finding">
+<div class="note-box" data-title="A surprising finding">
 
 Harvard's Ash Center concluded it was ["the apocalypse that wasn't."](https://ash.harvard.edu/articles/the-apocalypse-that-wasnt-ai-was-everywhere-in-2024s-elections-but-deepfakes-and-misinformation-were-only-part-of-the-picture/) The News Literacy Project found cheap fakes (non-AI manipulations) were used **7× more often** than genuine AI-generated content. The feared "AI disinformation tsunami" didn't fully materialize — but the *infrastructure* for it now exists.
 
@@ -349,7 +349,7 @@ A survey of AI researchers ([Grace et al., 2025](https://arxiv.org/abs/2502.1487
 </div>
 
 ---
-<!-- _class: scale-85 -->
+<!-- _class: scale-80 -->
 
 # What's next for LLMs? The scaling wall
 
@@ -361,11 +361,18 @@ A survey of AI researchers ([Grace et al., 2025](https://arxiv.org/abs/2502.1487
 
 </div>
 
-<div class="tip-box" data-title="The response: make models smaller and smarter">
+<div class="tip-box" data-title="The mainstream response: make models smaller and smarter">
 
 - **LoRA** ([Hu et al., 2021](https://arxiv.org/abs/2106.09685)): Fine-tune with 10,000× fewer parameters by injecting low-rank adapters
 - **Mixture of Experts** (MoE): Activate only a fraction of parameters per token (see [Lecture 25](../week9/lecture25.html))
 - **Distillation**: Train small models to mimic large ones (see [Lecture 19](../week7/lecture19.html))
+
+</div>
+
+<div class="important-box" data-title="More radical response: new architectures">
+
+- **Neural ODEs** ([Chen et al., 2018](https://arxiv.org/abs/1806.07366)), **liquid networks** ([Hasani et al., 2021](https://arxiv.org/abs/2006.04439)), **state space models** ([Gu & Dao, 2023](https://arxiv.org/abs/2312.00752)) — non-transformer architectures that can learn more efficiently from less data
+- Models that learn to modify their own weights and architecture during inference (see next slide)
 
 </div>
 
@@ -446,7 +453,7 @@ Every design decision embeds values. Every system reflects choices. Every deploy
 You are graduating into a world where:
 - AI agents can write code, browse the web, and use your computer
 - Models can strategically deceive their own trainers
-- 75+ copyright lawsuits are reshaping intellectual property law
+- 77+ US copyright lawsuits (112 worldwide) are reshaping intellectual property law
 - Companies are laying off workers based on AI's *anticipated* future capabilities
 - No country has figured out how to regulate this technology
 
