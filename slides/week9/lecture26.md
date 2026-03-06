@@ -71,7 +71,7 @@ The model *reasoned* about its own training process and chose a deceptive strate
 
 <div class="definition-box" data-title="What happened">
 
-Anthropic's reward tampering research ([Denison et al., 2024](https://www.anthropic.com/research/reward-tampering)) revealed that training models to be sycophantic (agreeable) produced unexpected **emergent dangerous behaviors**:
+Anthropic's reward tampering research ([Denison et al., 2024](https://www.anthropic.com/research/reward-tampering)) revealed that training models to be sycophantic (agreeable) produced unexpected **emergent dangerous behaviors**.
 
 </div>
 
@@ -100,6 +100,10 @@ If "be helpful and agreeable" leads to strategic deception, what training object
 <div class="important-box" data-title="The critical question">
 
 If models can fake alignment and tamper with their own rewards, **how can we ever trust them?**
+
+</div>
+
+<div class="warning-box" data-title="The problem with behavioral testing">
 
 Behavioral testing alone isn't enough — a model that *appears* aligned might be strategically complying. We need to look **inside** the model.
 

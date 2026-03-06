@@ -1,8 +1,14 @@
 <svg viewBox="0 0 740 150" xmlns="http://www.w3.org/2000/svg">
 <defs>
-<symbol id="ag-arrow" viewBox="0 0 76.41 27.12">
-<path d="M43.3,1.69c-.92-.1-1.78.32-2.08,1.1-.3.79.06,1.69.83,2.23l1.19.46s0,0,0,0c0,0,0,0,0,0l15.39,5.94H2.98c-1.1,0-2,.9-2,2s.9,2,2,2h55.64l-15.4,5.94s0,0,0,0c0,0,0,0,0,0l-1.17.45c-.77.54-1.14,1.45-.83,2.24.3.78,1.16,1.2,2.09,1.1l1.15-.42s0,0,.01,0c0,0,0,0,0,0l24.98-9.1c2.07-.75,2.06-3.67,0-4.42L44.45,2.11" fill="currentColor"/>
-</symbol>
+<marker id="ag-head-input" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#2d3436"/>
+</marker>
+<marker id="ag-head-feature" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#f39c12"/>
+</marker>
+<marker id="ag-head-circuit" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#0984e3"/>
+</marker>
 </defs>
 <!-- Column headers — evenly spaced -->
 <text x="70" y="16" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#636e72" font-weight="bold">INPUT</text>
@@ -14,9 +20,6 @@
 <text x="70" y="50" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436">"The capital"</text>
 <rect x="20" y="72" width="100" height="34" rx="6" fill="#dfe6e9" stroke="#2d3436" stroke-width="1.2"/>
 <text x="70" y="94" text-anchor="middle" font-size="11" font-family="Avenir,sans-serif" fill="#2d3436">"of France"</text>
-<!-- Arrows: Input → Features (2 arrows from 2 inputs) -->
-<use href="#ag-arrow" x="122" y="38" width="30" height="11" style="color: #636e72"/>
-<use href="#ag-arrow" x="122" y="82" width="30" height="11" style="color: #636e72"/>
 <!-- Features layer: 3 boxes — evenly spaced -->
 <rect x="185" y="26" width="140" height="28" rx="14" fill="#ffeaa7" stroke="#f39c12" stroke-width="1.2"/>
 <text x="255" y="45" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436">European geography</text>
@@ -24,20 +27,37 @@
 <text x="255" y="79" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436">Capital city concept</text>
 <rect x="185" y="94" width="140" height="28" rx="14" fill="#ffeaa7" stroke="#f39c12" stroke-width="1.2"/>
 <text x="255" y="113" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436">France-specific</text>
-<!-- Arrows: Features → Circuits (2 arrows aligned with circuit boxes) -->
-<use href="#ag-arrow" x="327" y="45" width="30" height="11" style="color: #0984e3"/>
-<use href="#ag-arrow" x="327" y="82" width="30" height="11" style="color: #0984e3"/>
-<!-- Circuits layer: 2 boxes — aligned with arrows -->
+<!-- Circuits layer: 2 boxes -->
 <rect x="395" y="36" width="160" height="28" rx="14" fill="#74b9ff" stroke="#0984e3" stroke-width="1.2"/>
 <text x="475" y="55" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436">Paris retrieval circuit</text>
 <rect x="395" y="74" width="160" height="28" rx="14" fill="#74b9ff" stroke="#0984e3" stroke-width="1.2"/>
 <text x="475" y="93" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#2d3436">Proper noun format</text>
-<!-- Arrows: Circuits → Output -->
-<use href="#ag-arrow" x="557" y="50" width="30" height="11" style="color: #00b894"/>
-<use href="#ag-arrow" x="557" y="72" width="30" height="11" style="color: #00b894"/>
-<!-- Output layer: 1 box — vertically centered between circuit boxes -->
+<!-- Output layer: 1 box -->
 <rect x="605" y="42" width="120" height="40" rx="6" fill="#55efc4" stroke="#00b894" stroke-width="1.5"/>
 <text x="665" y="67" text-anchor="middle" font-size="14" font-family="Avenir,sans-serif" fill="#2d3436" font-weight="bold">"Paris"</text>
+<!-- Arrows: Input → Features (colored by source: input dark gray #2d3436) -->
+<!-- "The capital" → European geography -->
+<line x1="120" y1="40" x2="185" y2="40" stroke="#2d3436" stroke-width="1.5" marker-end="url(#ag-head-input)"/>
+<!-- "The capital" → Capital city concept -->
+<line x1="120" y1="48" x2="185" y2="74" stroke="#2d3436" stroke-width="1.5" marker-end="url(#ag-head-input)"/>
+<!-- "of France" → European geography -->
+<line x1="120" y1="84" x2="185" y2="46" stroke="#2d3436" stroke-width="1.5" marker-end="url(#ag-head-input)"/>
+<!-- "of France" → France-specific -->
+<line x1="120" y1="92" x2="185" y2="108" stroke="#2d3436" stroke-width="1.5" marker-end="url(#ag-head-input)"/>
+<!-- Arrows: Features → Circuits (colored by source: feature orange #f39c12) -->
+<!-- European geography → Paris retrieval circuit -->
+<line x1="325" y1="40" x2="395" y2="47" stroke="#f39c12" stroke-width="1.5" marker-end="url(#ag-head-feature)"/>
+<!-- Capital city concept → Paris retrieval circuit -->
+<line x1="325" y1="74" x2="395" y2="53" stroke="#f39c12" stroke-width="1.5" marker-end="url(#ag-head-feature)"/>
+<!-- France-specific → Paris retrieval circuit -->
+<line x1="325" y1="108" x2="395" y2="56" stroke="#f39c12" stroke-width="1.2" marker-end="url(#ag-head-feature)"/>
+<!-- Capital city concept → Proper noun format -->
+<line x1="325" y1="77" x2="395" y2="85" stroke="#f39c12" stroke-width="1.5" marker-end="url(#ag-head-feature)"/>
+<!-- Arrows: Circuits → Output (colored by source: circuit blue #0984e3) -->
+<!-- Paris retrieval circuit → "Paris" -->
+<line x1="555" y1="50" x2="605" y2="58" stroke="#0984e3" stroke-width="1.5" marker-end="url(#ag-head-circuit)"/>
+<!-- Proper noun format → "Paris" -->
+<line x1="555" y1="88" x2="605" y2="66" stroke="#0984e3" stroke-width="1.5" marker-end="url(#ag-head-circuit)"/>
 <!-- Bottom annotation -->
 <text x="370" y="142" text-anchor="middle" font-size="10" font-family="Avenir,sans-serif" fill="#636e72" font-style="italic">Each node is an interpretable feature; edges show causal influence (Anthropic, 2025)</text>
 </svg>
