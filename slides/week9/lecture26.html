@@ -1055,20 +1055,34 @@ Winter 2026</p>
 <div class="warning-box" data-title="Three converging limits">
 <ol>
 <li><strong>Running out of data</strong> — Most high-quality human text has already been used. Training on AI-generated data causes <a href="https://www.nature.com/articles/s41586-024-07566-y"><strong>model collapse</strong></a>: tails of the distribution vanish irreversibly (<a href="https://www.nature.com/articles/s41586-024-07566-y">Shumailov et al., 2024</a>)</li>
-<li><strong>Energy consumption</strong> — Data centers consumed ~415 TWh in 2024 (~1.5% of global electricity); projected to reach <strong>945 TWh by 2030</strong> (~3%) (<a href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai">IEA, 2025</a>)</li>
+<li><strong>Energy consumption</strong> — Data centers consumed ~415 TWh in 2024 (~1.5% of global electricity); projected to reach <strong>945 TWh by 2030</strong> (~3%; <a href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai">IEA, 2025</a>)</li>
 <li><strong>Diminishing returns</strong> — Each order-of-magnitude increase in compute yields smaller performance gains. The era of &quot;just make it bigger&quot; may be ending</li>
 </ol>
 </div>
 <div class="tip-box" data-title="The response: make models smaller and smarter">
 <ul>
-<li><a href="https://arxiv.org/abs/2106.09685"><strong>LoRA</strong></a> (<a href="https://arxiv.org/abs/2106.09685">Hu et al., 2021</a>): Fine-tune with 10,000× fewer parameters by injecting low-rank adapters</li>
+<li><strong>LoRA</strong> (<a href="https://arxiv.org/abs/2106.09685">Hu et al., 2021</a>): Fine-tune with 10,000× fewer parameters by injecting low-rank adapters</li>
 <li><strong>Mixture of Experts</strong> (MoE): Activate only a fraction of parameters per token (see <a href="../week9/lecture25.html">Lecture 25</a>)</li>
 <li><strong>Distillation</strong>: Train small models to mimic large ones (see <a href="../week7/lecture19.html">Lecture 19</a>)</li>
-<li><a href="https://research.google/blog/introducing-nested-learning-a-new-ml-paradigm-for-continual-learning/"><strong>Nested Learning</strong></a> (<a href="https://arxiv.org/abs/2512.24695">Google, NeurIPS 2025</a>): Models that learn continuously without catastrophic forgetting</li>
 </ul>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-75" data-theme="cdl-theme" lang="en-US" class="scale-75" style="--class:scale-75;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-class="scale-80" data-theme="cdl-theme" lang="en-US" class="scale-80" style="--class:scale-80;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="whats-next-for-llms-continual-learning">What's next for LLMs? Continual learning</h1>
+<div class="definition-box" data-title="The problem: static models in a changing world">
+<p>Transformer-based LLMs are <strong>static</strong> after training completes. They cannot learn from new experiences, update their knowledge, or adapt to new domains without retraining — a process that costs millions of dollars and takes weeks or months. When fine-tuned on new data, they suffer <strong>catastrophic forgetting</strong>: previously learned capabilities degrade or vanish entirely (<a href="https://arxiv.org/abs/2404.16789">Shi et al., 2025</a>).</p>
+</div>
+<div class="note-box" data-title="Nested Learning: a new paradigm">
+<p><a href="https://research.google/blog/introducing-nested-learning-a-new-ml-paradigm-for-continual-learning/"><strong>Nested Learning</strong></a> (<a href="https://arxiv.org/abs/2512.24695">Behrouz et al., 2025, <em>NeurIPS</em></a>) reimagines model architecture as a set of <strong>nested optimization problems</strong>, each with its own &quot;context flow.&quot; Key insights:</p>
+<ul>
+<li>Gradient-based optimizers (Adam, SGD) are actually <strong>associative memory modules</strong> that compress gradient information</li>
+<li>A <strong>self-modifying learning module</strong> learns its own update algorithm</li>
+<li>A <strong>continuum memory system</strong> generalizes traditional long/short-term memory</li>
+</ul>
+<p>Their proof-of-concept architecture (<strong>Hope</strong>) outperforms standard transformers on language modeling while supporting continual learning without catastrophic forgetting.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-class="scale-75" data-theme="cdl-theme" lang="en-US" class="scale-75" style="--class:scale-75;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="whats-next-for-llms-the-local-revolution">What's next for LLMs? The local revolution</h1>
 <div class="note-box" data-title="The shift from cloud to edge">
 <table>
@@ -1098,16 +1112,45 @@ Winter 2026</p>
 </tbody>
 </table>
 </div>
-<div class="important-box" data-title="Multimodal models: beyond text">
-<p>The frontier is rapidly moving beyond language. Models now process <strong>text + images + audio + video</strong> natively:</p>
-<ul>
-<li><a href="https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/">Gemini 2.5 Pro</a>: 2M-token context can ingest 2 hours of video</li>
-<li>Open models like <a href="https://arxiv.org/abs/2501.01909">Tarsier2</a> outperform GPT-4o on video understanding benchmarks</li>
-<li>Real-time multimodal interaction (voice, vision, screen sharing) is becoming standard</li>
-</ul>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-70" data-theme="cdl-theme" lang="en-US" class="scale-70" style="--class:scale-70;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+<h1 id="whats-next-for-llms-multimodal-models">What's next for LLMs? Multimodal models</h1>
+<div class="definition-box" data-title="Beyond text: the multimodal frontier">
+<p>Users increasingly expect models to handle <strong>text + images + audio + video</strong> natively. Multimodal is quickly becoming the default, not the exception.</p>
+</div>
+<div class="note-box" data-title="Current capabilities">
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Capability</th>
+<th>Limitation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://developers.googleblog.com/en/gemini-2-5-video-understanding/"><strong>Gemini 2.5 Pro</strong></a></td>
+<td>2M-token context; up to <strong>6 hours</strong> of video; 84.8% on VideoMME (<a href="https://developers.googleblog.com/en/gemini-2-5-video-understanding/">Google, 2025</a>)</td>
+<td>Closed-source; API-only</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2412.10360"><strong>Apollo</strong></a></td>
+<td>Open family (3B–7B); Apollo-3B outperforms most 7B models on video tasks (<a href="https://arxiv.org/abs/2412.10360">Zohar et al., CVPR 2025</a>)</td>
+<td>Limited to shorter clips</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2501.01909"><strong>Tarsier2</strong></a></td>
+<td>Outperforms GPT-4o on video description benchmarks</td>
+<td>Narrow task focus</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="important-box" data-title="Open challenges">
+<p>Long-form video remains hard: <strong>token redundancy</strong> inflates compute, <strong>context windows</strong> fragment temporal coherence, and <strong>cross-modal reasoning</strong> across hours of content is still unreliable (<a href="https://openaccess.thecvf.com/content/CVPR2025/html/Zhou_MLVU_Benchmarking_Multi-task_Long_Video_Understanding_CVPR_2025_paper.html">Zhou et al., 2025, <em>CVPR</em></a>). Expect rapid progress over the next 1–2 years as architectures mature.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="the-question-that-matters">The question that matters</h1>
 <div class="important-box" data-title="Technology is not neutral">
 <p>Every design decision embeds values. Every system reflects choices. Every deployment affects real people.</p>
@@ -1122,7 +1165,7 @@ Winter 2026</p>
 <p><strong>You</strong> will be the generation that shapes how this technology is used. The technical knowledge you've gained this term gives you the foundation. The ethical questions don't have answer keys.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-class="scale-85" data-theme="cdl-theme" lang="en-US" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="scale-85" data-theme="cdl-theme" lang="en-US" class="scale-85" style="--class:scale-85;--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="further-reading">Further reading</h1>
 <div class="note-box" data-title="Further reading">
 <p><a href="https://arxiv.org/abs/2412.14093"><strong>Greenblatt et al. (2024, <em>arXiv</em>)</strong></a> &quot;Alignment Faking in Large Language Models&quot; — Models that strategically pretend to be aligned.</p>
@@ -1133,7 +1176,7 @@ Winter 2026</p>
 <p><a href="https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance"><strong>Harvard Business Review (2026)</strong></a> &quot;Companies Are Laying Off Workers Because of AI's Potential, Not Its Performance.&quot;</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-theme="cdl-theme" lang="en-US" style="--theme:cdl-theme;" data-transition-back="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}" data-transition="{&quot;name&quot;:&quot;fade&quot;,&quot;duration&quot;:&quot;0.25s&quot;,&quot;builtinFallback&quot;:true}">
 <h1 id="questions">Questions?</h1>
 <div class="emoji-figure">
   <div class="emoji-col">

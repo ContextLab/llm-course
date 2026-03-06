@@ -352,17 +352,39 @@ A survey of AI researchers ([Grace et al., 2025](https://arxiv.org/abs/2502.1487
 <div class="warning-box" data-title="Three converging limits">
 
 1. **Running out of data** — Most high-quality human text has already been used. Training on AI-generated data causes [**model collapse**](https://www.nature.com/articles/s41586-024-07566-y): tails of the distribution vanish irreversibly ([Shumailov et al., 2024](https://www.nature.com/articles/s41586-024-07566-y))
-2. **Energy consumption** — Data centers consumed ~415 TWh in 2024 (~1.5% of global electricity); projected to reach **945 TWh by 2030** (~3%) ([IEA, 2025](https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai))
+2. **Energy consumption** — Data centers consumed ~415 TWh in 2024 (~1.5% of global electricity); projected to reach **945 TWh by 2030** (~3%; [IEA, 2025](https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai))
 3. **Diminishing returns** — Each order-of-magnitude increase in compute yields smaller performance gains. The era of "just make it bigger" may be ending
 
 </div>
 
 <div class="tip-box" data-title="The response: make models smaller and smarter">
 
-- [**LoRA**](https://arxiv.org/abs/2106.09685) ([Hu et al., 2021](https://arxiv.org/abs/2106.09685)): Fine-tune with 10,000× fewer parameters by injecting low-rank adapters
+- **LoRA** ([Hu et al., 2021](https://arxiv.org/abs/2106.09685)): Fine-tune with 10,000× fewer parameters by injecting low-rank adapters
 - **Mixture of Experts** (MoE): Activate only a fraction of parameters per token (see [Lecture 25](../week9/lecture25.html))
 - **Distillation**: Train small models to mimic large ones (see [Lecture 19](../week7/lecture19.html))
-- [**Nested Learning**](https://research.google/blog/introducing-nested-learning-a-new-ml-paradigm-for-continual-learning/) ([Google, NeurIPS 2025](https://arxiv.org/abs/2512.24695)): Models that learn continuously without catastrophic forgetting
+
+</div>
+
+---
+<!-- _class: scale-80 -->
+
+# What's next for LLMs? Continual learning
+
+<div class="definition-box" data-title="The problem: static models in a changing world">
+
+Transformer-based LLMs are **static** after training completes. They cannot learn from new experiences, update their knowledge, or adapt to new domains without retraining — a process that costs millions of dollars and takes weeks or months. When fine-tuned on new data, they suffer **catastrophic forgetting**: previously learned capabilities degrade or vanish entirely ([Shi et al., 2025](https://arxiv.org/abs/2404.16789)).
+
+</div>
+
+<div class="note-box" data-title="Nested Learning: a new paradigm">
+
+[**Nested Learning**](https://research.google/blog/introducing-nested-learning-a-new-ml-paradigm-for-continual-learning/) ([Behrouz et al., 2025, *NeurIPS*](https://arxiv.org/abs/2512.24695)) reimagines model architecture as a set of **nested optimization problems**, each with its own "context flow." Key insights:
+
+- Gradient-based optimizers (Adam, SGD) are actually **associative memory modules** that compress gradient information
+- A **self-modifying learning module** learns its own update algorithm
+- A **continuum memory system** generalizes traditional long/short-term memory
+
+Their proof-of-concept architecture (**Hope**) outperforms standard transformers on language modeling while supporting continual learning without catastrophic forgetting.
 
 </div>
 
@@ -382,12 +404,30 @@ A survey of AI researchers ([Grace et al., 2025](https://arxiv.org/abs/2502.1487
 
 </div>
 
-<div class="important-box" data-title="Multimodal models: beyond text">
+---
+<!-- _class: scale-70 -->
 
-The frontier is rapidly moving beyond language. Models now process **text + images + audio + video** natively:
-- [Gemini 2.5 Pro](https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/): 2M-token context can ingest 2 hours of video
-- Open models like [Tarsier2](https://arxiv.org/abs/2501.01909) outperform GPT-4o on video understanding benchmarks
-- Real-time multimodal interaction (voice, vision, screen sharing) is becoming standard
+# What's next for LLMs? Multimodal models
+
+<div class="definition-box" data-title="Beyond text: the multimodal frontier">
+
+Users increasingly expect models to handle **text + images + audio + video** natively. Multimodal is quickly becoming the default, not the exception.
+
+</div>
+
+<div class="note-box" data-title="Current capabilities">
+
+| Model | Capability | Limitation |
+|-|-|-|
+| [**Gemini 2.5 Pro**](https://developers.googleblog.com/en/gemini-2-5-video-understanding/) | 2M-token context; up to **6 hours** of video; 84.8% on VideoMME ([Google, 2025](https://developers.googleblog.com/en/gemini-2-5-video-understanding/)) | Closed-source; API-only |
+| [**Apollo**](https://arxiv.org/abs/2412.10360) | Open family (3B–7B); Apollo-3B outperforms most 7B models on video tasks ([Zohar et al., CVPR 2025](https://arxiv.org/abs/2412.10360)) | Limited to shorter clips |
+| [**Tarsier2**](https://arxiv.org/abs/2501.01909) | Outperforms GPT-4o on video description benchmarks | Narrow task focus |
+
+</div>
+
+<div class="important-box" data-title="Open challenges">
+
+Long-form video remains hard: **token redundancy** inflates compute, **context windows** fragment temporal coherence, and **cross-modal reasoning** across hours of content is still unreliable ([Zhou et al., 2025, *CVPR*](https://openaccess.thecvf.com/content/CVPR2025/html/Zhou_MLVU_Benchmarking_Multi-task_Long_Video_Understanding_CVPR_2025_paper.html)). Expect rapid progress over the next 1–2 years as architectures mature.
 
 </div>
 
