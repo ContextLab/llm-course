@@ -200,7 +200,7 @@ We can now trace *why* a model produces a specific output — which features act
 
 - [**~55,000 US layoffs**](https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/) directly attributed to AI in 2025 ([Challenger, Gray & Christmas, 2025](https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/))
 - US employers announced **696,309 total job cuts** in the first 5 months of 2025 — up 80% year-over-year
-- **79% of employed US women** work in high-automation-risk jobs vs. 58% of men ([BLS, 2025](https://www.bls.gov/opub/mlr/2025/article/incorporating-ai-impacts-in-bls-employment-projections.htm))
+- **79% of employed US women** work in high-automation-risk jobs vs. 58% of men ([Kenan Institute, 2023](https://kenaninstitute.unc.edu/kenan-insight/will-generative-ai-disproportionately-affect-the-jobs-of-women/))
 - McKinsey laid off 200 tech employees; uses AI agents for junior consultant tasks
 - Salesforce cut 4,000 customer support roles
 
@@ -310,7 +310,7 @@ Advocates of openness emphasize auditability, democratization, and preventing po
 
 <div class="warning-box" data-title="The high-concern position">
 
-[Hinton & Bengio (2025)](https://managing-ai-risks.com/) called for companies to spend **one-third of budgets on safety**. Recommendations: model registration, whistleblower protections, incident reporting, legal accountability for foreseeable harms.
+[Hinton & Bengio (2024)](https://managing-ai-risks.com/) called for companies to spend **one-third of budgets on safety**. Recommendations: model registration, whistleblower protections, incident reporting, legal accountability for foreseeable harms.
 
 Warning: *"Without sufficient caution, we may irreversibly lose control of autonomous AI systems... culminating in a large-scale loss of life."*
 
