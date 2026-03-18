@@ -1,5 +1,7 @@
 # Models of Language and Conversation
 
+[![DOI](https://zenodo.org/badge/861365160.svg)](https://doi.org/10.5281/zenodo.19094654)
+
 Welcome!  This repository contains course materials for the Dartmouth undergraduate course on large language models and chatbots (conversational agents).  The syllabus may be found [here](https://github.com/ContextLab/llm-course/blob/main/admin/syllabus.pdf).  Feel free to follow along with the course materials (whether you are officially enrolled in the course or just visiting!), submit comments and suggestions, etc.  An outline of the course materials, including links to lecture and discussion videos and assignments may be found [here](https://github.com/ContextLab/llm-course/blob/main/slides/README.md).
 
 <p align="center">
