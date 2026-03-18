@@ -940,23 +940,13 @@
                 courseData.push(currentWeek);
             }
 
-            // Week descriptions from syllabus (Topics column)
-            const weekDescriptions = {
-                1: 'Introduction, Pattern Matching, ELIZA',
-                2: 'Data Cleaning, Tokenization, POS Tagging',
-                3: 'Classic Embeddings (LSA, LDA), Word Embeddings',
-                4: 'Contextual Embeddings, Dimensionality Reduction',
-                5: 'Attention Mechanisms, Transformer Architecture',
-                6: 'BERT Deep Dive, Encoder Models',
-                7: 'GPT Architecture, Scaling Up',
-                8: 'No classes (instructor away)',
-                9: 'RAG, Mixture of Experts, Ethics',
-                10: 'Final Project Presentations'
-            };
-
-            // Apply week descriptions from syllabus
+            // Auto-generate week subtitles from parsed lecture titles
             courseData.forEach(week => {
-                week.subtitle = weekDescriptions[week.number] || '';
+                if (week.lectures.length > 0) {
+                    week.subtitle = week.lectures.map(l => l.title).join(', ');
+                } else if (week.noClassNotice) {
+                    week.subtitle = 'No classes (instructor away)';
+                }
             });
 
             return courseData;
