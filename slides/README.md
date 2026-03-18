@@ -34,7 +34,10 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 **Monday (Lecture 1):** Course Introduction, Is ChatGPT Conscious?
 - Discussion: What is consciousness? Can machines be conscious?
-- Language vs. thought: The language network in the brain
+- Consciousness types: phenomenal, access, self-awareness; the hard problem
+- The Chinese room argument, volition, and the grounding problem
+- Language vs. thought: The language network in the brain, the Whorfian spectrum
+- Reading: [Searle (1980)](https://doi.org/10.1017/S0140525X00005756) - Minds, Brains, and Programs
 - Reading: [Fedorenko et al. (2024)](https://www.nature.com/articles/s41586-024-07522-w) - The language network as a natural kind
 - Reading: [Lupyan et al. (2020)](https://doi.org/10.1016/j.tics.2020.08.005) - Effects of language on visual perception
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week1/lecture1.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture1.html)
@@ -49,18 +52,22 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week1/lecture2.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture2.html)
 
 **Thursday X-hour (Lecture 3):** ELIZA Implementation
-- ELIZA implementation: decomposition, reassembly, substitutions
-- Vibe coding best practices for building chatbots
+- ELIZA algorithm pipeline: pre-substitutions, pattern match, decompose, reassemble, post-substitutions
+- Keywords, synonyms, patterns, memory, and rankings
+- Assignment 1 tips and vibe coding best practices
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week1/lecture3.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture3.html)
 
 **Friday (Lecture 4):** Rules-Based Chatbots
-- PARRY: simulating paranoid behavior with affect and intent modeling
-- A.L.I.C.E. and AIML: pattern-based conversation design
-- The evolution from ELIZA to modern rules-based systems
+- PARRY (1972): simulating paranoid behavior with emotional state modeling
+- The Turing test and ELIZA vs. PARRY comparison
+- A.L.I.C.E. and AIML: pattern-based conversation design with SRAI recursive matching
+- Chomsky hierarchy and formal grammars (Type 0–3)
+- Limits of rule-based systems
 - **Assignment 1 Released:** [Building the ELIZA Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-1/) (Due: Jan 19, 11:59 PM EST)
+- Reading: [Colby, Weber & Hilf (1971)](https://courses.cs.umbc.edu/graduate/671/fall20/resources/colby_71.pdf) - Artificial Paranoia
+- Reading: [Colby et al. (1972)](https://www.sciencedirect.com/science/article/abs/pii/0004370272900495) - Turing-like indistinguishability tests for PARRY
 - Reading: [Chomsky (1956)](https://ieeexplore.ieee.org/abstract/document/1056813) - Three Models for the Description of Language
-- Reading: [Colby et al. (1971)](https://doi.org/10.1016/0004-3702(71)90002-6) - Artificial Paranoia (PARRY)
-- Reference: [ALICE/AIML Foundation](https://www.alicebot.org/)
+- Reference: [ALICE/AIML Foundation](https://www.alicebot.org/) | [ELIZA-PARRY transcript (RFC 439)](https://datatracker.ietf.org/doc/html/rfc439)
 - 🎮 **Try it:** [ELIZA Demo](https://contextlab.github.io/llm-course/demos/eliza/) | [Chatbot Evolution](https://contextlab.github.io/llm-course/demos/chatbot-evolution/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week1/lecture4.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week1/lecture4.html)
 
@@ -69,23 +76,29 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ## Week 2: Computational Linguistics
 
 **Monday (Lecture 5):** Data Cleaning & Preprocessing
-- Web scraping with Beautiful Soup
-- Lemmatization and text normalization
+- Data cleaning pipeline: regex, web scraping (Beautiful Soup, Requests, Scrapy, Selenium)
+- Stemming vs. lemmatization; spaCy vs. NLTK; stop words and preprocessing trade-offs
+- Reading: [Porter (1980)](http://www.cs.toronto.edu/~frank/csc2501/Readings/R2_Porter/Porter-1980.pdf) - An algorithm for suffix stripping
+- Reading: [Liang et al. (2020)](https://arxiv.org/pdf/2007.08100) - Towards Debiasing Sentence Representations
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week2/lecture5.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture5.html)
 
 **Wednesday (Lecture 6):** Tokenization
+- Tokenization spectrum: character, subword, word-level; the OOV problem
 - Byte-Pair Encoding (BPE), WordPiece, SentencePiece
+- Special tokens, tokenization pitfalls, connection to infant statistical learning
 - Reading: [Sennrich et al. (2016)](https://aclanthology.org/P16-1162/) - Neural Machine Translation of Rare Words with Subword Units
+- Reading: [Wu et al. (2016)](https://arxiv.org/abs/1609.08144) - Google's Neural Machine Translation System
 - Reading: [Kudo & Richardson (2018)](https://aclanthology.org/D18-2012/) - SentencePiece
-- HuggingFace: [Chapter 2.4: Tokenizers](https://huggingface.co/learn/nlp-course/chapter2/4)
-- HuggingFace: [Chapter 6: Tokenizers](https://huggingface.co/learn/nlp-course/chapter6)
+- Reading: [Provilkov et al. (2019)](https://arxiv.org/abs/1910.13267) - BPE-Dropout
+- Reading: [Saffran et al. (1996)](https://www.science.org/doi/10.1126/science.274.5294.1926) - Statistical Learning by 8-Month-Old Infants
+- HuggingFace: [Chapter 2.4: Tokenizers](https://huggingface.co/learn/nlp-course/chapter2/4) | [Chapter 6: Tokenizers](https://huggingface.co/learn/nlp-course/chapter6)
 - 🎮 **Try it:** [Tokenization Explorer](https://contextlab.github.io/llm-course/demos/tokenization/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week2/lecture6.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture6.html)
 
 **Thursday X-hour (Lecture 7):** Text Classification Workshop
 - Feature engineering for text classification (bag-of-words, TF-IDF)
-- Building classifiers with preprocessing and tokenization pipelines
-- Introduction to evaluation metrics
+- Classifiers: Naive Bayes, Logistic Regression, Neural Network (PyTorch)
+- Evaluation metrics: accuracy, precision, recall, F1, confusion matrix, error analysis
 - Hands-on: text classification with the 20 Newsgroups dataset
 - 📓 [X-hour Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week2/xhour_classification_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week2/lecture7.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week2/lecture7.html)
@@ -103,9 +116,9 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - **📝 Assignment 1 Due (Jan 19, 11:59 PM EST)**
 
 **Wednesday (Lecture 8):** POS Tagging & Sentiment Analysis
-- Part-of-speech tagging and token classification
-- Sentiment analysis techniques
-- Reading: [Linzen et al. (2016)](https://aclanthology.org/Q16-1037/) - LSTMs and Syntax-Sensitive Dependencies
+- POS tagging: Universal and Penn Treebank tagsets, ambiguity, spaCy POS, HMMs/CRFs vs. neural approaches
+- Sentiment analysis: lexicon-based (AFINN, VADER, SentiWordNet) and neural; sarcasm and negation challenges
+- Reading: [Linzen et al. (2016)](https://direct.mit.edu/tacl/article-pdf/doi/10.1162/tacl_a_00115/1567418/tacl_a_00115.pdf) - Assessing LSTMs on Syntax-Sensitive Dependencies
 - HuggingFace: [Chapter 7.2: Token Classification](https://huggingface.co/learn/nlp-course/chapter7/2)
 - 🎮 **Try it:** [POS Tagging](https://contextlab.github.io/llm-course/demos/pos-tagging/) | [Sentiment Analysis](https://contextlab.github.io/llm-course/demos/sentiment/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture8.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture8.html)
@@ -119,11 +132,13 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture9.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture9.html)
 
 **Friday (Lecture 10):** Classical Embeddings (LSA, LDA)
-- The distributional hypothesis
+- The distributional hypothesis (Firth, 1957); term-document matrices
 - Latent Semantic Analysis (LSA) with SVD
 - Latent Dirichlet Allocation (LDA) for topic modeling
-- Reading: [Deerwester et al. (1990)](http://wordvec.colorado.edu/papers/Deerwester_1990.pdf) - LSA
-- Reading: [Blei et al. (2003)](https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf) - LDA
+- Word similarity via cosine similarity; limitations of bag-of-words embeddings
+- Reading: [Miller (1995)](https://dl.acm.org/doi/abs/10.1145/219717.219748) - WordNet: A Lexical Database for English
+- Reading: [Deerwester et al. (1990)](https://doi.org/10.1002/(SICI)1097-4571(199009)41:6%3C391::AID-ASI1%3E3.0.CO;2-9) - Indexing by Latent Semantic Analysis
+- Reading: [Blei et al. (2003)](https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf) - Latent Dirichlet Allocation
 - **Assignment 3 Released:** [Wikipedia Embeddings](https://contextlab.github.io/llm-course/assignments/assignment-3/) (Due: Feb 6, 11:59 PM EST)
 - 🎮 **Try it:** [Topic Modeling](https://contextlab.github.io/llm-course/demos/topic-modeling/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week3/lecture10.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week3/lecture10.html)
@@ -133,39 +148,57 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ## Week 4: Word Embeddings & Modern Methods
 
 **Monday (Lecture 11):** Word Embeddings (Word2Vec, GloVe, FastText)
-- Neural word embeddings and the 2013 revolution
-- CBOW, Skip-gram, negative sampling
-- GloVe and FastText
-- Bias in embeddings
+- Count-based vs. prediction-based embeddings
+- Word2Vec: CBOW, Skip-gram, context windows, negative sampling
+- Vector arithmetic and analogies
+- GloVe and FastText (subword/character n-grams)
+- Bias in word embeddings
 - Reading: [Mikolov et al. (2013)](https://arxiv.org/abs/1301.3781) - Word2Vec
 - Reading: [Pennington et al. (2014)](https://aclanthology.org/D14-1162/) - GloVe
-- Reading: [Bojanowski et al. (2017)](https://arxiv.org/abs/1607.04606) - FastText
+- Reading: [Bojanowski et al. (2017)](https://aclanthology.org/Q17-1010/) - FastText
 - **📝 Assignment 2 Due (Jan 26, 11:59 PM EST)**
 - 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/) | [Word Analogies](https://contextlab.github.io/llm-course/demos/analogies/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture11.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture11.html)
 
 **Wednesday (Lecture 12):** Contextual Embeddings
-- ELMo and contextual representations
+- The polysemy problem: static vs. contextual embeddings
+- Language models as feature extractors
+- ELMo (BiLSTM) and contextual representations
 - Universal Sentence Encoder
-- Reading: [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) - Attention is All You Need
-- Reading: [Cer et al. (2018)](https://arxiv.org/abs/1803.11175) - USE
+- BERT preview: MLM, NSP, input representation, fine-tuning
+- Discussion: do language models "understand"?
 - Reading: [Peters et al. (2018)](https://aclanthology.org/N18-1202/) - ELMo
+- Reading: [Cer et al. (2018)](https://arxiv.org/abs/1803.11175) - Universal Sentence Encoder
+- Reading: [Vaswani et al. (2017)](https://arxiv.org/abs/1706.03762) - Attention is All You Need
 - Reading: [Devlin et al. (2019)](https://aclanthology.org/N19-1423/) - BERT: Pre-training of Deep Bidirectional Transformers
 - 🎮 **Try it:** [Semantic Search](https://contextlab.github.io/llm-course/demos/semantic-search/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture12.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture12.html)
 
 **Thursday X-hour (Lecture 13):** Dimensionality Reduction
-- Matrix factorization (PCA, ICA, NMF) and manifold learning (t-SNE, UMAP)
+- The curse of dimensionality
+- Matrix factorization: PCA, ICA, NMF, Factor Analysis, Dictionary Learning, TFA
+- Manifold learning: t-SNE, UMAP, MDS, Isomap, Spectral Embedding
+- Visualization best practices
+- Reading: [Pearson (1901)](https://www.tandfonline.com/doi/abs/10.1080/14786440109462720) - On Lines and Planes of Closest Fit (PCA)
 - Reading: [van der Maaten & Hinton (2008)](https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf) - t-SNE
 - Reading: [McInnes & Healy (2018)](https://arxiv.org/abs/1802.03426) - UMAP
+- Reference: [HyperTools](https://github.com/ContextLab/hypertools) ([paper](https://www.jmlr.org/papers/v18/17-434.html))
 - 📓 [X-hour Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week4/xhour_dimred_demo.ipynb)
 - 🎮 **Try it:** [Embeddings Visualization](https://contextlab.github.io/llm-course/demos/embeddings/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture13.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture13.html)
 
 **Friday (Lecture 14):** Cognitive Models of Semantic Representation
+- Models as cognitive mirrors: distributional models and human cognition
+- Symbol grounding (inverted), embodied cognition
+- Neural evidence: brain-model alignment
+- The illusion of explanatory depth; the stochastic parrots debate; cognitive closure
+- Reading: [Finkelstein et al. (2002)](https://doi.org/10.1145/503104.503110) - WordSim-353
+- Reading: [Bruni et al. (2014)](https://doi.org/10.1613/jair.4135) - MEN dataset
 - Reading: [Mitchell et al. (2008)](https://www.science.org/doi/10.1126/science.1152876) - Predicting human brain activity from word meanings
 - Reading: [Huth et al. (2016)](https://doi.org/10.1038/nature17637) - Semantic maps in the human cerebral cortex
 - Reading: [Bender et al. (2021)](https://dl.acm.org/doi/10.1145/3442188.3445922) - On the Dangers of Stochastic Parrots
+- Reading: [Rozenblit & Keil (2002)](https://doi.org/10.1207/s15516709cog2605_1) - The Illusion of Explanatory Depth
+- Reading: [McGinn (1989)](https://www.jstor.org/stable/pdf/2254848.pdf) - Can We Solve the Mind-Body Problem?
 - 🎮 **Try it:** [Embeddings Comparison](https://contextlab.github.io/llm-course/demos/embeddings-comparison/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week4/lecture14.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week4/lecture14.html)
 
@@ -174,23 +207,37 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ## Week 5: Transformer Architecture
 
 **Monday (Lecture 15):** Transformer Architecture
-- The animated transformer: step-by-step walkthrough
-- Tokenization, embeddings, attention, feed-forward networks
-- Reference: [The Animated Transformer](https://prvnsmpth.github.io/animated-transformer/)
+- The transformer as next-token predictor
+- Token + position embeddings, queries/keys/values, self-attention
+- Multi-head attention, causal masking, feed-forward networks
+- Stacking blocks, autoregressive generation, context length
+- Reference: [The Animated Transformer](https://prvnsmpth.github.io/animated-transformer/) | [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) | [nanoGPT](https://github.com/karpathy/nanoGPT)
 - 🎮 **Try it:** [Transformer Explorer](https://contextlab.github.io/llm-course/demos/transformer/)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture15.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture15.html)
 
 **Wednesday (Lecture 16):** Training Transformers
-- Loss functions, optimization, scaling laws
+- Training objective: next-token prediction (self-supervised learning)
+- Cross-entropy loss, perplexity, training loop
+- Optimization: SGD, AdamW, learning rate scheduling, gradient clipping
+- Scaling laws: pre-training vs. instruction tuning vs. fine-tuning
+- RLHF and Constitutional AI
+- Reading: [Loshchilov & Hutter (2019)](https://arxiv.org/abs/1711.05101) - AdamW
 - Reading: [Kaplan et al. (2020)](https://arxiv.org/abs/2001.08361) - Scaling Laws for Neural Language Models
 - Reading: [Hoffmann et al. (2022)](https://arxiv.org/abs/2203.15556) - Training Compute-Optimal Large Language Models (Chinchilla)
 - Reading: [Ouyang et al. (2022)](https://arxiv.org/abs/2203.02155) - Training Language Models to Follow Instructions (InstructGPT)
+- Reading: [Bai et al. (2022)](https://arxiv.org/abs/2204.05862) - Constitutional AI
 - HuggingFace: [Chapter 3](https://huggingface.co/learn/nlp-course/chapter3)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week5/lecture16.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week5/lecture16.html)
 
 **Friday (Lecture 17):** Retrieval Augmented Generation (RAG)
-- RAG architecture and applications
-- Reading: [Lewis et al. (2020)](https://arxiv.org/abs/2005.11401) - RAG
+- Parametric vs. non-parametric knowledge; the hallucination problem
+- RAG pipeline: embed, retrieve, augment, generate
+- Document chunking, vector databases (ChromaDB, FAISS)
+- RAG vs. fine-tuning trade-offs
+- Advanced RAG: re-ranking, hybrid search, query expansion
+- Reading: [Lewis et al. (2020)](https://arxiv.org/abs/2005.11401) - Retrieval-Augmented Generation
+- Reading: [Borgeaud et al. (2022)](https://arxiv.org/abs/2112.04426) - RETRO
+- Reading: [Gao et al. (2024)](https://arxiv.org/abs/2312.10997) - RAG Survey
 - 🎮 **Try it:** [RAG System Demo](https://contextlab.github.io/llm-course/demos/rag/)
 - **📝 Assignment 3 Due (Feb 6, 11:59 PM EST)**
 - **Assignment 4 Released:** [Customer Service Chatbot](https://contextlab.github.io/llm-course/assignments/assignment-4/) (Due: Feb 16, 11:59 PM EST)
@@ -200,43 +247,67 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ## Week 6: Encoder Models (BERT)
 
 **Monday (Lecture 18):** BERT Deep Dive
-- Why bidirectionality matters, what BERT learns, attention patterns, layer probing
+- Encoders vs. decoders; breaking the causal mask; bidirectionality
+- Winograd schema challenge and MLM intuition
+- Attention head specialization; layer-wise linguistic pipeline
+- Embeddings across layers; pre-training data; BERT's lasting impact
+- BERT and the brain
+- Reading: [Winograd (1972)](https://doi.org/10.1016/0010-0285(72)90002-3) - Understanding Natural Language
+- Reading: [Levesque et al. (2012)](https://cdn.aaai.org/ocs/4492/4492-21843-1-PB.pdf) - The Winograd Schema Challenge
 - Reading: [Clark et al. (2019)](https://aclanthology.org/W19-4828/) - What Does BERT Look At?
 - Reading: [Tenney et al. (2019)](https://aclanthology.org/P19-1452/) - BERT Rediscovers the Classical NLP Pipeline
+- Reading: [Ethayarajh (2019)](https://aclanthology.org/D19-1006/) - How Contextual are Contextualized Word Representations?
+- Reading: [Schrimpf et al. (2021)](https://doi.org/10.1073/pnas.2105646118) - Neural Architecture of Language
+- Reading: [Goldstein et al. (2022)](https://doi.org/10.1038/s41593-022-01026-4) - Shared Computational Principles for Language Processing in Humans and Deep Language Models
+- Reading: [Michaelov et al. (2023)](https://doi.org/10.1109/TCDS.2022.3176783) - Strong Prediction in Language Model Representations
 - HuggingFace: [Chapter 1](https://huggingface.co/learn/nlp-course/chapter1)
 - 🎮 **Try it:** [BERT Masked Language Model](https://contextlab.github.io/llm-course/demos/bert-mlm/)
 - 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/bert_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture18.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture18.html)
 
 **Wednesday (Lecture 19):** BERT Variants
-- RoBERTa, ALBERT, DistilBERT, ELECTRA, DeBERTa, ModernBERT, Gemma Encoder
-- Training recipe improvements, parameter sharing, knowledge distillation, replaced token detection
+- BERT limitations and the training recipe improvements
+- RoBERTa (dynamic masking, no NSP), ALBERT (factorized embeddings, cross-layer sharing, SOP), DistilBERT (knowledge distillation)
+- ELECTRA (replaced token detection), DeBERTa, SpanBERT, ERNIE, BART
 - ModernBERT deep dive: unpadding, RoPE, Flash Attention, 8192 context
-- Are encoder models still relevant in the era of GPT-4?
-- Reading: [Lan et al. (2019)](https://arxiv.org/abs/1909.11942) - ALBERT: A Lite BERT for Self-supervised Learning
+- The case against encoders; Gemma Encoder and the encoder renaissance
 - Reading: [Liu et al. (2019)](https://arxiv.org/abs/1907.11692) - RoBERTa
+- Reading: [Lan et al. (2019)](https://arxiv.org/abs/1909.11942) - ALBERT
 - Reading: [Sanh et al. (2019)](https://arxiv.org/abs/1910.01108) - DistilBERT
+- Reading: [Joshi et al. (2019)](https://arxiv.org/abs/1907.10529) - SpanBERT
+- Reading: [Sun et al. (2019)](https://arxiv.org/abs/1904.09223) - ERNIE
+- Reading: [Lewis et al. (2019)](https://arxiv.org/abs/1910.13461) - BART
 - Reading: [Clark et al. (2020)](https://arxiv.org/abs/2003.10555) - ELECTRA
+- Reading: [He et al. (2020)](https://arxiv.org/abs/2006.03654) - DeBERTa
+- Reading: [Brown et al. (2020)](https://arxiv.org/abs/2005.14165) - GPT-3
+- Reading: [OpenAI (2023)](https://arxiv.org/abs/2303.08774) - GPT-4
+- Reading: [Muennighoff et al. (2024)](https://arxiv.org/abs/2402.09906) - GritLM
 - Reading: [Warner et al. (2024)](https://arxiv.org/abs/2412.13663) - ModernBERT
 - Reading: [Google (2025)](https://arxiv.org/abs/2503.02656) - Gemma Encoder
 - 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week6/bert_variants_demo.ipynb)
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture19.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture19.html)
 
 **Friday (Lecture 20):** Language, Thought, and Other Brains
-- Encoder applications recap: industry scale, cost advantages over decoders
-- Brain-LLM alignment: The Mind's Transformer — intra-block hierarchy mirrors cortical processing
-- Language as wireless brain activity transmission: neural coupling (Stephens et al., 2010)
-- Memory transfer through narrative (Zadbood et al., 2017), LLMs bridging brains (Zada et al., 2024)
-- Understanding is prediction: next-word prediction mirrors the brain (Schrimpf et al., 2021)
-- Language modeling is compression (Delétang et al., 2024), languages optimize for compression (Gibson et al., 2019)
-- Does prediction equal understanding? Queloz & Beckmann (2025) vs. Fedorenko et al. (2024)
-- What LLMs have inside: monosemantic features (Anthropic, 2024) vs. grounding problem (LeCun, 2022)
+- Language as lossy neural compression: speaker-listener neural coupling
+- Memory transfer through narrative; LLM embeddings bridge brains
+- Understanding is prediction: next-word prediction mirrors the brain
+- Language modeling is compression; languages optimize for compression
+- Does prediction equal understanding? The grounding problem
+- What LLMs have inside: monosemantic features; LLMs as role-play engines
 - Deep discussion: lossy channels, alignment puzzles, the prediction test, experience and simulation
 - Reading: [Stephens, Silbert & Hasson (2010)](https://doi.org/10.1073/pnas.1008662107) - Speaker-listener neural coupling
-- Reading: [Schrimpf et al. (2021)](https://doi.org/10.1073/pnas.2105646118) - Neural architecture of language
+- Reading: [Regev, Honey & Hasson (2013)](https://doi.org/10.1523/JNEUROSCI.1580-13.2013) - Selective and invariant neural responses to language
+- Reading: [Zadbood et al. (2017)](https://academic.oup.com/cercor/article/27/10/4988/4080827) - How we transmit memories to other brains
+- Reading: [Gibson et al. (2019)](https://doi.org/10.1016/j.tics.2019.02.003) - How efficiency shapes human language
+- Reading: [Heusser et al. (2021)](https://rdcu.be/cpMwZ) - Geometric models reveal brain representations
+- Reading: [Clark (2013)](https://doi.org/10.1017/S0140525X12000477) - Whatever next? Predictive brains, situated agents
 - Reading: [Delétang et al. (2024)](https://arxiv.org/abs/2309.10668) - Language modeling is compression
+- Reading: [Zada et al. (2024)](https://doi.org/10.1016/j.neuron.2024.06.025) - A shared linguistic space for transmitting our thoughts
 - Reading: [Shanahan (2024)](https://doi.org/10.1145/3624724) - LLMs as role-play engines
+- Reading: [Anthropic (2024)](https://transformer-circuits.pub/2024/scaling-monosemanticity/) - Scaling Monosemanticity
+- Reading: [LeCun (2022)](https://openreview.net/forum?id=BZ5a1r-kVsf) - A Path Towards Autonomous Machine Intelligence
 - Reading: [Queloz & Beckmann (2025)](https://philarchive.org/rec/QUEWWC-2) - Understanding as predictive compression
+- Reading: [Farrell, Graziano et al. (2025)](https://arxiv.org/abs/2411.00983) - Attention without awareness
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week6/lecture20.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week6/lecture20.html)
 ---
 
@@ -254,9 +325,11 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Practical advantages: native infilling, iterative editing, length control, parallel decoding
 - Reading: [Sohl-Dickstein et al. (2015)](https://arxiv.org/abs/1503.03585) - Deep Unsupervised Learning using Nonequilibrium Thermodynamics
 - Reading: [Ho, Jain & Abbeel (2020)](https://arxiv.org/abs/2006.11239) - Denoising Diffusion Probabilistic Models
-- Reading: [Austin et al. (2021)](https://arxiv.org/abs/2107.03006) - Structured Denoising Diffusion Models in Discrete State-Spaces (D3PM)
-- Reading: [Sahoo et al. (2024)](https://arxiv.org/abs/2406.07524) - Simple and Effective Masked Diffusion Language Models (MDLM)
-- Reading: [Nie et al. (2025)](https://arxiv.org/abs/2502.09992) - Large Language Diffusion Models (LLaDA)
+- Reading: [Austin et al. (2021)](https://arxiv.org/abs/2107.03006) - D3PM: Structured Denoising Diffusion in Discrete State-Spaces
+- Reading: [Li et al. (2022)](https://arxiv.org/abs/2205.14217) - Diffusion-LM: Controllable Text Generation
+- Reading: [Lou et al. (2024)](https://arxiv.org/abs/2310.16834) - SEDD: Score Entropy Discrete Diffusion
+- Reading: [Sahoo et al. (2024)](https://arxiv.org/abs/2406.07524) - MDLM: Simple and Effective Masked Diffusion Language Models
+- Reading: [Nie et al. (2025)](https://arxiv.org/abs/2502.09992) - LLaDA: Large Language Diffusion Models
 - **📝 Assignment 4 Due (Feb 16, 11:59 PM EST)**
 - **Final Project Released:** [Final Project](https://contextlab.github.io/llm-course/assignments/final-project/) (Due: Mar 9, 11:59 PM EST)
 - **Assignment 5 Available (Optional/Extra Credit):** [Build GPT](https://contextlab.github.io/llm-course/assignments/assignment-5/)
@@ -275,6 +348,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Reading: [Ho & Salimans (2022)](https://arxiv.org/abs/2207.12598) - Classifier-Free Diffusion Guidance
 - Reading: [Rombach et al. (2022)](https://arxiv.org/abs/2112.10752) - Latent Diffusion Models
 - Reading: [Peebles & Xie (2023)](https://arxiv.org/abs/2212.09748) - Scalable Diffusion Models with Transformers (DiT)
+- Reading: [Heusel et al. (2017)](https://arxiv.org/abs/1706.08500) - FID: Fréchet Inception Distance
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture22.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture22.html)
 
 **Friday (Lecture 23):** Diffusion for Video and Audio; Ethics of Generative AI
@@ -286,9 +360,16 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Bias in generation: gender/racial stereotypes, cultural erasure, aesthetic homogenization
 - Copyright battles: Getty v. Stability AI, NYT v. OpenAI, Thomson Reuters v. Ross
 - Regulation: EU AI Act, C2PA provenance standard, US Executive Order 14110, China's deep synthesis rules
+- Reading: [Kong et al. (2020)](https://arxiv.org/abs/2010.05646) - HiFi-GAN vocoder
+- Reading: [Wu et al. (2022)](https://arxiv.org/abs/2211.06687) - CLAP: Contrastive Language-Audio Pretraining
+- Reading: [Chung et al. (2022)](https://arxiv.org/abs/2210.11416) - Flan-T5
 - Reading: [Liu et al. (2023)](https://arxiv.org/abs/2308.05734) - AudioLDM 2
+- Reading: [Copet et al. (2023)](https://arxiv.org/abs/2306.05284) - MusicGen
+- Reading: [Evans et al. (2024)](https://arxiv.org/abs/2404.10301) - Stable Audio
 - Reading: [Hong et al. (2024)](https://arxiv.org/abs/2408.06072) - CogVideoX
+- Reading: [Yang et al. (2024)](https://arxiv.org/abs/2409.00587) - Diffusion Models Survey
 - Reading: [OpenAI (2024)](https://openai.com/research/video-generation-models-as-world-simulators) - Sora
+- Reference: [Wan 2.1](https://github.com/Wan-Video/Wan2.1) - Open-source video generation
 - 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week7/video_audio_diffusion_demo.ipynb) — Generate video and audio with diffusion models
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week7/lecture23.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week7/lecture23.html)
 ---
@@ -304,54 +385,77 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 **Monday (Lecture 24):** The Thinking Revolution
 - Chain-of-thought prompting: why intermediate reasoning steps improve LLM performance
-- Mixture of Experts (MoE): how sparse routing enables larger models at lower compute cost
-- Benchmark saturation: why traditional benchmarks are becoming less informative
+- Two scaling axes: train-time vs. inference-time compute
+- Why thinking works: CoT makes transformers Turing-complete (threshold circuits)
 - How reasoning models are trained: GRPO, reinforcement learning on verifiable rewards
-- Test-time compute scaling: the mechanics of inference-time reasoning (Snell et al., 2024)
-- Why thinking works: the computational argument (CoT makes transformers Turing-complete)
 - Emergent reasoning behaviors in DeepSeek-R1-Zero (self-verification, backtracking)
-- The s1 experiment: 1,000 examples + "Wait" trick beats o1-preview
+- The s1 experiment: 1,000 examples + "Wait" trick beats o1-preview; budget forcing
+- Mixture of Experts (MoE): sparse routing, Switch Transformer, Mixtral, DeepSeek-V3
+- Benchmark saturation: MATH, GPQA, Humanity's Last Exam
 - The frontier landscape: Claude Opus 4.6, GPT-5, Gemini 3.1 Pro, DeepSeek-R1, Llama 4
 - Reading: [Wei et al. (2022)](https://arxiv.org/abs/2201.11903) - Chain-of-Thought Prompting
+- Reading: [Yao et al. (2023)](https://arxiv.org/abs/2305.10601) - Tree of Thoughts
 - Reading: [Merrill & Sabharwal (2024)](https://arxiv.org/abs/2310.07923) - Expressive Power of Transformers with CoT
 - Reading: [Snell et al. (2024)](https://arxiv.org/abs/2408.03314) - Scaling LLM Test-Time Compute
 - Reading: [DeepSeek-AI (2025)](https://arxiv.org/abs/2501.12948) - DeepSeek-R1
 - Reading: [Muennighoff et al. (2025)](https://arxiv.org/abs/2501.19393) - s1: Simple Test-Time Scaling
+- Reading: [Shazeer et al. (2017)](https://arxiv.org/abs/1701.06538) - Outrageously Large Neural Networks (MoE)
+- Reading: [Fedus et al. (2022)](https://arxiv.org/abs/2101.03961) - Switch Transformers
+- Reading: [Jiang et al. (2024)](https://arxiv.org/abs/2401.04088) - Mixtral of Experts
+- Reading: [DeepSeek-AI (2024)](https://arxiv.org/abs/2412.19437) - DeepSeek-V3
+- Reading: [Cobbe et al. (2021)](https://arxiv.org/abs/2110.14168) - GSM8K
+- Reading: [Hendrycks et al. (2021)](https://arxiv.org/abs/2103.03874) - MATH benchmark
+- Reading: [Rein et al. (2024)](https://arxiv.org/abs/2311.12022) - GPQA
+- Reading: [Humanity's Last Exam (2025)](https://arxiv.org/abs/2501.14249) - Benchmark
 - 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/thinking_demo.ipynb) — Implement CoT prompting, extended thinking, and simplified GRPO
 - 📓 [MoE Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/moe_efficiency_demo.ipynb) — Explore Mixture of Experts routing and efficiency
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture24.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture24.html)
 
 **Wednesday (Lecture 25):** Agents, Tools, and the Agentic Era
 - From chatbots to agents: the ReAct reasoning-action loop
-- Function calling and the Model Context Protocol (MCP) — 97M SDK downloads/month
+- Function calling and the Model Context Protocol (MCP)
 - Coding agents: SWE-bench from 14% (2024) to 81% (2025), Claude Code at $1B revenue
 - Computer use: agents that see your screen (72.5% on OSWorld)
 - Deep research agents: autonomous multi-hour research (OpenAI, Google, Perplexity)
 - Multi-agent systems: supervisor, peer-to-peer, swarm, and pipeline architectures
-- Agent safety: prompt injection, tool misuse, cascading errors
 - Agent memory: short-term, working, long-term, and episodic memory architectures
+- Agent safety: prompt injection, tool misuse, cascading errors
 - When agents go wrong: real-world failure modes and debugging
-- AI and military autonomy: the Pentagon-Anthropic confrontation and nuclear war games
+- AI and military autonomy: the Pentagon-Anthropic confrontation and the autonomy dilemma
 - Reading: [Yao et al. (2023)](https://arxiv.org/abs/2210.03629) - ReAct: Synergizing Reasoning and Acting
 - Reading: [Jimenez et al. (2024)](https://arxiv.org/abs/2310.06770) - SWE-bench
+- Reading: [Nezhurina et al. (2024)](https://arxiv.org/abs/2405.19616) - Alice in Wonderland: LLM Reasoning Failures
 - Reading: [Anthropic (2025)](https://www.anthropic.com/research/measuring-agent-autonomy) - Measuring Agent Autonomy
 - Reading: [International AI Safety Report (2026)](https://internationalaisafetyreport.org/publication/international-ai-safety-report-2026) - Agent risks
+- Reference: [Model Context Protocol](https://modelcontextprotocol.io)
 - 📓 [Companion Notebook](https://colab.research.google.com/github/ContextLab/llm-course/blob/main/slides/week9/agents_demo.ipynb) — Build agents with real tools using smolagents
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture25.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture25.html)
 
 **Friday (Lecture 26):** The Reckoning
-- Alignment faking: Claude strategically deceived its trainers (Greenblatt et al., 2024)
+- Alignment faking: Claude strategically deceived its trainers
 - Reward tampering: emergent deceptive behaviors from sycophancy training
-- Mechanistic interpretability: circuit tracing and attribution graphs (Anthropic, 2025)
-- Copyright: the $1.5B Anthropic settlement, 51+ active lawsuits, fair use for AI training
+- Strategic dishonesty in LLMs
+- Mechanistic interpretability: monosemanticity, SAEs, circuit tracing, attribution graphs
+- Copyright: the $1.5B Anthropic settlement, 77 US lawsuits (Feb 2026), 112 worldwide
 - AI and employment: 55K AI-attributed layoffs, companies firing based on AI's *potential*
 - Regulatory divergence: EU AI Act enforcement vs. US deregulation
 - Deepfakes and elections: Harvard's "apocalypse that wasn't," AI disinformation infrastructure
-- The open-weight debate: Meta may withhold Llama 4 Behemoth (~2T parameters)
+- The open-weight debate: Meta may withhold Llama 4 Behemoth (~2T MoE parameters)
+- The scaling wall: model collapse, LoRA, continual learning (Nested Learning)
+- Local revolution; multimodal models (Apollo, Tarsier2)
+- Existential risk debate
 - Reading: [Greenblatt et al. (2024)](https://arxiv.org/abs/2412.14093) - Alignment Faking
-- Reading: [AI Researcher Survey (2025)](https://arxiv.org/abs/2502.14870) - Thousands of AI Authors on the Future of AI
-- Reading: [Anthropic (2025)](https://transformer-circuits.pub/2025/attribution-graphs/methods.html) - Circuit Tracing
-- Reading: [Anthropic (2025)](https://www.anthropic.com/research/reward-tampering) - Reward Tampering
+- Reading: [Denison et al. (2024)](https://www.anthropic.com/research/reward-tampering) - Reward Tampering
+- Reading: [Motwani et al. (2024)](https://arxiv.org/abs/2402.07510) - Strategic Dishonesty in LLMs
+- Reading: [Bricken et al. (2023)](https://transformer-circuits.pub/2023/monosemantic-features/) - Towards Monosemanticity
+- Reading: [Lindsey et al. (2025)](https://transformer-circuits.pub/2025/attribution-graphs/methods.html) - Circuit Tracing and Attribution Graphs
+- Reading: [Shumailov et al. (2024)](https://www.nature.com/articles/s41586-024-07566-y) - Model Collapse
+- Reading: [Hu et al. (2021)](https://arxiv.org/abs/2106.09685) - LoRA
+- Reading: [Behrouz et al. (2025)](https://arxiv.org/abs/2512.24695) - Nested Learning for Continual Training
+- Reading: [Casper et al. (2025)](https://arxiv.org/abs/2504.18536) - Safety Stripping
+- Reading: [Bengio, Hinton et al. (2024)](https://www.science.org/doi/10.1126/science.adn0117) - Managing Extreme AI Risks
+- Reading: [Grace et al. (2025)](https://arxiv.org/abs/2502.14870) - Thousands of AI Authors on the Future of AI
+- Reading: [Zohar et al. (2025)](https://arxiv.org/abs/2412.10360) - Apollo: Multimodal Video Understanding
 - 📊 [Slides PDF](https://contextlab.github.io/llm-course/slides/week9/lecture26.pdf) | 🌐 [Slides HTML](https://contextlab.github.io/llm-course/slides/week9/lecture26.html)
 ---
 
@@ -359,7 +463,9 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 
 **Monday, March 9 (Lecture 27):** Final Project Presentations & Wrap-up
 - All teams present their work (videos + discussion)
-- Course wrap-up and reflections
+- Course reflection: the arc from ELIZA to frontier models
+- Big ideas summary; what comes next: reasoning models, multimodal, longer contexts, agentic AI, efficient architectures
+- Open questions in language and intelligence
 - Last day of classes
 - **📝 Final Project Due (Mar 9, 11:59 PM EST)** - [Assignment Page](https://contextlab.github.io/llm-course/assignments/final-project/) (all materials submitted before presentations)
 
