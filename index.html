@@ -713,11 +713,22 @@
                         courseData.push(currentWeek);
                     }
 
+                    // Check next line for italic subtitle: *subtitle text*
+                    let weekSubtitle = '';
+                    if (i + 1 < lines.length) {
+                        const nextLine = lines[i + 1].trim();
+                        const subtitleMatch = nextLine.match(/^\*([^*]+)\*$/);
+                        if (subtitleMatch) {
+                            weekSubtitle = subtitleMatch[1];
+                            i++; // skip the subtitle line
+                        }
+                    }
+
                     currentWeek = {
                         id: 'week' + weekNumber,
                         number: weekNumber,
                         title: weekTitle,
-                        subtitle: '',
+                        subtitle: weekSubtitle,
                         expanded: weekNumber === getCurrentWeek(),
                         lectures: []
                     };
@@ -940,14 +951,7 @@
                 courseData.push(currentWeek);
             }
 
-            // Auto-generate week subtitles from parsed lecture titles
-            courseData.forEach(week => {
-                if (week.lectures.length > 0) {
-                    week.subtitle = week.lectures.map(l => l.title).join(', ');
-                } else if (week.noClassNotice) {
-                    week.subtitle = 'No classes (instructor away)';
-                }
-            });
+            // Subtitles are parsed from italic lines after week headers
 
             return courseData;
         }

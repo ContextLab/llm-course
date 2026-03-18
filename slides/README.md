@@ -31,6 +31,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ---
 
 ## Week 1: Introduction & String Manipulation
+*Consciousness, pattern matching, ELIZA, rules-based chatbots*
 
 **Monday (Lecture 1):** Course Introduction, Is ChatGPT Conscious?
 - Discussion: What is consciousness? Can machines be conscious?
@@ -74,6 +75,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ---
 
 ## Week 2: Computational Linguistics
+*Data cleaning, tokenization, text classification*
 
 **Monday (Lecture 5):** Data Cleaning & Preprocessing
 - Data cleaning pipeline: regex, web scraping (Beautiful Soup, Requests, Scrapy, Selenium)
@@ -111,6 +113,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ---
 
 ## Week 3: Vibe Coding & Classical Embeddings
+*POS tagging, sentiment analysis, vibe coding, LSA & LDA*
 
 **Monday (MLK Day)**: NO CLASS - Martin Luther King Jr. Day
 - **📝 Assignment 1 Due (Jan 19, 11:59 PM EST)**
@@ -146,6 +149,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ---
 
 ## Week 4: Word Embeddings & Modern Methods
+*Word2Vec, GloVe, FastText, contextual embeddings, dimensionality reduction*
 
 **Monday (Lecture 11):** Word Embeddings (Word2Vec, GloVe, FastText)
 - Count-based vs. prediction-based embeddings
@@ -205,6 +209,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ---
 
 ## Week 5: Transformer Architecture
+*Attention, transformers, training & scaling, RAG*
 
 **Monday (Lecture 15):** Transformer Architecture
 - The transformer as next-token predictor
@@ -245,6 +250,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ---
 
 ## Week 6: Encoder Models (BERT)
+*BERT deep dive, encoder variants, language & thought*
 
 **Monday (Lecture 18):** BERT Deep Dive
 - Encoders vs. decoders; breaking the causal mask; bidirectionality
@@ -312,6 +318,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ---
 
 ## Week 7: Diffusion Models
+*Text diffusion, image generation, video & audio, generative AI ethics*
 
 **Monday (Lecture 21):** Diffusion Models for Text
 - Two generation paradigms: autoregressive (GPT) vs. diffusion (iterative refinement)
@@ -375,6 +382,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ---
 
 ## Week 8: No Classes
+*Instructor away — work on final projects*
 
 **⚠️ NO CLASS February 23-27 (Instructor Away)**
 - Use this time to work on your final project
@@ -382,6 +390,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ---
 
 ## Week 9: The Frontier
+*Reasoning & thinking models, AI agents, safety & society*
 
 **Monday (Lecture 24):** The Thinking Revolution
 - Chain-of-thought prompting: why intermediate reasoning steps improve LLM performance
@@ -392,7 +401,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - The s1 experiment: 1,000 examples + "Wait" trick beats o1-preview; budget forcing
 - Mixture of Experts (MoE): sparse routing, Switch Transformer, Mixtral, DeepSeek-V3
 - Benchmark saturation: MATH, GPQA, Humanity's Last Exam
-- The frontier landscape: Claude Opus 4.6, GPT-5, Gemini 3.1 Pro, DeepSeek-R1, Llama 4
+- The frontier landscape: Claude Opus 4.6, GPT-5, Gemini 3.1 Pro, DeepSeek-R1, Llama 4, Qwen 3
 - Reading: [Wei et al. (2022)](https://arxiv.org/abs/2201.11903) - Chain-of-Thought Prompting
 - Reading: [Yao et al. (2023)](https://arxiv.org/abs/2305.10601) - Tree of Thoughts
 - Reading: [Merrill & Sabharwal (2024)](https://arxiv.org/abs/2310.07923) - Expressive Power of Transformers with CoT
@@ -442,7 +451,8 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 - Deepfakes and elections: Harvard's "apocalypse that wasn't," AI disinformation infrastructure
 - The open-weight debate: Meta may withhold Llama 4 Behemoth (~2T MoE parameters)
 - The scaling wall: model collapse, LoRA, continual learning (Nested Learning)
-- Local revolution; multimodal models (Apollo, Tarsier2)
+- The local revolution: running models locally (Ollama, LM Studio)
+- The multimodal frontier: Apollo, Tarsier2, Gemini 2.5 Pro
 - Existential risk debate
 - Reading: [Greenblatt et al. (2024)](https://arxiv.org/abs/2412.14093) - Alignment Faking
 - Reading: [Denison et al. (2024)](https://www.anthropic.com/research/reward-tampering) - Reward Tampering
@@ -460,6 +470,7 @@ Explore concepts hands-on with our interactive web demos! Each demo runs directl
 ---
 
 ## Week 10: Final Project Presentations
+*Student presentations & course wrap-up*
 
 **Monday, March 9 (Lecture 27):** Final Project Presentations & Wrap-up
 - All teams present their work (videos + discussion)
